@@ -355,7 +355,7 @@ interpolation, classification = interp.evaluate(binary)</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.BaseIFInterpolator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">BaseIFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_nan_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">out_scaling</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'linear'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'kNN'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#BaseIFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.BaseIFInterpolator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling the initial-final interpolation for POSYDON.</p>
 <p>Initialize the BaseIFInterpolation.</p>
 <p>Initialize the BaseIFInterpolation and if ‘filename’ is provided load
@@ -365,28 +365,28 @@ interpolator(s) and classifier(s) are trained upon initialization.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – An instance of the PSyGrid class.</p></li>
-<li><p><strong>in_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys to be used as the input to the interpolator, by default
+<li><p><strong>in_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The keys to be used as the input to the interpolator, by default
 these are star_1_mass, star_2_mass, and period_days.</p></li>
-<li><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
+<li><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
 by default all keys are used.</p></li>
-<li><p><strong>out_nan_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
+<li><p><strong>out_nan_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which the interpolator is supposed to provide values,
 but are all nan in the grid.</p></li>
-<li><p><strong>in_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the input keys, by default these scalings are
+<li><p><strong>in_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the input keys, by default these scalings are
 optimized through Monte Carlo Cross Validation.</p></li>
-<li><p><strong>out_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the output keys, by default these scalings
+<li><p><strong>out_scaling</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The scalings for the output keys, by default these scalings
 are optimized through Monte Carlo Cross Validation.</p></li>
 <li><p><strong>filename</strong> (<em>string</em>) – A path to a .pkl file containing a saved interpolator</p></li>
-<li><p><strong>interp_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The interpolation method to be used can be either
+<li><p><strong>interp_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The interpolation method to be used can be either
 linear, 1NN, or a list specifying which interpolation method to be
 used for each type of track. If interp_classes is specified and
 this parameter is not a list then the interpolator will use the
 specified method for all classes.</p></li>
-<li><p><strong>interp_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – A list of classes that the simulation tracks can
+<li><p><strong>interp_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – A list of classes that the simulation tracks can
 fall into. Usually specified as the mass transfer type. This only
 needs be specified if interp_method is a list.</p></li>
-<li><p><strong>class_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The classification method to be used, either kNN or
+<li><p><strong>class_method</strong> (<em>string</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The classification method to be used, either kNN or
 1NN.</p></li>
-<li><p><strong>c_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which a classifier should be trained. At a minimum
+<li><p><strong>c_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The keys for which a classifier should be trained. At a minimum
 should contain the keys needed for multi-class interpolation if it
 is requested</p></li>
 </ul>
@@ -432,7 +432,7 @@ output vectors are to be approximated.</p>
 <dd><p>Load interpolation model, which can only be used for predictions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of pickle file to be loaded.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path/name of pickle file to be loaded.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -443,7 +443,7 @@ output vectors are to be approximated.</p>
 <dd><p>Save complete interpolation model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -539,7 +539,7 @@ for training the interpolator.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Classifier">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Classifier</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Classifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Classifier" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used as a shell parent class for all classifiers.</p>
 <p>Initialize the Classifier.</p>
 <dl class="py method">
@@ -603,7 +603,7 @@ for training the interpolator.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.IFInterpolator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">IFInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolators</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#IFInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.IFInterpolator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class handling initial-final interpolation.</p>
 <p>Class handling initial-final interpolation with support to interpolate
 certain keys by differing classes.</p>
@@ -612,7 +612,7 @@ certain keys by differing classes.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>grid</strong> (<a class="reference internal" href="posydon.grids.html#posydon.grids.psygrid.PSyGrid" title="posydon.grids.psygrid.PSyGrid"><em>PSyGrid</em></a>) – The training grid</p></li>
-<li><p><strong>interpolators</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>dictionaries</em>) – Contain parameters for the BaseIFIneterpolators to be constructed</p></li>
+<li><p><strong>interpolators</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>dictionaries</em>) – Contain parameters for the BaseIFIneterpolators to be constructed</p></li>
 </ul>
 </dd>
 </dl>
@@ -694,7 +694,7 @@ which an output vector will be approximated.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Interpolator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Interpolator</span></span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Interpolator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used as a shell parent class for all Interpolators.</p>
 <p>Initialize the Interpolator.</p>
 <dl class="py method">
@@ -846,7 +846,7 @@ which an output vector will be approximated.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MC_Interpolator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MC_Interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classes</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">methods</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MC_Interpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MC_Interpolator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class implementing class-wise interpolation.</p>
 <p>Initialize the class-wise interpolation.</p>
 <dl class="simple">
@@ -900,7 +900,7 @@ which an output vector will be approximated.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.MatrixScaler">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">MatrixScaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#MatrixScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.MatrixScaler" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class used to scale input and output space.</p>
 <p>Initialize the Scaler with desired scalings.</p>
 <dl class="py method">
@@ -960,7 +960,7 @@ which an output vector will be approximated.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.IF_interpolation.</span></span><span class="sig-name descname"><span class="pre">Scaler</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">norms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">XT</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ic</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.interpolation.IF_interpolation.Scaler.denormalize">
 <span class="sig-name descname"><span class="pre">denormalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Xn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">klass</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/IF_interpolation.html#Scaler.denormalize"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.IF_interpolation.Scaler.denormalize" title="Link to this definition"></a></dt>
@@ -992,7 +992,7 @@ which an output vector will be approximated.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>models</strong> (<em>psi.Interpolator</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>psi.Interpolator</em>) – Models to be evaluated.</p></li>
+<li><p><strong>models</strong> (<em>psi.Interpolator</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>psi.Interpolator</em>) – Models to be evaluated.</p></li>
 <li><p><strong>grid_T</strong> (<em>psg.PSyGrid</em>) – Train grid</p></li>
 <li><p><strong>grid_t</strong> (<em>psg.PSyGrid</em>) – Test grid</p></li>
 <li><p><strong>ux2</strong> (<em>#TODO</em>)</p></li>
@@ -1077,12 +1077,12 @@ which an output vector will be approximated.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>grid_train</strong> (<em>string</em>) – Path to training grid</p></li>
 <li><p><strong>grid_test</strong> (<em>string</em>) – Path to testing grid</p></li>
-<li><p><strong>ux2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>floats</em>) – List containing the slices at which plots are to be generated. Slices
+<li><p><strong>ux2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>floats</em>) – List containing the slices at which plots are to be generated. Slices
 are the 3rd variable in the input space, that is the mass of the second
 star for CO-HeMS and CO-HMS_RLO grids and the mass ratio for the
 HMS-HMS grid</p></li>
 <li><p><strong>path</strong> (<em>string</em>) – The path where assesment plots will be saved</p></li>
-<li><p><strong>classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – List containing the classes to be used in the MC-Interpolator</p></li>
+<li><p><strong>classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – List containing the classes to be used in the MC-Interpolator</p></li>
 </ul>
 </dd>
 </dl>
@@ -1095,8 +1095,8 @@ HMS-HMS grid</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – number of samples in the data set.</p></li>
-<li><p><strong>percent_test</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Percentage of samples to be in the test sets. (0 &lt; percent_test &lt; 0.5)</p></li>
+<li><p><strong>N</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – number of samples in the data set.</p></li>
+<li><p><strong>percent_test</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Percentage of samples to be in the test sets. (0 &lt; percent_test &lt; 0.5)</p></li>
 <li><p><strong>labels</strong> (<em>#TODO</em>)</p></li>
 </ul>
 </dd>
@@ -1183,13 +1183,13 @@ constraint - either a real number or fieldname that the sum needs to be</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
-<li><p><strong>key_sets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>lists</em>) – List of collections of keys connected with &gt;= inequalities (descending
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>key_sets</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>lists</em>) – List of collections of keys connected with &gt;= inequalities (descending
 order). E.g., if one constraint is <cite>a &gt;= b &gt;= c</cite>, then key_sets is
 [[a, b, c], …].</p></li>
-<li><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – For which star (1 or 2), the constraint will be applied. E.g.,
+<li><p><strong>star</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – For which star (1 or 2), the constraint will be applied. E.g.,
 <cite>star_{}_mass</cite> will be either <cite>star_1_mass</cite> or <cite>star_2_mass</cite>.</p></li>
-<li><p><strong>log</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, then the largest parameter (first key), is given in log10
+<li><p><strong>log</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, then the largest parameter (first key), is given in log10
 scale, while all the rest are in linear scale.</p></li>
 </ul>
 </dd>
@@ -1197,7 +1197,7 @@ scale, while all the rest are in linear scale.</p></li>
 <dd class="field-even"><p>The sanitized version of <cite>fv_dict</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1209,9 +1209,9 @@ scale, while all the rest are in linear scale.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary.</p></li>
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The final values dictionary.</p></li>
 <li><p><strong>sum_keys</strong> (<em>array-like</em>) – Which quantities should add up to a specific value.</p></li>
-<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – If float, then the sum of the quantities should be eqaul to that.
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If float, then the sum of the quantities should be eqaul to that.
 If str, the fieldname of the quanity that the sum is constrained by.</p></li>
 </ul>
 </dd>
@@ -1219,7 +1219,7 @@ If str, the fieldname of the quanity that the sum is constrained by.</p></li>
 <dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1233,13 +1233,13 @@ specified by the user. This function assumes that the keys for star 1
 have a corresponding key in star 2 when applicable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>strings</em>) – The keys specified in the IFInterpolator</p>
+<dd class="field-odd"><p><strong>out_keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>strings</em>) – The keys specified in the IFInterpolator</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>A list of constraints that can and will be applied</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of dicts</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of dicts</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1251,16 +1251,16 @@ have a corresponding key in star 2 when applicable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The final values dictionary</p></li>
-<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – The dictionary specifying the constraint to be applied</p></li>
-<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – A list of formatted key names</p></li>
+<li><p><strong>fv_dict</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The final values dictionary</p></li>
+<li><p><strong>constraint</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – The dictionary specifying the constraint to be applied</p></li>
+<li><p><strong>keys</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – A list of formatted key names</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The sanitized version of the final values dictionary.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1284,18 +1284,18 @@ have a corresponding key in star 2 when applicable.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fvalues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Dictionary containing the final values returned from the initial-final
+<li><p><strong>fvalues</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary containing the final values returned from the initial-final
 interpolator evaluation method.</p></li>
-<li><p><strong>constraints</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><em>dicts</em>) – A list of constraints that are to be applied. Can be computed using the
+<li><p><strong>constraints</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>dicts</em>) – A list of constraints that are to be applied. Can be computed using the
 find_constraints_to_apply function</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If True, report the actions.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, report the actions.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The dictionary of sanitized final values.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1313,7 +1313,7 @@ find_constraints_to_apply function</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.data_scaling.DataScaler">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.data_scaling.</span></span><span class="sig-name descname"><span class="pre">DataScaler</span></span><a class="reference internal" href="../_modules/posydon/interpolation/data_scaling.html#DataScaler"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.data_scaling.DataScaler" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Data Normalization class.</p>
 <p>This class provides normalizing tools for float 1D arrays. Features can be
 standarized or scaled to a range depending on the method chosen when
@@ -1335,11 +1335,11 @@ values.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
 and their log versions ‘log_min_max’, ‘neg_log_min_max’,
 ‘log_max_abs’, ‘log_standarize’, ‘neg_log_standarize’.</p></li>
-<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – lower range value of x_t after (<a href="#id7"><span class="problematic" id="id8">log_</span></a>)min_max scaling</p></li>
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – upper range value of x_t after (<a href="#id9"><span class="problematic" id="id10">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – lower range value of x_t after (<a href="#id7"><span class="problematic" id="id8">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – upper range value of x_t after (<a href="#id9"><span class="problematic" id="id10">log_</span></a>)min_max scaling</p></li>
 </ul>
 </dd>
 </dl>
@@ -1356,10 +1356,10 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – expects a 1D array and finds norm values of columns</p></li>
-<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
+<li><p><strong>method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – scaling method. Possible values: ‘min_max’, ‘max_abs’, ‘standarize’
 and the log versions ‘log_min_max’, ‘log_max_abs’, ‘log_standarize’</p></li>
-<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – lower range value of x_t after (<a href="#id13"><span class="problematic" id="id14">log_</span></a>)min_max scaling</p></li>
-<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – upper range value of x_t after (<a href="#id15"><span class="problematic" id="id16">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – lower range value of x_t after (<a href="#id13"><span class="problematic" id="id14">log_</span></a>)min_max scaling</p></li>
+<li><p><strong>upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – upper range value of x_t after (<a href="#id15"><span class="problematic" id="id16">log_</span></a>)min_max scaling</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1419,7 +1419,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.eep.EEP">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.eep.</span></span><span class="sig-name descname"><span class="pre">EEP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_NAMES</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">ZAMShi</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">EEP_INTERVAL</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/eep.html#EEP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.eep.EEP" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Convert a MESA history file to Equivalent Evolutionary Phase track.</p>
 <p>Load an MESA history file and construct the EEP instance.</p>
 </dd></dl>
@@ -1431,7 +1431,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">GRIDInterpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#GRIDInterpolator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.GRIDInterpolator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class to interpolate between single star MESA tracks.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="posydon.interpolation.interpolation.GRIDInterpolator.path">
@@ -1439,7 +1439,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dd><p>The path to the directory that contains the h5 grid.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1450,7 +1450,7 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dd><p>Contains valid keys for accessing the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1469,9 +1469,9 @@ min(x_transf) = lower, max(x_transf) = upper</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The specific time-series described by the key.
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The specific time-series described by the key.
 Valid keys are in the <cite>keys</cite> attribute.</p></li>
-<li><p><strong>M_new</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The associated initial mass
+<li><p><strong>M_new</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The associated initial mass
 which time-series requires interpolation.</p></li>
 </ul>
 </dd>
@@ -1501,7 +1501,7 @@ associated with the initial mass <cite>M_new</cite>.</p>
 <dd><p>Return the masses of the grid files.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of floats</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of floats</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1533,10 +1533,10 @@ which corresponding data should be loaded.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>u</strong> (<em>array_like</em>) – The array which last dimension requires min-max rescaling.</p></li>
-<li><p><strong>lim</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)"><em>tuple</em></a>) – The tuples have length 2 and contains the limits on
+<li><p><strong>lim</strong> (<em>sequence</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – The tuples have length 2 and contains the limits on
 the min-max rescaling.
 There should be one tuple for each array in the last dimension.</p></li>
-<li><p><strong>inv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>False</cite> then the standard min-max rescaling will be performed.
+<li><p><strong>inv</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>False</cite> then the standard min-max rescaling will be performed.
 If <cite>True</cite> then the inverse min-max rescaling
 to restore and array will be performed.</p></li>
 </ul>
@@ -1558,8 +1558,8 @@ to restore and array will be performed.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>array_like</em>) – The array which have been min-max rescaled.</p></li>
-<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The lower limit of the min-max range.</p></li>
-<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The upper limit of the min-max range.</p></li>
+<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The lower limit of the min-max range.</p></li>
+<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The upper limit of the min-max range.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1574,7 +1574,7 @@ to restore and array will be performed.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.interpolation.interpolation.psyTrackInterp">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.interpolation.interpolation.</span></span><span class="sig-name descname"><span class="pre">psyTrackInterp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">in_keys</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interp_in_q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/interpolation/interpolation.html#psyTrackInterp"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.interpolation.interpolation.psyTrackInterp" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Perform track interpolation for POSYDON.</p>
 <p>Initialize the psyTrackInterp class.</p>
 <dl class="field-list simple">
@@ -1617,7 +1617,7 @@ default is false</p></li>
 <dd><p>Save complete interpolation model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – path/name of ‘.pkl’ file where the model will be saved.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1638,8 +1638,8 @@ default is false</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>x</strong> (<em>array_like</em>) – The array that requires min-max rescaling.</p></li>
-<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The lower limit of the range to scale.</p></li>
-<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The upper limit of the range to scale.</p></li>
+<li><p><strong>xmin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The lower limit of the range to scale.</p></li>
+<li><p><strong>xmax</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The upper limit of the range to scale.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1691,6 +1691,8 @@ default is false</p></li>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

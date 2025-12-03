@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Prerequisites &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Installation Guide" href="installation-guide.html" />
+    <link rel="prev" title="Introduction, Objectives, and Scope" href="../introduction-acknowledgements/intro.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Prerequisites</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#operating-system">Operating System</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#software-dependencies">Software Dependencies</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#hardware-requirements">Hardware Requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installation-steps">Installation Steps</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#final-notes">Final Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Prerequisites</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting-started/prerequisites.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="prerequisites">
+<h1>Prerequisites<a class="headerlink" href="#prerequisites" title="Link to this heading"></a></h1>
+<p>Before proceeding with the installation and usage of POSYDON, there are certain prerequisites that must be met. This page outlines all the necessary requirements for a smooth experience with the tool.</p>
+<section id="operating-system">
+<h2>Operating System<a class="headerlink" href="#operating-system" title="Link to this heading"></a></h2>
+<p>POSYDON has been tested on the following operating systems:</p>
+<ul class="simple">
+<li><p>Linux (Ubuntu 20.04 and newer, CentOS 7, etc.)</p></li>
+<li><p>macOS (10.14 and newer)</p></li>
+</ul>
+<p>(Note: Adapt and expand the list based on the actual compatibility of POSYDON)</p>
+</section>
+<section id="software-dependencies">
+<h2>Software Dependencies<a class="headerlink" href="#software-dependencies" title="Link to this heading"></a></h2>
+<ol class="arabic simple">
+<li><p>Python 3.11</p></li>
+<li><p>More dependencies are defined in our setup file and should be automatically applied during the installation. To allow you having different versions of the packages we require we strongly encourage to use a dedicated conda environment for POSYDON.</p></li>
+</ol>
+<p>(Note: Expand on any specific versions or configurations, if necessary.)</p>
+</section>
+<section id="hardware-requirements">
+<h2>Hardware Requirements<a class="headerlink" href="#hardware-requirements" title="Link to this heading"></a></h2>
+<p><strong>Storage</strong>:</p>
+<p>In order to run a population synthesis model with POSYDON, you must ensure that you have enough free storage space. It depends on the dataset how much free space you need:</p>
+<ul class="simple">
+<li><p>DR1: approximately <strong>40GB</strong></p></li>
+<li><p>DR2: approximately <strong>140GB</strong> (the default in the <a class="reference internal" href="installation-guide.html#installation-guide"><span class="std std-ref">installation</span></a>)</p></li>
+<li><p>one of the eight metallicities in DR2: approximately <strong>20GB</strong></p></li>
+</ul>
+<p>This is crucial for downloading the lite MESA simulation library, interpolation objects, and other auxiliary files used by the code.</p>
+<p>Memory:</p>
+<ul class="simple">
+<li><p>Minimum: 8GB RAM</p></li>
+<li><p>Recommended: 16GB RAM</p></li>
+</ul>
+<p>(Note: Adjust memory requirements based on your knowledge of POSYDON’s demands.)</p>
+<p>CPU:</p>
+<ul class="simple">
+<li><p>Multi-core processor recommended for optimal performance, e.g. HPC cluster.</p></li>
+</ul>
+<p>(Note: Include more specific CPU details if necessary.)</p>
+<p>Network:</p>
+<ul class="simple">
+<li><p>A stable internet connection for downloading necessary libraries and datasets.</p></li>
+</ul>
+</section>
+<section id="installation-steps">
+<h2>Installation Steps<a class="headerlink" href="#installation-steps" title="Link to this heading"></a></h2>
+<p>Proceed to <a class="reference internal" href="installation-guide.html#installation-guide"><span class="std std-ref">Installation Guide</span></a> to understand the steps required to get POSYDON up and running.</p>
+</section>
+<section id="final-notes">
+<h2>Final Notes<a class="headerlink" href="#final-notes" title="Link to this heading"></a></h2>
+<p>Ensure all the above prerequisites are met before initiating the setup for POSYDON to ensure a seamless and hassle-free experience.</p>
+<p>If you encounter any issues, please refer to the <a class="reference internal" href="../troubleshooting-faqs/installation-issues.html#installation-issues"><span class="std std-ref">Troubleshooting Guide</span></a> or <a class="reference internal" href="../contact-support/contact-information.html#contact-info"><span class="std std-ref">contact us</span></a>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../introduction-acknowledgements/intro.html" class="btn btn-neutral float-left" title="Introduction, Objectives, and Scope" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="installation-guide.html" class="btn btn-neutral float-right" title="Installation Guide" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

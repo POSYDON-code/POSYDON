@@ -1,0 +1,1177 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.visualization.VH_diagram.Presenter &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.visualization.VH_diagram.Presenter</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.visualization.VH_diagram.Presenter</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Data visualization in VH diagram.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbital_separation_from_period</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.GraphVisualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">CaseInfos</span><span class="p">,</span> <span class="n">PointInfos</span><span class="p">,</span> <span class="n">StateInfos</span><span class="p">,</span> <span class="n">columnTYPE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.MainWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">MainWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.SimulationModel</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationModel</span>
+
+
+<div class="viewcode-block" id="to_megayears">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.to_megayears">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_megayears</span><span class="p">(</span><span class="n">nb</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert yr to Myr.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">nb</span> <span class="o">/</span> <span class="mi">1000000</span></div>
+
+
+
+<div class="viewcode-block" id="combine_simplified_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.combine_simplified_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">combine_simplified_data</span><span class="p">(</span><span class="o">*</span><span class="p">,</span> <span class="n">data_to</span><span class="p">,</span> <span class="n">data_from</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Combine 2 dictionaries of SimplifiedInfo.</span>
+
+<span class="sd">    data_to[].state_after take the value of data_from[].state_before.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_to : dictionary of SimplifiedInfo</span>
+<span class="sd">        Informations who will be udpated.</span>
+<span class="sd">    data_from : dictionary of SimplifiedInfo</span>
+<span class="sd">        Informations who will be combined.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data_to</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">data_to</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">=</span> <span class="n">data_from</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span></div>
+
+
+
+<div class="viewcode-block" id="to_simplified_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.to_simplified_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">to_simplified_data</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert dictionnary of SimplifiedInfo with values as `.state_before`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    row : dictionnary</span>
+<span class="sd">        Dictionnary of value to convert.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dictionnary of SimplifiedInfo</span>
+<span class="sd">        Dictionnary of SimplifiedInfo containing the value as</span>
+<span class="sd">        SimplifiedInfo.state_before.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">row</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SimplifiedInfo</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+
+    <span class="c1"># Side effect</span>
+    <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">SimplifiedInfo</span><span class="p">(</span>
+        <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="s2">&quot;nan&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+
+<div class="viewcode-block" id="file_exist">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.file_exist">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">file_exist</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if file exists.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_star_state_filename">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.get_star_state_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_star_state_filename</span><span class="p">(</span><span class="n">state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of the file illustring the state of one star.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state : str</span>
+<span class="sd">        State name of the star.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Name of the file illustrating this state.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">state</span><span class="o">.</span><span class="n">count</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">state</span> <span class="o">+</span> <span class="n">suffix</span>
+
+    <span class="n">parts</span> <span class="o">=</span> <span class="n">state</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">suffix</span></div>
+
+
+
+<div class="viewcode-block" id="get_event_state_filename">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.get_event_state_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_event_state_filename</span><span class="p">(</span><span class="n">left_star_state</span><span class="p">,</span> <span class="n">event_state</span><span class="p">,</span> <span class="n">right_star_state</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span>
+                             <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the name of the file illustrating the event with the 2 given star.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    left_star_state : str</span>
+<span class="sd">        State&#39;s name of the left star.</span>
+<span class="sd">    event_state : str</span>
+<span class="sd">        State&#39;s name of the event.</span>
+<span class="sd">    right_star_state : type</span>
+<span class="sd">        State&#39;s name of the right star.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Name of the file illustrating this complete state.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">left_star_filename</span> <span class="o">=</span> <span class="n">get_star_state_filename</span><span class="p">(</span><span class="n">left_star_state</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">left_star_filename</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;_&quot;</span><span class="p">:</span>
+        <span class="n">left_star_filename</span> <span class="o">+=</span> <span class="s2">&quot;_&quot;</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">left_star_filename</span>
+        <span class="o">+</span> <span class="n">event_state</span>
+        <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
+        <span class="o">+</span> <span class="n">get_star_state_filename</span><span class="p">(</span><span class="n">right_star_state</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">suffix</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="equal_with_epsilon">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.equal_with_epsilon">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">equal_with_epsilon</span><span class="p">(</span><span class="n">nb_1</span><span class="p">,</span> <span class="n">nb_2</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if 2 numbers are equal up to epsilon.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nb_1 : int, float, double</span>
+<span class="sd">        Value 1 to compare.</span>
+<span class="sd">    nb_2 : int, float, double</span>
+<span class="sd">        Value 2 compare.</span>
+<span class="sd">    epsilon : int, float, double</span>
+<span class="sd">        Difference allowed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if numbers are equal up to epsilon, False if not.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">abs</span><span class="p">(</span><span class="n">nb_1</span> <span class="o">-</span> <span class="n">nb_2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">epsilon</span></div>
+
+
+
+<div class="viewcode-block" id="get_max_distance">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.get_max_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_max_distance</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get max distance from a dictionary of SimplifiedInfo.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : dictionnary of SimplifiedInfo</span>
+<span class="sd">        Dictionnary, full of SimplifiedInfo, containing all infos</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Max distance of this row, accroding to before/after state</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">&gt;</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+        <span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span>
+                <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+                <span class="k">else</span> <span class="mi">0</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span></div>
+
+
+
+<div class="viewcode-block" id="calculate_separation">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.calculate_separation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_separation</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;For each row in dataframe, calculate the separation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : pandas.DataFrame</span>
+<span class="sd">        Complete dataframe without &#39;separation&#39;.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Array of float</span>
+<span class="sd">        Array of calculated separations, len(array) == nb rows.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">((</span><span class="s2">&quot;orbital_period&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;S1_mass&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="s2">&quot;S2_mass&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">data</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">separations</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+        <span class="n">separations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+            <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;orbital_period&quot;</span><span class="p">],</span>
+                                           <span class="n">row</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">separations</span></div>
+
+
+
+<div class="viewcode-block" id="SimplifiedInfo">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.SimplifiedInfo">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimplifiedInfo</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple class to store an before/after info and simplfy dataframe.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state_before : any value</span>
+<span class="sd">        Value for the older state.</span>
+<span class="sd">    state_after : any value</span>
+<span class="sd">        Value for the younger state.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    state_before</span>
+<span class="sd">    state_after</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state_before</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">state_after</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a SimplifiedInfo instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_before</span> <span class="o">=</span> <span class="n">state_before</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">state_after</span> <span class="o">=</span> <span class="n">state_after</span></div>
+
+
+
+<div class="viewcode-block" id="Presenter">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.Presenter">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Presenter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Charged to setup window and format data before calling display funcs.&quot;&quot;&quot;</span>
+
+    <span class="c1"># PATH_TO_DRAWS = os.path.dirname(__file__) + &quot;\\draws\\%s.png&quot;</span>
+    <span class="n">PATH_TO_DRAWS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+        <span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon&quot;</span><span class="p">,</span> <span class="s2">&quot;visualization&quot;</span><span class="p">,</span> <span class="s2">&quot;VH_diagram&quot;</span><span class="p">,</span> <span class="s2">&quot;draws&quot;</span>
+    <span class="p">)</span>
+    <span class="n">PATH_TO_SCREENS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;screens&quot;</span><span class="p">)</span>
+
+    <span class="n">_formating_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;binary_index&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;state&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;event&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$</span><span class="si">%.2f</span><span class="s2">\, Mys$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;separation&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;orbital_period&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$p = </span><span class="si">%.2f</span><span class="s2">\, d$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;eccentricity&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$e = </span><span class="si">%.2f</span><span class="s2"> $&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;V_sys&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rl_relative_overflow_1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;rl_relative_overflow_2&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;mass_transfer_case&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;nearest_neighbour_distance&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_state&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_metallicity&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_mass&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$m=</span><span class="si">%3.2f</span><span class="s2">\, \mathrm</span><span class="si">{M}</span><span class="s2">_\odot$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_R&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_L&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_lg_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_lg_system_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_lg_wind_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_he_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_he_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_c_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_c_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_o_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_o_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_center_h1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_center_he4&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_center_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_center_n14&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_center_o16&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surface_h1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surface_he4&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surface_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surface_n14&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surface_o16&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_LH&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_LHe&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_LZ&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_Lnuc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_c12_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_avg_c_in_c_core&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surf_avg_omega&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_surf_avg_omega_div_omega_crit&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_total_moment_of_inertia&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_log_total_angular_momentum&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_spin&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S1_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_state&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_metallicity&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_mass&quot;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$m=</span><span class="si">%3.2f</span><span class="s2">\, \mathrm</span><span class="si">{M}</span><span class="s2">_\odot$&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_R&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_L&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_lg_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_lg_system_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_lg_wind_mdot&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_he_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_he_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_c_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_c_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_o_core_mass&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_o_core_radius&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_center_h1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_center_he4&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_center_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_center_n14&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_center_o16&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surface_h1&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surface_he4&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surface_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surface_n14&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surface_o16&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_LH&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_LHe&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_LZ&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_Lnuc&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_c12_c12&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_avg_c_in_c_core&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surf_avg_omega&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_surf_avg_omega_div_omega_crit&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_total_moment_of_inertia&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_log_total_angular_momentum&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_spin&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;S2_profile&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a Presenter instance.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span> <span class="o">=</span> <span class="n">SimulationModel</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="n">filename</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">load_csv</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span><span class="o">.</span><span class="n">start_visualization</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">detail_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_visualisation_detailed</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">reduce_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_visualisation_reduced</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">simplify_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_visualisation_simplified</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">diagram_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_visualisation_diagram</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">distance_representation_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_set_distance_representation</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">save_required</span><span class="p">()</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">screen</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">options</span><span class="p">()</span><span class="o">.</span><span class="n">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span><span class="p">)</span>
+
+        <span class="c1"># maybe change it by flags if more option</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_representation</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">options</span><span class="p">()</span><span class="o">.</span><span class="n">set_distance_representation</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_distance_representation</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="Presenter.screen">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.Presenter.screen">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">screen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take a screen of the displayed window.&quot;&quot;&quot;</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_SCREENS</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">filepath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_SCREENS</span><span class="p">,</span>
+            <span class="n">datetime</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">-%H-%M-%S&quot;</span><span class="p">)</span>
+            <span class="o">+</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.png&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">repaint</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">saveAsPicture</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">filepath</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_corresponding_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get binary data and calculate missing columns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int</span>
+<span class="sd">            Binary index to load.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">==</span> <span class="n">index</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">get_by_binary_index</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;separation&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">:</span>
+            <span class="n">separations</span> <span class="o">=</span> <span class="n">calculate_separation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">separations</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">separations</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="o">=</span> <span class="n">index</span>
+
+<div class="viewcode-block" id="Presenter.present">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.Presenter.present">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">present</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Preset the binary.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="o">.</span><span class="n">options</span><span class="p">()</span><span class="o">.</span><span class="n">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_corresponding_data</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Presenter.close">
+<a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.Presenter.Presenter.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the window.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_main_window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_update_visualisation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the display according to current_index and present_mode.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_current_index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_detailed_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_reduced_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_columns</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_simplified_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">==</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_diagram_columns</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_digram_presentation</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_current_data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_basic_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add columns for Detailled/Reduced/Simplified View.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">TIMELINE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;TIME&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;S1&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;EVENT/STATE&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;S2&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_diagram_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add columns for Diagram View.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">TIMELINE</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;TIME&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="n">columnTYPE</span><span class="o">.</span><span class="n">CONNECTED</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;STATE&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_visualisation_detailed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_visualisation_reduced</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_visualisation_simplified</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_visualisation_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_present_mode</span> <span class="o">=</span> <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_distance_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_representation</span> <span class="o">=</span> <span class="n">state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_visualisation</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_basic_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare widget to display as basic (non-simplified) data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        row : dictionary</span>
+<span class="sd">            Dataframe&#39;s row needing to be formated.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of Infos</span>
+<span class="sd">            Array containing derivated struct of Infos to create correspondong</span>
+<span class="sd">            widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_data</span> <span class="o">=</span> <span class="n">PointInfos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">to_megayears</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]))</span>
+
+        <span class="n">s1_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span><span class="p">,</span>
+            <span class="n">centered_txt</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">],</span>
+            <span class="n">bot_left_txt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;S1_mass&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">s1_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">event_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span><span class="p">)</span>
+        <span class="n">event_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">event_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span>
+                                    <span class="k">if</span> <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">])</span> <span class="o">!=</span> <span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+                                    <span class="k">else</span> <span class="nb">str</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="s2">&quot;eccentricity&quot;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">event_data</span><span class="o">.</span><span class="n">bot_right_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;eccentricity&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;eccentricity&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">&quot;orbital_period&quot;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">:</span>
+            <span class="n">event_data</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;orbital_period&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;orbital_period&quot;</span><span class="p">]</span>
+            <span class="p">)</span>
+
+        <span class="n">s2_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span><span class="p">,</span>
+            <span class="n">centered_txt</span><span class="o">=</span><span class="n">row</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">],</span>
+            <span class="n">bot_right_txt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;S2_mass&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+
+        <span class="n">s2_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">time_data</span><span class="p">,</span> <span class="n">s1_data</span><span class="p">,</span> <span class="n">event_data</span><span class="p">,</span> <span class="n">s2_data</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_simplified_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">infos</span><span class="p">,</span> <span class="n">side</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the information &#39;data_name&#39; for simplfied view.</span>
+
+<span class="sd">        This is done according to whether it exists or not, and if there is a</span>
+<span class="sd">        before/after.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset : dictionary of SimplifiedInfo</span>
+<span class="sd">            Dictionary containing all infos to format.</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of the info to format.</span>
+<span class="sd">        infos : type</span>
+<span class="sd">            Struct to create coresponding widget.</span>
+<span class="sd">        side : bool</span>
+<span class="sd">            Indicate on which side display the information, False = Left</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">side</span><span class="p">:</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                       <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">top_left_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                       <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">bot_right_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                        <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">top_right_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                        <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">side</span><span class="p">:</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">bot_left_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                       <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">infos</span><span class="o">.</span><span class="n">bot_right_text</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                                        <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_simplified_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare widget informations to display as simplified data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dictionary of SimplifiedInfo</span>
+<span class="sd">            Infos formated to be displayed in widgets.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of Infos</span>
+<span class="sd">            Array containing derivated struct of Infos to create corresponding</span>
+<span class="sd">            widgets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_data</span> <span class="o">=</span> <span class="n">PointInfos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+            <span class="o">%</span> <span class="n">to_megayears</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">))</span>
+
+        <span class="n">s1_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S1_id</span><span class="p">)</span>
+        <span class="n">s1_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">s1_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s1_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_simplified_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;S1_mass&quot;</span><span class="p">,</span> <span class="n">s1_data</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">event_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_event_id</span><span class="p">)</span>
+        <span class="n">event_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">event_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">event_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_simplified_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="n">event_data</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_simplified_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span> <span class="n">event_data</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">s2_data</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_S2_id</span><span class="p">)</span>
+        <span class="n">s2_data</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">s2_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">s2_data</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_simplified_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;S2_mass&quot;</span><span class="p">,</span> <span class="n">s2_data</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">time_data</span><span class="p">,</span> <span class="n">s1_data</span><span class="p">,</span> <span class="n">event_data</span><span class="p">,</span> <span class="n">s2_data</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_distance_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">simplified_distance</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Normalize 1 of the 2 distances in simplified_distance.</span>
+
+<span class="sd">        Use the max_distance, according to whether it exists or not,</span>
+<span class="sd">        if it&#39;s NaN or 0.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        simplified_distance : SimplifiedInfo</span>
+<span class="sd">            Struct containing distances of the current state.</span>
+<span class="sd">        max_distance : float</span>
+<span class="sd">            Description of parameter `max_distance`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Normalized current star distance.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">max_distance</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_after</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_after</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_after</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">max_distance</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span>
+                    <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">max_distance</span><span class="p">))</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_before</span><span class="p">):</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_before</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_before</span> <span class="o">=</span> <span class="mi">1</span>
+
+            <span class="k">if</span> <span class="n">max_distance</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">simplified_distance</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+                    <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">max_distance</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_set_diagram_infos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">data_name</span><span class="p">,</span> <span class="n">diagram_infos</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format the information &#39;data_name&#39; for diagram view.</span>
+
+<span class="sd">        This is done according to whether it exists or not, and if there is</span>
+<span class="sd">        a before/after.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        dataset : dictionary of SimplifiedInfo</span>
+<span class="sd">            Dictionary containing all infos to format.</span>
+<span class="sd">        data_name : str</span>
+<span class="sd">            Name of the info to format.</span>
+<span class="sd">        diagram_infos : StateInfos</span>
+<span class="sd">            Struct to create coresponding widget.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">data_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">dataset</span><span class="p">:</span>
+            <span class="n">diagram_infos</span><span class="o">.</span><span class="n">top_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">diagram_infos</span><span class="o">.</span><span class="n">bot_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">diagram_infos</span><span class="o">.</span><span class="n">top_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span>
+                                       <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">diagram_infos</span><span class="o">.</span><span class="n">bot_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span>
+                                           <span class="o">%</span> <span class="n">dataset</span><span class="p">[</span><span class="n">data_name</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">diagram_infos</span><span class="o">.</span><span class="n">bot_texts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_diagram_line</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare widget information to display basic (non-simplified) data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : dictionary of SimplifiedInfo</span>
+<span class="sd">            Infos formated to be displayed in widgets.</span>
+<span class="sd">        max_distance : float</span>
+<span class="sd">            Max distance between 2 star, used to set normalized distance</span>
+<span class="sd">            for this state.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of Infos</span>
+<span class="sd">            Array containing derivated struct of Infos to create corresponding</span>
+<span class="sd">            widgets.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">time_info</span> <span class="o">=</span> <span class="n">PointInfos</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_time_id</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_formating_dict</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">%</span> <span class="n">to_megayears</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="n">state_info</span> <span class="o">=</span> <span class="n">StateInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distance_representation</span> <span class="ow">and</span> <span class="s2">&quot;separation&quot;</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_distance_representation</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">],</span> <span class="n">max_distance</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">distance</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="n">state_before_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+            <span class="n">get_event_state_filename</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">state_after_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+            <span class="n">get_event_state_filename</span><span class="p">(</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span>
+                <span class="ow">and</span> <span class="n">file_exist</span><span class="p">(</span><span class="n">state_after_filename</span><span class="p">)):</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">=</span> <span class="n">state_after_filename</span>
+        <span class="k">elif</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span> <span class="ow">and</span> <span class="n">file_exist</span><span class="p">(</span>
+            <span class="n">state_before_filename</span>
+        <span class="p">):</span>
+            <span class="n">state_info</span><span class="o">.</span><span class="n">event_filename</span> <span class="o">=</span> <span class="n">state_before_filename</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S1_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S1_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S1_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S2_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">state_info</span><span class="o">.</span><span class="n">S2_filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">PATH_TO_DRAWS</span><span class="p">,</span>
+                    <span class="n">get_star_state_filename</span><span class="p">(</span>
+                        <span class="n">data</span><span class="p">[</span><span class="s2">&quot;S2_state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span> <span class="n">suffix</span><span class="o">=</span><span class="s2">&quot;.png&quot;</span>
+                    <span class="p">),</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_diagram_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;S1_mass&quot;</span><span class="p">,</span> <span class="n">state_info</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_diagram_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="n">state_info</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_diagram_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span> <span class="n">state_info</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_diagram_infos</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s2">&quot;S2_mass&quot;</span><span class="p">,</span> <span class="n">state_info</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="n">time_info</span><span class="p">,</span> <span class="n">state_info</span><span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_detailed_presentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format and display data in the Detailled View.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to display in detailled view.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;END&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">formatted_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_basic_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="n">formatted_data</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reduce_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Reduce the dataframe given by folowing hardcoded rules.</span>
+
+<span class="sd">        If the row has same time (within 10,000 years) as the previous one,</span>
+<span class="sd">        each info is combined with the previous info in a SimplifiedInfo struct</span>
+<span class="sd">        giving a dictionary with same row&#39;s key, full of SimplifiedInfo, which</span>
+<span class="sd">        are the simplified row.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to simplify.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of dictionary of SimplifiedInfo</span>
+<span class="sd">            Each dictionary hold same keys of 1 data&#39;s row, but with</span>
+<span class="sd">            SimplifiedInfo as value.</span>
+<span class="sd">            Array length =/= row&#39;s number in data because some infos are</span>
+<span class="sd">            combined in SimplifiedInfo.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reduced_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;END&quot;</span> <span class="ow">or</span> <span class="s2">&quot;redirect&quot;</span> <span class="ow">in</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]:</span>
+                <span class="k">continue</span>
+
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">to_simplified_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">reduced_data</span><span class="p">:</span>
+                <span class="n">reduced_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">equal_with_epsilon</span><span class="p">(</span>
+                        <span class="n">reduced_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                        <span class="n">new_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                        <span class="mi">10000</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">reduced_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span><span class="p">)</span>
+                    <span class="ow">and</span> <span class="p">(</span><span class="n">new_data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span><span class="p">)</span>
+                <span class="p">):</span>  <span class="c1"># Need to combine</span>
+                    <span class="n">combine_simplified_data</span><span class="p">(</span>
+                        <span class="n">data_to</span><span class="o">=</span><span class="n">reduced_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_from</span><span class="o">=</span><span class="n">new_data</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reduced_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">reduced_data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_reduced_presentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format and display data in the Reduced View.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to display in reduced view.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">reduced_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_reduce_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">line_data</span> <span class="ow">in</span> <span class="n">reduced_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_simplified_line</span><span class="p">(</span><span class="n">line_data</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simplify_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Simplify the dataframe given by folowing hardcoded rules.</span>
+
+<span class="sd">        If the row isn&#39;t interesting, each info is combined with the previous</span>
+<span class="sd">        info in a SimplifiedInfo struct, giving a dictionary with same row&#39;s</span>
+<span class="sd">        key, full of SimplifiedInfo, which are the simplified row.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to simplify.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Array of dictionary of SimplifiedInfo</span>
+<span class="sd">            Each dictionary hold same keys of 1 data&#39;s row, but with</span>
+<span class="sd">            SimplifiedInfo as value.</span>
+<span class="sd">            Array length =/= row&#39;s number in data because some infos are</span>
+<span class="sd">            combined in SimplifiedInfo.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">simplified_data</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;END&quot;</span> <span class="ow">or</span> <span class="n">row</span><span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;redirect&quot;</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">new_data</span> <span class="o">=</span> <span class="n">to_simplified_data</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">simplified_data</span><span class="p">:</span>
+                <span class="n">simplified_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">equal_with_epsilon</span><span class="p">(</span>
+                        <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                        <span class="n">new_data</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span><span class="p">,</span>
+                        <span class="mi">10000</span><span class="p">,</span>
+                    <span class="p">)</span>
+                    <span class="ow">and</span> <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span>
+                    <span class="ow">and</span> <span class="n">new_data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">!=</span> <span class="s2">&quot;detached&quot;</span>
+                <span class="p">)</span> <span class="ow">or</span> <span class="p">(</span>
+                    <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">==</span> <span class="s2">&quot;detached&quot;</span>
+                    <span class="ow">and</span> <span class="n">new_data</span><span class="p">[</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_before</span> <span class="o">==</span> <span class="s2">&quot;detached&quot;</span>
+                <span class="p">):</span>  <span class="c1"># Need to combine</span>
+                    <span class="n">combine_simplified_data</span><span class="p">(</span>
+                        <span class="n">data_to</span><span class="o">=</span><span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">data_from</span><span class="o">=</span><span class="n">new_data</span>
+                    <span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">simplified_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_data</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">simplified_data</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_simplified_presentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format and display data in the Simplified View.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to display in simplified view.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">simplified_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">simplified_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_prepare_simplified_line</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_digram_presentation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Format and display data in the Diagram View.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        data : pandas.DataFrame</span>
+<span class="sd">            Data to display in diagram view.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">simplified_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_data</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+
+        <span class="n">max_distance_data</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">simplified_data</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">get_max_distance</span><span class="p">)</span>
+        <span class="n">max_distance</span> <span class="o">=</span> <span class="n">get_max_distance</span><span class="p">(</span><span class="n">max_distance_data</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">line_data</span> <span class="ow">in</span> <span class="n">simplified_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_prepare_diagram_line</span><span class="p">(</span><span class="n">line_data</span><span class="p">,</span> <span class="n">max_distance</span><span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">==</span> <span class="s2">&quot;disrupted&quot;</span>
+            <span class="ow">or</span> <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span> <span class="o">==</span> <span class="s2">&quot;merged&quot;</span>
+        <span class="p">):</span>
+            <span class="n">aditional_info</span> <span class="o">=</span> <span class="n">CaseInfos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_state_id</span><span class="p">)</span>
+            <span class="n">aditional_info</span><span class="o">.</span><span class="n">border_width</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="n">aditional_info</span><span class="o">.</span><span class="n">centered_text</span> <span class="o">=</span> <span class="n">simplified_data</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span>
+                <span class="s2">&quot;state&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">state_after</span>
+            <span class="n">aditional_info</span><span class="o">.</span><span class="n">connected</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">()</span><span class="o">.</span><span class="n">add_line</span><span class="p">([</span><span class="n">aditional_info</span><span class="p">])</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

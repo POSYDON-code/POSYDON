@@ -257,11 +257,11 @@ no selector has been set, all binaries are selected (combine this with the
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The fullpath of the HDF5 file.</p></li>
-<li><p><strong>find_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>None</em>) – The number of binaries to select (at most) or None to select all.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The fullpath of the HDF5 file.</p></li>
+<li><p><strong>find_n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – The number of binaries to select (at most) or None to select all.</p></li>
 <li><p><strong>select_oneline</strong> (<em>function</em><em> or </em><em>None</em>) – The function to operate on chunks of the <cite>oneline</cite> table.</p></li>
 <li><p><strong>select_history</strong> (<em>function</em><em> or </em><em>None</em>) – The function to operate on chunks of the <cite>oneline</cite> table.</p></li>
-<li><p><strong>select_columns</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>array</em>) – If None, all columns will be returned. If a string, only those columns
+<li><p><strong>select_columns</strong> (<em>None</em><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>array</em>) – If None, all columns will be returned. If a string, only those columns
 with name containing this string will be returned. An array of strings
 can be used for multiple such patterns.</p></li>
 </ul>
@@ -281,7 +281,7 @@ can be used for multiple such patterns.</p></li>
 <dd><p>Print the columns in the <cite>oneline</cite> and <cite>history</cite> keys in an HDF5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The fullpath of the HDF5 file.</p>
+<dd class="field-odd"><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The fullpath of the HDF5 file.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -301,7 +301,7 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryGenerator">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryGenerator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sampler</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">generate_independent_samples</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">RNG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryGenerator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryGenerator" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Generate binaries to be included in a BinaryPopulation.</p>
 <p>Initialize the BinaryGenerator instance.</p>
 <dl class="py method">
@@ -310,7 +310,7 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <dd><p>Return a binary for evolution in a population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Sets binary index. Defaults to number of generated binaries.</p>
+<dd class="field-odd"><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Sets binary index. Defaults to number of generated binaries.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>binary</strong></p>
@@ -350,13 +350,13 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.BinaryPopulation">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">BinaryPopulation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#BinaryPopulation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Handle a binary star population.</p>
 <p>Initialize the binary population object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Size of the population</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Size of the population</p></li>
 <li><p><strong>population_properties</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><em>SimulationProperties</em></a>) – Instance of simulationproperties holding steps.</p></li>
 </ul>
 </dd>
@@ -374,8 +374,8 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>absolute_filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Absolute path to the file to be saved.</p></li>
-<li><p><strong>file_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – List of absolute paths to the temporary files.</p></li>
+<li><p><strong>absolute_filepath</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Absolute path to the file to be saved.</p></li>
+<li><p><strong>file_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of absolute paths to the temporary files.</p></li>
 </ul>
 </dd>
 </dl>
@@ -388,12 +388,12 @@ a) One-liner for creating a BinaryPopulation from an inifile:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Custom binary indices to use. Default is range(number_of_binaries).
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – Custom binary indices to use. Default is range(number_of_binaries).
 If running with MPI, indices are split between processes if given.</p></li>
-<li><p><strong>breakdown_to_df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>True</em>) – Breakdown a binary after evolution, converting to dataframe and
+<li><p><strong>breakdown_to_df</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>True</em>) – Breakdown a binary after evolution, converting to dataframe and
 removing the binary instance from memory.</p></li>
-<li><p><strong>tqdm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>False</em>) – Show tqdm progress bar during evolution.</p></li>
-<li><p><strong>optimize_ram</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>False</em>) – If True, dump binary data during evolve to save RAM.</p></li>
+<li><p><strong>tqdm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>False</em>) – Show tqdm progress bar during evolution.</p></li>
+<li><p><strong>optimize_ram</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>False</em>) – If True, dump binary data during evolve to save RAM.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -409,8 +409,8 @@ removing the binary instance from memory.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print useful info.</p></li>
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print useful info.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -439,7 +439,7 @@ removing the binary instance from memory.</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.binarypopulation.PopulationManager">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.binarypopulation.</span></span><span class="sig-name descname"><span class="pre">PopulationManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/binarypopulation.html#PopulationManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.binarypopulation.PopulationManager" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Manage a population of binaries.</p>
 <p>Initialize a PopulationManager instance.</p>
 <dl class="py method">
@@ -475,9 +475,9 @@ remove the BinaryStar instance from self.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a>) – Selects the binaries to load.</p></li>
-<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Query performed on disk to select history and oneline DataFrames.</p></li>
-<li><p><strong>restore</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If true, restore binaries back to initial conditions.</p></li>
+<li><p><strong>indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Selects the binaries to load.</p></li>
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Query performed on disk to select history and oneline DataFrames.</p></li>
+<li><p><strong>restore</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If true, restore binaries back to initial conditions.</p></li>
 </ul>
 </dd>
 </dl>
@@ -505,11 +505,11 @@ a string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Name of hdf file saved.</p></li>
+<li><p><strong>fname</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of hdf file saved.</p></li>
 <li><p><strong>mode</strong> (<em>{'a'</em><em>, </em><em>'w'</em><em>, </em><em>'r'</em><em>, </em><em>'r+'}</em><em>, </em><em>default 'a'</em>) – See pandas HDFStore docs</p></li>
 <li><p><strong>complib</strong> (<em>{'zlib'</em><em>, </em><em>'lzo'</em><em>, </em><em>'bzip2'</em><em>, </em><em>'blosc'}</em><em>, </em><em>default 'zlib'</em>) – Compression library. See HDFStore docs</p></li>
-<li><p><strong>complevel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>0-9</em><em>, </em><em>default 9</em>) – Level of compression. See HDFStore docs</p></li>
-<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Arguments for <cite>BinaryStar</cite> methods <cite>to_df</cite> and <cite>to_oneline_df</cite>.</p></li>
+<li><p><strong>complevel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>0-9</em><em>, </em><em>default 9</em>) – Level of compression. See HDFStore docs</p></li>
+<li><p><strong>kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Arguments for <cite>BinaryStar</cite> methods <cite>to_df</cite> and <cite>to_oneline_df</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -555,7 +555,7 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
 <li><p><strong>eccentricity_scheme</strong> (<em>string</em>) – Distribution from which eccentricities are randomly drawn</p></li>
 <li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class</p></li>
 </ul>
@@ -576,7 +576,7 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbital_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> (</em><em>default: 'period'</em><em>)</em>) – The scheme to use to get either orbital periods or separations</p></li>
+<li><p><strong>orbital_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> (</em><em>default: 'period'</em><em>)</em>) – The scheme to use to get either orbital periods or separations</p></li>
 <li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class</p></li>
 </ul>
 </dd>
@@ -606,11 +606,11 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
-<li><p><strong>orbital_separation_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Minimum orbital separation in solar radii</p></li>
-<li><p><strong>orbital_separation_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Maximum orbital separation in solar radii</p></li>
-<li><p><strong>log_orbital_separation_mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Mean of the lognormal distribution.</p></li>
-<li><p><strong>log_orbital_separation_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Standard deviation of the lorgnormal distribution.</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>orbital_separation_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum orbital separation in solar radii</p></li>
+<li><p><strong>orbital_separation_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum orbital separation in solar radii</p></li>
+<li><p><strong>log_orbital_separation_mean</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Mean of the lognormal distribution.</p></li>
+<li><p><strong>log_orbital_separation_sigma</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Standard deviation of the lorgnormal distribution.</p></li>
 <li><p><strong>orbital_separation_scheme</strong> (<em>string</em>) – Distribution from which the orbital separations are randomly drawn</p></li>
 </ul>
 </dd>
@@ -631,9 +631,9 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
-<li><p><strong>primary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Minimum primary mass</p></li>
-<li><p><strong>primary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Maximum primary mass</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>primary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum primary mass</p></li>
+<li><p><strong>primary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum primary mass</p></li>
 <li><p><strong>primary_mass_scheme</strong> (<em>string</em>) – Distribution from which the primary masses are randomly drawn</p></li>
 </ul>
 </dd>
@@ -655,9 +655,9 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>primary_masses</strong> (<em>ndarray</em><em> of </em><em>floats</em>) – Previously drawn primary masses</p></li>
-<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
-<li><p><strong>secondary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Minimum secondary mass</p></li>
-<li><p><strong>secondary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Maximum secondary mass</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of binaries that require randomly sampled orbital separations</p></li>
+<li><p><strong>secondary_mass_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Minimum secondary mass</p></li>
+<li><p><strong>secondary_mass_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Maximum secondary mass</p></li>
 <li><p><strong>secondary_mass_scheme</strong> (<em>string</em>) – Distribution from which the secondary masses are randomly drawn</p></li>
 </ul>
 </dd>
@@ -681,10 +681,10 @@ and a binary fraction based on the values given in Moe and Di Stefano (2017).</p
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
 duplicate args are overwritten (stacked) first
 to last.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print helpful info.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print helpful info.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -706,10 +706,10 @@ by setting Data Types of the columns explicitly.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary_df</strong> (<em>DataFrame</em>) – A pandas Dataframe containing binary history</p></li>
-<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
+<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
 associated data types as values.</p></li>
-<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
-<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
+<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
+<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -734,10 +734,10 @@ have many overalapping columns, with a few extras and different naming.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary_df</strong> (<em>DataFrame</em>) – A pandas Dataframe containing binary history</p></li>
-<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
+<li><p><strong>extra_binary_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – A dictionary with extra column names as keys, and their
 associated data types as values.</p></li>
-<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
-<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
+<li><p><strong>extra_S1_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 1.</p></li>
+<li><p><strong>extra_S2_dtypes_user</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Same as above, but only for star 2.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -766,10 +766,10 @@ associated data types as values.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
 duplicate args are overwritten (stacked) first
 to last.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print helpful info.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print helpful info.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -788,10 +788,10 @@ to last.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>list like</em>) – Path to inifile. If multiple files are given,
 duplicate args are overwritten (stacked) first
 to last.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Print helpful info.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print helpful info.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -921,7 +921,7 @@ If not provided, the default value is set to 0.7</p>
 <dd><p>Compute the cosmological redshift given the cosmic time.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>t_cosm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>ndarray</em><em> of </em><em>floats</em>) – Cosmic time(s) for which you want to know the redhisft.</p>
+<dd class="field-odd"><p><strong>t_cosm</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>ndarray</em><em> of </em><em>floats</em>) – Cosmic time(s) for which you want to know the redhisft.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Cosmolgocial redshift(s) corresponding to t_cosm.</p>
@@ -1009,7 +1009,7 @@ containing: kick velocity, azimuthal angle, polar angle, mean anomaly</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>orbital_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scheme to get the orbit: ‘separation’, ‘period’</p></li>
+<li><p><strong>orbital_scheme</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Scheme to get the orbit: ‘separation’, ‘period’</p></li>
 <li><p><strong>**kwargs</strong> (<em>dictionary</em>) – kwargs from BinaryPopulation class, which should contain
 read_samples_from_file</p></li>
 </ul>
@@ -1033,15 +1033,15 @@ read_samples_from_file</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>available_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Collection of available keys.</p></li>
-<li><p><strong>allowed_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Collection of allowed keys.</p></li>
+<li><p><strong>available_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Collection of available keys.</p></li>
+<li><p><strong>allowed_keys</strong> (<em>iterable object</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>e.g. list</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Collection of allowed keys.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>key</strong> – The first matched key.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1055,7 +1055,7 @@ read_samples_from_file</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.selection_effects.KNNmodel">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.selection_effects.</span></span><span class="sig-name descname"><span class="pre">KNNmodel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sensitivity_key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/selection_effects.html#KNNmodel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.selection_effects.KNNmodel" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>K-nearest neighbor model that instantiates based on detection probability grid</p>
 <p>When instantiating, must supply path to the grid, and key that represents
 GW network and sensitivity.</p>
@@ -1132,7 +1132,7 @@ Required series in the dataframe:</p>
 <p>Initialise the Chruslinska+21 model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Chruslinska+21 requires the
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Chruslinska+21 requires the
 following parameters:
 - sub_model : str</p>
 <blockquote>
@@ -1176,13 +1176,13 @@ This is the name of the file containing the data.</p>
 <dd><p>Interpolate the cosmic star formation rate density at the given redshift(s)</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1194,7 +1194,7 @@ This is the name of the file containing the data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
 <li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
 </ul>
 </dd>
@@ -1213,13 +1213,13 @@ This is the name of the file containing the data.</p>
 <dd><p>Calculate the mean metallicity at a given redshift</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1237,7 +1237,7 @@ mean metallicity evolution of Madau &amp; Fragos (2017).</p>
 <p>Initialise the Fujimoto+24 model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Fujimoto+24 requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Fujimoto+24 requires the following parameters:
 - sigma : float or str</p>
 <blockquote>
 <div><p>The standard deviation of the log-normal metallicity distribution.
@@ -1278,7 +1278,7 @@ Options are:
 <p>Initialise the IllustrisTNG model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>Additional SFH model parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>Additional SFH model parameters:
 - Z_max : float</p>
 <blockquote>
 <div><p>The maximum metallicity in absolute units.</p>
@@ -1304,13 +1304,13 @@ Options are:
 <dd><p>The cosmic star formation rate density at a given redshift.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1323,7 +1323,7 @@ metallicity bins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
 <li><p><strong>metallicity_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
 </ul>
 </dd>
@@ -1342,13 +1342,13 @@ metallicity bins.</p>
 <dd><p>Calculate the mean metallicity at a given redshift</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1366,7 +1366,7 @@ The specific parameters for CSFRD must be provided by subclasses.</p>
 <p>Initialise the MadauBase class</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. MadauBase requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. MadauBase requires the following parameters:
 - sigma : float or str</p>
 <blockquote>
 <div><p>The standard deviation of the log-normal metallicity distribution.
@@ -1419,13 +1419,13 @@ Annual Review of Astronomy and Astrophysics, 52, 415-486.
 density formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The cosmic star formation rate density at the given redshift.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1459,13 +1459,13 @@ redshift.</p>
 <p>Follows Madau &amp; Fragos (2017) mean metallicity evolution</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mean metallicity at the given redshift.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1482,7 +1482,7 @@ or “Neijssel+19” (sigma=0.39) or a float value.</p>
 <dd class="field-odd"><p>The standard deviation of the log-normal metallicity distribution.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1512,7 +1512,7 @@ mean metallicity evolution of Madau &amp; Fragos (2017) <a class="reference inte
 metallicity evolution of Madau &amp; Fragos (2017) <a class="reference internal" href="#id9" id="id6"><span>[Rc209e4668c41-2]</span></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Madau+14 requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Madau+14 requires the following parameters:
 - sigma : float or str</p>
 <blockquote>
 <div><p>The standard deviation of the log-normal metallicity
@@ -1581,7 +1581,7 @@ metallicity evolution of Madau &amp; Fragos (2017) <a class="reference internal"
 <p>Initialise the Madau+17 model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Madau+17 requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Madau+17 requires the following parameters:
 - sigma : float or str</p>
 <blockquote>
 <div><p>The standard deviation of the log-normal metallicity distribution.
@@ -1638,7 +1638,7 @@ also fitted to the BBH merger rate.</p>
 <p>Initialise the Neijssel+19 model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Neijssel+19 requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Neijssel+19 requires the following parameters:
 - sigma : float or str</p>
 <blockquote>
 <div><p>The standard deviation of the log-normal metallicity distribution.
@@ -1697,13 +1697,13 @@ given redshift.</p>
 <p>Overwrites the mean_metallicity method of MadauBase class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1713,13 +1713,13 @@ given redshift.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.star_formation_history.SFHBase">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.star_formation_history.</span></span><span class="sig-name descname"><span class="pre">SFHBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">SFH_MODEL</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/star_formation_history.html#SFHBase"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.star_formation_history.SFHBase" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/abc.html#abc.ABC" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ABC</span></code></a></p>
 <p>Abstract class for star formation history models</p>
 <p>Initialise the SFH model</p>
 <p>Adds the model parameters as attributes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters.
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters.
 - Z_max : float</p>
 <blockquote>
 <div><p>The maximum metallicity in absolute units.</p>
@@ -1748,16 +1748,16 @@ The implementation should calculate and return the cosmic star formation
 rate density at the given redshift(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The cosmic star formation rate density at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1773,8 +1773,8 @@ metallicity bins at the provided redshift (z).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – The redshift(s) at which to compute the star formation rate.</p></li>
-<li><p><strong>metallicity_bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> or </em><em>array-like</em>) – The metallicity bin boundaries or labels used in the computation to
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – The redshift(s) at which to compute the star formation rate.</p></li>
+<li><p><strong>metallicity_bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> or </em><em>array-like</em>) – The metallicity bin boundaries or labels used in the computation to
 account for different metallicity contributions.</p></li>
 </ul>
 </dd>
@@ -1798,16 +1798,16 @@ The implementation should calculate and return the mean metallicity
 at the given redshift(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The mean metallicity at the given redshift(s).</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array-like</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array-like</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.13)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><strong>NotImplementedError</strong></a> – If the subclass does not implement this method.:</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1821,9 +1821,9 @@ at the given redshift(s).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
+<li><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array-like</em>) – Cosmological redshift.</p></li>
 <li><p><strong>met_bins</strong> (<em>array</em>) – Metallicity bins edges in absolute metallicity.</p></li>
-<li><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – SFH model parameters.</p></li>
+<li><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SFH model parameters.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1853,7 +1853,7 @@ star formation rate density models, respectively.</p>
 <p>Initialise the Zavala+21 model</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>SFH model parameters. Zavala+21 requires the following parameters:
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>SFH model parameters. Zavala+21 requires the following parameters:
 - sub_model : str</p>
 <blockquote>
 <div><p>The sub-model to use. Either “min” or “max”.</p>
@@ -1886,13 +1886,13 @@ star formation rate density models, respectively.</p>
 density formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
+<dd class="field-odd"><p><strong>z</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>np.array</em>) – Cosmological redshift.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The cosmic star formation rate density at the given redshift.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a> or array</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1905,7 +1905,7 @@ density formula.</p>
 <dd><p>Return the appropriate SFH model based on the given parameters</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – SFH model parameters.</p>
+<dd class="field-odd"><p><strong>SFH_MODEL</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – SFH model parameters.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The SFH model instance.</p>
@@ -1923,12 +1923,12 @@ density formula.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>N_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of formation ages to produce.</p></li>
-<li><p><strong>star_formation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>{constant</em><em>, </em><em>burst}</em>) – Constant - random formation times from a uniform distribution.
+<li><p><strong>N_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of formation ages to produce.</p></li>
+<li><p><strong>star_formation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>{constant</em><em>, </em><em>burst}</em>) – Constant - random formation times from a uniform distribution.
 Burst - all stars are born at the same time.</p></li>
-<li><p><strong>burst_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – Sets birth time in years.</p></li>
-<li><p><strong>min_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets minimum of random sampling.</p></li>
-<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>age_of_universe</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets maximum of random sampling.</p></li>
+<li><p><strong>burst_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – Sets birth time in years.</p></li>
+<li><p><strong>min_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>0</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets minimum of random sampling.</p></li>
+<li><p><strong>max_time</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>age_of_universe</em><em> (</em><em>years</em><em>)</em>) – If constant SF, sets maximum of random sampling.</p></li>
 <li><p><strong>RNG</strong> (<em>&lt;class</em><em>, </em><em>np.random.Generator&gt;</em>) – Random generator instance.</p></li>
 </ul>
 </dd>
@@ -1970,7 +1970,7 @@ final state of each binary system.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.DFInterface">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">DFInterface</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#DFInterface"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.DFInterface" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the interface between the population file and the History and Oneline classes.</p>
 <dl class="py method">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.DFInterface.get_html_repr">
@@ -1978,13 +1978,13 @@ final state of each binary system.</p>
 <dd><p>Return the HTML representation of the key table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key of the table to return the HTML representation of.</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key of the table to return the HTML representation of.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The HTML representation of the key table.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1995,13 +1995,13 @@ final state of each binary system.</p>
 <dd><p>Return a string representation of the key table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key of the table to return the string representation of.</p>
+<dd class="field-odd"><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key of the table to return the string representation of.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The string representation of the key table.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2013,8 +2013,8 @@ final state of each binary system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key of the table</p></li>
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key of the table</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2033,11 +2033,11 @@ final state of each binary system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key of the table to select from.</p></li>
-<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – A string representing the query condition to apply to the data.</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the data to select.</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the data to select.</p></li>
-<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – A list of column names to select.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key of the table to select from.</p></li>
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – A string representing the query condition to apply to the data.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the data to select.</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the data to select.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – A list of column names to select.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2056,8 +2056,8 @@ final state of each binary system.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key of the table.</p></li>
-<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key of the table.</p></li>
+<li><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2084,7 +2084,7 @@ It allows accessing and manipulating the history table based on various keys and
 <dd><p>The path to the population file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2095,7 +2095,7 @@ It allows accessing and manipulating the history table based on various keys and
 <dd><p>If <cite>True</cite>, print additional information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2106,7 +2106,7 @@ It allows accessing and manipulating the history table based on various keys and
 <dd><p>The chunksize to use when reading the history file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2128,7 +2128,7 @@ It allows accessing and manipulating the history table based on various keys and
 <dd><p>The number of systems in the history dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2139,7 +2139,7 @@ It allows accessing and manipulating the history table based on various keys and
 <dd><p>The columns of the history dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2162,9 +2162,9 @@ if not present in the file. The history dataframe is not loaded into memory.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the population file.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – If <cite>True</cite>, print additional information.</p></li>
-<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> (</em><em>default=100000</em><em>)</em>) – The chunksize to use when reading the history file.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The path to the population file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If <cite>True</cite>, print additional information.</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> (</em><em>default=100000</em><em>)</em>) – The chunksize to use when reading the history file.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2174,7 +2174,7 @@ if not present in the file. The history dataframe is not loaded into memory.</p>
 <dd><p>Return the first n rows of the history table</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The first n rows of the history table.</p>
@@ -2198,11 +2198,11 @@ a list of column names using the <cite>columns</cite> parameter.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – A string representing the query condition to apply to the data.
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – A string representing the query condition to apply to the data.
 It is only possible to query on the index or string columns.</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the data to select.</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the data to select.</p></li>
-<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – A list of column names to select.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the data to select.</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the data to select.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – A list of column names to select.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2234,7 +2234,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>The path to the population file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2245,7 +2245,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>If <cite>True</cite>, print additional information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2256,7 +2256,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>The chunksize to use when reading the oneline file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2267,7 +2267,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>The number of systems in the oneline dataframe.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2288,7 +2288,7 @@ It is only possible to query on the index or string columns.</p></li>
 <span class="sig-name descname"><span class="pre">columns</span></span><a class="headerlink" href="#posydon.popsyn.synthetic_population.Oneline.columns" title="Link to this definition"></a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2297,9 +2297,9 @@ It is only possible to query on the index or string columns.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the HDFStore file containing the Oneline population data.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print additional information during initialization. Default is False.</p></li>
-<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to read from the HDFStore file at a time. Default is 10000.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The path to the HDFStore file containing the Oneline population data.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print additional information during initialization. Default is False.</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to read from the HDFStore file at a time. Default is 10000.</p></li>
 </ul>
 </dd>
 </dl>
@@ -2309,7 +2309,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>Get the first n rows of the oneline table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The first n rows of the oneline table.</p>
@@ -2329,11 +2329,11 @@ You can specify conditions to filter the rows, define the range of rows to selec
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – A condition to filter the rows of the oneline table. Default is None.
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – A condition to filter the rows of the oneline table. Default is None.
 It is only possible to query on the index or string columns.</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the subset. Default is None.</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the subset. Default is None.</p></li>
-<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – The column names to include in the subset. Default is None.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the subset. Default is None.</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the subset. Default is None.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – The column names to include in the subset. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2358,7 +2358,7 @@ It is only possible to query on the index or string columns.</p></li>
 <dd><p>Get the last n rows of the oneline table.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
+<dd class="field-odd"><p><strong>n</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of rows to return. Default is 10.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The last n rows of the oneline table.</p>
@@ -2417,7 +2417,7 @@ as well as methods to access and manipulate the history and oneline dataframes.<
 <dd><p>The parameters from the ini file used to create the population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2472,7 +2472,7 @@ as well as methods to access and manipulate the history and oneline dataframes.<
 <dd><p>If <cite>True</cite>, print additional information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2483,7 +2483,7 @@ as well as methods to access and manipulate the history and oneline dataframes.<
 <dd><p>The chunksize to use when reading the population file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2494,7 +2494,7 @@ as well as methods to access and manipulate the history and oneline dataframes.<
 <dd><p>The path to the population file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2505,7 +2505,7 @@ as well as methods to access and manipulate the history and oneline dataframes.<
 <dd><p>The number of systems in the population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2533,15 +2533,15 @@ will be given the same metallicity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the population file</p></li>
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – The metallicity of the population in solar units.</p></li>
-<li><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – The path to the ini file used to create the population.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, print additional information.</p></li>
-<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The chunksize to use when reading the population file.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The path to the population file</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The metallicity of the population in solar units.</p></li>
+<li><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The path to the ini file used to create the population.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, print additional information.</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The chunksize to use when reading the population file.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the provided filename does not contain ‘.h5’ extension.
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the provided filename does not contain ‘.h5’ extension.
 If the population file does not contain a history table.
 If the population file does not contain an oneline table.
 If the population file does not contain an ini_parameters table.
@@ -2561,10 +2561,10 @@ If the population file does not contain a mass_per_metallicity table and no meta
 from the HMS-HMS grid is included in the formation channels.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>mt_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, include the mass-transfer history in the formation channels. Default is False.</p>
+<dd class="field-odd"><p><strong>mt_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, include the mass-transfer history in the formation channels. Default is False.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the mt_history_HMS_HMS column is not present in the oneline dataframe.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the mt_history_HMS_HMS column is not present in the oneline dataframe.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -2580,8 +2580,8 @@ You can specify the fraction of binaries in the population using the <cite>f_bin
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>f_bin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – The fraction of binaries in the population. Default is 0.7.</p></li>
-<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, overwrite the underlying mass values if they already exist. Default is <cite>False</cite>.</p></li>
+<li><p><strong>f_bin</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – The fraction of binaries in the population. Default is 0.7.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, overwrite the underlying mass values if they already exist. Default is <cite>False</cite>.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2602,7 +2602,7 @@ You can specify the fraction of binaries in the population using the <cite>f_bin
 <dd class="field-odd"><p>A dictionary with keys ‘history’ and ‘oneline’, where the values are the column names of the respective dataframes.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2631,8 +2631,8 @@ The function needs to take 3 arguments:</p>
 </div></blockquote>
 <p>and return a pd.DataFrame containing the transient population, which needs to contain the columns ‘time’ and ‘metallicity’.</p>
 </p></li>
-<li><p><strong>oneline_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Columns to extract from the oneline dataframe. Default is all columns.</p></li>
-<li><p><strong>hist_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Columns to extract from the history dataframe. Default is all columns.</p></li>
+<li><p><strong>oneline_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Columns to extract from the oneline dataframe. Default is all columns.</p></li>
+<li><p><strong>hist_cols</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Columns to extract from the history dataframe. Default is all columns.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -2642,7 +2642,7 @@ The function needs to take 3 arguments:</p>
 <dd class="field-odd"><p><a class="reference internal" href="#posydon.popsyn.synthetic_population.TransientPopulation" title="posydon.popsyn.synthetic_population.TransientPopulation">TransientPopulation</a> or None</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the transient population requires a time column or if the transient population contains duplicate columns.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the transient population requires a time column or if the transient population contains duplicate columns.</p>
 </dd>
 </dl>
 <p class="rubric">Examples</p>
@@ -2662,13 +2662,13 @@ based on the current length of data in the file that is being appended to.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>selection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The indices of the systems to export.</p></li>
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the export file to create or append to.</p></li>
-<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of systems to export at a time. Default is 1000000.</p></li>
+<li><p><strong>selection</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The indices of the systems to export.</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the export file to create or append to.</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of systems to export at a time. Default is 1000000.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the filename does not contain “.h5” extension.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the filename does not contain “.h5” extension.</p>
 </dd>
 </dl>
 <div class="admonition warning">
@@ -2722,7 +2722,7 @@ based on the current length of data in the file that is being appended to.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.PopulationIO">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationIO</span></span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationIO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationIO" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the input/output of population files.</p>
 <p>This class provides methods to load and save population files in HDF5 format.
 It also includes methods to load and save metadata and ini parameters.</p>
@@ -2743,7 +2743,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dd><p>A dictionary containing some ini parameters, described in parameter_array.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2753,7 +2753,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.PopulationRunner">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.popsyn.synthetic_population.</span></span><span class="sig-name descname"><span class="pre">PopulationRunner</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path_to_ini</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/popsyn/synthetic_population.html#PopulationRunner"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.popsyn.synthetic_population.PopulationRunner" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class to handle the evolution of binary populations.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="posydon.popsyn.synthetic_population.PopulationRunner.pop_params">
@@ -2761,7 +2761,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dd><p>The parameters of the population population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2772,7 +2772,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dd><p>The metallicities of the populations in solar units.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2783,7 +2783,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dd><p>The binary populations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a> of <a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="posydon.popsyn.binarypopulation.BinaryPopulation">BinaryPopulation</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference internal" href="#posydon.popsyn.binarypopulation.BinaryPopulation" title="posydon.popsyn.binarypopulation.BinaryPopulation">BinaryPopulation</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2794,7 +2794,7 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dd><p>If <cite>True</cite>, print additional information.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)">bool</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2803,12 +2803,12 @@ It also includes methods to load and save metadata and ini parameters.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path_to_ini</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The path to the ini file.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print additional information. Default is False.</p></li>
+<li><p><strong>path_to_ini</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The path to the ini file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print additional information. Default is False.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the provided <cite>path_to_ini</cite> does not have a ‘.ini’ extension.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the provided <cite>path_to_ini</cite> does not have a ‘.ini’ extension.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -2857,7 +2857,7 @@ each population, it merges them using the <cite>merge_parallel_runs</cite> metho
 <dd><p>The identifier for the star formation history.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2868,7 +2868,7 @@ each population, it merges them using the <cite>merge_parallel_runs</cite> metho
 <dd><p>The base path for accessing the rates data.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2879,7 +2879,7 @@ each population, it merges them using the <cite>merge_parallel_runs</cite> metho
 <dd><p>The model data for the star formation history.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2934,7 +2934,7 @@ each population, it merges them using the <cite>merge_parallel_runs</cite> metho
 <dd><p>The names of the observable populations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -2995,7 +2995,7 @@ The path in the file is ‘/transients/{transient_name}/rates/{SFH_identifier}�
 This can be accessed using the intrinsic_rate_density attribute of the Rates class.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.</p>
+<dd class="field-odd"><p><strong>channels</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – Flag indicating whether to calculate the intrinsic rate density for each channel separately. Default is False.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>DataFrame containing the intrinsic rate density values.</p>
@@ -3023,7 +3023,7 @@ the location ‘/transients/{transient_name}/rates/observable/{observable_name}�
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>observable_func</strong> (<em>function</em>) – The observability function that takes the TransientPopulation as input.</p></li>
-<li><p><strong>observable_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the observable.</p></li>
+<li><p><strong>observable_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the observable.</p></li>
 </ul>
 </dd>
 </dl>
@@ -3121,7 +3121,7 @@ which can take a while to load if the population is large.
 It loads the observable population from ‘/transients/{transient_name}/rates/observable/{observable_name}’ in the HDF5 file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>observable_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the observable population to return.</p>
+<dd class="field-odd"><p><strong>observable_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the observable population to return.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>The observable population based on the provided name.</p>
@@ -3141,7 +3141,7 @@ It loads the observable population from ‘/transients/{transient_name}/rates/ob
 <dd class="field-odd"><p>The names of the observable populations.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3155,17 +3155,17 @@ The property can be intrinsic or observable, and the histogram can be plotted fo
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The property to plot the histogram for.</p></li>
-<li><p><strong>intrinsic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, plot the intrinsic property. Default is True.</p></li>
-<li><p><strong>observable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – The observable population name to plot the histogram for. Default is None.</p></li>
-<li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of bins to use for the histogram. Default is 50.</p></li>
-<li><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – The channel to plot the histogram for. Default is None.
+<li><p><strong>prop</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The property to plot the histogram for.</p></li>
+<li><p><strong>intrinsic</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, plot the intrinsic property. Default is True.</p></li>
+<li><p><strong>observable</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The observable population name to plot the histogram for. Default is None.</p></li>
+<li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The number of bins to use for the histogram. Default is 50.</p></li>
+<li><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – The channel to plot the histogram for. Default is None.
 A channel column must be present in the transient population.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plot</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the specified property is not a valid property in the transient population.
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the specified property is not a valid property in the transient population.
 If the specified observable is not a valid observable population.
 If the specified channel is not present in the transient population.</p>
 </dd>
@@ -3188,9 +3188,9 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The key to select the slice from. Must be one of [‘weights’, ‘z_events’, ‘birth’].</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the slice. Defaults to None.</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the slice. Defaults to None.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The key to select the slice from. Must be one of [‘weights’, ‘z_events’, ‘birth’].</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the slice. Defaults to None.</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the slice. Defaults to None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3200,7 +3200,7 @@ The key specifies which rates dataframe to select, and must be one of [‘weight
 <dd class="field-odd"><p>pandas.DataFrame</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the key is not one of [‘weights’, ‘z_events’, ‘birth’].</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the key is not one of [‘weights’, ‘z_events’, ‘birth’].</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3279,7 +3279,7 @@ calculate the cosmic weights of the transient population.</p>
 <dd><p>Name of the transient population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3301,7 +3301,7 @@ calculate the cosmic weights of the transient population.</p>
 <dd><p>List of columns in the transient population.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3312,14 +3312,14 @@ The transient population linked is located at ‘/transients/{transient_name}’
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the file containing the population. The file should be in HDF5 format.</p></li>
-<li><p><strong>transient_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The name of the transient population within the file.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, additional information will be printed during the initialization process.</p></li>
-<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The chunksize to use when reading the population file (default is 100000).</p></li>
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the file containing the population. The file should be in HDF5 format.</p></li>
+<li><p><strong>transient_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the transient population within the file.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If <cite>True</cite>, additional information will be printed during the initialization process.</p></li>
+<li><p><strong>chunksize</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The chunksize to use when reading the population file (default is 100000).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the specified transient population name is not found in the file.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the specified transient population name is not found in the file.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -3343,8 +3343,8 @@ This allows for multiple star formation histories to be used with the same trans
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>SFH_identifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Identifier for the star formation history.</p></li>
-<li><p><strong>MODEL_in</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary containing the model parameters. If not provided, the default model parameters will be used.</p></li>
+<li><p><strong>SFH_identifier</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Identifier for the star formation history.</p></li>
+<li><p><strong>MODEL_in</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary containing the model parameters. If not provided, the default model parameters will be used.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3354,7 +3354,7 @@ This allows for multiple star formation histories to be used with the same trans
 <dd class="field-odd"><p><a class="reference internal" href="#posydon.popsyn.synthetic_population.Rates" title="posydon.popsyn.synthetic_population.Rates">Rates</a></p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If a parameter name in MODEL_in is not valid.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If a parameter name in MODEL_in is not valid.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -3381,7 +3381,7 @@ These can be accessed using the Rates class.</p>
 <dd class="field-odd"><p>A list of column names in the transient population.</p>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a></p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -3407,14 +3407,14 @@ of the entire population will be plotted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em> or </em><em>None</em>) – The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.</p></li>
-<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.6)"><em>matplotlib.axes.Axes</em></a><em> or </em><em>None</em>) – The axes object to plot the distribution on. If None, a new figure and axes will be created.</p></li>
-<li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of bins to use for the histogram.</p></li>
-<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The color of the histogram.</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>None</em>) – The metallicity value to select a specific population. If None, the delay time distribution of the entire population will be plotted.</p></li>
+<li><p><strong>ax</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.7)"><em>matplotlib.axes.Axes</em></a><em> or </em><em>None</em>) – The axes object to plot the distribution on. If None, a new figure and axes will be created.</p></li>
+<li><p><strong>bins</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The number of bins to use for the histogram.</p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The color of the histogram.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
-<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the specified metallicity is not present in the population.</p>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the specified metallicity is not present in the population.</p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -3430,7 +3430,7 @@ of the entire population will be plotted.</p>
 <dd><p>Plot the efficiency over metallicity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, plot the subchannels. Default is False.</p>
+<dd class="field-odd"><p><strong>channel</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, plot the subchannels. Default is False.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3442,8 +3442,8 @@ of the entire population will be plotted.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The type of grid to plot.</p></li>
-<li><p><strong>met_Zsun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The metallicity of the Sun.</p></li>
+<li><p><strong>grid_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The type of grid to plot.</p></li>
+<li><p><strong>met_Zsun</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The metallicity of the Sun.</p></li>
 <li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.</p></li>
 </ul>
 </dd>
@@ -3475,11 +3475,11 @@ You can specify conditions to filter the rows, define the range of rows to selec
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – A condition to filter the rows of the transient table. Default is None.
+<li><p><strong>where</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – A condition to filter the rows of the transient table. Default is None.
 It is only possible to search on the index or string columns.</p></li>
-<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the subset. Default is None.</p></li>
-<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the subset. Default is None.</p></li>
-<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – The column names to include in the subset. Default is None.</p></li>
+<li><p><strong>start</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The starting index of the subset. Default is None.</p></li>
+<li><p><strong>stop</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – The ending index of the subset. Default is None.</p></li>
+<li><p><strong>columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – The column names to include in the subset. Default is None.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3540,7 +3540,7 @@ This DataFrame contains the following columns:
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>sensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – <p>The sensitivity of the detector.
+<li><p><strong>sensitivity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – <p>The sensitivity of the detector.
 Available sensitivities are (for Hanford, Livingston, Virgo network):
 - ‘O3actual_H1L1V1’ : aligo_O3actual_H1.txt, aligo_O3actual_L1.txt, avirgo_O3actual.txt
 - ‘O4low_H1L1V1’ : aligo_O4low.txt, aligo_O4low.txt, avirgo_O4high_NEW.txt
@@ -3601,7 +3601,7 @@ The output dataframe contains the following columns:
 <li><p><strong>history_chunk</strong> (<em>pd.DataFrame</em>) – The history chunk of the population.</p></li>
 <li><p><strong>oneline_chunk</strong> (<em>pd.DataFrame</em>) – The oneline chunk of the population.</p></li>
 <li><p><strong>formation_channels_chunk</strong> (<em>pd.DataFrame</em><em> (</em><em>can be made optional</em><em>)</em>) – The formation pathway chunk of the population.</p></li>
-<li><p><strong>S1_S2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – The star that will be the progenitor of the GRB. Can be either ‘S1’ or ‘S2’.</p></li>
+<li><p><strong>S1_S2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The star that will be the progenitor of the GRB. Can be either ‘S1’ or ‘S2’.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3691,6 +3691,8 @@ The output dataframe contains the following columns:
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

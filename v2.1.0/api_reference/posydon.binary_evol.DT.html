@@ -155,7 +155,7 @@
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.DT.double_CO.DoubleCO">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.double_CO.</span></span><span class="sig-name descname"><span class="pre">DoubleCO</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_o_steps_interval</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/double_CO.html#DoubleCO"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.double_CO.DoubleCO" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>The double compact-object step class.</p>
 <p>Initialize a DoubleCO instance.</p>
 </dd></dl>
@@ -232,7 +232,7 @@ STAR_STATES_FOR_strippedHe_MATCHING = [</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.DT.track_match.TrackMatcher">
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.track_match.</span></span><span class="sig-name descname"><span class="pre">TrackMatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">grid_name_Hrich</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grid_name_strippedHe</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">PATH_TO_POSYDON_DATA</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">matching_method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'minimize'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_HMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_postMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">list_for_matching_HeStar</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">record_matching</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/track_match.html#TrackMatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.track_match.TrackMatcher" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <blockquote>
 <div><p>This class contains the functionality to match binary star components</p>
 </div></blockquote>
@@ -263,7 +263,7 @@ calculated from the star’s (pre-match) angular momentum
 and moment of inertia.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 <dt class="field-even">Warns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>InappropriateValueWarning</strong> – If the pre-match rotation quantities are NaN or None and can
@@ -306,7 +306,7 @@ further.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.POSYDONError" title="posydon.utils.posydonerror.POSYDONError"><strong>POSYDONError</strong></a> – If there is no star to evolve (both are massless remnants), then
 evolution can no continue and detached step should not have been
 called.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the State of star 1 or 2 is not recognized.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the State of star 1 or 2 is not recognized.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.POSYDONError" title="posydon.utils.posydonerror.POSYDONError"><strong>POSYDONError</strong></a> – If the <cite>non_existent_companion</cite> of the binary is determined to
 be not equal to 0 (both stars exist), 1 (only star 2 exists),
 or 2 (only star 1 exists), something has gone wrong.</p></li>
@@ -341,7 +341,7 @@ time series of each star for further evolution.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>BinaryStar object</em>) – A binary star object, containing the binary system’s properties.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – If self.record_matching is True, then the matched quantities of
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If self.record_matching is True, then the matched quantities of
 the star will be appended to the history. This is a string that
 can be used as a custom label in the BinaryStar object’s history,
 meant to indicate the relevant evolution step’s name. This should
@@ -373,7 +373,7 @@ further.</p></li>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.13)"><strong>ValueError</strong></a> – If the <cite>primary_normal</cite> and <cite>primary_not_normal</cite> flags are
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the <cite>primary_normal</cite> and <cite>primary_not_normal</cite> flags are
 both determined to be False. One or the other should be True.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.MatchingError" title="posydon.utils.posydonerror.MatchingError"><strong>MatchingError</strong></a> – If the stellar matching to a single star model fails, or the
 PchipInterpolator object returned from matching is None.</p></li>
@@ -395,14 +395,14 @@ minimum difference occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attr_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>]</em>) – Contains the keys of the requested specific quantities that will
+<li><p><strong>attr_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Contains the keys of the requested specific quantities that will
 be matched in the single star track.</p></li>
-<li><p><strong>attr_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Contains the latest values (from a previous POSYDON step) of the
+<li><p><strong>attr_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains the latest values (from a previous POSYDON step) of the
 quantities of “keys” in the POSYDON SingleStar object. This should
 be the same length as “keys”.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Set True to search the single star H-rich grids, or False to
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Set True to search the single star H-rich grids, or False to
 search the He-rich grids.</p></li>
-<li><p><strong>rescale_facs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>]</em>) – Contains normalization factors to be divided for rescaling
+<li><p><strong>rescale_facs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains normalization factors to be divided for rescaling
 attribute values. This should be the same length as attr_names.</p></li>
 </ul>
 </dd>
@@ -429,10 +429,10 @@ matching to a single star track.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
 that we will grab values from and update <cite>star</cite> with.</p></li>
 </ul>
 </dd>
@@ -458,9 +458,9 @@ the compact object to provide a mass and age.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>BinaryStar object</em>) – A binary star object, containing the binary system’s properties.</p></li>
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>copy_prev_m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – A mass value that may be copied from another star in the case
+<li><p><strong>copy_prev_m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A mass value that may be copied from another star in the case
 where the target star is a compact object</p></li>
-<li><p><strong>copy_prev_t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – An age value that may be copied from another star in the case
+<li><p><strong>copy_prev_t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – An age value that may be copied from another star in the case
 where the target star is a compact object</p></li>
 </ul>
 </dd>
@@ -488,10 +488,10 @@ star track.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
 that we will grab values from and update <cite>star</cite> with.</p></li>
 </ul>
 </dd>
@@ -509,9 +509,9 @@ of mass <cite>m0</cite> at an age of <cite>t</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Keyword of the desired quantity.</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The initial mass of the desired stellar track.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The desired age along the stellar track.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the desired quantity.</p></li>
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The initial mass of the desired stellar track.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The desired age along the stellar track.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -519,7 +519,7 @@ of mass <cite>m0</cite> at an age of <cite>t</cite>.</p>
 initial mass <cite>m0</cite> at the time <cite>t</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -619,7 +619,7 @@ in such cases.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.13)"><strong>AttributeError</strong></a> – If a matching parameter does not exist in the single star
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.14)"><strong>AttributeError</strong></a> – If a matching parameter does not exist in the single star
 grid options</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.NumericalError" title="posydon.utils.posydonerror.NumericalError"><strong>NumericalError</strong></a> – If SciPy numerical differentiation occured outside boundary
 while matching to single star track.</p></li>
@@ -639,11 +639,11 @@ range, thereby preventing a possible match.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attr_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Keyword of the requested quantity.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>attr_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the requested quantity.</p></li>
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>scaler_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Scaling method in the DataScaler class. See
+<li><p><strong>scaler_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Scaling method in the DataScaler class. See
 posydon.interpolation.data_scaling.DataScaler().fit() for more
 details.</p></li>
 </ul>
@@ -709,7 +709,7 @@ and those quantities are poorly defined.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
 </ul>
@@ -756,6 +756,8 @@ matched to the helium rich single star grid).</p></li>
             <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
             
             <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
             
         </dl>
         

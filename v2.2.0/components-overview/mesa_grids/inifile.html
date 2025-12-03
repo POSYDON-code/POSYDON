@@ -1,0 +1,654 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ini file documentation for POSYDON GRIDS &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Processing Pipeline" href="../processing-pipeline.html" />
+    <link rel="prev" title="Run a dynamic MESA grid" href="dynamic.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="fixed.html">Run a fixed MESA grid</a></li>
+<li class="toctree-l2"><a class="reference internal" href="dynamic.html">Run a dynamic MESA grid</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">ini file documentation for POSYDON GRIDS</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../mesa-grids.html">MESA Grids API</a></li>
+      <li class="breadcrumb-item active">ini file documentation for POSYDON GRIDS</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/mesa_grids/inifile.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ini-file-documentation-for-posydon-grids">
+<span id="inifile"></span><h1>ini file documentation for POSYDON GRIDS<a class="headerlink" href="#ini-file-documentation-for-posydon-grids" title="Link to this heading"></a></h1>
+<section id="how-to-write-a-configuration-file">
+<h2>How to write a configuration file<a class="headerlink" href="#how-to-write-a-configuration-file" title="Link to this heading"></a></h2>
+<p>The <cite>posydon-setup-grid</cite> command-line executable cannot run without a
+configuration file. This <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file needs to specify all aspects of the MESA
+simulation that are static, i.e. those parts that are shared amongst every MESA
+simulation in your grid. The design of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file file is such that it will
+start with the MESA defaults for every possible MESA parameter, stack on top of
+that the POSYDON suggested defaults, and then finally, if supplied, stack user
+specific parameters on top of both the MESA defaults and the POSYDON defaults.
+This scheme requires a high-performance computing environment with SLURM
+installed.</p>
+<p>Below we describe each section of the <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file and what each value corresponds
+to. In general, lines with capitalized quantities surrounded by {} are
+quantities that need to be adjusted for your specific case.</p>
+<p>Here is a link to the most recent stable release version of the default <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file
+for POSYDON:
+<a class="reference external" href="https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini">Stable Version INIFILE</a></p>
+<p>Here is a link to the unstable development version of the default <code class="samp docutils literal notranslate"><span class="pre">ini</span></code> file for
+POSYDON:
+<a class="reference external" href="https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini">Development Version INIFILE</a></p>
+<section id="slurm">
+<span id="inifile-slurm"></span><h3>[slurm]<a class="headerlink" href="#slurm" title="Link to this heading"></a></h3>
+<p>This section designates all the SLURM-related parameters.</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[slurm]</span>
+
+<span class="c1">; Number of nodes you would like to request</span>
+<span class="na">number_of_nodes</span><span class="o">=</span><span class="s">1</span>
+
+<span class="c1">; This is the number of processes that will be running MESA simulations</span>
+<span class="na">number_of_mpi_tasks</span><span class="o">=</span><span class="s">1</span>
+
+<span class="c1">; This is the number of cores you will let each MESA simulation use</span>
+<span class="na">number_of_cpus_per_task</span><span class="o">=</span><span class="s">4</span>
+
+<span class="c1">; run as job array</span>
+<span class="c1">; cannot be false if running with --run-type sample</span>
+<span class="na">job_array</span><span class="o">=</span><span class="s">True</span>
+
+<span class="c1">; user name</span>
+<span class="na">user</span><span class="o">=</span><span class="s">{USERNAME}</span>
+
+<span class="c1">; partition</span>
+<span class="na">partition</span><span class="o">=</span><span class="s">{PARTITION}</span>
+
+<span class="c1">; account</span>
+<span class="c1">; If running on geneva cluster set this to &quot;default&quot;</span>
+<span class="na">account</span><span class="o">=</span><span class="s">{ACCOUNT}</span>
+
+<span class="c1">; wall-time</span>
+<span class="na">walltime</span><span class="o">=</span><span class="s">&#39;2-00:00:00&#39;</span>
+
+<span class="c1">; work-directory: place, where MESA writes during runtime</span>
+<span class="na">work_dir</span><span class="o">=</span><span class="s">{WORK_DIRECTORY}</span>
+
+<span class="c1">;email</span>
+<span class="na">email</span><span class="o">=</span><span class="s">{YOUR_EMAIL_ADDRESS}</span>
+
+<span class="c1">; new group to be set with write permission</span>
+<span class="c1">; if empty string no changes on group and permission</span>
+<span class="c1">; group on yggdrasil: GL_S_Astro_POSYDON</span>
+<span class="c1">; group on Quest: b1119</span>
+<span class="na">newgroup</span><span class="o">=</span><span class="s">&#39;&#39;</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id1">
+<caption><span class="caption-text">general settings</span><a class="headerlink" href="#id1" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Setting name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>number_of_nodes</p></td>
+<td><p>The number of nodes each job will request</p></td>
+</tr>
+<tr class="row-odd"><td><p>number_of_mpi_tasks</p></td>
+<td><p>(outdated) The number of parallel processes ganerates by MPI (recommended to not change)</p></td>
+</tr>
+<tr class="row-even"><td><p>number_of_cpus_per_task</p></td>
+<td><p>The number of CPUs each job will request (in best this should align with the number of threads set for MESA)</p></td>
+</tr>
+<tr class="row-odd"><td><p>job_array</p></td>
+<td><p>Set to <cite>True</cite> to run a SLURM job array</p></td>
+</tr>
+<tr class="row-even"><td><p>user</p></td>
+<td><p>User name</p></td>
+</tr>
+<tr class="row-odd"><td><p>partition</p></td>
+<td><p>SLURM partition to run the jobs on</p></td>
+</tr>
+<tr class="row-even"><td><p>account</p></td>
+<td><p>SLURM account to run the jobs on</p></td>
+</tr>
+<tr class="row-odd"><td><p>walltime</p></td>
+<td><p>Maximum time for each run, otherwise it will get cancelled by SLURM to avoid never ending MESA runs going on too short time steps</p></td>
+</tr>
+<tr class="row-even"><td><p>work_dir</p></td>
+<td><p>The path to the place, where the data will be writting during runtime (it is recommended to use fast local node storage here), afterwards the data will be copied/moved to the current directory (uncommend this line to write always to the final location)</p></td>
+</tr>
+<tr class="row-odd"><td><p>email</p></td>
+<td><p>Your email address to receive notifications from SLURM</p></td>
+</tr>
+<tr class="row-even"><td><p>newgroup</p></td>
+<td><p>The name of the owning group all the files should get (leave empty if no changes are needed here)</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesa-inlists">
+<h3>[mesa_inlists]<a class="headerlink" href="#mesa-inlists" title="Link to this heading"></a></h3>
+<p>This section designates all the basic MESA-specific parameters.</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[mesa_inlists]</span>
+<span class="c1">; inlist types: binary_control,binary_job,star_job,star_control</span>
+
+<span class="c1">; Please leave MESA defaults lines alone, please fill in the path to</span>
+<span class="c1">; you local clone of POSYDON</span>
+<span class="na">posydon_github_root</span><span class="o">=</span><span class="s">{PATH_TO_POSYDON_DIRECTORY}</span>
+
+<span class="c1">; There are a number of ways to build the physics of your MESA grid</span>
+<span class="c1">; the first way is to point the sections below to your own MESA inlists,</span>
+<span class="c1">; and/or the POSYDON default inlists (versions of which can be found in the</span>
+<span class="c1">; following repo: https://github.com/POSYDON-code/POSYDON-MESA-INLISTS)</span>
+<span class="c1">; you can also supply a scenario using syntax such as below, and the setup script</span>
+<span class="c1">; will automatically find the inlists from POSYDON</span>
+<span class="c1">; you want to use based on the git tag/commit and the scenario</span>
+<span class="c1">; (in this case you are simulating MS-MS binaries)</span>
+<span class="c1">; NOTE: You can use the scenario logic below and *still* supply your own local</span>
+<span class="c1">; user mesa inlists that will overwrite or tweak some of the physics associated</span>
+<span class="c1">; with the scenario.</span>
+
+<span class="na">scenario</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;posydon&#39;, &#39;master-9ddb61bb0c482399fa5a41dd22fde41ccd8175d9&#39;, &#39;CO-H_star&#39;]</span>
+
+<span class="c1">; zams_filename if a zams_filename is supplied this supercedes any star1 or star2 formation inlists</span>
+<span class="c1">; and skips to running the binary with this pre-computed zams model.</span>
+<span class="na">zams_filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/ZAMS_models/zams_z0.0142m2_y0.2703.data</span>
+
+<span class="c1">; single_star_grid, this boolean, when True, will take the inlist1 from the binary mesa inlist section</span>
+<span class="c1">; and run in a single star grid configuration</span>
+<span class="na">single_star_grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+
+<span class="c1">; Star1 formation - star1_job</span>
+<span class="c1">; star1_formation_job_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/star_job.defaults</span>
+<span class="c1">; star1_formation_job_posydon_defaults = ${user_template_root}/inlist1</span>
+<span class="c1">; star1_formation_job_user = None</span>
+
+<span class="c1">; Star2 formation - star2_job</span>
+<span class="c1">; star2_formation_job_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/star_job.defaults</span>
+<span class="c1">; star2_formation_job_posydon_defaults = ${user_template_root}/inlist2</span>
+<span class="c1">; star2_formation_job_user = None</span>
+
+<span class="c1">; Star1 formation - star1_control</span>
+<span class="c1">; star1_formation_controls_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/controls.defaults</span>
+<span class="c1">; star1_formation_controls_posydon_defaults = ${user_template_root}/inlist1</span>
+<span class="c1">; star1_formation_controls_user = None</span>
+
+<span class="c1">; Star2 formation - star2_control</span>
+<span class="c1">; star2_formation_controls_mesa_defaults = ${posydon_github_root}/grid_params/defaults/r11701/star/controls.defaults</span>
+<span class="c1">; star2_formation_controls_posydon_defaults = ${user_template_root}/inlist2</span>
+<span class="c1">; star2_formation_controls_user = None</span>
+
+<span class="c1">; binary_control</span>
+<span class="na">binary_controls_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/binary/binary_controls.defaults</span>
+<span class="c1">; binary_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist_project</span>
+<span class="c1">; binary_controls_user = ${user_template_root}/binary/inlist_project</span>
+
+<span class="c1">; binary_job</span>
+<span class="na">binary_job_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/binary/binary_job.defaults</span>
+<span class="c1">; binary_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist_project</span>
+<span class="c1">; binary_job_user = ${user_template_root}/binary/inlist_project</span>
+
+<span class="c1">; star1_job</span>
+<span class="na">star1_job_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/star/star_job.defaults</span>
+<span class="c1">; star1_job_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist1</span>
+<span class="c1">; star1_job_user =  ${user_template_root}/binary/inlist1</span>
+
+<span class="c1">; star1_control</span>
+<span class="na">star1_controls_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/star/controls.defaults</span>
+<span class="c1">; star1_controls_posydon_defaults = ${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/inlist1</span>
+<span class="c1">; star1_controls_user = ${user_template_root}/binary/inlist1</span>
+
+<span class="c1">; star2_job</span>
+<span class="na">star2_job_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/star/star_job.defaults</span>
+<span class="c1">; star2_job_posydon_defaults = ${user_template_root}/binary/inlist2</span>
+<span class="c1">; star2_job_user = None</span>
+
+<span class="c1">; star2_control</span>
+<span class="na">star2_controls_mesa_defaults</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/defaults/r11701/star/controls.defaults</span>
+<span class="c1">; star2_controls_posydon_defaults = ${user_template_root}/binary/inlist2</span>
+<span class="c1">; star2_controls_user = None</span>
+
+<span class="c1">; star history columns</span>
+<span class="na">star_history_columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/history_columns.list</span>
+
+<span class="c1">; binary history columns</span>
+<span class="na">binary_history_columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary_history_columns.list</span>
+
+<span class="c1">; profile columns</span>
+<span class="na">profile_columns</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/profile_columns.list</span>
+
+<span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+<span class="c1">;;;;; MESA OUTPUT CONTROLS ;;;;;;;</span>
+<span class="c1">;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;</span>
+
+<span class="c1">; controls how often MESA prints out the history of the evolution</span>
+<span class="na">history_interval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
+
+<span class="c1">; Save binary history (history file will be named: )</span>
+<span class="na">binary_history</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+
+<span class="c1">; save history of star1</span>
+<span class="na">history_star1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+<span class="c1">;save final profile of star1</span>
+<span class="na">final_profile_star1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="c1">; save final model of star1</span>
+<span class="na">final_model_star1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
+
+<span class="c1">; save history of star2</span>
+<span class="na">history_star2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="c1">; save profile of star2</span>
+<span class="na">final_profile_star2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+<span class="c1">; save final model of star2</span>
+<span class="na">final_model_star2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">settings for the MESA inlist</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Setting name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>posydon_github_root</p></td>
+<td><p>The path to your used POSYDON version</p></td>
+</tr>
+<tr class="row-odd"><td><p>scenario</p></td>
+<td><p>List containing multiple information: 1) the source (‘posydon’ or ‘user’(for future use)), 2) the git commit (the branch and full git hash for the inlist submodule separated by a dash), 3) the systems type (‘HMS-HMS’, ‘CO-H_star’, ‘CO-He_star’)</p></td>
+</tr>
+<tr class="row-even"><td><p>zams_filename</p></td>
+<td><p>The location of the file containing the ZAMS models</p></td>
+</tr>
+<tr class="row-odd"><td><p>single_star_grid</p></td>
+<td><p>Flag to indicate single star or binary evolution</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_formation_job_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section defaults to form star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star1_formation_job_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of POSYDON to form star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_formation_job_user</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of the user to form star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_formation_job_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section defaults to form star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star2_formation_job_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of POSYDON to form star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_formation_job_user</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of the user to form star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_formation_controls_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section defaults to form star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star1_formation_controls_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of POSYDON to form star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_formation_controls_user</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of the user to form star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_formation_controls_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section defaults to form star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star2_formation_controls_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of POSYDON to form star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_formation_controls_user</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of the user to form star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>binary_controls_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section defaults to evolve the binary</p></td>
+</tr>
+<tr class="row-odd"><td><p>binary_controls_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of POSYDON to evolve the binary</p></td>
+</tr>
+<tr class="row-even"><td><p>binary_controls_user</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of the user to evolve the binary</p></td>
+</tr>
+<tr class="row-odd"><td><p>binary_job_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section defaults to evolve the binary</p></td>
+</tr>
+<tr class="row-even"><td><p>binary_job_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of POSYDON to evolve the binary</p></td>
+</tr>
+<tr class="row-odd"><td><p>binary_job_user</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of the user to evolve the binary</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_job_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section defaults to evolve star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star1_job_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of POSYDON to evolve star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_job_user</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of the user to evolve star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star1_controls_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section defaults to evolve star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>star1_controls_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of POSYDON to evolve star 1</p></td>
+</tr>
+<tr class="row-odd"><td><p>star1_controls_user</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of the user to evolve star 1</p></td>
+</tr>
+<tr class="row-even"><td><p>star2_job_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section defaults to evolve star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_job_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of POSYDON to evolve star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star2_job_user</p></td>
+<td><p>(outdated) Path to the MESA job section inlist of the user to evolve star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_controls_mesa_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section defaults to evolve star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star2_controls_posydon_defaults</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of POSYDON to evolve star 2</p></td>
+</tr>
+<tr class="row-odd"><td><p>star2_controls_user</p></td>
+<td><p>(outdated) Path to the MESA controls section inlist of the user to evolve star 2</p></td>
+</tr>
+<tr class="row-even"><td><p>star_history_columns</p></td>
+<td><p>(outdated) Path to the history columns list of the stars</p></td>
+</tr>
+<tr class="row-odd"><td><p>binary_history_columns</p></td>
+<td><p>(outdated) Path to the history columns list of the binary</p></td>
+</tr>
+<tr class="row-even"><td><p>profile_columns</p></td>
+<td><p>(outdated) Path to the profile columns list to write the final stellar profile</p></td>
+</tr>
+<tr class="row-odd"><td><p>history_interval</p></td>
+<td><p>Interval how often MESA will add a model to the star’s histories</p></td>
+</tr>
+<tr class="row-even"><td><p>binary_history</p></td>
+<td><p>Interval how often MESA will add a model to the binary history</p></td>
+</tr>
+<tr class="row-odd"><td><p>history_star1</p></td>
+<td><p>Flag, whether the history of star 1 should be saved</p></td>
+</tr>
+<tr class="row-even"><td><p>final_profile_star1</p></td>
+<td><p>(outdated, done in <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code>) Flag, whether the final profil of star 1 should be saved</p></td>
+</tr>
+<tr class="row-odd"><td><p>final_model_star1</p></td>
+<td><p>Flag, whether the final model of star 1 should be saved</p></td>
+</tr>
+<tr class="row-even"><td><p>history_star2</p></td>
+<td><p>Flag, whether the history of star 2 should be saved</p></td>
+</tr>
+<tr class="row-odd"><td><p>final_profile_star2</p></td>
+<td><p>(outdated, done in <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code>) Flag, whether the final profil of star 2 should be saved</p></td>
+</tr>
+<tr class="row-even"><td><p>final_model_star2</p></td>
+<td><p>Flag, whether the final model of star 2 should be saved</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mesa-extras">
+<h3>[mesa_extras]<a class="headerlink" href="#mesa-extras" title="Link to this heading"></a></h3>
+<p>This section designates all the parameters for MESA makefiles and fortran files.</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[mesa_extras]</span>
+<span class="c1">; path to MESA makefile for executable binary and star</span>
+<span class="na">makefile_binary</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/binary/work/make/makefile</span>
+<span class="na">makefile_star</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/star/work/make/makefile</span>
+
+<span class="c1">; N.B. Normally system_type will determine which extras file gets used.</span>
+<span class="c1">; posydon has a set of approved extras files for given types of systems</span>
+<span class="c1">; and it will use these extra files by default but you may supply your own</span>
+<span class="c1">; if you wish.</span>
+
+<span class="c1">; user specified binary extra</span>
+<span class="na">mesa_binary_extras</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/binary/work/src/run_binary_extras.f</span>
+<span class="c1">; user_binary_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_binary_extras.f</span>
+
+<span class="c1">; user specified star extra - these go into the binary/src/ directory</span>
+<span class="na">mesa_star_binary_extras</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/binary/work/src/run_star_extras.f</span>
+<span class="c1">; user_star_binary_extras =${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f</span>
+
+<span class="c1">; user specified star extras - these are for single star formation (e.g., pre-MS evolution)</span>
+<span class="na">mesa_star1_extras</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/star/work/src/run_star_extras.f</span>
+<span class="c1">; user_star1_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f</span>
+
+<span class="na">mesa_star2_extras</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/star/work/src/run_star_extras.f</span>
+<span class="c1">; user_star2_extras = ${mesa_inlists:posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/default_common_inlists/binary/src/run_star_extras.f</span>
+
+<span class="c1">; binary_run.f</span>
+<span class="na">binary_run</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/binary/work/src/binary_run.f</span>
+
+<span class="c1">; star_run.f</span>
+<span class="na">star_run</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">${MESA_DIR}/star/work/src/run.f</span>
+</pre></div>
+</div>
+<table class="docutils align-default" id="id3">
+<caption><span class="caption-text">settings for the MESA extras</span><a class="headerlink" href="#id3" title="Link to this table"></a></caption>
+<thead>
+<tr class="row-odd"><th class="head"><p>Setting name</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>makefile_binary</p></td>
+<td><p>Path to the make file of MESA’s binary module</p></td>
+</tr>
+<tr class="row-odd"><td><p>makefile_star</p></td>
+<td><p>Path to the make file of MESA’s star module</p></td>
+</tr>
+<tr class="row-even"><td><p>mesa_binary_extras</p></td>
+<td><p>Path to MESA’s binary module default <code class="samp docutils literal notranslate"><span class="pre">run_binary_extras.f</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>user_binary_extras</p></td>
+<td><p>Path to the users/POSYDON <code class="samp docutils literal notranslate"><span class="pre">run_binary_extras.f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>mesa_star_binary_extras</p></td>
+<td><p>Path to MESA’s binary module default <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>user_star_binary_extras</p></td>
+<td><p>Path to the users/POSYDON <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>mesa_star1_extras</p></td>
+<td><p>Path to MESA’s star module default <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>user_star1_extras</p></td>
+<td><p>Path to the users/POSYDON <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>mesa_star2_extras</p></td>
+<td><p>Path to MESA’s star module default <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>user_star2_extras</p></td>
+<td><p>Path to the users/POSYDON <code class="samp docutils literal notranslate"><span class="pre">run_star_extras.f</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p>binary_run</p></td>
+<td><p>Path to MESA’s binary module <code class="samp docutils literal notranslate"><span class="pre">binary_run.f</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p>star_run</p></td>
+<td><p>Path to MESA’s star module <code class="samp docutils literal notranslate"><span class="pre">run.f</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="run-parameters">
+<h3>[run_parameters]<a class="headerlink" href="#run-parameters" title="Link to this heading"></a></h3>
+<p>This section designates the run parameters for a grid.</p>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[run_parameters]</span>
+<span class="c1">; If running posydon-run-grid with option --grid-type fixed</span>
+<span class="c1">; then the grid is a file with all the different samples you would like to</span>
+<span class="c1">; run MESA on.</span>
+<span class="c1">; If posydon-make-grid is run with --grid-type dynamic, then grid is</span>
+<span class="c1">; a file of pre-run MESA simulations from which you will generate new samples to</span>
+<span class="c1">; run MESA on (i.e. generate grid points on the fly).</span>
+
+<span class="na">grid</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">{PATH_TO_GRID}</span>
+</pre></div>
+</div>
+<p>The <code class="samp docutils literal notranslate"><span class="pre">grid</span></code> specifies where to find the csv file to read the runs from.</p>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="dynamic.html" class="btn btn-neutral float-left" title="Run a dynamic MESA grid" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../processing-pipeline.html" class="btn btn-neutral float-right" title="Processing Pipeline" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

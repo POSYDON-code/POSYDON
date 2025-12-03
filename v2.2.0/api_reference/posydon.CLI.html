@@ -1,0 +1,451 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.CLI &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.CLI.popsyn" href="posydon.CLI.popsyn.html" />
+    <link rel="prev" title="posydon" href="posydon.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">posydon.CLI</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="posydon.CLI.popsyn.html">posydon.CLI.popsyn</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-posydon.CLI.io">posydon.CLI.io</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.clear_previous_lines"><code class="docutils literal notranslate"><span class="pre">clear_previous_lines()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_bash_submit_rescue_script"><code class="docutils literal notranslate"><span class="pre">create_bash_submit_rescue_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_bash_submit_script"><code class="docutils literal notranslate"><span class="pre">create_bash_submit_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_batch_rescue_script"><code class="docutils literal notranslate"><span class="pre">create_batch_rescue_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_merge_script"><code class="docutils literal notranslate"><span class="pre">create_merge_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_merge_script_text"><code class="docutils literal notranslate"><span class="pre">create_merge_script_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_python_scripts"><code class="docutils literal notranslate"><span class="pre">create_python_scripts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_run_script"><code class="docutils literal notranslate"><span class="pre">create_run_script()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_run_script_text"><code class="docutils literal notranslate"><span class="pre">create_run_script_text()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_slurm_array"><code class="docutils literal notranslate"><span class="pre">create_slurm_array()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_slurm_merge"><code class="docutils literal notranslate"><span class="pre">create_slurm_merge()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_slurm_rescue"><code class="docutils literal notranslate"><span class="pre">create_slurm_rescue()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.create_slurm_scripts"><code class="docutils literal notranslate"><span class="pre">create_slurm_scripts()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.print_error"><code class="docutils literal notranslate"><span class="pre">print_error()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.print_separator_line"><code class="docutils literal notranslate"><span class="pre">print_separator_line()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.print_separator_section"><code class="docutils literal notranslate"><span class="pre">print_separator_section()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#posydon.CLI.io.print_success"><code class="docutils literal notranslate"><span class="pre">print_success()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+      <li class="breadcrumb-item active">posydon.CLI</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.CLI.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.CLI">
+<span id="posydon-cli"></span><h1>posydon.CLI<a class="headerlink" href="#module-posydon.CLI" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="posydon.CLI.popsyn.html">posydon.CLI.popsyn</a></li>
+</ul>
+</div>
+<section id="module-posydon.CLI.io">
+<span id="posydon-cli-io"></span><h2>posydon.CLI.io<a class="headerlink" href="#module-posydon.CLI.io" title="Link to this heading"></a></h2>
+<p>Module for input/output operations in the CLI of Posydon.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.clear_previous_lines">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">clear_previous_lines</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_lines</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#clear_previous_lines"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.clear_previous_lines" title="Link to this definition"></a></dt>
+<dd><p>Clear the specified number of previous lines in the terminal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_lines</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Number of lines to clear</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_bash_submit_rescue_script">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_bash_submit_rescue_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rescue_scripts</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_bash_submit_rescue_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_bash_submit_rescue_script" title="Link to this definition"></a></dt>
+<dd><p>Generate a bash script to submit rescue scripts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the bash submission script to create</p></li>
+<li><p><strong>rescue_scripts</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The list of rescue script paths</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_bash_submit_script">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_bash_submit_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_bash_submit_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_bash_submit_script" title="Link to this definition"></a></dt>
+<dd><p>Creates the bash submission script for all SLURM jobs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the bash submission script to create</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The list of metallicities in solar units</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_batch_rescue_script">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_batch_rescue_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_batch_rescue_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_batch_rescue_script" title="Link to this definition"></a></dt>
+<dd><p>Generate a script to resubmit failed runs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – The arguments passed to the CLI</p></li>
+<li><p><strong>batch_status</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary with batch status information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the generated rescue script</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_merge_script">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_merge_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_merge_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_merge_script" title="Link to this definition"></a></dt>
+<dd><p>Creates a merge script for the population synthesis run.</p>
+<p>The created merge script will combine the “evolution.combined.h5” files
+from the different job arrays in the “temp_directory” into a
+single “{MET}_Zsun_population.h5” file in the run directory.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the .ini file containing population synthesis parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_merge_script_text">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_merge_script_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_merge_script_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_merge_script_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_python_scripts">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_python_scripts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_python_scripts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_python_scripts" title="Link to this definition"></a></dt>
+<dd><p>Creates the run and merge scripts for population synthesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the .ini file containing population synthesis parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_run_script">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_run_script</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_run_script"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_run_script" title="Link to this definition"></a></dt>
+<dd><p>Creates a run script for the population synthesis run.</p>
+<p>This function creates a script that will run the POSYDON population at a specific metallicity.
+The script takes a metallicity as a command-line input.
+It uses that metallicity to run the BinaryPopulation with.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the .ini file containing population synthesis parameters.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_run_script_text">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_run_script_text</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_run_script_text"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_run_script_text" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_slurm_array">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_slurm_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_array_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_per_cpu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_slurm_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_slurm_array" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm array script for population synthesis job arrays.</p>
+<p>Creates a SLURM submission script file named
+“{str_met}_Zsun_slurm_array.slurm” where str_met is the metallicity
+converted to string format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>job_array_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The length of the job array (number of jobs)</p></li>
+<li><p><strong>partition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM partition to submit the job to</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Email address for job notifications</p></li>
+<li><p><strong>walltime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Time limit for the job in SLURM format (e.g., “24:00:00”)</p></li>
+<li><p><strong>account</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM account to charge the job to</p></li>
+<li><p><strong>mem_per_cpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Memory per CPU allocation (e.g., “4G”)</p></li>
+<li><p><strong>path_to_posydon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON installation</p></li>
+<li><p><strong>path_to_posydon_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON_DATA directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_slurm_merge">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_slurm_merge</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">merge_walltime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_per_cpu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_slurm_merge"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_slurm_merge" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm submit script for merging population synthesis results.</p>
+<p>Creates a SLURM submission script file named
+“{str_met}_Zsun_merge_popsyn.slurm” where str_met is the metallicity
+converted to string format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>partition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM partition to submit the job to</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Email address for job notifications</p></li>
+<li><p><strong>merge_walltime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Time limit for the merge job in SLURM format (e.g., “12:00:00”)</p></li>
+<li><p><strong>account</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM account to charge the job to</p></li>
+<li><p><strong>mem_per_cpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Memory per CPU allocation (e.g., “4G”)</p></li>
+<li><p><strong>path_to_posydon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON installation</p></li>
+<li><p><strong>path_to_posydon_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON_DATA directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_slurm_rescue">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_slurm_rescue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_indices</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">job_array_length</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">partition</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">email</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">walltime</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">account</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mem_per_cpu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">path_to_posydon_data</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_slurm_rescue"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_slurm_rescue" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm rescue script for resubmitting failed population synthesis jobs.</p>
+<p>Creates a SLURM submission script file named
+“{str_met}_Zsun_rescue.slurm” where str_met is the metallicity
+converted to string format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>missing_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – List of failed job indices to resubmit</p></li>
+<li><p><strong>job_array_length</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The original length of the job array (number of jobs)</p></li>
+<li><p><strong>partition</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM partition to submit the job to</p></li>
+<li><p><strong>email</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Email address for job notifications</p></li>
+<li><p><strong>walltime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Time limit for the job in SLURM format (e.g., “24:00:00”)</p></li>
+<li><p><strong>account</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – SLURM account to charge the job to</p></li>
+<li><p><strong>mem_per_cpu</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Memory per CPU allocation (e.g., “4G”)</p></li>
+<li><p><strong>path_to_posydon</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON installation</p></li>
+<li><p><strong>path_to_posydon_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the POSYDON_DATA directory</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.create_slurm_scripts">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">create_slurm_scripts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#create_slurm_scripts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.create_slurm_scripts" title="Link to this definition"></a></dt>
+<dd><p>Creates the slurm scripts for population synthesis.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The metallicity in solar units (e.g., 0.02 for Z=0.02)</p></li>
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – the arguments passed to the function</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.print_error">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">print_error</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#print_error"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.print_error" title="Link to this definition"></a></dt>
+<dd><p>Print an error message in red.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The error message to print</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.print_separator_line">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">print_separator_line</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#print_separator_line"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.print_separator_line" title="Link to this definition"></a></dt>
+<dd><p>Print a separator line.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.print_separator_section">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">print_separator_section</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#print_separator_section"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.print_separator_section" title="Link to this definition"></a></dt>
+<dd><p>Print a section separator line.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.io.print_success">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.io.</span></span><span class="sig-name descname"><span class="pre">print_success</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/io.html#print_success"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.io.print_success" title="Link to this definition"></a></dt>
+<dd><p>Print a success message in green.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>message</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The success message to print</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.html" class="btn btn-neutral float-left" title="posydon" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.CLI.popsyn.html" class="btn btn-neutral float-right" title="posydon.CLI.popsyn" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

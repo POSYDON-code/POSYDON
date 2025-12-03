@@ -1,0 +1,1377 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.star_formation_history &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.star_formation_history</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.star_formation_history</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Implements the selection of different star-formation history scenarios.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">sp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">histogram_sampler</span><span class="p">,</span>
+    <span class="n">read_histogram_from_file</span><span class="p">,</span>
+    <span class="n">rejection_sampler</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">Zsun</span><span class="p">,</span> <span class="n">age_of_universe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.interpolators</span><span class="w"> </span><span class="kn">import</span> <span class="n">interp1d</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+<span class="n">SFH_SCENARIOS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;burst&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;constant&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_linear&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_log10&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_linear_histogram&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;custom_log10_histogram&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="SFHBase">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.SFHBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SFHBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract class for star formation history models&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the SFH model</span>
+
+<span class="sd">        Adds the model parameters as attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters.</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalise</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">SFH_MODEL</span> <span class="o">=</span> <span class="n">SFH_MODEL</span>
+        <span class="c1"># Automatically attach all model parameters as attributes</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">SFH_MODEL</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+
+        <span class="c1"># check if Z_max is not larger than 1</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_max must be in absolute units! &quot;</span>
+                                 <span class="s2">&quot;It cannot be larger than 1!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_max must be in absolute units! &quot;</span>
+                                 <span class="s2">&quot;It cannot be negative!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_min must be in absolute units! &quot;</span>
+                                 <span class="s2">&quot;It cannot be negative!&quot;</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_min must be in absolute units! &quot;</span>
+                                 <span class="s2">&quot;It cannot be larger than 1!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_min must be smaller than Z_max!&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="SFHBase.CSFRD">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.SFHBase.CSFRD">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CSFRD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the cosmic star formation rate density.</span>
+
+<span class="sd">        This is an abstract method that must be implemented by subclasses.</span>
+<span class="sd">        The implementation should calculate and return the cosmic star formation</span>
+<span class="sd">        rate density at the given redshift(s).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The cosmic star formation rate density at the given redshift(s).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">            NotImplementedError: If the subclass does not implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SFHBase.mean_metallicity">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.SFHBase.mean_metallicity">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the mean metallicity at redshift z.</span>
+
+<span class="sd">        This is an abstract method that must be implemented by subclasses.</span>
+<span class="sd">        The implementation should calculate and return the mean metallicity</span>
+<span class="sd">        at the given redshift(s).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The mean metallicity at the given redshift(s).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        -------</span>
+<span class="sd">            NotImplementedError: If the subclass does not implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SFHBase.fSFR">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.SFHBase.fSFR">[docs]</a>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fSFR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the star formation rate fraction (fSFR) at a given redshift</span>
+<span class="sd">        using the specified metallicity bins.</span>
+
+<span class="sd">        This is an abstract method that must be implemented by subclasses.</span>
+<span class="sd">        The implementation should calculate and return the fractional SFR per</span>
+<span class="sd">        metallicity bins at the provided redshift (z).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ---------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            The redshift(s) at which to compute the star formation rate.</span>
+<span class="sd">        metallicity_bins : list or array-like</span>
+<span class="sd">            The metallicity bin boundaries or labels used in the computation to</span>
+<span class="sd">            account for different metallicity contributions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The calculated star formation rate at the given redshift(s) and</span>
+<span class="sd">            metallicity bins in Msun/yr.</span>
+
+<span class="sd">        Raises:</span>
+<span class="sd">            NotImplementedError: If the subclass does not implement this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_distribute_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Distribute the SFR over the metallicity bins using the CDF</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        cdf_func : function</span>
+<span class="sd">            The cumulative density function to use.</span>
+<span class="sd">        metallicity_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Fraction of the SFR in the given metallicity bin at the given redshift.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># verify if the metallicity bins are sorted</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metallicity bins must be sorted &quot;</span>
+                             <span class="s2">&quot;in ascending order.&quot;</span><span class="p">)</span>
+
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+                <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+
+        <span class="n">first_bin_index</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">last_bin_index</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">fSFR</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="c1"># include material outside the metallicity bounds if requested</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="o">&gt;=</span> <span class="n">metallicity_bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">)</span> <span class="o">-</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Z_max is smaller than the highest metallicity bin.&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;SFHModelWarning&#39;</span><span class="p">)</span>
+                <span class="c1"># find the index of the last bin that is smaller than Z_max</span>
+                <span class="n">last_bin_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">last_bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">)</span> <span class="o">-</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="n">last_bin_index</span><span class="p">])</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">last_bin_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="o">&lt;=</span> <span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Z_min is larger than the lowest metallicity bin.&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;SFHModelWarning&#39;</span><span class="p">)</span>
+                <span class="c1"># find the index of the first bin that is larger than Z_min</span>
+                <span class="n">first_bin_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span><span class="p">)</span> <span class="o">-</span><span class="mi">1</span>
+                <span class="n">fSFR</span><span class="p">[:</span><span class="n">first_bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">first_bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="n">first_bin_index</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span><span class="p">)</span>
+
+        <span class="c1"># Check if in the same bin</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">first_bin_index</span> <span class="o">==</span> <span class="n">last_bin_index</span><span class="p">:</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">first_bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_max</span><span class="p">)</span> <span class="o">-</span> <span class="n">cdf_func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_min</span><span class="p">)</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">first_bin_index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="n">fSFR</span><span class="p">[:</span><span class="n">first_bin_index</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalise</span><span class="p">:</span>
+            <span class="n">fSFR</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fSFR</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fSFR</span>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">met_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the star formation history at a given redshift and metallicity</span>
+<span class="sd">        bins</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+<span class="sd">        met_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Star formation history per metallicity bin at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD</span><span class="p">(</span><span class="n">z</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">fSFR</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">met_bins</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MadauBase">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauBase">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MadauBase</span><span class="p">(</span><span class="n">SFHBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for Madau-style star-formation history implementations.</span>
+<span class="sd">    This class implements common methods for CSFRD, mean metallicity,</span>
+<span class="sd">    and fractional SFR based on the chosen Madau parameterisation.</span>
+<span class="sd">    The specific parameters for CSFRD must be provided by subclasses.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the MadauBase class</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. MadauBase requires the following parameters:</span>
+<span class="sd">            - sigma : float or str</span>
+<span class="sd">                The standard deviation of the log-normal metallicity distribution.</span>
+<span class="sd">                Options are:</span>
+<span class="sd">                - Bavera+20</span>
+<span class="sd">                - Neijssel+19</span>
+<span class="sd">                - float</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">            - CSFRD_params: dict</span>
+<span class="sd">                Parameters for the cosmic star formation rate density (CSFRD)</span>
+<span class="sd">                - a, b, c, d : float</span>
+<span class="sd">                Follows the Madau &amp; Dickinson (2014) CSFRD formula (Eq. 15) in [1]_</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Madau, P., &amp; Dickinson, M. (2014). Cosmic star formation history.</span>
+<span class="sd">           Annual Review of Astronomy and Astrophysics, 52, 415-486.</span>
+<span class="sd">           https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M/abstract</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;sigma&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SFH_MODEL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;sigma not given!&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MadauBase.CSFRD">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauBase.CSFRD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CSFRD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The cosmic star formation rate density at a given redshift.</span>
+
+<span class="sd">        Follows the Madau &amp; Dickinson (2014) cosmic star formation rate</span>
+<span class="sd">        density formula.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or np.array</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array</span>
+<span class="sd">            The cosmic star formation rate density at the given redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span>
+        <span class="k">return</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">])</span> <span class="o">**</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;d&quot;</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MadauBase.std_log_metallicity_dist">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauBase.std_log_metallicity_dist">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">std_log_metallicity_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the standard deviation of the log-normal metallicity</span>
+<span class="sd">        distribution</span>
+
+<span class="sd">        Either recognised the strings &quot;Bavera+20&quot; (sigma=0.5)</span>
+<span class="sd">        or &quot;Neijssel+19&quot; (sigma=0.39) or a float value.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The standard deviation of the log-normal metallicity distribution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">&quot;Bavera+20&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.5</span>
+            <span class="k">elif</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+                <span class="k">return</span> <span class="mf">0.39</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Unknown sigma choice!&quot;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sigma value </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MadauBase.mean_metallicity">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauBase.mean_metallicity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The mean metallicity at a given redshift</span>
+
+<span class="sd">        Follows Madau &amp; Fragos (2017) mean metallicity evolution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or np.array</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array</span>
+<span class="sd">            The mean metallicity at the given redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="mf">0.153</span> <span class="o">-</span> <span class="mf">0.074</span> <span class="o">*</span> <span class="n">z</span> <span class="o">**</span> <span class="mf">1.34</span><span class="p">)</span> <span class="o">*</span> <span class="n">Zsun</span></div>
+
+
+<div class="viewcode-block" id="MadauBase.fSFR">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauBase.fSFR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fSFR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fraction of the SFR at a given redshift z in a given metallicity</span>
+<span class="sd">        bin as described in Bavera et al. (2020).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : np.array</span>
+<span class="sd">            Cosmological redshift.</span>
+<span class="sd">        metallicity_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Fraction of the SFR in the given metallicity bin at the given</span>
+<span class="sd">            redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_log_metallicity_dist</span><span class="p">()</span>
+        <span class="c1"># Compute mu; if z is an array, mu will be an array.</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="c1"># Ensure mu is an array for consistency</span>
+        <span class="n">mu_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mu_array</span><span class="p">):</span>
+            <span class="n">cdf_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+            <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribute_cdf</span><span class="p">(</span><span class="n">cdf_func</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fSFR</span></div>
+</div>
+
+
+<div class="viewcode-block" id="MadauDickinson14">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauDickinson14">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MadauDickinson14</span><span class="p">(</span><span class="n">MadauBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Madau &amp; Dickinson (2014) [1]_ star formation history model using the</span>
+<span class="sd">    mean metallicity evolution of Madau &amp; Fragos (2017) [2]_.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Madau, P., &amp; Dickinson, M. (2014). ARA&amp;A, 52, 415-486.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M</span>
+<span class="sd">    .. [2] Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Madau &amp; Dickinson (2014) [1]_ SFH model with the</span>
+<span class="sd">        metallicity evolution of Madau &amp; Fragos (2017) [2]_.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Madau+14 requires the following parameters:</span>
+<span class="sd">            - sigma : float or str</span>
+<span class="sd">                The standard deviation of the log-normal metallicity</span>
+<span class="sd">                distribution.</span>
+<span class="sd">                Options are:</span>
+<span class="sd">                - Bavera+20</span>
+<span class="sd">                - Neijssel+19</span>
+<span class="sd">                - float</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">            - CSFRD_params: dict</span>
+<span class="sd">                Parameters for the cosmic star formation rate density (CSFRD)</span>
+<span class="sd">                - a, b, c, d : float</span>
+<span class="sd">                Follows the Madau &amp; Dickinson (2014) CSFRD formula (Eq. 15) in [1]_</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Madau, P., &amp; Dickinson, M. (2014). ARA&amp;A, 52, 415-486.</span>
+<span class="sd">            https://ui.adsabs.harvard.edu/abs/2014ARA%26A..52..415M</span>
+<span class="sd">        .. [2] Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.</span>
+<span class="sd">            https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="c1"># Parameters for Madau+Dickinson14 CSFRD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mf">0.015</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mf">2.7</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mf">2.9</span><span class="p">,</span>
+            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">5.6</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="MadauFragos17">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.MadauFragos17">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MadauFragos17</span><span class="p">(</span><span class="n">MadauBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Madau &amp; Fragos (2017) star formation history model with the</span>
+<span class="sd">    metallicity evolution of Madau &amp; Fragos (2017) [1]_.</span>
+
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/abstract</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Madau+17 model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Madau+17 requires the following parameters:</span>
+<span class="sd">            - sigma : float or str</span>
+<span class="sd">                The standard deviation of the log-normal metallicity distribution.</span>
+<span class="sd">                Options are:</span>
+<span class="sd">                - Bavera+20</span>
+<span class="sd">                - Neijssel+19</span>
+<span class="sd">                - float</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="c1"># Parameters for Madau+Fragos17 CSFRD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mf">2.6</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mf">3.2</span><span class="p">,</span>
+            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">6.2</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Neijssel19">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Neijssel19">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Neijssel19</span><span class="p">(</span><span class="n">MadauBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Neijssel et al. (2019) [1]_ star formation history model, which fits</span>
+<span class="sd">    the Madau &amp; Dickinson (2014) [2]_ cosmic star formation rate density formula</span>
+<span class="sd">    with the BBH merger rate and uses a truncated log-normal distribution for</span>
+<span class="sd">    the mean metallicity distribution.</span>
+<span class="sd">    The mean metallicity evolution follows the Langer and Normal parameterisation</span>
+<span class="sd">    also fitted to the BBH merger rate.</span>
+
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Neijssel, C. J., et al. (2019). MNRAS, 490, 3740.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2019MNRAS.490.3740N</span>
+<span class="sd">    .. [2] Madau, P., &amp; Fragos, T. (2017). ApJ, 840(1), 39.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2017ApJ...840...39M/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Neijssel+19 model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Neijssel+19 requires the following parameters:</span>
+<span class="sd">            - sigma : float or str</span>
+<span class="sd">                The standard deviation of the log-normal metallicity distribution.</span>
+<span class="sd">                Options are:</span>
+<span class="sd">                - Bavera+20</span>
+<span class="sd">                - Neijssel+19</span>
+<span class="sd">                - float</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="c1"># Parameters for Neijssel+19 CSFRD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mf">0.01</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mf">2.77</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mf">2.9</span><span class="p">,</span>
+            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">4.7</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># overwrite mean_metallicity method of MadauBase</span>
+<div class="viewcode-block" id="Neijssel19.mean_metallicity">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Neijssel19.mean_metallicity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the mean metallicity at a given redshift</span>
+
+<span class="sd">        Overwrites the mean_metallicity method of MadauBase class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The mean metallicity at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">0.035</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.23</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Neijssel19.fSFR">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Neijssel19.fSFR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fSFR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fraction of the SFR at a given redshift z in a given metallicity bin</span>
+<span class="sd">        as described in Neijssel et al. (2019).</span>
+
+<span class="sd">        Overwrites the fSFR method of MadauBase class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : np.array</span>
+<span class="sd">            Cosmological redshift.</span>
+<span class="sd">        metallicity_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Fraction of the SFR in the given metallicity bins at the</span>
+<span class="sd">            given redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># assume a truncated ln-normal distribution of metallicities</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_log_metallicity_dist</span><span class="p">()</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">mu_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">mean</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">mu_array</span><span class="p">):</span>
+            <span class="n">cdf_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+            <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribute_cdf</span><span class="p">(</span><span class="n">cdf_func</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fSFR</span></div>
+</div>
+
+
+<div class="viewcode-block" id="IllustrisTNG">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.IllustrisTNG">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">IllustrisTNG</span><span class="p">(</span><span class="n">SFHBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The IllustrisTNG star formation history model.</span>
+
+<span class="sd">    Uses the TNG100-1 model from the IllustrisTNG simulation.</span>
+
+<span class="sd">    https://www.tng-project.org/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the IllustrisTNG model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="c1"># load the TNG data</span>
+        <span class="n">illustris_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_illustrisTNG_data</span><span class="p">()</span>
+        <span class="c1"># the data is stored in reverse order high to low redshift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;redshifts&quot;</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;mets&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;M&quot;</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Msun</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_illustrisTNG_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load IllustrisTNG SFR dataset into the class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print information about the data loading.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading IllustrisTNG data...&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;SFR/IllustrisTNG.npz&quot;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="IllustrisTNG.CSFRD">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.IllustrisTNG.CSFRD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CSFRD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The cosmic star formation rate density at a given redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or np.array</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array</span>
+<span class="sd">            The cosmic star formation rate density at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SFR_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SFR_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IllustrisTNG.mean_metallicity">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.IllustrisTNG.mean_metallicity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the mean metallicity at a given redshift</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The mean metallicity at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">out</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:])</span>
+        <span class="n">Z_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Z_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="IllustrisTNG.fSFR">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.IllustrisTNG.fSFR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fSFR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the fractional SFR as a function of redshift and</span>
+<span class="sd">        metallicity bins.</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">        We are using the closest redshift bin in the IllustrisTNG simulation</span>
+<span class="sd">        that is smaller than the requested redshift to extract the metallicity</span>
+<span class="sd">        distribution for the requested redshift.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+<span class="sd">        metallicity_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Fraction of the SFR in the given metallicity bin at the given redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">redshift_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">z</span><span class="p">])</span>
+        <span class="n">Z_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">[</span><span class="n">redshift_indices</span><span class="p">]</span>
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># At a specific redshift, the SFR is distributed over the metallicities</span>
+                <span class="c1"># according to the mass distribution</span>
+                <span class="c1"># Add a final point to the CDF and metallicities to ensure normalisation to 1</span>
+                <span class="n">Z_dist_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">Z_dist_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Z_dist_cdf</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+                <span class="n">Z_x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">Z_dist_cdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">Z_x_values</span><span class="p">,</span> <span class="n">Z_dist_cdf</span><span class="p">)</span>
+                <span class="n">cdf_fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Z_dist_cdf_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribute_cdf</span><span class="p">(</span><span class="n">cdf_fun</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fSFR</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Chruslinska21">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Chruslinska21">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Chruslinska21</span><span class="p">(</span><span class="n">SFHBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Chruślińska+21 star formation history model [1]_.</span>
+
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Chruślińska, M., et al. (2021). MNRAS, 508, 4994.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2021MNRAS.508.4994C</span>
+
+<span class="sd">    Data source:</span>
+<span class="sd">    https://ftp.science.ru.nl/astro/mchruslinska/Chruslinska_et_al_2021/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Chruslinska+21 model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Chruslinska+21 requires the</span>
+<span class="sd">            following parameters:</span>
+<span class="sd">            - sub_model : str</span>
+<span class="sd">                The sub-model to use.</span>
+<span class="sd">                This is the name of the file containing the data.</span>
+<span class="sd">            - Z_solar_scaling : str</span>
+<span class="sd">                The scaling of the solar metallicity. Options are:</span>
+<span class="sd">                - Asplund09</span>
+<span class="sd">                - AndersGrevesse89</span>
+<span class="sd">                - GrevesseSauval98</span>
+<span class="sd">                - Villante14</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;sub_model&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SFH_MODEL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sub-model not given!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;Z_solar_scaling&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SFH_MODEL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Z_solar_scaling not given!&quot;</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_chruslinska_data</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_chruslinska_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the data from the Chruslinska+21 models.</span>
+<span class="sd">        Transforms the data to the format used in the classes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print information about the data loading.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># oxygen to hydrogen abundance ratio ( FOH == 12 + log(O/H) )</span>
+        <span class="c1"># as used in the calculations - do not change</span>
+        <span class="c1"># This is the metallicity bin edges used in the Chruslinska+21 calculations</span>
+        <span class="n">FOH_min</span> <span class="o">=</span> <span class="mf">5.3</span>
+        <span class="n">FOH_max</span> <span class="o">=</span> <span class="mf">9.7</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">FOH_bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">FOH_min</span><span class="p">,</span> <span class="n">FOH_max</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dFOH</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FOH_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">FOH_bins</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1"># Need to use the Z_solar_scaling parameter to</span>
+        <span class="c1"># convert the FOH bins to absolute metallicity.</span>
+        <span class="c1"># Use solar metallicity as the reference point</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_FOH_to_Z</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">FOH_bins</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;SFR/Chruslinska+21&quot;</span><span class="p">)</span>
+        <span class="n">_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="n">delta_T</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_redshift_data</span><span class="p">(</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_load_raw_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span> <span class="p">[</span><span class="n">M</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="mf">1e6</span><span class="o">*</span><span class="n">delta_T</span><span class="p">[</span><span class="n">ii</span><span class="p">])</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">delta_T</span><span class="p">))])</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">dFOH</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_FOH_to_Z</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">FOH</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the oxygen to hydrogen abundance ratio to absolute metallicity</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        FOH : float or array-like</span>
+<span class="sd">            The oxygen to hydrogen abundance ratio.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The absolute metallicity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># scalings from Chruslinksa+21</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_solar_scaling</span> <span class="o">==</span> <span class="s2">&quot;Asplund09&quot;</span><span class="p">:</span>
+            <span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.0134</span>
+            <span class="n">FOHsun</span> <span class="o">=</span> <span class="mf">8.69</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_solar_scaling</span> <span class="o">==</span> <span class="s2">&quot;AndersGrevesse89&quot;</span><span class="p">:</span>
+            <span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.017</span>
+            <span class="n">FOHsun</span> <span class="o">=</span> <span class="mf">8.83</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_solar_scaling</span> <span class="o">==</span> <span class="s2">&quot;GrevesseSauval98&quot;</span><span class="p">:</span>
+            <span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.0201</span>
+            <span class="n">FOHsun</span> <span class="o">=</span> <span class="mf">8.93</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z_solar_scaling</span> <span class="o">==</span> <span class="s2">&quot;Villante14&quot;</span><span class="p">:</span>
+            <span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.019</span>
+            <span class="n">FOHsun</span> <span class="o">=</span> <span class="mf">8.85</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">valid_options</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Asplund09&quot;</span><span class="p">,</span> <span class="s2">&quot;AndersGrevesse89&quot;</span><span class="p">,</span>
+                             <span class="s2">&quot;GrevesseSauval98&quot;</span><span class="p">,</span> <span class="s2">&quot;Villante14&quot;</span><span class="p">]</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid Z_solar_scaling &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">Z_solar_scaling</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                             <span class="sa">f</span><span class="s2">&quot;Valid options: </span><span class="si">{</span><span class="n">valid_options</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">logZ</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Zsun</span><span class="p">)</span> <span class="o">+</span> <span class="n">FOH</span> <span class="o">-</span> <span class="n">FOHsun</span>
+        <span class="k">return</span> <span class="mi">10</span><span class="o">**</span><span class="n">logZ</span>
+
+<div class="viewcode-block" id="Chruslinska21.mean_metallicity">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Chruslinska21.mean_metallicity">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the mean metallicity at a given redshift</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The mean metallicity at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mean_over_redshift</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mean_over_redshift</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">mean_over_redshift</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mean_over_redshift</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dFOH</span><span class="p">)</span>
+
+        <span class="n">Z_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="n">mean_over_redshift</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Z_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Chruslinska21.fSFR">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Chruslinska21.fSFR">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fSFR</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the fractional SFR as a function of redshift and metallicity bins</span>
+
+<span class="sd">        Note:</span>
+<span class="sd">        We are using the closest redshift from Chruslinska+21 models</span>
+<span class="sd">        that is smaller than the requested redshift to extract the</span>
+<span class="sd">        metallicity distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+<span class="sd">        metallicity_bins : array</span>
+<span class="sd">            Metallicity bins edges in absolute metallicity.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ndarray</span>
+<span class="sd">            Fraction of the SFR in the given metallicity bin at the given redshift.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># only use data within the metallicity bounds (no lower bound)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">):</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Some redshift values are lower than the minimum &#39;</span>
+                    <span class="s1">&#39;redshift in the Chruslinska+21 data. &#39;</span>
+                    <span class="s1">&#39;Using the minimum redshift available.&#39;</span><span class="p">,</span>
+                    <span class="s1">&#39;SFHModelWarning&#39;</span><span class="p">)</span>
+            <span class="n">redshift_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">)</span>
+                                    <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                                    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">z</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">redshift_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">z</span><span class="p">])</span>
+
+        <span class="n">Z_dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span><span class="p">[</span><span class="n">redshift_indices</span><span class="p">]</span>
+        <span class="n">fSFR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">z</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Z_dist_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">/</span> <span class="n">Z_dist</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">Z_dist_cdf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Z_dist_cdf</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">Z_x_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+                <span class="n">Z_dist_cdf_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">Z_x_values</span><span class="p">,</span> <span class="n">Z_dist_cdf</span><span class="p">)</span>
+                <span class="n">cdf_fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">Z_dist_cdf_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+                <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_distribute_cdf</span><span class="p">(</span><span class="n">cdf_fun</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fSFR</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_redshift_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the redshift data from a Chruslinsk+21 model file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        time : array</span>
+<span class="sd">            the center of the time bins</span>
+<span class="sd">        redshift : array</span>
+<span class="sd">            the redshifts corresponding to the time bins</span>
+<span class="sd">        delt : array</span>
+<span class="sd">            the width of the time bins</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading redshift data...&quot;</span><span class="p">)</span>
+
+        <span class="n">time</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">delt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_folder</span><span class="p">,</span> <span class="s2">&quot;Time_redshift_deltaT.dat&quot;</span><span class="p">),</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">time</span><span class="p">,</span> <span class="n">redshift</span><span class="p">,</span> <span class="n">delt</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_raw_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the sub-model data from the file</span>
+
+<span class="sd">        The data structure is as follows:</span>
+<span class="sd">        - mass per unit (comoving) volume formed in each z (row) - FOH (column) bin</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array</span>
+<span class="sd">            Mass formed per unit volume in each redshift and FOH bin</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sub_model</span><span class="si">}</span><span class="s2">.dat&quot;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">input_file</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">data</span>
+
+<div class="viewcode-block" id="Chruslinska21.CSFRD">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Chruslinska21.CSFRD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CSFRD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Interpolate the cosmic star formation rate density at the given redshift(s)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : float or array-like</span>
+<span class="sd">            Cosmological redshift.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or array-like</span>
+<span class="sd">            The cosmic star formation rate density at the given redshift(s).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">SFR_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">dFOH</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">SFR_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="Fujimoto24">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Fujimoto24">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Fujimoto24</span><span class="p">(</span><span class="n">MadauBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Fujimoto et al. (2024) star formation history model.</span>
+<span class="sd">    mean metallicity evolution of Madau &amp; Fragos (2017).</span>
+
+<span class="sd">    Fujimoto et al. (2024), ApJ SS, 275, 2, 36, 59</span>
+<span class="sd">    https://ui.adsabs.harvard.edu/abs/2024ApJS..275...36F/abstract</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Fujimoto+24 model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Fujimoto+24 requires the following parameters:</span>
+<span class="sd">            - sigma : float or str</span>
+<span class="sd">                The standard deviation of the log-normal metallicity distribution.</span>
+<span class="sd">                Options are:</span>
+<span class="sd">                - Bavera+20</span>
+<span class="sd">                - Neijssel+19</span>
+<span class="sd">                - float</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="c1"># Parameters for Fujimoto+24 CSFRD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">CSFRD_params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;a&quot;</span><span class="p">:</span> <span class="mf">0.010</span><span class="p">,</span>
+            <span class="s2">&quot;b&quot;</span><span class="p">:</span> <span class="mf">2.8</span><span class="p">,</span>
+            <span class="s2">&quot;c&quot;</span><span class="p">:</span> <span class="mf">3.3</span><span class="p">,</span>
+            <span class="s2">&quot;d&quot;</span><span class="p">:</span> <span class="mf">6.6</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="Zavala21">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Zavala21">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Zavala21</span><span class="p">(</span><span class="n">MadauBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;The Zavala et al. (2021) star formation history model [1]_.</span>
+
+<span class="sd">    The &quot;min&quot; and &quot;max&quot; models are based on the obscured and unobscured</span>
+<span class="sd">    star formation rate density models, respectively.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Zavala, J., et al. (2021). ApJ, 909(2), 165.</span>
+<span class="sd">        https://ui.adsabs.harvard.edu/abs/2021ApJ...909..165Z/</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialise the Zavala+21 model</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        SFH_MODEL : dict</span>
+<span class="sd">            SFH model parameters. Zavala+21 requires the following parameters:</span>
+<span class="sd">            - sub_model : str</span>
+<span class="sd">                The sub-model to use. Either &quot;min&quot; or &quot;max&quot;.</span>
+<span class="sd">            Additional SFH model parameters:</span>
+<span class="sd">            - Z_max : float</span>
+<span class="sd">                The maximum metallicity in absolute units.</span>
+<span class="sd">            - Z_min : float</span>
+<span class="sd">                The minimum metallicity in absolute units.</span>
+<span class="sd">            - normalise : bool</span>
+<span class="sd">                Normalise the metallicity distribution to 1.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;sub_model&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">SFH_MODEL</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Sub-model not given!&quot;</span><span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_load_zavala_data</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_load_zavala_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load the data from the Zavala+21 models</span>
+<span class="sd">        Transforms the data to the format used in the classes.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;SFR/Zavala+21.txt&quot;</span><span class="p">)</span>
+        <span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">data_file</span><span class="p">,</span>
+                               <span class="n">names</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="s2">&quot;SFRD_min&quot;</span><span class="p">,</span> <span class="s2">&quot;SFRD_max&quot;</span><span class="p">],</span>
+                               <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                               <span class="n">sep</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\s+&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># The min / max values originally come from their obscured</span>
+        <span class="c1"># and unobscured SFRD model.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_model</span> <span class="o">==</span> <span class="s2">&quot;min&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s2">&quot;SFRD_min&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">sub_model</span> <span class="o">==</span> <span class="s2">&quot;max&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s2">&quot;SFRD_max&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid sub-model!&quot;</span><span class="p">)</span>
+
+    <span class="c1"># overwrite the CSFRD method of MadauBase</span>
+<div class="viewcode-block" id="Zavala21.CSFRD">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.Zavala21.CSFRD">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">CSFRD</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="n">SFR_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">redshifts</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">SFR_data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SFR_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="get_SFH_model">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.get_SFH_model">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_SFH_model</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the appropriate SFH model based on the given parameters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    SFH_MODEL : dict</span>
+<span class="sd">        SFH model parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    a SFHBase instance or subclass</span>
+<span class="sd">        The SFH model instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Madau+Fragos17&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MadauFragos17</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">MadauDickinson14</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Fujimoto+24&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Fujimoto24</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Neijssel19</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;IllustrisTNG&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">IllustrisTNG</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Chruslinska+21&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Chruslinska21</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">SFH_MODEL</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;Zavala+21&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">Zavala21</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SFR!&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SFR_per_met_at_z">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.SFR_per_met_at_z">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">SFR_per_met_at_z</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">met_bins</span><span class="p">,</span> <span class="n">SFH_MODEL</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the SFR per metallicity bin at a given redshift(s)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    z : float or array-like</span>
+<span class="sd">        Cosmological redshift.</span>
+<span class="sd">    met_bins : array</span>
+<span class="sd">        Metallicity bins edges in absolute metallicity.</span>
+<span class="sd">    SFH_MODEL : dict</span>
+<span class="sd">        SFH model parameters.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    SFH : 2D array</span>
+<span class="sd">        Star formation history per metallicity bin at the given redshift(s).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">SFH</span> <span class="o">=</span> <span class="n">get_SFH_model</span><span class="p">(</span><span class="n">SFH_MODEL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">SFH</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">met_bins</span><span class="p">)</span></div>
+
+
+<span class="c1"># TODO: No testing coverage for the following function, but should be added</span>
+<div class="viewcode-block" id="get_formation_times">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.get_formation_times">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_formation_times</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">,</span> <span class="n">star_formation</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get formation times of binaries in a population based on a SFH scenario.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    N_binaries : int</span>
+<span class="sd">        Number of formation ages to produce.</span>
+<span class="sd">    star_formation : str, {constant, burst}</span>
+<span class="sd">        Constant - random formation times from a uniform distribution.</span>
+<span class="sd">        Burst - all stars are born at the same time.</span>
+<span class="sd">    burst_time : float, 0 (years)</span>
+<span class="sd">        Sets birth time in years.</span>
+<span class="sd">    min_time : float, 0 (years)</span>
+<span class="sd">        If constant SF, sets minimum of random sampling.</span>
+<span class="sd">    max_time : float, age_of_universe (years)</span>
+<span class="sd">        If constant SF, sets maximum of random sampling.</span>
+<span class="sd">    RNG : &lt;class, np.random.Generator&gt;</span>
+<span class="sd">        Random generator instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array</span>
+<span class="sd">        The formation times array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RNG&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+
+    <span class="n">scenario</span> <span class="o">=</span> <span class="n">star_formation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">&quot;burst&quot;</span><span class="p">:</span>
+        <span class="n">burst_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_time&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">)</span> <span class="o">*</span> <span class="n">burst_time</span>
+
+    <span class="n">max_time_default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_simulation_time&quot;</span><span class="p">,</span> <span class="n">age_of_universe</span><span class="p">)</span>
+    <span class="n">max_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_time&quot;</span><span class="p">,</span> <span class="n">max_time_default</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span><span class="p">:</span>
+        <span class="n">min_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;min_time&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N_binaries</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="n">min_time</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">max_time</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;custom_linear&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_log10&quot;</span><span class="p">]:</span>
+        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_ages_file&quot;</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">custom_ages_file</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="n">rejection_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N_binaries</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;log10&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
+            <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">current_binary_ages</span>
+        <span class="k">return</span> <span class="n">max_time</span> <span class="o">-</span> <span class="n">current_binary_ages</span>
+
+    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;custom_linear_histogram&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_log10_histogram&quot;</span><span class="p">]:</span>
+        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_ages_file&quot;</span><span class="p">)</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">read_histogram_from_file</span><span class="p">(</span><span class="n">custom_ages_file</span><span class="p">)</span>
+        <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="n">histogram_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;log10&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
+            <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">current_binary_ages</span>
+        <span class="k">return</span> <span class="n">max_time</span> <span class="o">-</span> <span class="n">current_binary_ages</span>
+
+    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+        <span class="s2">&quot;Unknown star formation scenario &#39;</span><span class="si">{}</span><span class="s2">&#39; given. Valid options: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">star_formation</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SFH_SCENARIOS</span><span class="p">)</span>
+        <span class="p">)</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

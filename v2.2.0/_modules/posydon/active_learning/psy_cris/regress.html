@@ -1,0 +1,1242 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.active_learning.psy_cris.regress &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.active_learning.psy_cris.regress</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.active_learning.psy_cris.regress</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The PSY-CRIS regression module.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">collections</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sklearn.gaussian_process</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gp</span>
+
+<span class="c1"># -------- regressors --------</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearNDInterpolator</span><span class="p">,</span> <span class="n">Rbf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.qhull</span><span class="w"> </span><span class="kn">import</span> <span class="n">QhullError</span>
+
+<span class="c1"># from sklearn.gaussian_process import GaussianProcessRegressor</span>
+<span class="c1"># from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C</span>
+
+<span class="c1"># -----------------------------</span>
+
+
+<span class="n">LinearNDInterpolator_names</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;linear&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;lin&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;linearndinterpolator&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;linear nd interpolator&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+<span class="n">RBF_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span> <span class="s2">&quot;radialbasisfunction&quot;</span><span class="p">,</span> <span class="s2">&quot;radial basis function&quot;</span><span class="p">]</span>
+<span class="n">GaussianProcessRegressor_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;gp&quot;</span><span class="p">,</span> <span class="s2">&quot;gpr&quot;</span><span class="p">,</span> <span class="s2">&quot;gaussianprocessregressor&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="makehash">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.makehash">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">makehash</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manage nested dictionaries.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="n">makehash</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Regressor">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Regressor</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Perform regression/interpolation with different regression algorithms.</span>
+
+<span class="sd">    Regression algorithms are trained by class and by output column in the data</span>
+<span class="sd">    set and stored as instance variables in nested dictionaries.</span>
+
+<span class="sd">    This class inlcudes a &#39;cross validation&#39; method that trains with the</span>
+<span class="sd">    holdout method but calculates differences instead of a single accuracy.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">TableData_object</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Regressor instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        TableData_object : instance of &lt;class, TableData&gt;</span>
+<span class="sd">            An instance of the TableData class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span> <span class="o">=</span> <span class="n">TableData_object</span>
+
+        <span class="n">holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_regr_data</span><span class="p">(</span><span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># _regr_inputs_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">output_dict</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># _regr_outputs_</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span> <span class="o">=</span> <span class="n">holder</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># _regr_dfs_per_class_</span>
+
+        <span class="n">max_apc_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">apc_dfs_per_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">apc_dfs_per_class</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">non_APC_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">val</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;APC&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">non_APC_cols</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="k">continue</span>  <span class="c1"># no APC cols to work on</span>
+            <span class="n">apc_dfs_per_class</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">non_APC_cols</span><span class="p">)</span>
+            <span class="n">abs_max_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">apc_dfs_per_class</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()))</span>
+            <span class="n">max_apc_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">abs_max_val</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">max_apc_vals</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abs_max_APC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">max_apc_vals</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">abs_max_APC</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_undefined_p_change_val_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">_return_data_</span><span class="p">(</span>
+            <span class="s2">&quot;undefined_p_change_val&quot;</span>
+        <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_regressors_</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv_regressors_</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_log_history_</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cv_log_history</span> <span class="o">=</span> <span class="n">makehash</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="Regressor.train_everything">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.train_everything">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train_everything</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_names</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train all classes and columns with the specified list of regressors.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_names : list</span>
+<span class="sd">            List of strings specifying all the regressors to train.</span>
+<span class="sd">        verbose : optional, bool</span>
+<span class="sd">            Print useful information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">regr_name</span> <span class="ow">in</span> <span class="n">regressor_names</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Regressor: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regr_name</span><span class="p">))</span>
+            <span class="n">class_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+            <span class="k">for</span> <span class="n">class_name</span> <span class="ow">in</span> <span class="n">class_keys</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">regr_name</span><span class="p">,</span> <span class="p">[</span><span class="n">class_name</span><span class="p">],</span> <span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Done Regressor train_everything.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Regressor.train">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.train">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">di</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Train a regression algorithm.</span>
+
+<span class="sd">        Implemented regressors:</span>
+<span class="sd">            LinearNDInterpolator (&#39;linear&#39;, ...)</span>
+<span class="sd">            Radial Basis Function (&#39;rbf&#39;, ...)</span>
+<span class="sd">            GaussianProcessRegressor (&#39;gp&#39;, ...)</span>
+
+<span class="sd">        &gt;&gt;&gt; rg = Regressor( TableData_object )</span>
+<span class="sd">        &gt;&gt;&gt; rg.train(&#39;linear&#39;, di = np.arange(0, Ndatapoints, 5), verbose=True)</span>
+
+<span class="sd">        Trained regressor objects are uniquely defined by the algorithm used to</span>
+<span class="sd">        train, the data set used to train (grouped by class), and finally the</span>
+<span class="sd">        output column (there could be more than one). This motivates the data</span>
+<span class="sd">        structure for storing the regressor objects as follows:</span>
+<span class="sd">            Algorithm -&gt; Class -&gt; Output Column -&gt; Object</span>
+<span class="sd">        Here is more realistic example of what it could look like:</span>
+<span class="sd">          {RBF: {&quot;class_1&quot;: {&quot;output_1&quot;: {instance of scipy.interpolate.rbf}}}}</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_name : string</span>
+<span class="sd">            Name of regressor to train.</span>
+<span class="sd">        class_keys : list</span>
+<span class="sd">            List of class(es) to train on.</span>
+<span class="sd">        col_keys : list or None</span>
+<span class="sd">            For a given class, what columns to train on.</span>
+<span class="sd">            If None, it trains on all columns in one class.</span>
+<span class="sd">        di : optional, array</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            If None (default) - train on whole data set</span>
+<span class="sd">        verbose : optional, bool</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+
+<span class="sd">        Note: You can train mutliple classes at once as long as they have the</span>
+<span class="sd">        same columns specified in col_keys.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regressor_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">col_keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">first_class_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">first_class_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="n">col_keys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">first_class_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> Training on all </span><span class="si">{0}</span><span class="s2"> columns in &#39;</span><span class="si">{1}</span><span class="s2">&#39;...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="nb">len</span><span class="p">(</span><span class="n">col_keys</span><span class="p">),</span> <span class="n">class_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No regression data for </span><span class="si">{0}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="k">return</span>
+
+        <span class="k">if</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+            <span class="n">regr_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_linear_ND_interpolator</span><span class="p">(</span>
+                <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;RBF&quot;</span><span class="p">:</span>
+            <span class="n">regr_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_rbf_interpolator</span><span class="p">(</span>
+                <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;GaussianProcessRegressor&quot;</span><span class="p">:</span>
+            <span class="n">regr_holder</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_gaussian_process_regressor</span><span class="p">(</span>
+                <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="n">di</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No trainers with name </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">))</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">class_dict</span> <span class="ow">in</span> <span class="n">regr_holder</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">interpolated_obj</span> <span class="ow">in</span> <span class="n">class_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">dict loc: </span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">,&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">regressor_key</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span>
+                        <span class="p">)</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_cv_regressors_</span><span class="p">[</span><span class="n">regressor_key</span><span class="p">][</span><span class="n">class_key</span><span class="p">][</span>
+                        <span class="n">col_key</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">interpolated_obj</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_regressors_</span><span class="p">[</span><span class="n">regressor_key</span><span class="p">][</span><span class="n">class_key</span><span class="p">][</span>
+                        <span class="n">col_key</span>
+                    <span class="p">]</span> <span class="o">=</span> <span class="n">interpolated_obj</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">EXIT TRAIN</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_cleaned_regression_data_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">,</span>
+                                      <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check for NaNs and user-specified `undefined_p_change_val`.</span>
+
+<span class="sd">        Given a set of training data, the output is checked for nans and</span>
+<span class="sd">        user-specified undefined_p_change_val. All instances are removed</span>
+<span class="sd">        before training. Returns the new training input and output data:</span>
+<span class="sd">        training_x, training_y.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        training_x : ndarray</span>
+<span class="sd">            Input data to clean.</span>
+<span class="sd">        training_y : array</span>
+<span class="sd">            Ouptut data to clean.</span>
+<span class="sd">        class_key : str</span>
+<span class="sd">            Which class is being cleaned.</span>
+<span class="sd">        col_key : str</span>
+<span class="sd">            Which column is being cleaned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        training_x : ndarray</span>
+<span class="sd">            Cleaned input data free of undefined values.</span>
+<span class="sd">        training_y : array</span>
+<span class="sd">            Cleaned output data free of undefined values.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">training_y</span><span class="p">))</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">where_undef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">training_y</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">where_def</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">training_y</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">need_to_clean</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_undefined_p_change_val_</span> <span class="ow">in</span> <span class="n">training_y</span><span class="p">:</span>
+            <span class="n">where_undef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_undefined_p_change_val_</span>
+                                   <span class="o">==</span> <span class="n">training_y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">where_def</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_undefined_p_change_val_</span>
+                                 <span class="o">!=</span> <span class="n">training_y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">need_to_clean</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">need_to_clean</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">need_to_clean</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Not training on </span><span class="si">{0}</span><span class="s2"> value(s) in </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">.&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_undef</span><span class="p">),</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">))</span>
+            <span class="n">training_x</span> <span class="o">=</span> <span class="n">training_x</span><span class="p">[</span><span class="n">where_def</span><span class="p">]</span>
+            <span class="n">training_y</span> <span class="o">=</span> <span class="n">training_y</span><span class="p">[</span><span class="n">where_def</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span>
+
+<div class="viewcode-block" id="Regressor.fit_linear_ND_interpolator">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.fit_linear_ND_interpolator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_linear_ND_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span>
+                                   <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit linear ND interpolator.</span>
+
+<span class="sd">        Implementation from: scipy.interpolate.LinearNDInterpolator</span>
+<span class="sd">        (https://docs.scipy.org/doc/scipy/reference/interpolate.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_keys : list</span>
+<span class="sd">            List of classes to train on.</span>
+<span class="sd">        col_keys : list</span>
+<span class="sd">            List of columns in the class to train on.</span>
+<span class="sd">            If multiple classes are given, it is assumed they all contain</span>
+<span class="sd">            the supplied columns.</span>
+<span class="sd">        data_interval : array, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            If None (default) train on whole data set</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        regressor_holder : dict</span>
+<span class="sd">            Ordered by class specific data and then by column. Nested</span>
+<span class="sd">            dictionary maps to a trained linearNDinterpolator object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Fit LinearNDInterpolator ---&quot;</span><span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">regressor_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">class_key</span> <span class="ow">in</span> <span class="n">class_keys</span><span class="p">:</span>
+            <span class="n">this_class_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># will hold columns</span>
+
+            <span class="c1"># extract the output data associated with class_key</span>
+            <span class="n">which_class_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">col_key</span> <span class="ow">in</span> <span class="n">col_keys</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+
+                <span class="c1"># if any undefined_p_change_val in regression data, remove it</span>
+                <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cleaned_regression_data_</span><span class="p">(</span>
+                    <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%.0f</span><span class="s2"> training points&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">LinearNDInterpolator</span><span class="p">(</span><span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">)</span>
+                <span class="k">except</span> <span class="n">QhullError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">err</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping linearNDinterpolator training&quot;</span><span class="p">)</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">this_class_dict</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">regressor_holder</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_class_dict</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Done in </span><span class="si">{0:.2f}</span><span class="s2"> seconds. ---&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">regressor_holder</span></div>
+
+
+<div class="viewcode-block" id="Regressor.fit_rbf_interpolator">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.fit_rbf_interpolator">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_rbf_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit RBF interpolator - binary classification (one against all).</span>
+
+<span class="sd">        Implementation from: scipy.interpolate.Rbf</span>
+<span class="sd">        (https://docs.scipy.org/doc/scipy/reference/interpolate.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_keys :</span>
+<span class="sd">            List of classes to train on.</span>
+<span class="sd">        col_keys :</span>
+<span class="sd">            If multiple classes are given, it is assumed they all contain</span>
+<span class="sd">            the supplied columns.</span>
+<span class="sd">        data_interval : array, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None (default) train on whole data set</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        regressor_holder : dict</span>
+<span class="sd">            Ordered by class specific data and then by column. Nested</span>
+<span class="sd">            dictionary maps to a trained RBF object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Fit RBF ---&quot;</span><span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">regressor_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">class_key</span> <span class="ow">in</span> <span class="n">class_keys</span><span class="p">:</span>
+            <span class="n">this_class_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># will hold columns</span>
+
+            <span class="c1"># extract the output data associated with class_key</span>
+            <span class="n">which_class_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">col_key</span> <span class="ow">in</span> <span class="n">col_keys</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+
+                <span class="c1"># if any undefined_p_change_val in regression data, remove it</span>
+                <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cleaned_regression_data_</span><span class="p">(</span>
+                    <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">)</span>
+
+                <span class="n">argList</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                    <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">training_x</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+                <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">training_y</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%.0f</span><span class="s2"> training points&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">))</span>
+                    <span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Skipping training... not enough points for Rbf&quot;</span><span class="p">)</span>
+                    <span class="c1"># Rbf will fail for training with one point.</span>
+                    <span class="c1"># So we put None here.</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">line</span> <span class="o">=</span> <span class="n">Rbf</span><span class="p">(</span><span class="o">*</span><span class="n">argList</span><span class="p">)</span>
+
+                <span class="n">this_class_dict</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">line</span>
+            <span class="n">regressor_holder</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_class_dict</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Done in </span><span class="si">{0:.2f}</span><span class="s2"> seconds. ---&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">regressor_holder</span></div>
+
+
+<div class="viewcode-block" id="Regressor.fit_gaussian_process_regressor">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.fit_gaussian_process_regressor">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_gaussian_process_regressor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span>
+                                       <span class="n">data_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit a Gaussian Process regressor.</span>
+
+<span class="sd">        Implementation from: sklearn.gaussian_process</span>
+<span class="sd">        (https://scikit-learn.org/stable/modules/gaussian_process.html)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_keys :</span>
+<span class="sd">            List of classes to train on.</span>
+<span class="sd">        col_keys :</span>
+<span class="sd">            If multiple classes are given, it is assumed they all contain</span>
+<span class="sd">            the supplied columns.</span>
+<span class="sd">        data_interval : array, optional</span>
+<span class="sd">            Array indicies of data used to train (training on a subset).</span>
+<span class="sd">            if None (default) train on whole data set</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print statements with more information while training.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        regressor_holder : dict</span>
+<span class="sd">            Ordered by class specific data and then by column. Nested</span>
+<span class="sd">            dictionary maps to a trained GaussianProcessRegressor object.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Fit GaussianProcessRegressor ---&quot;</span><span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="n">n_restarts</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">regressor_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">class_key</span> <span class="ow">in</span> <span class="n">class_keys</span><span class="p">:</span>
+            <span class="n">this_class_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>  <span class="c1"># will hold columns</span>
+            <span class="c1"># extract the output data associated with class_key</span>
+            <span class="n">which_class_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span>
+
+            <span class="k">for</span> <span class="n">col_key</span> <span class="ow">in</span> <span class="n">col_keys</span><span class="p">:</span>
+
+                <span class="k">if</span> <span class="n">data_interval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">di</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_interval</span><span class="p">)</span>
+                    <span class="n">training_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+                    <span class="n">training_y</span> <span class="o">=</span> <span class="n">which_class_data</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">)[</span><span class="n">di</span><span class="p">]</span>
+
+                <span class="c1"># if any undefined_p_change_val in regression data, remove it</span>
+                <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_cleaned_regression_data_</span><span class="p">(</span>
+                    <span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">: </span><span class="si">%s</span><span class="s2"> - </span><span class="si">%.0f</span><span class="s2"> training points&quot;</span>
+                        <span class="o">%</span> <span class="p">(</span><span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">))</span>
+                    <span class="p">)</span>
+
+                <span class="n">num_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">training_x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">starting_loc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
+                <span class="n">axis_ranges</span> <span class="o">=</span> <span class="p">[(</span><span class="mf">1e-3</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_dim</span><span class="p">)]</span>
+                <span class="c1"># kernel = C( 1e3, (1e2, 5e4) ) * RBF(</span>
+                <span class="c1">#     [10, 500, 300.], [(1e0, 1e3), (1e0, 1e3), (1e-1, 5e3)])</span>
+                <span class="n">kernel</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">kernels</span><span class="o">.</span><span class="n">RBF</span><span class="p">(</span><span class="n">starting_loc</span><span class="p">,</span> <span class="n">axis_ranges</span><span class="p">)</span>
+                <span class="n">gpr</span> <span class="o">=</span> <span class="n">gp</span><span class="o">.</span><span class="n">GaussianProcessRegressor</span><span class="p">(</span>
+                    <span class="n">kernel</span><span class="o">=</span><span class="n">kernel</span><span class="p">,</span> <span class="n">n_restarts_optimizer</span><span class="o">=</span><span class="n">n_restarts</span>
+                <span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span>
+                        <span class="s2">&quot; PRE-fit params:</span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">gpr</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">get_params</span><span class="p">())</span>
+                    <span class="p">)</span>  <span class="c1"># helpful for kernel things</span>
+                <span class="n">gpr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">training_x</span><span class="p">,</span> <span class="n">training_y</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;POST-fit params:</span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span>
+                          <span class="nb">format</span><span class="p">(</span><span class="n">gpr</span><span class="o">.</span><span class="n">kernel_</span><span class="o">.</span><span class="n">get_params</span><span class="p">()))</span>
+
+                <span class="n">this_class_dict</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">gpr</span>
+            <span class="n">regressor_holder</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_class_dict</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;--- Done in </span><span class="si">{0:.2f}</span><span class="s2"> seconds. ---&quot;</span><span class="o">.</span>
+                  <span class="nb">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">regressor_holder</span></div>
+
+
+<div class="viewcode-block" id="Regressor.get_predictions">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.get_predictions">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_predictions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_names</span><span class="p">,</span> <span class="n">class_keys</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span>
+                        <span class="n">test_input</span><span class="p">,</span> <span class="n">return_std</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get predictions from trained regressors for a set of inputs.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_names : list</span>
+<span class="sd">            List of regressor algorithm names to use to predict.</span>
+<span class="sd">        class_keys : list</span>
+<span class="sd">            List of classes to get predictions for.</span>
+<span class="sd">        col_keys : list</span>
+<span class="sd">            List of columns to get predictions for.</span>
+<span class="sd">        test_input : ndarray</span>
+<span class="sd">            Array of input points for which predictions will be found.</span>
+<span class="sd">        return_std : optional, bool</span>
+<span class="sd">            Return the STD is when using GaussianProcessRegressor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        predictions : dict</span>
+<span class="sd">            Dictionary ordered by algorithm, class, and output column mapping</span>
+<span class="sd">            to an array of predictions for the test input points.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">regr_name</span> <span class="ow">in</span> <span class="n">regressor_names</span><span class="p">:</span>
+            <span class="n">regr_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regr_name</span><span class="p">)</span>
+            <span class="n">this_class_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">class_key</span> <span class="ow">in</span> <span class="n">class_keys</span><span class="p">:</span>
+                <span class="n">these_cols_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+
+                <span class="k">for</span> <span class="n">col_key</span> <span class="ow">in</span> <span class="n">col_keys</span><span class="p">:</span>
+                    <span class="c1"># will return None for failed Rbf, otherwise ndarray</span>
+                    <span class="n">pred_vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">regr_key</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span>
+                                              <span class="n">col_key</span><span class="p">,</span> <span class="n">test_input</span><span class="p">,</span>
+                                              <span class="n">return_std</span><span class="o">=</span><span class="n">return_std</span><span class="p">)</span>
+                    <span class="n">these_cols_dict</span><span class="p">[</span><span class="n">col_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_vals</span>
+
+                <span class="n">this_class_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">these_cols_dict</span>
+            <span class="n">predictions</span><span class="p">[</span><span class="n">regr_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">this_class_dict</span>
+
+        <span class="k">return</span> <span class="n">predictions</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">test_input</span><span class="p">,</span>
+                 <span class="n">return_std</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the trained regressor at test_input and return predictions.</span>
+
+<span class="sd">        If using GaussianProcessRegressor, the std is optionally returned.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">test_input</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">test_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">test_input</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">test_input</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">test_input</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1"># given bad data</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">sigma</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># default</span>
+
+        <span class="c1"># if empty</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_regressors_</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">bool</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_cv_regressors_</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">No trained interpolators exist.&quot;</span><span class="p">)</span>
+
+        <span class="n">regressor_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span><span class="p">:</span>
+            <span class="n">interpolators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cv_regressors_</span><span class="p">[</span><span class="n">regressor_key</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">interpolators</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regressors_</span><span class="p">[</span><span class="n">regressor_key</span><span class="p">]</span>
+
+        <span class="n">interp</span> <span class="o">=</span> <span class="n">interpolators</span><span class="p">[</span><span class="n">class_key</span><span class="p">][</span><span class="n">col_key</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;RBF&quot;</span><span class="p">:</span>
+            <span class="c1"># When Rbf training fails for small classes, interpolator is None</span>
+            <span class="k">if</span> <span class="n">interp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+
+            <span class="n">argList</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">test_input</span><span class="p">[</span><span class="mi">0</span><span class="p">])):</span>
+                <span class="n">argList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">test_input</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">col</span><span class="p">])</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="o">*</span><span class="n">argList</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;GaussianProcessRegressor&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_std</span><span class="p">:</span>
+                <span class="n">pred</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_input</span><span class="p">,</span> <span class="n">return_std</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pred</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+            <span class="n">pred</span> <span class="o">=</span> <span class="n">interp</span><span class="p">(</span><span class="n">test_input</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Name not recognized: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">return_std</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Regressor.get_regressor_name_to_key">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.get_regressor_name_to_key">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_regressor_name_to_key</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the standard key (str) of a classifier.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">LinearNDInterpolator_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">RBF_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;RBF&quot;</span>
+        <span class="k">elif</span> <span class="n">name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">in</span> <span class="n">GaussianProcessRegressor_names</span><span class="p">:</span>
+            <span class="n">key</span> <span class="o">=</span> <span class="s2">&quot;GaussianProcessRegressor&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No regressor with name &#39;</span><span class="si">%s</span><span class="s2">&#39;.&quot;</span> <span class="o">%</span> <span class="n">name</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">key</span></div>
+
+
+<div class="viewcode-block" id="Regressor.show_structure">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.show_structure">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_structure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show (print) the structure of the regression data.&quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">outer_key</span><span class="p">,</span> <span class="n">outer_val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CLASS: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">outer_key</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">outer_val</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">COLS:&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">mid_key</span><span class="p">,</span> <span class="n">mid_val</span> <span class="ow">in</span> <span class="n">outer_val</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">mid_key</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="Regressor.get_cross_val_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.get_cross_val_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_cross_val_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Randomly sample the data set and seperate training and test data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_key : str, class_dtype(int or other)</span>
+<span class="sd">            Class key specifying the class to get data from.</span>
+<span class="sd">        col_key : str</span>
+<span class="sd">            Column key specifying the output column to get data.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Fraction of data set to use for training. (0.05 = 5% of data set)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cross_val_test_input_data : ndarray</span>
+<span class="sd">            Input data used to test after training on a subset.</span>
+<span class="sd">        cross_val_test_output_data : ndarray</span>
+<span class="sd">            Output data used to test after training on a subset.</span>
+<span class="sd">        sorted_rnd_int_vals : array</span>
+<span class="sd">            Indicies of original data that were used as training points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">])</span> <span class="o">*</span> <span class="n">alpha</span><span class="p">)</span>
+        <span class="n">rnd_input_train</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rnd_outout_train</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rnd_int_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rnd_int_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="c1"># print(&quot;Num points&quot;, num_points)</span>
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">or</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Alpha must be in the range (0,1].&quot;</span><span class="p">)</span>
+
+        <span class="n">ct</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">rnd_int_vals</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">num_points</span> <span class="ow">and</span> <span class="n">ct</span> <span class="o">&lt;</span> <span class="mf">1e7</span><span class="p">:</span>
+            <span class="n">rnd_int</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]))</span>
+
+            <span class="k">if</span> <span class="n">rnd_int</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">rnd_int_set</span><span class="p">:</span>
+                <span class="n">rnd_int_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rnd_int</span><span class="p">)</span>
+                <span class="n">rnd_int_set</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">rnd_int</span><span class="p">)</span>
+            <span class="n">ct</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="n">train_rnd_int_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">rnd_int_vals</span><span class="p">))</span>
+
+        <span class="c1"># Random training data</span>
+        <span class="c1"># cross_val_train_input_data = (self.input_dict[class_key].</span>
+        <span class="c1">#                               to_numpy(float))[train_rnd_int_vals, :]</span>
+        <span class="c1"># cross_val_train_class_data = (</span>
+        <span class="c1">#     self.regr_dfs_per_class[class_key][col_key].to_numpy(float)</span>
+        <span class="c1"># )[train_rnd_int_vals]</span>
+
+        <span class="n">test_int_vals</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">])):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">train_rnd_int_vals</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">test_int_vals</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="c1"># The remainder which will be used to test fits</span>
+        <span class="n">cross_val_test_input_data</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span>
+                                     <span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">))[</span><span class="n">test_int_vals</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">cross_val_test_output_data</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_key</span><span class="p">][</span><span class="n">col_key</span><span class="p">]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">(</span><span class="nb">float</span><span class="p">))[</span>
+                <span class="n">test_int_vals</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">cross_val_test_input_data</span><span class="p">,</span>
+                <span class="n">cross_val_test_output_data</span><span class="p">,</span>
+                <span class="n">train_rnd_int_vals</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Regressor.cross_validate">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.cross_validate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cross_validate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span>
+                       <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Our method of cross validation for regression.</span>
+
+<span class="sd">        Train on a subset of the data and predict values for the rest.</span>
+<span class="sd">        Then calculate the difference between the true and predicted value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_name :</span>
+<span class="sd">            Regressor name to use for analysis.</span>
+<span class="sd">        class_key :</span>
+<span class="sd">            Class key to take differences.</span>
+<span class="sd">        col_key :</span>
+<span class="sd">            Column key to take differences.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Fraction of data set used to find differences.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print useful information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        percent_diffs : array</span>
+<span class="sd">            Percent difference.</span>
+<span class="sd">        diffs : array</span>
+<span class="sd">            Absolute difference.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="p">(</span>
+            <span class="n">cross_val_test_input</span><span class="p">,</span>
+            <span class="n">cross_val_test_output</span><span class="p">,</span>
+            <span class="n">train_data_indicies</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_cross_val_data</span><span class="p">(</span><span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;alpha: </span><span class="si">%f</span><span class="s2">, num_training_points </span><span class="si">%.0f</span><span class="s2">&quot;</span>
+                <span class="o">%</span> <span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">train_data_indicies</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="n">regressor_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
+
+        <span class="c1"># Train classifier</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+                <span class="c1"># if linear - train rbf to use if linear predicts nan</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+                    <span class="n">regressor_key</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">class_key</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">col_key</span><span class="p">],</span>
+                    <span class="n">di</span><span class="o">=</span><span class="n">train_data_indicies</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+                    <span class="s2">&quot;RBF&quot;</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">class_key</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">col_key</span><span class="p">],</span>
+                    <span class="n">di</span><span class="o">=</span><span class="n">train_data_indicies</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">train</span><span class="p">(</span>
+                    <span class="n">regressor_key</span><span class="p">,</span>
+                    <span class="p">[</span><span class="n">class_key</span><span class="p">],</span>
+                    <span class="p">[</span><span class="n">col_key</span><span class="p">],</span>
+                    <span class="n">di</span><span class="o">=</span><span class="n">train_data_indicies</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="n">time_to_train</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+
+            <span class="c1"># Make Predictions</span>
+            <span class="k">if</span> <span class="n">regressor_key</span> <span class="o">==</span> <span class="s2">&quot;LinearNDInterpolator&quot;</span><span class="p">:</span>
+                <span class="n">predicted_values_linear</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span>
+                    <span class="n">regressor_key</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">cross_val_test_input</span>
+                <span class="p">)</span>
+                <span class="n">predicted_values_rbf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span>
+                    <span class="s2">&quot;RBF&quot;</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">cross_val_test_input</span>
+                <span class="p">)</span>
+                <span class="n">where_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">predicted_values_linear</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">: </span><span class="si">{1}</span><span class="s2"> nan points out of </span><span class="si">{2}</span><span class="s2">. Used rbf instead.&quot;</span><span class="o">.</span>
+                          <span class="nb">format</span><span class="p">(</span><span class="n">regressor_key</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">),</span>
+                                 <span class="nb">len</span><span class="p">(</span><span class="n">predicted_values_linear</span><span class="p">)))</span>
+                    <span class="n">predicted_values_linear</span><span class="p">[</span><span class="n">where_nan</span><span class="p">]</span> <span class="o">=</span> <span class="n">predicted_values_rbf</span><span class="p">[</span>
+                        <span class="n">where_nan</span><span class="p">]</span>
+                <span class="n">predicted_values</span> <span class="o">=</span> <span class="n">predicted_values_linear</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">predicted_values</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">regressor_key</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span>
+                                                 <span class="n">col_key</span><span class="p">,</span> <span class="n">cross_val_test_input</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;FAILED DURING CROSS VAL PREDICT&quot;</span><span class="p">)</span>
+            <span class="k">raise</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__train_cross_val</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="c1"># Calculate the difference</span>
+        <span class="n">diffs</span> <span class="o">=</span> <span class="n">predicted_values</span> <span class="o">-</span> <span class="n">cross_val_test_output</span>
+
+        <span class="n">where_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cross_val_test_output</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 1d array</span>
+        <span class="n">where_not_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">cross_val_test_output</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># 1d array</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">percent_diffs</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">diffs</span><span class="p">[</span><span class="n">where_not_zero</span><span class="p">]</span> <span class="o">/</span> <span class="n">cross_val_test_output</span><span class="p">[</span><span class="n">where_not_zero</span><span class="p">]</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> output(s) with value zero. Omitting for percent change &quot;</span>
+                  <span class="s2">&quot;calculation.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">)))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">percent_diffs</span> <span class="o">=</span> <span class="p">(</span><span class="n">diffs</span> <span class="o">/</span> <span class="n">cross_val_test_output</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span>
+
+        <span class="k">return</span> <span class="n">percent_diffs</span><span class="p">,</span> <span class="n">diffs</span></div>
+
+
+<div class="viewcode-block" id="Regressor.get_max_APC_val">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.get_max_APC_val">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_max_APC_val</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the maximum interpolated average percent change for a class.</span>
+
+<span class="sd">        For a given class, and regression method. Return the maximum</span>
+<span class="sd">        interpolated average percent change value across all APC columns in</span>
+<span class="sd">        the class sorted data set. Helper method for constructing target</span>
+<span class="sd">        distributions for the Sampler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_name : str</span>
+<span class="sd">            Name of regression algorithm to use.</span>
+<span class="sd">        class_key : str</span>
+<span class="sd">            Class key to use for data.</span>
+<span class="sd">        args : array</span>
+<span class="sd">            Locations for the APC value to be predicted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        max_APC : float</span>
+<span class="sd">            Maximum average percent change (APC) value.</span>
+<span class="sd">        which_col_max : int</span>
+<span class="sd">            Index of which column had the maximum APC.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">regr_column_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        <span class="n">good_col_keys</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">regr_column_names</span> <span class="k">if</span> <span class="s2">&quot;APC&quot;</span> <span class="ow">in</span> <span class="n">i</span>
+        <span class="p">]</span>  <span class="c1"># columns with average percent change data</span>
+
+        <span class="c1"># No APC for this class</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">good_col_keys</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="n">regr_key</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
+        <span class="n">predictions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">([</span><span class="n">regr_key</span><span class="p">],</span> <span class="p">[</span><span class="n">class_key</span><span class="p">],</span>
+                                           <span class="n">good_col_keys</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+        <span class="n">dict_with_APC_data</span> <span class="o">=</span> <span class="n">predictions</span><span class="p">[</span><span class="n">regr_key</span><span class="p">][</span><span class="n">class_key</span><span class="p">]</span>
+        <span class="n">max_APC_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">dict_with_APC_data</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
+        <span class="n">max_APC</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">max_APC_vals</span><span class="p">)</span>
+        <span class="n">which_col_max</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span>
+            <span class="n">dict_with_APC_data</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">max_APC_vals</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">max_APC</span><span class="p">,</span> <span class="n">which_col_max</span></div>
+
+
+<div class="viewcode-block" id="Regressor.mult_diffs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.mult_diffs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mult_diffs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">cutoff</span><span class="p">,</span>
+                   <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;For multiple calls to cross_validate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        regressor_name : str</span>
+<span class="sd">            Name of regression algorithm to use.</span>
+<span class="sd">        class_key : str, class_dtype(int or other)</span>
+<span class="sd">            Name of class data to use.</span>
+<span class="sd">        col_keys : str</span>
+<span class="sd">            Column keys to cross validate on.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Fraction of data set to cross validate on.</span>
+<span class="sd">        cutoff : float</span>
+<span class="sd">            Sets the cutoff percentage at which to calculate</span>
+<span class="sd">            the fraction of the data set above or below.</span>
+<span class="sd">        vebose : bool, optional</span>
+<span class="sd">            Print useful diagnostic information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        p_diffs_holder : ndarray</span>
+<span class="sd">            Percent differencs per column.</span>
+<span class="sd">        attr_holder : ndarray</span>
+<span class="sd">            Contains the number of points outside the cutoff, mean,</span>
+<span class="sd">            and standard deviation of the percent difference calculations.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># col_keys = self.regr_dfs_per_class[class_key].keys()</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MULT DIFFS:&quot;</span><span class="p">,</span> <span class="n">regressor_name</span><span class="p">,</span> <span class="n">col_keys</span><span class="p">)</span>
+
+        <span class="n">p_diffs_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">col_key</span> <span class="ow">in</span> <span class="n">col_keys</span><span class="p">:</span>
+            <span class="n">p_diffs</span><span class="p">,</span> <span class="n">diffs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cross_validate</span><span class="p">(</span>
+                <span class="n">regressor_name</span><span class="p">,</span> <span class="n">class_key</span><span class="p">,</span> <span class="n">col_key</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span>
+            <span class="p">)</span>
+            <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">p_diffs</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">p_diffs_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">p_diffs</span><span class="p">[</span><span class="n">where_not_nan</span><span class="p">])</span>
+
+        <span class="n">attr_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p_diff</span> <span class="ow">in</span> <span class="n">p_diffs_holder</span><span class="p">:</span>
+            <span class="n">holder</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="n">outside_cutoff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">p_diff</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">cutoff</span> <span class="o">*</span> <span class="mi">100</span>
+            <span class="n">num_outside</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">outside_cutoff</span><span class="p">)</span>
+
+            <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">num_outside</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">p_diff</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>  <span class="c1"># percent outside</span>
+            <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">p_diff</span><span class="p">))</span>  <span class="c1"># mean</span>
+            <span class="n">holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">p_diff</span><span class="p">))</span>  <span class="c1"># standard deviation</span>
+
+            <span class="n">attr_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p_diffs_holder</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">attr_holder</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Regressor.plot_regr_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.plot_regr_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">plot_regr_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot all regression data from the chosen class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_name : str</span>
+<span class="sd">            Specify what class data will plotted.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        matplotlib figure</span>
+<span class="sd">            Plots with all regression data for a given class.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data_out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span>
+        <span class="n">data_in</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_out</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Output for class &#39;</span><span class="si">{0}</span><span class="s2">&#39;: </span><span class="si">{1}</span><span class="s2"> </span><span class="se">\n</span><span class="s2">No valid data to plot.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">class_name</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">data_out</span><span class="p">)</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">key_in</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+        <span class="n">key_out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_out</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+        <span class="c1"># note they are still data frames until this point</span>
+        <span class="n">num_x_axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_in</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="n">num_y_axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data_out</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+        <span class="c1"># inches per subplot - these ratios can be changed</span>
+        <span class="n">fig_x_ratio</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="n">fig_y_ratio</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">/</span> <span class="mi">3</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="n">num_y_axis</span><span class="p">,</span>
+            <span class="n">ncols</span><span class="o">=</span><span class="n">num_x_axis</span><span class="p">,</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="n">fig_x_ratio</span> <span class="o">*</span> <span class="n">num_x_axis</span><span class="p">,</span> <span class="n">fig_y_ratio</span> <span class="o">*</span> <span class="n">num_y_axis</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># so that the indexing below works</span>
+        <span class="k">if</span> <span class="n">num_y_axis</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">subs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">subs</span><span class="p">])</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Plotting all regression data from class &#39;</span><span class="si">{0}</span><span class="s2">&#39;. &quot;</span>
+              <span class="s2">&quot;This could take some time...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">class_name</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_x_axis</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_y_axis</span><span class="p">):</span>
+                <span class="n">data_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_in</span><span class="p">[</span><span class="n">key_in</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+                <span class="n">data_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data_out</span><span class="p">[</span><span class="n">key_out</span><span class="p">[</span><span class="n">k</span><span class="p">]])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+
+                <span class="n">subs</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">data_x</span><span class="p">,</span> <span class="n">data_y</span><span class="p">,</span> <span class="s2">&quot;.&quot;</span><span class="p">)</span>
+                <span class="n">subs</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">key_in</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="n">subs</span><span class="p">[</span><span class="n">k</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">key_out</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+
+<div class="viewcode-block" id="Regressor.get_rnd_test_inputs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.regress.Regressor.get_rnd_test_inputs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_rnd_test_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">class_name</span><span class="p">,</span> <span class="n">N</span><span class="p">,</span> <span class="n">other_rng</span><span class="o">=</span><span class="p">{},</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Produce randomly sampled &#39;test&#39; inputs inside domain of input_data.</span>
+
+<span class="sd">        Input data is seperated by class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        class_name : str</span>
+<span class="sd">            Class name to specify which input data you want to look at.</span>
+<span class="sd">        N : int</span>
+<span class="sd">            Number of test inputs to return.</span>
+<span class="sd">        other_rng: dict, optional</span>
+<span class="sd">            Change the range of random sampling in desired axis. By default,</span>
+<span class="sd">            the sampling is done in the range of the training data.</span>
+<span class="sd">            The axis is specified with an integer key and the value</span>
+<span class="sd">            is a list specifying the range. {1:[min, max]}</span>
+<span class="sd">        verbose: bool, optional</span>
+<span class="sd">            Print diagnostic information. (default False)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rnd_test_points : ndarray</span>
+<span class="sd">            Test points randomly sampled in the range of the training data</span>
+<span class="sd">            in each axis unless otherwise specified in &#39;other_rng&#39;.</span>
+<span class="sd">            Has the same shape as input data from TableData.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="c1"># find max and min in each axis</span>
+        <span class="n">a_max</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">a_min</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_axis</span><span class="p">):</span>
+            <span class="n">a_max</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+            <span class="n">a_min</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_dict</span><span class="p">[</span><span class="n">class_name</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">i</span><span class="p">]))</span>
+        <span class="c1"># sample N points between max &amp; min in each axis</span>
+        <span class="n">axis_rnd_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_axis</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">other_rng</span><span class="p">:</span>
+                <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span> <span class="o">=</span> <span class="n">other_rng</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span> <span class="o">=</span> <span class="n">a_min</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">a_max</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> - min: </span><span class="si">{1}</span><span class="s2">, max: </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">b_min</span><span class="p">,</span> <span class="n">b_max</span><span class="p">))</span>
+
+            <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="n">b_min</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">b_max</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">N</span><span class="p">)</span>
+
+            <span class="c1"># this reshape is necessary to concatenate</span>
+            <span class="n">axis_rnd_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+
+        <span class="c1"># now put the random points back together with same shape as input_data</span>
+        <span class="n">rnd_test_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">axis_rnd_points</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rnd_test_points</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

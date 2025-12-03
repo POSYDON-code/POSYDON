@@ -1,0 +1,1286 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.active_learning.psy_cris.sample &mdash; posydon 2.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=b21de401"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.active_learning.psy_cris.sample</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.active_learning.psy_cris.sample</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;The definition of the `Sampler` class in PSY-CRIS.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">OrderedDict</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">scipy.stats</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.spatial.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">pdist</span>
+
+
+<div class="viewcode-block" id="Sampler">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Sampler</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class implementing PTMCMC and MCMC for PSY-CRIS algorith.</span>
+
+<span class="sd">    Modular implementation of PTMCMC and MCMC designed to</span>
+<span class="sd">    implement the PSY-CRIS algorithm of sampling points</span>
+<span class="sd">    in a target distribution constructed with a Classifier</span>
+<span class="sd">    and Regressor. After a posterior is generated, methods</span>
+<span class="sd">    in this class are also used to downsample.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">regressor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the sampler.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier : instance of &lt;class, Classifier&gt;</span>
+<span class="sd">            A trained classifier object.</span>
+<span class="sd">        regressor : instance of &lt;class, Regressor&gt;, optional</span>
+<span class="sd">            A trained regressor object.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span> <span class="o">=</span> <span class="n">classifier</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span> <span class="o">=</span> <span class="n">regressor</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">_TableData_</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span><span class="o">.</span><span class="n">_TableData_</span>
+            <span class="c1"># Find the bounds of the walker - should be a TableData attribute</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">_max_input_vals</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">_min_input_vals</span>
+
+        <span class="c1"># You can save chains_history in here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chain_step_hist_holder_</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="c1"># Not fully implemented yet I&#39;m pretty sure....</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_MAX_APC_str_</span> <span class="o">=</span> <span class="p">[]</span>
+
+<div class="viewcode-block" id="Sampler.TD_2d_analytic">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.TD_2d_analytic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">TD_2d_analytic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;2-dimensional analytic target distribution for testing MCMC/PTMCMC.</span>
+
+<span class="sd">        The function:</span>
+<span class="sd">        $\frac{16}{3\pi} \left( \exp\left[-\mu^2 - (9 + 4\mu^2 + 8\nu)^2\right]</span>
+<span class="sd">        + \frac{1}{2} \exp\left[- 8 \mu^2 - 8 (\nu-2)^2\right] \right)$</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        name : str</span>
+<span class="sd">            Name of algorithm to use. For this method None.</span>
+<span class="sd">        args : array</span>
+<span class="sd">            2D location to get the value of the function.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Kwargs for more complex target distributions.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array or float</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">nu</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">arg1</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">mu</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="mi">9</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">nu</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="n">arg2</span> <span class="o">=</span> <span class="o">-</span><span class="mi">8</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="mi">8</span> <span class="o">*</span> <span class="p">(</span><span class="n">nu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">16</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">arg1</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">arg2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Sampler.get_TD_classification_data">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.get_TD_classification_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_TD_classification_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get target-distribution classification data.</span>
+
+<span class="sd">        Calculate terms relevant for creating target distributions</span>
+<span class="sd">        with classification terms.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Trained classifier name to use for predictions.</span>
+<span class="sd">        position : array</span>
+<span class="sd">            Position in parameter space to eval</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            TD_verbose : bool</span>
+<span class="sd">                Print useful output</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        max_probs : array</span>
+<span class="sd">            Maximum probabilities at each query point</span>
+<span class="sd">        position : array</span>
+<span class="sd">            Position in parameter space being queried</span>
+<span class="sd">        cls_key : array</span>
+<span class="sd">            Classification key predicted for each query position</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">classifier_name</span><span class="p">,</span> <span class="n">position</span> <span class="o">=</span> <span class="n">args</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">position</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">position</span> <span class="o">=</span> <span class="n">position</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">TD_verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">normalized_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">return_probs</span><span class="p">(</span>
+            <span class="n">classifier_name</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">TD_verbose</span>
+        <span class="p">)</span>
+        <span class="n">where_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">position</span><span class="p">))</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">where_not_nan</span><span class="p">]</span>
+        <span class="p">)</span>
+        <span class="n">max_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">normalized_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cls_key</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">normalized_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">position</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">max_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">position</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="mf">1e-16</span>
+            <span class="n">cls_key</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">position</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">TD_verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">cls_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">cls_key</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">max_probs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mf">1e-16</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">TD_verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\t</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">cls_key</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">cls_key</span></div>
+
+
+<div class="viewcode-block" id="Sampler.TD_classification">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.TD_classification">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">TD_classification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Target distribution using classification.</span>
+
+<span class="sd">        $f(x) = 1 - max[P_{\rm class}(x)]$</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            String to specify the trained classification algorithm to use.</span>
+<span class="sd">        position : array</span>
+<span class="sd">            Single location in parameter space for the target distribution to</span>
+<span class="sd">            be evaluated at.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            TD_BETA : float</span>
+<span class="sd">                Exponent of target distribution - $f(x)^{\rm TD_BETA}$</span>
+<span class="sd">                Used for smoothing or sharpening.</span>
+<span class="sd">            TD_verbose : bool</span>
+<span class="sd">                Extra print output every method call.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        array</span>
+<span class="sd">            If classification probability is Nan: f(x) = 1E-16</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># TD_verbose = kwargs.get(&quot;TD_verbose&quot;, False)</span>
+        <span class="n">TD_BETA</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_BETA&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+        <span class="n">max_probs</span><span class="p">,</span> <span class="n">pos</span><span class="p">,</span> <span class="n">cls_keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_TD_classification_data</span><span class="p">(</span>
+            <span class="n">classifier_name</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="p">)</span>
+
+        <span class="n">theoretical_max_TD_cls_term</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">num_classes</span>
+        <span class="k">return</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">max_probs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">theoretical_max_TD_cls_term</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">TD_BETA</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Sampler.TD_classification_regression">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.TD_classification_regression">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">TD_classification_regression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Target distribution using both classification &amp; regression.</span>
+
+<span class="sd">        Classification: $1 - max[P_{\rm class}(x)]$</span>
+<span class="sd">        Regression: $ A_0 \log( A_1* abs( max[APC_n [loc]]) + 1 )$</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        names : list like</span>
+<span class="sd">            Iterable containing the two strings specifying the classification</span>
+<span class="sd">            and regression algorithm to use.</span>
+<span class="sd">        args : array</span>
+<span class="sd">            Position in parameter space to evaluate the target distribution at.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            TD_A1 : float, optional</span>
+<span class="sd">                Scaling factor inside the Log regression error term.</span>
+<span class="sd">                (Default = 0.5)</span>
+<span class="sd">            TD_TAU : float, optional</span>
+<span class="sd">                Relative weight of classification to regression term.</span>
+<span class="sd">                (Default = 0.5)</span>
+<span class="sd">            TD_BETA : float, optional</span>
+<span class="sd">                Exponent of the entire target distribution. Used</span>
+<span class="sd">                for smoothing or sharpening the distribution. Default is 1.</span>
+<span class="sd">            TD_verbose : bool, optional</span>
+<span class="sd">                Print more diagnostic information.</span>
+
+<span class="sd">        Rreturns</span>
+<span class="sd">        --------</span>
+<span class="sd">        array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normalized_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">return_probs</span><span class="p">(</span>
+            <span class="n">names</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="n">max_probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">normalized_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pred_class_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">normalized_probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cls_key</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">class_id_mapping</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                   <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">pred_class_ids</span><span class="p">]</span>
+
+        <span class="n">theoretical_max_TD_cls_term</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mi">1</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">num_classes</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">max_probs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">max_probs</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="mf">1e-16</span>
+        <span class="n">classification_term</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">max_probs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">theoretical_max_TD_cls_term</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_not_nan</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">normalized_probs</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mf">1e-16</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span><span class="o">.</span><span class="n">regr_dfs_per_class</span><span class="p">[</span><span class="n">cls_key</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span>
+            <span class="p">):</span>
+                <span class="n">max_APC</span><span class="p">,</span> <span class="n">which_col_max</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span><span class="o">.</span><span class="n">get_max_APC_val</span><span class="p">(</span>
+                    <span class="n">names</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">cls_key</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">args</span>
+                <span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_MAX_APC_str_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">which_col_max</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span><span class="o">.</span><span class="n">abs_max_APC</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No max APC value found in TableData...&quot;</span><span class="p">)</span>
+
+                <span class="n">A1</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_A1&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+                <span class="n">scaling_log_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">A1</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">A1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="n">A0</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">scaling_log_func</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Regressor_</span><span class="o">.</span><span class="n">abs_max_APC</span><span class="p">)</span>
+                <span class="n">regression_term</span> <span class="o">=</span> <span class="n">A0</span> <span class="o">*</span> <span class="n">scaling_log_func</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span> <span class="n">max_APC</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">regression_term</span> <span class="o">=</span> <span class="mf">1e-16</span>
+
+        <span class="n">TD_TAU</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_TAU&quot;</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">TD_BETA</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_BETA&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;TD_verbose&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TD_TAU: </span><span class="si">{0}</span><span class="s2"> | TD_BETA: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">TD_TAU</span><span class="p">,</span> <span class="n">TD_BETA</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">TD_TAU</span> <span class="o">*</span> <span class="n">classification_term</span>
+                <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">TD_TAU</span><span class="p">)</span> <span class="o">*</span> <span class="n">regression_term</span><span class="p">)</span> <span class="o">**</span> <span class="n">TD_BETA</span></div>
+
+
+<div class="viewcode-block" id="Sampler.save_chain_step_history">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.save_chain_step_history">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_chain_step_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">chain_step_history</span><span class="p">,</span>
+                                <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Save PTMCMC output chain_step_history inside the sampler object.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_step_hist_holder_</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="ow">or</span> <span class="n">overwrite</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
+                <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">You are about to overwrite an existing element in &#39;</span><span class="si">{0}</span><span class="s2">&#39;</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Use the option &#39;overwrite=True&#39; to reassign.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chain_step_hist_holder_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">chain_step_history</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Saved chain to &#39;</span><span class="si">{0}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="Sampler.get_saved_chain_step_history">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.get_saved_chain_step_history">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_saved_chain_step_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">return_all</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the saved chain step history.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">return_all</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_step_hist_holder_</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chain_step_hist_holder_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="Sampler.run_PTMCMC">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.run_PTMCMC">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_PTMCMC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">T_max</span><span class="p">,</span> <span class="n">N_tot</span><span class="p">,</span> <span class="n">target_dist</span><span class="p">,</span> <span class="n">classifier_name</span><span class="p">,</span>
+                   <span class="n">init_pos</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">N_draws_per_swap</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">c_spacing</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+                   <span class="n">alpha</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper_limit_reject</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                   <span class="n">trace_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a Paralel Tempered MCMC with user-specified target distribution.</span>
+
+<span class="sd">        Calls the method `run_MCMC`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        T_max : float</span>
+<span class="sd">            Sets the maximum temperature MCMC in the chain.</span>
+<span class="sd">        N_tot : int</span>
+<span class="sd">            The total number of iterations for the PTMCMC.</span>
+<span class="sd">        target_dist : callable</span>
+<span class="sd">            The target distribution to sample.</span>
+<span class="sd">            Must take arguments (method_name, location_to_eval)</span>
+<span class="sd">            (A 2D analytic function is provided - analytic_target_dist)</span>
+<span class="sd">        classifier_name : str, list</span>
+<span class="sd">            A single string or list of strings specifying the interpolator to</span>
+<span class="sd">            use for classification or classification &amp; regression respectively.</span>
+<span class="sd">        init_pos : array</span>
+<span class="sd">            Initial position of walkers in each axis. Default is the median of</span>
+<span class="sd">            the input data in TableData.</span>
+<span class="sd">        N_draws_per_swap : int, optional</span>
+<span class="sd">            Number of draws to perform for each MCMC before swap proposals.</span>
+<span class="sd">        c_spacing : float, optional</span>
+<span class="sd">            Sets the spacing of temperatures in each chain.</span>
+<span class="sd">            T_{i+1} = T_{i}^{1/c}, range: [T_max , T=1]</span>
+<span class="sd">        alpha : float, optional</span>
+<span class="sd">            Sets the standard deviation of steps taken by the walkers. Default</span>
+<span class="sd">            is 1/5 the range of training data from TableData.</span>
+<span class="sd">        upper_limit_reject : float, optional</span>
+<span class="sd">            Sets the upper limit of rejected points.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Useful print statements during execution.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        chain_step_history : dict</span>
+<span class="sd">            Hold the step history for every chain. Keys are integers that range</span>
+<span class="sd">            from 0 (max T) to the total number of chains -1 (min T).</span>
+<span class="sd">        T_list : array</span>
+<span class="sd">            Array filled with the temperatures of each chain from max to min.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        There is a zero prior on the PTMCMC outside the range of training data.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># create list of Temperatures: T_{i+1}=T_{i}^{1/c}, range: [T_max, T=1]</span>
+        <span class="n">T_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">T_max</span><span class="p">]</span>
+        <span class="k">while</span> <span class="n">T_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mf">1.3</span><span class="p">:</span>
+            <span class="n">T_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">T_list</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">c_spacing</span><span class="p">))</span>
+        <span class="n">T_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">T_list</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span>
+
+        <span class="n">num_chains</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Num chains: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Temperatures: </span><span class="si">{1}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_chains</span><span class="p">,</span>
+                                                                <span class="n">T_list</span><span class="p">))</span>
+
+        <span class="c1"># data storage</span>
+        <span class="n">chain_holder</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T_list</span><span class="p">)):</span>
+            <span class="n">chain_holder</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">N_loops</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_tot</span> <span class="o">/</span> <span class="n">N_draws_per_swap</span><span class="p">)</span>
+
+        <span class="c1"># Initial conditions for all links in chain</span>
+        <span class="c1"># ADD: init_pos can be a unitless position in the range of the axes of</span>
+        <span class="c1"># the data. This change should also be applied to alpha - user just</span>
+        <span class="c1"># gives num(0, 1]</span>
+        <span class="k">if</span> <span class="n">init_pos</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">init_pos</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">init_pos</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">init_pos</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;init_pos has </span><span class="si">{0}</span><span class="s2"> dimensions, must be one dimensional.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">init_pos</span><span class="o">.</span><span class="n">ndim</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="p">[</span><span class="nb">abs</span><span class="p">(</span><span class="n">max_val</span><span class="o">-</span><span class="n">min_val</span><span class="p">)</span><span class="o">/</span><span class="mi">5</span> <span class="k">for</span> <span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span> <span class="ow">in</span>
+                     <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">)]</span>
+
+        <span class="c1"># start chains in the same position</span>
+        <span class="n">this_iter_step_loc</span> <span class="o">=</span> <span class="p">[</span><span class="n">init_pos</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_chains</span>
+
+        <span class="c1"># Accept ratio tracker</span>
+        <span class="n">total_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_chains</span><span class="p">)</span>
+        <span class="n">total_rej</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_chains</span><span class="p">)</span>
+        <span class="n">acc_ratio_holder</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_chains</span><span class="p">)</span>
+
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">counter</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_loops</span><span class="p">):</span>
+            <span class="c1"># Number of draws before swap</span>
+            <span class="n">N_draws</span> <span class="o">=</span> <span class="n">N_draws_per_swap</span>
+
+            <span class="n">last_step_holder</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_chains</span><span class="p">):</span>
+                <span class="c1"># Run MCMC as f(T) N_draw times</span>
+                <span class="n">step_history</span> <span class="o">=</span> <span class="p">[</span><span class="n">this_iter_step_loc</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span>
+                <span class="n">steps</span><span class="p">,</span> <span class="n">acc</span><span class="p">,</span> <span class="n">rej</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_MCMC</span><span class="p">(</span>
+                    <span class="n">N_draws</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="p">,</span>
+                    <span class="n">step_history</span><span class="p">,</span>
+                    <span class="n">target_dist</span><span class="p">,</span>
+                    <span class="n">classifier_name</span><span class="p">,</span>
+                    <span class="n">T</span><span class="o">=</span><span class="n">T_list</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+                    <span class="n">upper_limit_reject</span><span class="o">=</span><span class="n">upper_limit_reject</span><span class="p">,</span>
+                    <span class="o">**</span><span class="n">TD_kwargs</span>
+                <span class="p">)</span>
+                <span class="c1"># save &#39;current&#39; params for each T</span>
+                <span class="n">last_step_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                <span class="n">total_acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">acc</span>
+                <span class="n">total_rej</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">rej</span>
+                <span class="n">acc_ratio_holder</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">total_acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="n">total_acc</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                                                      <span class="o">+</span> <span class="n">total_rej</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                <span class="c1"># data storage</span>
+                <span class="n">chain_holder</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">steps</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="c1"># useful output during the PTMCMC</span>
+                <span class="n">num_bars</span> <span class="o">=</span> <span class="mi">20</span>
+                <span class="n">how_close</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">counter</span> <span class="o">/</span> <span class="p">(</span><span class="n">N_loops</span> <span class="o">-</span> <span class="mi">1</span><span class="p">))</span> <span class="o">*</span> <span class="n">num_bars</span><span class="p">)</span>
+                <span class="n">progress_bar</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s2">&quot;|&quot;</span>
+                    <span class="o">+</span> <span class="n">how_close</span> <span class="o">*</span> <span class="s2">&quot;=&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;&gt;&quot;</span>
+                    <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">num_bars</span> <span class="o">-</span> <span class="n">how_close</span><span class="p">)</span> <span class="o">*</span> <span class="s2">&quot; &quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;|&quot;</span>
+                    <span class="o">+</span> <span class="s2">&quot;</span><span class="si">{0:.1f}</span><span class="s2">%&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">counter</span> <span class="o">/</span> <span class="p">(</span><span class="n">N_loops</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;num_acc/total: Tmax=</span><span class="si">{0:.4f}</span><span class="s2"> Tmin=</span><span class="si">{1:.4f}</span><span class="s2"> loop #</span><span class="si">{2}</span><span class="s2">, </span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span>
+                     <span class="nb">format</span><span class="p">(</span><span class="n">acc_ratio_holder</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">acc_ratio_holder</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="n">counter</span><span class="p">,</span> <span class="n">progress_bar</span><span class="p">))</span>
+                <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span>
+
+            <span class="c1"># Calc H to see if chains SWAP</span>
+            <span class="n">accept</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">reject</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                <span class="n">args_i</span> <span class="o">=</span> <span class="n">last_step_holder</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">args_i_1</span> <span class="o">=</span> <span class="n">last_step_holder</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="n">top</span> <span class="o">=</span> <span class="p">(</span><span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">args_i_1</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">))</span><span class="o">**</span><span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">/</span> <span class="n">T_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">args_i</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">/</span> <span class="n">T_list</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+                <span class="n">bot</span> <span class="o">=</span> <span class="p">(</span><span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">args_i</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">/</span> <span class="n">T_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">args_i_1</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span>
+                    <span class="mi">1</span> <span class="o">/</span> <span class="n">T_list</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="c1"># can get div 0 errors when using linear because of nans</span>
+                <span class="k">if</span> <span class="n">bot</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">ratio</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ratio</span> <span class="o">=</span> <span class="n">top</span> <span class="o">/</span> <span class="n">bot</span>
+
+                <span class="c1"># inter-chain transition probability</span>
+                <span class="n">H</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ratio</span><span class="p">)</span>
+
+                <span class="n">chance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">chance</span> <span class="o">&lt;=</span> <span class="n">H</span><span class="p">:</span>
+                    <span class="n">accept</span> <span class="o">+=</span> <span class="mi">1</span>
+                    <span class="c1"># SWAP the params between the two chains</span>
+                    <span class="n">last_step_holder</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">args_i_1</span>
+                    <span class="n">last_step_holder</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">args_i</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">reject</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="c1"># print(accept, reject); print(last_step_holder)</span>
+
+            <span class="c1"># Update current params (could be swapped)</span>
+            <span class="c1"># to read into MCMC on next iteration!!!</span>
+            <span class="n">this_iter_step_loc</span> <span class="o">=</span> <span class="n">last_step_holder</span>
+
+        <span class="n">chain_step_history</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">,</span> <span class="n">steps</span> <span class="ow">in</span> <span class="n">chain_holder</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">chain_step_history</span><span class="p">[</span><span class="n">pos</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Length of chains: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">chain_step_history</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+                          <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_chains</span><span class="p">)])))</span>
+            <span class="n">fin_time_s</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Finished in </span><span class="si">{0:.2f}</span><span class="s2"> seconds, </span><span class="si">{1:.2f}</span><span class="s2"> minutes.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">fin_time_s</span><span class="p">,</span> <span class="n">fin_time_s</span> <span class="o">/</span> <span class="mi">60</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="n">trace_plots</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_trace_plot</span><span class="p">(</span><span class="n">chain_step_history</span><span class="p">,</span> <span class="n">T_list</span><span class="p">,</span>
+                                     <span class="mi">0</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">make_trace_plot</span><span class="p">(</span><span class="n">chain_step_history</span><span class="p">,</span> <span class="n">T_list</span><span class="p">,</span>
+                                     <span class="n">num_chains</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">chain_step_history</span><span class="p">,</span> <span class="n">T_list</span></div>
+
+
+<div class="viewcode-block" id="Sampler.run_MCMC">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.run_MCMC">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_MCMC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">N_trials</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">step_history</span><span class="p">,</span> <span class="n">target_dist</span><span class="p">,</span>
+                 <span class="n">classifier_name</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper_limit_reject</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Run a Markov chain Monte Carlo given a target distribution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        N_trials : int</span>
+<span class="sd">            Number of proposals or trial steps to take before stopping.</span>
+<span class="sd">        alpha : float</span>
+<span class="sd">            Related to the step size of the MCMC walker.</span>
+<span class="sd">            Defines the standard deviation of a zero mean normal</span>
+<span class="sd">            from which the step is randomly drawn.</span>
+<span class="sd">        step_history : list</span>
+<span class="sd">            Initial starting location in parameter space.</span>
+<span class="sd">            Could contain an arbitrary number of previous steps</span>
+<span class="sd">            but a walker will start at the last step in the list.</span>
+<span class="sd">        targe_dist : callable</span>
+<span class="sd">            The target distribution to sample.</span>
+<span class="sd">            Must take arguments ( method_name, element_of_step_history )</span>
+<span class="sd">            (A 2D analytic function is provided - TD_2d_analytic)</span>
+<span class="sd">        classifier_name : str</span>
+<span class="sd">            Name of interpolation technique used in the target_dist.</span>
+<span class="sd">        T : float, optional</span>
+<span class="sd">            Temperature of the MCMC.</span>
+<span class="sd">        upper_limit_reject : int, optional</span>
+<span class="sd">            Sets the maximum number of rejected steps before the MCMC</span>
+<span class="sd">            stops walking. Avoiding a slowly converging walk with few</span>
+<span class="sd">            accepted points.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        step_history : array</span>
+<span class="sd">            An array containing all accepted steps of the MCMC.</span>
+<span class="sd">        accept : int</span>
+<span class="sd">            Total number of accepted steps.</span>
+<span class="sd">        reject : int</span>
+<span class="sd">            Total number of rejected steps.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Assumes uniform priors and a symetric jump proposal (gaussian).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_history</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">step_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">step_history</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">step_history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">step_history</span><span class="p">])</span>
+        <span class="c1"># We will be appending to the list</span>
+        <span class="n">step_history</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span>
+
+        <span class="n">accept</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">reject</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">while</span> <span class="p">(</span><span class="n">accept</span> <span class="o">+</span> <span class="n">reject</span> <span class="o">&lt;</span> <span class="n">N_trials</span>
+               <span class="ow">and</span> <span class="n">reject</span> <span class="o">&lt;</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">upper_limit_reject</span><span class="p">))):</span>
+            <span class="n">current_step</span> <span class="o">=</span> <span class="n">step_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+            <span class="c1"># f(θ)</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">current_step</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">)</span>
+            <span class="c1"># θ+Δθ</span>
+            <span class="n">trial_step</span> <span class="o">=</span> <span class="n">current_step</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span>
+                <span class="mi">0</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">current_step</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="c1"># f(θ+Δθ)</span>
+            <span class="n">trial_val</span> <span class="o">=</span> <span class="n">target_dist</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span> <span class="n">trial_step</span><span class="p">,</span> <span class="o">**</span><span class="n">TD_kwargs</span><span class="p">)</span>
+
+            <span class="c1"># check if the trial step is in the range of data</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">step_in_axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">trial_step</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span>
+                    <span class="n">step_in_axis</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                    <span class="ow">and</span> <span class="n">step_in_axis</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="p">):</span>
+                    <span class="k">pass</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">trial_val</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># essential reject points outside of range</span>
+
+            <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># avoid div 0 errors</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ratio</span> <span class="o">=</span> <span class="n">trial_val</span> <span class="o">/</span> <span class="n">val</span>
+
+            <span class="n">accept_prob</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">ratio</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">T</span><span class="p">))</span>
+
+            <span class="n">chance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">chance</span> <span class="o">&lt;=</span> <span class="n">accept_prob</span><span class="p">:</span>
+                <span class="n">accept</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">step_history</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trial_step</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">reject</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">step_history</span><span class="p">),</span> <span class="n">accept</span><span class="p">,</span> <span class="n">reject</span></div>
+
+
+<div class="viewcode-block" id="Sampler.normalize_step_history">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.normalize_step_history">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_step_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_history</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Take steps and normalize [0,1] according to min/max in each axis.</span>
+
+<span class="sd">        The max and min are taken from the original data set from TableData.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">normed_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">steps_in_axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">step_history</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">normed_steps</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">steps_in_axis</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">normed_steps</span></div>
+
+
+<div class="viewcode-block" id="Sampler.undo_normalize_step_history">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.undo_normalize_step_history">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">undo_normalize_step_history</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">normed_steps</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rescale step history.</span>
+
+<span class="sd">        Take normed steps from [0,1] and return their value</span>
+<span class="sd">        in the original range of the axes based off the range in TableData.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mapped_steps</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">normed_steps</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">steps_in_axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">normed_steps</span><span class="o">.</span><span class="n">T</span><span class="p">):</span>
+            <span class="n">mapped_steps</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="n">steps_in_axis</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+                <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="n">mapped_steps</span></div>
+
+
+<div class="viewcode-block" id="Sampler.do_simple_density_logic">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.do_simple_density_logic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_simple_density_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_history</span><span class="p">,</span> <span class="n">N_points</span><span class="p">,</span> <span class="n">Kappa</span><span class="p">,</span>
+                                <span class="n">var_mult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">add_mvns_together</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                                <span class="n">include_training_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform multivariate normal density logic on a given step history.</span>
+
+<span class="sd">        This is a simplified version of the method &#39;do_density_logic&#39;.</span>
+<span class="sd">        It assumes that every accepted point will have the same exact MVN.</span>
+
+<span class="sd">        Each proposal distribution starts with the training set from TableData</span>
+<span class="sd">        which keeps training data from being proposed again.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_history : ndarray</span>
+<span class="sd">            List of points from a PTMCMC or MCMC. (posterior)</span>
+<span class="sd">        N_points : int</span>
+<span class="sd">            Number of points desired to be drawn from the posterior but may not</span>
+<span class="sd">            actually be the number of points accepted. Contributes to the</span>
+<span class="sd">            length scale of the MVN distribution of accepted points</span>
+<span class="sd">            (along with kappa).</span>
+<span class="sd">        Kappa : float</span>
+<span class="sd">            Scaling factor that sets the initial size of the MVN for accepted</span>
+<span class="sd">            points. This should be proportional to the filling factor of the</span>
+<span class="sd">            area of iterest described by the target distribution used to</span>
+<span class="sd">            create the posterior.</span>
+<span class="sd">        var_mult : float, ndarray, optional</span>
+<span class="sd">            Variance multiplier for the MVN of accepted points.</span>
+<span class="sd">        add_mvns_together : bool, optional</span>
+<span class="sd">            Add MVNs together when creating the accepted point distribution.</span>
+<span class="sd">        include_training_data : bool, optional</span>
+<span class="sd">            Include the trainind data in the target distribution before</span>
+<span class="sd">            sampling.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print useful diagnostic information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accepted_points : ndarray</span>
+<span class="sd">            Accepted points from the posterior to be labled by the user.</span>
+<span class="sd">            (query points)</span>
+<span class="sd">        rejected_points : ndarray</span>
+<span class="sd">            Rejected points from the posterior.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The accepted laguage here is indicative of query points for the oracle</span>
+<span class="sd">        to label in an active learning scheme. It is not accepted vs rejected</span>
+<span class="sd">        normally used for MCMC.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">include_training_data</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No TableData found in sampler. &quot;</span>
+                                 <span class="s2">&quot;Set `include_training_data` to false.&quot;</span><span class="p">)</span>
+            <span class="n">original_training_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span><span class="s2">&quot;input&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">original_training_data</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">how_many_training_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_training_data</span><span class="p">)</span>
+        <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">original_training_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="c1"># approximate scaling of the variance given a set of N proposal points</span>
+        <span class="c1"># the filling factor Kappa is not generally known a priori</span>
+        <span class="k">if</span> <span class="n">var_mult</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">var_mult</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_points</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">n_dim</span><span class="p">)</span> <span class="o">*</span> <span class="n">var_mult</span>
+        <span class="n">Covariance</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Covariance: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Covariance</span><span class="p">))</span>
+
+        <span class="n">single_MVN</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_dim</span><span class="p">),</span>
+                                                     <span class="n">Covariance</span><span class="p">)</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span>
+            <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">n_dim</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">Covariance</span><span class="p">))</span>
+
+        <span class="c1"># treat the training data as already accepted points</span>
+        <span class="n">accepted_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">original_training_data</span><span class="p">)</span>
+        <span class="n">rejected_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">step</span> <span class="ow">in</span> <span class="n">step_history</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">accepted_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># distance: how far is this point from all the accepted_points</span>
+            <span class="n">dist_to_acc_pts</span> <span class="o">=</span> <span class="n">step</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)</span>
+            <span class="n">pdf_val_at_point</span> <span class="o">=</span> <span class="n">single_MVN</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">dist_to_acc_pts</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pdf_val_at_point</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
+                <span class="n">pdf_val_at_point</span> <span class="o">=</span> <span class="p">[</span><span class="n">pdf_val_at_point</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">add_mvns_together</span><span class="p">:</span>
+                <span class="n">pdf_val_at_point</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pdf_val_at_point</span><span class="p">)]</span>
+            <span class="n">random_chances</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">max_val</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">pdf_val_at_point</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">chance_above_distr</span> <span class="o">=</span> <span class="n">random_chances</span> <span class="o">&gt;</span> <span class="n">pdf_val_at_point</span>
+
+            <span class="k">if</span> <span class="n">chance_above_distr</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="n">accepted_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rejected_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step</span><span class="p">)</span>
+
+        <span class="c1"># remove training data from accepted points</span>
+        <span class="n">only_new_accpeted_points</span> <span class="o">=</span> <span class="n">accepted_points</span><span class="p">[</span><span class="n">how_many_training_data</span><span class="p">:]</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">only_new_accpeted_points</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rejected_points</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Sampler.do_density_logic">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.do_density_logic">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">do_density_logic</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_history</span><span class="p">,</span> <span class="n">N_points</span><span class="p">,</span> <span class="n">Kappa</span><span class="p">,</span>  <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                         <span class="n">norm_steps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">var_mult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">add_mvns_together</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">pre_acc_points</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do the density based of the normal gaussian kernel on each point.</span>
+
+<span class="sd">        This method automatically takes out the first 5% of steps of the MCMC</span>
+<span class="sd">        so that the initial starting points are not chosen automatically</span>
+<span class="sd">        (if you start in a non-ideal region). Wait for the burn in.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_history : ndarray</span>
+<span class="sd">        N_points : int</span>
+<span class="sd">        Kappa : float</span>
+<span class="sd">        shuffle : bool, optional</span>
+<span class="sd">        norm_steps : bool, optional</span>
+<span class="sd">        var_mult : float, optional</span>
+<span class="sd">        add_mvns_together : bool, optional</span>
+<span class="sd">        verbose : bool, optional</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accepted_points : ndarray</span>
+<span class="sd">        rejected_points : ndarray</span>
+<span class="sd">        accepted_sigmas : ndarray</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">shuffle</span><span class="p">:</span>  <span class="c1"># shuffle the order of the steps</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Shuffling steps....&quot;</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span>  <span class="c1"># returns none</span>
+
+        <span class="k">if</span> <span class="n">norm_steps</span><span class="p">:</span>  <span class="c1"># normalize steps</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Normalizing steps....&quot;</span><span class="p">)</span>
+            <span class="n">step_history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">normalize_step_history</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span>
+
+        <span class="c1"># Set the default average length scale</span>
+        <span class="n">num_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">input_data</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">N_points</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">num_dim</span><span class="p">)</span>
+
+        <span class="c1"># We assume the covaraince is the identity - later we may pass the</span>
+        <span class="c1"># entire array but for now we just assume you pass a</span>
+        <span class="c1"># variance multiplier (var_mult)</span>
+        <span class="k">if</span> <span class="n">var_mult</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">var_mult</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">num_dim</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">var_mult</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">var_mult</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">var_mult</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="n">num_dim</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;var_mult must be the same dimensionality as input data.&quot;</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Num dims: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_dim</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;length scale sigma: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;var_mult: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">var_mult</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kappa: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Kappa</span><span class="p">))</span>
+
+        <span class="c1"># -&gt; Forcing a few key points to always be accepted, for example</span>
+        <span class="k">if</span> <span class="n">pre_acc_points</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">accepted_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pre_acc_points</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">accepted_points</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">pre_acc_points</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">accepted_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">accepted_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">accepted_sigmas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">max_val_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">accepted_mvn_holder</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">rejected_points</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">skip_steps</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">step_history</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.05</span><span class="p">)</span>
+        <span class="n">good_steps</span> <span class="o">=</span> <span class="n">step_history</span><span class="p">[</span>
+            <span class="n">skip_steps</span><span class="p">:</span>
+        <span class="p">]</span>  <span class="c1"># skip first 5% of steps to get into a good region</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">good_steps</span><span class="p">)):</span>
+            <span class="n">proposed_step</span> <span class="o">=</span> <span class="n">good_steps</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+            <span class="n">accept</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">accept</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If you enter you must have accepted one point</span>
+                <span class="n">Sigma</span> <span class="o">=</span> <span class="n">accepted_sigmas</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">:]</span>
+                <span class="n">k</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+                <span class="n">max_val</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">Sigma</span><span class="p">))</span>
+                <span class="n">max_val_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">max_val</span><span class="p">)</span>
+                <span class="n">rnd_chance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
+                    <span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">max_val_holder</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span>
+                <span class="p">)</span>
+                <span class="c1"># we will choose the chance from [0, highest point in distr]</span>
+
+                <span class="n">distr_holder</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">point</span> <span class="ow">in</span> <span class="n">accepted_mvn_holder</span><span class="p">:</span>
+                    <span class="n">eval_mvn_at_new_step</span> <span class="o">=</span> <span class="n">point</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">proposed_step</span><span class="p">)</span>
+                    <span class="n">distr_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">eval_mvn_at_new_step</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">add_mvns_together</span><span class="p">:</span>
+                    <span class="c1"># instead of checking each individual point keeping all</span>
+                    <span class="c1"># mvns seperate, we want to add them</span>
+                    <span class="c1"># together and get upper bound</span>
+                    <span class="c1"># IF we do this we need to change the MVN to not be</span>
+                    <span class="c1"># normalized !!!!</span>
+                    <span class="c1"># THE UNORMALIZED MVN IS NOT IMPLEMENTED</span>
+                    <span class="n">total_chance_above_distr</span> <span class="o">=</span> <span class="p">(</span>
+                        <span class="n">rnd_chance</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distr_holder</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">total_chance_above_distr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+                        <span class="n">rnd_chance</span> <span class="o">&gt;</span> <span class="n">distr_holder</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)</span> <span class="o">==</span> <span class="n">total_chance_above_distr</span><span class="p">:</span>
+                    <span class="n">accept</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">pass</span>  <span class="c1"># REJECT</span>
+
+            <span class="k">if</span> <span class="n">accept</span><span class="p">:</span>
+                <span class="c1"># https://stackoverflow.com/questions/619335</span>
+                <span class="c1"># corner = np.random.normal(0,0.1, 1)</span>
+                <span class="c1"># A = np.array( [ [sigma, corner], [corner, sigma] ] )</span>
+                <span class="c1"># Sigma = np.dot(A,A.transpose())</span>
+                <span class="c1"># Sigma = [ [sigma*var_mult[0], 0.], [0., sigma*var_mult[1]] ]</span>
+                <span class="n">Sigma</span> <span class="o">=</span> <span class="p">(</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">var_mult</span><span class="p">))</span>
+                         <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">var_mult</span><span class="p">]))</span>
+                <span class="n">mvn</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">proposed_step</span><span class="p">,</span> <span class="n">Sigma</span><span class="p">)</span>
+
+                <span class="n">accepted_mvn_holder</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mvn</span><span class="p">)</span>
+                <span class="n">accepted_sigmas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)</span>
+                <span class="n">accepted_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proposed_step</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">rejected_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">proposed_step</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Num accepted: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Num rejected: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rejected_points</span><span class="p">)))</span>
+
+        <span class="k">if</span> <span class="n">norm_steps</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Unormalizing steps....&quot;</span><span class="p">)</span>
+            <span class="n">accepted_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undo_normalize_step_history</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">)</span>
+            <span class="n">rejected_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">undo_normalize_step_history</span><span class="p">(</span><span class="n">rejected_points</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">accepted_points</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rejected_points</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">accepted_sigmas</span><span class="p">),</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Sampler.get_proposed_points">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.get_proposed_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_proposed_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_history</span><span class="p">,</span> <span class="n">N_points</span><span class="p">,</span> <span class="n">Kappa</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">norm_steps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">add_mvns_together</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">include_training_data</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">var_mult</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">seed</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_repeats</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_iters</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span>
+                            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get proposed points in parameter space given a MCMC step history.</span>
+
+<span class="sd">        The desnity logic is not deterministic, so multiple iterations</span>
+<span class="sd">        may be needed to converge on a desired number of proposed points.</span>
+<span class="sd">        This method performs multiple calls to do_density_logic while</span>
+<span class="sd">        changing Kappa in order to return the desired number of points. After</span>
+<span class="sd">        n_iters instances of the correct number of N_points, the distibution</span>
+<span class="sd">        with the largest average distance is chosen.</span>
+
+<span class="sd">        Warning: This algorithm has not been tested for large N data sets and</span>
+<span class="sd">                 may struggle to converge.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_history : ndarray</span>
+<span class="sd">            Posterior from which to sample new query points.</span>
+<span class="sd">        N_points : int</span>
+<span class="sd">            N query points to converge to.</span>
+<span class="sd">        Kappa : float</span>
+<span class="sd">            Multiplies the length scale of MVNs and changes such that the</span>
+<span class="sd">            desired number of query points is found.</span>
+<span class="sd">        shuffle : bool, optional</span>
+<span class="sd">            Shuffle points in posterior in place before sampling.</span>
+<span class="sd">        norm_steps : bool, optional</span>
+<span class="sd">            Normalize steps before sampling.</span>
+<span class="sd">        add_mvns_together : bool, optional</span>
+<span class="sd">            Add MVNs of accepted point distribution together.</span>
+<span class="sd">        include_training_data : bool, optional</span>
+<span class="sd">            Include training data in the accpeted point distribution before</span>
+<span class="sd">            sampling.</span>
+<span class="sd">        var_mult : ndarray, optional</span>
+<span class="sd">            Variance multiplier.</span>
+<span class="sd">        seed : float, optional</span>
+<span class="sd">            Random seed to use for random sampling.</span>
+<span class="sd">        n_repeats: int, optional</span>
+<span class="sd">            Number of times to converge to the correct number of points. Each</span>
+<span class="sd">            iteration may be a different realization of the posterior.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            Print useful information.</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            show_plots : bool, optional</span>
+<span class="sd">            Show 2D plot of proposed points with step history &amp; training data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        acc_pts : ndarray</span>
+<span class="sd">            Array of proposed points to be used as initial</span>
+<span class="sd">            conditions in new simulations.</span>
+<span class="sd">        Kappa : float</span>
+<span class="sd">            Scaling factor which reproduced the desired number</span>
+<span class="sd">            of accepted points.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Will automatically exit if it goes through max_iters iterations</span>
+<span class="sd">        without converging on the desired number of points.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">seed</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed</span><span class="o">=</span><span class="n">seed</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Setting seed: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">seed</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="s2">&quot;Converging to </span><span class="si">{0}</span><span class="s2"> points, </span><span class="si">{1}</span><span class="s2"> times.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N_points</span><span class="p">,</span>
+                                                              <span class="nb">int</span><span class="p">(</span><span class="n">n_repeats</span><span class="p">))</span>
+            <span class="p">)</span>
+
+        <span class="n">enough_good_pts</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="n">how_many_good_pts</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">n_repeats</span><span class="p">)</span>
+        <span class="n">good_n_points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">avg_distances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">good_kappas</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">iters</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">enough_good_pts</span><span class="p">)</span> <span class="ow">and</span> <span class="n">iters</span> <span class="o">&lt;</span> <span class="n">max_iters</span><span class="p">:</span>
+
+            <span class="n">acc_pts</span><span class="p">,</span> <span class="n">rej_pts</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_simple_density_logic</span><span class="p">(</span>
+                <span class="n">step_history</span><span class="p">,</span>
+                <span class="n">N_points</span><span class="p">,</span>
+                <span class="n">Kappa</span><span class="p">,</span>
+                <span class="n">var_mult</span><span class="o">=</span><span class="n">var_mult</span><span class="p">,</span>
+                <span class="n">add_mvns_together</span><span class="o">=</span><span class="n">add_mvns_together</span><span class="p">,</span>
+                <span class="n">include_training_data</span><span class="o">=</span><span class="n">include_training_data</span><span class="p">,</span>
+                <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">Kappa</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="mf">0.5</span>
+                <span class="n">iters</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">continue</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">==</span> <span class="n">N_points</span><span class="p">:</span>
+                <span class="n">average_dist_between_acc_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">))</span>
+                <span class="n">good_n_points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span>
+                <span class="n">avg_distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">average_dist_between_acc_points</span><span class="p">)</span>
+                <span class="n">good_kappas</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Kappa</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">good_n_points</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">how_many_good_pts</span><span class="p">:</span>
+                    <span class="n">enough_good_pts</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">==</span> <span class="n">N_points</span><span class="p">:</span>
+                    <span class="n">print_str</span> <span class="o">=</span> <span class="s2">&quot;  *</span><span class="si">{0}</span><span class="s2">*  </span><span class="si">{1:2.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="nb">len</span><span class="p">(</span><span class="n">good_n_points</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">start_time</span> <span class="o">-</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+                    <span class="p">)</span>
+                    <span class="n">ending</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">print_str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">ending</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span>
+                <span class="nb">print</span><span class="p">(</span>
+                    <span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> acc_pts: </span><span class="si">{0}</span><span class="s2">, Kappa = </span><span class="si">{1:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">),</span>
+                                                              <span class="n">Kappa</span><span class="p">)</span>
+                    <span class="o">+</span> <span class="n">print_str</span><span class="p">,</span>
+                    <span class="n">end</span><span class="o">=</span><span class="n">ending</span><span class="p">,</span>
+                <span class="p">)</span>
+
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">-</span> <span class="n">N_points</span><span class="p">)</span>
+
+            <span class="n">change_factor</span> <span class="o">=</span> <span class="mf">0.01</span> <span class="o">/</span> <span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">iters</span><span class="p">)))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">N_points</span><span class="p">:</span>
+                <span class="n">Kappa</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">change_factor</span> <span class="o">*</span> <span class="n">diff</span><span class="p">)</span>  <span class="c1"># increase kappa</span>
+            <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">acc_pts</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">N_points</span><span class="p">:</span>
+                <span class="k">if</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">change_factor</span> <span class="o">*</span> <span class="n">diff</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="n">Kappa</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="mf">0.1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Kappa</span> <span class="o">=</span> <span class="n">Kappa</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">change_factor</span><span class="o">*</span><span class="n">diff</span><span class="p">)</span>  <span class="c1"># decrease kappa</span>
+
+            <span class="n">iters</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">iters</span> <span class="o">==</span> <span class="n">max_iters</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reached max iters before converging!&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Final Kappa = </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Converged in </span><span class="si">{1}</span><span class="s2"> iters.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">Kappa</span><span class="p">,</span>
+                                                                        <span class="n">iters</span><span class="p">))</span>
+
+        <span class="c1"># we want 1/r dependance to penalize closely spaced points</span>
+        <span class="n">where_best_distribution</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">avg_distances</span><span class="p">)</span>
+        <span class="n">best_acc_pts</span> <span class="o">=</span> <span class="n">good_n_points</span><span class="p">[</span><span class="n">where_best_distribution</span><span class="p">]</span>
+        <span class="n">best_Kappa</span> <span class="o">=</span> <span class="n">good_kappas</span><span class="p">[</span><span class="n">where_best_distribution</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Average Distances: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">avg_distances</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Kappas: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">good_kappas</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;loc: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">where_best_distribution</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;show_plots&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">make_prop_points_plots</span><span class="p">(</span><span class="n">step_history</span><span class="p">,</span> <span class="n">best_acc_pts</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">best_acc_pts</span><span class="p">,</span> <span class="n">best_Kappa</span></div>
+
+
+<div class="viewcode-block" id="Sampler.make_prop_points_plots">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.make_prop_points_plots">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_prop_points_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_hist</span><span class="p">,</span> <span class="n">prop_points</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                               <span class="n">show_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the proposed / accepted points over the step history.&quot;&quot;&quot;</span>
+        <span class="n">axis1</span><span class="p">,</span> <span class="n">axis2</span> <span class="o">=</span> <span class="n">axes</span>
+        <span class="n">fig</span><span class="p">,</span> <span class="n">sub</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">nrows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">90</span><span class="p">)</span>
+        <span class="n">training_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">input_data</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">training_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis1</span><span class="p">],</span>
+            <span class="n">training_data</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis2</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training data&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">step_hist</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis1</span><span class="p">],</span>
+            <span class="n">step_hist</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis2</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C0&quot;</span><span class="p">,</span>
+            <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;step history&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
+            <span class="n">prop_points</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis1</span><span class="p">],</span>
+            <span class="n">prop_points</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">axis2</span><span class="p">],</span>
+            <span class="n">color</span><span class="o">=</span><span class="s2">&quot;pink&quot;</span><span class="p">,</span>
+            <span class="n">label</span><span class="o">=</span><span class="s2">&quot;new proposed points&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">axis1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">[</span><span class="n">axis1</span><span class="p">])</span>
+        <span class="n">sub</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_min_vals_</span><span class="p">[</span><span class="n">axis2</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">_max_vals_</span><span class="p">[</span><span class="n">axis2</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s2">&quot;best&quot;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">sub</span></div>
+
+
+<div class="viewcode-block" id="Sampler.make_trace_plot">
+<a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.sample.Sampler.make_trace_plot">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">make_trace_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chain_holder</span><span class="p">,</span> <span class="n">T_list</span><span class="p">,</span> <span class="n">Temp</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                        <span class="n">show_fig</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Make a `step number` vs. `position of a sampler in an axis` plot.</span>
+
+<span class="sd">        This function makes titles assuming you are using the data</span>
+<span class="sd">        from the classifier.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">show_fig</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">save_fig</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">which_temp</span> <span class="o">=</span> <span class="n">Temp</span>  <span class="c1"># int? index</span>
+
+        <span class="n">n_axis</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">chain_holder</span><span class="p">[</span><span class="n">which_temp</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">steps</span> <span class="o">=</span> <span class="n">chain_holder</span><span class="p">[</span><span class="n">which_temp</span><span class="p">]</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">axis_names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Classifier_</span><span class="o">.</span><span class="n">_TableData_</span><span class="o">.</span><span class="n">get_data</span><span class="p">(</span>
+            <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;input&quot;</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+
+        <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span>
+            <span class="n">nrows</span><span class="o">=</span><span class="n">n_axis</span><span class="p">,</span>
+            <span class="n">ncols</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mf">2.5</span> <span class="o">*</span> <span class="n">n_axis</span><span class="p">),</span>
+            <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+            <span class="n">gridspec_kw</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;width_ratios&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.8</span><span class="p">,</span> <span class="mi">1</span><span class="p">]},</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">ax</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">axs</span><span class="p">):</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="n">num</span><span class="p">],</span> <span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C4&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Input: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">axis_names</span><span class="p">[</span><span class="n">num</span><span class="p">]))</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Axis </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot; , T=</span><span class="si">{0:.2f}</span><span class="s2">&quot;</span><span class="o">.</span>
+                             <span class="nb">format</span><span class="p">(</span><span class="n">T_list</span><span class="p">[</span><span class="n">which_temp</span><span class="p">]),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;N steps&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">steps</span><span class="p">[</span><span class="n">num</span><span class="p">],</span>
+                       <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">histtype</span><span class="o">=</span><span class="s2">&quot;step&quot;</span><span class="p">,</span> <span class="n">density</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C1&quot;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Axis </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num</span><span class="p">),</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+            <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Posterior&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+
+        <span class="n">fig</span><span class="o">.</span><span class="n">subplots_adjust</span><span class="p">(</span><span class="n">hspace</span><span class="o">=</span><span class="mf">0.45</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;trace_plot_T</span><span class="si">{0:.0f}</span><span class="s2">.pdf&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">T_list</span><span class="p">[</span><span class="n">which_temp</span><span class="p">]))</span>
+        <span class="k">if</span> <span class="n">show_fig</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.0
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.0/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
