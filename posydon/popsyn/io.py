@@ -142,6 +142,12 @@ EXTRA_STAR_COLUMNS_DTYPES = {
 }
 
 SCALAR_NAMES_DTYPES = {
+    # Individual natal kick properties (new)
+    'natal_kick_velocity': 'float64',
+    'natal_kick_azimuthal_angle': 'float64',
+    'natal_kick_polar_angle': 'float64',
+    'natal_kick_mean_anomaly': 'float64',
+    # Legacy natal kick array components (for backward compatibility)
     'natal_kick_array_0': 'float64',
     'natal_kick_array_1': 'float64',
     'natal_kick_array_2': 'float64',
@@ -573,57 +579,3 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['S2_kwargs'] = S2_kwargs
 
     return pop_kwargs
-
-
-def create_run_script_text(ini_file):
-
-
-    text=["from posydon.popsyn.binarypopulation import BinaryPopulation",
-         "from posydon.popsyn.io import binarypop_kwargs_from_ini",
-         "from posydon.utils.common_functions import convert_metallicity_to_string",
-         "from posydon.binary_evol.simulationproperties import SimulationProperties",
-         "import argparse",
-
-         'if __name__ == "__main__":',
-         "    parser = argparse.ArgumentParser()",
-         "    parser.add_argument('metallicity', type=float)",
-         "    args = parser.parse_args()",
-        f"    ini_kw = binarypop_kwargs_from_ini('{ini_file}')",
-         "    ini_kw['metallicity'] = args.metallicity",
-         "    str_met = convert_metallicity_to_string(args.metallicity)",
-         "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
-        f"    sim_props = SimulationProperties.from_ini('{ini_file}')",
-         "    synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)",
-         "    synpop.evolve()"]
-
-    text = '\n'.join(text)
-    return text
-
-
-def create_merge_script_text(ini_file):
-
-
-    text = ['from posydon.popsyn.binarypopulation import BinaryPopulation',
-            'from posydon.popsyn.io import binarypop_kwargs_from_ini',
-            'from posydon.utils.common_functions import convert_metallicity_to_string',
-            'import argparse',
-            'import os',
-            'if __name__ == "__main__":',
-            '    parser = argparse.ArgumentParser()',
-            '    parser.add_argument("metallicity", type=float)',
-            '    args = parser.parse_args()',
-           f'    ini_kw = binarypop_kwargs_from_ini("{ini_file}")',
-            '    ini_kw["metallicity"] = args.metallicity',
-            '    str_met = convert_metallicity_to_string(args.metallicity)',
-            '    ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]',
-            '    synpop = BinaryPopulation(**ini_kw)',
-            '    path_to_batch = ini_kw["temp_directory"]',
-            '    tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]',
-            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".h5")[0].split(".")[-1]))',
-            '    synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)',
-            '    print("done")',
-            '    if len(os.listdir(path_to_batch)) == 0:',
-            '        os.rmdir(path_to_batch)']
-
-    text = '\n'.join(text)
-    return text

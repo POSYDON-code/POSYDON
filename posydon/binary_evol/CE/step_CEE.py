@@ -55,6 +55,7 @@ from posydon.utils.common_functions import (
     calculate_Mejected_for_integrated_binding_energy,
     check_state_of_star,
 )
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 
 MODEL = {"prescription": 'alpha-lambda',
@@ -183,8 +184,6 @@ class StepCEE(object):
         self.path_to_posydon = PATH_TO_POSYDON
 
 
-        #m_min_H = np.min(self.grid_Hrich.grid_mass)
-        #m_max_H = np.max(self.grid_Hrich.grid_mass)
         list_for_matching_HMS = [
                         ["mass", "center_h1", "he_core_mass"],
                         [20.0, 1.0, 10.0],
@@ -1156,9 +1155,9 @@ class StepCEE(object):
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
                 if star.metallicity is None:
-                    star.surface_he4 = 1 - star.surface_h1 - 0.0142
+                    star.surface_he4 = 1 - star.surface_h1 - Zsun
                 else:
-                    star.surface_he4 = 1.0-star.surface_h1-star.metallicity
+                    star.surface_he4 = 1 - star.surface_h1 - star.metallicity * Zsun
                 star.log_LH = -1e99
                 attributes_changing.extend([
                                         "surface_h1",
@@ -1492,6 +1491,7 @@ class StepCEE(object):
             if self.verbose:
                 print(f"The binary overfilled its RL due to the companion's inflated radius \n"
                       f"The Roche lobe of the companion is: {RL2}, The radius is: {rc2_i}")
+<<<<<<< HEAD
             t_i = binary.time
             #m0, t0 =self.track_matcher.get_star_match_data(binary, comp_star)
             if comp_star == binary.star_1:
@@ -1511,5 +1511,27 @@ class StepCEE(object):
             rc2_i = 10**comp_star.interp1d['log_R'](t_i)
         if self.verbose:
             print(f"After matching to single star the radius of the done is : {rc2_i} ")
+=======
+                print("Adjusting the companion's radius by matching to single star.")
+            t_i = binary.time
+
+
+            match_primary = False
+            match_secondary = True
+
+            _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
+                                                           match_primary=match_primary,
+                                                           match_secondary=match_secondary)
+            if comp_star.interp1d:
+                rc2_i = comp_star.interp1d(t_i)["R"]
+            else:
+                rc2_i = rc2_i  # no change
+                Pwarn("The companion star radius within the common envelope cannot be updated. "
+                      "Using the initial companion radius. This should never happen.",
+                      'InterpolationWarning')
+
+        if self.verbose:
+            print(f"After matching to single star the companion's radius is : {rc2_i} ")
+>>>>>>> 61fd26ee242b387d94546fabe1573a219a7b3145
 
         return rc2_i

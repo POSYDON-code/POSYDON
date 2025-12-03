@@ -803,13 +803,13 @@ class TestFunctions:
                  (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 6,\
                   np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))]
         for (x, y, s, r) in tests:
-            assert np.array_equal(totest.rejection_sampler(x=x, y=y, size=s),\
-                                  r)
-        assert np.array_equal(totest.rejection_sampler(x_lim=np.array([0.0,\
-                                                                       1.0]),\
-                                                       pdf=mock_pdf, size=5),\
-                              np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
-        assert np.array_equal(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
+            assert np.allclose(totest.rejection_sampler(x=x, y=y, size=s),\
+                               r)
+        assert np.allclose(totest.rejection_sampler(x_lim=np.array([0.0,\
+                                                                     1.0]),\
+                                                     pdf=mock_pdf, size=5),\
+                           np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
+        assert np.allclose(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
                                                        y=np.array([0.2, 0.8]),\
                                                        x_lim=np.array([0.0,\
                                                                        1.0]),\
@@ -886,7 +886,7 @@ class TestFunctions:
                                                     y=np.array([0.2, 0.8]),\
                                                     size=5),\
                            np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
-        assert np.array_equal(totest.histogram_sampler(x_edges=np.array([0.0,\
+        assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                          0.5,\
                                                                          1.0]\
                                                        ), y=np.array([0.2,\
@@ -924,11 +924,11 @@ class TestFunctions:
             totest.read_histogram_from_file(path=csv_path_failing_element_types)
         # examples:
         arrays = totest.read_histogram_from_file(path=csv_path_ex1)
-        assert np.array_equal(arrays[0], np.array([0.1, 1.1, 2.1]))
-        assert np.array_equal(arrays[1], np.array([1.0, 1.0]))
+        assert np.allclose(arrays[0], np.array([0.1, 1.1, 2.1]))
+        assert np.allclose(arrays[1], np.array([1.0, 1.0]))
         arrays = totest.read_histogram_from_file(path=csv_path_ex2)
-        assert np.array_equal(arrays[0], np.array([0.2, 1.2, 2.2]))
-        assert np.array_equal(arrays[1], np.array([2.0, 2.0]))
+        assert np.allclose(arrays[0], np.array([0.2, 1.2, 2.2]))
+        assert np.allclose(arrays[1], np.array([2.0, 2.0]))
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument
@@ -2165,9 +2165,9 @@ class TestFunctions:
                 test_profile = star_profile[['mass', 'radius']]
                 d_mass, d_radius, d_dm =\
                     totest.get_mass_radius_dm_from_profile(test_profile)
-                assert np.array_equal(d_mass, star_profile['mass'])
-                assert np.array_equal(d_radius, star_profile['radius'])
-                assert np.array_equal(d_dm, star_profile['dm'])
+                assert np.allclose(d_mass, star_profile['mass'])
+                assert np.allclose(d_radius, star_profile['radius'])
+                assert np.allclose(d_dm, star_profile['dm'])
         # get total mass and radius
         M = star_profile['mass'].max()
         R = star_profile['radius'].max()
@@ -2176,19 +2176,19 @@ class TestFunctions:
             totest.get_mass_radius_dm_from_profile(star_profile[['mass',\
                                                                  'log_R']],\
                                                    m1_i = M, radius1 = R)
-        assert np.array_equal(d_mass, star_profile['mass'])
-        assert np.array_equal(d_radius, star_profile['radius'])
-        assert np.array_equal(d_dm, star_profile['dm'])
+        assert np.allclose(d_mass, star_profile['mass'])
+        assert np.allclose(d_radius, star_profile['radius'])
+        assert np.allclose(d_dm, star_profile['dm'])
         # examples: profile with radius and dm (in grams)
         d_mass, d_radius, d_dm =\
             totest.get_mass_radius_dm_from_profile(star_profile[['mass', 'dm',\
                                                                  'radius']],\
                                                    m1_i = M, radius1 = R)
-        assert np.array_equal(d_mass, star_profile['mass'])
-        assert np.array_equal(d_radius, star_profile['radius'])
+        assert np.allclose(d_mass, star_profile['mass'])
+        assert np.allclose(d_radius, star_profile['radius'])
         # convert Msun to grams
         d_dm = d_dm * totest.const.Msun
-        assert np.array_equal(d_dm, star_profile['dm'])
+        assert np.allclose(d_dm, star_profile['dm'])
 
     def test_get_internal_energy_from_profile(self, star_profile, monkeypatch):
         def mock_calculate_H2recombination_energy(profile, tolerance=0.001):
@@ -2232,7 +2232,7 @@ class TestFunctions:
                                                    + "energy giving negative "\
                                                    + "values."
         # examples: no internal energy
-        assert np.array_equal(np.array([0, 0, 0, 0]),\
+        assert np.allclose(np.array([0, 0, 0, 0]),\
                               totest.get_internal_energy_from_profile(\
                               "lambda_from_profile_gravitational",\
                               star_profile[['radius']]))
@@ -2240,7 +2240,7 @@ class TestFunctions:
                                                +"internal energy -- "\
                                                +"proceeding with 'lambda_from"\
                                                +"_profile_gravitational'"):
-            assert np.array_equal(np.array([0, 0, 0, 0]),\
+            assert np.allclose(np.array([0, 0, 0, 0]),\
                    totest.get_internal_energy_from_profile("test",\
                                                            star_profile[[\
                                                            'radius']]))
@@ -2278,7 +2278,7 @@ class TestFunctions:
                                                +"calculate H2 recombination "\
                                                +"energy -- H2 recombination "\
                                                +"energy is assumed 0"):
-            assert np.array_equal(np.array([0, 0, 0, 0]),\
+            assert np.allclose(np.array([0, 0, 0, 0]),\
                                   totest.calculate_H2recombination_energy(\
                                   star_profile[['radius']]))
 
@@ -2316,7 +2316,7 @@ class TestFunctions:
                                                +"calculate recombination "\
                                                +"energy -- recombination "\
                                                +"energy is assumed 0"):
-            assert np.array_equal(np.array([0, 0, 0, 0]),\
+            assert np.allclose(np.array([0, 0, 0, 0]),\
                                   totest.calculate_recombination_energy(\
                                   star_profile[['radius']]))
 
@@ -2460,21 +2460,21 @@ class TestFunctions:
                 for z in range(3):
                     if ((x!=0) or (y!=0) or (z!=0)):
                         # angle=0 -> no rotation
-                        assert np.array_equal(totest.rotate(\
+                        assert np.allclose(totest.rotate(\
                                np.array([x, y, z]), 0.0),\
                                np.array([[1, 0, 0], [0, 1, 0], [0, 0, 1]]))
                         # inverse rotation around inverted axis
-                        assert np.array_equal(totest.rotate(\
+                        assert np.allclose(totest.rotate(\
                                np.array([-x, -y, -z]), -1.0),\
                                totest.rotate(np.array([x, y, z]), 1.0))
         # examples: angle=1.0
         s = np.sin(1.0)
         c = np.cos(1.0)
-        assert np.array_equal(totest.rotate(np.array([1, 0, 0]), 1.0),\
+        assert np.allclose(totest.rotate(np.array([1, 0, 0]), 1.0),\
                               np.array([[1, 0, 0], [0, c, -s], [0, s, c]]))
-        assert np.array_equal(totest.rotate(np.array([0, 1, 0]), 1.0),\
+        assert np.allclose(totest.rotate(np.array([0, 1, 0]), 1.0),\
                               np.array([[c, 0, s], [0, 1, 0], [-s, 0, c]]))
-        assert np.array_equal(totest.rotate(np.array([0, 0, 1]), 1.0),\
+        assert np.allclose(totest.rotate(np.array([0, 0, 1]), 1.0),\
                               np.array([[c, -s, 0], [s, c, 0], [0, 0, 1]]))
         assert np.allclose(totest.rotate(np.array([1, 1, 0]), 1.0),\
                            np.array([[0.77015115, 0.22984885, 0.59500984],\

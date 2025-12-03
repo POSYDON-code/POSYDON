@@ -166,6 +166,38 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
         tilt_2[pd.isna(tilt_2)] = 0.
     return (m_1*a_1*np.cos(tilt_1)+m_2*a_2*np.cos(tilt_2))/(m_1+m_2)
 
+
+def effective_precession(theta_1, theta_2, a1, a2, m1, m2):
+    """Calculate the effective spin precession.
+
+    Following Equation 14 in Gerosa+2021, which
+    is used in the LVK analyses.
+    https://arxiv.org/abs/2011.11948
+
+    \chi_p = max(a_1 * sin(theta_1),
+            q * ((4q + 3)/(4+3q)) * a_2 * sin(theta_2))
+
+    Parameters
+    ----------
+    theta_1 : float or np.ndarray
+        Tilt angle of the primary spin (in radians).
+    theta_2 : float or np.ndarray
+        Tilt angle of the secondary spin (in radians).
+    a1 : float or np.ndarray
+        Dimensionless spin magnitude of the primary.
+    a2 : float or np.ndarray
+        Dimensionless spin magnitude of the secondary.
+    m1 : float or np.ndarray
+        Mass of the primary.
+    m2 : float or np.ndarray
+        Mass of the secondary.
+    """
+    q = m2/m1
+    a_1_perp = np.abs(a1 * np.sin(theta_1))
+    a_2_perp = q * ((4*q + 3)/(4+3*q)) * a2 * np.sin(theta_2)
+    chi_p = np.maximum(a_1_perp, a_2_perp)
+    return chi_p
+
 def m_chirp(m_1, m_2):
     '''Calculate the chirp mass of two masses.'''
     return (m_1*m_2)**(3./5)/(m_1+m_2)**(1./5)

@@ -51,29 +51,17 @@ def default_tides(a, e, primary, secondary, verbose=False):
 
     """
 
-    m1 = primary.latest["mass"]
-    R1 = primary.latest["R"]
-    m_env1 = primary.latest["mass_conv_reg_fortides"]
-    dr_env1 = primary.latest["thickness_conv_reg_fortides"]
-    rmid_env1 = primary.latest["radius_conv_reg_fortides"]
-    omega1 = primary.latest["omega"]
-    rtop_env1 = primary.latest["conv_mx1_top_r"]
-    rbot_env1 = primary.latest["conv_mx1_bot_r"]
-    Xsurf_1 = primary.latest["surface_h1"]
-    L1 = primary.latest["L"]
-    MOI_1 = primary.latest["inertia"]
+    p1 = primary.latest
+    p2 = secondary.latest
+    m1, R1, omega1 = p1["mass"], p1["R"], p1["omega"]
+    m_env1, dr_env1, rmid_env1 = p1["mass_conv_reg_fortides"], p1["thickness_conv_reg_fortides"], p1["radius_conv_reg_fortides"]
+    rtop_env1, rbot_env1 = p1["conv_mx1_top_r"], p1["conv_mx1_bot_r"]
+    Xsurf_1, L1, MOI_1 = p1["surface_h1"], p1["L"], p1["inertia"]
 
-    m2 = secondary.latest["mass"]
-    R2 = secondary.latest["R"]
-    m_env2 = secondary.latest["mass_conv_reg_fortides"]
-    dr_env2 = secondary.latest["thickness_conv_reg_fortides"]
-    rmid_env2 = secondary.latest["radius_conv_reg_fortides"]
-    omega2 = secondary.latest["omega"]
-    rtop_env2 = secondary.latest["conv_mx1_top_r"]
-    rbot_env2 = secondary.latest["conv_mx1_bot_r"]
-    Xsurf_2 = secondary.latest["surface_h1"]
-    L2 = secondary.latest["L"]
-    MOI_2 = secondary.latest["inertia"]
+    m2, R2, omega2 = p2["mass"], p2["R"], p2["omega"]
+    m_env2, dr_env2, rmid_env2 = p2["mass_conv_reg_fortides"], p2["thickness_conv_reg_fortides"], p2["radius_conv_reg_fortides"]
+    rtop_env2, rbot_env2 = p2["conv_mx1_top_r"], p2["conv_mx1_bot_r"]
+    Xsurf_2, L2, MOI_2 = p2["surface_h1"], p2["L"], p2["inertia"]
 
     q1 = m1/ m2
     q2 = m2 / m1
@@ -137,33 +125,33 @@ def default_tides(a, e, primary, secondary, verbose=False):
     if kT_conv_pri is None or not np.isfinite(kT_conv_pri):
         kT_conv_pri = 0.0
 
-        if verbose:
-            print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
-            print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
+        #if verbose:
+        #    print("kT_conv_sec is", kT_conv_sec, ", set to 0.")
+        #    print("kT_conv_pri is", kT_conv_pri, ", set to 0.")
     # this is the 1/timescale of all d/dt calculted below in yr^-1
 
-    if verbose:
-        print(
-            "Equilibrium tides in deep convective envelope",
-            m_env2,
-            dr_env2,
-            rmid_env2,
-            R2,
-            m2,
-            m_env1,
-            dr_env1,
-            rmid_env1,
-            R1,
-            m1
-        )
-        print("convective tiimescales and efficiencies",
-            tau_conv_2, P_orb, P_spin_sec, P_tid_sec,
-            f_conv_sec,
-            F_tid,
-            tau_conv_1, P_orb, P_spin_pri, P_tid_pri,
-            f_conv_pri,
-            F_tid,
-            )
+    #if verbose:
+    #    print(
+    #        "Equilibrium tides in deep convective envelope",
+    #        m_env2,
+    #        dr_env2,
+    #        rmid_env2,
+    #        R2,
+    #        m2,
+    #        m_env1,
+    #        dr_env1,
+    #        rmid_env1,
+    #        R1,
+    #        m1
+    #    )
+    #    print("convective timescales and efficiencies",
+    #        tau_conv_2, P_orb, P_spin_sec, P_tid_sec,
+    #        f_conv_sec,
+    #        F_tid,
+    #        tau_conv_1, P_orb, P_spin_pri, P_tid_pri,
+    #        f_conv_pri,
+    #        F_tid,
+    #        )
 
     # dynamical timecale
     F_tid = 1
@@ -207,22 +195,22 @@ def default_tides(a, e, primary, secondary, verbose=False):
     if (R_conv_pri > R1 or R_conv_pri <= 0.0
             or rbot_env1 / R1 > 0.1):
         E22 = 1.592e-9 * m1 ** (2.84)
-        if verbose:
-            print(
-                "R_conv of the convective core is not behaving well or we "
-                "are not calculating the convective core, we switch to "
-                "Zahn+1975 calculation of E2",
-                R_conv_sec,
-                R2,
-                rtop_env2,
-                rbot_env2,
-                E21,
-                R_conv_pri,
-                R1,
-                rtop_env1,
-                rbot_env1,
-                E22
-            )
+        #if verbose:
+        #    print(
+        #        "R_conv of the convective core is not behaving well or we "
+        #        "are not calculating the convective core, we switch to "
+        #        "Zahn+1975 calculation of E2",
+        #        R_conv_sec,
+        #        R2,
+        #        rtop_env2,
+        #        rbot_env2,
+        #        E21,
+        #        R_conv_pri,
+        #        R1,
+        #        rtop_env1,
+        #        rbot_env1,
+        #        E22
+        #    )
     else:
         if R1 <= 0:
             E22 = 0
@@ -251,25 +239,25 @@ def default_tides(a, e, primary, secondary, verbose=False):
         * E22
         * const.secyer)
     # this is the 1/timescale of all d/dt calculted below in yr^-1
-    if verbose:
-        print(
-            "Dynamical tides in radiative envelope",
-            rtop_env2,
-            rbot_env2,
-            R_conv_sec,
-            E21,
-            rtop_env1,
-            rbot_env1,
-            R_conv_pri,
-            E22,
-            F_tid
-        )
+    #if verbose:
+    #    print(
+    #        "Dynamical tides in radiative envelope",
+    #        rtop_env2,
+    #        rbot_env2,
+    #        R_conv_sec,
+    #        E21,
+    #        rtop_env1,
+    #        rbot_env1,
+    #        R_conv_pri,
+    #        E22,
+    #        F_tid
+    #    )
     kT_sec = max(kT_conv_sec, kT_rad_sec)
     kT_pri = max(kT_conv_pri, kT_rad_pri)
-    if verbose:
-        print("kT_conv/rad of tides is ", kT_conv_sec, kT_rad_sec,
-            kT_conv_pri, kT_rad_pri, "in 1/yr, and we picked the ",
-            kT_sec, kT_pri)
+    #if verbose:
+    #    print("kT_conv/rad of tides is ", kT_conv_sec, kT_rad_sec,
+    #        kT_conv_pri, kT_rad_pri, "in 1/yr, and we picked the ",
+    #        kT_sec, kT_pri)
 
     da_tides_sec = (
             -6
@@ -328,10 +316,10 @@ def default_tides(a, e, primary, secondary, verbose=False):
             / (1 - e ** 2) ** 6
             * (f2 - (1 - e ** 2) ** (3 / 2) * f5 * omega1 / n)
     )
-    if verbose:
-        print("da,de,dOmega_tides = ",
-            da_tides_sec, de_tides_sec, dOmega_tides_sec,
-            da_tides_pri, de_tides_pri, dOmega_tides_pri)
+    #if verbose:
+    #    print("da,de,dOmega_tides = ",
+    #        da_tides_sec, de_tides_sec, dOmega_tides_sec,
+    #        da_tides_pri, de_tides_pri, dOmega_tides_pri)
 
     da = da_tides_sec + da_tides_pri
     de = de_tides_sec + de_tides_pri

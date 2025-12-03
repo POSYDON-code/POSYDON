@@ -116,3 +116,6 @@ venv.bak/
 
 # macOS
 .DS_store
+
+# dev-tools folders
+/dev-tools/POSYDON_*

@@ -1497,8 +1497,8 @@ class StepSN(object):
             M_companion = binary.star_2.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_1.natal_kick_array[0] is None:
-                Vkick = binary.star_1.natal_kick_array[0]
+            if not binary.star_1.natal_kick_velocity is None:
+                Vkick = binary.star_1.natal_kick_velocity
             else:
                 # Draw a random orbital kick
                 # Vkick is the kick velocity with components Vkx, Vky, Vkz in
@@ -1536,29 +1536,30 @@ class StepSN(object):
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
-                binary.star_1.natal_kick_array[0] = Vkick
+                binary.star_1.natal_kick_velocity = Vkick
 
-            if not binary.star_1.natal_kick_array[1] is None:
-                phi = binary.star_1.natal_kick_array[1]
+            if not binary.star_1.natal_kick_azimuthal_angle is None:
+                phi = binary.star_1.natal_kick_azimuthal_angle
             else:
                 phi = np.random.uniform(0, 2 * np.pi)
-                binary.star_1.natal_kick_array[1] = phi
+                binary.star_1.natal_kick_azimuthal_angle = phi
 
-            if not binary.star_1.natal_kick_array[2] is None:
-                cos_theta = np.cos(binary.star_1.natal_kick_array[2])
+            if not binary.star_1.natal_kick_polar_angle is None:
+                cos_theta = np.cos(binary.star_1.natal_kick_polar_angle)
             else:
                 cos_theta = np.random.uniform(-1, 1)
-                binary.star_1.natal_kick_array[2] = np.arccos(cos_theta)
+                binary.star_1.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_1.natal_kick_array[3] is None:
-                mean_anomaly = binary.star_1.natal_kick_array[3]
+            if not binary.star_1.natal_kick_mean_anomaly is None:
+                mean_anomaly = binary.star_1.natal_kick_mean_anomaly
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
-                    raise ValueError("mean_anomaly must be a single float value.")
+                    raise ValueError("mean_anomaly must be a single float value."
+                                     f"\n mean_anomaly = {mean_anomaly}")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
-                binary.star_1.natal_kick_array[3] = mean_anomaly
+                binary.star_1.natal_kick_mean_anomaly = mean_anomaly
 
         elif binary.event == "CC2":
             if binary.star_2.SN_type == "WD":
@@ -1602,8 +1603,8 @@ class StepSN(object):
             M_companion = binary.star_1.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_2.natal_kick_array[0] is None:
-                Vkick = binary.star_2.natal_kick_array[0]
+            if not binary.star_2.natal_kick_velocity is None:
+                Vkick = binary.star_2.natal_kick_velocity
             else:
                 # Draw a random orbital kick
                 # Vkick is the kick velocity with components Vkx, Vky, Vkz in
@@ -1636,29 +1637,29 @@ class StepSN(object):
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
-                binary.star_2.natal_kick_array[0] = Vkick
+                binary.star_2.natal_kick_velocity = Vkick
 
-            if not binary.star_2.natal_kick_array[1] is None:
-                phi = binary.star_2.natal_kick_array[1]
+            if not binary.star_2.natal_kick_azimuthal_angle is None:
+                phi = binary.star_2.natal_kick_azimuthal_angle
             else:
                 phi = np.random.uniform(0, 2 * np.pi)
-                binary.star_2.natal_kick_array[1] = phi
+                binary.star_2.natal_kick_azimuthal_angle = phi
 
-            if not binary.star_2.natal_kick_array[2] is None:
-                cos_theta = np.cos(binary.star_2.natal_kick_array[2])
+            if not binary.star_2.natal_kick_polar_angle is None:
+                cos_theta = np.cos(binary.star_2.natal_kick_polar_angle)
             else:
                 cos_theta = np.random.uniform(-1, 1)
-                binary.star_2.natal_kick_array[2] = np.arccos(cos_theta)
+                binary.star_2.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_2.natal_kick_array[3] is None:
-                mean_anomaly = binary.star_2.natal_kick_array[3]
+            if not binary.star_2.natal_kick_mean_anomaly is None:
+                mean_anomaly = binary.star_2.natal_kick_mean_anomaly
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
                     raise ValueError("mean_anomaly must be a single float value.")
             else:
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
-                binary.star_2.natal_kick_array[3] = mean_anomaly
+                binary.star_2.natal_kick_mean_anomaly = mean_anomaly
 
         # update the orbit
         if binary.state == "disrupted" or binary.state == "initially_single_star" or binary.state == "merged":
