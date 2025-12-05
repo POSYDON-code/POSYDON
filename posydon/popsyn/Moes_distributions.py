@@ -465,4 +465,4 @@ class Moe_17_PsandQs():
             logPs.append(mylogP)
             es.append(mye)
             Zs.append(Z)
-        return np.array(M2s), np.array(logPs), np.array(es), np.array(Zs)
+        return np.array(M2s), 10**np.array(logPs), np.array(es), np.array(Zs)
