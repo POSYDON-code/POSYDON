@@ -94,7 +94,8 @@ class Moe_17_PsandQs():
             ret += integrate_newton_cotes(x[idx:idx + p], f[idx:idx + p])
         return ret
 
-    def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=100):
+    def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=100, 
+                 orbital_period_min=1.412, orbital_period_max=1e8, **kwargs):
         """Initializing the class.
 
         Parameters
@@ -116,7 +117,9 @@ class Moe_17_PsandQs():
         # 0.8 < M1/Msun < 40 with self.numM1 steps in log space
         self.M1v = 10**(np.linspace(np.log10(0.8), np.log10(40.0), self.numM1))
         # 0.15 < log10(P/day) < 8.0 with self.numlogP steps
-        self.logPv = np.linspace(0.15, 8.0, self.numlogP)
+        self.logPv = np.linspace(np.log10(orbital_period_min), 
+                                 np.log10(orbital_period_max), 
+                                 self.numlogP)
         # 0.10 < q < 1.00 with self.numq steps
         self.qv = np.linspace(0.1, 1.0, self.numq)
         # 0.0001 < e < 0.9901 with self.nume steps
