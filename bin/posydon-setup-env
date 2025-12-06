@@ -1,0 +1,4 @@
+from posydon.utils.install import _run_install
+
+if __name__ == '__main__':
+    _run_install()
