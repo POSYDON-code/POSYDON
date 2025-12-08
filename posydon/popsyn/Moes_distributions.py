@@ -94,7 +94,7 @@ class Moe_17_PsandQs():
             ret += integrate_newton_cotes(x[idx:idx + p], f[idx:idx + p])
         return ret
 
-    def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=100,
+    def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=200,
                  orbital_period_min=1.412, orbital_period_max=1e8, **kwargs):
         """Initializing the class.
 
@@ -113,6 +113,7 @@ class Moe_17_PsandQs():
         self.numlogP = n_logP
         self.numq = n_q
         self.nume = n_e
+        
         # ranges where M+D17 has statistics corrected for selection effects:
         # 0.8 < M1/Msun < 40 with self.numM1 steps in log space
         self.M1v = 10**(np.linspace(np.log10(0.8), np.log10(40.0), self.numM1))
