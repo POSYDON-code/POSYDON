@@ -20,7 +20,7 @@ Dive into our Jupyter Notebook that will show you how to create a MESA PSyGrid d
 To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the :ref:`API Documentation <processing-pipeline>`.
 
 
-II. The Full POSYDON Processing Pipeline Experience
+II. The Full POSYDON Processing Pipeline Experience 
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 From A to Z, this tutorial shows you how to process, concatenate, down sample, plot grids and check failure rates, train interpolation objects and export the POSYDON dataset for population synthesis.
@@ -29,7 +29,7 @@ From A to Z, this tutorial shows you how to process, concatenate, down sample, p
 
     run_full_pipeline
 
-Congratulations! You've now mastered the POSYDON Processing Pipeline.
+Congratulations! You've now mastered the POSYDON Processing Pipeline. To learn more about the PSyGrid object or the Processing Pipeline API ini file, check out the [API Documentation](api.rst) and the indepth components overview.
 
 
 .. _plot_1d:
@@ -74,7 +74,7 @@ Export Single Star PSyGrid Datasets
 Learn how to export single star PSyGrid datasets. This is an advanced tutorial because it requires knowledge about the EEP code.
 
 .. note::
-
+    
     POSYDON v2.0.0 does not embed a python interface to compute EEPs but relies on the Fortran code of Aaron Dotter (2016). Future POSYDON code releases will include a python interface to compute EEPs and embed the export of single stellar grid into the post-processing pipeline.
 
 .. toctree::

@@ -172,10 +172,10 @@ Binary events are defined according to the following table:
   * - ``oCE2``
     - The binary is at the onset of Common Envelope initiated by star 2.
   * - ``oDoubleCE1``
-    - | The binary is at the onset of Double Common Envelope initiated by star 1.
+    - | The binary is at the onset of Double Common Envelope initiated by star 1. 
       | Both stars are post main-sequence.
   * - ``oDoubleCE2``
-    - | The binary is at the onset of Double Common Envelope initiated by star 2.
+    - | The binary is at the onset of Double Common Envelope initiated by star 2. 
       | Both stars are post main-sequence.
   * - ``CO_contact``
     - The binary reached contact in the compact object phase.

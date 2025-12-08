@@ -48,7 +48,7 @@ Note that the loading of the simulation steps is separate from creating the obje
 
     # read from file
     sim_props = simprop_kwargs_from_ini('population_params.ini', verbose=False)
-
+    
     # create SimulationProperties object
     sim = SimulationProperties(**sim_props)
 
@@ -784,7 +784,7 @@ When reading the binary population arguments from a ``population_params.ini`` fi
 
     # read from file
     pop_params = binarypop_kwargs_from_ini('population_params.ini', verbose=False)
-
+    
     # create BinaryPopulation object
     pop = BinaryPopulation(**pop_params)
 

@@ -7,7 +7,7 @@ Documentation of the :samp:`ini` file for the post-processing pipeline
 Aim of the :samp:`ini` file
 ===========================
 
-Using an :samp:`ini` file should help to keep an overview on large grid
+Using an :samp:`ini` file should help to keep an overview on large grid 
 repositories and ensures that all workflows will be set up the same way.
 
 There is a script to set up the pipeline, it takes one argument:

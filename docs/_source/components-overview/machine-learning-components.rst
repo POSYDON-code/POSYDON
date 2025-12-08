@@ -21,8 +21,8 @@ Profile Interpolation
 
 .. warning::
 
-    This feature is experimental and may not be suitable for scientific use. If
-    you want to use this feature, please install the relevant dependencies
+    This feature is experimental and may not be suitable for scientific use. If 
+    you want to use this feature, please install the relevant dependencies 
     with `pip install -e .[ml]`.
 
 POSYDON supports an experimental feature that allows the user to interpolate

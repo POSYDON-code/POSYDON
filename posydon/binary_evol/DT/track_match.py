@@ -1434,11 +1434,6 @@ class TrackMatcher:
 
         """
 
-        if star == binary.star_1 and not self.match_s1:
-            return None, None
-        elif star == binary.star_2 and not self.match_s2:
-            return None, None
-
         with np.errstate(all="ignore"):
             # get the initial m0, t0 track
             if star.co:

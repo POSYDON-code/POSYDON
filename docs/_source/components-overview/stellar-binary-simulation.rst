@@ -10,7 +10,7 @@ Stellar & Binary-star Simulation
 POSYDON: Building Populations with Object-Oriented Design
 =========================================================
 
-POSYDON provides a fully customizable framework to population synthesis modeling. By leveraging the power and flexibility of object-oriented design, it offers a modular and scalable architecture that enables researchers to customize, extend, and integrate various astrophysical processes with ease. This section delves into the intricacies of the POSYDON hierarchy, outlining the key classes, their interrelationships, and their roles in crafting sophisticated population synthesis models.
+POSYDON provides a fully customizable framework to population synthesis modeling. By leveraging the power and flexibility of object-oriented design, it offers a modular and scalable architecture that enables researchers to customize, extend, and integrate various astrophysical processes with ease. This section delves into the intricacies of the POSYDON hierarchy, outlining the key classes, their interrelationships, and their roles in crafting sophisticated population synthesis models. 
 
 The Single Star Object
 ----------------------

@@ -88,7 +88,7 @@ A more powerful feature is the :func:`History.select` function, which allows you
 If you want to have a peak, you can use the :meth:`~Population.head` or :meth:`~Population.tail` functions.
 
 .. code-block:: python
-
+  
     pop.history.head(10)
     pop.history.tail(10)
 
@@ -250,7 +250,7 @@ It loops over all the systems in the population in chunks and applies the given 
 The :func:`Population.create_transient_population` function takes a function as an argument: :code:`selection_function`.
 
 The :code:`selection_function` takes 3 arguments: :code:`history_chunk`, :code:`oneline_chunk`, and :code:`formation_channels_chunk` (optional).
-These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system.
+These chunks are cut based on a given chunksize, which is set to 1000000 by default, and are cut on system. 
 This means that a complete history of a system is always passed to the function by :func:`Population.create_transient_population`.
 
 :code:`selection_function` is a function you can adapt to your own needs, and
@@ -470,7 +470,7 @@ If you like to overplot multiple properties, you can set ``show=False`` and manu
 
 .. _population-file-structure:
 
-The Structure of Generated Population Files
+The Structure of Generated Population Files 
 ###########################################
 
 The main output of a population synthesis run is a HDF5 population file.
