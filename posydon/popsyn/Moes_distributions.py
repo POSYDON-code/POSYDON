@@ -113,7 +113,7 @@ class Moe_17_PsandQs():
         self.numlogP = n_logP
         self.numq = n_q
         self.nume = n_e
-        
+
         # ranges where M+D17 has statistics corrected for selection effects:
         # 0.8 < M1/Msun < 40 with self.numM1 steps in log space
         self.M1v = 10**(np.linspace(np.log10(0.8), np.log10(40.0), self.numM1))
