@@ -190,6 +190,15 @@ class SimulationProperties:
         self.preload_imports()
 
     def preload_imports(self):
+        """
+            Preload the imports of detached_step and MesaGridStep to avoid 
+        importing them when they are needed when `close()` is called. In 
+        particular, detached_step imports sklearn, which in turn utilizes 
+        loky, which invokes its own register.at_exit call. If this happens 
+        during the `close()` call, which is invoked at shutdown, a 
+        failure occurs, hence the need for something like this.
+        """
+        
         from posydon.binary_evol.DT.step_detached import detached_step
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
 
