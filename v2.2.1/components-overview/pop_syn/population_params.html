@@ -1,0 +1,1854 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>POSYDON Population Synthesis Configuration Guide &mdash; posydon 2.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=16656018"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="The Flow Chart Object" href="flow_chart.html" />
+    <link rel="prev" title="The Binary Population Object" href="binary_population.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="single_star.html">The SingleStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_star.html">The BinaryStar object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">POSYDON Population Synthesis Configuration Guide</a></li>
+<li class="toctree-l2"><a class="reference internal" href="flow_chart.html">The Flow Chart Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_hooks.html">Evolutionary Hooks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="user_modules.html">User Modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+      <li class="breadcrumb-item active">POSYDON Population Synthesis Configuration Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/population_params.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="posydon-population-synthesis-configuration-guide">
+<span id="pop-params-guide"></span><h1>POSYDON Population Synthesis Configuration Guide<a class="headerlink" href="#posydon-population-synthesis-configuration-guide" title="Link to this heading"></a></h1>
+<p>This documentation provides a detailed overview of the configuration options available in the Posydon software package.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The default values in the population_params.ini file included in POSYDON
+have not been calibrated, validated, or are used by the POSYDON team. They are
+often an ad-hoc choice, and the user should carefully consider the values
+of each parameter for their science case.</p>
+</div>
+<section id="environment-variables">
+<h2>Environment Variables<a class="headerlink" href="#environment-variables" title="Link to this heading"></a></h2>
+<p>The environment variable <cite>PATH_TO_POSYDON</cite> will be read from your shell session.</p>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description/Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><cite>PATH_TO_POSYDON</cite></p></td>
+<td><p><cite>&lt;PATH_TO_POSYDON&gt;</cite></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="simulationproperties">
+<h2>SimulationProperties<a class="headerlink" href="#simulationproperties" title="Link to this heading"></a></h2>
+<p>After the environment variables, the next part of the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file
+contains how systems will move through the simulation steps [Flow Chart](flow_chart.rst) and the parameters for each step.</p>
+<p>These parameters are read in and used to create a <a class="reference internal" href="../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulationProperties</span></code></a> object.</p>
+<p>It allows for the addition of hooks before and after each step, and the evolution of a system (see <a class="reference internal" href="custom_hooks.html#custom-hooks"><span class="std std-ref">Custom Hooks</span></a>).
+The <code class="docutils literal notranslate"><span class="pre">SimulationProperties</span></code> can be manually read and loaded in.
+Note that the loading of the simulation steps is separate from creating the object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
+
+<span class="c1"># read from file</span>
+<span class="n">sim_props</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># create SimulationProperties object</span>
+<span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_props</span><span class="p">)</span>
+
+<span class="c1"># load the steps</span>
+<span class="n">sim</span><span class="o">.</span><span class="n">load_steps</span><span class="p">()</span>
+</pre></div>
+</div>
+<section id="flow-chart">
+<h3>Flow Chart<a class="headerlink" href="#flow-chart" title="Link to this heading"></a></h3>
+<p>The flow chart is the core of POSYDON.
+It controls the mapping between a POSYDON binary object and its step evolution, see the <a class="reference internal" href="flow_chart.html#flow-chart"><span class="std std-ref">Flow Chart Object</span></a> page for more details.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the flow chart and the name of the flow chart function.</div>
+<div class="line">The flow chart function is used to determine the next step of the binary object.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.flow_chart',</span> <span class="pre">'flow_chart']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line">You can find an example in the tutorials.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-mesa-hms-hms-co-hms-rlo-co-hems-co-hems-rlo">
+<h3>Step MESA (HMS-HMS, CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO)<a class="headerlink" href="#step-mesa-hms-hms-co-hms-rlo-co-hems-co-hems-rlo" title="Link to this heading"></a></h3>
+<p>The MESA step is the most important step of POSYDON as it leverages the POSYDON MESA grids to evolve the binary object according to one of the supported MESA binary-star grids.</p>
+<p>Below we give the default values for the HMS-HMS step, as an example.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.step_MESA',</span> <span class="pre">'step_HMS_HMS']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interpolation_path</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The path to the interpolation file for the step.</div>
+<div class="line">If None, the path is found by default with</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code> and <code class="docutils literal notranslate"><span class="pre">step_name</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">interpolation_filename</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The name of the interpolation file for the step.</div>
+<div class="line">If None, the name is found by default with</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code>, <code class="docutils literal notranslate"><span class="pre">step_name</span></code>, and <code class="docutils literal notranslate"><span class="pre">metallicity</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">interpolation_method</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The interpolation method used to interpolate the MESA grid.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_neighbour'</span></code> : nearest neighbour interpolation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'linear3c_kNN'</span></code> : linear interpolation with closest neighbours</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'1NN_1NN'</span></code> : 1NN interpolation with 1NN interpolation?</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'linear3c_kNN'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">save_initial_conditions</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Store the initial conditions when using nearest neighbour interpolation.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">track_interpolation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Track the interpolation when using nearest neighbour interpolation.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stop_method</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The method to stop the evolution of a binary</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'stop_at_end'</span></code> : stop at the end of the simulation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'stop_at_max_time'</span></code> : stop at the maximum time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'stop_at_condition'</span></code> : stop at a condition</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'stop_at_max_time'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stop_star</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specifies the star to stop for the condition.</div>
+<div class="line">Relevant when <code class="docutils literal notranslate"><span class="pre">stop_method</span></code> is <code class="docutils literal notranslate"><span class="pre">'stop_at_condition'</span></code>.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'star_1'</span></code> : stop condition applied to star 1</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'star_2'</span></code> : stop condition applied to star 2</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'star_1'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stop_var_name</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The variable name for the stop condition.</div>
+<div class="line">Only applicable when <code class="docutils literal notranslate"><span class="pre">stop_method</span></code> is <code class="docutils literal notranslate"><span class="pre">'stop_at_condition'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">stop_value</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The value at which to stop.</div>
+<div class="line">Relevant when <code class="docutils literal notranslate"><span class="pre">stop_method</span></code> is <code class="docutils literal notranslate"><span class="pre">'stop_at_condition'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">stop_interpolate</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Specifies whether to interpolate when stopping.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-detached">
+<h3>Step Detached<a class="headerlink" href="#step-detached" title="Link to this heading"></a></h3>
+<p>The detached step uses analytical expressions and MESA single star grids to evolve the binary object when it is not interacting.
+It evolves the binary object in isolation until Roche lobe overflow occurs.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.step_detached',</span> <span class="pre">'detached_step']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_method</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The method to match the MESA single star grid to the binary object.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code> : minimize the difference between the MESA single star grid and the binary object</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'root'</span></code> : find the root of the difference between the MESA single star grid and the binary object</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance</span></code></p></td>
+<td><div class="line-block">
+<div class="line">When using the “minimize” matching method, a computed square</div>
+<div class="line">Euclidean distance between the pre-match and post-match values</div>
+<div class="line">less than this must be achieved for a successful match.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance_hard</span></code></p></td>
+<td><div class="line-block">
+<div class="line">This tolerance is checked after all else fails, as a last attempt</div>
+<div class="line">to find a solution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">do_wind_loss</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable orbital separation and eccentricity changes from stellar wind loss.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_tides</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable tides following Hut, P. 1981, A&amp;A, 99, 126.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">do_gravitational_radiation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable gravitational radiation following Junker, W., &amp; Schafer, G. 1992, MNRAS, 254, 146.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_magnetic_braking</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable stellar angular momentum loss from magnetic braking.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">magnetic_braking_mode</span></code></p></td>
+<td><div class="line-block">
+<div class="line">A string corresponding to the desired magnetic braking prescription.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'RVJ83'</span></code>: Rappaport, S., Joss, P. C., &amp; Verbunt, F. 1983, ApJ, 275, 713</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'M15'</span></code>: Matt et al. 2015, ApJ, 799, L23</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'G18'</span></code>: Garraffo et al. 2018, ApJ, 862, 90</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'CARB'</span></code>: Van &amp; Ivanova 2019, ApJ, 886, L31</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'RVJ83'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_stellar_evolution_and_spin_from_winds</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable stellar angular momentum loss from winds.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RLO_orbit_at_orbit_with_same_am</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Binaries are circularized instantaneously when RLO occurs and this</div>
+<div class="line">option dictates how that is handled. If false, place</div>
+<div class="line">the binary in an orbit with separation equal to the binary’s</div>
+<div class="line">separation at periastron. If true, circularize the orbit assuming</div>
+<div class="line">that angular momentum is conserved w.r.t. the previously (possibly)</div>
+<div class="line">eccentric orbit. In the latter case, the star may no longer</div>
+<div class="line">fill its Roche lobe after circularization, and may be further</div>
+<div class="line">evolved until RLO commences once again, but without changing the</div>
+<div class="line">orbit.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">record_matching</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If true, append quantities achieved from track matching to the binary history.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-disrupted">
+<h3>Step Disrupted<a class="headerlink" href="#step-disrupted" title="Link to this heading"></a></h3>
+<p>The disrupted step evolves a system when a supernova has unbound the binary components.
+This class inherits from the detached step, but only evolves the remaining star in isolation.
+This means that this step uses the single stars loaded by the detached step.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.step_disrupted',</span> <span class="pre">'DisruptedStep']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_method</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The method to match the MESA single star grid to the binary object.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code> : minimize the difference between the MESA single star grid and the binary object</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'root'</span></code> : find the root of the difference between the MESA single star grid and the binary object</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance</span></code></p></td>
+<td><div class="line-block">
+<div class="line">When using the “minimize” matching method, a computed square</div>
+<div class="line">Euclidean distance between the pre-match and post-match values</div>
+<div class="line">less than this must be achieved for a successful match.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance_hard</span></code></p></td>
+<td><div class="line-block">
+<div class="line">This tolerance is checked after all else fails, as a last attempt</div>
+<div class="line">to find a solution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">do_wind_loss</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable orbital separation and eccentricity changes from stellar wind loss.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_tides</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable tides following Hut, P. 1981, A&amp;A, 99, 126.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">do_gravitational_radiation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable gravitational radiation following Junker, W., &amp; Schafer, G. 1992, MNRAS, 254, 146.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_magnetic_braking</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable stellar angular momentum loss from magnetic braking.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">magnetic_braking_mode</span></code></p></td>
+<td><div class="line-block">
+<div class="line">A string corresponding to the desired magnetic braking prescription.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'RVJ83'</span></code>: Rappaport, S., Joss, P. C., &amp; Verbunt, F. 1983, ApJ, 275, 713</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'M15'</span></code>: Matt et al. 2015, ApJ, 799, L23</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'G18'</span></code>: Garraffo et al. 2018, ApJ, 862, 90</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'CARB'</span></code>: Van &amp; Ivanova 2019, ApJ, 886, L31</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'RVJ83'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">do_stellar_evolution_and_spin_from_winds</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable stellar angular momentum loss from winds.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RLO_orbit_at_orbit_with_same_am</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Binaries are circularized instaneously when RLO occurs and this</div>
+<div class="line">option dictates how that is handled. If false, place</div>
+<div class="line">the binary in an orbit with separation equal to the binary’s</div>
+<div class="line">separation at periastron. If true, circularize the orbit assuming</div>
+<div class="line">that angular momentum is conserved w.r.t. the previously (possibly)</div>
+<div class="line">eccentric orbit. In the latter case, the star may no longer</div>
+<div class="line">fill its Roche lobe after circularization, and may be further</div>
+<div class="line">evolved until RLO commences once again, but without changing the</div>
+<div class="line">orbit.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">record_matching</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If true, append quantities achieved from track matching to the binary history.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-merged">
+<h3>Step Merged<a class="headerlink" href="#step-merged" title="Link to this heading"></a></h3>
+<p>In this step, the system has undergone a merger and is now a single star.
+This class inherits from the detached step, but only evolves the remaining star in isolation.
+This means that this step uses the single stars loaded by the detached step.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.step_merged',</span> <span class="pre">'MergedStep']</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-initially-single">
+<h3>Step Initially Single<a class="headerlink" href="#step-initially-single" title="Link to this heading"></a></h3>
+<p>This step is used to evolve a single star system.
+This class inherits from the detached step and evolves the star in isolation.
+This means that this step uses the single stars loaded by the detached step.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.step_initially_single','InitiallySingleStep']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_method</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The method to match the MESA single star grid to the binary object.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code> : minimize the difference between the MESA single star grid and the binary object</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'root'</span></code> : find the root of the difference between the MESA single star grid and the binary object</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'minimize'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance</span></code></p></td>
+<td><div class="line-block">
+<div class="line">When using the “minimize” matching method, a computed square</div>
+<div class="line">Euclidean distance between the pre-match and post-match values</div>
+<div class="line">less than this must be achieved for a successful match.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-2</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">matching_tolerance_hard</span></code></p></td>
+<td><div class="line-block">
+<div class="line">This tolerance is checked after all else fails, as a last attempt</div>
+<div class="line">to find a solution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e-1</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">record_matching</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If true, append quantities achieved from track matching to the binary history.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-common-envelope">
+<h3>Step Common Envelope<a class="headerlink" href="#step-common-envelope" title="Link to this heading"></a></h3>
+<p>The common envelope step is used to evolve a binary system when the primary or secondary star has initiated a common envelope phase.
+It calculates the binding energy of the envelope and the energy available to eject it.
+If the energy budget is greater than the binding energy, the envelope is ejected and the system is evolved to the next step.
+If the energy budget is less than the binding energy, the system is merged.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.CE.step_CEE',</span> <span class="pre">'StepCEE']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">prescription</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The prescription used for the common envelope evolution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'alpha-lambda'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_efficiency</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The efficiency of the common envelope ejection.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_option_for_lambda</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The option for calculating the lambda parameter.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'default_lambda'</span></code> : default lambda value</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_from_grid_final_values'</span></code> : lambda from grid final values</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_from_profile_gravitational'</span></code> : lambda from profile gravitational</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_from_profile_gravitational_plus_internal'</span></code> : lambda from profile gravitational plus internal</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_from_profile_gravitational_plus_internal_minus_recombination'</span></code> : lambda from profile gravitational plus internal minus recombination</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'lambda_from_grid_final_values'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_lambda_default</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The default lambda value, used only for the <code class="docutils literal notranslate"><span class="pre">'default_lambda'</span></code> option.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_option_for_HG_star</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The option for handling Hertzsprung gap stars in common envelope evolution.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'optimistic'</span></code> : optimistic scenario</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'pessimistic'</span></code> : pessimistic scenario</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'optimistic'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_alpha_thermal</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The alpha thermal parameter, used only for the <code class="docutils literal notranslate"><span class="pre">'lambda_from_profile_gravitational_plus_internal'</span></code> and <code class="docutils literal notranslate"><span class="pre">'lambda_from_profile_gravitational_plus_internal_minus_recombination'</span></code> options.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The hydrogen fraction for defining the core.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">0.01</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">0.3</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.3</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The helium fraction for defining the core.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.1</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CEE_tolerance_err</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The tolerance error for the common envelope evolution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.001</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">common_envelope_option_after_succ_CEE</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The option for handling the system after a successful common envelope ejection.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'one_phase_variable_core_definition'</span></code> : lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; no mass transfer (use this defined core mass as the stripped remnant mass)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'two_phases_stableMT'</span></code> : first lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to <code class="docutils literal notranslate"><span class="pre">'two_phases_windloss'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'two_phases_windloss'</span></code> : first lose mass till the variable core definition (see <code class="docutils literal notranslate"><span class="pre">core_definition_H_fraction</span></code>/<code class="docutils literal notranslate"><span class="pre">core_definition_He_fraction</span></code>) with the given <code class="docutils literal notranslate"><span class="pre">prescription</span></code>; second lose the mass remaining mass above the core defined in MESA as a fast wind</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'two_phases_stableMT'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-supernova">
+<h3>Step Supernova<a class="headerlink" href="#step-supernova" title="Link to this heading"></a></h3>
+<p>This step performs the core-collapse supernova evolution of the star.
+Multiple prescriptions are implemented and can be selected.
+If a pretrained prescription is used (<code class="docutils literal notranslate"><span class="pre">use_interp_values=True</span></code>), interpolators are available to speed up the calculation and predict additional properties of the collapse, such as the spin.
+The collection of trained prescriptions can be found in the <code class="docutils literal notranslate"><span class="pre">MODELS.py</span></code> file at <code class="docutils literal notranslate"><span class="pre">posydon/grids/MODELS.py</span></code>.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you want to use a combination that does not have a trained model, please turn off <code class="docutils literal notranslate"><span class="pre">use_interp_values</span></code>,
+otherwise your population runs will fail! Depending on <code class="docutils literal notranslate"><span class="pre">use_core_masses</span></code>,
+the core masses or stellar profiles are used to determine the supernova properties.</p>
+</div>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.SN.step_SN',</span> <span class="pre">'StepSN']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mechanism</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The mechanism used for the supernova.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'direct'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Fryer+12-rapid'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Fryer+12-delayed'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Sukhbold+16-engine'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Fryer+12-delayed'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">engine</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The engine used for the supernova.</div>
+<div class="line">Relevant for <code class="docutils literal notranslate"><span class="pre">'Sukhbold+16-engine'</span></code> and <code class="docutils literal notranslate"><span class="pre">'Patton&amp;Sukhbold20-engine'</span></code> mechanisms.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'N20'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'S19.8'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W15'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W20'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'W18'</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">''</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PISN</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The prescription used for pair-instability supernova.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Marchant+19'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Hendriks+23'</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Hendriks+23'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">PISN_CO_shift</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The shift in CO core mass for the start of the Hendriks+23 PPI prescription</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">PPI_extra_mass_loss</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Additional PPI mass loss for the Hendriks+23 prescription</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">-20.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ECSN</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The prescription used for electron-capture supernova.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'Tauris+15'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Podsiadlowksi+04'</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Tauris+15'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">conserve_hydrogen_envelope</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Conserve the hydrogen envelope during the supernova.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">conserve_hydrogen_PPI</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Include the hydrogen envelope during the calculation of the</div>
+<div class="line">PPI mass loss with the Hendriks+23 prescription</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_neutrino_mass_loss</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The maximum mass loss due to neutrinos.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">max_NS_mass</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The maximum mass of a neutron star.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2.5</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_interp_values</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Use interpolation values for the supernova properties, which are calculated during <code class="docutils literal notranslate"><span class="pre">step_MESA</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">use_profiles</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Use profiles for the supernova.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_core_masses</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Use core masses for the supernova.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">allow_spin_None</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Allow compact objects to have undetermined spin values in the lack of profile data.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">approx_at_he_depletion</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Approximate at helium depletion.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kick</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Apply a kick to the remnant.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kick_normalisation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The normalisation method for the kick.</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'one_minus_fallback'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'one_over_mass'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'NS_one_minus_fallback_BH_one'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'one'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'zero'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'asym_ej'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'linear'</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_normal'</span></code></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'one_over_mass'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_NS</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The standard deviation of the kick velocity for core-collapse supernova neutron stars.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">265.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_CCSN_BH</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The standard deviation of the kick velocity for core-collapse supernova black holes.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">265.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">sigma_kick_ECSN</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The standard deviation of the kick velocity for electron-capture supernova.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">20.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enables verbose mode.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-double-compact-object">
+<h3>Step Double Compact Object<a class="headerlink" href="#step-double-compact-object" title="Link to this heading"></a></h3>
+<p>In this step, the system has evolved to a double compact object system.
+The merger time due to gravitational wave emission is calculated.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.DT.double_CO',</span> <span class="pre">'DoubleCO']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+<div class="line"><code class="docutils literal notranslate"><span class="pre">['import.path',</span> <span class="pre">'name_of_step']</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">n_o_steps_history</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The number of steps interval for the double compact object evolution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="step-end">
+<h3>Step End<a class="headerlink" href="#step-end" title="Link to this heading"></a></h3>
+<p>The final step of the simulation.
+All succesfull systems should reach this step.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the step and the name of the step class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.step_end',</span> <span class="pre">'step_end']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom step. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="extra-hooks">
+<h3>Extra Hooks<a class="headerlink" href="#extra-hooks" title="Link to this heading"></a></h3>
+<p>It’s possible to add custom hooks to the simulation steps.
+A few example hooks are provides: <code class="docutils literal notranslate"><span class="pre">TimingHooks</span></code> and <code class="docutils literal notranslate"><span class="pre">StepNamesHooks</span></code> (See <a class="reference internal" href="custom_hooks.html#custom-hooks"><span class="std std-ref">Custom Hooks</span></a> for more details)
+Each new hook has a unique import number, starting from 1.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">import_1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the hook and the name of the hook class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.simulationproperties',</span> <span class="pre">'TimingHooks']</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import_1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom hook. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs_1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Additional keyword arguments for the hook.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">import_2</span></code></p></td>
+<td><div class="line-block">
+<div class="line">The import path for the hook and the name of the hook class.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">['posydon.binary_evol.simulationproperties',</span> <span class="pre">'StepNamesHooks']</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">absolute_import_2</span></code></p></td>
+<td><div class="line-block">
+<div class="line">An absolute import of a custom hook. It follows the same structure as <code class="docutils literal notranslate"><span class="pre">import</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">kwargs_2</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Additional keyword arguments for the hook.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">{}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="binarypopulation">
+<h2>BinaryPopulation<a class="headerlink" href="#binarypopulation" title="Link to this heading"></a></h2>
+<p>A <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.binarypopulation.BinaryPopulation" title="posydon.popsyn.binarypopulation.BinaryPopulation"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryPopulation</span></code></a> is created to evolve the population using a given <a class="reference internal" href="../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulationProperties</span></code></a> object.</p>
+<p>This class requires additional parameters, because it will require initial distributions
+for to sample <a class="reference internal" href="../../api_reference/posydon.binary_evol.html#posydon.binary_evol.binarystar.BinaryStar" title="posydon.binary_evol.binarystar.BinaryStar"><code class="xref py py-class docutils literal notranslate"><span class="pre">BinaryStar</span></code></a> objects from,
+such as the masses and orbital parameters.
+Moreover, it contains the parameters for metallicity and the practicality of running populations.
+This includes, the number of binaries, the metallicity, how often to save the population to file.</p>
+<p>When reading the binary population arguments from a <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file, the <a class="reference internal" href="../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties" title="posydon.binary_evol.simulationproperties.SimulationProperties"><code class="xref py py-class docutils literal notranslate"><span class="pre">SimulationProperties</span></code></a> are read in automatically.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.binarypopulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">BinaryPopulation</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
+
+<span class="c1"># read from file</span>
+<span class="n">pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># create BinaryPopulation object</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="o">**</span><span class="n">pop_params</span><span class="p">)</span>
+</pre></div>
+</div>
+<section id="binarypopulation-options">
+<h3>BinaryPopulation Options<a class="headerlink" href="#binarypopulation-options" title="Link to this heading"></a></h3>
+<p>These parameters contain options on how the population is evolved, in practical terms, ie. the number of binaries.
+It also contains which sampling distributions to use for the initial conditions of the binaries.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">optimize_ram</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Save population in batches.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">ram_per_cpu</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Set maximum RAM per CPU before batch saving (in GB).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">dump_rate</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Batch save after evolving N binaries.</div>
+<div class="line">To facilitate I/O performance, this should be at least 500 for populations of 100.000 binaries or more.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">2000</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">temp_directory</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Folder for keeping batch files.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'batches'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">tqdm</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Enable progress bar.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">breakdown_to_df</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Convert BinaryStars into DataFrames after evolution.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">use_MPI</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, evolve with MPI (equivalent to: <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">mpi4py</span> <span class="pre">import</span> <span class="pre">MPI,</span> <span class="pre">comm</span> <span class="pre">=</span> <span class="pre">MPI.COMM_WORLD</span></code>).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">metallicity</span></code></p></td>
+<td><div class="line-block">
+<div class="line">In units of solar metallicity. Supported values <code class="docutils literal notranslate"><span class="pre">[2.,</span> <span class="pre">1.,</span> <span class="pre">0.45,</span> <span class="pre">0.2,</span> <span class="pre">0.1,</span> <span class="pre">0.01,</span> <span class="pre">0.001,</span> <span class="pre">0.0001]</span></code></div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">[1.]</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">error_checking_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, write all POSYDON errors to stderr at runtime</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">warnings_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, write all POSYDON warnings to stderr at runtime</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">history_verbose</span></code></p></td>
+<td><div class="line-block">
+<div class="line">If True, record extra functional steps in the output DataFrames</div>
+<div class="line">(These extra steps represent internal workings of POSYDON rather than physical phases of evolution)</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">False</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">entropy</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Random Number Generation: uses system entropy.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">number_of_binaries</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Number of binaries to evolve.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">star_formation</span></code></p></td>
+<td><div class="line-block">
+<div class="line">What star formation is used to sample the binaries.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'constant'</span></code>: sample with a constant rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'burst'</span></code>: sample from a burst of star formation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_linear'</span></code>: sample with a custom linear rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_log10'</span></code>: sample with a custom log10 rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_linear_histogram'</span></code>: sample from a custom linear histogram rate over time</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'custom_log10_histogram'</span></code>: sample from a custom log10 histogram rate over time</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'burst'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">max_simulation_time</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum simulation time (in years).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">13.8e9</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">binary_fraction</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Fraction of binaries (0 &lt; fraction &lt;= 1).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Salpeter</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1955ApJ...121..161S/abstract">Salpeter E. E., 1955, ApJ, 121, 161</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Kroupa1993'</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1993MNRAS.262..545K/abstract">Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Kroupa2001'</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2001MNRAS.322..231K/abstract">Kroupa P., 2001, MNRAS, 322, 231</a></p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Kroupa2001'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum primary mass (in solar masses)</div>
+<div class="line">limits: 0-300</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">7.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum primary mass (in solar masses).</div>
+<div class="line">Needs to be larger than <code class="docutils literal notranslate"><span class="pre">secondary_mass_min</span></code>.</div>
+<div class="line">limits: 0-300</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">150.0</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'flat_mass_ratio'</span></code>: flat mass ratio distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'q=1'</span></code>: mass ratio of 1. Ignores <code class="docutils literal notranslate"><span class="pre">secondary_mass_min/max</span></code> and sets the secondary mass to the primary mass.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Moe2017'</span></code>: distribution from <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract">Moe &amp; Di Stefano (2017)</a> (it will cause other options on <code class="docutils literal notranslate"><span class="pre">orbital_period_scheme</span></code> and <code class="docutils literal notranslate"><span class="pre">eccentricity_scheme</span></code> to be ignored)</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'flat_mass_ratio'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum secondary mass (in solar masses).</div>
+<div class="line">Is required to be smaller than the minimum primary mass.</div>
+<div class="line">limits: 0-270</div>
+<div class="line">DR2 HMS-HMS grid has a minimum M2 mass of 0.5.</div>
+<div class="line">We always check if q&gt;=0.05 and M2&gt;=secondary_mass_min are satisfied in the initial sampling.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">secondary_mass_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum secondary mass (in solar masses).</div>
+<div class="line">limits: 0-270</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">150.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">How to the orbital parameter is sampled.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'separation'</span></code>: use orbital separation</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'period'</span></code>: use orbital period</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'period'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_scheme</span> <span class="pre">=</span> <span class="pre">'period'</span></code>.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">Sana+12_period_extended</span></code>: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract">Sana et al. 2012</a></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Moe2017'</span></code>: distribution from <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract">Moe &amp; Di Stefano (2017)</a> (it will cause other options on <code class="docutils literal notranslate"><span class="pre">secondary_mass_scheme</span></code> and <code class="docutils literal notranslate"><span class="pre">eccentricity_scheme</span></code> to be ignored)</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'Sana+12_period_extended'</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum orbital period (in days).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.75</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">orbital_period_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum orbital period (in days).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">6000.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_scheme</span> <span class="pre">=</span> <span class="pre">'separation'</span></code>.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_uniform'</span></code>: log-uniform distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_normal'</span></code>: log-normal distribution</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'log_uniform'</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_min</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Minimum orbital separation (in solar radii).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">5.0</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#orbital_separation_max</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Maximum orbital separation (in solar radii).</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">1e5</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">#log_orbital_separation_mean</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_separation_scheme</span> <span class="pre">=</span> <span class="pre">'log_normal'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">#log_orbital_separation_sigma</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Used only for <code class="docutils literal notranslate"><span class="pre">orbital_separation_scheme</span> <span class="pre">=</span> <span class="pre">'log_normal'</span></code>.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">eccentricity_scheme</span></code></p></td>
+<td><div class="line-block">
+<div class="line">How the initial binary eccentricity is sampled.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'zero'</span></code> : zero eccentricity</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'thermal'</span></code>: thermal distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'uniform'</span></code>: uniform distribution</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'Moe2017'</span></code>: distribution from <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract">Moe &amp; Di Stefano (2017)</a> (it will cause other options on <code class="docutils literal notranslate"><span class="pre">secondary_mass_scheme</span></code> and <code class="docutils literal notranslate"><span class="pre">orbital_period_scheme</span></code> to be ignored)</p></li>
+</ul>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'zero'</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="saving-output">
+<h2>Saving Output<a class="headerlink" href="#saving-output" title="Link to this heading"></a></h2>
+<p>You can decide on your own output parameters for the population file.
+The data are split in two different tables: the <code class="docutils literal notranslate"><span class="pre">history</span></code> table and the <code class="docutils literal notranslate"><span class="pre">oneline</span></code> table.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">history</span></code> table contains values that change throughout the evolution of the system,
+while the <code class="docutils literal notranslate"><span class="pre">oneline</span></code> table contains values that are constant throughout the evolution of the system or only occur once.</p>
+<section id="binarystar-output">
+<h3>BinaryStar Output<a class="headerlink" href="#binarystar-output" title="Link to this heading"></a></h3>
+<p>The <a class="reference internal" href="../../api_reference/posydon.binary_evol.html#module-posydon.binary_evol.binarystar" title="posydon.binary_evol.binarystar"><code class="xref py py-class docutils literal notranslate"><span class="pre">binarystar</span></code></a> class contains the binary systems and
+the parameters here determine what output of that class will be outputted into the final population file.
+<cite>scalar_names</cite> will only be stored in the oneline table.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">extra_columns</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Additional columns to include in the output.</div>
+<div class="line">Note: <code class="docutils literal notranslate"><span class="pre">'step_times'</span></code> requires <code class="docutils literal notranslate"><span class="pre">TimingHooks</span></code> from <code class="docutils literal notranslate"><span class="pre">posydon.binary_evol.simulationproperties</span></code>.</div>
+</div>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;step_times&#39;</span><span class="p">:</span><span class="s1">&#39;float64&#39;</span><span class="p">}</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">only_select_columns</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Columns to include in the output.</div>
+<div class="line">Example: <code class="docutils literal notranslate"><span class="pre">['state',</span> <span class="pre">'event',</span> <span class="pre">'time',</span> <span class="pre">'orbital_period',</span> <span class="pre">'eccentricity',</span> <span class="pre">'lg_mtransfer_rate']</span></code></div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'state'</span></code>: The state of the binary system.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'event'</span></code>: The event occurring in the binary system.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'time'</span></code>: The time of the event in years.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'separation'</span></code>: The separation between the binary stars in solar radii.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'orbital_period'</span></code>: The orbital period of the binary system in days.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'eccentricity'</span></code>: The eccentricity of the binary orbit.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'V_sys'</span></code>: The systemic velocity of the binary system.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'rl_relative_overflow_1'</span></code>: The Roche lobe relative overflow for star 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'rl_relative_overflow_2'</span></code>: The Roche lobe relative overflow for star 2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lg_mtransfer_rate'</span></code>: The logarithm of the mass transfer rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mass_transfer_case'</span></code>: The case of mass transfer.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'trap_radius'</span></code>: The trapping radius.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'acc_radius'</span></code>: The accretion radius.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'t_sync_rad_1'</span></code>: The synchronization timescale for radiative zones star 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'t_sync_conv_1'</span></code>: The synchronization timescale for convective zones star 1.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'t_sync_rad_2'</span></code>: The synchronization timescale for radiative zones star 2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'t_sync_conv_2'</span></code>: The synchronization timescale for convective zones star 2.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'nearest_neighbour_distance'</span></code>: The distance to the nearest neighbour.</p></li>
+</ul>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
+<span class="s1">&#39;event&#39;</span><span class="p">,</span>
+<span class="s1">&#39;time&#39;</span><span class="p">,</span>
+<span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span>
+<span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span>
+<span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scalar_names</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Scalars of the binary to include in the output.</div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'interp_class_HMS_HMS'</span></code>: interpolation class for HMS-HMS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'interp_class_CO_HMS_RLO'</span></code>: interpolation class for CO-HMS-RLO</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'interp_class_CO_HeMS'</span></code>: interpolation class for CO-HeMS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'interp_class_CO_HeMS_RLO'</span></code>: interpolation class for CO-HeMS-RLO</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mt_history_HMS_HMS'</span></code>: mass transfer history for HMS-HMS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mt_history_CO_HMS_RLO'</span></code>: mass transfer history for CO-HMS-RLO</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mt_history_CO_HeMS'</span></code>: mass transfer history for CO-HeMS</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mt_history_CO_HeMS_RLO'</span></code>: mass transfer history for CO-HeMS-RLO</p></li>
+</ul>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;interp_class_HMS_HMS&#39;</span><span class="p">,</span>
+<span class="s1">&#39;interp_class_CO_HMS_RLO&#39;</span><span class="p">,</span>
+<span class="s1">&#39;interp_class_CO_HeMS&#39;</span><span class="p">,</span>
+<span class="s1">&#39;interp_class_CO_HeMS_RLO&#39;</span><span class="p">,</span>
+<span class="s1">&#39;mt_history_HMS_HMS&#39;</span><span class="p">,</span>
+<span class="s1">&#39;mt_history_CO_HMS_RLO&#39;</span><span class="p">,</span>
+<span class="s1">&#39;mt_history_CO_HeMS&#39;</span><span class="p">,</span>
+<span class="s1">&#39;mt_history_CO_HeMS_RLO&#39;</span><span class="p">]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="singlestar-1-and-2-output">
+<h3>SingleStar 1 and 2 Output<a class="headerlink" href="#singlestar-1-and-2-output" title="Link to this heading"></a></h3>
+<p>This dictionary contains the parameters that will be saved in the output of the SingleStar objects in the system.
+<cite>only_select_columns</cite> will be stored in the history table,  and the initial and final step will be stored in the oneline table with the prefix <code class="code docutils literal notranslate"><span class="pre">S1</span></code> or <code class="code docutils literal notranslate"><span class="pre">S2</span></code> depending on the star,
+<cite>scalar_names</cite> will only be stored in the oneline table.</p>
+<table class="population-params-table docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 80.0%" />
+<col style="width: 10.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">include_S1</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Include SingleStar 1 in the output.</div>
+</div>
+</td>
+<td><p><code class="docutils literal notranslate"><span class="pre">True</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">only_select_columns</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Columns to include in the output for SingleStar 1.</div>
+<div class="line">Example: <code class="docutils literal notranslate"><span class="pre">['state',</span> <span class="pre">'mass',</span> <span class="pre">'log_R',</span> <span class="pre">'log_L',</span> <span class="pre">'lg_mdot',</span> <span class="pre">'he_core_mass',</span> <span class="pre">'he_core_radius',</span> <span class="pre">'co_core_mass',</span> <span class="pre">'co_core_radius',</span> <span class="pre">'center_h1',</span> <span class="pre">'center_he4',</span> <span class="pre">'surface_h1',</span> <span class="pre">'surface_he4',</span> <span class="pre">'surf_avg_omega_div_omega_crit',</span> <span class="pre">'spin']</span></code></div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'state'</span></code>: The state of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'metallicity'</span></code>: The metallicity of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mass'</span></code>: The mass of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_R'</span></code>: The logarithm of the radius of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_L'</span></code>: The logarithm of the luminosity of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lg_mdot'</span></code>: The logarithm of the mass loss rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lg_system_mdot'</span></code>: The logarithm of the system mass loss rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lg_wind_mdot'</span></code>: The logarithm of the wind mass loss rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'he_core_mass'</span></code>: The mass of the helium core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'he_core_radius'</span></code>: The radius of the helium core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'c_core_mass'</span></code>: The mass of the carbon core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'c_core_radius'</span></code>: The radius of the carbon core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'o_core_mass'</span></code>: The mass of the oxygen core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'o_core_radius'</span></code>: The radius of the oxygen core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'co_core_mass'</span></code>: The mass of the carbon-oxygen core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'co_core_radius'</span></code>: The radius of the carbon-oxygen core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_h1'</span></code>: The hydrogen fraction at the center.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_he4'</span></code>: The helium fraction at the center.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_c12'</span></code>: The carbon-12 fraction at the center.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_n14'</span></code>: The nitrogen-14 fraction at the center.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_o16'</span></code>: The oxygen-16 fraction at the center.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surface_h1'</span></code>: The hydrogen fraction at the surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surface_he4'</span></code>: The helium fraction at the surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surface_c12'</span></code>: The carbon-12 fraction at the surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surface_n14'</span></code>: The nitrogen-14 fraction at the surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surface_o16'</span></code>: The oxygen-16 fraction at the surface.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_LH'</span></code>: The logarithm of the hydrogen burning luminosity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_LHe'</span></code>: The logarithm of the helium burning luminosity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_LZ'</span></code>: The logarithm of the metallicity burning luminosity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_Lnuc'</span></code>: The logarithm of the nuclear burning luminosity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'c12_c12'</span></code>: The carbon-12 to carbon-12 reaction rate.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'center_gamma'</span></code>: The central gamma value.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'avg_c_in_c_core'</span></code>: The average carbon fraction in the carbon core.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surf_avg_omega'</span></code>: The average surface angular velocity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'surf_avg_omega_div_omega_crit'</span></code>: The ratio of the average surface angular velocity to the critical angular velocity.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'total_moment_of_inertia'</span></code>: The total moment of inertia.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'log_total_angular_momentum'</span></code>: The logarithm of the total angular momentum.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'spin'</span></code>: The spin of the star.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_top_mass'</span></code>: The mass at the top of the convective envelope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_bot_mass'</span></code>: The mass at the bottom of the convective envelope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_top_radius'</span></code>: The radius at the top of the convective envelope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_bot_radius'</span></code>: The radius at the bottom of the convective envelope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_turnover_time_g'</span></code>: The turnover time of the convective envelope (gravity).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_turnover_time_l_b'</span></code>: The turnover time of the convective envelope (local buoyancy).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'conv_env_turnover_time_l_t'</span></code>: The turnover time of the convective envelope (local turbulence).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'envelope_binding_energy'</span></code>: The binding energy of the envelope.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'mass_conv_reg_fortides'</span></code>: The mass of the convective region for tides.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'thickness_conv_reg_fortides'</span></code>: The thickness of the convective region for tides.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'radius_conv_reg_fortides'</span></code>: The radius of the convective region for tides.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_CE_1cent'</span></code>: The lambda parameter for common envelope evolution (1%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_CE_10cent'</span></code>: The lambda parameter for common envelope evolution (10%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_CE_30cent'</span></code>: The lambda parameter for common envelope evolution (30%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'lambda_CE_pure_He_star_10cent'</span></code>: The lambda parameter for common envelope evolution for pure helium stars (10%).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'profile</span> <span class="pre">[not</span> <span class="pre">currently</span> <span class="pre">supported]'</span></code>: The profile (not currently supported).</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'total_mass_h1'</span></code>: The total Hydrogen mass.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'total_mass_he4'</span></code>: The total Helium mass.</p></li>
+</ul>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
+<span class="s1">&#39;mass&#39;</span><span class="p">,</span>
+<span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
+<span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
+<span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
+<span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
+<span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
+<span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
+<span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
+<span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
+<span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
+<span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
+<span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
+<span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
+<span class="s1">&#39;spin&#39;</span><span class="p">,]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">scalar_names</span></code></p></td>
+<td><div class="line-block">
+<div class="line">Scalars to include in the output for SingleStar 1.</div>
+<div class="line">Example: <code class="docutils literal notranslate"><span class="pre">['natal_kick_array',</span> <span class="pre">'SN_type',</span> <span class="pre">'f_fb',</span> <span class="pre">'spin_orbit_tilt_first_SN',</span> <span class="pre">'spin_orbit_tilt_second_SN',</span> <span class="pre">'m_disk_accreted',</span> <span class="pre">'m_disk_radiated']</span></code></div>
+<div class="line">Options:</div>
+</div>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">'natal_kick_array'</span></code>: The array of natal kicks.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'SN_type'</span></code>: The type of supernova.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'f_fb'</span></code>: The fallback fraction.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'spin_orbit_tilt_first_SN'</span></code>: The spin-orbit tilt after the first supernova.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'spin_orbit_tilt_second_SN'</span></code>: The spin-orbit tilt after the second supernova.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'m_disk_accreted'</span></code>: The mass accreted onto the disk.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">'m_disk_radiated'</span></code>: The mass radiated from the disk.</p></li>
+</ul>
+</td>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
+<span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
+<span class="s1">&#39;f_fb&#39;</span><span class="p">,</span>
+<span class="s1">&#39;spin_orbit_tilt_first_SN&#39;</span><span class="p">,</span>
+<span class="s1">&#39;spin_orbit_tilt_second_SN&#39;</span><span class="p">,]</span>
+</pre></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="binary_population.html" class="btn btn-neutral float-left" title="The Binary Population Object" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="flow_chart.html" class="btn btn-neutral float-right" title="The Flow Chart Object" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.1/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

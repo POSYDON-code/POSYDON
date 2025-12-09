@@ -1,0 +1,534 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.norm_pop &mdash; posydon 2.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=16656018"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.norm_pop</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.norm_pop</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Compute and normalize population synthesis models.&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">dblquad</span><span class="p">,</span> <span class="n">nquad</span><span class="p">,</span> <span class="n">quad</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.popsyn.IMFs</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">IMFs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn</span><span class="w"> </span><span class="kn">import</span> <span class="n">independent_sample</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.distributions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">FlatMassRatio</span><span class="p">,</span>
+    <span class="n">LogUniform</span><span class="p">,</span>
+    <span class="n">PowerLawPeriod</span><span class="p">,</span>
+    <span class="n">Sana12Period</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">orbital_separation_from_period</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<div class="viewcode-block" id="get_IMF_pdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_IMF_pdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_IMF_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;get the IMF pdf function</span>
+
+<span class="sd">    Supported schemes based on the IMF module:</span>
+<span class="sd">    Additional parameters can be passed to the scheme</span>
+<span class="sd">    by adding them to the kwargs dictionary with the scheme name as the key</span>
+<span class="sd">    Example:</span>
+
+<span class="sd">    ```</span>
+<span class="sd">    kwargs = {</span>
+<span class="sd">        &#39;primary_mass_scheme&#39;: &#39;Salpeter&#39;,</span>
+<span class="sd">        &#39;primary_mass_min&#39;: 0.1,</span>
+<span class="sd">        &#39;primary_mass_max&#39;: 100,</span>
+<span class="sd">        &#39;Salpeter&#39;: {&#39;alpha&#39;: 2.35}</span>
+<span class="sd">    }</span>
+<span class="sd">    ```</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Dictionary containing the parameters.</span>
+<span class="sd">        `primary_mass_scheme`, `primary_mass_min`, `primary_mass_max` are required.</span>
+<span class="sd">        Additional parameters are required depending on the scheme.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    IMF_pdf : function</span>
+<span class="sd">        Function that returns the IMF PDF</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">primary_mass_scheme</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;primary_mass_scheme&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="n">scheme_kwargs</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">primary_mass_scheme</span><span class="p">,</span> <span class="p">{})</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># dynamically retrieve the IMF class from the IMFs module</span>
+        <span class="n">imf_class</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">IMFs</span><span class="p">,</span> <span class="n">primary_mass_scheme</span><span class="p">)</span>
+        <span class="n">imf</span> <span class="o">=</span> <span class="n">imf_class</span><span class="p">(</span><span class="n">m_min</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">],</span>
+                        <span class="n">m_max</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">],</span>
+                        <span class="o">**</span><span class="n">scheme_kwargs</span><span class="p">)</span>
+        <span class="n">IMF_pdf</span> <span class="o">=</span> <span class="n">imf</span><span class="o">.</span><span class="n">pdf</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="c1"># if not found, default to a flat distribution</span>
+        <span class="n">IMF_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m1</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">])</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;The primary_mass_scheme &#39;</span><span class="si">{</span><span class="n">primary_mass_scheme</span><span class="si">}</span><span class="s2">&#39; is not recognized. &quot;</span>
+              <span class="s2">&quot;Using a flat mass distribution instead.&quot;</span><span class="p">,</span> <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">IMF_pdf</span></div>
+
+
+<div class="viewcode-block" id="get_mass_ratio_pdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_mass_ratio_pdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mass_ratio_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that returns the mass ratio PDF function</span>
+
+<span class="sd">    Supported schemes:</span>
+<span class="sd">    - `flat_mass_ratio` for `secondary_mass_scheme`</span>
+<span class="sd">        Requires the following parameters:</span>
+<span class="sd">        - `secondary_mass_min`</span>
+<span class="sd">        - `secondary_mass_max`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Dictionary containing the simulation parameters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pdf : function</span>
+<span class="sd">        Function that returns the mass ratio PDF</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span>
+        <span class="ow">and</span> <span class="p">(</span><span class="s1">&#39;q_min&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span> <span class="ow">and</span> <span class="s1">&#39;q_max&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">)):</span>
+        <span class="c1"># flat mass ratio, where bounds are dependent on m1 and min/max m2</span>
+        <span class="c1"># and q_min = 0.05, q_max = 1</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_pdf_for_m1</span><span class="p">(</span><span class="n">m1</span><span class="p">):</span>
+            <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
+            <span class="n">minimum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">m1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span><span class="o">*</span><span class="mf">0.05</span><span class="p">],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">maximum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+                <span class="p">[</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_max&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">m1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">m1</span><span class="p">))],</span>
+                <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">q_dist</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="n">minimum</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;=</span> <span class="n">maximum</span><span class="p">),</span>
+                                        <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">maximum</span> <span class="o">-</span> <span class="n">minimum</span><span class="p">),</span>
+                                        <span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">q_dist</span>
+        <span class="n">q_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">,</span> <span class="n">m1</span><span class="p">:</span> <span class="n">get_pdf_for_m1</span><span class="p">(</span><span class="n">m1</span><span class="p">)(</span><span class="n">q</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">:</span>
+        <span class="c1"># flat mass ratio, where bounds are given</span>
+        <span class="n">q_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">,</span> <span class="n">m1</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                                <span class="p">(</span><span class="n">q</span> <span class="o">&gt;</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">]),</span>
+                                <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">]),</span>
+                                <span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># default to a flat distribution</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;The secondary_mass_scheme is not defined use a flat mass ratio &quot;</span>
+              <span class="s2">&quot;distribution in (0,1].&quot;</span><span class="p">,</span> <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+        <span class="n">q_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">q</span><span class="p">,</span> <span class="n">m1</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span><span class="o">&lt;=</span><span class="mf">1.0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">q_pdf</span></div>
+
+
+<div class="viewcode-block" id="get_binary_fraction_pdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_binary_fraction_pdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_binary_fraction_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;get the binary fraction pdf function</span>
+
+<span class="sd">    Supported schemes:</span>
+<span class="sd">    - `const` with `binary_fraction_const`</span>
+<span class="sd">        requires the following parameters to be present:</span>
+<span class="sd">        - `binary_fraction_const`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Dictionary containing the parameters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pdf : function</span>
+<span class="sd">        Function that returns the binary fraction PDF</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;binary_fraction_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">:</span>
+        <span class="n">f_b</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">]</span>
+        <span class="n">binary_fraction_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">binary</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">),</span>
+                                                      <span class="n">f_b</span><span class="p">,</span>
+                                                      <span class="mi">1</span><span class="o">-</span><span class="n">f_b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Binary fraction scheme not recognized&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">binary_fraction_pdf</span></div>
+
+
+<div class="viewcode-block" id="get_period_pdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_period_pdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_period_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;get the period pdf function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Dictionary containing the simulation parameters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pdf : function</span>
+<span class="sd">        Function that returns the period PDF, which expects the following</span>
+<span class="sd">        parameters; P, m1</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;period&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Sana+12_period_extended&#39;</span><span class="p">:</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">Sana12Period</span><span class="p">(</span>
+                <span class="n">p_min</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_min&#39;</span><span class="p">],</span>
+                <span class="n">p_max</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_max&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">period_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="n">period</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;power_law&#39;</span><span class="p">:</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">PowerLawPeriod</span><span class="p">(</span>
+                <span class="n">p_min</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_min&#39;</span><span class="p">],</span>
+                <span class="n">p_max</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_period_max&#39;</span><span class="p">],</span>
+                <span class="n">slope</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;power_law_slope&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="n">period_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="kc">None</span><span class="p">:</span> <span class="n">period</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">P</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Orbital period scheme not recognized&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;separation&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_separation_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;log_uniform&#39;</span><span class="p">:</span>
+            <span class="n">separation_log_uniform</span> <span class="o">=</span> <span class="n">LogUniform</span><span class="p">(</span>
+                <span class="nb">min</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_separation_min&#39;</span><span class="p">],</span>
+                <span class="nb">max</span><span class="o">=</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;orbital_separation_max&#39;</span><span class="p">],</span>
+            <span class="p">)</span>
+            <span class="c1"># Since the outer function is set in PDF(P) and inner as P(a),</span>
+            <span class="c1"># we need to do a change of variables.</span>
+            <span class="c1"># PDF(P) = PDF(a) * |da/dP|</span>
+            <span class="c1"># da/dP = (2/3) * (a/P)</span>
+            <span class="c1"># PDF(P) = (2/3) * log_uniform(log_a)</span>
+            <span class="n">period_pdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="n">separation_log_uniform</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span>
+                <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">P</span><span class="p">,</span> <span class="n">m1</span><span class="p">,</span> <span class="n">q</span><span class="o">*</span><span class="n">m1</span><span class="p">)</span>
+            <span class="p">)</span> <span class="o">*</span> <span class="mf">2.</span><span class="o">/</span><span class="mf">3.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Orbital separation scheme not recognized&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Orbital scheme not recognized. &quot;</span>
+                         <span class="s2">&quot;Please specify either &#39;period&#39; or &#39;separation&#39; &quot;</span>
+                         <span class="s2">&quot;and a valid scheme for that orbital scheme.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">period_pdf</span></div>
+
+
+<div class="viewcode-block" id="get_pdf">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_pdf">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">,</span> <span class="n">mass_pdf</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function that builds a PDF function given the simulation parameters</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kwargs : dict</span>
+<span class="sd">        Dictionary containing the simulation parameters</span>
+<span class="sd">    mass_pdf : bool, optional</span>
+<span class="sd">        If True, the PDF will return the mass distribution only.</span>
+<span class="sd">        If False, it will return the full PDF including mass ratio, binary fraction,</span>
+<span class="sd">        and period distributions. Default is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    pdf_function : function</span>
+<span class="sd">        Function that returns a probability density function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IMF_pdf</span> <span class="o">=</span> <span class="n">get_IMF_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">q_pdf</span> <span class="o">=</span> <span class="n">get_mass_ratio_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">f_b_pdf</span> <span class="o">=</span> <span class="n">get_binary_fraction_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+    <span class="n">period_pdf</span> <span class="o">=</span> <span class="n">get_period_pdf</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">mass_pdf</span><span class="p">:</span>
+        <span class="n">pdf_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="c1"># binaries</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">),</span>
+                     <span class="p">(</span><span class="n">f_b_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">))</span>
+                      <span class="o">*</span> <span class="n">IMF_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span>
+                      <span class="o">*</span> <span class="n">q_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">))),</span>
+                     <span class="c1"># single stars</span>
+                     <span class="p">(</span><span class="n">f_b_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">))</span>
+                      <span class="o">*</span> <span class="n">IMF_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">)))</span>
+                    <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">pdf_function</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">m1</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">:</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">),</span>
+                <span class="c1"># binaries</span>
+                <span class="p">(</span><span class="n">f_b_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">IMF_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">q_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">period_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">P</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">))),</span>
+                <span class="c1"># single stars</span>
+                <span class="p">(</span><span class="n">f_b_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binary</span><span class="p">))</span>
+                <span class="o">*</span> <span class="n">IMF_pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">)))</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+    <span class="k">return</span> <span class="n">pdf_function</span></div>
+
+
+<div class="viewcode-block" id="get_mean_mass">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.get_mean_mass">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mean_mass</span><span class="p">(</span><span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Calculate the mean mass of the population</span>
+
+<span class="sd">    Integrates the mass distribution to calculate the mean mass of</span>
+<span class="sd">    the population</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    params : dict</span>
+<span class="sd">        Dictionary containing the MODEL parameters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mean_mass : float</span>
+<span class="sd">        Mean mass of the population</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">PDF</span> <span class="o">=</span> <span class="n">get_pdf</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">mass_pdf</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># integration bounds</span>
+    <span class="n">m1_min</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">]</span>
+    <span class="n">m1_max</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;q_min&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">q_min</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">q_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">],</span>
+                        <span class="mi">0</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="s1">&#39;q_max&#39;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">q_max</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">q_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;secondary_mass_max&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">],</span>
+                        <span class="mi">1</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">q_min</span> <span class="o">&gt;</span> <span class="n">q_max</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;q_min must be less than q_max&quot;</span><span class="p">)</span>
+
+    <span class="c1"># binary integration</span>
+    <span class="n">I_bin</span> <span class="o">=</span> <span class="n">dblquad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">q</span><span class="p">,</span> <span class="n">m</span><span class="p">:</span> <span class="p">(</span><span class="n">m</span> <span class="o">+</span> <span class="n">m</span> <span class="o">*</span> <span class="n">q</span><span class="p">)</span> <span class="o">*</span> <span class="n">PDF</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">P</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span>
+                    <span class="n">m1_min</span><span class="p">,</span> <span class="n">m1_max</span><span class="p">,</span>
+                    <span class="n">q_min</span><span class="p">,</span> <span class="n">q_max</span>
+                    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+
+    <span class="c1"># single star integration</span>
+    <span class="n">I_single</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">m</span><span class="p">:</span> <span class="n">m</span> <span class="o">*</span> <span class="n">PDF</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">m1_min</span><span class="p">,</span> <span class="n">m1_max</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">mean_mass</span> <span class="o">=</span> <span class="n">I_bin</span> <span class="o">+</span> <span class="n">I_single</span>
+    <span class="k">return</span> <span class="n">mean_mass</span></div>
+
+
+<div class="viewcode-block" id="calculate_model_weights">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.norm_pop.calculate_model_weights">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_model_weights</span><span class="p">(</span><span class="n">pop_data</span><span class="p">,</span>
+                            <span class="n">M_sim</span><span class="p">,</span>
+                            <span class="n">simulation_parameters</span><span class="p">,</span>
+                            <span class="n">population_parameters</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;reweight each model in the simulation to the requested population&#39;&#39;&#39;</span>
+
+    <span class="n">f_b_sim</span> <span class="o">=</span> <span class="n">simulation_parameters</span><span class="p">[</span><span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">]</span>
+    <span class="n">f_b_pop</span> <span class="o">=</span> <span class="n">population_parameters</span><span class="p">[</span><span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f_b_sim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">f_b_pop</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No single stars simulated, but requested&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">f_b_sim</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">f_b_pop</span> <span class="o">==</span> <span class="mi">1</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No binaries simulated, but requested&quot;</span><span class="p">)</span>
+
+    <span class="c1"># build the pdf functions</span>
+    <span class="n">PDF_sim</span> <span class="o">=</span> <span class="n">get_pdf</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">,</span> <span class="n">mass_pdf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">PDF_pop</span> <span class="o">=</span> <span class="n">get_pdf</span><span class="p">(</span><span class="n">population_parameters</span><span class="p">,</span> <span class="n">mass_pdf</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># initial properties</span>
+    <span class="n">mean_mass_sim</span> <span class="o">=</span> <span class="n">get_mean_mass</span><span class="p">(</span><span class="n">simulation_parameters</span><span class="p">)</span>
+    <span class="n">mean_mass_pop</span> <span class="o">=</span> <span class="n">get_mean_mass</span><span class="p">(</span><span class="n">population_parameters</span><span class="p">)</span>
+
+    <span class="n">factor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">M_sim</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">mean_mass_sim</span> <span class="o">/</span> <span class="n">mean_mass_pop</span><span class="p">)</span>
+
+    <span class="c1"># we still need to distinguish between binary and single stars for the PDF</span>
+    <span class="n">binary_mask</span> <span class="o">=</span> <span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;state_i&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;initially_single_star&#39;</span>
+    <span class="n">weight_pop</span> <span class="o">=</span> <span class="n">PDF_pop</span><span class="p">(</span><span class="n">m1</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">],</span>
+                         <span class="n">q</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S2_mass_i&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">],</span>
+                         <span class="n">P</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;orbital_period_i&#39;</span><span class="p">],</span>
+                         <span class="n">binary</span><span class="o">=</span><span class="n">binary_mask</span><span class="p">)</span>
+
+    <span class="n">weight_sim</span> <span class="o">=</span> <span class="n">PDF_sim</span><span class="p">(</span><span class="n">m1</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">],</span>
+                         <span class="n">q</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S2_mass_i&#39;</span><span class="p">]</span><span class="o">/</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">],</span>
+                         <span class="n">P</span><span class="o">=</span><span class="n">pop_data</span><span class="p">[</span><span class="s1">&#39;orbital_period_i&#39;</span><span class="p">],</span>
+                         <span class="n">binary</span><span class="o">=</span><span class="n">binary_mask</span><span class="p">)</span>
+
+    <span class="n">output</span> <span class="o">=</span> <span class="p">(</span><span class="n">weight_pop</span> <span class="o">/</span> <span class="n">weight_sim</span><span class="p">)</span> <span class="o">*</span> <span class="n">factor</span>
+    <span class="n">output</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">output</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">output</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">output</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">return</span> <span class="n">output</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.1/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

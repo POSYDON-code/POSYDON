@@ -1,0 +1,1621 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.step_detached &mdash; posydon 2.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=16656018"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.step_detached</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.step_detached</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Detached evolution step.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Zepei Xing &lt;Zepei.Xing@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Nam Tran &lt;tranhn03@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Camille Liotine &lt;cliotine@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.binarystar</span><span class="w"> </span><span class="kn">import</span> <span class="n">BINARYPROPERTIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.gravitational_radiation.default_gravrad</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">default_gravrad</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.key_library</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">DEFAULT_TRANSLATED_KEYS</span><span class="p">,</span>
+    <span class="n">DEFAULT_TRANSLATION</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.magnetic_braking.prescriptions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CARB_braking</span><span class="p">,</span>
+    <span class="n">G18_braking</span><span class="p">,</span>
+    <span class="n">M15_braking</span><span class="p">,</span>
+    <span class="n">RVJ83_braking</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.tides.default_tides</span><span class="w"> </span><span class="kn">import</span> <span class="n">default_tides</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.track_match</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackMatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.winds.default_winds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">default_sep_from_winds</span><span class="p">,</span>
+    <span class="n">default_spin_from_winds</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">STAR_STATES_CC</span><span class="p">,</span>
+    <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span><span class="p">,</span>
+    <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">,</span>
+    <span class="n">UNDEFINED_STATES</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.singlestar</span><span class="w"> </span><span class="kn">import</span> <span class="n">STARPROPERTIES</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+
+<span class="c1">#from posydon.interpolation.data_scaling import DataScaler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">bondi_hoyle</span><span class="p">,</span>
+    <span class="n">check_state_of_star</span><span class="p">,</span>
+    <span class="n">orbital_period_from_separation</span><span class="p">,</span>
+    <span class="n">roche_lobe_radius</span><span class="p">,</span>
+    <span class="n">set_binary_to_failed</span><span class="p">,</span>
+    <span class="n">zero_negative_values</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ClassificationError</span><span class="p">,</span>
+    <span class="n">FlowError</span><span class="p">,</span>
+    <span class="n">NumericalError</span><span class="p">,</span>
+    <span class="n">POSYDONError</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<div class="viewcode-block" id="event">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.event">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a helper function to set attributes for solve_ivp events.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">dec</span></div>
+
+
+<div class="viewcode-block" id="detached_step">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">detached_step</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Evolve a detached binary.</span>
+
+<span class="sd">    The binary will be evolved until Roche-lobe overflow, core-collapse or</span>
+<span class="sd">    maximum simulation time, using the standard equations that govern the</span>
+<span class="sd">    orbital evolution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path to the directory that contains POSYDON data HDF5 files. Defaults</span>
+<span class="sd">        to the PATH_TO_POSYDON_DATA environment variable. Used for track</span>
+<span class="sd">        matching.</span>
+
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity of the grid. This should be one of the eight</span>
+<span class="sd">        supported metallicities:</span>
+
+<span class="sd">            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]</span>
+
+<span class="sd">        and this will be converted to a corresponding string (e.g.,</span>
+<span class="sd">        1e+00 --&gt; &quot;1e+00_Zsun&quot;). Used for track matching.</span>
+
+<span class="sd">    matching_method : str</span>
+<span class="sd">        Method to find the best match between a star from a previous step and a</span>
+<span class="sd">        point in a single star evolution track. Options:</span>
+
+<span class="sd">            &quot;root&quot;: Tries to find a root of two matching quantities. It is</span>
+<span class="sd">                    possible to not find one, causing the evolution to fail.</span>
+
+<span class="sd">            &quot;minimize&quot;: Minimizes the sum of squares of differences of</span>
+<span class="sd">                        various quantities between the previous evolution step and</span>
+<span class="sd">                        a stellar evolution track.</span>
+
+<span class="sd">        Used for track matching.</span>
+
+<span class="sd">    grid_name_Hrich : str</span>
+<span class="sd">        Name of the single star H-rich grid h5 file,</span>
+<span class="sd">        including its parent directory. This is set to</span>
+<span class="sd">        (for example):</span>
+
+<span class="sd">            grid_name_Hrich = &#39;single_HMS/1e+00_Zsun.h5&#39;</span>
+
+<span class="sd">        by default if not specified. Used for track matching.</span>
+
+<span class="sd">    grid_name_strippedHe : str</span>
+<span class="sd">        Name of the single star He-rich grid h5 file. This is</span>
+<span class="sd">        set to (for example):</span>
+
+<span class="sd">            grid_name_strippedHe = &#39;single_HeMS/1e+00_Zsun.h5&#39;</span>
+
+<span class="sd">        by default if not specified. Used for track matching.</span>
+
+<span class="sd">    list_for_matching_HMS : list</span>
+<span class="sd">        A list of mixed type that specifies properties of the matching</span>
+<span class="sd">        process for HMS stars. Used for track matching.</span>
+
+<span class="sd">    list_for_matching_postMS : list</span>
+<span class="sd">        A list of mixed type that specifies properties of the matching</span>
+<span class="sd">        process for postMS stars. Used for track matching.</span>
+
+<span class="sd">    list_for_matching_HeStar : list</span>
+<span class="sd">        A list of mixed type that specifies properties of the matching</span>
+<span class="sd">        process for He stars. Used for track matching.</span>
+
+<span class="sd">    record_matching : bool</span>
+<span class="sd">        Whether properties of the matched star(s) should be recorded in the</span>
+<span class="sd">        binary evolution history. Used for track matching.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    KEYS : list[str]</span>
+<span class="sd">        Contains keywords corresponding to MESA data column names</span>
+<span class="sd">        which are used to extract quantities from the single star</span>
+<span class="sd">        evolution grids.</span>
+
+<span class="sd">    dt : float</span>
+<span class="sd">        The timestep size, in years, to be appended to the history of the</span>
+<span class="sd">        binary. None means only the final step. Note: do not select very</span>
+<span class="sd">        small timesteps because it may mess with the solving of the ODE.</span>
+
+<span class="sd">    n_o_steps_history : int</span>
+<span class="sd">        Alternatively, we can define the number of timesteps to be appended to</span>
+<span class="sd">        the history of the binary. None means only the final step. If both `dt`</span>
+<span class="sd">        and `n_o_steps_history` are different than None, `dt` has priority.</span>
+
+<span class="sd">    do_wind_loss : bool</span>
+<span class="sd">        If True, take into account change of separation due to mass loss</span>
+<span class="sd">        from the star.</span>
+
+<span class="sd">    do_tides : bool</span>
+<span class="sd">        If True, take into account change of separation, eccentricity and</span>
+<span class="sd">        star spin due to tidal forces.</span>
+
+<span class="sd">    do_gravitational_radiation : bool</span>
+<span class="sd">        If True, take into account change of separation and eccentricity</span>
+<span class="sd">        due to gravitational wave radiation.</span>
+
+<span class="sd">    do_magnetic_braking : bool</span>
+<span class="sd">        If True, take into account change of star spin due to magnetic</span>
+<span class="sd">        braking.</span>
+
+<span class="sd">    magnetic_braking_mode : str</span>
+<span class="sd">        A string corresponding to the desired magnetic braking prescription.</span>
+<span class="sd">            -- RVJ83: Rappaport, Verbunt, &amp; Joss 1983 (Default)</span>
+<span class="sd">            -- M15: Matt et al. 2015</span>
+<span class="sd">            -- G18: Garraffo et al. 2018</span>
+<span class="sd">            -- CARB: Van &amp; Ivanova 2019</span>
+
+<span class="sd">    do_stellar_evolution_and_spin_from_winds : bool</span>
+<span class="sd">        If True, take into account change of star spin due to change of its</span>
+<span class="sd">        moment of inertia during its evolution and due to spin angular</span>
+<span class="sd">        momentum loss due to winds.</span>
+
+<span class="sd">    RLO_orbit_at_orbit_with_same_am : bool</span>
+<span class="sd">        Binaries are circularized instaneously when RLO occurs and this</span>
+<span class="sd">        option dictates how that is handled. If False (default), place</span>
+<span class="sd">        the binary in an orbit with separation equal to the binary&#39;s</span>
+<span class="sd">        separation at periastron. If True, circularize the orbit assuming</span>
+<span class="sd">        that angular momentum is conserved w.r.t. the previously (possibly)</span>
+<span class="sd">        eccentric orbit. In the latter case, the star may no longer</span>
+<span class="sd">        fill its Roche lobe after circularization, and may be further</span>
+<span class="sd">        evolved until RLO commences once again, but without changing the</span>
+<span class="sd">        orbit.</span>
+
+<span class="sd">    translate : dict</span>
+<span class="sd">        Dictionary containing data column name (key) translations between</span>
+<span class="sd">        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).</span>
+
+<span class="sd">    track_matcher : TrackMatcher object</span>
+<span class="sd">        The TrackMatcher object performs functions related to matching</span>
+<span class="sd">        binary stellar evolution components to single star evolution models.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        True if we want to print stuff.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">n_o_steps_history</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">do_wind_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">do_tides</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">do_gravitational_radiation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">do_magnetic_braking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">magnetic_braking_mode</span><span class="o">=</span><span class="s2">&quot;RVJ83&quot;</span><span class="p">,</span>
+            <span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">RLO_orbit_at_orbit_with_same_am</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">record_matching</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">grid_name_strippedHe</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">metallicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">path</span><span class="o">=</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span>
+            <span class="n">matching_method</span><span class="o">=</span><span class="s2">&quot;minimize&quot;</span><span class="p">,</span>
+            <span class="n">matching_tolerance</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
+            <span class="n">matching_tolerance_hard</span><span class="o">=</span><span class="mf">1e-1</span><span class="p">,</span>
+            <span class="n">list_for_matching_HMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">list_for_matching_postMS</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">list_for_matching_HeStar</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the step. See class documentation for details.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="n">dt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_history</span> <span class="o">=</span> <span class="n">n_o_steps_history</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_wind_loss</span> <span class="o">=</span> <span class="n">do_wind_loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_tides</span> <span class="o">=</span> <span class="n">do_tides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="n">do_gravitational_radiation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_magnetic_braking</span> <span class="o">=</span> <span class="n">do_magnetic_braking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">=</span> <span class="n">magnetic_braking_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_stellar_evolution_and_spin_from_winds</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">do_stellar_evolution_and_spin_from_winds</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RLO_orbit_at_orbit_with_same_am</span> <span class="o">=</span> <span class="n">RLO_orbit_at_orbit_with_same_am</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span>
+                <span class="n">dt</span><span class="p">,</span>
+                <span class="n">n_o_steps_history</span><span class="p">,</span>
+                <span class="n">matching_method</span><span class="p">,</span>
+                <span class="n">do_wind_loss</span><span class="p">,</span>
+                <span class="n">do_tides</span><span class="p">,</span>
+                <span class="n">do_gravitational_radiation</span><span class="p">,</span>
+                <span class="n">do_magnetic_braking</span><span class="p">,</span>
+                <span class="n">magnetic_braking_mode</span><span class="p">,</span>
+                <span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">translate</span> <span class="o">=</span> <span class="n">DEFAULT_TRANSLATION</span>
+
+        <span class="c1"># these are the KEYS read from POSYDON h5 grid files (after translating</span>
+        <span class="c1"># them to the appropriate columns)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">KEYS</span> <span class="o">=</span> <span class="n">DEFAULT_TRANSLATED_KEYS</span>
+
+        <span class="c1"># creating a track matching object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span> <span class="o">=</span> <span class="n">TrackMatcher</span><span class="p">(</span><span class="n">grid_name_Hrich</span> <span class="o">=</span> <span class="n">grid_name_Hrich</span><span class="p">,</span>
+                                          <span class="n">grid_name_strippedHe</span> <span class="o">=</span> <span class="n">grid_name_strippedHe</span><span class="p">,</span>
+                                          <span class="n">path</span><span class="o">=</span><span class="n">path</span><span class="p">,</span> <span class="n">metallicity</span> <span class="o">=</span> <span class="n">metallicity</span><span class="p">,</span>
+                                          <span class="n">matching_method</span> <span class="o">=</span> <span class="n">matching_method</span><span class="p">,</span>
+                                          <span class="n">matching_tolerance</span><span class="o">=</span><span class="n">matching_tolerance</span><span class="p">,</span>
+                                          <span class="n">matching_tolerance_hard</span><span class="o">=</span><span class="n">matching_tolerance_hard</span><span class="p">,</span>
+                                          <span class="n">list_for_matching_HMS</span> <span class="o">=</span> <span class="n">list_for_matching_HMS</span><span class="p">,</span>
+                                          <span class="n">list_for_matching_HeStar</span> <span class="o">=</span> <span class="n">list_for_matching_HeStar</span><span class="p">,</span>
+                                          <span class="n">list_for_matching_postMS</span> <span class="o">=</span> <span class="n">list_for_matching_postMS</span><span class="p">,</span>
+                                          <span class="n">record_matching</span> <span class="o">=</span> <span class="n">record_matching</span><span class="p">,</span>
+                                          <span class="n">verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># create evolution handler object</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">init_evo_kwargs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evo</span> <span class="o">=</span> <span class="n">detached_evolution</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">evo_kwargs</span><span class="p">)</span>
+
+        <span class="k">return</span>
+
+<div class="viewcode-block" id="detached_step.init_evo_kwargs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step.init_evo_kwargs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">init_evo_kwargs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Store keyword args required to initialize detached evolution, based on step&#39;s kwargs.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evo_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;primary&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;secondary&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;do_wind_loss&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_wind_loss</span><span class="p">,</span>
+            <span class="s2">&quot;do_tides&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_tides</span><span class="p">,</span>
+            <span class="s2">&quot;do_magnetic_braking&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_magnetic_braking</span><span class="p">,</span>
+            <span class="s2">&quot;magnetic_braking_mode&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span><span class="p">,</span>
+            <span class="s2">&quot;do_stellar_evolution_and_spin_from_winds&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="p">,</span>
+            <span class="s2">&quot;do_gravitational_radiation&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span><span class="p">,</span>
+            <span class="s2">&quot;verbose&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the name of evolution step.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="s2">&quot;Detached Step.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Evolve the binary through detached evolution until RLO or</span>
+<span class="sd">        compact object formation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : BinaryStar object</span>
+<span class="sd">            A BinaryStar object containing a binary system&#39;s properties.</span>
+<span class="sd">            This binary will be evolved through detached evolution here.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the max time is exceeded by the current time of</span>
+<span class="sd">            evolution.</span>
+
+<span class="sd">        NumericalError</span>
+<span class="sd">            If numerical integration fails for the binary during</span>
+<span class="sd">            the calculation of its detached evolution. We mark</span>
+<span class="sd">            the binary as failed in this case.</span>
+
+<span class="sd">        FlowError</span>
+<span class="sd">            If the evolution of H-rich/He-rich stars in RLO onto</span>
+<span class="sd">            H-rich/He-rich stars after HMS-HMS is detected. This</span>
+<span class="sd">            evolution pathway is not yet supported by our grids.</span>
+<span class="sd">            The binary evolution is marked as failed at this</span>
+<span class="sd">            point.</span>
+
+<span class="sd">        ClassificationError</span>
+<span class="sd">            If stable RLO between two HMS-HMS stars is determined</span>
+<span class="sd">            as a result of detached evolution. We mark these</span>
+<span class="sd">            binaries as failed.</span>
+
+<span class="sd">        POSYDONError</span>
+<span class="sd">            If both stars are calculated to be ready for collapse</span>
+<span class="sd">            as a result of detached evolution, but the two stars</span>
+<span class="sd">            differ in mass.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get simulation properties and step names</span>
+        <span class="n">binary_sim_prop</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s2">&quot;properties&quot;</span><span class="p">)</span>
+        <span class="n">all_step_names</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">binary_sim_prop</span><span class="p">,</span> <span class="s2">&quot;all_step_names&quot;</span><span class="p">)</span>
+
+        <span class="c1"># get the next step&#39;s name to display for match recording in data frame</span>
+        <span class="c1"># (in the event that the total_state is not in the flow, this will be None,</span>
+        <span class="c1">#  and the binary will be set to fail in BinaryStar().run_step()).</span>
+        <span class="n">next_step_name</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">get_next_step_name</span><span class="p">()</span>
+
+        <span class="c1"># match stars to single star models for detached evolution</span>
+        <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">only_CO</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">do_matching</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">next_step_name</span><span class="p">)</span>
+
+        <span class="n">secondary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">t_max</span>
+        <span class="n">primary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">t_max</span>
+        <span class="c1"># set the age offset on the matched track to be the time span</span>
+        <span class="c1"># from the start of the track to the current age</span>
+        <span class="c1"># (for these interp1d, x = time)</span>
+        <span class="n">secondary</span><span class="o">.</span><span class="n">t_offset</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">t0</span>
+        <span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">t_offset</span>
+
+        <span class="n">primary</span><span class="o">.</span><span class="n">t_offset</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">-</span> <span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">t0</span>
+        <span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">t_offset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">max_time</span>
+
+        <span class="c1"># store memory references of primary/secondary</span>
+        <span class="c1"># for detached evolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">set_stars</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">t0</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo1</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+            <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo2</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">])</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> \
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">only_CO</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;initial_RLOF&quot;</span>
+            <span class="k">return</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_time</span> <span class="o">-</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_time is lower than the current time. &quot;</span>
+                                <span class="s2">&quot;Evolution of the detached binary will go to &quot;</span>
+                                <span class="s2">&quot;lower times.&quot;</span><span class="p">)</span>
+
+            <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="nb">all</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">):</span>
+
+                <span class="c1"># solve ODEs for detached evolution</span>
+                <span class="n">t_before_ODEsolution</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">solve_ODEs</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">)</span>
+                <span class="n">t_after_ODEsolution</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+
+            <span class="c1"># clear dictionaries that held current properties during ODE solution</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">):</span>
+                <span class="k">del</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">secondary</span><span class="p">,</span> <span class="s2">&quot;latest&quot;</span><span class="p">):</span>
+                <span class="k">del</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="n">ivp_tspan</span> <span class="o">=</span> <span class="n">t_after_ODEsolution</span> <span class="o">-</span> <span class="n">t_before_ODEsolution</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">ODE solver duration: </span><span class="si">{</span><span class="n">ivp_tspan</span><span class="si">:</span><span class="s2">.6g</span><span class="si">}</span><span class="s2"> sec&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;solution of ODE&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integration failed for </span><span class="si">{</span><span class="n">binary</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2"> &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;(</span><span class="si">{</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span><span class="si">}</span><span class="s2">): &quot;</span>
+                      <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">return</span>
+
+            <span class="c1"># update binary/star properties after detached evolution</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_time_after_evo</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_after_evo</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">update_co_stars</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">)</span>
+
+            <span class="c1"># check primary/secondary star states</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">secondary</span><span class="o">.</span><span class="n">co</span><span class="p">:</span>
+                <span class="n">secondary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">secondary</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">timestep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">secondary</span><span class="o">.</span><span class="n">state_history</span><span class="p">[</span><span class="n">timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">secondary</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">timestep</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;massless_remnant&quot;</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">co</span> <span class="ow">and</span> <span class="n">secondary</span><span class="o">.</span><span class="n">co</span><span class="p">):</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="n">primary</span><span class="o">.</span><span class="n">co</span><span class="p">:</span>
+                <span class="n">mdot_acc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">bondi_hoyle</span><span class="p">(</span>
+                    <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="nb">slice</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">),</span> <span class="kc">None</span><span class="p">),</span>
+                    <span class="n">wind_disk_criteria</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">scheme</span><span class="o">=</span><span class="s1">&#39;Kudritzki+2000&#39;</span><span class="p">))</span>
+                <span class="n">primary</span><span class="o">.</span><span class="n">lg_mdot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mdot_acc</span><span class="o">.</span><span class="n">item</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+                <span class="n">primary</span><span class="o">.</span><span class="n">lg_mdot_history</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">lg_mdot_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mdot_acc</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">primary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">timestep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="n">primary</span><span class="o">.</span><span class="n">state_history</span><span class="p">[</span><span class="n">timestep</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_state_of_star</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">i</span><span class="o">=</span><span class="n">timestep</span><span class="p">,</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">co</span> <span class="ow">and</span> <span class="n">secondary</span><span class="o">.</span><span class="n">co</span><span class="p">):</span>
+                <span class="c1">## CHECK IF THE BINARY IS IN RLO</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">RLO_orbit_at_orbit_with_same_am</span><span class="p">:</span>
+                        <span class="c1"># final circular orbit conserves angular momentum</span>
+                        <span class="c1"># compared to the eccentric orbit</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">1.5</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="c1"># final circular orbit is at periastron of the ecc. orbit</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">separation</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">**</span> <span class="mf">1.5</span>
+
+                    <span class="n">abs_diff_porb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span> <span class="o">-</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+                                    <span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">secondary</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">mass</span><span class="p">))</span> <span class="o">/</span> <span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span>
+
+
+                    <span class="n">abs_diff_porb_str</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">abs_diff_porb = </span><span class="si">{</span><span class="n">abs_diff_porb</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">binary.orbital_period = </span><span class="si">{</span><span class="n">binary</span><span class="o">.</span><span class="n">orbital_period</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">+</span>\
+                        <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">orbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = &quot;</span> <span class="o">+</span> \
+                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">orbital_period_from_separation</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span><span class="w"> </span><span class="n">secondary</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span><span class="w"> </span><span class="n">primary</span><span class="o">.</span><span class="n">mass</span><span class="p">)</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="n">abs_diff_porb_str</span><span class="p">)</span>
+
+                    <span class="k">assert</span> <span class="n">abs_diff_porb</span> <span class="o">&lt;</span> <span class="mf">1e-2</span><span class="p">,</span> \
+                            <span class="s2">&quot;detached_step: abs_diff_porb &gt;= 1e-2</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">+</span> \
+                            <span class="n">abs_diff_porb_str</span>
+
+                    <span class="c1"># instantly circularize at RLO</span>
+                    <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mi">0</span>
+
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;RLO1&quot;</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oRLO1&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;RLO2&quot;</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oRLO2&quot;</span>
+
+                    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;RLO2&quot;</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oRLO2&quot;</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;RLO1&quot;</span>
+                            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;oRLO1&quot;</span>
+
+                    <span class="k">if</span> <span class="p">(</span><span class="s1">&#39;step_HMS_HMS_RLO&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">all_step_names</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="p">((</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span>
+                            <span class="ow">and</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span><span class="p">)</span>
+                        <span class="ow">or</span> <span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span>
+                            <span class="ow">and</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_HE_RICH_EVOLVABLE</span><span class="p">)):</span>
+                            <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">FlowError</span><span class="p">(</span><span class="s2">&quot;Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after &quot;</span>
+                                        <span class="s2">&quot;HMS-HMS not yet supported.&quot;</span><span class="p">)</span>
+
+                        <span class="k">elif</span> <span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span>
+                            <span class="ow">and</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_H_RICH_EVOLVABLE</span><span class="p">):</span>
+                            <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+                            <span class="k">raise</span> <span class="n">ClassificationError</span><span class="p">(</span><span class="s2">&quot;Binary is in the detached step but has stable RLO with two HMS stars - &quot;</span>
+                                                <span class="s2">&quot;should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)&quot;</span><span class="p">)</span>
+
+
+                <span class="c1">## CHECK IF STARS WILL UNDERGO CC</span>
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                    <span class="c1"># reached t_max of track. End of life (possible collapse) of secondary</span>
+                    <span class="k">if</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CC1&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CC2&quot;</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_final_values</span><span class="p">(</span><span class="n">secondary</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_profile</span><span class="p">(</span><span class="n">secondary</span><span class="p">)</span>
+
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">primary</span><span class="o">.</span><span class="n">co</span> <span class="ow">and</span> <span class="n">primary</span><span class="o">.</span><span class="n">state</span> <span class="ow">in</span> <span class="n">STAR_STATES_CC</span><span class="p">:</span>
+                        <span class="c1"># simultaneous core-collapse of the other star as well</span>
+                        <span class="n">primary_time</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">+</span> <span class="n">primary</span><span class="o">.</span><span class="n">t_offset</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                        <span class="n">secondary_time</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">+</span> <span class="n">secondary</span><span class="o">.</span><span class="n">t_offset</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                        <span class="k">if</span> <span class="n">primary_time</span> <span class="o">==</span> <span class="n">secondary_time</span><span class="p">:</span>
+                            <span class="c1"># we manually check if s.t_events[3] should also be happening simultaneously</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_final_values</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_profile</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+
+                        <span class="k">if</span> <span class="n">primary</span><span class="o">.</span><span class="n">mass</span> <span class="o">!=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">mass</span><span class="p">:</span>
+                            <span class="k">raise</span> <span class="n">POSYDONError</span><span class="p">(</span>
+                                <span class="s2">&quot;Both stars are found to be ready for collapse &quot;</span>
+                                <span class="s2">&quot;(i.e. end of their life) during the detached &quot;</span>
+                                <span class="s2">&quot;step, but do not have the same mass&quot;</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="mi">3</span><span class="p">]:</span>
+                    <span class="c1"># reached t_max of track. End of life (possible collapse) of primary</span>
+                    <span class="k">if</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CC2&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CC1&quot;</span>
+
+                    <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_final_values</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">track_matcher</span><span class="o">.</span><span class="n">get_star_profile</span><span class="p">(</span><span class="n">primary</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>  <span class="c1"># Reached max_time asked.</span>
+                    <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span> <span class="o">-</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;MaxTime_exceeded&quot;</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;maxtime&quot;</span>
+
+<div class="viewcode-block" id="detached_step.solve_ODEs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step.solve_ODEs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_ODEs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Utilizes SciPy&#39;s solve_ivp() method to solve a set of</span>
+<span class="sd">        differential equations that describe the orbital evolution</span>
+<span class="sd">        (separation and eccentricity) and stellar rotation rate</span>
+<span class="sd">        evolution during step_detached.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : BinaryStar object</span>
+<span class="sd">            A binary star object, containing the binary system&#39;s properties.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        res : ODESolver object</span>
+<span class="sd">            This is the ODESolver object produced by SciPy&#39;s</span>
+<span class="sd">            solve_ivp function that contains calculated values</span>
+<span class="sd">            of the stars evolution through the detached step.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="p">,</span>
+                            <span class="n">events</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo2</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_max_time1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_max_time2</span><span class="p">],</span>
+                            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;Radau&quot;</span><span class="p">,</span>
+                            <span class="n">t_span</span><span class="o">=</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span><span class="p">),</span>
+                            <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">,</span>
+                                <span class="n">secondary</span><span class="o">.</span><span class="n">omega0</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">omega0</span><span class="p">],</span>
+                            <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RK45 failed with error </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">, trying with &#39;RK45&#39; method.&quot;</span><span class="p">)</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="p">,</span>
+                            <span class="n">events</span><span class="o">=</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rlo2</span><span class="p">,</span>
+                                    <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_max_time1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_max_time2</span><span class="p">],</span>
+                            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;RK45&quot;</span><span class="p">,</span>
+                            <span class="n">t_span</span><span class="o">=</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span><span class="p">),</span>
+                            <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">binary</span><span class="o">.</span><span class="n">separation</span><span class="p">,</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span><span class="p">,</span>
+                                <span class="n">secondary</span><span class="o">.</span><span class="n">omega0</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">omega0</span><span class="p">],</span>
+                            <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">failed_state</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span>
+            <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Integration failed for </span><span class="si">{</span><span class="n">failed_state</span><span class="si">}</span><span class="s2"> binary.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="detached_step.get_time_after_evo">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step.get_time_after_evo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_time_after_evo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            After detached evolution, this uses the ODESolver result</span>
+<span class="sd">        to determine what the current time is.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        res : ODESolver object</span>
+<span class="sd">            This is the ODESolver object produced by SciPy&#39;s</span>
+<span class="sd">            solve_ivp function that contains calculated values</span>
+<span class="sd">            of the stars evolution through the detached step.</span>
+
+<span class="sd">        binary: BinaryStar object</span>
+<span class="sd">            A binary star object, containing the binary system&#39;s properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t : float or array[float]</span>
+<span class="sd">            This is the time elapsed as a result of detached</span>
+<span class="sd">            evolution in years. This is a float unless the</span>
+<span class="sd">            user specifies a timestep (see `n_o_steps_history`</span>
+<span class="sd">            or `dt`) to use via the simulation properties ini</span>
+<span class="sd">            file, in which case it is an array.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="o">/</span><span class="mf">2.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dt</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+                <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_history</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">t_step</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_o_steps_history</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">t_step</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">,</span> <span class="n">t_step</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="k">if</span> <span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">([</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># self.dt is None and self.n_o_steps_history is None</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span>
+
+        <span class="k">return</span> <span class="n">t</span></div>
+
+
+<div class="viewcode-block" id="detached_step.update_after_evo">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step.update_after_evo">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_after_evo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Update star and binary properties and interpolators with</span>
+<span class="sd">        ODESolver result from detached evolution. This update gives</span>
+<span class="sd">        the binary/stars their appropriate values, according to the</span>
+<span class="sd">        interpolation after detached evolution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float or array[float]</span>
+<span class="sd">            This is the time elapsed as a result of detached</span>
+<span class="sd">            evolution in years. This is a float unless the</span>
+<span class="sd">            user specifies a timestep to use via the simulation</span>
+<span class="sd">            properties ini file, in which case it is an array.</span>
+
+<span class="sd">        binary : BinaryStar object</span>
+<span class="sd">            A binary star object, containing the binary system&#39;s properties.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Warns</span>
+<span class="sd">        -----</span>
+<span class="sd">        InappropriateValueWarning</span>
+<span class="sd">            If trying to compute log angular momentum for object with no spin.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">sep_interp</span><span class="p">,</span> <span class="n">ecc_interp</span><span class="p">,</span> <span class="n">omega_interp_sec</span><span class="p">,</span> <span class="n">omega_interp_pri</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">result_interp_primary</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">result_interp_secondary</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">mass_interp_sec</span> <span class="o">=</span> <span class="n">result_interp_secondary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]]</span>
+        <span class="n">mass_interp_pri</span> <span class="o">=</span> <span class="n">result_interp_primary</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]]</span>
+
+        <span class="n">result_interp_secondary</span><span class="p">[</span><span class="s2">&quot;sep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sep_interp</span>
+        <span class="n">result_interp_secondary</span><span class="p">[</span><span class="s2">&quot;ecc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_interp</span>
+        <span class="n">result_interp_secondary</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">result_interp_secondary</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_interp_sec</span>
+
+        <span class="n">result_interp_primary</span><span class="p">[</span><span class="s2">&quot;sep&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sep_interp</span>
+        <span class="n">result_interp_primary</span><span class="p">[</span><span class="s2">&quot;ecc&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_interp</span>
+        <span class="n">result_interp_primary</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">t</span>
+        <span class="n">result_interp_primary</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">omega_interp_pri</span>
+
+        <span class="n">p_orb_interp</span> <span class="o">=</span> <span class="n">orbital_period_from_separation</span><span class="p">(</span>
+            <span class="n">sep_interp</span><span class="p">,</span> <span class="n">mass_interp_sec</span><span class="p">,</span>
+            <span class="n">mass_interp_pri</span><span class="p">)</span>
+
+        <span class="n">result_interp_primary</span><span class="p">[</span><span class="s2">&quot;porb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_orb_interp</span>
+        <span class="n">result_interp_secondary</span><span class="p">[</span><span class="s2">&quot;porb&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">p_orb_interp</span>
+
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">secondary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">binary</span><span class="p">],</span>
+                                <span class="p">[</span><span class="n">STARPROPERTIES</span><span class="p">,</span> <span class="n">STARPROPERTIES</span><span class="p">,</span> <span class="n">BINARYPROPERTIES</span><span class="p">]):</span>
+
+            <span class="c1"># just update orbit and normal stars, COs later</span>
+            <span class="k">if</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">co</span><span class="p">:</span> <span class="k">continue</span>
+
+            <span class="n">interp1d</span> <span class="o">=</span> <span class="n">result_interp_primary</span> <span class="k">if</span> <span class="n">obj</span> <span class="o">==</span> <span class="n">primary</span> <span class="k">else</span> <span class="n">result_interp_secondary</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">prop</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;event&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;mass_transfer_case&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;nearest_neighbour_distance&quot;</span><span class="p">,</span>
+                           <span class="s2">&quot;state&quot;</span><span class="p">,</span> <span class="s2">&quot;metallicity&quot;</span><span class="p">,</span> <span class="s2">&quot;V_sys&quot;</span><span class="p">]:</span>
+                    <span class="c1"># For star objects, the state is calculated further below</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+                <span class="c1"># replace the actual surf_avg_w with the effective omega,</span>
+                <span class="c1"># which takes into account the whole star</span>
+                <span class="c1"># key  = &#39;effective_omega&#39; # in rad/sec</span>
+                <span class="c1"># current = s.y[2][-1] / 3.1558149984e7</span>
+                <span class="c1"># history_of_attribute = s.y[2][:-1] / 3.1558149984e7</span>
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;surf_avg_omega_div_omega_crit&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+
+                    <span class="n">omega_crit_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span>
+                        <span class="o">*</span> <span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">msol</span>
+                        <span class="o">/</span> <span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]]</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span> <span class="o">/</span> <span class="n">omega_crit_hist</span>
+
+                    <span class="c1"># ensure positive rotation values</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;surf_avg_omega&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="s2">&quot;rl_relative_overflow_&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">==</span> <span class="n">binary</span><span class="p">):</span>
+                    <span class="n">s</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span> <span class="k">if</span> <span class="s2">&quot;_1&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="k">else</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span>
+                    <span class="n">s_alt</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_2</span> <span class="k">if</span> <span class="s2">&quot;_1&quot;</span> <span class="ow">in</span> <span class="n">key</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span> <span class="k">else</span> <span class="n">binary</span><span class="o">.</span><span class="n">star_1</span>
+                    <span class="k">if</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">s</span><span class="p">:</span>
+                        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rel_rlo1</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">[</span><span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;sep&quot;</span><span class="p">],</span> <span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;ecc&quot;</span><span class="p">]])</span>
+
+                    <span class="k">elif</span> <span class="n">secondary</span> <span class="o">==</span> <span class="n">s_alt</span><span class="p">:</span>
+                        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_rel_rlo2</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="p">[</span><span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;sep&quot;</span><span class="p">],</span> <span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;ecc&quot;</span><span class="p">]])</span>
+
+                <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;separation&quot;</span><span class="p">,</span> <span class="s2">&quot;orbital_period&quot;</span><span class="p">,</span> <span class="s2">&quot;eccentricity&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">]:</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">msol</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;log_total_angular_momentum&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+
+                    <span class="n">tot_j_hist</span> <span class="o">=</span> <span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span> \
+                                   <span class="o">*</span> <span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">]]</span> \
+                                   <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">msol</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+                    <span class="n">tot_j_hist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">tot_j_hist</span><span class="p">)</span>
+
+                    <span class="n">tot_j_hist</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">tot_j_hist</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">tot_j_hist</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">tot_j_hist</span><span class="p">,</span> <span class="o">-</span><span class="mf">99.0</span><span class="p">)</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">history</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">history</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;spin&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+
+                    <span class="n">history</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">clight</span>
+                        <span class="o">*</span> <span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="n">const</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span> \
+                        <span class="o">*</span> <span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;total_moment_of_inertia&quot;</span><span class="p">]]</span> \
+                        <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">msol</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">rsol</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> \
+                        <span class="o">/</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span> <span class="o">*</span> <span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]]</span> \
+                        <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">msol</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">zero_negative_values</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;lg_mdot&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_wind_mdot&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="n">key</span><span class="p">]]))</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">history</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">history</span><span class="p">,</span> <span class="o">-</span><span class="mf">99.0</span><span class="p">)</span>
+                    <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">out</span><span class="o">=</span><span class="n">history</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="p">(</span><span class="n">history</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">))</span>
+
+                <span class="k">elif</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">in</span> <span class="n">interp1d</span> <span class="ow">and</span> <span class="n">obj</span> <span class="o">!=</span> <span class="n">binary</span><span class="p">):</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">translate</span><span class="p">[</span><span class="n">key</span><span class="p">]]</span>
+
+                <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;profile&quot;</span><span class="p">]:</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+                <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">history</span><span class="p">)</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+
+                <span class="c1"># only update history if dt or n_o_steps_history is set</span>
+                <span class="c1"># such that history has more than one entry.</span>
+                <span class="c1"># Otherwise, this is updated later in BinaryStar.run_step()</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="detached_step.update_co_stars">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_step.update_co_stars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_co_stars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Update compact object properties after detached</span>
+<span class="sd">        evolution. The properties are updated here using the</span>
+<span class="sd">        CO star properties from the last step. Often, these</span>
+<span class="sd">        values are null.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float or array[float]</span>
+<span class="sd">            This is the time elapsed as a result of detached</span>
+<span class="sd">            evolution in years. This is a float unless the</span>
+<span class="sd">            user specifies a timestep to use via the simulation</span>
+<span class="sd">            properties ini file, in which case it is an array.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">obj</span><span class="p">,</span> <span class="n">prop</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">secondary</span><span class="p">,</span> <span class="n">primary</span><span class="p">],</span>
+                           <span class="p">[</span><span class="n">STARPROPERTIES</span><span class="p">,</span> <span class="n">STARPROPERTIES</span><span class="p">]):</span>
+
+            <span class="c1"># only update compact objects here</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">obj</span><span class="o">.</span><span class="n">co</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">prop</span><span class="p">:</span>
+
+                <span class="c1"># simply get the current attribute value and update</span>
+                <span class="c1"># this step&#39;s props with it. Detached evolution does not</span>
+                <span class="c1"># modify these properties for a CO by default, so they</span>
+                <span class="c1"># typically remain unchanged from the previous step.</span>
+                <span class="n">history</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">)]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">))</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="n">history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">current</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                    <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">key</span> <span class="o">+</span> <span class="s2">&quot;_history&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">history</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="detached_evolution">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">detached_evolution</span><span class="p">:</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">secondary</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">do_wind_loss</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">do_tides</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">do_magnetic_braking</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">magnetic_braking_mode</span><span class="o">=</span><span class="s2">&quot;RVJ83&quot;</span><span class="p">,</span>
+                    <span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">do_gravitational_radiation</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                    <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+        <span class="c1"># initially these are typically NoneType</span>
+        <span class="c1"># and set by set_stars()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span> <span class="o">=</span> <span class="n">primary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span> <span class="o">=</span> <span class="n">secondary</span>
+        <span class="c1"># physical properties tracked by interpolators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phys_keys</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># also separation and eccentricity</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1"># detached evolution options</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_wind_loss</span> <span class="o">=</span> <span class="n">do_wind_loss</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_tides</span> <span class="o">=</span> <span class="n">do_tides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="n">do_gravitational_radiation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_magnetic_braking</span> <span class="o">=</span> <span class="n">do_magnetic_braking</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">=</span> <span class="n">magnetic_braking_mode</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_stellar_evolution_and_spin_from_winds</span> <span class="o">=</span> <span class="n">do_stellar_evolution_and_spin_from_winds</span>
+
+    <span class="c1"># timing events for solve_ivp...</span>
+    <span class="c1"># detects secondary RLO</span>
+<div class="viewcode-block" id="detached_evolution.ev_rlo1">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_rlo1">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_rlo1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Difference between radius and Roche lobe at a given time. Used</span>
+<span class="sd">        to check if there is RLOF mass transfer during the detached binary</span>
+<span class="sd">        evolution interpolation. Calculated for the secondary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time of the evolution, in years.</span>
+
+<span class="sd">        y : tuple(float)</span>
+<span class="sd">            [separation, eccentricity] at that time. Separation should be</span>
+<span class="sd">            in solar radii.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RL_diff : float</span>
+<span class="sd">            Difference between stellar radius and 95% of the Roche lobe</span>
+<span class="sd">            radius in solar radii.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_primary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">result_secondary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">pri_mass</span> <span class="o">=</span> <span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">sec_mass</span> <span class="o">=</span> <span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ecc</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">sec_mass</span><span class="p">,</span> <span class="n">pri_mass</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ecc</span><span class="p">)</span> <span class="o">*</span> <span class="n">sep</span><span class="p">)</span>
+
+        <span class="c1"># 95% filling of the RL is enough to assume beginning of RLO,</span>
+        <span class="c1"># as we do in CO-HMS_RLO grid</span>
+        <span class="n">RL_diff</span> <span class="o">=</span> <span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.95</span><span class="o">*</span><span class="n">RL</span>
+        <span class="k">return</span> <span class="n">RL_diff</span></div>
+
+
+    <span class="c1"># detects primary RLO</span>
+<div class="viewcode-block" id="detached_evolution.ev_rlo2">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_rlo2">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_rlo2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Difference between radius and Roche lobe at a given time. Used</span>
+<span class="sd">        to check if there is RLOF mass transfer during the detached binary</span>
+<span class="sd">        evolution interpolation. Calculated for the primary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time of the evolution, in years</span>
+
+<span class="sd">        y : tuple(float)</span>
+<span class="sd">            [separation, eccentricity] at that time. Separation should be</span>
+<span class="sd">            in solar radii.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RL_diff : float</span>
+<span class="sd">            Difference between stellar radius and 95% of the Roche lobe</span>
+<span class="sd">            radius in solar radii.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_primary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">result_secondary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">pri_mass</span> <span class="o">=</span> <span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">sec_mass</span> <span class="o">=</span> <span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+
+
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ecc</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">pri_mass</span><span class="p">,</span> <span class="n">sec_mass</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ecc</span><span class="p">)</span> <span class="o">*</span> <span class="n">sep</span><span class="p">)</span>
+        <span class="n">RL_diff</span> <span class="o">=</span> <span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.95</span><span class="o">*</span><span class="n">RL</span>
+        <span class="k">return</span> <span class="n">RL_diff</span></div>
+
+
+    <span class="c1"># detects secondary RLO via relative difference btwn. R and R_RL</span>
+<div class="viewcode-block" id="detached_evolution.ev_rel_rlo1">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_rel_rlo1">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_rel_rlo1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Relative difference between radius and Roche lobe. Used to</span>
+<span class="sd">        check if there is RLOF mass transfer during the detached binary</span>
+<span class="sd">        evolution interpolation. Calculated for the secondary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time of the evolution, in years.</span>
+
+<span class="sd">        y : tuple(float)</span>
+<span class="sd">            [separation, eccentricity] at that time. Separation should be</span>
+<span class="sd">            in solar radii.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RL_rel_diff : float</span>
+<span class="sd">            Relative difference between stellar radius and Roche lobe</span>
+<span class="sd">            radius.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_primary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">result_secondary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">pri_mass</span> <span class="o">=</span> <span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">sec_mass</span> <span class="o">=</span> <span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ecc</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">sec_mass</span><span class="p">,</span> <span class="n">pri_mass</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ecc</span><span class="p">)</span> <span class="o">*</span> <span class="n">sep</span><span class="p">)</span>
+        <span class="n">RL_rel_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">RL</span><span class="p">)</span> <span class="o">/</span> <span class="n">RL</span>
+        <span class="k">return</span> <span class="n">RL_rel_diff</span></div>
+
+
+    <span class="c1"># detects primary RLO via relative difference btwn. R and R_RL</span>
+<div class="viewcode-block" id="detached_evolution.ev_rel_rlo2">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_rel_rlo2">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_rel_rlo2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Relative difference between radius and Roche lobe. Used to</span>
+<span class="sd">        check if there is RLOF mass transfer during the detached binary</span>
+<span class="sd">        evolution interpolation. Calculated for the primary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            Time of the evolution, in years.</span>
+
+<span class="sd">        y : tuple(float)</span>
+<span class="sd">            [separation, eccentricity] at that time. Separation should be</span>
+<span class="sd">            in solar radii.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RL_rel_diff : float</span>
+<span class="sd">            Relative difference between stellar radius and Roche lobe</span>
+<span class="sd">            radius.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">result_primary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">result_secondary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+        <span class="n">pri_mass</span> <span class="o">=</span> <span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+        <span class="n">sec_mass</span> <span class="o">=</span> <span class="n">result_secondary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+
+        <span class="n">sep</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">ecc</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="n">RL</span> <span class="o">=</span> <span class="n">roche_lobe_radius</span><span class="p">(</span><span class="n">pri_mass</span><span class="p">,</span> <span class="n">sec_mass</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">ecc</span><span class="p">)</span> <span class="o">*</span> <span class="n">sep</span><span class="p">)</span>
+        <span class="n">RL_rel_diff</span> <span class="o">=</span> <span class="p">(</span><span class="n">result_primary</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">RL</span><span class="p">)</span> <span class="o">/</span> <span class="n">RL</span>
+        <span class="k">return</span> <span class="n">RL_rel_diff</span></div>
+
+
+    <span class="c1"># detects if the max age in track of secondary is reached</span>
+<div class="viewcode-block" id="detached_evolution.ev_max_time1">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_max_time1">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_max_time1</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">-</span> <span class="n">t</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">t_offset</span></div>
+
+
+    <span class="c1"># detects if the max age in track of primary is reached</span>
+<div class="viewcode-block" id="detached_evolution.ev_max_time2">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.ev_max_time2">[docs]</a>
+    <span class="nd">@event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">ev_max_time2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">t_max</span> <span class="o">-</span> <span class="n">t</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">t_offset</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.set_stars">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.set_stars">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_stars</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">t0</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Sets memory references for primary and secondary star associated with</span>
+<span class="sd">        this evolution. It is expected that primary/secondary have interp1d</span>
+<span class="sd">        objects already, as required for detached evolution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        t0 : float</span>
+<span class="sd">            The time at the start of detached evolution. Typically should be the</span>
+<span class="sd">            binary.time prior to detached evolution.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span> <span class="o">=</span> <span class="n">primary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span> <span class="o">=</span> <span class="n">secondary</span>
+        <span class="c1"># update list of tracked physical properties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">phys_keys</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="o">.</span><span class="n">keys</span><span class="p">)</span>
+
+        <span class="c1"># dictionaries to track current properties during evolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">latest</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">latest</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t0</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.update_props">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.update_props">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_props</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Update properties of stars w/ current age during detached evolution.</span>
+<span class="sd">        This uses the interp1d objects (PchipInterpolator2) of the primary and</span>
+<span class="sd">        secondary to interpolate stellar properties using the current time of</span>
+<span class="sd">        integration, t, along a stellar track. Compact objects have no stellar</span>
+<span class="sd">        track to interpolate along, and simply either have copies of the surviving</span>
+<span class="sd">        star, or array-like, zeroed arrays.</span>
+
+<span class="sd">            The primary and secondary (SingleStar objects) are each given a new</span>
+<span class="sd">        attribute called `latest` that is a dictionary containing the stellar</span>
+<span class="sd">        properties of the star at the latest time of integration, t, for access</span>
+<span class="sd">        in calculations during step_detached evolution.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">            t : float</span>
+<span class="sd">                The current time of integration during solve_ivp().</span>
+
+<span class="sd">            y : list</span>
+<span class="sd">                The current set of solutions for orbital separation [Rsol],</span>
+<span class="sd">            orbital eccentricity, spin of the secondary star [rad/yr], and</span>
+<span class="sd">            spin of the primary star [rad/yr].</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># updating star properties with interpolated values at current time</span>
+        <span class="c1"># TODO: update star current/history progressively here rather than after evo?</span>
+        <span class="n">primary_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">secondary_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">phys_keys</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">primary_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">secondary_data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+        <span class="c1"># update omega, a, e, based on current diffeq solution</span>
+        <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># We limit separation to non-negative values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># We limit eccentricity to non-negative values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">&lt;</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">):</span>
+            <span class="c1"># we force a negligible eccentricity to become 0</span>
+            <span class="c1"># for computational stability</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Negligible eccentricity became 0 for &quot;</span>
+                    <span class="s2">&quot;computational stability&quot;</span><span class="p">)</span>
+
+        <span class="c1"># update omega</span>
+        <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>  <span class="c1"># We limit omega spin to non-negative values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>  <span class="c1"># in rad/yr</span>
+        <span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
+
+        <span class="c1"># store current delta(t)/time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">t</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Diff. equation describing the orbital evolution of a detached binary.</span>
+
+<span class="sd">        The equation handles wind mass-loss [1]_, tidal [2]_, gravational [3]_</span>
+<span class="sd">        effects and magnetic braking [4]_, [5]_, [6]_, [7]_, [8]_. It also handles</span>
+<span class="sd">        the change of the secondary&#39;s stellar spin due to its change of moment of</span>
+<span class="sd">        intertia and due to mass-loss from its spinning surface. It is assumed that</span>
+<span class="sd">        the mass loss is fully non-conservative. Magnetic braking is fully applied</span>
+<span class="sd">        to secondary stars with mass less than 1.3 Msun and fully off for stars</span>
+<span class="sd">        with mass larger then 1.5 Msun. The effect of magnetic braking falls</span>
+<span class="sd">        linearly for stars with mass between 1.3 Msun and 1.5 Msun.</span>
+
+<span class="sd">        TODO: explain new features (e.g., double COs)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        t : float</span>
+<span class="sd">            The age of the system in years</span>
+
+<span class="sd">        y : list[float]</span>
+<span class="sd">            Contains the separation, eccentricity and angular velocity, in Rsolar,</span>
+<span class="sd">            dimensionless and rad/year units, respectively.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        Warns</span>
+<span class="sd">        -----</span>
+<span class="sd">        UnsupportedModelWarning</span>
+<span class="sd">            If an unsupported model or model is unspecified is determined from</span>
+<span class="sd">            `magnetic_braking_mode`. In this case, magnetic braking will not</span>
+<span class="sd">            be calculated during the detached step.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        result : list[float]</span>
+<span class="sd">            Contains the change of the separation, eccentricity and angular</span>
+<span class="sd">            velocity, in Rsolar, dimensionless and rad/year units, respectively.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] Tauris, T. M., &amp; van den Heuvel, E. 2006,</span>
+<span class="sd">            Compact stellar X-ray sources, 1, 623</span>
+<span class="sd">        .. [2] Hut, P. 1981, A&amp;A, 99, 126</span>
+<span class="sd">        .. [3] Junker, W., &amp; Schafer, G. 1992, MNRAS, 254, 146</span>
+<span class="sd">        .. [4] Rappaport, S., Joss, P. C., &amp; Verbunt, F. 1983, ApJ, 275, 713</span>
+<span class="sd">        .. [5] Matt et al. 2015, ApJ, 799, L23</span>
+<span class="sd">        .. [6] Garraffo et al. 2018, ApJ, 862, 90</span>
+<span class="sd">        .. [7] Van &amp; Ivanova 2019, ApJ, 886, L31</span>
+<span class="sd">        .. [8] Gossage et al. 2021, ApJ, 912, 65</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># update star/orbital props w/ current time during integration</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_props</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+        <span class="c1"># initialize deltas for this timestep</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1">#  Tidal forces affecting orbit and stellar spins</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_tides</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">tides</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After tides: da=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, de=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, dO_sec=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, dO_pri=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1">#  Gravitional radiation affecting the orbit</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gravitational_radiation</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After GR: da=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, de=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">de</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+        <span class="c1">#  Magnetic braking affecting stellar spins</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_magnetic_braking</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After MB: dO_sec=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, dO_pri=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1">#  Mass Loss affecting orbital separation</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_wind_loss</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sep_from_winds</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After winds: da=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Mass loss affecting stellar spins</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_stellar_evolution_and_spin_from_winds</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">spin_from_winds</span><span class="p">()</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;After spin winds: dO_sec=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">, dO_pri=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span><span class="si">:</span><span class="s2">.6e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">da</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">de</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Final derivatives: </span><span class="si">{</span><span class="n">result</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="c1"># Check for non-finite values</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="p">)):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ERROR: Non-finite derivative detected!&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span>
+
+<div class="viewcode-block" id="detached_evolution.spin_from_winds">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.spin_from_winds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">spin_from_winds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">dOmega_sec_winds</span><span class="p">,</span> <span class="n">dOmega_pri_winds</span> <span class="o">=</span> <span class="n">default_spin_from_winds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># sanitize output</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_sec_winds</span><span class="p">):</span>
+            <span class="n">dOmega_sec_winds</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_pri_winds</span><span class="p">):</span>
+            <span class="n">dOmega_pri_winds</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update spins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span> <span class="o">+=</span> <span class="n">dOmega_sec_winds</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span> <span class="o">+=</span> <span class="n">dOmega_pri_winds</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.sep_from_winds">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.sep_from_winds">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sep_from_winds</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">da_winds</span> <span class="o">=</span> <span class="n">default_sep_from_winds</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="c1"># sanitize output</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">da_winds</span><span class="p">):</span>
+            <span class="n">da_winds</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update separation</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">+=</span> <span class="n">da_winds</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.tides">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.tides">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">tides</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">da_tides</span><span class="p">,</span> <span class="n">de_tides</span><span class="p">,</span> <span class="n">dOmega_sec_tides</span><span class="p">,</span> <span class="n">dOmega_pri_tides</span> <span class="o">=</span> <span class="n">default_tides</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span>
+                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span>
+                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">da_tides</span><span class="p">):</span>
+            <span class="n">da_tides</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">de_tides</span><span class="p">):</span>
+            <span class="n">de_tides</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_sec_tides</span><span class="p">):</span>
+            <span class="n">dOmega_sec_tides</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_pri_tides</span><span class="p">):</span>
+            <span class="n">dOmega_pri_tides</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update orbital params and spin</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">+=</span> <span class="n">da_tides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de</span> <span class="o">+=</span> <span class="n">de_tides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span> <span class="o">+=</span> <span class="n">dOmega_sec_tides</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span> <span class="o">+=</span> <span class="n">dOmega_pri_tides</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.gravitational_radiation">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.gravitational_radiation">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">gravitational_radiation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="n">da_gr</span><span class="p">,</span> <span class="n">de_gr</span> <span class="o">=</span> <span class="n">default_gravrad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="c1"># sanitize output</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">da_gr</span><span class="p">):</span>
+            <span class="n">da_gr</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">de_gr</span><span class="p">):</span>
+            <span class="n">de_gr</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update orbital params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">da</span> <span class="o">+=</span> <span class="n">da_gr</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">de</span> <span class="o">+=</span> <span class="n">de_gr</span></div>
+
+
+<div class="viewcode-block" id="detached_evolution.magnetic_braking">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_detached.detached_evolution.magnetic_braking">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">magnetic_braking</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># domega_mb / dt = torque_mb / I is calculated below.</span>
+        <span class="c1"># All results are in units of [yr^-2], i.e., the amount of change</span>
+        <span class="c1"># in Omega over 1 year.</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">==</span> <span class="s2">&quot;RVJ83&quot;</span><span class="p">:</span>
+            <span class="n">dOmega_mb_sec</span><span class="p">,</span> <span class="n">dOmega_mb_pri</span> <span class="o">=</span> <span class="n">RVJ83_braking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">==</span> <span class="s2">&quot;M15&quot;</span><span class="p">:</span>
+
+            <span class="n">dOmega_mb_sec</span><span class="p">,</span> <span class="n">dOmega_mb_pri</span> <span class="o">=</span> <span class="n">M15_braking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">==</span> <span class="s2">&quot;G18&quot;</span><span class="p">:</span>
+
+            <span class="n">dOmega_mb_sec</span><span class="p">,</span> <span class="n">dOmega_mb_pri</span> <span class="o">=</span> <span class="n">G18_braking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span> <span class="o">==</span> <span class="s2">&quot;CARB&quot;</span><span class="p">:</span>
+
+            <span class="n">dOmega_mb_sec</span><span class="p">,</span> <span class="n">dOmega_mb_pri</span> <span class="o">=</span> <span class="n">CARB_braking</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="p">,</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;WARNING: Magnetic braking is not being calculated in the &quot;</span>
+                <span class="s2">&quot;detached step. The given magnetic_braking_mode string &quot;</span><span class="p">,</span>
+                <span class="sa">f</span><span class="s2">&quot;&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">magnetic_braking_mode</span><span class="si">}</span><span class="s2">&#39; does not match the available &quot;</span>
+                <span class="s2">&quot;built-in cases. To enable magnetic braking, please set &quot;</span>
+                <span class="s2">&quot;magnetc_braking_mode to one of the following strings: &quot;</span>
+                <span class="s2">&quot;&#39;RVJ83&#39; for Rappaport, Verbunt, &amp; Joss 1983&quot;</span>
+                <span class="s2">&quot;&#39;G18&#39; for Garraffo et al. 2018&quot;</span>
+                <span class="s2">&quot;&#39;M15&#39; for Matt et al. 2015&quot;</span>
+                <span class="s2">&quot;&#39;CARB&#39; for Van &amp; Ivanova 2019&quot;</span><span class="p">,</span> <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+
+        <span class="c1">#if self.verbose:</span>
+        <span class="c1">#    print(&quot;magnetic_braking_mode = &quot;, self.magnetic_braking_mode)</span>
+        <span class="c1">#    print(&quot;dOmega_mb = &quot;, dOmega_mb_sec, dOmega_mb_pri)</span>
+
+        <span class="c1"># Sanitise output</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_mb_sec</span><span class="p">):</span>
+            <span class="n">dOmega_mb_sec</span> <span class="o">=</span> <span class="mf">0.0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">dOmega_mb_pri</span><span class="p">):</span>
+            <span class="n">dOmega_mb_pri</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># update spins</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_sec</span> <span class="o">+=</span> <span class="n">dOmega_mb_sec</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dOmega_pri</span> <span class="o">+=</span> <span class="n">dOmega_mb_pri</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.1/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

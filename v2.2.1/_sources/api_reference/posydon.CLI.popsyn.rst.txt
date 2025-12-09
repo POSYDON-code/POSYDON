@@ -1,0 +1,25 @@
+posydon.CLI.popsyn
+==================
+
+.. automodule:: posydon.CLI.popsyn
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.CLI.popsyn.check
+------------------------
+
+.. automodule:: posydon.CLI.popsyn.check
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.CLI.popsyn.setup
+------------------------
+
+.. automodule:: posydon.CLI.popsyn.setup
+   :members:
+   :show-inheritance:
+   :undoc-members:

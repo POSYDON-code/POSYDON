@@ -1,0 +1,591 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.termination_flags &mdash; posydon 2.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=16656018"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.termination_flags</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.termination_flags</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for computing termination flags of MESA runs.</span>
+
+<span class="sd">There are four flags:</span>
+<span class="sd">    Flag 1: Indicates why the run terminated.</span>
+<span class="sd">    Flag 2: Denotes the mass transfer phase(s) the system has gone through.</span>
+<span class="sd">    Flag 3: Marks the evolutionary stage of the primary star.</span>
+<span class="sd">    Flag 4: Marks the evolutionary stage of the seconary star.</span>
+
+<span class="sd">The funtion `get_flags_from_MESA_run` is responsible for getting all flags for</span>
+<span class="sd">a run, using the more specialized functions defined in the module.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Ying Qin &lt;&lt;yingqin2013@hotmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">cumulative_mass_transfer_flag</span><span class="p">,</span>
+    <span class="n">infer_mass_transfer_case</span><span class="p">,</span>
+    <span class="n">infer_star_state</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span><span class="p">,</span>
+    <span class="n">MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">,</span>
+    <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.combine_TF</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TF1_POOL_ERROR</span><span class="p">,</span>
+    <span class="n">TF1_POOL_INITIAL_RLO</span><span class="p">,</span>
+    <span class="n">TF1_POOL_STABLE</span><span class="p">,</span>
+    <span class="n">TF1_POOL_UNSTABLE</span><span class="p">,</span>
+    <span class="n">TF2_POOL_INITIAL_RLO</span><span class="p">,</span>
+    <span class="n">TF2_POOL_NO_RLO</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># variables needed for inferring star states</span>
+<span class="n">STAR_HISTORY_VARIABLES</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;surface_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;center_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;center_he4&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;center_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LH&quot;</span><span class="p">,</span> <span class="s2">&quot;log_LHe&quot;</span><span class="p">,</span> <span class="s2">&quot;log_Lnuc&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="get_flag_from_MESA_output">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.get_flag_from_MESA_output">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_flag_from_MESA_output</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a flag about evolutionary outcome based on MESA output file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    MESA_log_path : string</span>
+<span class="sd">        The output file of MESA.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        The termination flag inferred from the last line containing the strings</span>
+<span class="sd">        `min_timestep_limit`, or `termination code:`, or `Terminate:`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">termination_code</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">MESA_log_path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">MESA_log_path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+            <span class="k">with</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log_file</span><span class="p">:</span>
+                <span class="n">log_lines</span> <span class="o">=</span> <span class="n">log_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">errors</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">log_file</span><span class="p">:</span>
+                <span class="n">log_lines</span> <span class="o">=</span> <span class="n">log_file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">log_lines</span><span class="p">):</span>
+            <span class="n">has_term_code</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;termination code: &quot;</span><span class="p">)</span>
+            <span class="n">has_terminate</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;Terminate: &quot;</span><span class="p">)</span>
+            <span class="n">reached_tpagb</span> <span class="o">=</span> <span class="s2">&quot;Reached TPAGB&quot;</span> <span class="ow">in</span> <span class="n">line</span>
+            <span class="n">min_timestep</span> <span class="o">=</span> <span class="s2">&quot;min_timestep_limit&quot;</span> <span class="ow">in</span> <span class="n">line</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">has_term_code</span> <span class="ow">or</span> <span class="n">has_terminate</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">min_timestep</span> <span class="ow">and</span> <span class="n">reached_tpagb</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="s2">&quot;Reached TPAGB&quot;</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">truncate_at</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span>
+                    <span class="s2">&quot;termination code: &quot;</span> <span class="k">if</span> <span class="n">has_term_code</span> <span class="k">else</span> <span class="s2">&quot;Terminate: &quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">min_timestep</span><span class="p">:</span>
+                    <span class="c1"># in case of &quot;min_timestep_limit&quot; allow to find another</span>
+                    <span class="c1"># termination code to overrule &quot;min_timestep_limit&quot;</span>
+                    <span class="n">termination_code</span> <span class="o">=</span> <span class="n">line</span><span class="p">[</span><span class="n">truncate_at</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">line</span><span class="p">[</span><span class="n">truncate_at</span><span class="p">:]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">termination_code</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">termination_code</span>
+    <span class="k">return</span> <span class="s2">&quot;reach cluster timelimit&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="get_mass_transfer_flag">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.get_mass_transfer_flag">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_mass_transfer_flag</span><span class="p">(</span><span class="n">binary_history</span><span class="p">,</span> <span class="n">history1</span><span class="p">,</span> <span class="n">history2</span><span class="p">,</span>
+                           <span class="n">start_at_RLO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">mesa_flag</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read flag from MESA history.</span>
+
+<span class="sd">    In case of contact during MS, RLOF1, RLOF2 or no_RLOF.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binary_history : np.array</span>
+<span class="sd">        The binary history file of MESA.</span>
+<span class="sd">        Can also be the history of star 1 or 2 if binary history columns.</span>
+<span class="sd">    history1 : np.array</span>
+<span class="sd">        The history file of MESA for star1.</span>
+<span class="sd">    history2 : np.array</span>
+<span class="sd">        The history file of MESA for star2.</span>
+<span class="sd">    start_at_RLO : bool (default: False)</span>
+<span class="sd">        Specify, whether the evolution is aimed to start at the first RLO.</span>
+<span class="sd">    mesa_flag : str or None (default: None)</span>
+<span class="sd">        Termination flag 1 (end condition).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flag_system_evolution_history : string</span>
+<span class="sd">        Possible flags are: &quot;None&quot;, &quot;initial_RLOF&quot;, &quot;contact_during_MS&quot;,</span>
+<span class="sd">        &quot;no_RLOF&quot;, a cumulative MT flag, e.g, &quot;case_A1/B1/A2&quot; where the</span>
+<span class="sd">        index indicates the donor star.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">mesa_flag</span> <span class="ow">in</span> <span class="n">TF1_POOL_ERROR</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;None&quot;</span>
+
+    <span class="k">if</span> <span class="n">mesa_flag</span> <span class="ow">in</span> <span class="n">TF1_POOL_INITIAL_RLO</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;initial_RLOF&quot;</span>
+
+    <span class="n">rel1</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_1&quot;</span><span class="p">]</span>
+    <span class="n">rel2</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;rl_relative_overflow_2&quot;</span><span class="p">]</span>
+    <span class="n">rate</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">]</span>
+
+    <span class="c1"># warning: all changes in the following lines need to be aligned with the</span>
+    <span class="c1"># function posydon.utils.common_functions.infer_mass_transfer_case</span>
+    <span class="n">where_rl_rel_1</span> <span class="o">=</span> <span class="n">rel1</span> <span class="o">&gt;</span> <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span>
+    <span class="n">where_rl_rel_2</span> <span class="o">=</span> <span class="n">rel2</span> <span class="o">&gt;</span> <span class="n">RL_RELATIVE_OVERFLOW_THRESHOLD</span>
+    <span class="n">where_rl_rel_1_dominates</span> <span class="o">=</span> <span class="n">rel1</span> <span class="o">&gt;=</span> <span class="n">rel2</span>
+    <span class="n">where_rl_rel_2_dominates</span> <span class="o">=</span> <span class="n">rel1</span> <span class="o">&lt;</span> <span class="n">rel2</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">where_rl_rel_1</span> <span class="o">&amp;</span> <span class="n">where_rl_rel_2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;contact_during_MS&quot;</span>
+    <span class="n">where_transfer</span> <span class="o">=</span> <span class="n">rate</span> <span class="o">&gt;</span> <span class="n">LG_MTRANSFER_RATE_THRESHOLD</span>
+    <span class="n">where_rlof_1</span> <span class="o">=</span> <span class="p">(</span><span class="n">where_rl_rel_1</span> <span class="o">|</span> <span class="n">where_transfer</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">where_rl_rel_1_dominates</span>
+    <span class="n">where_rlof_2</span> <span class="o">=</span> <span class="p">(</span><span class="n">where_rl_rel_2</span> <span class="o">|</span> <span class="n">where_transfer</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">where_rl_rel_2_dominates</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">where_rlof_1</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">where_rlof_2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s2">&quot;no_RLOF&quot;</span>
+
+    <span class="n">MT</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">where_rlof_1</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">where_rlof_1</span><span class="p">):</span>
+        <span class="n">star_history</span> <span class="o">=</span> <span class="n">history1</span>
+        <span class="n">star_mass</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span>
+        <span class="n">where_rlof</span> <span class="o">=</span> <span class="n">where_rlof_1</span>
+        <span class="n">rel_overflow</span> <span class="o">=</span> <span class="n">rel1</span>
+        <span class="n">indices_with_rlo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_rlof</span><span class="p">))[</span><span class="n">where_rlof</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">start_at_RLO</span> <span class="ow">and</span> <span class="n">indices_with_rlo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;initial_RLOF&quot;</span>
+        <span class="n">mass_transfer_cases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices_with_rlo</span><span class="p">:</span>
+            <span class="n">star_state</span> <span class="o">=</span> <span class="n">check_state_from_history</span><span class="p">(</span>
+                <span class="n">history</span><span class="o">=</span><span class="n">star_history</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">star_mass</span><span class="p">,</span> <span class="n">model_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">mt_case</span> <span class="o">=</span> <span class="n">infer_mass_transfer_case</span><span class="p">(</span>
+                <span class="n">rl_relative_overflow</span><span class="o">=</span><span class="n">rel_overflow</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">lg_mtransfer_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">donor_state</span><span class="o">=</span><span class="n">star_state</span><span class="p">)</span>
+            <span class="n">mass_transfer_cases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mt_case</span><span class="p">)</span>
+        <span class="n">MT</span><span class="p">[</span><span class="n">where_rlof</span><span class="p">]</span> <span class="o">=</span> <span class="n">mass_transfer_cases</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">where_rlof_2</span><span class="p">):</span>
+        <span class="n">star_history</span> <span class="o">=</span> <span class="n">history2</span>
+        <span class="n">star_mass</span> <span class="o">=</span> <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span>
+        <span class="n">where_rlof</span> <span class="o">=</span> <span class="n">where_rlof_2</span>
+        <span class="n">rel_overflow</span> <span class="o">=</span> <span class="n">rel2</span>
+        <span class="n">indices_with_rlo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_rlof</span><span class="p">))[</span><span class="n">where_rlof</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">start_at_RLO</span> <span class="ow">and</span> <span class="n">indices_with_rlo</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;initial_RLOF&quot;</span>
+        <span class="n">mass_transfer_cases</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">indices_with_rlo</span><span class="p">:</span>
+            <span class="n">star_state</span> <span class="o">=</span> <span class="n">check_state_from_history</span><span class="p">(</span>
+                <span class="n">history</span><span class="o">=</span><span class="n">star_history</span><span class="p">,</span> <span class="n">mass</span><span class="o">=</span><span class="n">star_mass</span><span class="p">,</span> <span class="n">model_index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">mt_case</span> <span class="o">=</span> <span class="n">infer_mass_transfer_case</span><span class="p">(</span>
+                <span class="n">rl_relative_overflow</span><span class="o">=</span><span class="n">rel_overflow</span><span class="p">[</span><span class="n">index</span><span class="p">],</span>
+                <span class="n">lg_mtransfer_rate</span><span class="o">=</span><span class="n">rate</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">donor_state</span><span class="o">=</span><span class="n">star_state</span><span class="p">)</span>
+            <span class="n">mass_transfer_cases</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mt_case</span><span class="p">)</span>
+        <span class="n">MT</span><span class="p">[</span><span class="n">where_rlof</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">+</span><span class="mi">10</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">mass_transfer_cases</span><span class="p">]</span> <span class="c1"># shift by 10</span>
+
+    <span class="n">flag</span> <span class="o">=</span> <span class="n">cumulative_mass_transfer_flag</span><span class="p">([</span><span class="n">t</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="n">MT</span> <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">],</span> <span class="n">shift_cases</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flag</span></div>
+
+
+
+<div class="viewcode-block" id="check_state_from_history">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.check_state_from_history">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_state_from_history</span><span class="p">(</span><span class="n">history</span><span class="p">,</span> <span class="n">mass</span><span class="p">,</span> <span class="n">model_index</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the final state of the star from the star history data.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    history : np.array</span>
+<span class="sd">        MESA history of the star.</span>
+<span class="sd">    mass : np.array</span>
+<span class="sd">        Mass history of the star.</span>
+<span class="sd">    model_index : int (default: -1)</span>
+<span class="sd">        Index of the model in history for which the state will be computed.</span>
+<span class="sd">        By default it is the end of the evolution (last model).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    state : str</span>
+<span class="sd">        The state of the star.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">history</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">infer_star_state</span><span class="p">(</span><span class="n">star_mass</span><span class="o">=</span><span class="n">mass</span><span class="p">[</span><span class="n">model_index</span><span class="p">],</span> <span class="n">star_CO</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">STAR_HISTORY_VARIABLES</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">history</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;The data column </span><span class="si">{}</span><span class="s2"> is not in the &quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">col</span><span class="p">)</span><span class="o">+</span>\
+                           <span class="s2">&quot;history file. It is needed for the determination&quot;</span><span class="o">+</span>\
+                           <span class="s2">&quot; of the star state.&quot;</span><span class="p">)</span>
+
+    <span class="n">variables_to_pass</span> <span class="o">=</span> <span class="p">{</span><span class="n">varname</span><span class="p">:</span> <span class="n">history</span><span class="p">[</span><span class="n">varname</span><span class="p">][</span><span class="n">model_index</span><span class="p">]</span>
+                         <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">STAR_HISTORY_VARIABLES</span><span class="p">}</span>
+    <span class="k">return</span> <span class="n">infer_star_state</span><span class="p">(</span><span class="n">star_CO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">variables_to_pass</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="get_flags_from_MESA_run">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.get_flags_from_MESA_run">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_flags_from_MESA_run</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">,</span> <span class="n">binary_history</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">history1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">history2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_at_RLO</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                            <span class="n">newTF1</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the four termination flags.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    MESA_log_path : str</span>
+<span class="sd">        Path to the MESA terminal output.</span>
+<span class="sd">    binary_history : np.array or None (default: None)</span>
+<span class="sd">        Binary history from MESA.</span>
+<span class="sd">    history1 : np.array or None (default: None)</span>
+<span class="sd">        Stellar history of the primary star.</span>
+<span class="sd">    history2 : np.array or None (default: None)</span>
+<span class="sd">        Stellar history of the secondary star.</span>
+<span class="sd">    start_at_RLO : bool (default: False)</span>
+<span class="sd">        Specify, whether the evolution is aimed to start at the first RLO.</span>
+<span class="sd">    newTF1: str</span>
+<span class="sd">        Replacement for the termination flag 1 (end condition) from the MESA</span>
+<span class="sd">        output.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    flag_MESAout, flag_mass_transfer, final_state_1, final_state_2 : str</span>
+<span class="sd">        flag_MESAout: actual line of MESA terminal output_path</span>
+<span class="sd">        flag_mass_transfer: describes the mass transfer (e.g., case A, case B).</span>
+<span class="sd">        final_state_1, final_state_2: describe the final evolutionary</span>
+<span class="sd">            state of the two stars. None if history star is not provided.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">newTF1</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
+        <span class="n">flag_out</span> <span class="o">=</span> <span class="n">get_flag_from_MESA_output</span><span class="p">(</span><span class="n">MESA_log_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">flag_out</span> <span class="o">=</span> <span class="n">newTF1</span>
+    <span class="n">final_state_1</span> <span class="o">=</span> <span class="n">check_state_from_history</span><span class="p">(</span><span class="n">history1</span><span class="p">,</span>
+                                             <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">])</span>
+    <span class="n">final_state_2</span> <span class="o">=</span> <span class="n">check_state_from_history</span><span class="p">(</span><span class="n">history2</span><span class="p">,</span>
+                                             <span class="n">binary_history</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">])</span>
+    <span class="n">flag_mass_transfer</span> <span class="o">=</span> <span class="n">get_mass_transfer_flag</span><span class="p">(</span><span class="n">binary_history</span><span class="p">,</span>
+                                                <span class="n">history1</span><span class="p">,</span> <span class="n">history2</span><span class="p">,</span>
+                                                <span class="n">start_at_RLO</span><span class="o">=</span><span class="n">start_at_RLO</span><span class="p">,</span>
+                                                <span class="n">mesa_flag</span><span class="o">=</span><span class="n">flag_out</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">flag_out</span><span class="p">,</span> <span class="n">flag_mass_transfer</span><span class="p">,</span> <span class="n">final_state_1</span><span class="p">,</span> <span class="n">final_state_2</span></div>
+
+
+
+<div class="viewcode-block" id="infer_interpolation_class">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.infer_interpolation_class">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">infer_interpolation_class</span><span class="p">(</span><span class="n">tf1</span><span class="p">,</span> <span class="n">tf2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use the first two termination flags to infer the interpolation class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tf1 : str</span>
+<span class="sd">        Termination flag 1 (end condition).</span>
+<span class="sd">    tf2 : str</span>
+<span class="sd">        Termination flag 2 (mass transfer).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Interpolation class.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">tf1</span> <span class="ow">in</span> <span class="n">TF1_POOL_INITIAL_RLO</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">tf2</span> <span class="ow">in</span> <span class="n">TF2_POOL_INITIAL_RLO</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="s2">&quot;initial_MT&quot;</span>
+    <span class="k">if</span> <span class="n">tf1</span> <span class="ow">in</span> <span class="n">TF1_POOL_ERROR</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;not_converged&quot;</span>
+    <span class="k">if</span> <span class="n">tf2</span> <span class="ow">in</span> <span class="n">TF2_POOL_NO_RLO</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;no_MT&quot;</span>
+    <span class="k">if</span> <span class="n">tf1</span> <span class="ow">in</span> <span class="n">TF1_POOL_STABLE</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">&#39;case&#39;</span> <span class="ow">in</span> <span class="n">tf2</span> <span class="ow">and</span> <span class="s1">&#39;1&#39;</span> <span class="ow">in</span> <span class="n">tf2</span> <span class="ow">and</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">tf2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;stable_reverse_MT&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s2">&quot;stable_MT&quot;</span>
+    <span class="k">if</span> <span class="n">tf1</span> <span class="ow">in</span> <span class="n">TF1_POOL_UNSTABLE</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;unstable_MT&quot;</span>
+    <span class="k">return</span> <span class="s2">&quot;unknown&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="get_detected_initial_RLO">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.get_detected_initial_RLO">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_detected_initial_RLO</span><span class="p">(</span><span class="n">grid</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generates a list of already detected initial RLO</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid : a PSyGrid</span>
+<span class="sd">        The grid to check.</span>
+
+<span class="sd">    Retruns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list containing systems already detected to be initial_MT based on</span>
+<span class="sd">        termination_flag_1. For each system there is a dictionary with the</span>
+<span class="sd">        impartant data, e.g. initial masses, periods, termination_flags</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#new list</span>
+    <span class="n">detected</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="c1">#go through grid</span>
+    <span class="n">N_runs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N_runs</span><span class="p">):</span>
+        <span class="n">flag1</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;termination_flag_1&quot;</span><span class="p">]</span>
+        <span class="c1">#find systems with termination because of initial overflow</span>
+        <span class="k">if</span> <span class="n">flag1</span> <span class="o">==</span> <span class="s2">&quot;Terminate because of overflowing initial model&quot;</span><span class="p">:</span>
+            <span class="n">mass1</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span>
+            <span class="n">mass2</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span>
+            <span class="n">period</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;period_days&quot;</span><span class="p">]</span>
+            <span class="n">exists_already</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1">#check for already existing entries of same mass combination</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">detected</span><span class="p">):</span>
+                <span class="k">if</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span><span class="o">-</span><span class="n">mass1</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1.0e-5</span> <span class="ow">and</span>
+                    <span class="nb">abs</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span><span class="o">-</span><span class="n">mass2</span><span class="p">)</span><span class="o">&lt;</span><span class="mf">1.0e-5</span><span class="p">):</span>
+                    <span class="n">exists_already</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="c1">#update values if new one has a larger period</span>
+                    <span class="k">if</span> <span class="n">d</span><span class="p">[</span><span class="s2">&quot;period_days&quot;</span><span class="p">]</span><span class="o">&lt;</span><span class="n">period</span><span class="p">:</span>
+                        <span class="n">detected</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">=</span><span class="p">({</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">:</span> <span class="n">mass1</span><span class="p">,</span>
+                                      <span class="s2">&quot;star_2_mass&quot;</span><span class="p">:</span> <span class="n">mass2</span><span class="p">,</span>
+                                      <span class="s2">&quot;period_days&quot;</span><span class="p">:</span> <span class="n">period</span><span class="p">,</span>
+                                      <span class="s2">&quot;termination_flag_3&quot;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;termination_flag_3&quot;</span><span class="p">],</span>
+                                      <span class="s2">&quot;termination_flag_4&quot;</span><span class="p">:</span>
+                            <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;termination_flag_4&quot;</span><span class="p">],</span>
+                                     <span class="p">})</span>
+            <span class="c1">#add masses, period, and termination flags 3 and 4 of detected</span>
+            <span class="c1"># system to the list</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">exists_already</span><span class="p">:</span>
+                <span class="n">detected</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">:</span> <span class="n">mass1</span><span class="p">,</span>
+                                 <span class="s2">&quot;star_2_mass&quot;</span><span class="p">:</span> <span class="n">mass2</span><span class="p">,</span>
+                                 <span class="s2">&quot;period_days&quot;</span><span class="p">:</span> <span class="n">period</span><span class="p">,</span>
+                                 <span class="s2">&quot;termination_flag_3&quot;</span><span class="p">:</span>
+                                  <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;termination_flag_3&quot;</span><span class="p">],</span>
+                                 <span class="s2">&quot;termination_flag_4&quot;</span><span class="p">:</span>
+                                  <span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;termination_flag_4&quot;</span><span class="p">],</span>
+                                 <span class="p">})</span>
+    <span class="k">return</span> <span class="n">detected</span></div>
+
+
+
+<div class="viewcode-block" id="get_nearest_known_initial_RLO">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.termination_flags.get_nearest_known_initial_RLO">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_nearest_known_initial_RLO</span><span class="p">(</span><span class="n">mass1</span><span class="p">,</span> <span class="n">mass2</span><span class="p">,</span> <span class="n">known_initial_RLO</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find the nearest system of initial RLO in the known ones</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass1 : float</span>
+<span class="sd">        star_1_mass of the run to check.</span>
+<span class="sd">    mass2 : float</span>
+<span class="sd">        star_2_mass of the run to check.</span>
+<span class="sd">    known_initial_RLO : list of dict</span>
+<span class="sd">        Boundary to apply.</span>
+
+<span class="sd">    Retruns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Containing the key parameters (e.g. initial masses, period) of the</span>
+<span class="sd">        nearest initial RLO run.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#default values</span>
+    <span class="n">d2min</span> <span class="o">=</span> <span class="mf">1.0e+99</span>
+    <span class="n">nearest</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+               <span class="s2">&quot;star_2_mass&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+               <span class="s2">&quot;period_days&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+              <span class="p">}</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">known_initial_RLO</span><span class="p">)</span><span class="o">&lt;</span><span class="n">MIN_COUNT_INITIAL_RLO_BOUNDARY</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Don&#39;t apply initial RLO boundary because of too few data points&quot;</span>
+              <span class="s2">&quot; in there.&quot;</span><span class="p">,</span><span class="s2">&quot;InappropriateValueWarning&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">nearest</span>
+    <span class="k">for</span> <span class="n">sys</span> <span class="ow">in</span> <span class="n">known_initial_RLO</span><span class="p">:</span>
+        <span class="c1">#search for a known system with closest mass combination</span>
+        <span class="c1">#use distance^2=(delta mass1)^2+(delta mass2)^2</span>
+        <span class="n">d2</span> <span class="o">=</span> <span class="p">(</span><span class="n">mass1</span><span class="o">-</span><span class="n">sys</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">mass2</span><span class="o">-</span><span class="n">sys</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">if</span> <span class="n">d2</span><span class="o">&lt;</span><span class="n">d2min</span><span class="p">:</span>
+            <span class="c1">#update nearest system</span>
+            <span class="n">d2min</span> <span class="o">=</span> <span class="n">d2</span>
+            <span class="n">nearest</span> <span class="o">=</span> <span class="n">sys</span>
+    <span class="k">return</span> <span class="n">nearest</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.1/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

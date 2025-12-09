@@ -1,0 +1,338 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.winds.default_winds &mdash; posydon 2.2.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../../_static/documentation_options.js?v=16656018"></script>
+      <script src="../../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../../index.html">
+            
+              <img src="../../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.winds.default_winds</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.winds.default_winds</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+
+<div class="viewcode-block" id="default_spin_from_winds">
+<a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.winds.html#posydon.binary_evol.DT.winds.default_winds.default_spin_from_winds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_spin_from_winds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function calculates the change in angular rotation rates</span>
+<span class="sd">    from wind loss.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        a : float</span>
+<span class="sd">            The current orbital separation (unused in calculation,</span>
+<span class="sd">            and only present in debugging output). [Rsolar]</span>
+
+<span class="sd">        e : float</span>
+<span class="sd">            The current orbital eccentricity (unused in calculation,</span>
+<span class="sd">            and only present in debugging output).</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            True if we want to print stuff.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        dOmega_sec : float</span>
+<span class="sd">            The change in rotation rate of the secondary (less evolved)</span>
+<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+
+<span class="sd">        dOmega_pri : float</span>
+<span class="sd">            The change in rotation rate of the primary (more evolved)</span>
+<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
+    <span class="n">Idot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;Idot&quot;</span><span class="p">]</span>
+
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
+    <span class="n">Idot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;Idot&quot;</span><span class="p">]</span>
+
+    <span class="c1"># Due to the secondary&#39;s own evolution, we have:</span>
+    <span class="c1"># domega_spin/dt = d(Jspin/I)/dt = dJspin/dt * 1/I + Jspin*d(1/I)/dt.</span>
+    <span class="c1"># These are the two terms calculated below.</span>
+    <span class="n">dOmega_spin_wind_sec</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">R2</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">omega2</span> <span class="o">*</span> <span class="n">mdot_2</span> <span class="o">/</span> <span class="n">MOI_2</span>
+    <span class="p">)</span>
+    <span class="c1"># jshell*Mdot/I : specific angular momentum of a thin sperical shell</span>
+    <span class="c1"># * mdot  / moment of inertia</span>
+    <span class="c1"># Omega is in rad/yr here, and R, M in solar (Mdot solar/yr).</span>
+    <span class="n">dOmega_deformation_sec</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">omega2</span> <span class="o">*</span> <span class="n">Idot_2</span> <span class="o">/</span> <span class="n">MOI_2</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1"># This is term of Jspin*d(1/I)/dt term of the domega_spin/dt. #</span>
+    <span class="c1"># We limit its increase due to contraction to 100 [(rad/yr)/yr]</span>
+    <span class="c1"># increase, otherwise the integrator will fail</span>
+    <span class="c1"># (usually when we have WD formation).</span>
+    <span class="n">dOmega_spin_wind_pri</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">R1</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">omega1</span> <span class="o">*</span> <span class="n">mdot_1</span> <span class="o">/</span> <span class="n">MOI_1</span>
+    <span class="p">)</span>
+    <span class="c1"># jshell*Mdot/I : specific angular momentum of a thin sperical shell</span>
+    <span class="c1"># * mdot  / moment of inertia</span>
+    <span class="c1"># Omega is in rad/yr here, and R, M in solar (Mdot solar/yr).</span>
+    <span class="n">dOmega_deformation_pri</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span>
+        <span class="p">[</span><span class="o">-</span><span class="n">omega1</span> <span class="o">*</span> <span class="n">Idot_1</span> <span class="o">/</span> <span class="n">MOI_1</span><span class="p">,</span> <span class="mi">100</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="c1">#if verbose:</span>
+    <span class="c1">#    print(</span>
+    <span class="c1">#        &quot;dOmega_spin_wind , dOmega_deformation = &quot;,</span>
+    <span class="c1">#        dOmega_spin_wind_sec,</span>
+    <span class="c1">#        dOmega_deformation_sec,</span>
+    <span class="c1">#        dOmega_spin_wind_pri,</span>
+    <span class="c1">#        dOmega_deformation_pri,</span>
+    <span class="c1">#    )</span>
+    <span class="n">dOmega_sec</span> <span class="o">=</span> <span class="n">dOmega_spin_wind_sec</span> <span class="o">+</span> <span class="n">dOmega_deformation_sec</span>
+    <span class="n">dOmega_pri</span> <span class="o">=</span> <span class="n">dOmega_spin_wind_pri</span> <span class="o">+</span> <span class="n">dOmega_deformation_pri</span>
+
+    <span class="c1">#if verbose:</span>
+    <span class="c1">#    print(&quot;a[Ro],e,Omega[rad/yr] have been =&quot;, a, e, omega2, omega1)</span>
+        <span class="c1">#print(&quot;da,de,dOmega (all) in 1yr is = &quot;,</span>
+        <span class="c1">#    da, de, dOmega_sec, dOmega_pri)</span>
+
+    <span class="k">return</span> <span class="n">dOmega_sec</span><span class="p">,</span> <span class="n">dOmega_pri</span></div>
+
+
+<div class="viewcode-block" id="default_sep_from_winds">
+<a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.winds.html#posydon.binary_evol.DT.winds.default_winds.default_sep_from_winds">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_sep_from_winds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
+
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function calculates the change in orbital separation from</span>
+<span class="sd">    wind loss, as e.g., in:</span>
+
+<span class="sd">        Tauris, T. M., &amp; van den Heuvel, E. 2006,</span>
+<span class="sd">                Compact stellar X-ray sources, 1, 623</span>
+
+<span class="sd">        from simple arguments regarding the balance of orbital angular</span>
+<span class="sd">    momentum.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        a : float</span>
+<span class="sd">            The current orbital separation. [Rsolar]</span>
+
+<span class="sd">        e : float</span>
+<span class="sd">            The current orbital eccentricity.</span>
+
+<span class="sd">        primary : SingleStar object</span>
+<span class="sd">            A single star object, representing the primary (more evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        secondary : SingleStar object</span>
+<span class="sd">            A single star object, representing the secondary (less evolved) star</span>
+<span class="sd">            in the binary and containing its properties.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            True if we want to print stuff.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        da_mt_tot : float</span>
+<span class="sd">            The change in orbital separation from both stars</span>
+<span class="sd">        for a time step in step_detached&#39;s solve_ivp(). [Rsolar/yr]</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="c1"># Msol</span>
+    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
+
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="c1"># Msol</span>
+    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
+
+    <span class="n">q1</span> <span class="o">=</span> <span class="n">m2</span> <span class="o">/</span> <span class="n">m1</span>
+    <span class="n">k11</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">mdot_2</span> <span class="o">/</span> <span class="n">m2</span><span class="p">)</span>
+    <span class="n">k21</span> <span class="o">=</span> <span class="n">mdot_2</span> <span class="o">/</span> <span class="n">m2</span>
+    <span class="n">k31</span> <span class="o">=</span> <span class="n">mdot_2</span> <span class="o">/</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">)</span>
+    <span class="c1"># This is simplified to da_mt = -a * Mdot/(M+Macc), for only (negative)</span>
+    <span class="c1"># wind Mdot from star M.</span>
+    <span class="n">da_mt_sec</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k11</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k21</span> <span class="o">+</span> <span class="n">k31</span><span class="p">)</span>
+
+    <span class="n">q2</span> <span class="o">=</span> <span class="n">m1</span> <span class="o">/</span> <span class="n">m2</span>
+    <span class="n">k12</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">mdot_1</span> <span class="o">/</span> <span class="n">m1</span><span class="p">)</span>
+    <span class="n">k22</span> <span class="o">=</span> <span class="n">mdot_1</span> <span class="o">/</span> <span class="n">m1</span>
+    <span class="n">k32</span> <span class="o">=</span> <span class="n">mdot_1</span> <span class="o">/</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">)</span>
+    <span class="n">da_mt_pri</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k12</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k22</span> <span class="o">+</span> <span class="n">k32</span><span class="p">)</span>
+
+    <span class="c1">#if verbose:</span>
+    <span class="c1">#    print(&quot;da_mt = &quot;, da_mt_sec, da_mt_pri)</span>
+
+    <span class="n">da_mt_tot</span> <span class="o">=</span> <span class="n">da_mt_sec</span> <span class="o">+</span> <span class="n">da_mt_pri</span>
+
+    <span class="k">return</span> <span class="n">da_mt_tot</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.1/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
