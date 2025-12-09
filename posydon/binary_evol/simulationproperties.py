@@ -187,6 +187,15 @@ class SimulationProperties:
                 self.all_step_names.append(key)
         self.steps_loaded = False
 
+        self.preload_imports()
+
+    def preload_imports(self):
+        from posydon.binary_evol.DT.step_detached import detached_step
+        from posydon.binary_evol.MESA.step_mesa import MesaGridStep
+
+        self._detached_step = detached_step
+        self._MesaGridStep = MesaGridStep
+
     @classmethod
     def from_ini(cls, path, metallicity = None, load_steps=False, verbose=False, **override_sim_kwargs):
         """Create a SimulationProperties instance from an inifile.
@@ -341,14 +350,13 @@ class SimulationProperties:
 
     def close(self):
         """Close hdf5 files before exiting."""
-        from posydon.binary_evol.DT.step_detached import detached_step
-        from posydon.binary_evol.MESA.step_mesa import MesaGridStep
+
         all_step_funcs = [getattr(self, key) for key, val in
                           self.__dict__.items() if 'step_' in key]
         for step_func in all_step_funcs:
-            if isinstance(step_func, MesaGridStep):
+            if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
-            elif isinstance(step_func, detached_step):
+            elif isinstance(step_func, self._detached_step):
                 for grid_interpolator in [step_func.track_matcher.grid_Hrich, step_func.track_matcher.grid_strippedHe]:
                     grid_interpolator.close()
 
