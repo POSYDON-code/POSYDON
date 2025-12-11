@@ -1,0 +1,632 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.CLI.popsyn &mdash; posydon 2.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=219dea72"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="posydon.active_learning" href="posydon.active_learning.html" />
+    <link rel="prev" title="posydon.CLI" href="posydon.CLI.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="posydon.html">posydon</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="posydon.CLI.html">posydon.CLI</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">posydon.CLI.popsyn</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.CLI.popsyn.check">posydon.CLI.popsyn.check</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-posydon.CLI.popsyn.setup">posydon.CLI.popsyn.setup</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="posydon.CLI.html#module-posydon.CLI.io">posydon.CLI.io</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.active_learning.html">posydon.active_learning</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.binary_evol.html">posydon.binary_evol</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.grids.html">posydon.grids</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.interpolation.html">posydon.interpolation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.popsyn.html">posydon.popsyn</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.user_modules.html">posydon.user_modules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.utils.html">posydon.utils</a></li>
+<li class="toctree-l2"><a class="reference internal" href="posydon.visualization.html">posydon.visualization</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="posydon.html">posydon</a></li>
+          <li class="breadcrumb-item"><a href="posydon.CLI.html">posydon.CLI</a></li>
+      <li class="breadcrumb-item active">posydon.CLI.popsyn</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api_reference/posydon.CLI.popsyn.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-posydon.CLI.popsyn">
+<span id="posydon-cli-popsyn"></span><h1>posydon.CLI.popsyn<a class="headerlink" href="#module-posydon.CLI.popsyn" title="Link to this heading"></a></h1>
+<section id="module-posydon.CLI.popsyn.check">
+<span id="posydon-cli-popsyn-check"></span><h2>posydon.CLI.popsyn.check<a class="headerlink" href="#module-posydon.CLI.popsyn.check" title="Link to this heading"></a></h2>
+<p>Module for checking the status of a population synthesis run.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.analyze_missing_batch_logs">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">analyze_missing_batch_logs</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_met</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#analyze_missing_batch_logs"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.analyze_missing_batch_logs" title="Link to this definition"></a></dt>
+<dd><p>Analyze log files for missing batches to determine failure reasons.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder</p></li>
+<li><p><strong>str_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String representation of metallicity</p></li>
+<li><p><strong>missing_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a>) – Set of missing batch indices</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.check_batch">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">check_batch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_folder_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#check_batch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.check_batch" title="Link to this definition"></a></dt>
+<dd><p>Check batch files for a specific metallicity when the population file is missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Metallicity to check</p></li>
+<li><p><strong>batch_folder_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the folder containing batch files</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with batch information including:
+- status: str (‘complete’, ‘incomplete’, ‘folder_missing’, etc.)
+- expected_count: int or None
+- found_count: int
+- metallicity: float
+- batch_folder: str
+- missing_indices: set or None</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.check_binary_counts">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">check_binary_counts</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#check_binary_counts"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.check_binary_counts" title="Link to this definition"></a></dt>
+<dd><p>Check if each population file has the expected number of binaries.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>floats</em>) – List of metallicities to check in solar units</p></li>
+<li><p><strong>expected_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Expected number of binaries per file</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>bool</em> – True if all counts match, False otherwise</p></li>
+<li><p><em>dict</em> – Dictionary with metallicity as key and binary count as value</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.check_popsyn_function">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">check_popsyn_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#check_popsyn_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.check_popsyn_function" title="Link to this definition"></a></dt>
+<dd><p>Function to check the status of a population run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – The arguments passed to the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.check_population_files">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">check_population_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#check_population_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.check_population_files" title="Link to this definition"></a></dt>
+<dd><p>Check if all merged population files exist.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the folder where the population run is located</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>floats</em>) – List of metallicities to check in solar units</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>bool</em> – True if all files exist, False otherwise</p></li>
+<li><p><em>dict</em> – Dictionary with metallicity as key and existence status as value</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.check_run_status">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">check_run_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metallicities</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">number_of_binaries</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#check_run_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.check_run_status" title="Link to this definition"></a></dt>
+<dd><p>Check whether the population files exist and if they have
+the expected number of binary counts.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder</p></li>
+<li><p><strong>metallicities</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of metallicities to check</p></li>
+<li><p><strong>number_of_binaries</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Expected number of binaries</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(files_exist, counts_match, file_status)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.find_missing_batch_indices">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">find_missing_batch_indices</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">batch_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_count</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#find_missing_batch_indices"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.find_missing_batch_indices" title="Link to this definition"></a></dt>
+<dd><p>Find which batch indices are missing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>batch_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the batch folder</p></li>
+<li><p><strong>expected_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Expected number of batches</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Set of missing batch indices</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)">set</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_batches_status">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_batches_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">synpop_params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_batches_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_batches_status" title="Link to this definition"></a></dt>
+<dd><p>Get the status of batch files for missing populations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder</p></li>
+<li><p><strong>missing_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary of metallicities with missing files</p></li>
+<li><p><strong>synpop_params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Population synthesis parameters</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Batch status information for each metallicity</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_binary_params">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_binary_params</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_binary_params"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_binary_params" title="Link to this definition"></a></dt>
+<dd><p>Read the binary population parameters from the INI file</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The path to the INI file</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><em>int</em> – The number of metallicities</p></li>
+<li><p><em>int</em> – The number of binaries</p></li>
+<li><p><em>list of floats</em> – The list of metallicities in solar units</p></li>
+<li><p><em>dict</em> – The dictionary of population synthesis parameters from the INI file</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_expected_batch_count">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_expected_batch_count</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_met</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_expected_batch_count"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_expected_batch_count" title="Link to this definition"></a></dt>
+<dd><p>Parse SLURM script to get expected batch count.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder</p></li>
+<li><p><strong>str_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String representation of metallicity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Expected batch count, or None if not found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_ini_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_ini_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_ini_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_ini_file" title="Link to this definition"></a></dt>
+<dd><p>Find and select the INI file for the population synthesis run.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – Command line arguments that needs to containing the run_folder path.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Path to the selected INI file.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If no INI file is found in the run folder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_run_configuration">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_run_configuration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_run_configuration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_run_configuration" title="Link to this definition"></a></dt>
+<dd><p>Get and validate the run configuration from the run folder.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – Arguments containing run_folder path</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(ini_file, num_metallicities, number_of_binaries, metallicities, synpop_params)</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If folder validation or INI file retrieval fails</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.get_user_confirmation">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">get_user_confirmation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prompt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_yes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">valid_no</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#get_user_confirmation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.get_user_confirmation" title="Link to this definition"></a></dt>
+<dd><p>Get user confirmation with validation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prompt</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The prompt to show the user</p></li>
+<li><p><strong>valid_yes</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – List of strings considered as “yes” (default: [‘yes’, ‘y’])</p></li>
+<li><p><strong>valid_no</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>, </em><em>optional</em>) – List of strings considered as “no” (default: [‘no’, ‘n’])</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if user confirmed, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.handle_batches_complete">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">handle_batches_complete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_files</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_status</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#handle_batches_complete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.handle_batches_complete" title="Link to this definition"></a></dt>
+<dd><p>Handle the case where all batch files are complete.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – Command line arguments</p></li>
+<li><p><strong>missing_files</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Dictionary of metallicities with missing files</p></li>
+<li><p><strong>batch_status</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Batch status information</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if merge jobs were handled (resubmitted or user declined), False if batches incomplete</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.print_batch_status">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">print_batch_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">str_met</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">actual_count</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">missing_indices</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#print_batch_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.print_batch_status" title="Link to this definition"></a></dt>
+<dd><p>Print the batch comparison status.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>str_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String representation of metallicity</p></li>
+<li><p><strong>expected_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em> or </em><em>None</em>) – Expected number of batches</p></li>
+<li><p><strong>actual_count</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Actual number of batches found</p></li>
+<li><p><strong>missing_indices</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#set" title="(in Python v3.14)"><em>set</em></a>) – Set of missing batch indices</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Status string: ‘unknown_expected_count’, ‘incomplete’, ‘complete’, or ‘extra_files’</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.read_batch_log_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">read_batch_log_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">log_file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_index</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_met</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">jobID</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#read_batch_log_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.read_batch_log_file" title="Link to this definition"></a></dt>
+<dd><p>Read and analyze a batch log file to determine failure reason.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>log_file_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the log file</p></li>
+<li><p><strong>batch_index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Index of the batch being analyzed</p></li>
+<li><p><strong>str_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String representation of the metallicity</p></li>
+<li><p><strong>jobID</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – SLURM job ID</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prints the analysis results directly</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.select_job_id">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">select_job_id</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">str_met</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#select_job_id"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.select_job_id" title="Link to this definition"></a></dt>
+<dd><p>Find and select a job ID from available log files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder</p></li>
+<li><p><strong>str_met</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – String representation of metallicity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Selected job ID, or None if no logs found</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)">int</a> or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.submit_slurm_job">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">submit_slurm_job</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">script_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#submit_slurm_job"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.submit_slurm_job" title="Link to this definition"></a></dt>
+<dd><p>Submit a SLURM job and handle errors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>script_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the SLURM script to submit</p></li>
+<li><p><strong>description</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Description of the job for error messages</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if submission succeeded, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.check.validate_run_folder">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.check.</span></span><span class="sig-name descname"><span class="pre">validate_run_folder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">run_folder</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/check.html#validate_run_folder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.check.validate_run_folder" title="Link to this definition"></a></dt>
+<dd><p>Validate that the run folder exists and is not empty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>run_folder</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to the run folder to validate</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="module-posydon.CLI.popsyn.setup">
+<span id="posydon-cli-popsyn-setup"></span><h2>posydon.CLI.popsyn.setup<a class="headerlink" href="#module-posydon.CLI.popsyn.setup" title="Link to this heading"></a></h2>
+<p>Utility functions for POSYDON population synthesis command line interface.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.setup.check_SN_MODEL_validity">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.setup.</span></span><span class="sig-name descname"><span class="pre">check_SN_MODEL_validity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose_on_fail</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/setup.html#check_SN_MODEL_validity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.setup.check_SN_MODEL_validity" title="Link to this definition"></a></dt>
+<dd><p>Checks if the step_SN model is valid for this script</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the path to the ini file</p></li>
+<li><p><strong>verbose_on_fail</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em> (</em><em>default: True</em><em>)</em>) – if <cite>True</cite> rerun the model selection with verbose mode if this failed</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if the model is valid or use_interp_values=False, False otherwise</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)">bool</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.setup.setup_popsyn_function">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.setup.</span></span><span class="sig-name descname"><span class="pre">setup_popsyn_function</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/setup.html#setup_popsyn_function"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.setup.setup_popsyn_function" title="Link to this definition"></a></dt>
+<dd><p>Function to setup the population synthesis run</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>args</strong> (<a class="reference external" href="https://docs.python.org/3/library/argparse.html#argparse.Namespace" title="(in Python v3.14)"><em>argparse.Namespace</em></a>) – the arguments passed to the function</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="posydon.CLI.popsyn.setup.validate_ini_file">
+<span class="sig-prename descclassname"><span class="pre">posydon.CLI.popsyn.setup.</span></span><span class="sig-name descname"><span class="pre">validate_ini_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ini_file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/CLI/popsyn/setup.html#validate_ini_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.CLI.popsyn.setup.validate_ini_file" title="Link to this definition"></a></dt>
+<dd><p>Validates the ini file for population synthesis</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>ini_file</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – the path to the ini file</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – if the ini file does not exist</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – if the step_SN MODEL is not valid for this script</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="posydon.CLI.html" class="btn btn-neutral float-left" title="posydon.CLI" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="posydon.active_learning.html" class="btn btn-neutral float-right" title="posydon.active_learning" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.2/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

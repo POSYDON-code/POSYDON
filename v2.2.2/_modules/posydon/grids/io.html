@@ -1,0 +1,687 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.grids.io &mdash; posydon 2.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=219dea72"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.grids.io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.grids.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Provides the functions that handle input/output of Job data.</span>
+
+<span class="sd">Example</span>
+<span class="sd">-------</span>
+<span class="sd">    print(&quot;Example using new script (Simone&#39;s runs)&quot;)</span>
+<span class="sd">    path = &quot;/home/konstantinos/pCloudDrive/&quot;</span>
+<span class="sd">           &quot;Shared/POSYDON/BinaryGrids/example_posydon_grid&quot;</span>
+
+<span class="sd">    grid_reader = GridReader(path, verbose=True)</span>
+
+<span class="sd">    print(&quot;READING THE PROFILE OF STAR1 IN THE SECOND BINARY OF THE GRID.&quot;)</span>
+<span class="sd">    profile = np.genfromtxt(grid_reader.runs[1].final_profile1_path,</span>
+<span class="sd">                            skip_header=5, names=True)</span>
+<span class="sd">    print(&quot;Columns:&quot;)</span>
+<span class="sd">    print(profile.dtype.names)</span>
+<span class="sd">    print(&quot;Array:&quot;)</span>
+<span class="sd">    print(profile)</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">The input path can be a list of paths or a string. The paths can be given with</span>
+<span class="sd">wildcard characters to incorporate multiple folders. E.g.,</span>
+
+<span class="sd">path = [&quot;/home/mygrid_part1&quot;, &quot;/home/mygrid_part2&quot;]</span>
+
+<span class="sd">or</span>
+
+<span class="sd">path = [&quot;home/mygrid_part*&quot;]</span>
+
+<span class="sd">Runs with the same initial parameters (folder name without the `_grid_index_*`</span>
+<span class="sd">part) are substituted. See `psygrid` module docstring for more information.</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Tassos Fragos &lt;Anastasios.Fragkos@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gzip</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.gridutils</span><span class="w"> </span><span class="kn">import</span> <span class="n">read_MESA_data_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+<span class="n">POSYDON_FORMAT_OPTIONS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># subfolders in the grid parent folder that are unnecessary</span>
+    <span class="s2">&quot;ignored folders&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;make&quot;</span><span class="p">,</span> <span class="s2">&quot;star1&quot;</span><span class="p">,</span> <span class="s2">&quot;star2&quot;</span><span class="p">,</span> <span class="s2">&quot;binary&quot;</span><span class="p">,</span> <span class="s2">&quot;data&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;column_lists&quot;</span><span class="p">,</span> <span class="s2">&quot;new_data&quot;</span><span class="p">,</span> <span class="s2">&quot;template&quot;</span><span class="p">,</span>
+                        <span class="s2">&quot;.ipynb_checkpoints&quot;</span><span class="p">],</span>
+    <span class="c1"># which files contain useful metadata concerning the grid</span>
+    <span class="s2">&quot;grid metadata&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;grid_test.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;grid_test.csv.gz&quot;</span><span class="p">,</span>
+                      <span class="s2">&quot;grid.csv&quot;</span><span class="p">,</span> <span class="s2">&quot;grid.csv.gz&quot;</span><span class="p">],</span>
+    <span class="c1"># which files contain useful metadata concerning individual grids</span>
+    <span class="s2">&quot;run metadata&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;inlist_grid_points&quot;</span><span class="p">,</span> <span class="s2">&quot;summary.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;out.txt&quot;</span><span class="p">,</span>
+                     <span class="s2">&quot;inlist_grid_point.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;summary.txt.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;out.txt.gz&quot;</span><span class="p">]</span>
+<span class="p">}</span>
+
+
+<span class="c1"># Note that the `.gz` versions of these filenames will also be searched</span>
+<span class="n">BINARY_OUTPUT_FILE</span> <span class="o">=</span> <span class="s2">&quot;out.txt&quot;</span>
+<span class="n">SINGLE_OUTPUT_FILE</span> <span class="o">=</span> <span class="s2">&quot;out_star1_formation_step0.txt&quot;</span>
+
+<span class="c1"># Possible extensions of EEP files (including zipped versions)</span>
+<span class="n">EEP_FILE_EXTENSIONS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;.data.eep&quot;</span><span class="p">,</span> <span class="s2">&quot;.data.clean.eep&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;.data.eep.gz&quot;</span><span class="p">,</span> <span class="s2">&quot;.data.clean.eep.gz&quot;</span><span class="p">]</span>
+
+
+<div class="viewcode-block" id="RunReader">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.RunReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RunReader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for reading MESA output files of an individual run.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;posydon&quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_maxlines</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize object and immediately read the data.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path of the file or folder containing the MESA run output.</span>
+<span class="sd">        fmt : str (default: &#39;posydon&#39;)</span>
+<span class="sd">            Format specifier. Linked to data-types, filename conventions, etc.</span>
+<span class="sd">        binary : bool (default: True)</span>
+<span class="sd">            Whether the run belongs to a binary grid.</span>
+<span class="sd">        verbose : bool (default: False)</span>
+<span class="sd">            If True, it prints reports of performed actions.</span>
+<span class="sd">        verbose_maxlines : int (default: 10)</span>
+<span class="sd">            In case of `verbose=True`, it sets the maximum number of lines of</span>
+<span class="sd">            metadata files to be printed. If None, all lines will be printed.</span>
+<span class="sd">            If 0, nothing will be printed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose_maxlines</span> <span class="o">=</span> <span class="n">verbose_maxlines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span>
+
+        <span class="c1"># used only if the run is saved in separate files</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history1_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history2_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary_history_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_profile1_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_profile2_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_profile1_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">initial_profile2_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_star1_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">final_star2_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_txt_path</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">fmt</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;posydon&quot;</span><span class="p">,</span> <span class="s2">&quot;posydon_single&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_posydon_format</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Format </span><span class="si">{}</span><span class="s2"> not supported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">))</span>
+
+<div class="viewcode-block" id="RunReader.read_posydon_format">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.RunReader.read_posydon_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_posydon_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read run structure, expecting the POSYDON collaboration format.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading run in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">joined_exists</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Return the joined path of `folder` and `filename`, if exists.&quot;&quot;&quot;</span>
+            <span class="n">fullpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder</span><span class="p">,</span> <span class="n">filename</span><span class="p">)</span>
+            <span class="n">fullpath_gz</span> <span class="o">=</span> <span class="n">fullpath</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullpath</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">fullpath</span>
+            <span class="k">if</span> <span class="n">allow_gzip</span> <span class="ow">and</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">fullpath_gz</span><span class="p">):</span>
+                <span class="k">return</span> <span class="n">fullpath_gz</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">files</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">files</span><span class="p">:</span>
+            <span class="n">fullpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="n">file</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;binary_history.data&quot;</span><span class="p">,</span> <span class="s2">&quot;binary_history.data.gz&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">binary_history_path</span> <span class="o">=</span> <span class="n">fullpath</span>
+            <span class="k">elif</span> <span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;final_star1.mod&quot;</span><span class="p">,</span> <span class="s2">&quot;final_star1.mod.gz&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">final_star1_path</span> <span class="o">=</span> <span class="n">fullpath</span>
+            <span class="k">elif</span> <span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;final_star2.mod&quot;</span><span class="p">,</span> <span class="s2">&quot;final_star2.mod.gz&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">final_star2_path</span> <span class="o">=</span> <span class="n">fullpath</span>
+            <span class="k">elif</span> <span class="p">((</span><span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="n">BINARY_OUTPUT_FILE</span><span class="p">,</span> <span class="n">BINARY_OUTPUT_FILE</span><span class="o">+</span><span class="s2">&quot;.gz&quot;</span><span class="p">])</span> <span class="ow">and</span>
+                  <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">out_txt_path</span> <span class="o">=</span> <span class="n">fullpath</span>
+            <span class="k">elif</span> <span class="p">((</span><span class="n">file</span> <span class="ow">in</span> <span class="p">[</span><span class="n">SINGLE_OUTPUT_FILE</span><span class="p">,</span> <span class="n">SINGLE_OUTPUT_FILE</span><span class="o">+</span><span class="s2">&quot;.gz&quot;</span><span class="p">])</span> <span class="ow">and</span>
+                  <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">out_txt_path</span> <span class="o">=</span> <span class="n">fullpath</span>
+            <span class="k">elif</span> <span class="n">file</span> <span class="ow">in</span> <span class="n">POSYDON_FORMAT_OPTIONS</span><span class="p">[</span><span class="s2">&quot;run metadata&quot;</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">joined_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS1&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS1&#39;</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history1_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS1/history.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">final_profile1_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS1/final_profile.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_profile1_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS1/initial_profile.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">joined_exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS2&#39;</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS2&#39;</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">history2_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS2/history.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">final_profile2_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS2/final_profile.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initial_profile2_path</span> <span class="o">=</span> <span class="n">joined_exists</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;LOGS2/initial_profile.data&#39;</span><span class="p">,</span> <span class="n">allow_gzip</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">history1_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history2_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_history_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_profile1_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_profile2_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_profile1_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_profile2_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_star1_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_star2_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_txt_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">)):</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;No relevant files found in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">),</span>
+                  <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">report</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="RunReader.report">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.RunReader.report">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">report</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Report what data or metadata were found.&quot;&quot;&quot;</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">isfound</span><span class="p">(</span><span class="n">var</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;Yes&quot;</span> <span class="k">if</span> <span class="n">var</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s2">&quot;No&quot;</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DATA FOUND&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MESA screen output       :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">out_txt_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;History of Star 1        :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history1_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;History of Star 2        :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history2_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Binary history           :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binary_history_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final profile of Star 1  :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_profile1_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final profile of Star 2  :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_profile2_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial profile of Star 1:&quot;</span><span class="p">,</span>
+              <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_profile1_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Initial profile of Star 2:&quot;</span><span class="p">,</span>
+              <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_profile2_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final model of Star 1    :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_star1_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Final model of Star 2    :&quot;</span><span class="p">,</span> <span class="n">isfound</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">final_star2_path</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;METADATA FILES: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">metafile</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span><span class="p">:</span>
+            <span class="n">print_meta_contents</span><span class="p">(</span><span class="n">metafile</span><span class="p">,</span> <span class="n">max_lines</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose_maxlines</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GridReader">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.GridReader">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GridReader</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for quick reading of MESA grid files.&quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;posydon&quot;</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose_maxlines</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize object and immediately load the grid file structure.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path of the file or folder containing the MESA runs.</span>
+<span class="sd">        fmt : str (default: &#39;posydon&#39;)</span>
+<span class="sd">            Format specifier. Linked to data-types, filename conventions, etc.</span>
+<span class="sd">        binary : bool (default: True)</span>
+<span class="sd">            Whether the grid(s) are binary.</span>
+<span class="sd">        verbose : bool (default: False)</span>
+<span class="sd">            If True, it prints reports of performed actions.</span>
+<span class="sd">        verbose_maxlines : int (default: 10)</span>
+<span class="sd">            In case of `verbose=True`, it sets the maximum number of lines of</span>
+<span class="sd">            metadata files to be printed. If None, all lines will be printed.</span>
+<span class="sd">            If 0, nothing will be printed.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fmt</span> <span class="o">=</span> <span class="n">fmt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">path</span> <span class="o">=</span> <span class="n">path</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">verbose_maxlines</span> <span class="o">=</span> <span class="n">verbose_maxlines</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">runs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="o">=</span> <span class="n">binary</span>
+
+        <span class="k">if</span> <span class="n">fmt</span> <span class="o">==</span> <span class="s2">&quot;posydon&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_folders</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_input_folders</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">read_posydon_format</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Format </span><span class="si">{}</span><span class="s2"> not supported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fmt</span><span class="p">))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_input_folders</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get a list of all the folders with MESA runs.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict view</span>
+<span class="sd">            Containing all the paths of MESA runs.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>
+            <span class="n">folder_paths</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">folder_paths</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">)</span>  <span class="c1"># raise TypeErr if not iterable</span>
+            <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;MESA path must be a string or list&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">err</span>
+
+        <span class="c1"># if wildcard&#39;s in paths, expand them</span>
+        <span class="n">folders</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>  <span class="c1"># key=initial params, value=fullpath</span>
+        <span class="n">out_name</span> <span class="o">=</span> <span class="n">BINARY_OUTPUT_FILE</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">binary</span> <span class="k">else</span> <span class="n">SINGLE_OUTPUT_FILE</span>
+        <span class="k">for</span> <span class="n">folder_path</span> <span class="ow">in</span> <span class="n">folder_paths</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Searching for MESA runs in `</span><span class="si">{}</span><span class="s2">`&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">folder_path</span><span class="p">))</span>
+
+            <span class="n">search_string</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="s2">&quot;**/&quot;</span> <span class="o">+</span> <span class="n">out_name</span><span class="p">)</span>
+            <span class="n">search_string_gz</span> <span class="o">=</span> <span class="n">search_string</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+            <span class="n">out_files_txt</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">search_string</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out_files_gz</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">search_string_gz</span><span class="p">,</span> <span class="n">recursive</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">out_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">out_files_txt</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">out_files_gz</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">out_file</span> <span class="ow">in</span> <span class="n">out_files</span><span class="p">:</span>
+                <span class="n">fullpath</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">out_file</span><span class="p">))</span>
+                <span class="n">params_part</span> <span class="o">=</span> <span class="n">initial_values_from_dirname</span><span class="p">(</span><span class="n">fullpath</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">params_part</span> <span class="ow">in</span> <span class="n">folders</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Run in </span><span class="si">{}</span><span class="s2"> substitutes run in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">fullpath</span><span class="p">,</span>
+                              <span class="n">folders</span><span class="p">[</span><span class="n">params_part</span><span class="p">]),</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+                <span class="n">folders</span><span class="p">[</span><span class="n">params_part</span><span class="p">]</span> <span class="o">=</span> <span class="n">fullpath</span>
+
+            <span class="c1"># discover metadata files</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">meta_path</span> <span class="ow">in</span> <span class="n">POSYDON_FORMAT_OPTIONS</span><span class="p">[</span><span class="s2">&quot;grid metadata&quot;</span><span class="p">]:</span>
+                <span class="n">search_string</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">folder_path</span><span class="p">,</span> <span class="n">meta_path</span><span class="p">)</span>
+                <span class="n">search_string_gz</span> <span class="o">=</span> <span class="n">search_string</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span>
+                <span class="n">meta_files_txt</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">search_string</span><span class="p">)</span>
+                <span class="n">meta_files_gz</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">search_string_gz</span><span class="p">)</span>
+                <span class="n">meta_files</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">meta_files_txt</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">meta_files_gz</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">metadata_files</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">meta_files</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">folders</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No folders found in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Found </span><span class="si">{}</span><span class="s2"> MESA runs.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">folders</span><span class="p">)))</span>
+
+        <span class="k">return</span> <span class="n">folders</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+<div class="viewcode-block" id="GridReader.read_posydon_format">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.GridReader.read_posydon_format">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_posydon_format</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read grid structure, expecting the POSYDON collaboration format.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reading grid in </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">fullpath</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">input_folders</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">fullpath</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">POSYDON_FORMAT_OPTIONS</span><span class="p">[</span><span class="s2">&quot;ignored folders&quot;</span><span class="p">]:</span>
+                <span class="n">new_run</span> <span class="o">=</span> <span class="n">RunReader</span><span class="p">(</span><span class="n">fullpath</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">fmt</span><span class="p">,</span>
+                                    <span class="n">binary</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">binary</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">new_run</span><span class="o">.</span><span class="n">out_txt_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Folder &quot;</span><span class="o">+</span><span class="n">fullpath</span><span class="o">+</span><span class="s2">&quot; has no stdout file.&quot;</span><span class="p">,</span>
+                          <span class="s2">&quot;MissingFilesWarning&quot;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_run</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GridReader.infer_history_columns">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.GridReader.infer_history_columns">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">infer_history_columns</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">BH_cols</span><span class="p">,</span> <span class="n">H1_cols</span><span class="p">,</span> <span class="n">H2_cols</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Infer the columns found in the grid&#39;s history data files.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        BH_cols : array-like</span>
+<span class="sd">            Which columns to consider from `binary_history`.</span>
+<span class="sd">        H1_cols : array-like</span>
+<span class="sd">            Which columns to consider from `history1`.</span>
+<span class="sd">        H2_cols : array-like</span>
+<span class="sd">            Which columns to consider from `history2`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list</span>
+<span class="sd">            The names of the columns in history data. Columns in `history1` and</span>
+<span class="sd">            `history2` are prefixed with `star1_` and `star2_` respectively.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">BH_from</span><span class="p">,</span> <span class="n">H1_from</span><span class="p">,</span> <span class="n">H2_from</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">runs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">BH_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">BH_from</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">binary_history_path</span>
+            <span class="k">if</span> <span class="n">H1_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">H1_from</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">history1_path</span>
+            <span class="k">if</span> <span class="n">H2_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">H2_from</span> <span class="o">=</span> <span class="n">run</span><span class="o">.</span><span class="n">history2_path</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">BH_from</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">H1_from</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">H2_from</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+                <span class="k">break</span>
+
+        <span class="n">BH</span><span class="p">,</span> <span class="n">H1</span><span class="p">,</span> <span class="n">H2</span> <span class="o">=</span> <span class="p">[</span><span class="n">read_MESA_data_file</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">columns</span><span class="p">)</span>
+                      <span class="k">for</span> <span class="n">path</span><span class="p">,</span> <span class="n">columns</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">([</span><span class="n">BH_from</span><span class="p">,</span> <span class="n">H1_from</span><span class="p">,</span> <span class="n">H2_from</span><span class="p">],</span>
+                                               <span class="p">[</span><span class="n">BH_cols</span><span class="p">,</span> <span class="n">H1_cols</span><span class="p">,</span> <span class="n">H2_cols</span><span class="p">])]</span>
+
+        <span class="n">BH_names</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">BH</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">BH</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">H1_names</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">H1</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">H1</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">H2_names</span> <span class="o">=</span> <span class="p">[]</span> <span class="k">if</span> <span class="n">H2</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">list</span><span class="p">(</span><span class="n">H2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+
+        <span class="n">H1_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;S1_&quot;</span> <span class="o">+</span> <span class="n">h1_name</span> <span class="k">for</span> <span class="n">h1_name</span> <span class="ow">in</span> <span class="n">H1_names</span><span class="p">]</span>
+        <span class="n">H2_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;S2_&quot;</span> <span class="o">+</span> <span class="n">h2_name</span> <span class="k">for</span> <span class="n">h2_name</span> <span class="ow">in</span> <span class="n">H2_names</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">BH_names</span> <span class="o">+</span> <span class="n">H1_names</span> <span class="o">+</span> <span class="n">H2_names</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="print_meta_contents">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.print_meta_contents">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_meta_contents</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">max_lines</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_chars_per_line</span><span class="o">=</span><span class="mi">80</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print parts of metadata files for inspection.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        Path of file containing the metadata.</span>
+<span class="sd">    max_lines : int or None (default: None)</span>
+<span class="sd">        Maximum number of lines to print. If None, print all of them.</span>
+<span class="sd">    max_chars_per_line: int or &quot;warp&quot; (default: 80)</span>
+<span class="sd">        If integer, it is the maximum number of character to be printed</span>
+<span class="sd">        (e.g., useful when printing MESA output). If &quot;warp&quot;, no truncation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_lines</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CONTENTS OF METADATA FILE: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">max_lines</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="n">max_lines</span><span class="p">:</span>
+            <span class="k">break</span>
+        <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">rstrip</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">max_chars_per_line</span> <span class="o">!=</span> <span class="s2">&quot;wrap&quot;</span><span class="p">:</span>
+            <span class="n">line</span> <span class="o">=</span> <span class="n">line</span><span class="p">[:</span><span class="n">max_chars_per_line</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="read_initial_values">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.read_initial_values">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_initial_values</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read grid point values given the MESA run directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesa_dir : str</span>
+<span class="sd">        Path of MESA directory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Initial values of all the variables in inlist_grid_points.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">,</span> <span class="s2">&quot;inlist_grid_points&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span> <span class="o">+</span> <span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+            <span class="n">path</span> <span class="o">+=</span> <span class="s2">&quot;.gz&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="n">initial_values</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">&quot;=&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">fields</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;=&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Multiple `=`, skipping line in </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">),</span>
+                  <span class="s2">&quot;InappropriateValueWarning&quot;</span><span class="p">)</span>
+            <span class="k">continue</span>
+        <span class="n">varname</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">valueparts</span> <span class="o">=</span> <span class="n">fields</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;d&quot;</span><span class="p">)</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">valueparts</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">valueparts</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">value</span> <span class="o">=</span> <span class="n">value</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="nb">float</span><span class="p">(</span><span class="n">valueparts</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+        <span class="k">if</span> <span class="n">varname</span> <span class="o">==</span> <span class="s2">&quot;m1&quot;</span><span class="p">:</span>
+            <span class="n">varname</span> <span class="o">=</span> <span class="s2">&quot;star_1_mass&quot;</span>
+        <span class="k">elif</span> <span class="n">varname</span> <span class="o">==</span> <span class="s2">&quot;m2&quot;</span><span class="p">:</span>
+            <span class="n">varname</span> <span class="o">=</span> <span class="s2">&quot;star_2_mass&quot;</span>
+        <span class="k">elif</span> <span class="n">varname</span> <span class="o">==</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">:</span>
+            <span class="n">varname</span> <span class="o">=</span> <span class="s2">&quot;period_days&quot;</span>
+        <span class="n">initial_values</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+    <span class="n">f</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">initial_values</span></div>
+
+
+
+<div class="viewcode-block" id="initial_values_from_dirname">
+<a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.io.initial_values_from_dirname">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">initial_values_from_dirname</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Use the name of the directory for inferring the main initial values.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mesa_dir : str</span>
+<span class="sd">        Path of MESA directory.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        v1, single star (1 item): only initial mass</span>
+<span class="sd">        v2, single star (2 items): initial mass and metallicity</span>
+<span class="sd">        v1, binary (3 items): primary and secondary initial mass and initial</span>
+<span class="sd">            orbital period</span>
+<span class="sd">        v2, binary (4 items): primary and secondary initial mass, initial</span>
+<span class="sd">            orbital period, and metallicity</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dirname</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">normpath</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="s2">&quot;initial_mass&quot;</span> <span class="ow">in</span> <span class="n">dirname</span><span class="p">:</span>                           <span class="c1"># single-star grid</span>
+        <span class="k">if</span> <span class="s2">&quot;v1/&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">):</span> <span class="c1"># version 1 dirnames don&#39;t contain initial_z</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;initial_mass&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;initial_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_z&quot;</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>                                                   <span class="c1"># binary-star grid</span>
+        <span class="k">if</span> <span class="s2">&quot;v1/&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">mesa_dir</span><span class="p">):</span> <span class="c1"># version 1 dirnames don&#39;t contain initial_z</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="s2">&quot;initial_eccentricity&quot;</span> <span class="ow">in</span> <span class="n">dirname</span><span class="p">:</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_z&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_eccentricity&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">variable_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;m1&quot;</span><span class="p">,</span> <span class="s2">&quot;m2&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_period_in_days&quot;</span><span class="p">,</span> <span class="s2">&quot;initial_z&quot;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">variable_names</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">dirname</span>
+
+    <span class="n">values</span> <span class="o">=</span> <span class="p">[</span><span class="n">dirname</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">variable_name</span><span class="o">+</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+              <span class="k">for</span> <span class="n">variable_name</span> <span class="ow">in</span> <span class="n">variable_names</span><span class="p">]</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">values</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.2/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

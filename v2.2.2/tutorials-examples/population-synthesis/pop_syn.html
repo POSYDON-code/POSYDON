@@ -1,0 +1,310 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Large-Scale Population Synthesis on HPC Facilities 🚀 &mdash; posydon 2.2.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/nbsphinx-code-cells.css?v=2aa19091" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=219dea72"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+      <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+      <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Stellar Transient Populations 🔍" href="bbh_analysis.html" />
+    <link rel="prev" title="Your First Binary Simulations with POSYDON 🌠" href="10_binaries_pop_syn.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VHD.html">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-class-materials-2025">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Large-Scale Population Synthesis on HPC Facilities 🚀</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/pop_syn.ipynb.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀">
+<h1>Large-Scale Population Synthesis on HPC Facilities 🚀<a class="headerlink" href="#Large-Scale-Population-Synthesis-on-HPC-Facilities-🚀" title="Link to this heading"></a></h1>
+<p>This tutorial will cover how to set up and run a large, multi-metallicity population run on an HPC with slurm. We will dive deeper into the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and how the <code class="docutils literal notranslate"><span class="pre">Population</span></code> class works for multi-metallicity populations.</p>
+<section id="Initialization-File-for-multi-metallicity-runs">
+<h2>Initialization File for multi-metallicity runs<a class="headerlink" href="#Initialization-File-for-multi-metallicity-runs" title="Link to this heading"></a></h2>
+<p>Let’s copy the default population synthesis <code class="docutils literal notranslate"><span class="pre">ini</span></code> file to your working directory. Make sure you’re on a cluster to be able to run and submit the jobs!</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
+
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>Open the <code class="docutils literal notranslate"><span class="pre">population_params.ini</span></code> file and you should see that the metallicity is currently set to solar (represented by a value of <code class="docutils literal notranslate"><span class="pre">1.</span></code>), but in the comment, you can see all 8 currently supported metallicities.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>metallicity = [1.] #[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]
+</pre></div>
+</div>
+<p>For our test run, we do not require a large population, so set the number of binaries to 1000. You can also leave the metallicity at just solar for now, but for multi-metallicity runs, you would simply add whatever available metallicities you desire to the list. You might also want to make sure the <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code> is set to 100 binaries for this example. What a <code class="docutils literal notranslate"><span class="pre">dump_rate</span> <span class="pre">=</span> <span class="pre">x</span></code> says is basically every time the POSYDON runs <code class="docutils literal notranslate"><span class="pre">x</span></code> binaries, dump their data into a file and remove them from RAM to
+free up some space. So, in this example, after each batch of 100 binaries is run we are going to save their data to a file and combine them all in the end. (If you are curious about guidelines on memory usage when running larger populations, please have a look at our <a class="reference internal" href="../../troubleshooting-faqs/code-questions.html"><span class="doc">Code Usage FAQ</span></a>.)</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>dump_rate = 100
+...
+number_of_binaries = 1000
+</pre></div>
+</div>
+</section>
+<section id="Setup-the-Population-Synthesis-Run">
+<h2>Setup the Population Synthesis Run<a class="headerlink" href="#Setup-the-Population-Synthesis-Run" title="Link to this heading"></a></h2>
+<p>POSYDON provides <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code> as a command line script that you can use to set up a (multi-metallicity) population run on an HPC facility. This will split each metallicity into a separate slurm job array and a dependent job which will automatically merge the output of the separate jobs. This removes the need to manually set up each slurm job. Below are two examples, but you might need to adjust the inputs for your email, cluster and available partitions.</p>
+<div class="admonition warning">
+<p class="admonition-title fa fa-exclamation-circle"><strong>Older POSYDON installations</strong></p>
+<p>If the <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code> command is not available, you might have to install POSYDON.</p>
+<ol class="arabic simple">
+<li><p>Go to the directory: <code class="docutils literal notranslate"><span class="pre">cd</span> <span class="pre">$PATH_TO_POSYDON</span></code></p></li>
+<li><p>Uninstall using pip <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">posydon</span></code></p></li>
+<li><p>Reinstall: if you’re using the development version: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">.</span></code></p></li>
+</ol>
+<p>See the <a class="reference internal" href="../../getting-started/installation-guide.html"><span class="doc">Installation instructions</span></a> if any issues occur.</p>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># example for yggdrasil</span>
+<span class="n">posydon</span><span class="o">-</span><span class="n">popsyn</span> <span class="n">setup</span> <span class="n">population_params</span><span class="o">.</span><span class="n">ini</span> <span class="o">--</span><span class="n">job_array</span><span class="o">=</span><span class="mi">10</span> \
+                                            <span class="o">--</span><span class="n">walltime</span><span class="o">=</span><span class="mi">00</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">00</span> \
+                                            <span class="o">--</span><span class="n">mem_per_cpu</span><span class="o">=</span><span class="mi">5</span><span class="n">G</span>  \
+                                            <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">debug</span><span class="o">-</span><span class="n">cpu</span> \
+                                            <span class="o">--</span><span class="n">email</span><span class="o">=</span><span class="nb">max</span><span class="o">.</span><span class="n">briel</span><span class="nd">@unige</span><span class="o">.</span><span class="n">ch</span> \
+                                            <span class="o">--</span><span class="n">account</span><span class="o">=</span><span class="n">fragkos</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># example for quest cluster</span>
+<span class="n">posydon</span><span class="o">-</span><span class="n">popsyn</span> <span class="n">setup</span> <span class="n">population_params</span><span class="o">.</span><span class="n">ini</span> <span class="o">--</span><span class="n">job_array</span><span class="o">=</span><span class="mi">10</span> \
+                                           <span class="o">--</span><span class="n">walltime</span><span class="o">=</span><span class="mi">00</span><span class="p">:</span><span class="mi">14</span><span class="p">:</span><span class="mi">00</span> \
+                                           <span class="o">--</span><span class="n">partition</span><span class="o">=</span><span class="n">posydon</span><span class="o">-</span><span class="n">std</span> \
+                                           <span class="o">--</span><span class="n">account</span><span class="o">=</span><span class="n">b1119</span> \
+                                           <span class="o">--</span><span class="n">email</span><span class="o">=</span><span class="nb">max</span><span class="o">.</span><span class="n">briel</span><span class="nd">@unige</span><span class="o">.</span><span class="n">ch</span> \
+                                           <span class="o">--</span><span class="n">mem_per_cpu</span><span class="o">=</span><span class="mi">5</span><span class="n">G</span>
+<br/></pre></div>
+</div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span> <span class="pre">--help</span></code> should provide a complete list of possible input parameters.</p>
+<section id="Walltime-and-job_array-number-fine-tuning">
+<h3>Walltime and job_array number fine-tuning<a class="headerlink" href="#Walltime-and-job_array-number-fine-tuning" title="Link to this heading"></a></h3>
+<p>The above examples will set up the population run with an array of 10 jobs for each metallicity. As such, each job will run 100 binaries of the 1000 binaries per metallicity.</p>
+<p>Fine-tuning the <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code>, <code class="docutils literal notranslate"><span class="pre">mem_per_cpu</span></code>, number of <code class="docutils literal notranslate"><span class="pre">job-array</span></code>’s, and <code class="docutils literal notranslate"><span class="pre">walltime</span></code> compared to the total number of binaries can be helpful in optimizing your cluster usage. See <a class="reference internal" href="../../troubleshooting-faqs/code-questions.html"><span class="doc">the FAQ</span></a> for more detailed guidance on the memory footprint of a population synthesis run in POSYDON. By default, 5GB of RAM is requested per job, which fits well with the default <code class="docutils literal notranslate"><span class="pre">dump_rate</span></code> of 2000.</p>
+<p>As a rule of thumb for the <code class="docutils literal notranslate"><span class="pre">walltime</span></code>, a single binary takes about 1-2 seconds to run. In the example run, each job of 100 binaries should take around 2 to 3 minutes. However, some additional set up time for loading the grids is required! See <a class="reference internal" href="../../troubleshooting-faqs/code-questions.html"><span class="doc">the FAQ</span></a> for another example of <code class="docutils literal notranslate"><span class="pre">walltime</span></code> estimation.</p>
+<p>After you’ve run the above setup, you should now have several files in your working directory.</p>
+<p>You can submit all job arrays and merged jobs using <code class="docutils literal notranslate"><span class="pre">slurm_submit.sh</span></code></p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">sh</span> <span class="n">slurm_submit</span><span class="o">.</span><span class="n">sh</span>
+</pre></div>
+</div>
+</div>
+<p>After your job has finished, you can use the following command to verify that your run was successful. Please replace <code class="docutils literal notranslate"><span class="pre">{run_folder}</span></code> with the folder, where you ran the population.</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>posydon-popsyn check {run_folder}
+</pre></div>
+</div>
+<p>Additionally, the <code class="docutils literal notranslate"><span class="pre">*_logs</span></code> folder will contain the logs of each job in the job_array.</p>
+<p>If one of your runs failed, you can use the <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">rescue</span> <span class="pre">{run_folder}</span></code> command to try to rescue it. This allows failed job in a job array to be resubmitted. You can provide the same commands as <code class="docutils literal notranslate"><span class="pre">posydon-popsyn</span> <span class="pre">setup</span></code>, if you want to change slurm parameters, such as walltime and mem-per-cpu.</p>
+</section>
+</section>
+<section id="Population-inspection">
+<h2>Population inspection<a class="headerlink" href="#Population-inspection" title="Link to this heading"></a></h2>
+<p>Once the runs and the concatenation have finished. You should have 8 files named <code class="docutils literal notranslate"><span class="pre">MET_Zsun_population.h5</span></code>, where <code class="docutils literal notranslate"><span class="pre">MET</span></code> are the metallicities.</p>
+<p>We will inspect two to check the number of binaries in the population.</p>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+
+<span class="n">file1</span> <span class="o">=</span> <span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span>
+<span class="n">file2</span> <span class="o">=</span> <span class="s1">&#39;1e-02_Zsun_population.h5&#39;</span>
+
+<span class="n">pop1</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pop1</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="p">)</span>
+
+<span class="n">pop2</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">file2</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pop2</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<p>In the next tutorial (<a class="reference internal" href="bbh_analysis.html"><span class="doc">BBH analysis</span></a>), we will look into selecting specific events and combining the different metallicity runs into a single population and selecting the binary black hole mergers in them!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="10_binaries_pop_syn.html" class="btn btn-neutral float-left" title="Your First Binary Simulations with POSYDON 🌠" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="bbh_analysis.html" class="btn btn-neutral float-right" title="Stellar Transient Populations 🔍" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.2/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
