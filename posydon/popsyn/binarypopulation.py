@@ -209,9 +209,12 @@ class BinaryPopulation:
         BinaryPopulation
             A new instance of a BinaryPopulation.
         """
+        
         pop_kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
+
         # finally get the population properties
         sim_prop_kwargs = simprop_kwargs_from_ini(path)
+        sim_prop_kwargs['verbose'] = verbose
         pop_kwargs['population_properties'] = SimulationProperties(
             **sim_prop_kwargs)
 
