@@ -184,3 +184,16 @@ ZENODO_COLLECTION['v2_tutorial_populations'] = {
     'url': "https://zenodo.org/records/15708476",
 }
 COMPLETE_SETS['v2_tutorial_populations'] = ['v2_tutorial_populations']
+
+ZENODO_COLLECTION['2025_school_data'] = {
+    'data': "https://zenodo.org/records/17902460/files/POSYDON_2025_school_data.tar.gz",
+    'description': "The POSYDON School 2025 lab datasets. "\
+                   + "These are various populations required to run the labs "\
+                   + "from the school. Populations ranging from 10 to "\
+                   + "1 million binaries are included, along with some small "\
+                   + "MESA grid data for one of the labs.",
+    'md5': "b5ee19b546a3377101efe61738902b70",
+    'title': "POSYDON School 2025 population and MESA data",
+    'url': "https://zenodo.org/records/17902460"
+}
+COMPLETE_SETS['2025_school_data'] = ['2025_school_data']
