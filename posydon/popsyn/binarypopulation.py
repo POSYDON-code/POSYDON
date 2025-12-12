@@ -209,7 +209,7 @@ class BinaryPopulation:
         BinaryPopulation
             A new instance of a BinaryPopulation.
         """
-        
+
         pop_kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
 
         # finally get the population properties
