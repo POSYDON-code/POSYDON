@@ -131,11 +131,11 @@ class BinaryPopulation:
         atexit.register(lambda: BinaryPopulation.close(self))
 
         # a .ini file will normally contain a list of metallicities, as
-        # expected by the PopulationRunner() class. However, if running 
+        # expected by the PopulationRunner() class. However, if running
         # evolve straight from this class, we need a float
         if isinstance(self.kwargs['metallicity'], (list, np.ndarray)):
             Pwarn('An array of metallicities was provided to the '
-                    'BinaryPopulation class but a single value is ' 
+                    'BinaryPopulation class but a single value is '
                     'needed. Taking the first element.', "ReplaceValueWarning")
             self.kwargs['metallicity'] = self.kwargs['metallicity'][0]
 
