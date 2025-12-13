@@ -15,7 +15,7 @@ default_kwargs = {
 
     # Size of the population
     'number_of_binaries': 100,
-    'metallicity' : 1.0, # in Zsolar
+    'metallicities' : [1.0], # in Zsolar
 
     # Star Formation History
     'star_formation': 'constant',

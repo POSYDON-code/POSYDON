@@ -133,18 +133,11 @@ class BinaryPopulation:
         # grab all metallicities in population or use single metallicity
         self.metallicities = self.kwargs.get('metallicities', [1.])
 
-        # PopulationRunner provides this; the .ini file does not by default
-        self.metallicity = self.kwargs.get('metallicity', self.metallicities[0])
-
-        # a .ini file will normally contain a list of metallicities, as
-        # expected by the PopulationRunner() class. However, if running
-        # evolve straight from this class, we need a float
-        if isinstance(self.metallicity, (list, np.ndarray)):
-            Pwarn('An array of metallicities was provided to the '
-                  'BinaryPopulation class but a single value is '
-                  'needed. Taking the first element.', "ReplaceValueWarning")
-            self.metallicity = self.kwargs['metallicity'][0]
-            self.kwargs['metallicity'] = self.metallicity
+        # the first index of the metallicities list will be chosen unless told otherwise
+        self.metallicity_index = self.kwargs.get('metallicity_index', 0)
+        self.kwargs['metallicity'] = self.kwargs.get('metallicity', 
+                                          self.metallicities[self.metallicity_index])
+        self.metallicity = self.kwargs['metallicity']
 
         # force the metallicity on to the simulation properties
         for key in STEP_NAMES_LOADING_GRIDS:
@@ -205,13 +198,18 @@ class BinaryPopulation:
         self.find_failed = self.manager.find_failed
 
     @classmethod
-    def from_ini(cls, path, verbose=False):
+    def from_ini(cls, path, metallicity_index=0, verbose=False):
         """Create a BinaryPopulation instance from an inifile.
 
         Parameters
         ----------
         path : str
             Path to an inifile to load in.
+
+        metallicity_index : int
+            Used to select a metallicity from the metallicities array 
+            in the .ini file. This is mainly useful if you are creating 
+            a BinaryPopulation class from scratch.
 
         verbose : bool
             Print useful info.
@@ -226,6 +224,8 @@ class BinaryPopulation:
         sim_prop_kwargs = simprop_kwargs_from_ini(path)
         pop_kwargs['population_properties'] = SimulationProperties(
             **sim_prop_kwargs)
+        
+        pop_kwargs['metallicity_index'] = metallicity_index
 
         return cls(**pop_kwargs)
 
