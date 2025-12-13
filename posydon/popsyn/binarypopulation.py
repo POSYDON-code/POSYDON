@@ -141,7 +141,7 @@ class BinaryPopulation:
         # evolve straight from this class, we need a float
         if isinstance(self.metallicity, (list, np.ndarray)):
             Pwarn('An array of metallicities was provided to the '
-                  'BinaryPopulation class but a single value is ' 
+                  'BinaryPopulation class but a single value is '
                   'needed. Taking the first element.', "ReplaceValueWarning")
             self.metallicity = self.kwargs['metallicity'][0]
             self.kwargs['metallicity'] = self.metallicity
