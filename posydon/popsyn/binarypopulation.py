@@ -137,7 +137,7 @@ class BinaryPopulation:
         self.metallicity = self.kwargs.get('metallicity', self.metallicities[0])
 
         # a .ini file will normally contain a list of metallicities, as
-        # expected by the PopulationRunner() class. However, if running 
+        # expected by the PopulationRunner() class. However, if running
         # evolve straight from this class, we need a float
         if isinstance(self.metallicity, (list, np.ndarray)):
             Pwarn('An array of metallicities was provided to the '
