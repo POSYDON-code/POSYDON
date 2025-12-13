@@ -135,7 +135,7 @@ class BinaryPopulation:
 
         # the first index of the metallicities list will be chosen unless told otherwise
         self.metallicity_index = self.kwargs.get('metallicity_index', 0)
-        self.kwargs['metallicity'] = self.kwargs.get('metallicity', 
+        self.kwargs['metallicity'] = self.kwargs.get('metallicity',
                                           self.metallicities[self.metallicity_index])
         self.metallicity = self.kwargs['metallicity']
 
@@ -207,8 +207,8 @@ class BinaryPopulation:
             Path to an inifile to load in.
 
         metallicity_index : int
-            Used to select a metallicity from the metallicities array 
-            in the .ini file. This is mainly useful if you are creating 
+            Used to select a metallicity from the metallicities array
+            in the .ini file. This is mainly useful if you are creating
             a BinaryPopulation class from scratch.
 
         verbose : bool
@@ -224,7 +224,7 @@ class BinaryPopulation:
         sim_prop_kwargs = simprop_kwargs_from_ini(path)
         pop_kwargs['population_properties'] = SimulationProperties(
             **sim_prop_kwargs)
-        
+
         pop_kwargs['metallicity_index'] = metallicity_index
 
         return cls(**pop_kwargs)
