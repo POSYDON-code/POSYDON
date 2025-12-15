@@ -81,7 +81,7 @@ class population_spectra():
 
     def create_spectrum(self):
         """ It splits up the population and combines the data to be saved.
-        """        
+        """      
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         nprocs = comm.Get_size()
@@ -121,24 +121,32 @@ class population_spectra():
         """
         isochromes = self.kwargs.get('isochromes',False)
         spectral_type = self.kwargs.get('spectral_type',False)
+        #
         if pop is None:
             pop = self.population
+        
+        weights = None
         if isochromes:
             mini_file = self.kwargs.get('mini_file',False)
             weights = IMF_WEIGHT(mini_file)
+        
+        num_waves = len(self.grids.lam_c)
         pop_spectrum = {}
         labels = []
         # Create empty spectral arrays
         for state in state_list:
-            pop_spectrum[state] = np.zeros(len(self.grids.lam_c))
+            pop_spectrum[state] = np.zeros(num_waves)
         #Creates arrays for the spectral types as well if indicated.
         if spectral_type:
             for key in spectral_types:
-                pop_spectrum[key] = np.zeros(len(self.grids.lam_c))
+                pop_spectrum[key] = np.zeros(num_waves)
         #Iterate through the whole population and calculate the spectrum of S1,S2.
         for i,binary in pop.iterrows():
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
+
+            #Store labels
+            labels.append([label1,label2])
 
             if spectrum_1 is not None and state_1 is not None:
                 if isochromes:
@@ -150,13 +158,12 @@ class population_spectra():
                 pop_spectrum[state_2] += spectrum_2
                 if spectral_type:
                     pop_spectrum[label2] += spectrum_2
-            pop = pop.drop(i)
-            labels.append([label1,label2])
-        pop_spectrum['Total'] = np.zeros(len(self.grids.lam_c))
+        
+        pop_spectrum['Total'] = np.zeros(num_waves)
         if spectral_type:
             for key in spectral_types:
                 pop_spectrum['Total'] += pop_spectrum[key]
-        else: 
+        else:
             for key in state_list:
                 pop_spectrum['Total'] += pop_spectrum[key]
 
@@ -172,9 +179,6 @@ class population_spectra():
             labels_S2: string
             file_path: string. Defaults to None.
         """
-
-    
-        
         if type(pop_spectrum)== list:
             # Check if the population is empty (All of the stars are CO)
             if labels.size == 0:
@@ -185,7 +189,7 @@ class population_spectra():
                 pop_data['S1_grid_status'] = labels[:,0]
                 pop_data['S2_grid_status'] = labels[:,1]
             combined_spectrum = Counter(pop_spectrum[0])
-            if len(pop_spectrum) > 0: 
+            if len(pop_spectrum) > 0:
                 for i in range(1,len(pop_spectrum)):
                     pop_dict = Counter(pop_spectrum[i])
                     combined_spectrum.update(pop_dict)

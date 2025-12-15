@@ -156,10 +156,10 @@ def point_the_grid(grids,x,label,**kwargs):
                 new_label,x = check_boundaries(grids,state_to_grid[state],**x)
                 if new_label != 'failed_grid':
                     return new_label,x
-                if (x['surface_h1'] > 0.4) & (x['Teff'] <  grids.spectral_grids['ostar_grid'].axis_x_max['Teff']):
-                    failed_label = labels_out_of_grid('ostar_grid',**x)
-                    if failed_label == 'log(g)':
-                        x = enforce_boundaries(grids, 'ostar_grid','log(g)',**kwargs)
+                if (x['surface_h1'] > 0.4) and (x['Teff'] <  grids.spectral_grids['ostar_grid'].axis_x_max['Teff']):
+                    failed_label = labels_out_of_grid(grids, 'ostar_grid',**x)
+                    if 'log(g)' in failed_label:
+                        x['log(g)'] = enforce_boundaries(grids, 'ostar_grid','log(g)',**kwargs)
                     new_label,x =  check_boundaries(grids,'ostar_grid',**x)
 
                 else: 
@@ -254,7 +254,6 @@ def generate_spectrum(grids,star,i,**kwargs):
                 if np.min(F_l) < 0: 
                     #F_l = smooth_flux_negatives(grids.lam_c,F_l.value if isinstance(F_l, u.Quantity) else F_l)
                     F_l = grids.NN_grid_flux(label,**x)
-                
                 if label == "stripped_grid":
                     Flux = F_l*4*np.pi*1e4/Lo
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
@@ -269,9 +268,11 @@ def generate_spectrum(grids,star,i,**kwargs):
                 try:
                     x = rescale_log_g(grids,label,**x)
                 except Exception as e:
-                    print(x)
-                    print('Under the exception',e)
+                    pass
+                    #print(x)
+                    #print('Under the exception',e)
                 label = f'failed_attempt_{count}'
+            count += 1
         label,x = point_the_grid(grids,x,label,**kwargs)
         if label == 'failed_grid':
             return None,state,label
@@ -305,9 +306,9 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     if label == "stripped_grid":
         Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
     elif label == 'WR_grid':
-        if (x['Teff'] > 100000) & (((x['Teff'] -100000)/100000) < 0.1):
+        if (x['Teff'] > 100000) and (((x['Teff'] -100000)/100000) < 0.1):
             x['Teff'] = 100000
-        elif (x['Teff'] > 100000)  & (((x['Teff'] -100000)/100000) > 0.1): 
+        elif (x['Teff'] > 100000)  and (((x['Teff'] -100000)/100000) > 0.1): 
             return None,star[f'{i}_state'],label
         x['R_t'] = calculated_Rt(star,i)
         Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
