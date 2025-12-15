@@ -52,7 +52,7 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
         # initialize generator for Moe+17-PsandQs
         if _gen_Moe_17_PsandQs is None:
-            _gen_Moe_17_PsandQs = Moe_17_PsandQs()
+            _gen_Moe_17_PsandQs = Moe_17_PsandQs(**kwargs)
         # use same defaults as generate_primary_masses
         M1_min = kwargs.get("primary_mass_min", 7)
         M1_max = kwargs.get("primary_mass_max", 120)
