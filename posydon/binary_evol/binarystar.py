@@ -295,7 +295,7 @@ class BinaryStar:
         #elif next_step_name == "step_detached":
         #    next_step(self)
         #elif next_step_name == "step_dco":
-        #    next_step(self) 
+        #    next_step(self)
         #elif next_step_name == "step_merged":
         #    next_step(self)
         #elif next_step_name == "step_disrupted":

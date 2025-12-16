@@ -431,7 +431,7 @@ class TrackMatcher:
     def train_scalers(self):
 
        # ...if not, fit a new scaler, and store it for later use
-        
+
         lists_for_matching = [self.list_for_matching_HMS,
                               self.list_for_matching_HeStar,
                               self.list_for_matching_HMS_alternative,
@@ -440,9 +440,9 @@ class TrackMatcher:
                               self.list_for_matching_postHeMS_alternative,
                               self.list_for_matching_postMS,
                               self.list_for_matching_postMS_alternative]
-        
+
         #htracks = [True, False, False, False, False, False, True, False]
-        
+
         for list_for_matching in lists_for_matching:
 
             match_attr_names = list_for_matching[0]
@@ -456,7 +456,7 @@ class TrackMatcher:
             for htrack in [True, False]:
                 grid = self.grid_Hrich if htrack else self.grid_strippedHe
                 self.initial_mass = grid.grid_mass
-                
+
                 # get (or train and get) scalers for attributes
                 # attributes are scaled to range (0, 1)
                 #scalers = []
@@ -481,7 +481,7 @@ class TrackMatcher:
                     self.stored_scalers[scaler_options] = scaler
 
     def create_root0_h(self):
-    
+
         # set which grid to search based on htrack condition
         grid = self.grid_Hrich
 
@@ -506,7 +506,7 @@ class TrackMatcher:
                 self.rootm_h[i, : len(track), j] = track
 
     def create_root0_he(self):
-    
+
         # set which grid to search based on htrack condition
         grid = self.grid_strippedHe
 
@@ -696,7 +696,7 @@ class TrackMatcher:
         scaler = self.stored_scalers.get(scaler_options, None)
         #if scaler is not None:
         #    return scaler
-        
+
         #print("DEBUG: Training scaler...")
 
         return scaler

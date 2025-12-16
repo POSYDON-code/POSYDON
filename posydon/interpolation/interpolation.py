@@ -516,7 +516,7 @@ class GRIDInterpolator():
         grid = self.grid
         for m in args:
             idx = np.argmax(m == self.grid_mass)
-            
+
             if hkey:
                 self.grid_data[m] = dict()
                 data = grid[idx].history1
@@ -532,14 +532,14 @@ class GRIDInterpolator():
                 profile = grid[idx].final_profile1
                 self.grid_profile[m][pkey] = profile[pkey]
                 self.grid_profile[m]['mass'] = profile['mass']
-            
+
             #self.grid_data[m] = dict()
             #self.grid_final_values[m] = dict()
             #self.grid_profile[m] = dict()
             #for key in self.keys:
-            
+
             #for key in self.final_keys:
-            
+
             #for key in self.profile_keys:
 
 
