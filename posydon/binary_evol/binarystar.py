@@ -231,6 +231,7 @@ class BinaryStar:
         else:
             self.properties = SimulationProperties()
 
+    #@profile
     def evolve(self):
         """Evolve a binary from start to finish."""
 
@@ -264,6 +265,7 @@ class BinaryStar:
 
         self.properties.post_evolve(self)
 
+    #@profile
     def run_step(self):
         """Evolve the binary through one evolutionary step."""
         total_state = self.get_total_state()
@@ -280,6 +282,29 @@ class BinaryStar:
                              "SimulationProperties.".format(next_step_name))
 
         self.properties.pre_step(self, next_step_name)
+
+        # breaking up for profiling
+        #if next_step_name == "step_HMS_HMS":
+        #    next_step(self)
+        #elif next_step_name == "step_CO_HeMS":
+        #    next_step(self)
+        #elif next_step_name == "step_CO_HMS_RLO":
+        #    next_step(self)
+        #elif next_step_name == "step_CO_HeMS_RLO":
+        #    next_step(self)
+        #elif next_step_name == "step_detached":
+        #    next_step(self)
+        #elif next_step_name == "step_dco":
+        #    next_step(self) 
+        #elif next_step_name == "step_merged":
+        #    next_step(self)
+        #elif next_step_name == "step_disrupted":
+        #    next_step(self)
+        #elif next_step_name == "step_SN":
+        #    next_step(self)
+        #elif next_step_name == "step_CE":
+        #    next_step(self)
+        #else:
         next_step(self)
 
         self.append_state()
