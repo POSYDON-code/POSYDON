@@ -15,6 +15,8 @@ __authors__ = [
 
 import numpy as np
 from scipy.stats import truncnorm
+from scipy.integrate import quad
+from scipy.interpolate import interp1d
 
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
@@ -329,7 +331,7 @@ def generate_primary_masses(number_of_binaries=1,
     """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
-    primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001','GPL_IMF']
+    primary_mass_scheme_options = ['Salpeter', 'Kroupa1993', 'Kroupa2001','GPL_IMF','Chabrier']
 
     if primary_mass_scheme not in primary_mass_scheme_options:
         raise ValueError("You must provide an allowed primary mass scheme.")
@@ -396,6 +398,28 @@ def generate_primary_masses(number_of_binaries=1,
             x1 = (normalization_constant/(alpha1 +1)* ( m1**(alpha1 +1 ) - primary_mass_min**(alpha1 +1 )))
             
             primary_masses = np.where(random_variable < x1, f1(random_variable), f2(random_variable))
+    
+    #Chabrier IMF
+    elif primary_mass_scheme == 'Chabrier':
+
+        low_Chabrier = lambda x: np.exp(- np.log10(x/0.2)**2/(0.645))
+        high_Chabrier = lambda x: x**(-1.35)
+        A = 1/(low_Chabrier(1)*quad(high_Chabrier,1,primary_mass_max)[0] + quad(low_Chabrier,primary_mass_min,1))[0]
+        Chabrier = lambda x: np.where(x < 1, A*low_Chabrier(x),A*low_Chabrier(1)* high_Chabrier(x))
+        
+        m_masses = np.logspace(np.log10(primary_mass_min), np.log10(primary_mass_max), 10000)
+        pdf_Chabrier = Chabrier(m_masses)
+        cdf_Chabrier = np.cumsum(pdf_Chabrier) - pdf_Chabrier[0]
+        cdf_Chabrier = cdf_Chabrier / max(cdf_Chabrier)
+
+        inverse_cdf = interp1d(
+            cdf_Chabrier, m_masses,
+            bounds_error=False,
+            fill_value=(primary_mass_min, primary_mass_max)
+        )
+
+        random_variable = RNG.uniform(size=number_of_binaries)
+        primary_masses = inverse_cdf(random_variable)
 
     else:
         pass
