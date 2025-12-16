@@ -502,8 +502,7 @@ class GRIDInterpolator():
             'avg_charge_He'
         )
 
-    #@profile
-    def load_grid(self, *args, hkey=None, fkey=None, pkey=None):
+    def load_grid(self, *args):
         """Load the requested data to `grid_data`.
 
         Parameters
@@ -516,39 +515,24 @@ class GRIDInterpolator():
         grid = self.grid
         for m in args:
             idx = np.argmax(m == self.grid_mass)
-            
-            if hkey:
-                self.grid_data[m] = dict()
-                data = grid[idx].history1
-                self.grid_data[m][hkey] = data[self.translate[hkey]]
-                self.grid_data[m]['log_L'] = data[self.translate['log_L']]
-                self.grid_data[m]['log_LH'] = data[self.translate['log_LH']]
-            if fkey:
-                self.grid_final_values[m] = dict()
-                final_value = grid[idx].final_values
-                self.grid_final_values[m][fkey] = final_value[fkey]
-            if pkey:
-                self.grid_profile[m] = dict()
-                profile = grid[idx].final_profile1
-                self.grid_profile[m][pkey] = profile[pkey]
-                self.grid_profile[m]['mass'] = profile['mass']
-            
-            #self.grid_data[m] = dict()
-            #self.grid_final_values[m] = dict()
-            #self.grid_profile[m] = dict()
-            #for key in self.keys:
-            
-            #for key in self.final_keys:
-            
-            #for key in self.profile_keys:
-
+            data = grid[idx].history1
+            final_value = grid[idx].final_values
+            profile = grid[idx].final_profile1
+            self.grid_data[m] = dict()
+            self.grid_final_values[m] = dict()
+            self.grid_profile[m] = dict()
+            for key in self.keys:
+                self.grid_data[m][key] = data[self.translate[key]]
+            for key in self.final_keys:
+                self.grid_final_values[m][key] = final_value[key]
+            for key in self.profile_keys:
+                self.grid_profile[m][key] = profile[key]
 
     def close(self):
         """Close any loaded psygrids."""
         if hasattr(self, 'grid'):
             self.grid.close()
 
-    #@profile
     def get(self, key, M_new):
         """Perform linear interpolation between specific time-series.
 
@@ -572,7 +556,7 @@ class GRIDInterpolator():
             try:
                 kvalue = self.grid_data[M_new][key]
             except KeyError:
-                self.load_grid(M_new, hkey=key)
+                self.load_grid(M_new)
                 kvalue = self.grid_data[M_new][key]
 
             log_L = self.grid_data[M_new]['log_L']
@@ -586,12 +570,12 @@ class GRIDInterpolator():
             try:
                 kvalue_low = self.grid_data[mass_low][key]
             except KeyError:
-                self.load_grid(mass_low, hkey=key)
+                self.load_grid(mass_low)
                 kvalue_low = self.grid_data[mass_low][key]
             try:
                 kvalue_high = self.grid_data[mass_high][key]
             except KeyError:
-                self.load_grid(mass_high, hkey=key)
+                self.load_grid(mass_high)
                 kvalue_high = self.grid_data[mass_high][key]
 
             i_cut = min(len(kvalue_low), len(kvalue_high))
@@ -619,7 +603,7 @@ class GRIDInterpolator():
             try:
                 kvalue = self.grid_final_values[M_new][key]
             except KeyError:
-                self.load_grid(M_new, fkey=key)
+                self.load_grid(M_new)
                 kvalue = self.grid_final_values[M_new][key]
         else:
             mass_low = np.max(self.grid_mass[M_new > self.grid_mass])
@@ -628,7 +612,7 @@ class GRIDInterpolator():
             try:
                 kvalue_low = self.grid_final_values[mass_low][key]
             except KeyError:
-                self.load_grid(mass_low, fkey=key)
+                self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
             while pd.isna(kvalue_low):
@@ -639,13 +623,13 @@ class GRIDInterpolator():
                 try:
                     kvalue_low = self.grid_final_values[mass_low][key]
                 except KeyError:
-                    self.load_grid(mass_low, fkey=key)
+                    self.load_grid(mass_low)
                     kvalue_low = self.grid_final_values[mass_low][key]
 
             try:
                 kvalue_high = self.grid_final_values[mass_high][key]
             except KeyError:
-                self.load_grid(mass_high, fkey=key)
+                self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
             while pd.isna(kvalue_high):
@@ -656,7 +640,7 @@ class GRIDInterpolator():
                 try:
                     kvalue_high = self.grid_final_values[mass_high][key]
                 except KeyError:
-                    self.load_grid(mass_high, fkey=key)
+                    self.load_grid(mass_high)
                     kvalue_high = self.grid_final_values[mass_high][key]
 
             weight = (M_new - mass_low) / (mass_high - mass_low)
@@ -674,7 +658,7 @@ class GRIDInterpolator():
             try:
                 kstate = self.grid_final_values[M_new][key]
             except KeyError:
-                self.load_grid(M_new, fkey=key)
+                self.load_grid(M_new)
                 kstate = self.grid_final_values[M_new][key]
         else:
             mass_low = np.max(self.grid_mass[M_new > self.grid_mass])
@@ -683,13 +667,13 @@ class GRIDInterpolator():
             try:
                 kstate_low = self.grid_final_values[mass_low][key]
             except KeyError:
-                self.load_grid(mass_low, fkey=key)
+                self.load_grid(mass_low)
                 kstate_low = self.grid_final_values[mass_low][key]
 
             try:
                 kstate_high = self.grid_final_values[mass_high][key]
             except KeyError:
-                self.load_grid(mass_high, fkey=key)
+                self.load_grid(mass_high)
                 kstate_high = self.grid_final_values[mass_high][key]
 
             mass_center = mass_low + (mass_high - mass_low)/2
@@ -709,7 +693,7 @@ class GRIDInterpolator():
                 idx = np.argmax(M_new == self.grid_mass)
                 profile_old = grid[idx].final_profile1
             except KeyError:
-                self.load_grid(M_new, pkey=key)
+                self.load_grid(M_new)
                 kvalue = self.grid_profile[M_new][key]
                 idx = np.argmax(M_new == self.grid_mass)
                 profile_old = grid[idx].final_profile1
@@ -720,12 +704,12 @@ class GRIDInterpolator():
             try:
                 kvalue_low = self.grid_profile[mass_low][key]
             except KeyError:
-                self.load_grid(mass_low, pkey=key)
+                self.load_grid(mass_low)
                 kvalue_low = self.grid_profile[mass_low][key]
             try:
                 kvalue_high = self.grid_profile[mass_high][key]
             except KeyError:
-                self.load_grid(mass_high, pkey=key)
+                self.load_grid(mass_high)
                 kvalue_high = self.grid_profile[mass_high][key]
 
             m_cor_low = (self.grid_profile[mass_low]['mass']

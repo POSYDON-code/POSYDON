@@ -2204,7 +2204,7 @@ class PSyRunView:
             raise IOError("The HDF5 file is not open.")
         fullkey = self._hdf5_key() + "/" + key
         try:
-            return hdf5[fullkey]#[()]
+            return hdf5[fullkey][()]
         except KeyError:
             if key in VALID_KEYS:  # key is valid, so the data is just missing
                 return None
