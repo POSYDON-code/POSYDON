@@ -17,12 +17,12 @@ __authors__ = [
 import os
 import time
 
+from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
 
-from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.binary_evol.DT.track_match import TrackMatcher
 
 class NullStep:
     """An evolution step that does nothing but is used to initialize."""
@@ -291,7 +291,7 @@ class SimulationProperties:
                                             list_for_matching_postMS = None,
                                             record_matching = False,
                                             verbose = False)
-                    
+
                 if name not in ["flow", "step_SN", "step_end"]:
                     step_kwargs['track_matcher'] = self.track_matcher
 
