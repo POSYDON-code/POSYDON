@@ -1,10 +1,11 @@
 import os
 import shutil
+import tracemalloc
+
 from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import PopulationRunner
 
-import tracemalloc
 
 def test_popruns():
 
@@ -16,7 +17,7 @@ def test_popruns():
 
     pop = BinaryPopulation.from_ini(my_ini_filename, verbose=True)
     print("Evolving BinaryPopulation...")
-    
+
     pop.evolve(optimize_ram=False, tqdm=False)
     print("Done!")
 
