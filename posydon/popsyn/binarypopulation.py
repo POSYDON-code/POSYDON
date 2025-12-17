@@ -134,7 +134,7 @@ class BinaryPopulation:
         self.metallicities = self.kwargs.get('metallicities', [1.])
 
         # The first index of the metallicities list will be chosen unless told otherwise.
-        # If metallicity is provided (as e.g., PopulationRunner does automatically), the 
+        # If metallicity is provided (as e.g., PopulationRunner does automatically), the
         # provided metallicity is used instead.
         self.metallicity_index = self.kwargs.get('metallicity_index', 0)
         self.kwargs['metallicity'] = self.kwargs.get('metallicity',
