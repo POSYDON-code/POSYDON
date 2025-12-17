@@ -141,7 +141,8 @@ class MesaGridStep:
             stop_var_name=None,
             stop_value=None,
             stop_interpolate=True,
-            verbose=False):
+            verbose=False,
+            **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
 
         Parameters
@@ -290,6 +291,7 @@ class MesaGridStep:
         # if hasattr(self, '_Interp'):
         #     self._Interp.close()
 
+    #@profile
     def get_final_MESA_step_time(self):
         """Infer the maximum MESA step time.
 
@@ -315,6 +317,7 @@ class MesaGridStep:
 
         return max_MESA_sim_time
 
+    #@profile
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
 

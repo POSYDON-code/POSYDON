@@ -252,7 +252,7 @@ class TrackMatcher:
     the previous step and the h5 track.
 
     """
-
+    #@profile
     def __init__(
             self,
             grid_name_Hrich,
@@ -424,6 +424,116 @@ class TrackMatcher:
 
         self.record_matching = record_matching
 
+
+        self.create_root0_h()
+        self.create_root0_he()
+        self.train_scalers()
+
+    #@profile
+    def train_scalers(self):
+
+       # ...if not, fit a new scaler, and store it for later use
+        
+        lists_for_matching = [self.list_for_matching_HMS,
+                              self.list_for_matching_HeStar,
+                              self.list_for_matching_HMS_alternative,
+                              self.list_for_matching_HeStar_alternative,
+                              self.list_for_matching_postHeMS,
+                              self.list_for_matching_postHeMS_alternative,
+                              self.list_for_matching_postMS,
+                              self.list_for_matching_postMS_alternative]
+        
+        #htracks = [True, False, False, False, False, False, True, False]
+        
+        for list_for_matching in lists_for_matching:
+
+            match_attr_names = list_for_matching[0]
+            rescale_facs = list_for_matching[1]
+            scaler_methods = list_for_matching[2]
+            bnds = list_for_matching[3:]
+
+            if self.verbose:
+                print("Matching parameters and their normalizations:\n",
+                        match_attr_names, rescale_facs)
+            for htrack in [True, False]:
+                grid = self.grid_Hrich if htrack else self.grid_strippedHe
+                self.initial_mass = grid.grid_mass
+                
+                # get (or train and get) scalers for attributes
+                # attributes are scaled to range (0, 1)
+                #scalers = []
+                for attr_name, method in zip(match_attr_names, scaler_methods):
+                    all_attributes = []
+                    # check that attributes are allowed as matching attributes
+                    if attr_name not in self.root_keys:
+                        raise AttributeError("Expected matching attribute "
+                                                f"{attr_name} not "
+                                                "added in root_keys list: "
+                                                f"{self.root_keys}")
+
+                    scaler_options = (attr_name, htrack, method)
+
+                    for mass in self.initial_mass:
+                        for i in grid.get(attr_name, mass):
+                            all_attributes.append(i)
+
+                    all_attributes = np.array(all_attributes)
+                    scaler = DataScaler()
+                    scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
+                    self.stored_scalers[scaler_options] = scaler
+
+    #@profile
+    def create_root0_h(self):
+    
+        # set which grid to search based on htrack condition
+        grid = self.grid_Hrich
+
+        # initial masses within grid (defined but never used? used in scale())
+        self.initial_mass = grid.grid_mass
+
+        # search across all initial masses and get max track length
+        max_track_length = 0
+        for mass in grid.grid_mass:
+            track_length = len(grid.get("age", mass))
+            max_track_length = max(max_track_length, track_length)
+
+        # intialize root matrix
+        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
+        self.rootm_h = np.inf * np.ones((len(grid.grid_mass),
+                                    max_track_length, len(self.root_keys)))
+
+        # for each mass, get matching metrics and store in matrix
+        for i, mass in enumerate(grid.grid_mass):
+            for j, key in enumerate(self.root_keys):
+                track = grid.get(key, mass)
+                self.rootm_h[i, : len(track), j] = track
+
+    #@profile
+    def create_root0_he(self):
+    
+        # set which grid to search based on htrack condition
+        grid = self.grid_strippedHe
+
+        # initial masses within grid (defined but never used? used in scale())
+        self.initial_mass = grid.grid_mass
+
+        # search across all initial masses and get max track length
+        max_track_length = 0
+        for mass in grid.grid_mass:
+            track_length = len(grid.get("age", mass))
+            max_track_length = max(max_track_length, track_length)
+
+        # intialize root matrix
+        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
+        self.rootm_he = np.inf * np.ones((len(grid.grid_mass),
+                                    max_track_length, len(self.root_keys)))
+
+        # for each mass, get matching metrics and store in matrix
+        for i, mass in enumerate(grid.grid_mass):
+            for j, key in enumerate(self.root_keys):
+                track = grid.get(key, mass)
+                self.rootm_he[i, : len(track), j] = track
+
     def get_root0(self, attr_names, attr_vals, htrack, rescale_facs=None):
         """
             Get the stellar evolution track in the single star grid with values
@@ -462,28 +572,9 @@ class TrackMatcher:
 
         """
 
+        rootm = self.rootm_h if htrack else self.rootm_he
         # set which grid to search based on htrack condition
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
-
-        # initial masses within grid (defined but never used? used in scale())
-        self.initial_mass = grid.grid_mass
-
-        # search across all initial masses and get max track length
-        max_track_length = 0
-        for mass in grid.grid_mass:
-            track_length = len(grid.get("age", mass))
-            max_track_length = max(max_track_length, track_length)
-
-        # intialize root matrix
-        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
-        self.rootm = np.inf * np.ones((len(grid.grid_mass),
-                                    max_track_length, len(self.root_keys)))
-
-        # for each mass, get matching metrics and store in matrix
-        for i, mass in enumerate(grid.grid_mass):
-            for j, key in enumerate(self.root_keys):
-                track = grid.get(key, mass)
-                self.rootm[i, : len(track), j] = track
 
         # rescaling factors
         if rescale_facs is None:
@@ -500,7 +591,7 @@ class TrackMatcher:
         # Slice out just the matching metric data for all stellar tracks
         # grid_attr_vals now has shape
         # (N(Mi), N(max_track_len), N(matching_metrics))
-        grid_attr_vals = self.rootm[:, :, idx]
+        grid_attr_vals = rootm[:, :, idx]
 
         # For all stellar tracks in grid:
         # Take difference btwn. grid track and given star values...
@@ -521,7 +612,7 @@ class TrackMatcher:
 
         # time and initial mass corresp. to track w/ minimum difference
         m0 = grid.grid_mass[mass_i]
-        t0 = self.rootm[mass_i][age_i][np.argmax("age" == self.root_keys)]
+        t0 = rootm[mass_i][age_i][np.argmax("age" == self.root_keys)]
 
         return m0, t0
 
@@ -607,22 +698,6 @@ class TrackMatcher:
 
         # find if the scaler has already been fitted and return it if so...
         scaler = self.stored_scalers.get(scaler_options, None)
-        if scaler is not None:
-            return scaler
-
-        # ...if not, fit a new scaler, and store it for later use
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
-        self.initial_mass = grid.grid_mass
-        all_attributes = []
-
-        for mass in self.initial_mass:
-            for i in grid.get(attr_name, mass):
-                all_attributes.append(i)
-
-        all_attributes = np.array(all_attributes)
-        scaler = DataScaler()
-        scaler.fit(all_attributes, method=scaler_method, lower=0.0, upper=1.0)
-        self.stored_scalers[scaler_options] = scaler
 
         return scaler
 
