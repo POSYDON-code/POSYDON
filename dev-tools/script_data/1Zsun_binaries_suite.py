@@ -811,4 +811,4 @@ if __name__ == "__main__":
                         help="Path to save HDF5 output")
     args = parser.parse_args()
 
-    evolve_binaries(verbose=args.verbose, args.output)
+    evolve_binaries(verbose=args.verbose, output_path=args.output)
