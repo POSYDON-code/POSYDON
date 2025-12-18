@@ -3,27 +3,24 @@
 # A script for validating the outputs of 100 binaries,
 # which can be compared to a baseline to monitor changes to the code.
 
-# script usage: ./validate_binaries.sh --branch candidate-branch
+# script usage: ./validate_binaries.sh --branch candidate_branch
+
+BRANCH=$1
+SUFFIX=$2
 
 # run candidate binaries and save to file
-# ./evolve_binaries.sh
-# save to file
+./evolve_binaries.sh "$BRANCH"
 
-# evaluate tolerance for quantitative values
+# compare quantitative, qualitative, warnings/errors, structured output
+# create outputs/comparison_branchname.txt
+SAFE_BRANCH="${BRANCH//\//_}"
+CANDIDATE_FILE="outputs/candidate_${SAFE_BRANCH}.h5"
+COMPARISON_FILE="outputs/comparison_${SAFE_BRANCH}${SUFFIX:+_$SUFFIX}.txt"
+python compare_runs.py baseline.h5 "$CANDIDATE_FILE" > "$COMPARISON_FILE"
 
-# evaluate qualitative differences
+if [ $? -ne 0 ]; then
+    echo "Error: compare_runs.py failed. Check $COMPARISON_FILE"
+    exit 1
+fi
 
-# warnings and error tracking
-
-# structured output
-
-# compare
-# python compare_runs.py baseline.json candidate.json
-
-
-
-
-
-# outputs/baseline.h5
-# outputs/candidate_branchname.h5
-# outputs/comparison_branchname.txt
+echo "Binary evolution comparison saved to $COMPARISON_FILE"
