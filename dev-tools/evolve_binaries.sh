@@ -88,11 +88,16 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
 echo "🚀 Running evolve_binaries.py"
 # # Run the Python script and capture output (stdout and stderr)
-python script_data/1Zsun_binaries_suite.py --output "$OUTPUT_FILE" > "$LOG_FILE" 2>&1
+python script_data/1Zsun_binaries_suite.py --output "$OUTPUT_FILE" 2>&1 | tee "$LOG_FILE" 
 
 if [ ! -f "$OUTPUT_FILE" ]; then
     echo "ERROR: Results file was not created: $OUTPUT_FILE"
     exit 2
+fi
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Python script exited with an error. Check $LOG_FILE for details."
+    exit 3
 fi
 
 echo -e "✅ Script completed. Output saved to \n$OUTPUT_FILE"
