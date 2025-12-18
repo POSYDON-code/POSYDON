@@ -28,6 +28,15 @@ mkdir -p "$WORK_DIR"
 FULL_PATH="$(realpath "$WORK_DIR")"
 CLONE_DIR="$FULL_PATH/POSYDON"
 
+OUTPUT_DIR="$FULL_PATH/outputs"
+LOG_DIR="$FULL_PATH/logs"
+
+SAFE_BRANCH="${BRANCH//\//_}"
+OUTPUT_FILE="$OUTPUT_DIR/candidate_${SAFE_BRANCH}.h5"
+LOG_FILE="$LOG_DIR/evolve_${SAFE_BRANCH}.log"
+
+mkdir -p "$OUTPUT_DIR" "$LOG_DIR"
+
 echo "📋 Copying script_data folder"
 # copy the script_data folder
 cp -r "./script_data" "$WORK_DIR"
@@ -79,6 +88,11 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
 echo "🚀 Running evolve_binaries.py"
 # # Run the Python script and capture output (stdout and stderr)
-python script_data/1Zsun_binaries_suite.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
+python script_data/1Zsun_binaries_suite.py --output "$OUTPUT_FILE" > "$LOG_FILE" 2>&1
 
-echo -e "✅ Script completed. Output saved to \n$FULL_PATH/evolve_binaries_$BRANCH.out"
+if [ ! -f "$OUTPUT_FILE" ]; then
+    echo "ERROR: Results file was not created: $OUTPUT_FILE"
+    exit 2
+fi
+
+echo -e "✅ Script completed. Output saved to \n$OUTPUT_FILE"
