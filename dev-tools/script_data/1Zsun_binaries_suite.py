@@ -206,7 +206,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  190925.99636740884,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Failing binary in matching
@@ -217,7 +217,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  20479.71919353725,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # flipped S1 and S2 ?
@@ -228,8 +228,8 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  18.605997832086413,'eccentricity': 0.0}, properties = sim_prop)
-    
-        evolve_binary(binary, h5file, binary_id) 
+
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # flipped S1 and S2
@@ -240,7 +240,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 4.190728383757787, 1.1521129697118118, 5.015343794234789]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  9.824025,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # flipped S1 and S2
@@ -251,7 +251,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  3.820571,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Normal binary evolution
@@ -262,7 +262,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  30.820571,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Normal binary
@@ -273,7 +273,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  63123.74544474666,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Normal binary
@@ -284,7 +284,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  27.77657038557851,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         #  Normal binary
@@ -298,7 +298,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star1, star2, **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
                             'orbital_period': 17.957531550841225, 'eccentricity': 0.0,},
                             properties=sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         #  High BH spin options
@@ -309,7 +309,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  501.99252706449792,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         #  Original a>1 spin error
@@ -320,7 +320,7 @@ def evolve_binaries(verbose,output_path):
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                             'orbital_period':  151.99252706449792,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED disrupted crash
@@ -334,7 +334,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':12.877004, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED error with SN type
@@ -348,7 +348,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':4513.150157, 'eccentricity': 0.0},
                         properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED oRLO2 looping
@@ -359,11 +359,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':37.917852,
                             'state': 'H-rich_Core_H_burning',
                             'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':113.352736, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Redirect to step_CO_HeMS (H-rich non-burning?)
@@ -375,7 +375,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star_1, star_2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 66.870417, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED oRLO2 looping
@@ -387,7 +387,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star_1, star_2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 37.958768, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED? step_detached failure
@@ -399,7 +399,7 @@ def evolve_binaries(verbose,output_path):
         binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':3007.865561, 'eccentricity': 0.0},
                         properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Disrupted binary
@@ -408,11 +408,11 @@ def evolve_binaries(verbose,output_path):
                                          'natal_kick_array': [268.837139, 5.773527, 2.568105, 2.519068]})
         star_2 = SingleStar(**{'mass' : 16.286318, 'state' : 'H-rich_Core_H_burning',
                                 'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star_1, star_2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':3007.865561, 'eccentricity': 0.0},
                         properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED Detached binary failure (low mass)
@@ -423,11 +423,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':0.8,
                             'state': 'H-rich_Core_H_burning',
                                'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':4513.150157, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED SN_TYPE = None crash
@@ -438,11 +438,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':3.273864,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':4513.150157, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED SN_TYPE errors
@@ -453,11 +453,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':3.273864,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':4513.150157, 'eccentricity': 0.0},
                         properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED SN_TYPE errors
@@ -468,11 +468,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':37.917852,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':2113.352736, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED ECSN errors?
@@ -483,12 +483,12 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 9.711216,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
-    
+
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':79.83702, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Interpolator masses??
@@ -499,11 +499,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':5.038679 ,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':5.537807, 'eccentricity': 0.0},
                         properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Interpolator masses?
@@ -514,11 +514,11 @@ def evolve_binaries(verbose,output_path):
         star_2 = SingleStar(**{'mass': 27.776178,
                                'state': 'H-rich_Core_H_burning',\
                                'natal_kick_array': [282.712103, 0.296252, 1.628433, 5.623812]})
-    
+
         binary = BinaryStar(star_1, star_2,
                         **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 93.387072, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED NaN spin
@@ -536,7 +536,7 @@ def evolve_binaries(verbose,output_path):
                             'separation': orbital_separation_from_period(5.931492e+03, star1.mass, star2.mass),
                             'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # FIXED NaN spin
@@ -547,13 +547,13 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':   6.874867,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':35.609894,
                             'separation': orbital_separation_from_period(35.609894, star1.mass, star2.mass),
                             'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # oRLO2 issue
@@ -564,11 +564,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 28.814626,
                               'state': 'H-rich_Core_H_burning',
                                'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':40.437993, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # oRLO2 issue
@@ -579,11 +579,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 19.622908,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':1484.768582, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # oRLO2 issue
@@ -594,11 +594,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 56.660506,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':2011.300659, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # oRLO2 issue
@@ -609,11 +609,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 37.917852,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':113.352736, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # oRLO2 issue
@@ -624,11 +624,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 84.344530,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':5.651896, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # redirect
@@ -639,11 +639,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':0.490231,
                             'state': 'H-rich_Core_H_burning',
                                'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':14513.150157, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # redirect
@@ -654,11 +654,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':0.8,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':4513.150157, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Max time
@@ -671,7 +671,7 @@ def evolve_binaries(verbose,output_path):
                                'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  1449.1101985875678,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # Max time
@@ -684,7 +684,7 @@ def evolve_binaries(verbose,output_path):
                                'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
         binary = BinaryStar(star_1, star_2, **{'time': 0.0,  'state': 'detached',  'event': 'ZAMS',
                                 'orbital_period':  20.82030114750744,'eccentricity': 0.0}, properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # PR421
@@ -695,11 +695,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass':  23.187355,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':18.865029, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # CE class
@@ -710,11 +710,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 28.98149,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':82.370989, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # PR574 - stepCE fix
@@ -725,11 +725,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 28.814626*0.4,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array':[0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':300.437993, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # e_ZAMS error
@@ -740,11 +740,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 3.5907829421526154,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 36.873457164644144, 'eccentricity': 0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # e_ZAMS error
@@ -756,11 +756,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 30.000450298072902,
                             'state': 'H-rich_Core_H_burning',
                             'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 24060.02101364665, 'eccentricity': 0.8085077857996965},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # e_ZAMS error
@@ -771,11 +771,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 1.4739109294156703,
                             'state': 'H-rich_Core_H_burning',
                             'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 4111.083887312003, 'eccentricity':0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # e_ZAMS error
@@ -786,11 +786,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 0.7061748406821822,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period': 2521.1927287891444, 'eccentricity':0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
         ########################################
         # e_ZAMS error
@@ -801,11 +801,11 @@ def evolve_binaries(verbose,output_path):
         star2 = SingleStar(**{'mass': 4.466151109802313    , #481560266,
                               'state': 'H-rich_Core_H_burning',
                               'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    
+
         binary = BinaryStar(star1, star2,
                             **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS', 'orbital_period':3110.1346707516914, 'eccentricity':0.0},
                             properties = sim_prop)
-        evolve_binary(binary, h5file, binary_id) 
+        evolve_binary(binary, h5file, binary_id)
         binary_id+=1
 
 if __name__ == "__main__":
