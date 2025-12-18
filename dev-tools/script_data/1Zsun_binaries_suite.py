@@ -153,9 +153,6 @@ def evolve_binary(binary, h5file, binary_id):
             grp.create_dataset(col, data=df[col].values)
 
     except Exception as e:
-        # turn off binary alarm in case of exception
-        signal.alarm(0)
-
         print_failed_binary(binary, e)
 
         err_grp = h5file.require_group(f"binary_{binary_id}/errors")
@@ -163,8 +160,6 @@ def evolve_binary(binary, h5file, binary_id):
         err_grp.attrs['exception_message'] = str(e)
 
     finally:
-        # Always turn off binary alarm and restore warning handler
-        signal.alarm(0)
         warnings.showwarning = old_showwarning
 
         # ensure binary group exists
