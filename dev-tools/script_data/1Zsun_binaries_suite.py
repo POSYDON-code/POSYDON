@@ -145,7 +145,7 @@ def evolve_binary(binary,h5file,binary_id):
         binary.evolve()
         # Display the evolution summary for successful evolution
         write_binary_to_screen(binary)
-        
+
         # Save to HDF5
         df = binary.to_df(**{'extra_columns':{'step_names':'str'}})
         grp = h5file.create_group(f"binary_{binary_id}")
@@ -166,10 +166,10 @@ def evolve_binary(binary,h5file,binary_id):
         # Always turn off binary alarm and restore warning handler
         signal.alarm(0)
         warnings.showwarning = old_showwarning
-        
+
         # ensure binary group exists
         grp = h5file.require_group(f"binary_{binary_id}")
-        
+
         # Save warnings to h5 file
         if captured_warnings:
             warn_grp = grp.create_group("warnings")
@@ -179,7 +179,7 @@ def evolve_binary(binary,h5file,binary_id):
                 warn_subgrp.attrs['message'] = warning['message']
                 warn_subgrp.attrs['filename'] = warning['filename']
                 warn_subgrp.attrs['lineno'] = warning['lineno']
-                
+
             print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
             for i, warning in enumerate(captured_warnings[:3], 1):  # Show max 3 warnings
                 print(f"   {i}. {warning['category']}: {warning['message']}")
@@ -776,7 +776,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Evolve binaries for validation.')
     parser.add_argument('--verbose', '-v', action='store_true', default=False,
                         help='Enable verbose output (default: False)')
-    parser.add_argument("--output", type=str, required=True, 
+    parser.add_argument("--output", type=str, required=True,
                         help="Path to save HDF5 output")
     args = parser.parse_args()
 
