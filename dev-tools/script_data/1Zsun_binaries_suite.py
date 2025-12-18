@@ -3,7 +3,7 @@
 Script to evolve a few binaries.
 Used for validation of the branch.
 
-Author: Max Briel
+Authors: Max Briel, Elizabeth Teng
 """
 
 import argparse
