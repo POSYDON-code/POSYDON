@@ -300,7 +300,6 @@ class  sub_population_spectra(population_spectra):
                 else:
                     pop_spectrum[state_2] += spectrum_2
                
-            pop = pop.drop(i)
 
         if spectral_type:
             for key in spectral_types:

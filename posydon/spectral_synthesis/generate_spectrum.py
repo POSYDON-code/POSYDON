@@ -13,20 +13,19 @@ __authors__ = [
 
 from copy import copy
 import numpy as np
-from astropy import constants as con
-from astropy import units as u
 import pandas as pd
 from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
 from posydon.spectral_synthesis.spectral_grids import GRID_KEYS 
-#Constants
-Lo = 3.828e33 #Solar Luminosity erg/ss
-Zo = 0.0142 #Solar metallicity
+import posydon.utils.constants as constants
+
 state_to_grid = {
     "WNE_star": "WNE_grid",
     "WNL_star": "WNL_grid",
     "WC_star":  "WC_grid", 
     "stripped_star" : "stripped_grid"
 }
+SCALE_CONSTANT = 4*np.pi*1e4/constants.Lsun
+
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
 
@@ -229,8 +228,8 @@ def generate_spectrum(grids,star,i,**kwargs):
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
     state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
-    L = 10**copy(star[f'{i}_log_L'])
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm 
+    L = 10**copy(star[f'{i}_log_L']) 
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
     x = {'Teff':Teff ,
          'log(g)': logg,
@@ -252,17 +251,17 @@ def generate_spectrum(grids,star,i,**kwargs):
                 F_l = grids.grid_flux(label,**x)
                 #Check if the flux has negative values if so then find the NN
                 if np.min(F_l) < 0: 
-                    #F_l = smooth_flux_negatives(grids.lam_c,F_l.value if isinstance(F_l, u.Quantity) else F_l)
+                    #F_l = smooth_flux_negatives(grids.lam_c, F_l)
                     F_l = grids.NN_grid_flux(label,**x)
                 if label == "stripped_grid":
-                    Flux = F_l*4*np.pi*1e4/Lo
+                    Flux = F_l
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
-                    Flux = F_l*4*np.pi*1e4/Lo *(L/10**5.3)
+                    Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
                     #Replace the negative values for WR
                     #Flux.value[Flux.value < 0] = 1e-99
                 else:
-                    Flux = F_l*R**2*4*np.pi*1e4/Lo
-                return Flux.value if isinstance(Flux, u.Quantity) else Flux,star['state'],label
+                    Flux = F_l*R**2*SCALE_CONSTANT
+                return Flux,star['state'],label
 
             except LookupError:
                 try:
@@ -290,7 +289,7 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
     state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm 
     L = 10**copy(star[f'{i}_log_L'])
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
   
@@ -304,16 +303,16 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     #If the star is WR we need to add R_t quantity in x 
 
     if label == "stripped_grid":
-        Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo
+        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT
     elif label == 'WR_grid':
         if (x['Teff'] > 100000) and (((x['Teff'] -100000)/100000) < 0.1):
             x['Teff'] = 100000
         elif (x['Teff'] > 100000)  and (((x['Teff'] -100000)/100000) > 0.1): 
             return None,star[f'{i}_state'],label
         x['R_t'] = calculated_Rt(star,i)
-        Flux = grids.grid_flux(label,**x)*4*np.pi*1e4/Lo *(L/10**5.3)
+        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT *(L/10**5.3)
     else:
-        Flux = grids.grid_flux(label,**x)*R**2*4*np.pi*1e4/Lo
+        Flux = grids.grid_flux(label,**x)*R**2*SCALE_CONSTANT
     return Flux.value,star['state'],label
 
 def rename_star_state(star,i):
@@ -368,7 +367,8 @@ def rename_star_state(star,i):
     """    
 
 def calculated_Rt(star,i):
-    M_dot = 10**copy(star[f'{i}_lg_mdot'])
+    #R_t is in R_sun units
+    M_dot = 10**copy(star[f'{i}_lg_mdot']) #M_sun/yr
     v_terminal = 1000 #km/s
     D_max = 4 
     R  = 10**copy(star[f'{i}_log_R'])
@@ -376,16 +376,17 @@ def calculated_Rt(star,i):
     return Rt
 
 def calculate_WR_wind_tau(star,i):
+
     xH_surf = copy(star[f'{i}_surface_h1'])
-    v_0 = 20 *u.km * u.s**(-1)# cm *s^-1 
-    T = copy(star[f'{i}_Teff'])*u.K
-    lg_M_dot = -10**copy(star[f'{i}_lg_mdot']) *con.M_sun*u.yr**(-1)
-    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
-    M = copy(star[f'{i}_mass'])*con.M_sun
-    k_e = 0.2*(1 + xH_surf) * u.cm**2 * u.g**(-1) 
+    v_0 = 20 *constants.km2cm # cm *s^-1 
+    T = copy(star[f'{i}_Teff'])#K
+    lg_M_dot = -10**copy(star[f'{i}_lg_mdot'])*constants.Msun/constants.secyer  #kg/s
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
+    M = copy(star[f'{i}_mass'])*constants.Msun #kg
+    k_e = 0.2*(1 + xH_surf) #cm^2/g 
     logg = copy(star[f'{i}_log_g'])
-    Gamma = k_e * con.sigma_sb*T**4/(con.c * (10**logg*u.cm*u.s**(-2)))
-    v_esc = np.sqrt(2 * con.G * M *R**(-1)* (1 - Gamma))
+    Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
+    v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
     
     v_terminal = 1.3 * v_esc
     tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
@@ -474,7 +475,7 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
     state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*con.R_sun
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun
     L = 10**copy(star[f'{i}_log_L'])
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
     x = {'Teff':Teff ,

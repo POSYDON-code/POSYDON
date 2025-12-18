@@ -69,6 +69,7 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
             # set value of eccentricity_scheme
             kwargs['eccentricity_scheme'] = ecc_scheme
             eccentricity_set = generate_eccentricities(**kwargs)
+        
     else:
 
         # Generate secondary masses
