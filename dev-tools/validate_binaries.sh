@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# A script for validating the outputs of 100 binaries, 
+# A script for validating the outputs of 100 binaries,
 # which can be compared to a baseline to monitor changes to the code.
 
 # script usage: ./validate_binaries.sh --branch candidate-branch
