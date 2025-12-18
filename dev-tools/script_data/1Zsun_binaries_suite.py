@@ -116,7 +116,15 @@ def print_failed_binary(binary,e,  max_error_lines=3):
 
     print("-" * line_length)
 
-def evolve_binary(binary):
+def evolve_binary(binary,h5file,binary_id):
+    """
+    Evolves a single binary, prints its evolution, and saves to HDF5.
+
+    Args:
+        binary: BinaryStar object
+        h5file: open h5py.File object for writing
+        binary_id: unique identifier for this binary
+    """
 
     # Capture warnings during evolution
     captured_warnings = []
@@ -137,44 +145,49 @@ def evolve_binary(binary):
         binary.evolve()
         # Display the evolution summary for successful evolution
         write_binary_to_screen(binary)
-
-        # Show warnings if any were captured
-        if captured_warnings:
-            print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
-            for i, warning in enumerate(captured_warnings[:3], 1):  # Show max 3 warnings
-                print(f"   {i}. {warning['category']}: {warning['message']}")
-            if len(captured_warnings) > 3:
-                print(f"   ... and {len(captured_warnings) - 3} more warning(s)")
-            elif len(captured_warnings) <= 3:
-                for i in range(4-len(captured_warnings)):
-                    print("")
-        else:
-            print(f"No warning(s) raised during evolution\n\n\n\n")
-        print("=" * line_length)
+        
+        # Save to HDF5
+        df = binary.to_df(**{'extra_columns':{'step_names':'str'}})
+        grp = h5file.create_group(f"binary_{binary_id}")
+        for col in df.columns:
+            grp.create_dataset(col, data=df[col].values)
 
     except Exception as e:
-
         # turn off binary alarm in case of exception
         signal.alarm(0)
 
         print_failed_binary(binary, e)
 
-        # Show warnings if any were captured before the exception
+        err_grp = h5file.require_group(f"binary_{binary_id}/errors")
+        err_grp.attrs['exception_type'] = type(e).__name__
+        err_grp.attrs['exception_message'] = str(e)
+
+    finally:
+        # Always turn off binary alarm and restore warning handler
+        signal.alarm(0)
+        warnings.showwarning = old_showwarning
+        
+        # ensure binary group exists
+        grp = h5file.require_group(f"binary_{binary_id}")
+        
+        # Save warnings to h5 file
         if captured_warnings:
-            print(f"\n⚠️  {len(captured_warnings)} warning(s) raised before failure:")
+            warn_grp = grp.create_group("warnings")
+            for i, warning in enumerate(captured_warnings):
+                warn_subgrp = warn_grp.create_group(f"warning_{i}")
+                warn_subgrp.attrs['category'] = warning['category']
+                warn_subgrp.attrs['message'] = warning['message']
+                warn_subgrp.attrs['filename'] = warning['filename']
+                warn_subgrp.attrs['lineno'] = warning['lineno']
+                
+            print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
             for i, warning in enumerate(captured_warnings[:3], 1):  # Show max 3 warnings
                 print(f"   {i}. {warning['category']}: {warning['message']}")
             if len(captured_warnings) > 3:
                 print(f"   ... and {len(captured_warnings) - 3} more warning(s)")
         else:
             print(f"No warning(s) raised during evolution\n\n\n\n")
-
         print("=" * line_length)
-    finally:
-        # Always turn off binary alarm and restore warning handler
-        signal.alarm(0)
-        warnings.showwarning = old_showwarning
-
 
 def evolve_binaries(verbose):
     """Evolves a few binaries to validate their output
@@ -763,6 +776,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Evolve binaries for validation.')
     parser.add_argument('--verbose', '-v', action='store_true', default=False,
                         help='Enable verbose output (default: False)')
+    parser.add_argument("--output", type=str, required=True, 
+                        help="Path to save HDF5 output")
     args = parser.parse_args()
 
     evolve_binaries(verbose=args.verbose)
