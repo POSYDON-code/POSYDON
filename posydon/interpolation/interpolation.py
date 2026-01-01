@@ -331,7 +331,9 @@ class GRIDInterpolator():
 
         grid_mass = []
         for i in range(len(grid)):
-            grid_mass.append(grid[i].history1['star_mass'][0])
+            minit = grid[i].history1['star_mass'][0] 
+            grid_mass.append(minit)
+
         self.grid_mass = np.array(grid_mass)
 
         grid_age = []
@@ -501,6 +503,11 @@ class GRIDInterpolator():
             'neutral_fraction_He',
             'avg_charge_He'
         )
+
+        # pre-load the grid data for all masses
+        for i in range(len(grid)):
+            minit = grid[i].history1['star_mass'][0] 
+            self.load_grid(minit)
 
     def load_grid(self, *args):
         """Load the requested data to `grid_data`.
