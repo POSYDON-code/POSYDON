@@ -16,8 +16,10 @@ __credits__ = [
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Juanga Serra Perez <jgserra@northwestern.edu>",
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>",
-    "Ying Qin <<yingqin2013@hotmail.com>",
+    "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Ying Qin <yingqin2013@hotmail.com>",
     "Aaron Dotter <aaron.dotter@gmail.com>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 del get_versions
