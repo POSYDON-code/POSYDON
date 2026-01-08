@@ -1,0 +1,816 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.CLI.io &mdash; posydon 2.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.CLI.io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.CLI.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for input/output operations in the CLI of Posydon.&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">textwrap</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+<span class="c1"># Output Utility Functions #</span>
+
+<span class="c1"># ANSI color codes for terminal output</span>
+<span class="n">COLOR_RED</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[31m&#39;</span>
+<span class="n">COLOR_GREEN</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[32m&#39;</span>
+<span class="n">COLOR_RESET</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span>
+
+<span class="c1"># Utility scripts for printing colored messages</span>
+<div class="viewcode-block" id="print_error">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.print_error">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_error</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print an error message in red.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    message : str</span>
+<span class="sd">        The error message to print</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COLOR_RED</span><span class="si">}{</span><span class="n">message</span><span class="si">}{</span><span class="n">COLOR_RESET</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_success">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.print_success">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_success</span><span class="p">(</span><span class="n">message</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a success message in green.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    message : str</span>
+<span class="sd">        The success message to print</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">COLOR_GREEN</span><span class="si">}{</span><span class="n">message</span><span class="si">}{</span><span class="n">COLOR_RESET</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_separator_line">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.print_separator_line">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_separator_line</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a separator line.&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;-&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="print_separator_section">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.print_separator_section">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_separator_section</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print a section separator line.&quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;#&quot;</span> <span class="o">*</span> <span class="mi">80</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="clear_previous_lines">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.clear_previous_lines">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clear_previous_lines</span><span class="p">(</span><span class="n">num_lines</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Clear the specified number of previous lines in the terminal.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    num_lines : int</span>
+<span class="sd">        Number of lines to clear</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># ANSI escape code to move cursor up one line</span>
+    <span class="n">UP</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[1A&#39;</span>
+    <span class="c1"># ANSI escape code to clear line</span>
+    <span class="n">CLEAR</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[K&#39;</span>
+
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_lines</span><span class="p">):</span>
+        <span class="c1"># Move up and clear line</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">UP</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">CLEAR</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># Script Creation Functions #</span>
+
+<span class="c1">## Main population setup</span>
+
+<div class="viewcode-block" id="create_merge_script_text">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_merge_script_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_merge_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        from posydon.popsyn.binarypopulation import BinaryPopulation</span>
+<span class="s1">        from posydon.popsyn.io import binarypop_kwargs_from_ini</span>
+<span class="s1">        from posydon.utils.common_functions import convert_metallicity_to_string</span>
+<span class="s1">        import argparse</span>
+<span class="s1">        import os</span>
+
+<span class="s1">        if __name__ == &quot;__main__&quot;:</span>
+<span class="s1">            parser = argparse.ArgumentParser()</span>
+<span class="s1">            parser.add_argument(&quot;metallicity&quot;, type=float)</span>
+<span class="s1">            args = parser.parse_args()</span>
+<span class="s1">            ini_kw = binarypop_kwargs_from_ini(&quot;</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s1">&quot;)</span>
+<span class="s1">            ini_kw[&quot;metallicity&quot;] = args.metallicity</span>
+<span class="s1">            str_met = convert_metallicity_to_string(args.metallicity)</span>
+<span class="s1">            ini_kw[&quot;temp_directory&quot;] = str_met + &quot;_Zsun_&quot; + ini_kw[&quot;temp_directory&quot;]</span>
+<span class="s1">            synpop = BinaryPopulation(**ini_kw)</span>
+<span class="s1">            path_to_batch = ini_kw[&quot;temp_directory&quot;]</span>
+<span class="s1">            tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch)</span>
+<span class="s1">                         if os.path.isfile(os.path.join(path_to_batch, f))]</span>
+<span class="s1">            tmp_files = sorted(tmp_files, key=lambda x: int(x.split(&quot;.h5&quot;)[0].split(&quot;.&quot;)[-1]))</span>
+<span class="s1">            synpop.combine_saved_files(str_met + &quot;_Zsun_population.h5&quot;, tmp_files)</span>
+<span class="s1">            print(&quot;done&quot;)</span>
+<span class="s1">            if len(os.listdir(path_to_batch)) == 0:</span>
+<span class="s1">                os.rmdir(path_to_batch)</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="create_run_script_text">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_run_script_text">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_run_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        from posydon.popsyn.binarypopulation import BinaryPopulation</span>
+<span class="s1">        from posydon.popsyn.io import binarypop_kwargs_from_ini</span>
+<span class="s1">        from posydon.utils.common_functions import convert_metallicity_to_string</span>
+<span class="s1">        from posydon.binary_evol.simulationproperties import SimulationProperties</span>
+<span class="s1">        import argparse</span>
+
+<span class="s1">        if __name__ == &quot;__main__&quot;:</span>
+<span class="s1">            parser = argparse.ArgumentParser()</span>
+<span class="s1">            parser.add_argument(&#39;metallicity&#39;, type=float)</span>
+<span class="s1">            args = parser.parse_args()</span>
+<span class="s1">            ini_kw = binarypop_kwargs_from_ini(&#39;</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s1">&#39;)</span>
+<span class="s1">            ini_kw[&#39;metallicity&#39;] = args.metallicity</span>
+<span class="s1">            str_met = convert_metallicity_to_string(args.metallicity)</span>
+<span class="s1">            ini_kw[&#39;temp_directory&#39;] = str_met+&#39;_Zsun_&#39; + ini_kw[&#39;temp_directory&#39;]</span>
+<span class="s1">            sim_props = SimulationProperties.from_ini(&#39;</span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s1">&#39;)</span>
+<span class="s1">            synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)</span>
+<span class="s1">            synpop.evolve()</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">text</span></div>
+
+
+<div class="viewcode-block" id="create_run_script">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_run_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_run_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates a run script for the population synthesis run.</span>
+
+<span class="sd">    This function creates a script that will run the POSYDON population at a specific metallicity.</span>
+<span class="sd">    The script takes a metallicity as a command-line input.</span>
+<span class="sd">    It uses that metallicity to run the BinaryPopulation with.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the .ini file containing population synthesis parameters.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">filename</span> <span class="o">=</span><span class="s1">&#39;run_metallicity.py&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_run_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="create_merge_script">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_merge_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_merge_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates a merge script for the population synthesis run.</span>
+
+<span class="sd">    The created merge script will combine the &quot;evolution.combined.h5&quot; files</span>
+<span class="sd">    from the different job arrays in the &quot;temp_directory&quot; into a</span>
+<span class="sd">    single &quot;{MET}_Zsun_population.h5&quot; file in the run directory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the .ini file containing population synthesis parameters.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">filename</span><span class="o">=</span><span class="s1">&#39;merge_metallicity.py&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">create_merge_script_text</span><span class="p">(</span><span class="n">ini_file</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="create_slurm_array">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_slurm_array">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_array</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                        <span class="n">job_array_length</span><span class="p">,</span>
+                        <span class="n">partition</span><span class="p">,</span>
+                        <span class="n">email</span><span class="p">,</span>
+                        <span class="n">walltime</span><span class="p">,</span>
+                        <span class="n">account</span><span class="p">,</span>
+                        <span class="n">mem_per_cpu</span><span class="p">,</span>
+                        <span class="n">path_to_posydon</span><span class="p">,</span>
+                        <span class="n">path_to_posydon_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm array script for population synthesis job arrays.</span>
+
+<span class="sd">    Creates a SLURM submission script file named</span>
+<span class="sd">    &quot;{str_met}_Zsun_slurm_array.slurm&quot; where str_met is the metallicity</span>
+<span class="sd">    converted to string format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    job_array_length : int</span>
+<span class="sd">        The length of the job array (number of jobs)</span>
+<span class="sd">    partition : str, optional</span>
+<span class="sd">        SLURM partition to submit the job to</span>
+<span class="sd">    email : str, optional</span>
+<span class="sd">        Email address for job notifications</span>
+<span class="sd">    walltime : str</span>
+<span class="sd">        Time limit for the job in SLURM format (e.g., &quot;24:00:00&quot;)</span>
+<span class="sd">    account : str, optional</span>
+<span class="sd">        SLURM account to charge the job to</span>
+<span class="sd">    mem_per_cpu : str</span>
+<span class="sd">        Memory per CPU allocation (e.g., &quot;4G&quot;)</span>
+<span class="sd">    path_to_posydon : str</span>
+<span class="sd">        Path to the POSYDON installation</span>
+<span class="sd">    path_to_posydon_data : str</span>
+<span class="sd">        Path to the POSYDON_DATA directory</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+    <span class="n">job_array_length</span> <span class="o">=</span> <span class="n">job_array_length</span> <span class="o">-</span> <span class="mi">1</span>  <span class="c1"># 0 already included</span>
+
+    <span class="c1"># Build optional SBATCH directives</span>
+    <span class="n">optional_directives</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">partition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;#SBATCH --mail-type=FAIL&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">])</span>
+
+    <span class="n">optional_section</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">optional_directives</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">optional_section</span><span class="p">:</span>
+        <span class="n">optional_section</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">text_pre</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        #!/bin/bash</span>
+<span class="s1">        #SBATCH --array=0-</span><span class="si">{</span><span class="n">job_array_length</span><span class="si">}</span>
+<span class="s1">        #SBATCH --job-name=</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_popsyn</span>
+<span class="s1">        #SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_%A_%a.out</span>
+<span class="s1">        #SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span>
+<span class="s1">        #SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">text_post</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">        export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+<span class="s1">        srun python ./run_metallicity.py </span><span class="si">{</span><span class="n">metallicity</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text_pre</span> <span class="o">+</span> <span class="n">optional_section</span> <span class="o">+</span> <span class="n">text_post</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_Zsun_slurm_array.slurm&quot;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_slurm_merge">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_slurm_merge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_merge</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                       <span class="n">partition</span><span class="p">,</span>
+                       <span class="n">email</span><span class="p">,</span>
+                       <span class="n">merge_walltime</span><span class="p">,</span>
+                       <span class="n">account</span><span class="p">,</span>
+                       <span class="n">mem_per_cpu</span><span class="p">,</span>
+                       <span class="n">path_to_posydon</span><span class="p">,</span>
+                       <span class="n">path_to_posydon_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm submit script for merging population synthesis results.</span>
+
+<span class="sd">    Creates a SLURM submission script file named</span>
+<span class="sd">    &quot;{str_met}_Zsun_merge_popsyn.slurm&quot; where str_met is the metallicity</span>
+<span class="sd">    converted to string format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    partition : str, optional</span>
+<span class="sd">        SLURM partition to submit the job to</span>
+<span class="sd">    email : str, optional</span>
+<span class="sd">        Email address for job notifications</span>
+<span class="sd">    merge_walltime : str</span>
+<span class="sd">        Time limit for the merge job in SLURM format (e.g., &quot;12:00:00&quot;)</span>
+<span class="sd">    account : str, optional</span>
+<span class="sd">        SLURM account to charge the job to</span>
+<span class="sd">    mem_per_cpu : str</span>
+<span class="sd">        Memory per CPU allocation (e.g., &quot;4G&quot;)</span>
+<span class="sd">    path_to_posydon : str</span>
+<span class="sd">        Path to the POSYDON installation</span>
+<span class="sd">    path_to_posydon_data : str</span>
+<span class="sd">        Path to the POSYDON_DATA directory</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+    <span class="c1"># Override walltime for debug-cpu partition</span>
+    <span class="k">if</span> <span class="n">partition</span> <span class="o">==</span> <span class="s1">&#39;debug-cpu&#39;</span><span class="p">:</span>
+        <span class="n">merge_walltime</span> <span class="o">=</span> <span class="s1">&#39;00:14:00&#39;</span>
+
+    <span class="c1"># Build optional SBATCH directives</span>
+    <span class="n">optional_directives</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">partition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;#SBATCH --mail-type=FAIL&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">])</span>
+
+    <span class="n">optional_section</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">optional_directives</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">optional_section</span><span class="p">:</span>
+        <span class="n">optional_section</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">text_pre</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        #!/bin/bash</span>
+<span class="s1">        #SBATCH --job-name=</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge</span>
+<span class="s1">        #SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_merge.out</span>
+<span class="s1">        #SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">        #SBATCH --time=</span><span class="si">{</span><span class="n">merge_walltime</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+    <span class="n">text_post</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">        export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+<span class="s1">        srun python ./merge_metallicity.py </span><span class="si">{</span><span class="n">metallicity</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text_pre</span> <span class="o">+</span> <span class="n">optional_section</span> <span class="o">+</span> <span class="n">text_post</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<span class="c1">## Rescue Script Creation Functions</span>
+
+<div class="viewcode-block" id="create_slurm_rescue">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_slurm_rescue">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_rescue</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                        <span class="n">missing_indices</span><span class="p">,</span>
+                        <span class="n">job_array_length</span><span class="p">,</span>
+                        <span class="n">partition</span><span class="p">,</span>
+                        <span class="n">email</span><span class="p">,</span>
+                        <span class="n">walltime</span><span class="p">,</span>
+                        <span class="n">account</span><span class="p">,</span>
+                        <span class="n">mem_per_cpu</span><span class="p">,</span>
+                        <span class="n">path_to_posydon</span><span class="p">,</span>
+                        <span class="n">path_to_posydon_data</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm rescue script for resubmitting failed population synthesis jobs.</span>
+
+<span class="sd">    Creates a SLURM submission script file named</span>
+<span class="sd">    &quot;{str_met}_Zsun_rescue.slurm&quot; where str_met is the metallicity</span>
+<span class="sd">    converted to string format.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    missing_indices : list of int</span>
+<span class="sd">        List of failed job indices to resubmit</span>
+<span class="sd">    job_array_length : int</span>
+<span class="sd">        The original length of the job array (number of jobs)</span>
+<span class="sd">    partition : str, optional</span>
+<span class="sd">        SLURM partition to submit the job to</span>
+<span class="sd">    email : str, optional</span>
+<span class="sd">        Email address for job notifications</span>
+<span class="sd">    walltime : str</span>
+<span class="sd">        Time limit for the job in SLURM format (e.g., &quot;24:00:00&quot;)</span>
+<span class="sd">    account : str, optional</span>
+<span class="sd">        SLURM account to charge the job to</span>
+<span class="sd">    mem_per_cpu : str</span>
+<span class="sd">        Memory per CPU allocation (e.g., &quot;4G&quot;)</span>
+<span class="sd">    path_to_posydon : str</span>
+<span class="sd">        Path to the POSYDON installation</span>
+<span class="sd">    path_to_posydon_data : str</span>
+<span class="sd">        Path to the POSYDON_DATA directory</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+    <span class="c1"># Format job array string for SBATCH</span>
+    <span class="n">job_array_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)))</span>
+
+    <span class="c1"># Build optional SBATCH directives</span>
+    <span class="n">optional_directives</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">if</span> <span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --account=</span><span class="si">{</span><span class="n">account</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">partition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;#SBATCH --partition=</span><span class="si">{</span><span class="n">partition</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">optional_directives</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span>
+            <span class="s2">&quot;#SBATCH --mail-type=FAIL&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;#SBATCH --mail-user=</span><span class="si">{</span><span class="n">email</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">])</span>
+
+    <span class="n">optional_section</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">optional_directives</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">optional_section</span><span class="p">:</span>
+        <span class="n">optional_section</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+    <span class="n">text_pre</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span><span class="se">\</span>
+<span class="s1">        #!/bin/bash</span>
+<span class="s1">        #SBATCH --array=</span><span class="si">{</span><span class="n">job_array_str</span><span class="si">}</span>
+<span class="s1">        #SBATCH --job-name=</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_popsyn_rescue</span>
+<span class="s1">        #SBATCH --output=./</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/rescue_%A_%a.out</span>
+<span class="s1">        #SBATCH --time=</span><span class="si">{</span><span class="n">walltime</span><span class="si">}</span>
+<span class="s1">        #SBATCH --mem-per-cpu=</span><span class="si">{</span><span class="n">mem_per_cpu</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">text_post</span> <span class="o">=</span> <span class="n">textwrap</span><span class="o">.</span><span class="n">dedent</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">        export PATH_TO_POSYDON=</span><span class="si">{</span><span class="n">path_to_posydon</span><span class="si">}</span>
+<span class="s1">        export PATH_TO_POSYDON_DATA=</span><span class="si">{</span><span class="n">path_to_posydon_data</span><span class="si">}</span>
+
+<span class="s1">        export SLURM_ARRAY_TASK_COUNT=</span><span class="si">{</span><span class="n">job_array_length</span><span class="si">}</span>
+<span class="s1">        export SLURM_ARRAY_TASK_MIN=0</span>
+
+<span class="s1">        srun python ./run_metallicity.py </span><span class="si">{</span><span class="n">metallicity</span><span class="si">}</span>
+<span class="s1">    &#39;&#39;&#39;</span><span class="p">)</span>
+
+    <span class="n">text</span> <span class="o">=</span> <span class="n">text_pre</span> <span class="o">+</span> <span class="n">optional_section</span> <span class="o">+</span> <span class="n">text_post</span>
+
+    <span class="n">filename</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_rescue.slurm&#39;</span>
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span> <span class="o">+</span> <span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">text</span><span class="p">)</span></div>
+
+
+<span class="c1">## Main Functions for Population Synthesis Setup ##</span>
+
+<div class="viewcode-block" id="create_python_scripts">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_python_scripts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_python_scripts</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the run and merge scripts for population synthesis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        Path to the .ini file containing population synthesis parameters.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">create_run_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">create_merge_script</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Created run script and merge script&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_slurm_scripts">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_slurm_scripts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_slurm_scripts</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the slurm scripts for population synthesis.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        The metallicity in solar units (e.g., 0.02 for Z=0.02)</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        the arguments passed to the function</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">create_slurm_array</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">job_array</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                       <span class="n">args</span><span class="o">.</span><span class="n">walltime</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span><span class="p">,</span>
+                       <span class="n">PATH_TO_POSYDON</span><span class="p">,</span>
+                       <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">))</span>
+
+    <span class="n">create_slurm_merge</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span><span class="p">,</span>
+                       <span class="n">args</span><span class="o">.</span><span class="n">merge_walltime</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span><span class="p">,</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span><span class="p">,</span>
+                       <span class="n">PATH_TO_POSYDON</span><span class="p">,</span>
+                       <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SLURM script created for metallicity </span><span class="si">{</span><span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="create_bash_submit_script">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_bash_submit_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_bash_submit_script</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Creates the bash submission script for all SLURM jobs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        The name of the bash submission script to create</span>
+<span class="sd">    metallicities : list of float</span>
+<span class="sd">        The list of metallicities in solar units</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s1">&#39;Replace &#39;</span><span class="o">+</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;OverwriteWarning&quot;</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+        <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;#!/bin/bash</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+            <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;array=$(sbatch --parsable &quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_Zsun_slurm_array.slurm)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;&quot;</span><span class="o">+</span><span class="n">str_met</span><span class="o">+</span><span class="s2">&quot; job array submitted as &#39;$</span><span class="si">{array}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;merge=$(sbatch --parsable --dependency=afterok:$</span><span class="si">{array}</span><span class="s2"> &quot;</span>
+                       <span class="s2">&quot;--kill-on-invalid-dep=yes &quot;</span>
+                       <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_merge_popsyn.slurm)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;&quot;</span><span class="o">+</span><span class="n">str_met</span><span class="o">+</span><span class="s2">&quot; merge job submitted as &#39;$</span><span class="si">{merge}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;Setup complete. You can now submit the jobs using &#39;./slurm_submit.sh&#39;&quot;</span><span class="p">)</span></div>
+
+
+<span class="c1">## Main functions for rescue</span>
+<div class="viewcode-block" id="create_batch_rescue_script">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_batch_rescue_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_batch_rescue_script</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">batch_status</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a script to resubmit failed runs.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments passed to the CLI</span>
+<span class="sd">    batch_status : dict</span>
+<span class="sd">        Dictionary with batch status information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path to the generated rescue script</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Generating rescue script for failed runs...&quot;</span><span class="p">)</span>
+
+    <span class="n">run_folder</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span>
+    <span class="n">metallicity</span> <span class="o">=</span> <span class="n">batch_status</span><span class="p">[</span><span class="s1">&#39;metallicity&#39;</span><span class="p">]</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+    <span class="n">slurm_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_slurm_array.slurm&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Extract missing indices from batch_status</span>
+    <span class="n">missing_indices</span> <span class="o">=</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;missing_indices&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">missing_indices</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No missing indices found in batch status.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Cannot generate rescue script.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;Please run the check function to resubmit the merge jobs.</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+                         <span class="s2">&quot;posydon-popsyn check &lt;run_folder&gt;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Parse the current slurm array script</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+    <span class="c1"># Extract parameters from the current script</span>
+    <span class="n">job_array_length</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">account</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">partition</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">walltime</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">path_to_posydon</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">path_to_posydon_data</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#SBATCH --array=&#39;</span><span class="p">):</span>
+            <span class="n">array_range</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">array_range</span><span class="p">:</span>
+                <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">array_range</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+                <span class="n">job_array_length</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --time=&quot;</span><span class="p">):</span>
+            <span class="n">walltime</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mem-per-cpu=&quot;</span><span class="p">):</span>
+            <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --partition=&quot;</span><span class="p">):</span>
+            <span class="n">partition</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --account=&quot;</span><span class="p">):</span>
+            <span class="n">account</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;#SBATCH --mail-user=&quot;</span><span class="p">):</span>
+            <span class="n">email</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;export PATH_TO_POSYDON=&quot;</span><span class="p">):</span>
+            <span class="n">path_to_posydon</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;export PATH_TO_POSYDON_DATA=&quot;</span><span class="p">):</span>
+            <span class="n">path_to_posydon_data</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+
+    <span class="c1"># Override with command-line arguments if provided</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">walltime</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">walltime</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">walltime</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">mem_per_cpu</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">mem_per_cpu</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">partition</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">partition</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">account</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">account</span>
+    <span class="k">if</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">email</span> <span class="o">=</span> <span class="n">args</span><span class="o">.</span><span class="n">email</span>
+
+    <span class="c1"># Create the rescue script</span>
+    <span class="n">create_slurm_rescue</span><span class="p">(</span>
+        <span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span>
+        <span class="n">missing_indices</span><span class="o">=</span><span class="n">missing_indices</span><span class="p">,</span>
+        <span class="n">job_array_length</span><span class="o">=</span><span class="n">job_array_length</span><span class="p">,</span>
+        <span class="n">partition</span><span class="o">=</span><span class="n">partition</span><span class="p">,</span>
+        <span class="n">email</span><span class="o">=</span><span class="n">email</span><span class="p">,</span>
+        <span class="n">walltime</span><span class="o">=</span><span class="n">walltime</span><span class="p">,</span>
+        <span class="n">account</span><span class="o">=</span><span class="n">account</span><span class="p">,</span>
+        <span class="n">mem_per_cpu</span><span class="o">=</span><span class="n">mem_per_cpu</span><span class="p">,</span>
+        <span class="n">path_to_posydon</span><span class="o">=</span><span class="n">path_to_posydon</span><span class="p">,</span>
+        <span class="n">path_to_posydon_data</span><span class="o">=</span><span class="n">path_to_posydon_data</span>
+    <span class="p">)</span>
+
+    <span class="n">rescue_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_rescue.slurm&#39;</span><span class="p">)</span>
+    <span class="n">print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue script generated: </span><span class="si">{</span><span class="n">rescue_script</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rescue_script</span></div>
+
+
+<div class="viewcode-block" id="create_bash_submit_rescue_script">
+<a class="viewcode-back" href="../../../api_reference/posydon.CLI.html#posydon.CLI.io.create_bash_submit_rescue_script">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_bash_submit_rescue_script</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">rescue_scripts</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate a bash script to submit rescue scripts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    filename : str</span>
+<span class="sd">        The name of the bash submission script to create</span>
+<span class="sd">    rescue_scripts : list of str</span>
+<span class="sd">        The list of rescue script paths</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">MERGE_SCRIPT_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{met}</span><span class="s2">_Zsun_merge_popsyn.slurm&quot;</span>
+    <span class="n">RESUBMIT_SCRIPT</span> <span class="o">=</span> <span class="s2">&quot;resubmit_slurm.sh&quot;</span>
+
+    <span class="c1"># Generate a resubmit_slurm.sh script</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;GENERATING A RESUBMIT SCRIPT ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">resubmit_sh_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">RESUBMIT_SCRIPT</span><span class="p">)</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">resubmit_sh_file</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;#!/bin/bash</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">script</span> <span class="ow">in</span> <span class="n">rescue_scripts</span><span class="p">:</span>
+            <span class="n">script_basename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">script</span><span class="p">)</span>
+            <span class="n">met</span> <span class="o">=</span> <span class="n">script_basename</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">merge_script</span> <span class="o">=</span> <span class="n">MERGE_SCRIPT_PATTERN</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="n">met</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;resubmit=$(sbatch --parsable </span><span class="si">{</span><span class="n">script_basename</span><span class="si">}</span><span class="s1">)</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Rescue script submitted as &#39;$</span><span class="si">{resubmit}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;merge=$(sbatch --parsable &quot;</span>
+                    <span class="s2">&quot;--dependency=afterok:$</span><span class="si">{resubmit}</span><span class="s2"> &quot;</span>
+                    <span class="s2">&quot;--kill-on-invalid-dep=yes &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">merge_script</span><span class="si">}</span><span class="s2">)</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;echo &#39;Merge job submitted as &#39;$</span><span class="si">{merge}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Rescue scripts ready to be resubmitted by &#39;sh </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">resubmit_sh_file</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.3/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

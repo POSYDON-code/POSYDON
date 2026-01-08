@@ -1,0 +1,767 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.io &mdash; posydon 2.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.io</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.io</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Handle I/O operations for the population synthesis code.</span>
+
+<span class="sd">POSYDON Data Types are enforced when converting BinaryStar</span>
+<span class="sd">and SingleStar instances to Pandas DataFrames. This is done to</span>
+<span class="sd">ensure memory efficient data storage and to solve problems</span>
+<span class="sd">combining temp batch files.</span>
+
+<span class="sd">Check Pandas docs for allowed data types in DataFrames.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ast</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">errno</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pprint</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">configparser</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConfigParser</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">BINARYPROPERTIES_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;binary_index&#39;</span> <span class="p">:</span> <span class="s1">&#39;int64&#39;</span><span class="p">,</span>
+    <span class="c1"># The state and event of the system. For more information, see</span>
+    <span class="c1"># `posydon.utils.common_functions.get_binary_state_and_event_and_mt_case()</span>
+    <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>                    <span class="c1">#</span>
+    <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>                     <span class="c1"># age of the system (yr)</span>
+    <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>               <span class="c1"># binary orbital separation (solar radii)</span>
+    <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>           <span class="c1"># binary orbital period (days)</span>
+    <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>             <span class="c1"># binary eccentricity</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>                    <span class="c1"># array of the 3 systemic velocity coordinates</span>
+    <span class="c1"># (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...</span>
+    <span class="s1">&#39;rl_relative_overflow_1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 1</span>
+    <span class="s1">&#39;rl_relative_overflow_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># ...for star 2</span>
+    <span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>        <span class="c1"># log10 of mass lost from the donor (Msun/yr)</span>
+    <span class="s1">&#39;mass_transfer_case&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>       <span class="c1"># current mass transfer case of the system.</span>
+                                    <span class="c1"># See `get_binary_state_and_event_and_mt_case`</span>
+                                    <span class="c1"># in `posydon.utils.common_functions`.</span>
+    <span class="s1">&#39;trap_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;acc_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_rad_1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_conv_1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_rad_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;t_sync_conv_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>   <span class="c1"># the distance of system from its nearest</span>
+                                              <span class="c1"># neighbour of MESA binary system  in case</span>
+                                              <span class="c1"># of interpolation during the the end of</span>
+                                              <span class="c1"># the previous step including MESA psygrid.</span>
+                                              <span class="c1"># The distance is normalized in the</span>
+                                              <span class="c1"># parameter space and limits at which it</span>
+                                              <span class="c1"># was calculated. See `mesa_step` for more.</span>
+<span class="p">}</span>
+
+<span class="c1"># specifies the dtypes of elements within an object (e.g., of elements in an array)</span>
+<span class="n">OBJECT_FIXED_SUB_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;V_sys&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;nearest_neighbour_distance&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span>
+<span class="p">}</span>
+
+<span class="n">STARPROPERTIES_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>            <span class="c1"># the evolutionary state of the star. For more info see</span>
+                                <span class="c1"># `posydon.utils.common_functions.check_state_of_star`</span>
+    <span class="s1">&#39;metallicity&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>      <span class="c1"># initial mass fraction of metals</span>
+    <span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>             <span class="c1"># mass (solar units)</span>
+    <span class="s1">&#39;log_R&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>            <span class="c1"># log10 of radius (solar units)</span>
+    <span class="s1">&#39;log_L&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>            <span class="c1"># log10 luminosity (solar units)</span>
+    <span class="s1">&#39;lg_mdot&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>          <span class="c1"># log10 of the absolulte mass change of the star due to</span>
+                        <span class="c1"># winds and RLO coming from binary history (Msun/yr)</span>
+    <span class="s1">&#39;lg_system_mdot&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># log10 of the system&#39;s absolute mass loss from around</span>
+                        <span class="c1"># the star due to inneficient mass transfer (Msun/yr)</span>
+    <span class="s1">&#39;lg_wind_mdot&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>     <span class="c1"># log10 of the absolute wind mass loss of the star from</span>
+                        <span class="c1"># `lg_wind_mdot_1/2` in binary_history (Msun/yr)</span>
+    <span class="s1">&#39;he_core_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>     <span class="c1"># in solar units</span>
+    <span class="s1">&#39;he_core_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># in solar units</span>
+    <span class="s1">&#39;c_core_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>      <span class="c1"># in solar units</span>
+    <span class="s1">&#39;c_core_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>    <span class="c1"># in solar units</span>
+    <span class="s1">&#39;o_core_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>      <span class="c1"># in solar units</span>
+    <span class="s1">&#39;o_core_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>    <span class="c1"># in solar units</span>
+    <span class="s1">&#39;co_core_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>     <span class="c1"># in solar units</span>
+    <span class="s1">&#39;co_core_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># in solar units</span>
+    <span class="c1"># Central mass fractions</span>
+    <span class="s1">&#39;center_h1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_he4&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_c12&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_n14&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;center_o16&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="c1"># Mass fractions at the surface</span>
+    <span class="s1">&#39;surface_h1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_he4&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_c12&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_n14&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;surface_o16&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="c1"># Energy production from nuclear burning (solar units)</span>
+    <span class="s1">&#39;log_LH&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>           <span class="c1"># H burning</span>
+    <span class="s1">&#39;log_LHe&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>          <span class="c1"># He burning</span>
+    <span class="s1">&#39;log_LZ&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>           <span class="c1"># non-H and non-He burning</span>
+    <span class="s1">&#39;log_Lnuc&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>         <span class="c1"># total nuclear burning energy production</span>
+    <span class="s1">&#39;c12_c12&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>          <span class="c1"># Carbon burning through c12-c12</span>
+    <span class="s1">&#39;center_gamma&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;avg_c_in_c_core&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>  <span class="c1"># average carbon mass fraction at the carbon core</span>
+    <span class="s1">&#39;surf_avg_omega&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># surface average rotational angular velocity (rad/sec)</span>
+    <span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>    <span class="c1"># ratio of `surf_avg_omega` to the</span>
+                                        <span class="c1"># surface critical rotation limit,</span>
+                                        <span class="c1"># taking into account centrifugal force</span>
+                                        <span class="c1"># &amp; radiation pressure (Eddington lim.)</span>
+    <span class="s1">&#39;total_moment_of_inertia&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>      <span class="c1"># total moment of inertia (gr*cm^2)</span>
+    <span class="s1">&#39;log_total_angular_momentum&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># log10 of total ang. momentum (gr*cm^2/s)</span>
+    <span class="s1">&#39;spin&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>                         <span class="c1"># the dimesionless spin of the star, if it</span>
+                                    <span class="c1"># is a compact object, which is equal to</span>
+                                    <span class="c1"># c*J/(GM^2).</span>
+    <span class="s1">&#39;conv_env_top_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_bot_mass&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_top_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_bot_radius&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_g&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_l_b&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;conv_env_turnover_time_l_t&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;envelope_binding_energy&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mass_conv_reg_fortides&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;thickness_conv_reg_fortides&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;radius_conv_reg_fortides&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_1cent&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_10cent&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_30cent&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;lambda_CE_pure_He_star_10cent&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;profile&#39;</span><span class="p">:</span> <span class="s1">&#39;object&#39;</span><span class="p">,</span>    <span class="c1"># the profile of the star, including extended information of</span>
+                            <span class="c1"># its internal structure, for a specific timestep, usually for</span>
+                            <span class="c1"># the end of the previous step including MESA psygrid.</span>
+    <span class="s1">&#39;total_mass_h1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>   <span class="c1"># total mass of Hydrogen throughout the star</span>
+    <span class="s1">&#39;total_mass_he4&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>  <span class="c1"># total mass of Helium throughout the star</span>
+<span class="p">}</span>
+
+<span class="n">EXTRA_BINARY_COLUMNS_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;step_names&#39;</span> <span class="p">:</span> <span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;step_times&#39;</span> <span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># no default extras for history attributes</span>
+<span class="n">EXTRA_STAR_COLUMNS_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;m_disk_radiated&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;m_disk_accreted&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="n">SCALAR_NAMES_DTYPES</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="c1"># Individual natal kick properties (new)</span>
+    <span class="s1">&#39;natal_kick_velocity&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_azimuthal_angle&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_polar_angle&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_mean_anomaly&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="c1"># Legacy natal kick array components (for backward compatibility)</span>
+    <span class="s1">&#39;natal_kick_array_0&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_array_1&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_array_2&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;natal_kick_array_3&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;SN_type&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;f_fb&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;spin_orbit_tilt_first_SN&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;spin_orbit_tilt_second_SN&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;M4&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;mu4&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;avg_c_in_c_core_at_He_depletion&#39;</span> <span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;co_core_mass_at_He_depletion&#39;</span> <span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;h1_mass_ej&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+    <span class="s1">&#39;he4_mass_ej&#39;</span><span class="p">:</span> <span class="s1">&#39;float64&#39;</span><span class="p">,</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="clean_binary_history_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.io.clean_binary_history_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_binary_history_df</span><span class="p">(</span><span class="n">binary_df</span><span class="p">,</span> <span class="n">extra_binary_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">extra_S1_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_S2_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Take a posydon binary history DataFrame from the</span>
+<span class="sd">    BinaryStar.to_df method and clean the data for saving</span>
+<span class="sd">    by setting Data Types of the columns explicitly.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    binary_df : DataFrame</span>
+<span class="sd">        A pandas Dataframe containing binary history</span>
+<span class="sd">    extra_binary_dtypes_user : dict, optional</span>
+<span class="sd">        A dictionary with extra column names as keys, and their</span>
+<span class="sd">        associated data types as values.</span>
+<span class="sd">    extra_S1_dtypes_user : dict, optional</span>
+<span class="sd">        Same as above, but only for star 1.</span>
+<span class="sd">    extra_S2_dtypes_user : dict, optional</span>
+<span class="sd">        Same as above, but only for star 2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    binary_df : DataFrame</span>
+<span class="sd">        A cleaned binary history ready for saving to HDF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">binary_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">)</span>
+
+    <span class="c1"># User specified extra binary and star columns</span>
+    <span class="k">if</span> <span class="n">extra_binary_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_binary_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">extra_S1_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_S1_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">extra_S2_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_S2_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># try to coerce data types automatically first</span>
+    <span class="n">binary_df</span> <span class="o">=</span> <span class="n">binary_df</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span>
+
+    <span class="c1"># Set data types for all columns explicitly</span>
+    <span class="n">hist_columns</span> <span class="o">=</span>  <span class="nb">set</span><span class="p">(</span><span class="n">binary_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># combine columns for binary history with extras</span>
+    <span class="n">BP_comb_extras_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">BINARYPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_BINARY_COLUMNS_DTYPES</span><span class="p">,</span>
+                           <span class="o">**</span><span class="n">extra_binary_dtypes_user</span><span class="p">}</span>
+    <span class="c1"># combine columns for star 1 and star 2 history with extras</span>
+    <span class="n">SP_comb_S1_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">STARPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_STAR_COLUMNS_DTYPES</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">extra_S1_dtypes_user</span><span class="p">}</span>
+    <span class="n">SP_comb_S2_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">STARPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_STAR_COLUMNS_DTYPES</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">extra_S2_dtypes_user</span><span class="p">}</span>
+
+    <span class="c1"># All default &amp; user passed keys which we have mappings for</span>
+    <span class="n">binary_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="n">BP_comb_extras_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="p">)</span>
+    <span class="n">S1_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S1_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+    <span class="n">S2_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;S2_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S2_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+
+    <span class="c1"># Find common keys between the binary_df and our column-dtype mapping</span>
+    <span class="n">common_keys</span> <span class="o">=</span>  <span class="n">hist_columns</span> <span class="o">&amp;</span> <span class="p">(</span> <span class="n">binary_keys</span> <span class="o">|</span> <span class="n">S1_keys</span> <span class="o">|</span> <span class="n">S2_keys</span> <span class="p">)</span>
+
+    <span class="c1"># Create a dict with column-dtype mapping only for columns in binary_df</span>
+    <span class="n">common_dtype_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">common_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">binary_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BP_comb_extras_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">key</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">S1_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SP_comb_S1_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">S2_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SP_comb_S2_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No data type found for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">. Dtypes must be explicity declared.&#39;</span><span class="p">)</span>
+    <span class="c1"># set dtypes</span>
+    <span class="n">binary_df</span> <span class="o">=</span> <span class="n">binary_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span> <span class="n">common_dtype_dict</span> <span class="p">)</span>
+    <span class="c1"># unset clean str data because pandas strings are broken for hdf saving</span>
+    <span class="n">convert_to_obj</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">common_dtype_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+            <span class="n">convert_to_obj</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span>
+    <span class="n">binary_df</span> <span class="o">=</span> <span class="n">binary_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span> <span class="n">convert_to_obj</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">binary_df</span></div>
+
+
+
+<div class="viewcode-block" id="clean_binary_oneline_df">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.io.clean_binary_oneline_df">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clean_binary_oneline_df</span><span class="p">(</span><span class="n">oneline_df</span><span class="p">,</span> <span class="n">extra_binary_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                            <span class="n">extra_S1_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">extra_S2_dtypes_user</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Take a posydon binary oneline DataFrame from the</span>
+<span class="sd">    BinaryStar.to_oneline_df method and clean the data for saving</span>
+<span class="sd">    by setting Data Types of the columns explicitly.</span>
+
+<span class="sd">    This method is similar to clean_binary_history_df since they</span>
+<span class="sd">    have many overalapping columns, with a few extras and different naming.</span>
+
+<span class="sd">    Note: there may be edge cases not handed if new scalar_names are added.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    binary_df : DataFrame</span>
+<span class="sd">        A pandas Dataframe containing binary history</span>
+<span class="sd">    extra_binary_dtypes_user : dict, optional</span>
+<span class="sd">        A dictionary with extra column names as keys, and their</span>
+<span class="sd">        associated data types as values.</span>
+<span class="sd">    extra_S1_dtypes_user : dict, optional</span>
+<span class="sd">        Same as above, but only for star 1.</span>
+<span class="sd">    extra_S2_dtypes_user : dict, optional</span>
+<span class="sd">        Same as above, but only for star 2.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    binary_df : DataFrame</span>
+<span class="sd">        A cleaned binary history ready for saving to HDF.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="n">oneline_df</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="p">)</span>
+
+    <span class="c1"># User specified extra binary and star columns</span>
+    <span class="k">if</span> <span class="n">extra_binary_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_binary_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">extra_S1_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_S1_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="n">extra_S2_dtypes_user</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">extra_S2_dtypes_user</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="c1"># try to coerce data types automatically first</span>
+    <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">infer_objects</span><span class="p">()</span>
+
+    <span class="c1"># Set data types for all columns explicitly</span>
+    <span class="n">oneline_columns</span> <span class="o">=</span>  <span class="nb">set</span><span class="p">(</span><span class="n">oneline_df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+
+    <span class="c1"># combine columns for binary history with extras</span>
+    <span class="n">BP_comb_extras_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">BINARYPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_BINARY_COLUMNS_DTYPES</span><span class="p">,</span>
+                           <span class="o">**</span><span class="n">extra_binary_dtypes_user</span><span class="p">}</span>
+    <span class="c1"># combine columns for star 1 and star 2 history with extras</span>
+    <span class="n">SP_comb_S1_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">STARPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_STAR_COLUMNS_DTYPES</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">SCALAR_NAMES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_S1_dtypes_user</span><span class="p">}</span>
+    <span class="n">SP_comb_S2_dict</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">STARPROPERTIES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">EXTRA_STAR_COLUMNS_DTYPES</span><span class="p">,</span>
+                       <span class="o">**</span><span class="n">SCALAR_NAMES_DTYPES</span><span class="p">,</span> <span class="o">**</span><span class="n">extra_S2_dtypes_user</span><span class="p">}</span>
+
+
+    <span class="c1"># All default &amp; user passed keys which we have mappings for</span>
+    <span class="n">binary_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_i&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BP_comb_extras_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+                     <span class="o">+</span> <span class="p">[</span><span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">BP_comb_extras_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+    <span class="n">S1_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_i&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S1_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+                 <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S1_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+    <span class="n">S2_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;S2_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_i&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S2_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+                 <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;S2_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="o">+</span> <span class="s1">&#39;_f&#39;</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SP_comb_S2_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+    <span class="n">scalar_keys</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span> <span class="p">[</span><span class="s1">&#39;S1_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SCALAR_NAMES_DTYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+                     <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;S2_&#39;</span> <span class="o">+</span> <span class="n">key</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">SCALAR_NAMES_DTYPES</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="p">)</span>
+
+    <span class="c1"># Find common keys between the binary_df and our column-dtype mapping</span>
+    <span class="n">common_keys</span> <span class="o">=</span>  <span class="n">oneline_columns</span> <span class="o">&amp;</span> <span class="p">(</span> <span class="n">binary_keys</span>
+                                     <span class="o">|</span> <span class="n">S1_keys</span>
+                                     <span class="o">|</span> <span class="n">S2_keys</span>
+                                     <span class="o">|</span> <span class="n">scalar_keys</span><span class="p">)</span>
+
+
+    <span class="c1"># Create a dict with column-dtype mapping only for columns in binary_df</span>
+    <span class="n">common_dtype_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># helper function to remove the &#39;_i&#39; and &#39;_f&#39;</span>
+    <span class="n">strip_prefix_and_suffix</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">key</span> <span class="p">:</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_i&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_f&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> \
+                                             <span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">common_keys</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">scalar_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SCALAR_NAMES_DTYPES</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+                                        <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">binary_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">BP_comb_extras_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">strip_prefix_and_suffix</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">S1_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SP_comb_S1_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">strip_prefix_and_suffix</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">elif</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">S2_keys</span><span class="p">:</span>
+            <span class="n">common_dtype_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">SP_comb_S2_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span> <span class="n">strip_prefix_and_suffix</span><span class="p">(</span><span class="n">key</span><span class="p">)</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No data type found for </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s1">. Dtypes must be explicity declared.&#39;</span><span class="p">)</span>
+    <span class="c1"># set dtypes</span>
+    <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span> <span class="n">common_dtype_dict</span> <span class="p">)</span>
+    <span class="c1"># unset clean str data because pandas strings are broken for hdf saving</span>
+    <span class="n">convert_to_obj</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">common_dtype_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="s1">&#39;string&#39;</span><span class="p">:</span>
+            <span class="n">convert_to_obj</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;object&#39;</span>
+    <span class="n">oneline_df</span> <span class="o">=</span> <span class="n">oneline_df</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span> <span class="n">convert_to_obj</span> <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">oneline_df</span></div>
+
+
+
+
+<div class="viewcode-block" id="parse_inifile">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.io.parse_inifile">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an inifile for evolving binary populations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser : &lt;class, ConfigParser&gt;</span>
+<span class="sd">        An instance of ConfigParser.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
+    <span class="c1"># Keys do not become lowercase by default</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">optionxform</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">option</span><span class="p">:</span> <span class="n">option</span>
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading inifile: </span><span class="se">\n\t</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                  <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">),</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="p">[</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">path</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Reading inifiles: </span><span class="se">\n</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">pprint</span><span class="o">.</span><span class="n">pformat</span><span class="p">(</span><span class="n">path</span><span class="p">)))</span>
+        <span class="n">bad_files</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">path</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+                <span class="n">bad_files</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">bad_files</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+                  <span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">strerror</span><span class="p">(</span><span class="n">errno</span><span class="o">.</span><span class="n">ENOENT</span><span class="p">),</span> <span class="n">bad_files</span><span class="p">)</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Path must be a string or list of strings. Given </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                         <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+
+    <span class="n">files_read</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+    <span class="c1"># Catch silent errors from configparser.read</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files were read successfully. Given </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span>
+                         <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">parser</span></div>
+
+
+
+<div class="viewcode-block" id="simprop_kwargs_from_ini">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.io.simprop_kwargs_from_ini">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">only</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an inifile into kwargs for the SimulationProperties class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+
+<span class="sd">    only : str</span>
+<span class="sd">        Name of a section to limit getting kwargs from, e.g.,</span>
+<span class="sd">        step_SN, step_CE, step_detached, etc.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser_dict : &lt;class, dict&gt;</span>
+<span class="sd">        The inifile converted to the kwargs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+    <span class="n">parser_dict</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">:</span>
+        <span class="c1"># skip default section</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;DEFAULT&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="k">if</span> <span class="n">only</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">section</span> <span class="o">!=</span> <span class="n">only</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+        <span class="c1"># evaluate str values as literal python and put</span>
+        <span class="c1"># into dict because parser only handles strings</span>
+        <span class="n">sect_dict</span> <span class="o">=</span> <span class="p">{</span><span class="n">key</span><span class="p">:</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+        <span class="c1"># only try imports from sections with &#39;import&#39;</span>
+        <span class="k">if</span> <span class="s1">&#39;import&#39;</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sect_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()):</span>
+            <span class="c1"># from posydon.... import ....</span>
+            <span class="c1">#      ^ import      as   ^ name</span>
+            <span class="n">import_and_name</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;import&#39;</span><span class="p">)</span>
+            <span class="n">absolute_import_and_name</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;absolute_import&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+            <span class="c1"># Use absolute import if provided</span>
+            <span class="k">if</span> <span class="n">absolute_import_and_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># unpack user specified py file, and class name to import</span>
+                <span class="n">import_location</span><span class="p">,</span> <span class="n">class_name</span> <span class="o">=</span> <span class="n">absolute_import_and_name</span>
+                <span class="n">absolute_import_location</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">import_location</span><span class="p">)</span>
+                <span class="c1"># Format: remove leading / in abs path, replace / with dots, remove &#39;.py&#39;</span>
+                <span class="n">location_as_module_name</span> <span class="o">=</span> <span class="n">absolute_import_location</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="s1">&#39;.&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+
+                <span class="c1"># create spec and load module</span>
+                <span class="n">spec</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">spec_from_file_location</span><span class="p">(</span> <span class="n">location_as_module_name</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="n">absolute_import_location</span><span class="p">)</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="n">module_from_spec</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+                <span class="n">spec</span><span class="o">.</span><span class="n">loader</span><span class="o">.</span><span class="n">exec_module</span><span class="p">(</span><span class="n">module</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># Use builtin posydon classes</span>
+                <span class="n">import_location</span><span class="p">,</span> <span class="n">class_name</span> <span class="o">=</span> <span class="n">import_and_name</span>
+                <span class="c1"># import module</span>
+                <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">import_location</span><span class="p">)</span>
+            <span class="c1"># extract class or function</span>
+            <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+            <span class="c1"># match the form SimulationProperties expects</span>
+            <span class="n">parser_dict</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">sect_dict</span><span class="p">)</span>
+
+        <span class="c1"># Try to find user defined hooks using absolute or</span>
+        <span class="c1"># relative imports. Requires slighltly different syntax.</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;extra_hooks&#39;</span><span class="p">:</span>
+            <span class="n">hooks_list</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">sect_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+                     <span class="k">if</span> <span class="s1">&#39;extra&#39;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">name</span><span class="p">]</span>
+            <span class="c1"># do not take extra_pre_step options etc.</span>
+
+            <span class="c1"># loop to try and find all hooks classes</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)):</span>
+                <span class="n">valid_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">names</span>
+                               <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">==</span> <span class="n">h</span><span class="p">]</span>
+
+                <span class="c1"># if there are no options with the index, continue</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">valid_names</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">import_and_name</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;import_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">))</span>
+                <span class="n">package</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;absolute_import_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="n">class_kwargs</span> <span class="o">=</span> <span class="n">sect_dict</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;kwargs_</span><span class="si">{}</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">h</span><span class="p">),</span> <span class="nb">dict</span><span class="p">())</span>
+
+                <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">import_and_name</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                                 <span class="n">package</span><span class="o">=</span><span class="n">package</span><span class="p">)</span>
+                <span class="bp">cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">import_and_name</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+                <span class="n">hooks_list</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="bp">cls</span><span class="p">,</span> <span class="n">class_kwargs</span><span class="p">))</span>
+
+            <span class="n">parser_dict</span><span class="p">[</span><span class="n">section</span><span class="p">]</span> <span class="o">=</span> <span class="n">hooks_list</span>
+
+    <span class="k">return</span> <span class="n">parser_dict</span></div>
+
+
+
+<div class="viewcode-block" id="binarypop_kwargs_from_ini">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.io.binarypop_kwargs_from_ini">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert an inifile into kwargs for the BinaryPopulation class.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    path : str or list like</span>
+<span class="sd">        Path to inifile. If multiple files are given,</span>
+<span class="sd">        duplicate args are overwritten (stacked) first</span>
+<span class="sd">        to last.</span>
+
+<span class="sd">    verbose : bool</span>
+<span class="sd">        Print helpful info.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    parser_dict : &lt;class, dict&gt;</span>
+<span class="sd">        The inifile converted to the kwargs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+    <span class="c1"># make sure the inifile has all of these sections</span>
+    <span class="k">for</span> <span class="n">sect_name</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;BinaryPopulation_options&#39;</span><span class="p">,</span> <span class="s1">&#39;BinaryStar_output&#39;</span><span class="p">,</span>
+                      <span class="s1">&#39;SingleStar_1_output&#39;</span><span class="p">,</span> <span class="s1">&#39;SingleStar_2_output&#39;</span><span class="p">]:</span>
+        <span class="k">assert</span> <span class="n">sect_name</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">parser</span><span class="o">.</span><span class="n">sections</span><span class="p">())</span>
+
+    <span class="n">pop_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">section</span> <span class="ow">in</span> <span class="n">parser</span><span class="o">.</span><span class="n">sections</span><span class="p">():</span>
+        <span class="k">if</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;BinaryPopulation_options&#39;</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+
+
+            <span class="n">JOB_ID</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getenv</span><span class="p">(</span><span class="s1">&#39;SLURM_ARRAY_JOB_ID&#39;</span><span class="p">)</span>
+            <span class="c1"># MPI import for local use only</span>
+            <span class="k">if</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;use_MPI&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">JOB_ID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;MPI must be turned off for job arrays.&#39;</span><span class="p">)</span>
+                <span class="n">exit</span><span class="p">()</span>
+            <span class="k">elif</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;use_MPI&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+                <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;comm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+            <span class="c1"># MPI needs to be turned off for job arrays</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;comm&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="c1"># Check if we are running as a job array</span>
+                <span class="k">if</span> <span class="n">JOB_ID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;use_MPI&#39;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;MPI must be turned off for job arrays.&#39;</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">JOB_ID</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;JOB_ID&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SLURM_ARRAY_JOB_ID&#39;</span><span class="p">])</span>
+                    <span class="c1"># account for job array not starting at 0</span>
+                    <span class="n">min_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SLURM_ARRAY_TASK_MIN&#39;</span><span class="p">])</span>
+                    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;RANK&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SLURM_ARRAY_TASK_ID&#39;</span><span class="p">])</span><span class="o">-</span><span class="n">min_rank</span>
+                    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s1">&#39;SLURM_ARRAY_TASK_COUNT&#39;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;RANK&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># right now binary, S1, and S2 output kwargs are all passed</span>
+        <span class="c1"># into the BinaryPopulation during init</span>
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;BinaryStar_output&#39;</span><span class="p">:</span>
+            <span class="n">binary_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">binary_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">pop_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">binary_kwargs</span><span class="p">}</span>
+
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;SingleStar_1_output&#39;</span><span class="p">:</span>
+            <span class="n">S1_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">S1_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S1&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S1_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;include_S1&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S1&#39;</span><span class="p">]:</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;S1_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S1_kwargs</span>
+
+        <span class="k">elif</span> <span class="n">section</span> <span class="o">==</span> <span class="s1">&#39;SingleStar_2_output&#39;</span><span class="p">:</span>
+            <span class="n">S2_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+            <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">parser</span><span class="p">[</span><span class="n">section</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">S2_kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">ast</span><span class="o">.</span><span class="n">literal_eval</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
+            <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S2&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S2_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;include_S2&#39;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;include_S2&#39;</span><span class="p">]:</span>
+                <span class="n">pop_kwargs</span><span class="p">[</span><span class="s1">&#39;S2_kwargs&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">S2_kwargs</span>
+
+    <span class="k">return</span> <span class="n">pop_kwargs</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.3/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

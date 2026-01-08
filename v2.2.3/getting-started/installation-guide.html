@@ -1,0 +1,555 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Installation Guide &mdash; posydon 2.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Quick Start: Examining the MESA Grids" href="first-grids.html" />
+    <link rel="prev" title="Prerequisites" href="prerequisites.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installing-posydon">Installing POSYDON</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#anaconda-recommended">Anaconda (Recommended)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#github-stable-version">GitHub (Stable Version)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-jupyter-for-tutorials">Installing Jupyter for Tutorials</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#installing-additional-dependencies-optional">Installing additional dependencies (Optional)</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#running-grids-of-mesa-models-using-posydon">Running grids of MESA models using POSYDON</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#documentation-building">Documentation Building</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#machine-learning-dependencies">Machine Learning Dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#installing-experimental-visualization-libraries">Installing Experimental Visualization Libraries</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Installation Guide</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/getting-started/installation-guide.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="installation-guide">
+<span id="id1"></span><h1>Installation Guide<a class="headerlink" href="#installation-guide" title="Link to this heading"></a></h1>
+<p>This guide will help you install POSYDON step-by-step. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.</p>
+<nav class="contents local" id="table-of-contents">
+<p class="topic-title">Table of Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#installing-posydon" id="id3">Installing POSYDON</a></p>
+<ul>
+<li><p><a class="reference internal" href="#anaconda-recommended" id="id4">Anaconda (Recommended)</a></p></li>
+<li><p><a class="reference internal" href="#github-stable-version" id="id5">GitHub (Stable Version)</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#installing-jupyter-for-tutorials" id="id6">Installing Jupyter for Tutorials</a></p></li>
+<li><p><a class="reference internal" href="#installing-additional-dependencies-optional" id="id7">Installing additional dependencies (Optional)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#running-grids-of-mesa-models-using-posydon" id="id8">Running grids of MESA models using POSYDON</a></p></li>
+<li><p><a class="reference internal" href="#documentation-building" id="id9">Documentation Building</a></p></li>
+<li><p><a class="reference internal" href="#machine-learning-dependencies" id="id10">Machine Learning Dependencies</a></p></li>
+<li><p><a class="reference internal" href="#installing-experimental-visualization-libraries" id="id11">Installing Experimental Visualization Libraries</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="installing-posydon">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Installing POSYDON</a><a class="headerlink" href="#installing-posydon" title="Link to this heading"></a></h2>
+<section id="anaconda-recommended">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Anaconda (Recommended)</a><a class="headerlink" href="#anaconda-recommended" title="Link to this heading"></a></h3>
+<ol class="arabic">
+<li><p><strong>Install Anaconda</strong></p>
+<blockquote>
+<div><p>If you haven’t already, download and install Anaconda from <a class="reference external" href="https://www.anaconda.com/products/distribution">Anaconda’s official website</a>.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Create a New Conda Environment</strong></p>
+<blockquote>
+<div><p>Open your terminal or Anaconda prompt and create a new environment called <code class="docutils literal notranslate"><span class="pre">posydon_env</span></code> using Python 3.11 (the <code class="docutils literal notranslate"><span class="pre">-y</span></code> automatically answers all confirmations with yes):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>create<span class="w"> </span>--name<span class="w"> </span>posydon_env<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11<span class="w"> </span>-y
+</pre></div>
+</div>
+<p>Activate the new environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>posydon_env
+</pre></div>
+</div>
+<p>As many of the required versions of packages are available on <code class="docutils literal notranslate"><span class="pre">conda-forge</span></code> you may need to add this channel to conda if you have not already:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>config<span class="w"> </span>--add<span class="w"> </span>channels<span class="w"> </span>conda-forge
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Install POSYDON</strong></p>
+<blockquote>
+<div><p>With the environment activated, install the POSYDON code from the POSYDON channel using (by default the installation will take place in the current directory, hence please navigate to your desired location first or use the <code class="docutils literal notranslate"><span class="pre">-p</span></code> option to specify a path):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>posydon<span class="w"> </span>posydon
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In the next step you will need to know where this package was installed. You can find it by running the following
+commands in Python:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">posydon</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">posydon</span><span class="o">.</span><span class="vm">__file__</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Use the parent directory of <code class="docutils literal notranslate"><span class="pre">/posydon/__init__.py</span></code> as the value for the environment variable
+<code class="code docutils literal notranslate"><span class="pre">PATH_TO_POSYDON</span></code> in the next step, e.g. <code class="docutils literal notranslate"><span class="pre">/Users/Documents/POSYDON/conda/site-packages/posydon/__init__.py</span></code>
+becomes <code class="docutils literal notranslate"><span class="pre">/Users/Documents/POSYDON/conda/site-packages</span></code>.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<ol class="arabic" id="posydon-env" start="4">
+<li><p><strong>Set Environment Variables</strong></p>
+<blockquote>
+<div><p>Export the required paths (please change the location names accordingly to your installation from the previous step):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>env<span class="w"> </span>config<span class="w"> </span>vars<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON</span><span class="o">=</span>/path/to/your/posydon/installation
+conda<span class="w"> </span>env<span class="w"> </span>config<span class="w"> </span>vars<span class="w"> </span><span class="nb">set</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON_DATA</span><span class="o">=</span>/path/where/you/want/to/store/data
+</pre></div>
+</div>
+<p>The path for the data location is up to you, but keeping the data separate from the code is recommended for organization.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>So that your new <cite>conda</cite> environment is loaded whenever you open a new terminal, you can add the following line to
+your <code class="code docutils literal notranslate"><span class="pre">~/.bashrc</span></code> or <code class="code docutils literal notranslate"><span class="pre">~/.bash_profile</span></code> or your shell equivalent:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>activate<span class="w"> </span>posydon_env
+</pre></div>
+</div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Download the Dataset</strong></p>
+<blockquote>
+<div><p>You can use POSYDON’s built-in API command (the downloaded data will be downloaded to the directory specified by <code class="code docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code>):</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Executing the following command <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code> will download the full DR2 data set. This includes data for
+all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
+metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data
+</pre></div>
+</div>
+<p>You may use <code class="code docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">-h</span></code> to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+If you would rather download something more minimal to run populations, you will need at least the auxillary data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>auxiliary
+</pre></div>
+</div>
+<p>and data for at least one metallicity (the examples and tutorials typically use solar):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>DR2_1Zsun
+</pre></div>
+</div>
+<p>Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the <a class="reference external" href="https://zenodo.org/communities/posydon/">POSYDON community</a> on Zenodo.</p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="github-stable-version">
+<span id="stable-version"></span><h3><a class="toc-backref" href="#id5" role="doc-backlink">GitHub (Stable Version)</a><a class="headerlink" href="#github-stable-version" title="Link to this heading"></a></h3>
+<p>For users interested in the latest features and developments, you can install POSYDON directly from its GitHub repository:</p>
+<ol class="arabic">
+<li><p><strong>Clone the Repository</strong></p>
+<blockquote>
+<div><p>In your terminal or command prompt execute one of the following command to clone the repo with the <code class="docutils literal notranslate"><span class="pre">https</span></code> protocol:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>By default, the repository will be placed in the current directory, so navigate to your desired location before proceeding.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/POSYDON-code/POSYDON.git
+</pre></div>
+</div>
+<p>For the <code class="docutils literal notranslate"><span class="pre">ssh</span></code> protocol:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>git@github.com:POSYDON-code/POSYDON.git
+</pre></div>
+</div>
+<p>Or for the Github CLI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>gh<span class="w"> </span>repo<span class="w"> </span>clone<span class="w"> </span>POSYDON-code/POSYDON
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Install the Stable Version</strong></p>
+<blockquote>
+<div><div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install <code class="docutils literal notranslate"><span class="pre">hdf5</span></code> and <code class="docutils literal notranslate"><span class="pre">pytables</span></code> through <code class="docutils literal notranslate"><span class="pre">conda</span></code>
+with <code class="docutils literal notranslate"><span class="pre">conda</span> <span class="pre">install</span> <span class="pre">hdf5</span> <span class="pre">pytables</span></code>, before following the instructions below.</p>
+</div>
+<p>Navigate to the cloned repository’s directory:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>POSYDON
+</pre></div>
+</div>
+<p>Install the software as an editable package using <code class="docutils literal notranslate"><span class="pre">pip</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Set Environment Variables</strong></p>
+<blockquote>
+<div><p>Next, export the required paths as environment variables. From the <code class="docutils literal notranslate"><span class="pre">POSYDON</span></code> directory that you just performed the installation in,
+you can execute <code class="docutils literal notranslate"><span class="pre">pwd</span></code> if you are unsure of the path name. Please change the location names accordingly below to your installation
+path:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON</span><span class="o">=</span>/path/to/your/posydon/installation
+<span class="nb">export</span><span class="w"> </span><span class="nv">PATH_TO_POSYDON_DATA</span><span class="o">=</span>/path/where/you/want/to/store/data
+</pre></div>
+</div>
+<p>The path for the data location is up to you, but keeping the data separate
+from the code is recommended for organization.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can add these lines to your <code class="code docutils literal notranslate"><span class="pre">~/.bashrc</span></code> or <code class="code docutils literal notranslate"><span class="pre">~/.bash_profile</span></code> or your shell equivalent to ensure the environment variables are set every time you open a new terminal.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Download the Dataset</strong></p>
+<blockquote>
+<div><p>You can use POSYDON’s built-in API command (the downloaded data will be downloaded to the directory specified by <code class="code docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code>):</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Executing the following command <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code> will download the full DR2 data set. This includes data for
+all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
+metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.</p>
+</div>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data
+</pre></div>
+</div>
+<p>You may use <code class="code docutils literal notranslate"><span class="pre">get-posydon-data</span> <span class="pre">-h</span></code> to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+If you would rather download something more minimal to run populations, you will need at least the auxillary data:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>auxillary
+</pre></div>
+</div>
+<p>and data for at least one metallicity (the examples and tutorials typically use solar):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>DR2_1Zsun
+</pre></div>
+</div>
+<p>Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the <a class="reference external" href="https://zenodo.org/communities/posydon/">POSYDON community</a> on Zenodo.</p>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+<section id="installing-jupyter-for-tutorials">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Installing Jupyter for Tutorials</a><a class="headerlink" href="#installing-jupyter-for-tutorials" title="Link to this heading"></a></h2>
+<p>Our tutorials are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.</p>
+<ol class="arabic">
+<li><p><strong>Using Anaconda (Recommended)</strong></p>
+<blockquote>
+<div><p>If you have already installed Anaconda as suggested earlier in the installation guide, installing Jupyter Lab or Notebook is straightforward:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>jupyterlab
+</pre></div>
+</div>
+<p>Or, for the classic Jupyter Notebook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>notebook
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Alternatively, via pip</strong></p>
+<blockquote>
+<div><p>If you prefer using <code class="docutils literal notranslate"><span class="pre">pip</span></code>, you can also install Jupyter Lab or Notebook using the following commands:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>jupyterlab
+</pre></div>
+</div>
+<p>Or, for the classic Jupyter Notebook:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>notebook
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>After Installation</strong></p>
+<blockquote>
+<div><p>Once installed, you can start Jupyter Lab or Notebook by running:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>lab
+</pre></div>
+</div>
+<p>Or:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>jupyter<span class="w"> </span>notebook
+</pre></div>
+</div>
+<p>From the terminal or command prompt. This will open a browser window where you can navigate to the downloaded notebooks and run them interactively.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Remember to navigate to the directory containing the Jupyter notebooks or you won’t see them listed in the Jupyter interface.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You might need to install a iPython kernel for the conda environment you are using.
+You can do this by running inside your conda environment:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>-c<span class="w"> </span>conda-forge<span class="w"> </span>ipykernel
+python<span class="w"> </span>-m<span class="w"> </span>ipykernel<span class="w"> </span>install<span class="w"> </span>--name<span class="o">=</span>posydon_env
+</pre></div>
+</div>
+</div>
+</section>
+<section id="installing-additional-dependencies-optional">
+<h2><a class="toc-backref" href="#id7" role="doc-backlink">Installing additional dependencies (Optional)</a><a class="headerlink" href="#installing-additional-dependencies-optional" title="Link to this heading"></a></h2>
+<p>For some specific functionalities, you may need to install additional dependencies.
+Below are the instructions for installing these dependencies and what they are used for.</p>
+<section id="running-grids-of-mesa-models-using-posydon">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Running grids of MESA models using POSYDON</a><a class="headerlink" href="#running-grids-of-mesa-models-using-posydon" title="Link to this heading"></a></h3>
+<p>If you are planning to create MESA grids using POSYDON on HPC facilities, it’s essential to have <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> installed to take advantage of parallel computations.
+You do not need to have <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> installed if you are only running population synthesis simulations.</p>
+<ol class="arabic">
+<li><p><strong>Install mpi4py via Anaconda (Recommended)</strong>:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda<span class="w"> </span>install<span class="w"> </span>mpi4py
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Alternatively, via pip</strong>:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;.[hpc]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Users have reported issues when trying to install <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> via pip. If you encounter any issues, try installing <code class="docutils literal notranslate"><span class="pre">mpi4py</span></code> through
+Anaconda. If you cannot solve the issue, please refer to the <a class="reference internal" href="../troubleshooting-faqs/installation-issues.html#installation-issues"><span class="std std-ref">Troubleshooting Guide</span></a> or seek support from
+the community or developers, see the <a class="reference internal" href="../contact-support/contact-information.html#contact-info"><span class="std std-ref">contact us</span></a> page.</p>
+</div>
+</section>
+<section id="documentation-building">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Documentation Building</a><a class="headerlink" href="#documentation-building" title="Link to this heading"></a></h3>
+<p>If you’re interested in building the POSYDON documentation locally:</p>
+<ol class="arabic">
+<li><p><strong>Install Documentation Modules</strong>:</p>
+<blockquote>
+<div><p>Navigate to your POSYDON directory and install the required documentation modules:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;.[doc]&quot;</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install <code class="docutils literal notranslate"><span class="pre">pandoc</span></code> separately through brew with
+<code class="docutils literal notranslate"><span class="pre">brew</span> <span class="pre">install</span> <span class="pre">pandoc</span></code>.</p>
+</div>
+</div></blockquote>
+</li>
+<li><p><strong>Compile the Documentation</strong>:</p>
+<blockquote>
+<div><p>Once you have the required modules installed, you can build the documentation using Sphinx:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>docs
+make<span class="w"> </span>html
+</pre></div>
+</div>
+<p>This command will generate the HTML documentation in the <code class="docutils literal notranslate"><span class="pre">_build/html</span></code> directory within the <code class="docutils literal notranslate"><span class="pre">docs</span></code> folder.</p>
+</div></blockquote>
+</li>
+<li><p><strong>Open the Compiled Documentation</strong>:</p>
+<blockquote>
+<div><p>After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the <code class="docutils literal notranslate"><span class="pre">index.html</span></code>:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>open<span class="w"> </span>_build/html/index.html
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">open</span></code> command works on macOS. If you’re using a different OS, you might need to open the <code class="docutils literal notranslate"><span class="pre">index.html</span></code> using your file manager or use a different command.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="machine-learning-dependencies">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Machine Learning Dependencies</a><a class="headerlink" href="#machine-learning-dependencies" title="Link to this heading"></a></h3>
+<p>For users who wish to utilize POSYDON’s latest machine learning features.
+This is specifically used in the active learning module and profile interpolation.
+You do not require these dependencies if you are using the provided Initial-Final interpolators.</p>
+<ol class="arabic">
+<li><p><strong>Navigate to your POSYDON directory</strong> (where the <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> is located) and run:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;.[ml]&quot;</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+<section id="installing-experimental-visualization-libraries">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Installing Experimental Visualization Libraries</a><a class="headerlink" href="#installing-experimental-visualization-libraries" title="Link to this heading"></a></h3>
+<p>POSYDON provides experimental visualization libraries to enhance the experience of data analysis and results visualization. While these libraries offer advanced features, please note that they might still be in development and could be subject to changes.</p>
+<p>To install these experimental visualization libraries</p>
+<ol class="arabic">
+<li><p><strong>Navigate to your POSYDON directory</strong> (where the <cite>setup.py</cite> is located) and run:</p>
+<blockquote>
+<div><div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span><span class="s2">&quot;.[vis]&quot;</span>
+</pre></div>
+</div>
+<p>After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.</p>
+</div>
+</div></blockquote>
+</li>
+</ol>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="prerequisites.html" class="btn btn-neutral float-left" title="Prerequisites" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="first-grids.html" class="btn btn-neutral float-right" title="Quick Start: Examining the MESA Grids" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.3/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

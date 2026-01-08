@@ -1,0 +1,309 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Van den Heuvel diagrams with POSYDON &mdash; posydon 2.2.3 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=85e56e6b"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Crafting the Core Datasets for POSYDON" href="../generating-datasets/generating-datasets.html" />
+    <link rel="prev" title="Custom POSYDON steps and flow chart" href="custom_step_and_flow.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="10_binaries_pop_syn.html">Your First Binary Simulations with POSYDON 🌠</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pop_syn.html">Large-Scale Population Synthesis on HPC Facilities 🚀</a></li>
+<li class="toctree-l2"><a class="reference internal" href="bbh_analysis.html">Stellar Transient Populations 🔍</a></li>
+<li class="toctree-l2"><a class="reference internal" href="lgrb_pop_syn.html">Computing Long-Duration Gamma-Ray Bursts from Double Compact Object Populations 🌌</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_met_pop_syn.html">Explore the assumption of star-formation history and DCO compute rates at one single metallicity 📖</a></li>
+<li class="toctree-l2"><a class="reference internal" href="evolve_single_binaries.html">Evolve individual binaries 🐞</a></li>
+<li class="toctree-l2"><a class="reference internal" href="custom_step_and_flow.html">Custom POSYDON steps and flow chart</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Van den Heuvel Diagrams</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+      <li class="breadcrumb-item active">Van den Heuvel diagrams with POSYDON</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/tutorials-examples/population-synthesis/VHD.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="van-den-heuvel-diagrams-with-posydon">
+<span id="vhd"></span><h1>Van den Heuvel diagrams with POSYDON<a class="headerlink" href="#van-den-heuvel-diagrams-with-posydon" title="Link to this heading"></a></h1>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>This is an <strong>experimental feature</strong> of POSYDON. Unexpected behaviors or results may occur.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>To use the visualization functionalities, install the optional visualization modules <cite>pip install .[vis]</cite></p>
+</div>
+<p><cite>VHdiagram</cite> provides a visual representation of individual POSYDON binaries, offering a more intuitive sense of their properties. This tutorial uses the ‘population.h5’ dataset as an example. You can use the population in the <cite>Stellar Transient Populations</cite> tutorial.</p>
+<section id="visualizing-a-specific-binary">
+<h2>Visualizing a Specific Binary<a class="headerlink" href="#visualizing-a-specific-binary" title="Link to this heading"></a></h2>
+<section id="simple-usage">
+<h3>Simple Usage<a class="headerlink" href="#simple-usage" title="Link to this heading"></a></h3>
+<p>To visualize a specific binary within an interactive window, use the following code:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagram</span>
+<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">&#39;population.h5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./dataset/&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">18976</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/detailled_window.png" src="../../_images/detailled_window.png" />
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Use the ‘path’ named parameter if your dataset resides in a different directory.</p>
+</div>
+<p>The options window, accessible via the ‘option’ button, lets you customize the view:</p>
+<img alt="../../_images/option_window.png" src="../../_images/option_window.png" />
+<p>Clicking the ‘save’ button captures a screenshot of the current view and saves it to a newly created ‘screens’ folder in the current directory.</p>
+</section>
+<section id="predefined-views">
+<h3>Predefined Views<a class="headerlink" href="#predefined-views" title="Link to this heading"></a></h3>
+<p>You can choose from four predefined views for faster visualization:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagram</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
+
+<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">&#39;population.h5&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">19628</span><span class="p">,</span> <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/diagram_window.png" src="../../_images/diagram_window.png" />
+</section>
+<section id="display-modes">
+<h3>Display Modes<a class="headerlink" href="#display-modes" title="Link to this heading"></a></h3>
+<p>You have the flexibility to display the diagram either within an interactive window or inline within a Jupyter notebook. The available display modes are:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagram</span><span class="p">,</span> <span class="n">DisplayMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.Presenter</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
+
+<span class="n">VHdiagram</span><span class="p">(</span>
+    <span class="s2">&quot;population.h5&quot;</span><span class="p">,</span>
+    <span class="n">index</span><span class="o">=</span><span class="mi">19628</span><span class="p">,</span>
+    <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
+    <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/diagram_inline.png" src="../../_images/diagram_inline.png" />
+</section>
+</section>
+<section id="advanced-visualization-techniques">
+<h2>Advanced Visualization Techniques<a class="headerlink" href="#advanced-visualization-techniques" title="Link to this heading"></a></h2>
+<section id="visualizing-multiple-binaries">
+<h3>Visualizing Multiple Binaries<a class="headerlink" href="#visualizing-multiple-binaries" title="Link to this heading"></a></h3>
+<p>The <cite>VHdiagramm_m</cite> class allows multiple binary visualizations to be arranged horizontally in a single plot:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMultiple</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagramm_m</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
+
+<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
+                <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
+                <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/diagram_multiple.png" src="../../_images/diagram_multiple.png" />
+</section>
+<section id="hierarchical-visualization">
+<h3>Hierarchical Visualization<a class="headerlink" href="#hierarchical-visualization" title="Link to this heading"></a></h3>
+<p>This visualization style aggregates identical steps into a tree plot where nodes represent common steps. Each node is labeled with percentages relative to the parent node percentage.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMultiple</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagramm_m</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayMode</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
+
+<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
+                <span class="n">hierarchy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
+                <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/diagram_hierarchy.png" src="../../_images/diagram_hierarchy.png" />
+</section>
+</section>
+<section id="binary-analysis-tools">
+<h2>Binary Analysis Tools<a class="headerlink" href="#binary-analysis-tools" title="Link to this heading"></a></h2>
+<section id="counting-binaries">
+<h3>Counting Binaries<a class="headerlink" href="#counting-binaries" title="Link to this heading"></a></h3>
+<p>Use the <cite>ParseDataFrame</cite> class to iterate through the binary file, counting identical binary simulations:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.ParseDataFrame</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseDataFrame</span>
+
+<span class="n">parse_df</span> <span class="o">=</span> <span class="n">ParseDataFrame</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">)</span>
+<span class="n">parse_df</span><span class="o">.</span><span class="n">count_dict</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">Counter</span><span class="p">({</span><span class="o">...</span><span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="sorting-binaries">
+<h3>Sorting Binaries<a class="headerlink" href="#sorting-binaries" title="Link to this heading"></a></h3>
+<p>You can sort binaries based on filenames of images representing their steps:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+                <span class="n">index</span><span class="o">=</span><span class="n">VHD</span><span class="o">.</span><span class="n">get_sorted_index</span><span class="p">(),</span>
+                <span class="n">frequency</span><span class="o">=</span><span class="n">parse_df</span><span class="o">.</span><span class="n">get_frequencies</span><span class="p">(),</span>
+                <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
+                <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<img alt="../../_images/diagram_multiple_sort.png" src="../../_images/diagram_multiple_sort.png" />
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="custom_step_and_flow.html" class="btn btn-neutral float-left" title="Custom POSYDON steps and flow chart" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../generating-datasets/generating-datasets.html" class="btn btn-neutral float-right" title="Crafting the Core Datasets for POSYDON" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.3
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.3/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
