@@ -16,4 +16,4 @@ except ImportError:
 
 # Minimal setup call - all metadata including version is in pyproject.toml
 # Version is automatically determined by setuptools-scm from git tags
-setup(cmdclass=cmdclass if cmdclass else None)
+setup(cmdclass=cmdclass)
