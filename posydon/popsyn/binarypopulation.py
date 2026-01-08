@@ -129,10 +129,17 @@ class BinaryPopulation:
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
-        self.metallicity = self.kwargs.get('metallicity', 1)
 
         # grab all metallicities in population or use single metallicity
-        self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
+        self.metallicities = self.kwargs.get('metallicities', [1.])
+
+        # The first index of the metallicities list will be chosen unless told otherwise.
+        # If metallicity is provided (as e.g., PopulationRunner does automatically), the
+        # provided metallicity is used instead.
+        self.metallicity_index = self.kwargs.get('metallicity_index', 0)
+        self.kwargs['metallicity'] = self.kwargs.get('metallicity',
+                                          self.metallicities[self.metallicity_index])
+        self.metallicity = self.kwargs['metallicity']
 
         # force the metallicity on to the simulation properties
         for key in STEP_NAMES_LOADING_GRIDS:
@@ -193,13 +200,18 @@ class BinaryPopulation:
         self.find_failed = self.manager.find_failed
 
     @classmethod
-    def from_ini(cls, path, verbose=False):
+    def from_ini(cls, path, metallicity_index=0, verbose=False):
         """Create a BinaryPopulation instance from an inifile.
 
         Parameters
         ----------
         path : str
             Path to an inifile to load in.
+
+        metallicity_index : int
+            Used to select a metallicity from the metallicities array
+            in the .ini file. This is mainly useful if you are creating
+            a BinaryPopulation class from scratch.
 
         verbose : bool
             Print useful info.
@@ -214,6 +226,8 @@ class BinaryPopulation:
         sim_prop_kwargs = simprop_kwargs_from_ini(path)
         pop_kwargs['population_properties'] = SimulationProperties(
             **sim_prop_kwargs)
+
+        pop_kwargs['metallicity_index'] = metallicity_index
 
         return cls(**pop_kwargs)
 
