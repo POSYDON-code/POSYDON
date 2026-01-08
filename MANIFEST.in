@@ -12,7 +12,7 @@ recursive-include posydon README.md
 recursive-include posydon *.ini
 
 # add config_file folder
-recursive-include posydon/config_files *
+graft config_files
 
 # add matplotlib style file
 include posydon/visualization/posydon.mplstyle
