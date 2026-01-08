@@ -111,7 +111,6 @@ include-package-data = true
 
 [tool.setuptools_scm]
 # setuptools-scm will automatically determine version from git tags
-# No additional configuration needed
 
 [tool.pytest.ini_options]
 addopts = "--verbose -r s"
