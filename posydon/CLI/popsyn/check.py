@@ -128,7 +128,7 @@ def get_binary_params(ini_file):
     '''
     # Read the population synthesis parameters
     synpop_params = binarypop_kwargs_from_ini(ini_file)
-    metallicities = synpop_params.get('metallicity', [])
+    metallicities = synpop_params.get('metallicities', [])
     num_metallicities = len(metallicities)
     number_of_binaries = synpop_params.get('number_of_binaries', 0)
     return num_metallicities, number_of_binaries, metallicities, synpop_params
