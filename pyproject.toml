@@ -87,15 +87,6 @@ test = [
   "pytest-cov >= 4.0.0",
 ]
 
-[project.scripts]
-compress-mesa = "posydon.binary_evol.CE.compress_main:main"
-get-posydon-data = "posydon.utils.data_download:main"
-posydon-popsyn = "posydon.popsyn.synthetic_population:main"
-posydon-run-grid = "posydon.grids.psygrid:run_grid"
-posydon-run-pipeline = "posydon.popsyn.pipeline:main"
-posydon-setup-grid = "posydon.grids.psygrid:setup_grid"
-posydon-setup-pipeline = "posydon.popsyn.pipeline:setup_pipeline"
-
 [project.urls]
 Homepage = "https://posydon.org"
 Documentation = "https://posydon.org/POSYDON"
@@ -108,6 +99,15 @@ include = ["posydon*"]
 
 [tool.setuptools]
 include-package-data = true
+script-files = [
+  "bin/compress-mesa",
+  "bin/get-posydon-data",
+  "bin/posydon-popsyn",
+  "bin/posydon-run-grid",
+  "bin/posydon-run-pipeline",
+  "bin/posydon-setup-grid",
+  "bin/posydon-setup-pipeline",
+]
 
 [tool.setuptools_scm]
 # setuptools-scm will automatically determine version from git tags
