@@ -14,7 +14,7 @@ authors = [
 maintainers = [
   {name = "POSYDON Collaboration", email = "posydon.team@gmail.com"},
 ]
-license = {text = "GPL-3.0-or-later"}
+license = "GPL-3.0-or-later"
 dynamic = ["version"]
 requires-python = ">=3.11, <3.12"
 readme = "README.md"
@@ -113,10 +113,22 @@ include-package-data = true
 # setuptools-scm will automatically determine version from git tags
 
 [tool.pytest.ini_options]
-addopts = "--verbose -r s"
+addopts = "--verbose -r s --cov --cov-branch --cov-report=term-missing --cov-fail-under=100"
+testpaths = ["posydon/unit_tests"]
 
 [tool.coverage.run]
-source = ["posydon"]
-omit = [
-  "posydon/_version.py",
+branch = true
+source = [
+  "posydon.config",
+  "posydon.utils",
+  "posydon.grids",
+  "posydon.popsyn.IMFs",
+  "posydon.popsyn.norm_pop",
+  "posydon.popsyn.distributions",
+  "posydon.popsyn.star_formation_history",
+  "posydon.CLI",
 ]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
