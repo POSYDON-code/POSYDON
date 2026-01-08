@@ -11,6 +11,9 @@ recursive-include posydon README.md
 # add default ini files
 recursive-include posydon *.ini
 
+# add config_file folder
+recursive-include posydon/config_files *
+
 # add matplotlib style file
 include posydon/visualization/posydon.mplstyle
 
