@@ -1,9 +1,12 @@
 {% set name = "posydon" %}
+<<<<<<< HEAD
 {% set version = "2.2.3" %}
+=======
+>>>>>>> 37edfaf5c (move to setuptools-scm for versioning)
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ version }}"
+  version: {{ GIT_DESCRIBE_TAG }}
 
 source:
   path: ..
@@ -17,7 +20,8 @@ requirements:
   host:
     - pip
     - python==3.11
-    - setuptools>=38.2.5
+    - setuptools>=76.0.0
+    - setuptools-scm>=8.0
 
   run:
     - python==3.11
