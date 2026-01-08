@@ -1,8 +1,4 @@
 {% set name = "posydon" %}
-<<<<<<< HEAD
-{% set version = "2.2.3" %}
-=======
->>>>>>> 37edfaf5c (move to setuptools-scm for versioning)
 
 package:
   name: "{{ name|lower }}"
