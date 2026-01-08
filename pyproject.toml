@@ -2,7 +2,7 @@
 # details: https://packaging.python.org/en/latest/guides/writing-pyproject-toml
 
 [build-system]
-requires = ["setuptools >= 76.0.0", "versioneer"]
+requires = ["setuptools >= 76.0.0", "setuptools-scm >= 8.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -108,6 +108,10 @@ include = ["posydon*"]
 
 [tool.setuptools]
 include-package-data = true
+
+[tool.setuptools_scm]
+# setuptools-scm will automatically determine version from git tags
+# No additional configuration needed
 
 [tool.pytest.ini_options]
 addopts = "--verbose -r s"
