@@ -3,7 +3,7 @@
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ data.version }}"
+  version: "{{ data.get('version') }}"
 
 source:
   path: ..
