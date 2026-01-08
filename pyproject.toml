@@ -14,7 +14,7 @@ authors = [
 maintainers = [
   {name = "POSYDON Collaboration", email = "posydon.team@gmail.com"},
 ]
-license = {text = "GPLv3+"}
+license = {text = "GPL-3.0-or-later"}
 dynamic = ["version"]
 requires-python = ">=3.11, <3.12"
 readme = "README.md"
@@ -38,7 +38,6 @@ classifiers = [
   "Operating System :: Unix",
   "Operating System :: MacOS",
   "Natural Language :: English",
-  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
 ]
 dependencies = [
   "numpy >= 1.24.2, < 2.0.0",
@@ -103,6 +102,12 @@ Documentation = "https://posydon.org/POSYDON"
 Repository = "https://github.com/POSYDON-code/POSYDON.git"
 Issues = "https://github.com/POSYDON-code/POSYDON/issues"
 Changelog = "https://github.com/POSYDON-code/POSYDON/releases"
+
+[tool.setuptools.packages.find]
+include = ["posydon*"]
+
+[tool.setuptools]
+include-package-data = true
 
 [tool.pytest.ini_options]
 addopts = "--verbose -r s"
