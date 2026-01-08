@@ -6,26 +6,17 @@ requires = ["setuptools >= 76.0.0", "versioneer"]
 build-backend = "setuptools.build_meta"
 
 [project]
-dynamic = [
-  "description",
-  "license",
-  "version",
-  "requires-python",
-  "classifiers",
-  "dependencies",
-  "optional-dependencies",
-]
 name = "posydon"
-#description = "POSYDON the Next Generation of Population Synthesis"
+description = "POSYDON the Next Generation of Population Synthesis"
 authors = [
   {name = "POSYDON Collaboration", email = "posydon.team@gmail.com"},
 ]
 maintainers = [
   {name = "POSYDON Collaboration", email = "posydon.team@gmail.com"},
 ]
-#license = 'GPLv3+'
-#version = "2.0.0.dev"
-#requires-python = ">=3.11, <3.12"
+license = {text = "GPLv3+"}
+dynamic = ["version"]
+requires-python = ">=3.11, <3.12"
 readme = "README.md"
 keywords = [
   "POSYDON",
@@ -34,60 +25,77 @@ keywords = [
   "Population Synthesis",
   "MESA",
 ]
-#classifiers = [
-#  'Development Status :: 4 - Beta',
-#  'Intended Audience :: Science/Research',
-#  'Intended Audience :: End Users/Desktop',
-#  'Topic :: Scientific/Engineering',
-#  'Topic :: Scientific/Engineering :: Astronomy',
-#  'Topic :: Scientific/Engineering :: Physics',
-#  'Programming Language :: Python',
-#  'Programming Language :: Python :: 3.11',
-#  'Operating System :: POSIX',
-#  'Operating System :: Unix',
-#  'Operating System :: MacOS',
-#  'Natural Language :: English',
-#  'License :: OSI Approved :: GNU General Public License v3 (GPLv3+)',
-#]
-#dependencies = [
-#  'numpy < 2.0.0, >= 1.24.2',
-#  'scipy <= 1.14.1, >= 1.10.1',
-#  'iminuit <= 2.30.1, >= 2.21.3',
-#  'configparser <= 7.1.0, >= 5.3.0',
-#  'astropy <= 6.1.6, >= 5.2.2',
-#  'pandas <= 2.2.3, >= 2.0.0',
-#  'scikit-learn == 1.2.2',
-#  'matplotlib <= 3.9.2, >= 3.9.0',
-#  'matplotlib-label-lines <= 0.7.0, >= 0.5.2',
-#  'h5py <= 3.12.1, >= 3.8.0',
-#  'psutil <= 6.1.0, >= 5.9.4',
-#  'tqdm <= 4.67.0, >= 4.65.0',
-#  'tables <= 3.10.1, >= 3.8.0',
-#  'progressbar2 <= 4.5.0, >= 4.2.0',
-#  'hurry.filesize <= 0.9, >= 0.9',
-#  'python-dotenv <= 1.0.1, >= 1.0.0',
-#]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Intended Audience :: End Users/Desktop",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Scientific/Engineering :: Astronomy",
+  "Topic :: Scientific/Engineering :: Physics",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: POSIX",
+  "Operating System :: Unix",
+  "Operating System :: MacOS",
+  "Natural Language :: English",
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+]
+dependencies = [
+  "numpy >= 1.24.2, < 2.0.0",
+  "scipy >= 1.10.1, <= 1.14.1",
+  "iminuit >= 2.21.3, <= 2.30.1",
+  "configparser >= 5.3.0, <= 7.1.0",
+  "astropy >= 5.2.2, <= 6.1.6",
+  "pandas >= 2.0.0, <= 2.2.3",
+  "scikit-learn == 1.2.2",
+  "matplotlib >= 3.9.0, <= 3.9.2",
+  "matplotlib-label-lines >= 0.5.2, <= 0.7.0",
+  "h5py >= 3.8.0, <= 3.12.1",
+  "psutil >= 5.9.4, <= 6.1.0",
+  "tqdm >= 4.65.0, <= 4.67.0",
+  "tables >= 3.8.0, <= 3.10.1",
+  "progressbar2 >= 4.2.0, <= 4.5.0",
+  "hurry.filesize >= 0.9, <= 0.9",
+  "python-dotenv >= 1.0.0, <= 1.0.1",
+]
 
-#[project.optional-dependencies]
-#doc = [
-#  'ipython',
-#  'sphinx >= 8.2.2',
-#  'numpydoc',
-#  'sphinx_rtd_theme',
-#  'sphinxcontrib_programoutput',
-#  'PSphinxTheme',
-#  'nbsphinx',
-#  'pandoc'
-#]
-#vis = [
-#  'PyQt5 <= 5.15.11, >= 5.15.9'
-#]
-#ml = [
-#  'tensorflow >= 2.13.0'
-#]
-#hpc = [
-#  'mpi4py >= 3.0.3'
-#]
+[project.optional-dependencies]
+doc = [
+  "ipython",
+  "sphinx >= 8.2.2",
+  "numpydoc",
+  "sphinx_rtd_theme",
+  "sphinxcontrib_programoutput",
+  "PSphinxTheme",
+  "nbsphinx",
+  "pandoc",
+]
+vis = [
+  "PyQt5 >= 5.15.9, <= 5.15.11",
+]
+ml = [
+  "tensorflow >= 2.13.0",
+]
+hpc = [
+  "mpi4py >= 3.0.3",
+]
+dev = [
+  "pre-commit >= 3.7.0",
+  "isort >= 5.13.2",
+]
+test = [
+  "pytest >= 7.3.1",
+  "pytest-cov >= 4.0.0",
+]
+
+[project.scripts]
+compress-mesa = "posydon.binary_evol.CE.compress_main:main"
+get-posydon-data = "posydon.utils.data_download:main"
+posydon-popsyn = "posydon.popsyn.synthetic_population:main"
+posydon-run-grid = "posydon.grids.psygrid:run_grid"
+posydon-run-pipeline = "posydon.popsyn.pipeline:main"
+posydon-setup-grid = "posydon.grids.psygrid:setup_grid"
+posydon-setup-pipeline = "posydon.popsyn.pipeline:setup_pipeline"
 
 [project.urls]
 Homepage = "https://posydon.org"
@@ -95,3 +103,12 @@ Documentation = "https://posydon.org/POSYDON"
 Repository = "https://github.com/POSYDON-code/POSYDON.git"
 Issues = "https://github.com/POSYDON-code/POSYDON/issues"
 Changelog = "https://github.com/POSYDON-code/POSYDON/releases"
+
+[tool.pytest.ini_options]
+addopts = "--verbose -r s"
+
+[tool.coverage.run]
+source = ["posydon"]
+omit = [
+  "posydon/_version.py",
+]
