@@ -52,6 +52,9 @@ elif [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
     source "$HOME/anaconda3/etc/profile.d/conda.sh"
 elif [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
     source "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+elif command -v conda >/dev/null 2>&1; then
+    CONDA_BASE=$(conda info --base)
+    source "${CONDA_BASE}/etc/profile.d/conda.sh"
 else
     echo -e "\033[31mError: Could not find conda installation. Please check your conda setup.\033[0m"
     exit 1
