@@ -11,6 +11,7 @@ import os
 import signal
 import sys
 import warnings
+
 import h5py
 
 from posydon.binary_evol.binarystar import BinaryStar, SingleStar
