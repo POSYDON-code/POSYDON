@@ -15,8 +15,10 @@ from copy import copy
 import numpy as np
 import pandas as pd
 from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
-from posydon.spectral_synthesis.spectral_grids import GRID_KEYS
+from posydon.spectral_synthesis.spectral_grids import GRID_KEYS 
 import posydon.utils.constants as constants
+from dataclasses import dataclass
+from functools import cached_property
 
 state_to_grid = {
     "WNE_star": "WNE_grid",
@@ -26,19 +28,19 @@ state_to_grid = {
 }
 SCALE_CONSTANT = 4*np.pi/constants.Lsun
 
-def check_boundaries(grids,grid_name,**kwargs):
+def check_boundaries(grids,grid_name,x_star):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
 
     It takes an input based on the grid check need to be made and returns a failed_grid message 
     if parameters are outside the boundaries. 
     """
-    x = copy(kwargs)
+   
     #First we check the global limits
     if grid_name == "global":
-        if x['Teff'] < grids.T_min or x['Teff'] > grids.T_max:
-            return 'failed_grid',x
-        elif x['log(g)'] < grids.logg_min or x['log(g)'] > grids.logg_max:
-            return 'failed_grid',x
+        if x_star.Teff < grids.T_min or x_star.Teff > grids.T_max:
+            return 'failed_grid',x_star
+        elif x_star.logg < grids.logg_min or x_star.logg > grids.logg_max:
+            return 'failed_grid',x_star
         else:
             return True
     grid = grids.spectral_grids[grid_name]
@@ -49,10 +51,10 @@ def check_boundaries(grids,grid_name,**kwargs):
         if axis_label == 'log(g)':
             tol = 0.2
             # Post-AGB stars
-            if x['log(g)'] > 6.5 :
+            if x_star.logg > 6.5 :
                 return 'failed_grid',x
-            elif (x['log(g)'] > 6) & (x['log_L'] < 4):
-                return 'failed_grid',x
+            elif (x_star.logg > 6) & (x_star.logg < 4):
+                return 'failed_grid',x_star
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
@@ -102,7 +104,7 @@ def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
 
 
 
-def point_the_grid(grids,x,label,**kwargs):
+def point_the_grid(grids,x_star,label,**kwargs):
     """Assigning the write label that would point to the spectra grid needed to used
 
     Args:
@@ -125,7 +127,7 @@ def point_the_grid(grids,x,label,**kwargs):
     """
     ostar_temp_cut_off = kwargs.get('ostar_temp_cut_off',28000)
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
-    state = copy(x['state'])
+    state = copy(x_star.state)
     #First check for stripped stars because their temp can be a lot
     # higher than the Teff of the Ostar grid limit
     if "stripped" in state:
@@ -218,35 +220,17 @@ def generate_spectrum(grids,star,i,**kwargs):
         state: string
         label: string 
     """
-    #First we check if the star is a CO. (for future we can add WD spectra)\
+
+    #First we check if the star is a CO. (for future we can add WD spectra)
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
         return None,star[f'{i}_state'],None
-    if star[f'{i}_surface_h1'] <= 0.6:
-        #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)    
     
-    Fe_H = np.log10(star['Z/Zo'])
-    Z_Zo = star['Z/Zo']
-    #Z= star['Z/Zo']*Zo
-    Teff = copy(star[f'{i}_Teff'])
-    logg = copy(star[f'{i}_log_g'])
-    state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
-    log_L = copy(star[f'{i}_log_L'])
-    L = 10**log_L #L_sun
-    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
-    x = {'Teff':Teff ,
-         'log(g)': logg,
-         '[Fe/H]': Fe_H,
-         'Z/Zo':Z_Zo,
-         'state':state,
-         'surface_h1' : surface_h1,
-         'log_L' : log_L,
-         '[alpha/Fe]':0.0}
-    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
-        x['R_t'] = star[f'{i}_Rt']
+    x_star = StellarParams(star,i)
+
     label = None
+
     label,x = point_the_grid(grids,x,label,**kwargs)
+
     count = 1
     if label == 'failed_grid':
         return None,state,label
@@ -261,7 +245,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                 if label == "stripped_grid":
                     Flux = F_l*SCALE_CONSTANT
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
-                    Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
+                    Flux = F_l*SCALE_CONSTANT *(10**x_star.log_L/10**5.3)
                     #Replace the negative values for WR
                     #Flux.value[Flux.value < 0] = 1e-99
                 else:
@@ -281,14 +265,14 @@ def generate_spectrum(grids,star,i,**kwargs):
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
-
+"""
 def regenerate_spectrum(grids,star,i,**kwargs):
     label = star[f'{i}_grid_status']
     if  pd.isna(label):
         return None,star[f'{i}_state'],label
     if label == "failed_grid":
         return None,star[f'{i}_state'],label
-    Fe_H = np.log(star['Z/Zo'])
+    Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
@@ -297,7 +281,7 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm 
     L = 10**copy(star[f'{i}_log_L'])
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
-  
+    
     x = {'Teff':Teff ,
          'log(g)': logg,
          '[Fe/H]': Fe_H,
@@ -319,106 +303,8 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     else:
         Flux = grids.grid_flux(label,**x)*R**2*SCALE_CONSTANT
     return Flux.value,star['state'],label
+"""
 
-def rename_star_state(star,i):
-    xH_surf = copy(star[f'{i}_surface_h1'])
-    xHe_surf = copy(star[f'{i}_surface_he4'])
-    tau = calculate_WR_wind_tau(star,i)
-    if 'H_burning' in star[f'{i}_state']:
-        H_burning = True 
-    else: 
-        H_burning = False
-    if xH_surf > 0.1: 
-        if H_burning: 
-            if tau > 0.1:
-                star[f'{i}_state'] = 'WNL_star'
-                if star[f'{i}_surface_h1'] < 0.2:
-                    star[f'{i}_surface_h1'] = 0.2
-                elif star[f'{i}_surface_h1'] > 0.4: 
-                    star[f'{i}_surface_h1'] = 0.4
-            else: 
-                if xH_surf < 0.4 * (1 - 0.1): 
-                    star[f'{i}_state'] = 'stripped_He_star'
-        else:
-            star[f'{i}_state'] = 'WNL_star' 
-            if star[f'{i}_surface_h1'] < 0.2:
-                star[f'{i}_surface_h1'] = 0.2
-            elif star[f'{i}_surface_h1'] > 0.4: 
-                star[f'{i}_surface_h1'] = 0.4
-            if tau <= 0.5:
-                star[f'{i}_state'] = 'stripped_He_star'
-            else:
-                star[f'{i}_state'] = 'WNL_star' 
-                if star[f'{i}_surface_h1'] < 0.2:
-                    star[f'{i}_surface_h1'] = 0.2
-                elif star[f'{i}_surface_h1'] > 0.4: 
-                    star[f'{i}_surface_h1'] = 0.4
-
-    elif (xH_surf <= 0.1) and (xHe_surf > 0.7):
-        if tau <= 1.0:
-            star[f'{i}_state'] = 'stripped_He_star'
-        else: 
-            star[f'{i}_state'] = 'WNE_star'
-    elif (xH_surf <= 0.1) and (xHe_surf < 0.7):
-        if tau <= 1.0:
-            star[f'{i}_state'] = 'stripped_He_star'
-        else: 
-            star[f'{i}_state'] = 'WC_star'
-    else: 
-        raise ValueError("This else shouldn't have been reached")
-    if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
-        star[f'{i}_Rt'] = calculated_Rt(star,i)
-    
-    """
-    if lg_M_dot < -6:
-        star[f'{i}_state'] = 'stripped_He_star'
-    else:
-        star[f'{i}_Rt'] = calculated_Rt(star,i)
-        if xH_surf < 0.1:
-            if xHe_surf < 0.7 :
-                star[f'{i}_state'] = 'WC_star'
-            else:
-                star[f'{i}_state'] = 'WNE_star'
-        else:
-            star[f'{i}_surface_h1'] = max(xH_surf,0.2)
-            star[f'{i}_state'] = 'WNL_star' 
-    """    
-def calculated_Rt(star,i):
-    #R_t is in R_sun units
-    M_dot = 10**copy(star[f'{i}_lg_mdot']) #M_sun/yr
-    v_terminal = 1000 #km/s
-    D_max = 4 
-    R  = 10**copy(star[f'{i}_log_R'])*constants.Rsun
-    M = copy(star[f'{i}_mass'])*constants.Msun #g
-    T = copy(star[f'{i}_Teff'])#K
-    xH_surf = copy(star[f'{i}_surface_h1'])
-    k_e = 0.2*(1 + xH_surf) #cm^2/g 
-    logg = copy(star[f'{i}_log_g'])
-    Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
-    
-    v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
-    if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
-        v_terminal = 1.3 * v_esc
-    else: 
-        v_terminal = 1.3 * v_esc
-    Rt = (R/constants.Rsun)*((v_terminal/(2500*1e5))/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
-    return Rt
- 
-def calculate_WR_wind_tau(star,i):
-
-    xH_surf = copy(star[f'{i}_surface_h1'])
-    v_0 = 20 *constants.km2cm # cm *s^-1 
-    T = copy(star[f'{i}_Teff'])#K
-    lg_M_dot = -10**copy(star[f'{i}_lg_mdot'])*constants.Msun/constants.secyer  #kg/s
-    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
-    M = copy(star[f'{i}_mass'])*constants.Msun #kg
-    k_e = 0.2*(1 + xH_surf) #cm^2/g 
-    logg = copy(star[f'{i}_log_g'])
-    Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
-    v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
-    v_terminal = 1.3 * v_esc
-    tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
-    return tau
 
 def find_nearest_neighbor_stripped(**x):
     #We want a function that will find the nearest neighbor in case of a star falling
@@ -536,3 +422,123 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+
+class StellarParams:
+    __slots__ = (
+        'Teff', 'logg', 'R', 'log_L',
+        'surface_h1', 'Z_Zo', 'Fe_H', 'state','spectral_type','R_t'
+    )
+
+    def __init__(self, star, i):
+        """
+        star : dict-like (HDF row)
+        i    : star index (1 or 2)
+        """
+
+        # Fix mislabeling
+ 
+
+        self.Teff = float(star[f'{i}_Teff'])
+        self.logg = float(star[f'{i}_log_g'])
+
+        self.log_L = float(star[f'{i}_log_L'])
+
+        self.R = 10.0 ** float(star[f'{i}_log_R']1)  # Rsun
+        self.surface_h1 = max(float(star[f'{i}_surface_h1']), 0.01)
+
+        self.Z_Zo = float(star['Z/Zo'])
+        self.Fe_H = np.log10(self.Z_Zo)
+        
+        #Rename the state of H-poor stars
+        if star[f'{i}_surface_h1'] <= 0.6:
+            rename_star_state(star, i)
+
+        self.state = star[f'{i}_state']
+
+        if self.state in ['WR_star','WNE_star','WNL_star','WC_star']:
+            self.R_t = calculate_Rt(star,i)
+        else: 
+            self.R_t = None
+
+        self.spectral_type = None
+
+
+    
+
+def calculated_Rt(star,i):
+    #R_t is in R_sun units
+    M_dot = 10**copy(star[f'{i}_lg_mdot']) #M_sun/yr
+    v_terminal = 1000 #km/s
+    D_max = 4 
+    R  = 10**copy(star[f'{i}_log_R'])
+    Rt = R*((v_terminal/2500)/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
+    return Rt
+
+def calculate_WR_wind_tau(star,i):
+
+    xH_surf = copy(star[f'{i}_surface_h1'])
+    v_0 = 20 *constants.km2cm # cm *s^-1 
+    T = copy(star[f'{i}_Teff'])#K
+    lg_M_dot = -10**copy(star[f'{i}_lg_mdot'])*constants.Msun/constants.secyer  #kg/s
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
+    M = copy(star[f'{i}_mass'])*constants.Msun #kg
+    k_e = 0.2*(1 + xH_surf) #cm^2/g 
+    logg = copy(star[f'{i}_log_g'])
+    Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
+    v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
+    
+    v_terminal = 1.3 * v_esc
+    tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
+    return tau
+
+
+def rename_star_state(star,i):
+    """Rename the star states of WR stars and 
+    stripped He-stars that look like a H-rich star in the POSYDON_data
+
+    Args:
+        star: object
+
+    """
+    xH_surf = copy(star[f'{i}_surface_h1'])
+    xHe_surf = copy(star[f'{i}_surface_he4'])
+    tau = calculate_WR_wind_tau(star,i)
+    if 'H_burning' in star[f'{i}_state']:
+        H_burning = True 
+    else: 
+        H_burning = False
+    if xH_surf > 0.1: 
+        if H_burning: 
+            if tau > 0.1:
+                star[f'{i}_state'] = 'WNL_star'
+                if star[f'{i}_surface_h1'] < 0.2:
+                    star[f'{i}_surface_h1'] = 0.2
+                elif star[f'{i}_surface_h1'] > 0.4: 
+                    star[f'{i}_surface_h1'] = 0.4
+            else: 
+                if xH_surf < 0.4 * (1 - 0.1): 
+                    star[f'{i}_state'] = 'stripped_He_star'
+        else:
+            if tau <= 0.5:
+                star[f'{i}_state'] = 'stripped_He_star'
+            else:
+                star[f'{i}_state'] = 'WNL_star' 
+                if star[f'{i}_surface_h1'] < 0.2:
+                    star[f'{i}_surface_h1'] = 0.2
+                elif star[f'{i}_surface_h1'] > 0.4: 
+                    star[f'{i}_surface_h1'] = 0.4
+
+    elif (xH_surf <= 0.1) and (xHe_surf > 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WNE_star'
+    elif (xH_surf <= 0.1) and (xHe_surf < 0.7):
+        if tau <= 1.0:
+            star[f'{i}_state'] = 'stripped_He_star'
+        else: 
+            star[f'{i}_state'] = 'WC_star'
+    else: 
+        raise ValueError("This else shouldn't have been reached")
+    if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
+        star[f'{i}_Rt'] = calculated_Rt(star,i)

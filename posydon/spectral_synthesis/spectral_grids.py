@@ -10,13 +10,12 @@ import os
 import copy
 from functools import reduce
 import numpy as np
-import astropy.units as unt
 import pymsg
 from posydon.spectral_synthesis.default_options import default_grid_kwargs
 from posydon.spectral_synthesis.spectral_tools import grid_global_limits
 from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
 
-kpc = 3.08e19*unt.m
+kpc = 3.08e21 # cm
 MSG_DIR = os.environ['MSG_DIR']
 GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
 PASS_DIR = os.path.join(MSG_DIR, 'data', 'passbands')
