@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script usage: ./evolve_binaries.sh <branch>
+# Script usage: export PATH_TO_POSYODN_DATA, then run ./evolve_binaries.sh <branch>
 # This script clones the POSYDON repo to the specified branch (defaults to 'main'),
 # copies evolve_binaries.py, runs it, and saves output to evolve_binaries.out
 
