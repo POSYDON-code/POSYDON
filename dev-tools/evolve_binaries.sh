@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Script usage: ./evolve_binaries.sh <branch>
+# Script usage: export PATH_TO_POSYODN_DATA, then run ./evolve_binaries.sh <branch>
 # This script clones the POSYDON repo to the specified branch (defaults to 'main'),
 # copies evolve_binaries.py, runs it, and saves output to evolve_binaries.out
 
@@ -28,6 +28,15 @@ mkdir -p "$WORK_DIR"
 FULL_PATH="$(realpath "$WORK_DIR")"
 CLONE_DIR="$FULL_PATH/POSYDON"
 
+OUTPUT_DIR="$FULL_PATH/outputs"
+LOG_DIR="$FULL_PATH/logs"
+
+SAFE_BRANCH="${BRANCH//\//_}"
+OUTPUT_FILE="$OUTPUT_DIR/candidate_${SAFE_BRANCH}.h5"
+LOG_FILE="$LOG_DIR/evolve_${SAFE_BRANCH}.log"
+
+mkdir -p "$OUTPUT_DIR" "$LOG_DIR"
+
 echo "📋 Copying script_data folder"
 # copy the script_data folder
 cp -r "./script_data" "$WORK_DIR"
@@ -43,6 +52,9 @@ elif [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
     source "$HOME/anaconda3/etc/profile.d/conda.sh"
 elif [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
     source "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
+elif command -v conda >/dev/null 2>&1; then
+    CONDA_BASE=$(conda info --base)
+    source "${CONDA_BASE}/etc/profile.d/conda.sh"
 else
     echo -e "\033[31mError: Could not find conda installation. Please check your conda setup.\033[0m"
     exit 1
@@ -79,6 +91,16 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
 echo "🚀 Running evolve_binaries.py"
 # # Run the Python script and capture output (stdout and stderr)
-python script_data/1Zsun_binaries_suite.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
+python script_data/1Zsun_binaries_suite.py --output "$OUTPUT_FILE" 2>&1 | tee "$LOG_FILE"
 
-echo -e "✅ Script completed. Output saved to \n$FULL_PATH/evolve_binaries_$BRANCH.out"
+if [ ! -f "$OUTPUT_FILE" ]; then
+    echo "ERROR: Results file was not created: $OUTPUT_FILE"
+    exit 2
+fi
+
+if [ $? -ne 0 ]; then
+    echo "ERROR: Python script exited with an error. Check $LOG_FILE for details."
+    exit 3
+fi
+
+echo -e "✅ Script completed. Output saved to \n$OUTPUT_FILE"
