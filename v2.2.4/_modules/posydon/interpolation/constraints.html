@@ -1,0 +1,729 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.interpolation.constraints &mdash; posydon 2.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4e6cfea6"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.interpolation.constraints</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.interpolation.constraints</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module to enforce constraints on interpolated quantities.</span>
+
+<span class="sd">Constraints are split up into 3 types:</span>
+
+<span class="sd"> 1. Astrophysical laws that must hold</span>
+<span class="sd"> 2. Inequalities between values interpolated upon which must hold</span>
+<span class="sd"> 3. Sums of values interpolated upon which must satisfy some inequality</span>
+
+<span class="sd">For each type of constraint, different parameter dictionaries are required.</span>
+
+<span class="sd">For type 1 constraints a dictionary with the following fields is required:</span>
+
+<span class="sd">    type - the type of constraint</span>
+<span class="sd">    name - the name of the constraint</span>
+<span class="sd">    dependent - the field for which the constraint must be calculated</span>
+<span class="sd">    independent - the field names which are used to compute the dependent</span>
+<span class="sd">    function - a function that computes the dependent from the independent</span>
+
+<span class="sd">For type 2 constraints a dictionary with the following fields is required:</span>
+
+<span class="sd">    type - the type of constraint</span>
+<span class="sd">    name - the name of the constraint</span>
+<span class="sd">    fields - a multi dimensional array containing the field names in the</span>
+<span class="sd">             desired descending order (if usage with default enforcer is</span>
+<span class="sd">             wanted)</span>
+<span class="sd">    log - a boolean denoting whether or not the largest (first) field in</span>
+<span class="sd">          each constraint list is in log scale (by default false)</span>
+<span class="sd">    function - a function that enforces the desired constraint (by default</span>
+<span class="sd">               inequality is corrected)</span>
+
+<span class="sd">For type 3 constraints a dictionary with the following fields is required:</span>
+
+<span class="sd">    type - the type of constraint</span>
+<span class="sd">    name - the name of the constraint</span>
+<span class="sd">    sum - an array of fields whose sum needs to satisfy some inequality</span>
+<span class="sd">    constraint - either a real number or fieldname that the sum needs to be</span>
+<span class="sd">                 constrained by</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Philipp Moura Srivastava &lt;philipp.msrivastava@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">orbital_separation_from_period</span><span class="p">,</span>
+    <span class="n">stefan_boltzmann_law</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># toggle this flag to enable/disable constraints (used for debugging)</span>
+<span class="n">INTERPOLATION_CONSTRAINTS_ON</span> <span class="o">=</span> <span class="kc">True</span>
+
+<span class="c1"># which quantities are excluded from the interpolator</span>
+<span class="c1"># QUANTITIES_EXCLUDED_FROM_INTERP = [&quot;S1_log_Teff&quot;, &quot;S2_log_Teff&quot;]</span>
+<span class="n">QUANTITIES_EXCLUDED_FROM_INTERP</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="n">EPS</span> <span class="o">=</span> <span class="mf">1.0e-9</span>   <span class="c1"># to avoid numerical precision errors</span>
+
+
+<div class="viewcode-block" id="boltzman_constraint_func">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.boltzman_constraint_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">boltzman_constraint_func</span><span class="p">(</span><span class="n">log_L</span><span class="p">,</span> <span class="n">log_R</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Boltzmann law constraint.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">stefan_boltzmann_law</span><span class="p">(</span><span class="mf">10.0</span> <span class="o">**</span> <span class="n">log_L</span><span class="p">,</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="n">log_R</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="kepler_3rd_law_func">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.kepler_3rd_law_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">kepler_3rd_law_func</span><span class="p">(</span><span class="n">period_days</span><span class="p">,</span> <span class="n">mass1</span><span class="p">,</span> <span class="n">mass2</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Kepler&#39;s 3rd law constraint.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="n">period_days</span><span class="p">,</span> <span class="n">mass1</span><span class="p">,</span> <span class="n">mass2</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="Lnuc_func">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.Lnuc_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">Lnuc_func</span><span class="p">(</span><span class="n">log_LH</span><span class="p">,</span> <span class="n">log_LHe</span><span class="p">,</span> <span class="n">log_LZ</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Total nuclear luminosity should be the sum of H, He and the rest.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">10.0</span><span class="o">**</span><span class="n">log_LH</span> <span class="o">+</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">log_LHe</span> <span class="o">+</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">log_LZ</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lg_system_mdot_func">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.lg_system_mdot_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lg_system_mdot_func</span><span class="p">(</span><span class="n">lg_system_mdot</span><span class="p">,</span> <span class="n">lg_mtransfer_rate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;System mdot must be less than the total mass-transfer rate.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">lg_system_mdot</span><span class="p">,</span> <span class="n">lg_mtransfer_rate</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="xfer_fraction_func">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.xfer_fraction_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xfer_fraction_func</span><span class="p">(</span><span class="n">lg_system_mdot_2</span><span class="p">,</span> <span class="n">lg_mtransfer_rate</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Infer the xfer_fraction from the system and mass-transfer rate.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">lg_system_mdot_2</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">98.0</span> <span class="ow">or</span> <span class="n">lg_mtransfer_rate</span> <span class="o">&lt;</span> <span class="o">-</span><span class="mf">98.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">1.0</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lg_system_mdot_2</span> <span class="o">+</span> <span class="n">lg_mtransfer_rate</span><span class="p">):</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">lg_system_mdot_2</span> <span class="o">&lt;=</span> <span class="n">lg_mtransfer_rate</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="mf">10.0</span> <span class="o">**</span> <span class="p">(</span><span class="n">lg_system_mdot_2</span> <span class="o">-</span> <span class="n">lg_mtransfer_rate</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+
+
+<div class="viewcode-block" id="correct_inequality">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.correct_inequality">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_inequality</span><span class="p">(</span><span class="n">fv_dict</span><span class="p">,</span> <span class="n">key_sets</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span> <span class="n">log</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply an &quot;unequality constraint&quot; (type 2) if needed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fv_dict : dict</span>
+<span class="sd">        The final values dictionary.</span>
+<span class="sd">    key_sets : list of lists</span>
+<span class="sd">        List of collections of keys connected with &gt;= inequalities (descending</span>
+<span class="sd">        order). E.g., if one constraint is `a &gt;= b &gt;= c`, then key_sets is</span>
+<span class="sd">        [[a, b, c], ...].</span>
+<span class="sd">    star : int</span>
+<span class="sd">        For which star (1 or 2), the constraint will be applied. E.g.,</span>
+<span class="sd">        `star_{}_mass` will be either `star_1_mass` or `star_2_mass`.</span>
+<span class="sd">    log : bool</span>
+<span class="sd">        If True, then the largest parameter (first key), is given in log10</span>
+<span class="sd">        scale, while all the rest are in linear scale.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The sanitized version of `fv_dict`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">key_set</span> <span class="ow">in</span> <span class="n">key_sets</span><span class="p">:</span>
+
+        <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_set</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">log</span><span class="p">:</span>         <span class="c1"># taking care of logged variables</span>
+            <span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">vals</span> <span class="o">!=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">indx</span><span class="p">,</span> <span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="n">key_set</span><span class="p">)):</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">indx</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">vals</span><span class="p">[</span><span class="n">indx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">val</span><span class="p">):</span>
+                    <span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">vals</span><span class="p">[</span><span class="n">indx</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
+                    <span class="n">vals</span><span class="p">[</span><span class="n">indx</span><span class="p">]</span> <span class="o">=</span> <span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fv_dict</span></div>
+
+
+
+<div class="viewcode-block" id="correct_sum">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.correct_sum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_sum</span><span class="p">(</span><span class="n">fv_dict</span><span class="p">,</span> <span class="n">sum_keys</span><span class="p">,</span> <span class="n">constraint</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Normalize quantities should their sum does not have the expected value.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fv_dict : dict</span>
+<span class="sd">        The final values dictionary.</span>
+<span class="sd">    sum_keys : array-like</span>
+<span class="sd">        Which quantities should add up to a specific value.</span>
+<span class="sd">    constraint : float or str</span>
+<span class="sd">        If float, then the sum of the quantities should be eqaul to that.</span>
+<span class="sd">        If str, the fieldname of the quanity that the sum is constrained by.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The sanitized version of the final values dictionary.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">keys_sum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sum_keys</span><span class="p">])</span>
+
+    <span class="n">target</span> <span class="o">=</span> <span class="n">fv_dict</span><span class="p">[</span><span class="n">constraint</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">constraint</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="k">else</span> <span class="n">constraint</span>
+
+    <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">keys_sum</span> <span class="o">-</span> <span class="n">target</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">EPS</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">sum_keys</span><span class="p">:</span>
+            <span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">constraint</span> <span class="o">*</span> <span class="p">(</span><span class="n">fv_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">/</span> <span class="n">keys_sum</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fv_dict</span></div>
+
+
+
+<div class="viewcode-block" id="get_thickness_n_radius">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.get_thickness_n_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_thickness_n_radius</span><span class="p">(</span><span class="n">fv_dict</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">keys</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Corrects thickness and radius constraint violation of one is present.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fv_dict : dict</span>
+<span class="sd">        The final values dictionary</span>
+<span class="sd">    constraint : dict</span>
+<span class="sd">        The dictionary specifying the constraint to be applied</span>
+<span class="sd">    keys : list</span>
+<span class="sd">        A list of formatted key names</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The sanitized version of the final values dictionary.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">r</span><span class="o">+</span><span class="n">t</span><span class="o">+</span><span class="n">R</span><span class="p">):</span>      <span class="c1"># if any of those is nan</span>
+        <span class="k">return</span> <span class="n">fv_dict</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">t</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">t</span> <span class="ow">and</span> <span class="n">r</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">t</span> <span class="o">&lt;=</span> <span class="n">R</span><span class="p">)):</span>
+
+        <span class="n">centroid</span> <span class="o">=</span> <span class="p">(</span><span class="n">R</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span> <span class="n">R</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>   <span class="c1"># centroid of convex hull</span>
+
+        <span class="k">if</span><span class="p">(</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">r</span><span class="p">):</span>
+            <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">R</span>
+            <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">R</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">slope</span> <span class="o">=</span> <span class="p">((</span><span class="n">r</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="n">coeff_mat_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">slope</span><span class="p">],</span>
+                                      <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">]])</span>
+
+            <span class="n">dep_vec_one</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">0</span><span class="p">])</span>
+
+            <span class="n">coeff_mat_two</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">slope</span><span class="p">],</span>
+                                      <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]])</span>
+
+            <span class="n">dep_vec_two</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">centroid</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">slope</span> <span class="o">*</span> <span class="n">centroid</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">R</span><span class="p">])</span>
+
+            <span class="n">inters</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">coeff_mat_one</span><span class="p">,</span> <span class="n">dep_vec_one</span><span class="p">),</span>
+                      <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">coeff_mat_two</span><span class="p">,</span> <span class="n">dep_vec_two</span><span class="p">)]</span>
+
+            <span class="n">valid_inters</span> <span class="o">=</span> <span class="p">[</span><span class="n">inter</span> <span class="k">for</span> <span class="n">inter</span> <span class="ow">in</span> <span class="n">inters</span>
+                            <span class="k">if</span> <span class="n">inter</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span>
+                            <span class="ow">and</span> <span class="n">inter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">inter</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">EPS</span>
+                            <span class="ow">and</span> <span class="n">inter</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">inter</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">R</span> <span class="o">+</span> <span class="n">EPS</span><span class="p">]</span>
+
+            <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">valid_inters</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+            <span class="n">min_indx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">vi</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">vi</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                                  <span class="k">for</span> <span class="n">vi</span> <span class="ow">in</span> <span class="n">valid_inters</span><span class="p">])</span>
+
+            <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">valid_inters</span><span class="p">[</span><span class="n">min_indx</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">fv_dict</span><span class="p">[</span><span class="n">keys</span><span class="p">[</span><span class="mi">2</span><span class="p">]]</span> <span class="o">=</span> <span class="n">valid_inters</span><span class="p">[</span><span class="n">min_indx</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">fv_dict</span></div>
+
+
+
+<span class="n">CONSTRAINTS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Boltzmann&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dependent&quot;</span><span class="p">:</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_Teff&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_L&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">boltzman_constraint_func</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Kepler&#39;s 3rd law&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dependent&quot;</span><span class="p">:</span> <span class="s2">&quot;binary_separation&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;period_days&quot;</span><span class="p">,</span> <span class="s2">&quot;star_1_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;star_2_mass&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">kepler_3rd_law_func</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Total nuclear luminosity&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dependent&quot;</span><span class="p">:</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_Lnuc&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_LH&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_LHe&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_LZ&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">Lnuc_func</span>
+    <span class="p">},</span>
+    <span class="p">{</span>   <span class="c1"># IMPORTANT: this should precede the `xfer_fraction` constraint</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;lg_system_mdot &lt;= lg_mtransfer_rate&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dependent&quot;</span><span class="p">:</span> <span class="s2">&quot;lg_system_mdot_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lg_system_mdot_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">lg_system_mdot_func</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;xfer_fraction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;dependent&quot;</span><span class="p">:</span> <span class="s2">&quot;xfer_fraction&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;independent&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;lg_system_mdot_2&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">xfer_fraction_func</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Element Mass Inequalities Constraint (2.2)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_he_core_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_co_core_mass&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Element Radius Inequalities Constraint (2.3)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_he_core_radius&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_co_core_radius&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.4&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_m_core_CE_1cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_m_core_CE_10cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_m_core_CE_30cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_m_core_CE_pure_He_star_10cent&quot;</span><span class="p">]</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.5&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_r_core_CE_1cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_r_core_CE_10cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_r_core_CE_30cent&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_r_core_CE_pure_He_star_10cent&quot;</span><span class="p">]</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">True</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.6&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_mass_conv_reg_fortides&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.7&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_log_R&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_thickness_conv_reg_fortides&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_radius_conv_reg_fortides&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="s2">&quot;function&quot;</span><span class="p">:</span> <span class="n">get_thickness_n_radius</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.9&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_direct_mass&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_Fryer+12-rapid_mass&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_Fryer+12-delayed_mass&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_Sukhbold+16-engineN20_mass&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_Patton&amp;Sukhbold20-engineN20_mass&quot;</span><span class="p">]</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;2.11&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[[</span><span class="s2">&quot;lg_mtransfer_rate&quot;</span><span class="p">,</span> <span class="s2">&quot;lg_system_mdot_</span><span class="si">{}</span><span class="s2">&quot;</span><span class="p">]],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mass in Hydrogen/Helium (2.12)&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;fields&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_total_mass_h1&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="s2">&quot;star_</span><span class="si">{}</span><span class="s2">_mass&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_total_mass_he4&quot;</span><span class="p">]</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="kc">False</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Center Sum Equal One&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sum_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_he4&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_c12&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_n14&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_o16&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_center_other&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;constraint&quot;</span><span class="p">:</span> <span class="mf">1.0</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Surface Sum Equal One&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;sum_fields&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_h1&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_he4&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_c12&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_n14&quot;</span><span class="p">,</span>
+                       <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_o16&quot;</span><span class="p">,</span> <span class="s2">&quot;S</span><span class="si">{}</span><span class="s2">_surface_other&quot;</span><span class="p">],</span>
+        <span class="s2">&quot;constraint&quot;</span><span class="p">:</span> <span class="mf">1.0</span>
+    <span class="p">}</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="check_order_of_constraints">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.check_order_of_constraints">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_order_of_constraints</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Report possible issues with the order of application of constraints.</span>
+
+<span class="sd">    TODO: this needs to be updated for the new types of constraints.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">changed_so_far</span><span class="p">,</span> <span class="n">used_so_far</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">CONSTRAINTS</span><span class="p">:</span>
+        <span class="c1"># find all colnames for the independent variables (including per star)</span>
+        <span class="n">indep_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">col</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span> <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+                         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">constraint</span><span class="o">.</span><span class="n">independent</span><span class="p">])</span>
+        <span class="c1"># same with dependent variables</span>
+        <span class="n">dep_cols</span> <span class="o">=</span> <span class="nb">set</span><span class="p">([</span><span class="n">constraint</span><span class="o">.</span><span class="n">dependent</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span> <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]])</span>
+
+        <span class="c1"># track quantities relevant to this constraint, already encountered</span>
+        <span class="n">already_changed</span> <span class="o">=</span> <span class="n">changed_so_far</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">indep_cols</span><span class="p">)</span>
+        <span class="n">about_to_change</span> <span class="o">=</span> <span class="n">used_so_far</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">dep_cols</span><span class="p">)</span>
+
+        <span class="c1"># if any, notify the user</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">already_changed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;In constraint </span><span class="si">{}</span><span class="s2">, independent quanitities (</span><span class="si">{}</span><span class="s2">) may have &quot;</span>
+                  <span class="s2">&quot;been modified by a previous constraint.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                      <span class="n">constraint</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">already_changed</span><span class="p">))</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">about_to_change</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Constraint </span><span class="si">{}</span><span class="s2"> may modify previously used dependent &quot;</span>
+                  <span class="s2">&quot;quanitities (</span><span class="si">{}</span><span class="s2">).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">constraint</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">about_to_change</span><span class="p">))</span>
+
+        <span class="c1"># you&#39;ve seen these now...</span>
+        <span class="n">changed_so_far</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">dep_cols</span><span class="p">)</span>
+        <span class="n">used_so_far</span><span class="o">.</span><span class="n">upate</span><span class="p">(</span><span class="n">indep_cols</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="find_constraints_to_apply">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.find_constraints_to_apply">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_constraints_to_apply</span><span class="p">(</span><span class="n">out_keys</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find out which constraints can be applied.</span>
+
+<span class="sd">    Find out which constraints can be applied based on the out_keys</span>
+<span class="sd">    specified by the user. This function assumes that the keys for star 1</span>
+<span class="sd">    have a corresponding key in star 2 when applicable.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    out_keys : list of strings</span>
+<span class="sd">        The keys specified in the IFInterpolator</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dicts</span>
+<span class="sd">        A list of constraints that can and will be applied</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">constraints_to_apply</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">CONSTRAINTS</span><span class="p">:</span>
+
+        <span class="n">should_apply</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;independent&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_keys</span><span class="p">:</span>
+                    <span class="n">should_apply</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">elif</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+
+            <span class="n">new_fields</span> <span class="o">=</span> <span class="p">[]</span>
+
+            <span class="k">for</span> <span class="n">fields</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]:</span>
+                <span class="n">add_subconstraint</span> <span class="o">=</span> <span class="kc">True</span>
+
+                <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">fields</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_keys</span><span class="p">:</span>
+                        <span class="n">add_subconstraint</span> <span class="o">=</span> <span class="kc">False</span>
+
+                <span class="k">if</span> <span class="n">add_subconstraint</span><span class="p">:</span>
+                    <span class="n">new_fields</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fields</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_fields</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">should_apply</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_fields</span>
+
+        <span class="k">elif</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+
+            <span class="k">for</span> <span class="n">field</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;sum_fields&quot;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">field</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">out_keys</span><span class="p">:</span>
+                    <span class="n">should_apply</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="k">if</span> <span class="n">should_apply</span><span class="p">:</span>
+            <span class="n">constraints_to_apply</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">constraint</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">constraints_to_apply</span></div>
+
+
+
+<div class="viewcode-block" id="sanitize_interpolated_quantities">
+<a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.constraints.sanitize_interpolated_quantities">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">sanitize_interpolated_quantities</span><span class="p">(</span><span class="n">fvalues</span><span class="p">,</span> <span class="n">constraints</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply constraints in final values returned from the IF interpolator.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    fvalues : dict</span>
+<span class="sd">        Dictionary containing the final values returned from the initial-final</span>
+<span class="sd">        interpolator evaluation method.</span>
+<span class="sd">    constraints : list of dicts</span>
+<span class="sd">        A list of constraints that are to be applied. Can be computed using the</span>
+<span class="sd">        find_constraints_to_apply function</span>
+<span class="sd">    verbose: bool</span>
+<span class="sd">        If True, report the actions.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        The dictionary of sanitized final values.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">INTERPOLATION_CONSTRAINTS_ON</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fvalues</span>
+
+    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">fvalues</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">stars_present</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;S1_log_R&quot;</span> <span class="ow">in</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+                               <span class="ow">and</span> <span class="s2">&quot;S2_log_R&quot;</span> <span class="ow">in</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="k">else</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">constraint</span> <span class="ow">in</span> <span class="n">constraints</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Enforcing constraint </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]))</span>
+
+        <span class="k">if</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y_colname</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;dependent&quot;</span><span class="p">]</span>
+            <span class="n">per_star</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span> <span class="ow">in</span> <span class="n">y_colname</span>
+            <span class="n">both_stars</span> <span class="o">=</span> <span class="n">per_star</span> <span class="ow">and</span> <span class="n">y_colname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">sanitized</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+            <span class="n">stars</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span> <span class="k">if</span> <span class="p">(</span><span class="n">per_star</span> <span class="ow">and</span> <span class="n">both_stars</span><span class="p">)</span> <span class="k">else</span> <span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="n">stars</span><span class="p">:</span>
+                <span class="n">x_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">x_colname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">x_colname</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;independent&quot;</span><span class="p">]]</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    </span><span class="si">{}</span><span class="s2"> -&gt; </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                        <span class="n">x_cols</span><span class="p">,</span> <span class="n">y_colname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)))</span>
+                <span class="n">x_vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">sanitized</span><span class="p">[</span><span class="n">x_col</span><span class="p">]</span> <span class="k">for</span> <span class="n">x_col</span> <span class="ow">in</span> <span class="n">x_cols</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x_vals</span><span class="p">)):</span>
+                    <span class="n">y_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">y_value</span> <span class="o">=</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;function&quot;</span><span class="p">](</span><span class="o">*</span><span class="n">x_vals</span><span class="p">)</span>
+                <span class="n">sanitized</span><span class="p">[</span><span class="n">y_colname</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)]</span> <span class="o">=</span> <span class="n">y_value</span>
+        <span class="k">elif</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">stars</span> <span class="o">=</span> <span class="n">stars_present</span>
+            <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="n">stars</span><span class="p">:</span>
+                <span class="c1"># creating fieldnames</span>
+                <span class="n">key_sets</span> <span class="o">=</span> <span class="p">[[</span><span class="n">key</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_set</span><span class="p">]</span>
+                            <span class="k">for</span> <span class="n">key_set</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;fields&quot;</span><span class="p">]]</span>
+
+                <span class="n">function</span> <span class="o">=</span> <span class="n">constraint</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;function&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">function</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">sanitized</span> <span class="o">=</span> <span class="n">correct_inequality</span><span class="p">(</span><span class="n">sanitized</span><span class="p">,</span> <span class="n">key_sets</span><span class="p">,</span> <span class="n">star</span><span class="p">,</span>
+                                                   <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;log&quot;</span><span class="p">])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">for</span> <span class="n">key_set</span> <span class="ow">in</span> <span class="n">key_sets</span><span class="p">:</span>
+                        <span class="n">sanitized</span> <span class="o">=</span> <span class="n">function</span><span class="p">(</span><span class="n">sanitized</span><span class="p">,</span> <span class="n">constraint</span><span class="p">,</span> <span class="n">key_set</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">stars</span> <span class="o">=</span> <span class="n">stars_present</span>
+            <span class="k">for</span> <span class="n">star</span> <span class="ow">in</span> <span class="n">stars</span><span class="p">:</span>
+                <span class="n">sum_keys</span> <span class="o">=</span> <span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">star</span><span class="p">)</span>
+                            <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;sum_fields&quot;</span><span class="p">]]</span>
+
+                <span class="n">sanitized</span> <span class="o">=</span> <span class="n">correct_sum</span><span class="p">(</span><span class="n">sanitized</span><span class="p">,</span> <span class="n">sum_keys</span><span class="p">,</span>
+                                        <span class="n">constraint</span><span class="p">[</span><span class="s2">&quot;constraint&quot;</span><span class="p">])</span>
+
+    <span class="k">return</span> <span class="n">sanitized</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.4/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

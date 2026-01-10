@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.analysis &mdash; posydon 2.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4e6cfea6"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.analysis</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.analysis</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for analyzing binary population simulation results.&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="n">CHUNKSIZE</span> <span class="o">=</span> <span class="mi">100000</span>
+<span class="n">CHUNKSIZE_SMALL</span> <span class="o">=</span> <span class="mi">1000</span>
+
+
+<div class="viewcode-block" id="report_columns">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.analysis.report_columns">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">report_columns</span><span class="p">(</span><span class="n">path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the columns in the `oneline` and `history` keys in an HDF5 file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The fullpath of the HDF5 file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Population file:&quot;</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">tablename</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;oneline&quot;</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tablename</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Columns in `</span><span class="si">{}</span><span class="s2">`</span><span class="se">\n</span><span class="si">{}</span><span class="se">\n</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">tablename</span><span class="p">,</span> <span class="s2">&quot;-&quot;</span><span class="o">*</span><span class="mi">20</span><span class="p">,</span> <span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">columns</span><span class="p">)))</span>
+            <span class="k">break</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_decide_chunksize</span><span class="p">(</span><span class="n">n_binaries</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Decide the HDF5 chunk size when searching for n_binaries.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n_binaries</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">CHUNKSIZE</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">CHUNKSIZE</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">CHUNKSIZE_SMALL</span><span class="p">,</span> <span class="n">n_binaries</span> <span class="o">//</span> <span class="mi">10</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_filter_columns</span><span class="p">(</span><span class="n">columns</span><span class="p">,</span> <span class="n">patterns</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Select a subset of columns based on a substring or array of substrings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    columns : array of str</span>
+<span class="sd">        The original columns to be filtered.</span>
+<span class="sd">    patterns : str or array of str</span>
+<span class="sd">        The pattern or list of patterns, where pattern is a substring.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    array of str</span>
+<span class="sd">        Subset of the columns on the basis of the inclusion of substring(s).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">patterns</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>                    <span class="c1"># return input if undefined pattern</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">patterns</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">bytes</span><span class="p">)):</span>  <span class="c1"># in the case of one pattern</span>
+        <span class="n">patterns</span> <span class="o">=</span> <span class="p">[</span><span class="n">patterns</span><span class="p">]</span>
+
+    <span class="n">selected_cols</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">columns</span><span class="p">):</span>
+        <span class="n">include_it</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">patterns</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">pattern</span> <span class="ow">in</span> <span class="n">col</span><span class="p">:</span>
+                <span class="n">include_it</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">include_it</span><span class="p">:</span>
+            <span class="n">selected_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">selected_cols</span>
+
+
+<div class="viewcode-block" id="get_subsets">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.analysis.get_subsets">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_subsets</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">find_n</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">select_oneline</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">select_history</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">select_columns</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the `oneline` and `history` subsets for a selection of binaries.</span>
+
+<span class="sd">    You select binaries from an HDF5 population by providing a function that</span>
+<span class="sd">    operates either on `oneline` or `history` and returns a boolean mask in-</span>
+<span class="sd">    dicating which rows correspond to the binaries of interest. E.g.,</span>
+
+<span class="sd">        def find_no_end(df):</span>
+<span class="sd">            return df[&quot;event_f&quot;] != &quot;END&quot;</span>
+
+<span class="sd">    can be used to find binaries that ended abruptly, based on the information</span>
+<span class="sd">    in the `oneline` table. Therefore, we set `select_oneline=find_no_end`. If</span>
+<span class="sd">    no selector has been set, all binaries are selected (combine this with the</span>
+<span class="sd">    `select_columns` argument to get a column subset of the data.)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    path : str</span>
+<span class="sd">        The fullpath of the HDF5 file.</span>
+<span class="sd">    find_n : int or None</span>
+<span class="sd">        The number of binaries to select (at most) or None to select all.</span>
+<span class="sd">    select_oneline : function or None</span>
+<span class="sd">        The function to operate on chunks of the `oneline` table.</span>
+<span class="sd">    select_history : function or None</span>
+<span class="sd">        The function to operate on chunks of the `oneline` table.</span>
+<span class="sd">    select_columns : None or str or array</span>
+<span class="sd">        If None, all columns will be returned. If a string, only those columns</span>
+<span class="sd">        with name containing this string will be returned. An array of strings</span>
+<span class="sd">        can be used for multiple such patterns.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    oneline, history</span>
+<span class="sd">        The subsets of the dataframes with the data for the selected binaries.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">say</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print only if verbose is True.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">select_oneline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">select_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Cannot use both `oneline` and `history` selectors.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">select_oneline</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">selector</span> <span class="o">=</span> <span class="n">select_oneline</span>
+        <span class="n">tablename</span> <span class="o">=</span> <span class="s2">&quot;oneline&quot;</span>
+    <span class="k">elif</span> <span class="n">select_history</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">selector</span> <span class="o">=</span> <span class="n">select_history</span>
+        <span class="n">tablename</span> <span class="o">=</span> <span class="s2">&quot;history&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">selector</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="n">chunksize</span> <span class="o">=</span> <span class="n">_decide_chunksize</span><span class="p">(</span><span class="n">find_n</span><span class="p">)</span>
+    <span class="n">say</span><span class="p">(</span><span class="s2">&quot;Chunk size:&quot;</span><span class="p">,</span> <span class="n">chunksize</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">select_columns</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">say</span><span class="p">(</span><span class="s2">&quot;Deciding which columns to include...&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;oneline&quot;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">oneline_columns</span> <span class="o">=</span> <span class="n">_filter_columns</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">select_columns</span><span class="p">)</span>
+            <span class="n">say</span><span class="p">(</span><span class="s2">&quot;    Selected oneline columns:&quot;</span><span class="p">,</span> <span class="n">oneline_columns</span><span class="p">)</span>
+            <span class="k">break</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">history_columns</span> <span class="o">=</span> <span class="n">_filter_columns</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="n">select_columns</span><span class="p">)</span>
+            <span class="n">say</span><span class="p">(</span><span class="s2">&quot;    Selected history columns:&quot;</span><span class="p">,</span> <span class="n">history_columns</span><span class="p">)</span>
+            <span class="k">break</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">oneline_columns</span><span class="p">,</span> <span class="n">history_columns</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="n">say</span><span class="p">(</span><span class="s2">&quot;Applying the selector...&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">say</span><span class="p">(</span><span class="s2">&quot;    No selector defined. Selecting all.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">all_indices</span><span class="p">,</span> <span class="n">selected_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">tablename</span><span class="p">,</span> <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">):</span>
+            <span class="n">all_indices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">selection</span> <span class="o">=</span> <span class="n">selector</span><span class="p">(</span><span class="n">chunk</span><span class="p">)</span>
+            <span class="n">selected_indices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="p">[</span><span class="n">selection</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">say</span><span class="p">(</span><span class="s2">&quot;   Selected </span><span class="si">{:7d}</span><span class="s2"> out of </span><span class="si">{:7d}</span><span class="s2"> binaries (</span><span class="si">{:.3g}</span><span class="s2">%)...</span><span class="se">\t</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">all_indices</span><span class="p">),</span>
+                       <span class="mi">100</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">all_indices</span><span class="p">)),</span> <span class="n">end</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">find_n</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="n">find_n</span><span class="p">:</span>
+                <span class="n">selected_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)[:</span><span class="n">find_n</span><span class="p">])</span>
+                <span class="n">say</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">    Found </span><span class="si">{}</span><span class="s2"> binaries.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">find_n</span><span class="p">))</span>
+                <span class="k">break</span>
+        <span class="n">say</span><span class="p">()</span>
+
+    <span class="n">say</span><span class="p">(</span><span class="s2">&quot;Obtaining `oneline` for the selection...&quot;</span><span class="p">)</span>
+    <span class="n">selected_oneline</span><span class="p">,</span> <span class="n">included_indices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">found_them</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;oneline&quot;</span><span class="p">,</span>
+                             <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">oneline_columns</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">chunk</span><span class="p">[</span><span class="n">chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)]</span>
+            <span class="n">included_indices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">found_them</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">included_indices</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span>
+        <span class="n">selected_oneline</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">selected_oneline</span><span class="p">,</span> <span class="n">chunk</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">found_them</span><span class="p">:</span>
+            <span class="n">say</span><span class="p">(</span><span class="s2">&quot;    Found the binaries.&quot;</span><span class="p">)</span>
+            <span class="k">break</span>
+
+    <span class="n">say</span><span class="p">(</span><span class="s2">&quot;Obtaining `history` for the selection...&quot;</span><span class="p">)</span>
+    <span class="n">selected_history</span><span class="p">,</span> <span class="n">included_indices</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(),</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="n">stop_at_next_chunk</span><span class="p">,</span> <span class="n">found_them</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_hdf</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;history&quot;</span><span class="p">,</span>
+                             <span class="n">chunksize</span><span class="o">=</span><span class="n">chunksize</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">history_columns</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">selector</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">chunk</span> <span class="o">=</span> <span class="n">chunk</span><span class="p">[</span><span class="n">chunk</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)]</span>
+            <span class="n">included_indices</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">chunk</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">found_them</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">included_indices</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span>
+        <span class="n">selected_history</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">selected_history</span><span class="p">,</span> <span class="n">chunk</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">found_them</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">stop_at_next_chunk</span><span class="p">:</span>
+                <span class="n">stop_at_next_chunk</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">say</span><span class="p">(</span><span class="s2">&quot;    Found the binaries.&quot;</span><span class="p">)</span>
+                <span class="k">break</span>
+
+    <span class="k">return</span> <span class="n">selected_oneline</span><span class="p">,</span> <span class="n">selected_history</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.4/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

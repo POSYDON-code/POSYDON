@@ -1,0 +1,1058 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.CLI.popsyn.check &mdash; posydon 2.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=4e6cfea6"></script>
+      <script src="../../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.CLI.popsyn.check</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.CLI.popsyn.check</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Module for checking the status of a population synthesis run.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">glob</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.CLI.io</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">clear_previous_lines</span><span class="p">,</span>
+    <span class="n">create_bash_submit_rescue_script</span><span class="p">,</span>
+    <span class="n">create_batch_rescue_script</span><span class="p">,</span>
+    <span class="n">print_error</span><span class="p">,</span>
+    <span class="n">print_separator_line</span><span class="p">,</span>
+    <span class="n">print_success</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+<span class="c1"># File naming patterns</span>
+<span class="n">MERGE_SCRIPT_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{met}</span><span class="s2">_Zsun_merge_popsyn.slurm&quot;</span>
+<span class="n">ARRAY_SCRIPT_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{met}</span><span class="s2">_Zsun_slurm_array.slurm&quot;</span>
+<span class="n">RESCUE_SCRIPT_PATTERN</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">{met}</span><span class="s2">_Zsun_rescue.slurm&quot;</span>
+<span class="n">RESUBMIT_SCRIPT</span> <span class="o">=</span> <span class="s2">&quot;resubmit_slurm.sh&quot;</span>
+
+<div class="viewcode-block" id="get_ini_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_ini_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Find and select the INI file for the population synthesis run.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        Command line arguments that needs to containing the run_folder path.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Path to the selected INI file.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If no INI file is found in the run folder.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1"># Find and select the INI file</span>
+    <span class="n">ini_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;*.ini&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">ini_files</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No INI file found in the run folder.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Handle multiple INI files</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ini_files</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Multiple INI files found:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">file</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">ini_files</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">idx</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">file</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="s2">&quot;Enter the index of the INI file you want to use: &quot;</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">selected_index</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">choice</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">selected_index</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">ini_files</span><span class="p">)):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid index; using the first INI file.&quot;</span><span class="p">)</span>
+                <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="n">selected_index</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Invalid input; using the first INI file.&quot;</span><span class="p">)</span>
+            <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">selected_ini</span> <span class="o">=</span> <span class="n">ini_files</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Using INI file:</span><span class="se">\n</span><span class="si">{</span><span class="n">selected_ini</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">selected_ini</span></div>
+
+
+<div class="viewcode-block" id="validate_run_folder">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.validate_run_folder">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_run_folder</span><span class="p">(</span><span class="n">run_folder</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Validate that the run folder exists and is not empty.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder to validate</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">run_folder</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Run folder &#39;</span><span class="si">{</span><span class="n">run_folder</span><span class="si">}</span><span class="s2">&#39; does not exist.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Please provide a valid path to a population run folder.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">folder_contents</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">run_folder</span><span class="p">)</span>
+    <span class="k">except</span> <span class="p">(</span><span class="ne">OSError</span><span class="p">,</span> <span class="ne">PermissionError</span><span class="p">)</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Cannot access run folder &#39;</span><span class="si">{</span><span class="n">run_folder</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;Please check folder permissions.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">folder_contents</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;Run folder &#39;</span><span class="si">{</span><span class="n">run_folder</span><span class="si">}</span><span class="s2">&#39; is empty.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="s2">&quot;This folder does not contain any population run files.&quot;</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_binary_params">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_binary_params">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;Read the binary population parameters from the INI file</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ini_file : str</span>
+<span class="sd">        The path to the INI file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int</span>
+<span class="sd">        The number of metallicities</span>
+<span class="sd">    int</span>
+<span class="sd">        The number of binaries</span>
+<span class="sd">    list of floats</span>
+<span class="sd">        The list of metallicities in solar units</span>
+<span class="sd">    dict</span>
+<span class="sd">        The dictionary of population synthesis parameters from the INI file</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Read the population synthesis parameters</span>
+    <span class="n">synpop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+    <span class="n">metallicities</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;metallicities&#39;</span><span class="p">,</span> <span class="p">[])</span>
+    <span class="n">num_metallicities</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span>
+    <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span></div>
+
+
+<div class="viewcode-block" id="get_run_configuration">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_run_configuration">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_run_configuration</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get and validate the run configuration from the run folder.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        Arguments containing run_folder path</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (ini_file, num_metallicities, number_of_binaries, metallicities, synpop_params)</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    FileNotFoundError</span>
+<span class="sd">        If folder validation or INI file retrieval fails</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Validate folder</span>
+    <span class="n">validate_run_folder</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">)</span>
+
+    <span class="c1"># Get INI file</span>
+    <span class="n">ini_file</span> <span class="o">=</span> <span class="n">get_ini_file</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># Get binary parameters</span>
+    <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span> <span class="o">=</span> \
+        <span class="n">get_binary_params</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;REQUESTED PARAMETERS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# metallicities: </span><span class="si">{</span><span class="n">num_metallicities</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;# binaries:      </span><span class="si">{</span><span class="n">number_of_binaries</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ini_file</span><span class="p">,</span> <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span></div>
+
+
+<span class="c1"># Check the population files and binary counts</span>
+
+<div class="viewcode-block" id="check_population_files">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.check_population_files">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_population_files</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if all merged population files exist.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicities : list of floats</span>
+<span class="sd">        List of metallicities to check in solar units</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if all files exist, False otherwise</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with metallicity as key and existence status as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">POP_FILE&quot;</span><span class="p">)</span>
+
+    <span class="n">all_exist</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">status_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+        <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_population.h5&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">merged_file</span><span class="p">):</span>
+            <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">NO&quot;</span><span class="p">)</span>
+            <span class="n">all_exist</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">status_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2"> </span><span class="se">\t\t</span><span class="s2">OK&quot;</span><span class="p">)</span>
+            <span class="n">status_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_exist</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................ERROR&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clear_previous_lines</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;POPULATION FILES CHECK ....................OK&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">all_exist</span><span class="p">,</span> <span class="n">status_dict</span></div>
+
+
+<div class="viewcode-block" id="check_binary_counts">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.check_binary_counts">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_binary_counts</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check if each population file has the expected number of binaries.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicities : list of floats</span>
+<span class="sd">        List of metallicities to check in solar units</span>
+<span class="sd">    expected_count : int</span>
+<span class="sd">        Expected number of binaries per file</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if all counts match, False otherwise</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with metallicity as key and binary count as value</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;MET</span><span class="se">\t\t</span><span class="s2">EXPECTED</span><span class="se">\t</span><span class="s2">FOUND</span><span class="se">\t</span><span class="s2">STATUS&quot;</span><span class="p">)</span>
+
+    <span class="n">all_match</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">counts_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
+        <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+        <span class="n">merged_file</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_population.h5&#39;</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">merged_file</span><span class="p">)</span>
+            <span class="n">num_binaries</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">number_of_systems</span>
+            <span class="n">counts_dict</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="n">num_binaries</span>
+
+            <span class="k">if</span> <span class="n">num_binaries</span> <span class="o">!=</span> <span class="n">expected_count</span><span class="p">:</span>
+                <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">num_binaries</span><span class="si">}</span><span class="s2">&quot;</span>
+                             <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">MISMATCH&quot;</span><span class="p">)</span>
+                <span class="n">all_match</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">num_binaries</span><span class="si">}</span><span class="s2">&quot;</span>
+                               <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">OK&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">-&quot;</span>
+                         <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">ERROR: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">all_match</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">all_match</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................ERROR&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">clear_previous_lines</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">metallicities</span><span class="p">)</span> <span class="o">+</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;BINARY COUNT CHECK     ....................OK&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">all_match</span><span class="p">,</span> <span class="n">counts_dict</span></div>
+
+
+<div class="viewcode-block" id="check_run_status">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.check_run_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_run_status</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether the population files exist and if they have</span>
+<span class="sd">    the expected number of binary counts.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder</span>
+<span class="sd">    metallicities : list</span>
+<span class="sd">        List of metallicities to check</span>
+<span class="sd">    number_of_binaries : int</span>
+<span class="sd">        Expected number of binaries</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple</span>
+<span class="sd">        (files_exist, counts_match, file_status)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Checking the status of the population run&quot;</span><span class="p">)</span>
+    <span class="n">print_separator_line</span><span class="p">()</span>
+
+    <span class="n">files_exist</span><span class="p">,</span> <span class="n">file_status</span> <span class="o">=</span> <span class="n">check_population_files</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">)</span>
+
+    <span class="n">counts_match</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">files_exist</span><span class="p">:</span>
+        <span class="n">counts_match</span><span class="p">,</span> <span class="n">binary_counts</span> <span class="o">=</span> <span class="n">check_binary_counts</span><span class="p">(</span>
+            <span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span>
+        <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">files_exist</span><span class="p">,</span> <span class="n">counts_match</span><span class="p">,</span> <span class="n">file_status</span></div>
+
+
+
+<span class="c1"># Check individual batch for reasons of the failed runs</span>
+
+<div class="viewcode-block" id="get_expected_batch_count">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_expected_batch_count">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_expected_batch_count</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse SLURM script to get expected batch count.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder</span>
+<span class="sd">    str_met : str</span>
+<span class="sd">        String representation of metallicity</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or None</span>
+<span class="sd">        Expected batch count, or None if not found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">slurm_script</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">ARRAY_SCRIPT_PATTERN</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="n">str_met</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">slurm_script</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">line</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;#SBATCH --array=&#39;</span><span class="p">):</span>
+                <span class="n">array_range</span> <span class="o">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;=&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                <span class="k">if</span> <span class="s1">&#39;-&#39;</span> <span class="ow">in</span> <span class="n">array_range</span><span class="p">:</span>
+                    <span class="n">start</span><span class="p">,</span> <span class="n">end</span> <span class="o">=</span> <span class="nb">map</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">array_range</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+                    <span class="k">return</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="find_missing_batch_indices">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.find_missing_batch_indices">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_missing_batch_indices</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find which batch indices are missing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    batch_folder : str</span>
+<span class="sd">        Path to the batch folder</span>
+<span class="sd">    expected_count : int</span>
+<span class="sd">        Expected number of batches</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    set</span>
+<span class="sd">        Set of missing batch indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">,</span> <span class="s1">&#39;evolution.combined.*&#39;</span><span class="p">))</span>
+    <span class="n">found_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">batch_file</span> <span class="ow">in</span> <span class="n">batch_files</span><span class="p">:</span>
+        <span class="n">file_name</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">batch_file</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">&#39;evolution.combined&#39;</span> <span class="ow">in</span> <span class="n">file_name</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="n">idx_str</span> <span class="o">=</span> <span class="n">file_name</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+            <span class="n">found_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">idx_str</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="nb">set</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">expected_count</span><span class="p">))</span> <span class="o">-</span> <span class="n">found_indices</span></div>
+
+
+<div class="viewcode-block" id="print_batch_status">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.print_batch_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">print_batch_status</span><span class="p">(</span><span class="n">str_met</span><span class="p">,</span> <span class="n">expected_count</span><span class="p">,</span> <span class="n">actual_count</span><span class="p">,</span> <span class="n">missing_indices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Print the batch comparison status.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    str_met : str</span>
+<span class="sd">        String representation of metallicity</span>
+<span class="sd">    expected_count : int or None</span>
+<span class="sd">        Expected number of batches</span>
+<span class="sd">    actual_count : int</span>
+<span class="sd">        Actual number of batches found</span>
+<span class="sd">    missing_indices : set</span>
+<span class="sd">        Set of missing batch indices</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    str</span>
+<span class="sd">        Status string: &#39;unknown_expected_count&#39;, &#39;incomplete&#39;, &#39;complete&#39;, or &#39;extra_files&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">expected_count</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">?</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="se">\t</span><span class="s2"> UNKNOWN EXPECTED COUNT&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;unknown_expected_count&quot;</span>
+
+    <span class="k">if</span> <span class="n">actual_count</span> <span class="o">&lt;</span> <span class="n">expected_count</span><span class="p">:</span>
+        <span class="n">missing_count</span> <span class="o">=</span> <span class="n">expected_count</span> <span class="o">-</span> <span class="n">actual_count</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">missing_count</span><span class="si">}</span><span class="s2"> MISSING&quot;</span><span class="p">)</span>
+        <span class="c1"># Show missing batch indices</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">10</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing batches: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">sample</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">))[:</span><span class="mi">10</span><span class="p">]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Missing batches include: </span><span class="si">{</span><span class="n">sample</span><span class="si">}</span><span class="s2"> and &quot;</span>
+                  <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">10</span><span class="si">}</span><span class="s2"> more&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;incomplete&quot;</span>
+
+    <span class="k">elif</span> <span class="n">actual_count</span> <span class="o">==</span> <span class="n">expected_count</span><span class="p">:</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                       <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">COMPLETE&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;complete&quot;</span>
+
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># actual_count &gt; expected_count</span>
+        <span class="n">extra_count</span> <span class="o">=</span> <span class="n">actual_count</span> <span class="o">-</span> <span class="n">expected_count</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="si">{</span><span class="n">expected_count</span><span class="si">}</span><span class="se">\t</span><span class="si">{</span><span class="n">actual_count</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="si">{</span><span class="n">extra_count</span><span class="si">}</span><span class="s2"> EXTRA&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="s2">&quot;extra_files&quot;</span></div>
+
+
+<div class="viewcode-block" id="select_job_id">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.select_job_id">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_job_id</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find and select a job ID from available log files.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder</span>
+<span class="sd">    str_met : str</span>
+<span class="sd">        String representation of metallicity</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    int or None</span>
+<span class="sd">        Selected job ID, or None if no logs found</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">jobIDs</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_*.out&#39;</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\033</span><span class="s2">[33mNo log files found. Cannot determine failure reasons.</span><span class="se">\033</span><span class="s2">[0m&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;This may indicate that the jobs were never submitted or the log directory is missing.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="c1"># Extract unique job IDs</span>
+    <span class="n">jobIDs</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="nb">int</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span><span class="p">(</span><span class="n">job</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;.&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">for</span> <span class="n">job</span> <span class="ow">in</span> <span class="n">jobIDs</span>
+    <span class="p">]</span>
+    <span class="n">jobIDs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">)</span>
+
+    <span class="c1"># If multiple job IDs, let user select</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please select a job ID to use: &quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">job_id</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="n">selected_job_idx</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">while</span> <span class="n">selected_job_idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Enter the index to the job ID: &quot;</span><span class="p">))</span>
+                <span class="k">if</span> <span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">idx</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">jobIDs</span><span class="p">):</span>
+                    <span class="n">selected_job_idx</span> <span class="o">=</span> <span class="n">idx</span>
+                    <span class="k">return</span> <span class="n">jobIDs</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+                    <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;Invalid selection. Please try again.&quot;</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+                <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;Please enter a valid number.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">jobIDs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="read_batch_log_file">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.read_batch_log_file">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">read_batch_log_file</span><span class="p">(</span><span class="n">log_file_path</span><span class="p">,</span> <span class="n">batch_index</span><span class="p">,</span> <span class="n">str_met</span><span class="p">,</span> <span class="n">jobID</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read and analyze a batch log file to determine failure reason.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_file_path : str</span>
+<span class="sd">        Path to the log file</span>
+<span class="sd">    batch_index : int</span>
+<span class="sd">        Index of the batch being analyzed</span>
+<span class="sd">    str_met : str</span>
+<span class="sd">        String representation of the metallicity</span>
+<span class="sd">    jobID : int</span>
+<span class="sd">        SLURM job ID</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+<span class="sd">        Prints the analysis results directly</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Check if the log file exists</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">log_file_path</span><span class="p">):</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">: Log file not found&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">log_file_path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">lines</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">: &lt;empty file&gt;&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Check for time limit exceeded</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">last_3_lines</span> <span class="o">=</span> <span class="p">[</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span> <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">:]]</span>
+            <span class="k">if</span> <span class="s2">&quot;DUE TO TIME LIMIT&quot;</span> <span class="ow">in</span> <span class="nb">str</span><span class="p">(</span><span class="n">last_3_lines</span><span class="p">):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">: Wall time exceeded&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">.out:&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">last_3_lines</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># File has fewer than 3 lines</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">: File contains </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span><span class="si">}</span><span class="s2"> line(s):&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;DUE TO TIME LIMIT&quot;</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;  Wall time exceeded&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s2">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">.out:&quot;</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Batch </span><span class="si">{</span><span class="n">batch_index</span><span class="si">}</span><span class="s2">: Error reading log file - </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="analyze_missing_batch_logs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.analyze_missing_batch_logs">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">analyze_missing_batch_logs</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">,</span> <span class="n">missing_indices</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Analyze log files for missing batches to determine failure reasons.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder</span>
+<span class="sd">    str_met : str</span>
+<span class="sd">        String representation of metallicity</span>
+<span class="sd">    missing_indices : set</span>
+<span class="sd">        Set of missing batch indices</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing_indices</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="n">jobID</span> <span class="o">=</span> <span class="n">select_job_id</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">jobID</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">READING THE LOGS OF </span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s2"> ....&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reasons for missing files:&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="n">missing_indices</span><span class="p">:</span>
+        <span class="n">log_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span>
+                                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs/popsyn_</span><span class="si">{</span><span class="n">jobID</span><span class="si">}</span><span class="s1">_</span><span class="si">{</span><span class="n">index</span><span class="si">}</span><span class="s1">.out&#39;</span><span class="p">)</span>
+        <span class="n">read_batch_log_file</span><span class="p">(</span><span class="n">log_file_path</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">str_met</span><span class="p">,</span> <span class="n">jobID</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="check_batch">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.check_batch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_batch</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">,</span> <span class="n">batch_folder_name</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check batch files for a specific metallicity when the population file is missing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the folder where the population run is located</span>
+<span class="sd">    metallicity : float</span>
+<span class="sd">        Metallicity to check</span>
+<span class="sd">    batch_folder_name : str</span>
+<span class="sd">        Name of the folder containing batch files</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Dictionary with batch information including:</span>
+<span class="sd">        - status: str (&#39;complete&#39;, &#39;incomplete&#39;, &#39;folder_missing&#39;, etc.)</span>
+<span class="sd">        - expected_count: int or None</span>
+<span class="sd">        - found_count: int</span>
+<span class="sd">        - metallicity: float</span>
+<span class="sd">        - batch_folder: str</span>
+<span class="sd">        - missing_indices: set or None</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+    <span class="c1"># Get expected batch count from SLURM script</span>
+    <span class="n">expected_batch_count</span> <span class="o">=</span> <span class="n">get_expected_batch_count</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">)</span>
+
+    <span class="c1"># Check if batch folder exists</span>
+    <span class="n">batch_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_Zsun_</span><span class="si">{</span><span class="n">batch_folder_name</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">):</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="se">\t\t</span><span class="s2">-</span><span class="se">\t</span><span class="s2">-</span><span class="se">\t</span><span class="s2">NO BATCH DIR&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="s2">&quot;folder_missing&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;expected_count&quot;</span><span class="p">:</span> <span class="n">expected_batch_count</span><span class="p">,</span>
+            <span class="s2">&quot;found_count&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">&quot;metallicity&quot;</span><span class="p">:</span> <span class="n">metallicity</span><span class="p">,</span>
+            <span class="s2">&quot;batch_folder&quot;</span><span class="p">:</span> <span class="n">batch_folder</span><span class="p">,</span>
+            <span class="s2">&quot;missing_indices&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># Count actual batch files</span>
+    <span class="n">batch_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">,</span> <span class="s1">&#39;evolution.combined.*&#39;</span><span class="p">))</span>
+    <span class="n">actual_count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">batch_files</span><span class="p">)</span>
+
+    <span class="c1"># Find missing batch indices if incomplete</span>
+    <span class="n">missing_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">expected_batch_count</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">actual_count</span> <span class="o">&lt;</span> <span class="n">expected_batch_count</span><span class="p">:</span>
+        <span class="n">missing_indices</span> <span class="o">=</span> <span class="n">find_missing_batch_indices</span><span class="p">(</span><span class="n">batch_folder</span><span class="p">,</span> <span class="n">expected_batch_count</span><span class="p">)</span>
+
+    <span class="c1"># Print status and determine overall status</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">print_batch_status</span><span class="p">(</span><span class="n">str_met</span><span class="p">,</span> <span class="n">expected_batch_count</span><span class="p">,</span> <span class="n">actual_count</span><span class="p">,</span> <span class="n">missing_indices</span><span class="p">)</span>
+
+    <span class="c1"># Analyze logs for missing batches</span>
+    <span class="n">analyze_missing_batch_logs</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">str_met</span><span class="p">,</span> <span class="n">missing_indices</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;status&quot;</span><span class="p">:</span> <span class="n">status</span><span class="p">,</span>
+        <span class="s2">&quot;expected_count&quot;</span><span class="p">:</span> <span class="n">expected_batch_count</span><span class="p">,</span>
+        <span class="s2">&quot;found_count&quot;</span><span class="p">:</span> <span class="n">actual_count</span><span class="p">,</span>
+        <span class="s2">&quot;metallicity&quot;</span><span class="p">:</span> <span class="n">metallicity</span><span class="p">,</span>
+        <span class="s2">&quot;batch_folder&quot;</span><span class="p">:</span> <span class="n">batch_folder</span><span class="p">,</span>
+        <span class="s2">&quot;missing_indices&quot;</span><span class="p">:</span> <span class="n">missing_indices</span> <span class="k">if</span> <span class="n">status</span> <span class="o">==</span> <span class="s2">&quot;incomplete&quot;</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="c1"># Get the status of all batches for missing populations</span>
+
+<div class="viewcode-block" id="get_batches_status">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_batches_status">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_batches_status</span><span class="p">(</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">missing_files</span><span class="p">,</span> <span class="n">synpop_params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the status of batch files for missing populations.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    run_folder : str</span>
+<span class="sd">        Path to the run folder</span>
+<span class="sd">    missing_files : dict</span>
+<span class="sd">        Dictionary of metallicities with missing files</span>
+<span class="sd">    synpop_params : dict</span>
+<span class="sd">        Population synthesis parameters</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Batch status information for each metallicity</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">batch_status</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">if</span> <span class="n">missing_files</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Checking batch files for missing populations:&quot;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">missing_files</span><span class="p">:</span>
+            <span class="n">print_separator_line</span><span class="p">()</span>
+            <span class="n">batch_status</span><span class="p">[</span><span class="n">met</span><span class="p">]</span> <span class="o">=</span> <span class="n">check_batch</span><span class="p">(</span>
+                <span class="n">run_folder</span><span class="p">,</span>
+                <span class="n">met</span><span class="p">,</span>
+                <span class="n">synpop_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;temp_directory&#39;</span><span class="p">,</span> <span class="s1">&#39;batches&#39;</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">print_separator_line</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">batch_status</span></div>
+
+
+<div class="viewcode-block" id="get_user_confirmation">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.get_user_confirmation">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_user_confirmation</span><span class="p">(</span><span class="n">prompt</span><span class="p">,</span> <span class="n">valid_yes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">valid_no</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get user confirmation with validation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    prompt : str</span>
+<span class="sd">        The prompt to show the user</span>
+<span class="sd">    valid_yes : list, optional</span>
+<span class="sd">        List of strings considered as &quot;yes&quot; (default: [&#39;yes&#39;, &#39;y&#39;])</span>
+<span class="sd">    valid_no : list, optional</span>
+<span class="sd">        List of strings considered as &quot;no&quot; (default: [&#39;no&#39;, &#39;n&#39;])</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if user confirmed, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">valid_yes</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">valid_yes</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;yes&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">valid_no</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">valid_no</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;no&#39;</span><span class="p">,</span> <span class="s1">&#39;n&#39;</span><span class="p">]</span>
+
+    <span class="n">choice</span> <span class="o">=</span> <span class="nb">input</span><span class="p">(</span><span class="n">prompt</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">valid_yes</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">elif</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">valid_no</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unrecognized input &#39;</span><span class="si">{</span><span class="n">choice</span><span class="si">}</span><span class="s2">&#39;. Treating as &#39;no&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="submit_slurm_job">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.submit_slurm_job">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">submit_slurm_job</span><span class="p">(</span><span class="n">script_path</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Submit a SLURM job and handle errors.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    script_path : str</span>
+<span class="sd">        Path to the SLURM script to submit</span>
+<span class="sd">    description : str, optional</span>
+<span class="sd">        Description of the job for error messages</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if submission succeeded, False otherwise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">(</span>
+            <span class="p">[</span><span class="s1">&#39;sbatch&#39;</span><span class="p">,</span> <span class="n">script_path</span><span class="p">],</span>
+            <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">capture_output</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">text</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">job_id</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Job submitted: </span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to submit job: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="ne">FileNotFoundError</span><span class="p">:</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;sbatch command not found. Is SLURM installed?&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<div class="viewcode-block" id="handle_batches_complete">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.handle_batches_complete">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">handle_batches_complete</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">missing_files</span><span class="p">,</span> <span class="n">batch_status</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle the case where all batch files are complete.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        Command line arguments</span>
+<span class="sd">    missing_files : dict</span>
+<span class="sd">        Dictionary of metallicities with missing files</span>
+<span class="sd">    batch_status : dict</span>
+<span class="sd">        Batch status information</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    bool</span>
+<span class="sd">        True if merge jobs were handled (resubmitted or user declined), False if batches incomplete</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">has_incomplete_batches</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span>
+        <span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;complete&quot;</span>
+        <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">has_incomplete_batches</span><span class="p">:</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">All batch files are complete.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please resubmit the merge jobs to generate the population files.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">get_user_confirmation</span><span class="p">(</span><span class="s2">&quot;Would you like to resubmit the merge jobs? (yes/no): &quot;</span><span class="p">):</span>
+            <span class="n">all_succeeded</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">missing_files</span><span class="p">:</span>
+                <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
+                <span class="n">script_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span>
+                    <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span>
+                    <span class="n">MERGE_SCRIPT_PATTERN</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">met</span><span class="o">=</span><span class="n">str_met</span><span class="p">)</span>
+                <span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">submit_slurm_job</span><span class="p">(</span><span class="n">script_path</span><span class="p">):</span> <span class="c1">#pragma: no cover</span>
+                    <span class="n">all_succeeded</span> <span class="o">=</span> <span class="kc">False</span>
+
+            <span class="k">if</span> <span class="n">all_succeeded</span><span class="p">:</span>
+                <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;All merge jobs submitted successfully.&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;Some merge jobs failed to submit. Please check the errors above.&quot;</span><span class="p">)</span> <span class="c1">#pragma: no cover</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Merge jobs not resubmitted.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="kc">True</span>
+
+    <span class="k">return</span> <span class="kc">False</span></div>
+
+
+<span class="c1">###########################################</span>
+<span class="c1">## Main function for checking a population</span>
+<span class="c1">###########################################</span>
+<div class="viewcode-block" id="check_popsyn_function">
+<a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.check.check_popsyn_function">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">check_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Function to check the status of a population run.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    args : argparse.Namespace</span>
+<span class="sd">        The arguments passed to the function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Checking the status of the population run in </span><span class="si">{</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get and validate configuration</span>
+    <span class="n">ini_file</span><span class="p">,</span> <span class="n">num_metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">synpop_params</span> <span class="o">=</span> \
+        <span class="n">get_run_configuration</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="c1"># Check run status</span>
+    <span class="n">files_exist</span><span class="p">,</span> <span class="n">counts_match</span><span class="p">,</span> <span class="n">file_status</span> <span class="o">=</span> <span class="n">check_run_status</span><span class="p">(</span>
+        <span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">,</span> <span class="n">number_of_binaries</span>
+    <span class="p">)</span>
+
+    <span class="c1"># If all checks passed, we&#39;re done</span>
+    <span class="k">if</span> <span class="n">files_exist</span> <span class="ow">and</span> <span class="n">counts_match</span><span class="p">:</span>
+        <span class="n">print_success</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">All checks passed successfully.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">0</span>
+
+    <span class="c1"># Otherwise, investigate further</span>
+    <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One or more checks failed.&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We will attempt to rescue the failed runs.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">print_separator_line</span><span class="p">()</span>
+
+    <span class="c1"># Check batch status for missing files</span>
+    <span class="n">missing_files</span> <span class="o">=</span> <span class="p">{</span><span class="n">met</span><span class="p">:</span> <span class="n">status</span> <span class="k">for</span> <span class="n">met</span><span class="p">,</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">file_status</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">status</span><span class="p">}</span>
+    <span class="n">batch_status</span> <span class="o">=</span> <span class="n">get_batches_status</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">missing_files</span><span class="p">,</span> <span class="n">synpop_params</span><span class="p">)</span>
+
+    <span class="c1"># Handle complete batches (just need merge)</span>
+    <span class="k">if</span> <span class="n">handle_batches_complete</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">missing_files</span><span class="p">,</span> <span class="n">batch_status</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">2</span>
+
+    <span class="c1"># If we get here, some batches are incomplete</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">One or more batch files are incomplete.</span><span class="se">\n</span><span class="s2">&quot;</span>
+          <span class="s2">&quot;We need to resubmit some of the batch jobs.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Check if batch folders are missing</span>
+    <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">status</span><span class="p">[</span><span class="s2">&quot;status&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;folder_missing&quot;</span> <span class="k">for</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">values</span><span class="p">()):</span>
+        <span class="n">print_error</span><span class="p">(</span><span class="s2">&quot;One or more batch folders are missing.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cannot generate rescue scripts without the batch folders.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please ensure that the batch folders exist and try again.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mi">1</span>
+
+    <span class="c1"># Generate rescue scripts for incomplete batches</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We can generate rescue scripts for the incomplete batches.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+          <span class="s2">&quot;These scripts will resubmit only the missing batch jobs.</span><span class="se">\n</span><span class="s2">&quot;</span>
+          <span class="s2">&quot;You can change the script parameters by giving them as arguments</span><span class="se">\n</span><span class="s2">&quot;</span>
+          <span class="s2">&quot;to the &#39;posydon-popsyn rescue&#39; command.</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">get_user_confirmation</span><span class="p">(</span><span class="s2">&quot;Do you want to create rescue scripts for the incomplete batches? &quot;</span>
+                          <span class="s2">&quot;(yes/no): &quot;</span><span class="p">):</span>
+        <span class="c1"># Create rescue scripts</span>
+        <span class="n">rescue_scripts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">status</span> <span class="ow">in</span> <span class="n">batch_status</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">print_separator_line</span><span class="p">()</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">GENERATING A RESCUE SCRIPT ....................&quot;</span><span class="p">)</span>
+            <span class="n">rescue_scripts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">create_batch_rescue_script</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="n">status</span><span class="p">))</span>
+            <span class="n">print_separator_line</span><span class="p">()</span>
+
+        <span class="n">resubmit_sh_file</span> <span class="o">=</span> <span class="n">create_bash_submit_rescue_script</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="n">rescue_scripts</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">get_user_confirmation</span><span class="p">(</span><span class="s2">&quot;Do you want to submit the rescue scripts now? (yes/no): &quot;</span><span class="p">):</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;sh </span><span class="si">{</span><span class="n">resubmit_sh_file</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rescue scripts submitted.&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Please submit the rescue scripts using the following command:&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;sh </span><span class="si">{</span><span class="n">RESUBMIT_SCRIPT</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="mi">2</span>
+
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rescue scripts not created. Exiting.&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="mi">2</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.4/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

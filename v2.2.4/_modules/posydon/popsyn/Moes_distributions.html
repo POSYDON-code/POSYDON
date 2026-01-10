@@ -1,0 +1,646 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.popsyn.Moes_distributions &mdash; posydon 2.2.4 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=4e6cfea6"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.popsyn.Moes_distributions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.popsyn.Moes_distributions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generate initial parameters following Moe &amp; Di Stefano (2017).</span>
+<span class="sd">https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract</span>
+<span class="sd">This module is an adoption of the translation of Moe&#39;s IDL code into python by</span>
+<span class="sd">Mads Sørensen (V. 0.1; 2017/02/03)</span>
+
+<span class="sd">NOTE my Maxwell Moe: This version produces only the statistical distributions</span>
+<span class="sd">of single stars, binaries, and inner binaries in hierarchical triples. Outer</span>
+<span class="sd">tertiaries in hierarchical triples are NOT generated. Moreover, given a set of</span>
+<span class="sd">companions, all with period P to primary mass M1, this version currently uses</span>
+<span class="sd">an approximation to determine the fraction of those companions that are inner</span>
+<span class="sd">binaries vs. outer triples. Nevertheless, this approximation reproduces the</span>
+<span class="sd">overall multiplicity statistics.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">newton_cotes</span><span class="p">,</span> <span class="n">quad</span>
+
+
+<div class="viewcode-block" id="Moe_17_PsandQs">
+<a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.Moes_distributions.Moe_17_PsandQs">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Moe_17_PsandQs</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate initial parameters following Moe &amp; Di Stefano (2017) [1]_.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation</span>
+<span class="sd">        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,</span>
+<span class="sd">        &lt;i&gt;The Astrophysical Journal Supplement Series&lt;/i&gt;, vol. 230, no. 2,</span>
+<span class="sd">        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discrete integration in chunks to avoid instabilities for</span>
+<span class="sd">        Newton-Cotes rule at high degree.</span>
+<span class="sd">        This function is similar to the IDL function int_tabulated except, this</span>
+<span class="sd">        function seems to be slightly more exact in its solution. Therefore,</span>
+<span class="sd">        relative to the IDL code, there are small numerical differences.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : ndarray of floats</span>
+<span class="sd">           1D array of values of the integration variable.</span>
+<span class="sd">        f : ndarray of floats</span>
+<span class="sd">            1D array of function values at given x, therefore this needs to have the same shape as x.</span>
+<span class="sd">        p : int (default: 5)</span>
+<span class="sd">            Chunk size. Too small and too high values may suffer from numerical</span>
+<span class="sd">            uncertainties.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ret : float</span>
+<span class="sd">            Integral value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">integrate_newton_cotes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
+<span class="w">            </span><span class="sd">&quot;&quot;&quot;Integrate f from x[0] to x[-1] via Newton cotes.</span>
+
+<span class="sd">            Parameters</span>
+<span class="sd">            ----------</span>
+<span class="sd">            x : ndarray of floats</span>
+<span class="sd">                1D array of values of the integration variable.</span>
+<span class="sd">            f : ndarray of floats</span>
+<span class="sd">                1D array of function values at given x values, therefore this needs to have the same shape as</span>
+<span class="sd">                x.</span>
+
+<span class="sd">            Returns</span>
+<span class="sd">            -------</span>
+<span class="sd">            float</span>
+<span class="sd">                Integral value.</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="c1"># x[0] and x[-1] are the same, hence integral over no range</span>
+                <span class="k">return</span> <span class="mi">0</span>
+            <span class="c1"># average sample spacing</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># sample positions normalized to [0,x.shape[0]-1]</span>
+            <span class="n">rn</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="n">dx</span>
+            <span class="c1"># round edges to avoid numerical errors</span>
+            <span class="n">rn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rn</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="n">rn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">rn</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">5</span><span class="p">)</span>
+            <span class="c1"># weights of Newton cotes</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">newton_cotes</span><span class="p">(</span><span class="n">rn</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># integration</span>
+            <span class="k">return</span> <span class="n">dx</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="n">ret</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="c1"># integrate by chunks of size p</span>
+            <span class="n">ret</span> <span class="o">+=</span> <span class="n">integrate_newton_cotes</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">p</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">idx</span><span class="p">:</span><span class="n">idx</span> <span class="o">+</span> <span class="n">p</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">ret</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_M1</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span> <span class="n">n_logP</span><span class="o">=</span><span class="mi">158</span><span class="p">,</span> <span class="n">n_q</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span> <span class="n">n_e</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+                 <span class="n">orbital_period_min</span><span class="o">=</span><span class="mf">1.412</span><span class="p">,</span> <span class="n">orbital_period_max</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializing the class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n_M1 : int (Default: 101)</span>
+<span class="sd">            Number of supporting points in the primary&#39;s mass.</span>
+<span class="sd">        n_logP : int (Default: 158)</span>
+<span class="sd">            Number of supporting points in the logarithmic period.</span>
+<span class="sd">        n_q : int (Default: 91)</span>
+<span class="sd">            Number of supporting points in the mass ratio.</span>
+<span class="sd">        n_e : int (Default: 100)</span>
+<span class="sd">            Number of supporting points in the eccentricity.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span> <span class="o">=</span> <span class="n">n_M1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span> <span class="o">=</span> <span class="n">n_logP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">numq</span> <span class="o">=</span> <span class="n">n_q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nume</span> <span class="o">=</span> <span class="n">n_e</span>
+
+        <span class="c1"># ranges where M+D17 has statistics corrected for selection effects:</span>
+        <span class="c1"># 0.8 &lt; M1/Msun &lt; 40 with self.numM1 steps in log space</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">M1v</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.8</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">40.0</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">))</span>
+        <span class="c1"># 0.15 &lt; log10(P/day) &lt; 8.0 with self.numlogP steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logPv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_period_min</span><span class="p">),</span>
+                                 <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_period_max</span><span class="p">),</span>
+                                 <span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">)</span>
+        <span class="c1"># 0.10 &lt; q &lt; 1.00 with self.numq steps</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numq</span><span class="p">)</span>
+        <span class="c1"># 0.0001 &lt; e &lt; 0.9901 with self.nume steps</span>
+        <span class="c1"># Maxwell Moe: set minimum to non-zero value to avoid numerical errors</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ev</span> <span class="o">=</span> <span class="mf">0.0001</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nume</span><span class="p">)</span>
+        <span class="c1"># Distribution functions (first setup gird, fill later in loop):</span>
+        <span class="c1"># Frequency of companions with q &gt; 0.1 per decade of orbital period.</span>
+        <span class="c1"># Bottom panel in Fig. 36 of M+D17</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">flogP_sq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">])</span>
+        <span class="c1"># Given M1 and P, the cumulative distribution of mass ratios q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumqdist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">numq</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">])</span>
+        <span class="c1"># Given M1 and P, the cumulative distribution of eccentricities e</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumedist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">nume</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">])</span>
+        <span class="c1"># Given M1 and P, the probability that the companion is a member of the</span>
+        <span class="c1"># inner binary (currently an approximation). 100% for log P &lt; 1.5,</span>
+        <span class="c1"># decreases with increasing P.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probbin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">])</span>
+        <span class="c1"># Given M1, the cumulative period distribution of the inner binary</span>
+        <span class="c1"># Normalized so that max(cumPbindist) = total binary frac. (NOT unity)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumPbindist</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span><span class="p">])</span>
+        <span class="c1"># Slope alpha of period distribution across intermediate periods</span>
+        <span class="c1"># 2.7 - DlogP &lt; log P &lt; 2.7 + DlogP, see Section 9.3 and Eqn. 23.</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="mf">0.018</span>
+        <span class="n">DlogP</span> <span class="o">=</span> <span class="mf">0.7</span>
+        <span class="c1"># Heaviside function for twins with 0.95 &lt; q &lt; 1.00</span>
+        <span class="n">Heaviside</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span> <span class="o">&gt;=</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+        <span class="c1"># normalize so that integral is unity</span>
+        <span class="n">Heaviside</span> <span class="o">=</span> <span class="n">Heaviside</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">,</span> <span class="n">Heaviside</span><span class="p">)</span>
+        <span class="c1"># Relevant indices with respect to mass ratio</span>
+        <span class="n">indlq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span> <span class="o">&gt;=</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">indsq</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span> <span class="o">&lt;</span> <span class="mf">0.3</span><span class="p">)</span>
+        <span class="n">indq0p3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">indlq</span><span class="p">)</span>
+
+        <span class="c1"># Loop through primary mass</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">myM1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M1v</span><span class="p">):</span>
+            <span class="c1"># Twin fraction parameters that are dependent on M1 only;</span>
+            <span class="c1"># section 9.1</span>
+            <span class="n">FtwinlogPle1</span> <span class="o">=</span> <span class="mf">0.3</span> <span class="o">-</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">)</span> <span class="c1"># Eqn. 6</span>
+            <span class="n">logPtwin</span> <span class="o">=</span> <span class="mf">8.0</span> <span class="o">-</span> <span class="n">myM1</span>                      <span class="c1"># Eqn. 7a</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&gt;=</span> <span class="mf">6.5</span><span class="p">):</span>
+                <span class="n">logPtwin</span> <span class="o">=</span> <span class="mf">1.5</span>                         <span class="c1"># Eqn. 7b</span>
+            <span class="c1"># Frequency of companions with q &gt; 0.3 at different orbital periods</span>
+            <span class="c1"># and dependent on M1 only; section 9.3</span>
+            <span class="n">flogPle1</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.020</span> <span class="o">+</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">)</span>
+                        <span class="o">+</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span>   <span class="c1">#; Eqn. 20</span>
+            <span class="n">flogPeq2p7</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.039</span> <span class="o">+</span> <span class="mf">0.07</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span> <span class="c1">#; Eqn. 21</span>
+            <span class="n">flogPeq5p5</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.078</span> <span class="o">-</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="mf">0.04</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">))</span><span class="o">**</span><span class="mf">2.0</span><span class="p">)</span> <span class="c1">#; Eqn. 22</span>
+
+            <span class="c1"># Loop through orbital period P</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">mylogP</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logPv</span><span class="p">):</span>
+                <span class="c1"># Given M1 and P, set excess twin fraction;</span>
+                <span class="c1"># section 9.1 and Eqn. 5</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">Ftwin</span> <span class="o">=</span> <span class="n">FtwinlogPle1</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">Ftwin</span> <span class="o">=</span> <span class="n">FtwinlogPle1</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">logPtwin</span><span class="o">-</span><span class="mf">1.0</span><span class="p">))</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;=</span> <span class="n">logPtwin</span><span class="p">):</span>
+                    <span class="n">Ftwin</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="c1"># Power-law slope gamma_largeq for M1 &lt; 1.2 Msun and various P;</span>
+                <span class="c1"># Eqn. 9</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;</span> <span class="mf">5.0</span><span class="p">):</span>
+                    <span class="n">gl_1p2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;=</span> <span class="mf">5.0</span><span class="p">):</span>
+                    <span class="n">gl_1p2</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">5.0</span><span class="p">)</span>
+                <span class="c1"># Power-law slope gamma_largeq for M1 = 3.5 Msun and various P;</span>
+                <span class="c1"># Eqn. 10</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">gl_3p5</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">4.5</span><span class="p">)):</span>
+                    <span class="n">gl_3p5</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">4.5</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">6.5</span><span class="p">)):</span>
+                    <span class="n">gl_3p5</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.2</span> <span class="o">-</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">4.5</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">6.5</span><span class="p">):</span>
+                    <span class="n">gl_3p5</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span>
+                <span class="c1"># Power-law slope gamma_largeq for M1 &gt; 6 Msun and various P;</span>
+                <span class="c1"># Eqn. 11</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">gl_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">)):</span>
+                    <span class="n">gl_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">-</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">4.0</span><span class="p">)):</span>
+                    <span class="n">gl_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.4</span> <span class="o">-</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">4.0</span><span class="p">):</span>
+                    <span class="n">gl_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.0</span>
+                <span class="c1"># Given P, interpolate gamma_largeq w/ respect to M1 at myM1</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">1.2</span><span class="p">):</span>
+                    <span class="n">gl</span> <span class="o">=</span> <span class="n">gl_1p2</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">1.2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">3.5</span><span class="p">)):</span>
+                    <span class="n">gl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">3.5</span><span class="p">]),</span>
+                                   <span class="p">[</span><span class="n">gl_1p2</span><span class="p">,</span><span class="n">gl_3p5</span><span class="p">])</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">3.5</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">6.0</span><span class="p">)):</span>
+                    <span class="n">gl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">6.0</span><span class="p">]),</span>
+                                   <span class="p">[</span><span class="n">gl_3p5</span><span class="p">,</span><span class="n">gl_6</span><span class="p">])</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">6.0</span><span class="p">):</span>
+                    <span class="n">gl</span> <span class="o">=</span> <span class="n">gl_6</span>
+                <span class="c1"># Power-law slope gamma_smallq for M1 &lt; 1.2 Msun and all P;</span>
+                <span class="c1"># Eqn. 13</span>
+                <span class="n">gs_1p2</span> <span class="o">=</span> <span class="mf">0.3</span>
+                <span class="c1"># Power-law slope gamma_smallq for M1 = 3.5 Msun and various P;</span>
+                <span class="c1"># Eqn. 14</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">2.5</span><span class="p">):</span>
+                    <span class="n">gs_3p5</span> <span class="o">=</span> <span class="mf">0.2</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">2.5</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">5.5</span><span class="p">)):</span>
+                    <span class="n">gs_3p5</span> <span class="o">=</span> <span class="mf">0.2</span> <span class="o">-</span> <span class="mf">0.3</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">2.5</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">5.5</span><span class="p">):</span>
+                    <span class="n">gs_3p5</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.7</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">5.5</span><span class="p">)</span>
+                <span class="c1"># Power-law slope gamma_smallq for M1 &gt; 6 Msun and various P;</span>
+                <span class="c1"># Eqn. 15</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">gs_6</span> <span class="o">=</span> <span class="mf">0.1</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">3.0</span><span class="p">)):</span>
+                    <span class="n">gs_6</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">-</span> <span class="mf">0.15</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">3.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">5.6</span><span class="p">)):</span>
+                    <span class="n">gs_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.2</span> <span class="o">-</span> <span class="mf">0.50</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">3.</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">5.6</span><span class="p">):</span>
+                    <span class="n">gs_6</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.5</span>
+                <span class="c1"># Given P, interpolate gamma_smallq w/ respect to M1 at myM1</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">1.2</span><span class="p">):</span>
+                    <span class="n">gs</span> <span class="o">=</span> <span class="n">gs_1p2</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">1.2</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">3.5</span><span class="p">)):</span>
+                    <span class="n">gs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="mf">1.2</span><span class="p">,</span><span class="mf">3.5</span><span class="p">]),</span>
+                                   <span class="p">[</span><span class="n">gs_1p2</span><span class="p">,</span><span class="n">gs_3p5</span><span class="p">])</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">3.5</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">6.0</span><span class="p">)):</span>
+                    <span class="n">gs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="mf">3.5</span><span class="p">,</span><span class="mf">6.0</span><span class="p">]),</span>
+                                   <span class="p">[</span><span class="n">gs_3p5</span><span class="p">,</span><span class="n">gs_6</span><span class="p">])</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">6.0</span><span class="p">):</span>
+                    <span class="n">gs</span> <span class="o">=</span> <span class="n">gs_6</span>
+                <span class="c1"># Given Ftwin, gamma_smallq, and gamma_largeq at the specified</span>
+                <span class="c1"># M1 &amp; P, tabulate the cumulative mass ratio distribution</span>
+                <span class="c1"># across 0.1 &lt; q &lt; 1.0</span>
+                <span class="c1"># slope across 0.3 &lt; q &lt; 1.0</span>
+                <span class="n">fq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="o">**</span><span class="n">gl</span>
+                <span class="c1"># normalize to 0.3 &lt; q &lt; 1.0</span>
+                <span class="n">fq</span> <span class="o">=</span> <span class="n">fq</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">[</span><span class="n">indlq</span><span class="p">],</span> <span class="n">fq</span><span class="p">[</span><span class="n">indlq</span><span class="p">])</span>
+                <span class="c1"># add twins</span>
+                <span class="n">fq</span> <span class="o">=</span> <span class="n">fq</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">Ftwin</span><span class="p">)</span> <span class="o">+</span> <span class="n">Heaviside</span> <span class="o">*</span> <span class="n">Ftwin</span>
+                <span class="c1"># slope across 0.1 &lt; q &lt; 0.3</span>
+                <span class="n">fq</span><span class="p">[</span><span class="n">indsq</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">fq</span><span class="p">[</span><span class="n">indq0p3</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">[</span><span class="n">indsq</span><span class="p">]</span><span class="o">/</span><span class="mf">0.3</span><span class="p">)</span><span class="o">**</span><span class="n">gs</span><span class="p">)</span>
+                <span class="c1"># cumulative distribution</span>
+                <span class="n">cumfq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">fq</span><span class="p">)</span> <span class="o">-</span> <span class="n">fq</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># normalize cumfq(q=1.0) = 1</span>
+                <span class="n">cumfq</span> <span class="o">=</span> <span class="n">cumfq</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cumfq</span><span class="p">)</span>
+                <span class="c1"># save to grid</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cumqdist</span><span class="p">[:,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cumfq</span>
+                <span class="c1"># Given M1 and P, q_factor is the ratio of all binaries</span>
+                <span class="c1"># 0.1 &lt; q &lt; 1.0 to those with 0.3 &lt; q &lt; 1.0</span>
+                <span class="n">q_factor</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">,</span> <span class="n">fq</span><span class="p">)</span>
+                <span class="c1"># Given M1 &amp; P, calculate power-law slope eta of eccentricity</span>
+                <span class="c1"># distribution</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;=</span> <span class="mf">0.7</span><span class="p">):</span>
+                    <span class="c1"># For log P &gt; 0.7 use fits in Section 9.2.</span>
+                    <span class="c1"># Power-law slope eta for M1 &lt; 3 Msun and log P &gt; 0.7</span>
+                    <span class="n">eta_3</span> <span class="o">=</span> <span class="mf">0.6</span> <span class="o">-</span> <span class="mf">0.7</span> <span class="o">/</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1">#; Eqn. 17</span>
+                    <span class="c1"># Power-law slope eta for M1 &gt; 7 Msun and log P &gt; 0.7</span>
+                    <span class="n">eta_7</span> <span class="o">=</span> <span class="mf">0.9</span> <span class="o">-</span> <span class="mf">0.2</span> <span class="o">/</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1">#; Eqn. 18</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># For log P &lt; 0.7, set eta to fitted values at log P = 0.7</span>
+                    <span class="n">eta_3</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.9</span>
+                    <span class="n">eta_7</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.1</span>
+                <span class="c1"># Given P, interpolate eta with respect to M1 at myM1</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">3.0</span><span class="p">):</span>
+                    <span class="n">eta</span> <span class="o">=</span> <span class="n">eta_3</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">3.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">myM1</span> <span class="o">&lt;=</span> <span class="mf">7.0</span><span class="p">)):</span>
+                    <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">myM1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="mf">3.0</span><span class="p">,</span><span class="mf">7.0</span><span class="p">]),</span>
+                                    <span class="p">[</span><span class="n">eta_3</span><span class="p">,</span> <span class="n">eta_7</span><span class="p">])</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">myM1</span> <span class="o">&gt;</span> <span class="mf">7.0</span><span class="p">):</span>
+                    <span class="n">eta</span> <span class="o">=</span> <span class="n">eta_7</span>
+                <span class="c1"># Given eta at the specified M1 and P, tabulate eccentricity</span>
+                <span class="c1"># distribution</span>
+                <span class="k">if</span><span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">):</span>
+                    <span class="c1"># For P &lt; 2 days, assume all systems are close to circular</span>
+                    <span class="c1"># For adopted ev (spacing and minimum value), eta = -3.2</span>
+                    <span class="c1"># satisfies this</span>
+                    <span class="n">fe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ev</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">3.2</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">fe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ev</span><span class="o">**</span><span class="n">eta</span>
+                    <span class="c1"># maximum eccentricity for given P</span>
+                    <span class="n">e_max</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="p">(</span><span class="mi">10</span><span class="o">**</span><span class="n">mylogP</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span><span class="p">)</span>
+                    <span class="c1"># set distribution = 0 for e &gt; e_max</span>
+                    <span class="n">fe</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">ev</span> <span class="o">&gt;=</span> <span class="n">e_max</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                    <span class="c1"># Assume e distribution has power-law slope eta for</span>
+                    <span class="c1"># 0.0 &lt; e / e_max &lt; 0.8 and then linear turnover between</span>
+                    <span class="c1"># 0.8 &lt; e / e_max &lt; 1.0 so that distribution is continuous</span>
+                    <span class="c1"># at e / e_max = 0.8 and zero at e = e_max</span>
+                    <span class="n">ind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">ev</span> <span class="o">&gt;=</span> <span class="mf">0.8</span><span class="o">*</span><span class="n">e_max</span><span class="p">)</span>
+                                         <span class="o">&amp;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ev</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="o">*</span><span class="n">e_max</span><span class="p">))</span>
+                    <span class="n">ind_cont</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">ind</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">fe</span><span class="p">[</span><span class="n">ind</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ev</span><span class="p">[</span><span class="n">ind</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.8</span><span class="o">*</span><span class="n">e_max</span><span class="p">,</span><span class="mf">1.0</span><span class="o">*</span><span class="n">e_max</span><span class="p">],</span>
+                                        <span class="p">[</span><span class="n">fe</span><span class="p">[</span><span class="n">ind_cont</span><span class="p">],</span><span class="mf">0.0</span><span class="p">])</span>
+                <span class="c1"># cumulative distribution</span>
+                <span class="n">cumfe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">fe</span><span class="p">)</span> <span class="o">-</span> <span class="n">fe</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># normalize cumfe(e=e_max) = 1</span>
+                <span class="n">cumfe</span> <span class="o">=</span> <span class="n">cumfe</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">cumfe</span><span class="p">)</span>
+                <span class="c1"># save to grid</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cumedist</span><span class="p">[:,</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cumfe</span>
+                <span class="c1"># Given constants alpha and DlogP and M1 dependent values</span>
+                <span class="c1"># flogPle1, flogPeq2p7, and flogPeq5p5, calculate frequency</span>
+                <span class="c1"># flogP of companions with q &gt; 0.3 per decade of orbital period</span>
+                <span class="c1"># at given P (Section 9.3 and Eqn. 23)</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.0</span><span class="p">):</span>
+                    <span class="n">flogP</span> <span class="o">=</span> <span class="n">flogPle1</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">2.7</span><span class="o">-</span><span class="n">DlogP</span><span class="p">)):</span>
+                    <span class="n">flogP</span> <span class="o">=</span> <span class="n">flogPle1</span> <span class="o">+</span> <span class="p">((</span><span class="n">flogPeq2p7</span><span class="o">-</span><span class="n">flogPle1</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">DlogP</span><span class="p">)</span>
+                                        <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">1.0</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.7</span><span class="o">-</span><span class="n">DlogP</span><span class="p">))</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">2.7</span><span class="o">-</span><span class="n">DlogP</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">2.7</span><span class="o">+</span><span class="n">DlogP</span><span class="p">)):</span>
+                    <span class="n">flogP</span> <span class="o">=</span> <span class="n">flogPeq2p7</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">2.7</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">((</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">2.7</span><span class="o">+</span><span class="n">DlogP</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">5.5</span><span class="p">)):</span>
+                    <span class="n">flogP</span> <span class="o">=</span> <span class="p">(</span><span class="n">flogPeq2p7</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">DlogP</span>
+                             <span class="o">+</span> <span class="p">(</span><span class="n">flogPeq5p5</span><span class="o">-</span><span class="n">flogPeq2p7</span><span class="o">-</span><span class="n">alpha</span><span class="o">*</span><span class="n">DlogP</span><span class="p">)</span>
+                               <span class="o">*</span><span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">2.7</span><span class="o">-</span><span class="n">DlogP</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">2.8</span><span class="o">-</span><span class="n">DlogP</span><span class="p">))</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&gt;</span> <span class="mf">5.5</span><span class="p">):</span>
+                    <span class="n">flogP</span> <span class="o">=</span> <span class="n">flogPeq5p5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.3</span><span class="o">*</span><span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">5.5</span><span class="p">))</span>
+                <span class="c1"># Convert frequency of companions with q &gt; 0.3 to frequency of</span>
+                <span class="c1"># companions with q &gt; 0.1 according to q_factor; save to grid</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">flogP_sq</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">flogP</span> <span class="o">*</span> <span class="n">q_factor</span>
+                <span class="c1"># Calculate prob. that a companion to M1 with period P is the</span>
+                <span class="c1"># inner binary. Currently this is an approximation. 100% for</span>
+                <span class="c1"># log P &lt; 1.5; For log P &gt; 1.5 adopt functional form that</span>
+                <span class="c1"># reproduces M1 dependent multiplicity statistics in</span>
+                <span class="c1"># Section 9.4, including a 41% binary star faction (59% single</span>
+                <span class="c1"># star fraction) for M1 = 1 Msun and 96% binary star fraction</span>
+                <span class="c1"># (4% single star fraction) for M1 = 28 Msun</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">mylogP</span> <span class="o">&lt;=</span> <span class="mf">1.5</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="mf">0.11</span> <span class="o">*</span> <span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span><span class="o">**</span><span class="mf">1.43</span>
+                                                    <span class="o">*</span> <span class="p">(</span><span class="n">myM1</span><span class="o">/</span><span class="mf">10.0</span><span class="p">)</span><span class="o">**</span><span class="mf">0.56</span><span class="p">)</span>
+                <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mf">0.0</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+            <span class="c1"># Given M1, calculate cumulative binary period distribution</span>
+            <span class="n">mycumPbindist</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flogP_sq</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+                             <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">flogP_sq</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">i</span><span class="p">])</span>
+            <span class="c1"># Normalize so that max(cumPbindist) = total binary star fraction</span>
+            <span class="c1"># (NOT 1)</span>
+            <span class="n">mycumPbindist</span> <span class="o">=</span> <span class="p">(</span><span class="n">mycumPbindist</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mycumPbindist</span><span class="p">)</span>
+                             <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logPv</span><span class="p">,</span>
+                                                  <span class="bp">self</span><span class="o">.</span><span class="n">flogP_sq</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+                                                  <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">probbin</span><span class="p">[:,</span><span class="n">i</span><span class="p">]))</span>
+            <span class="c1"># save to grid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cumPbindist</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mycumPbindist</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;Moe and Di Stefano 2017 distributions on a grid of &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">, n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">, n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">, and &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;&lt;h3&gt;Moe and Di Stefano 2017 distributions on a grid of&lt;/h3&gt;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M1</span><span class="p">,</span> <span class="n">M_min</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">M_max</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span> <span class="n">all_binaries</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializing the class.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        M1 : float or ndarray of float</span>
+<span class="sd">            Mass of the primary in Msun.</span>
+<span class="sd">        M_min : float (default: 0.08)</span>
+<span class="sd">            Minimum mass of a star in Msun.</span>
+<span class="sd">        M_max : float (default: 150.0)</span>
+<span class="sd">            Maximum mass of a star in Msun.</span>
+<span class="sd">        all_binaries : bool (default: True)</span>
+<span class="sd">            If true, set binary fraction to 1.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        M2, logP, e, Z : each being of same type as M1</span>
+<span class="sd">            The four values are:</span>
+<span class="sd">                - the mass of the secondary in Msun</span>
+<span class="sd">                - the log10 of the period in days</span>
+<span class="sd">                - the eccentricity</span>
+<span class="sd">                - the metallicity</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">M1s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">M1</span><span class="p">)</span>
+        <span class="n">M2s</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">logPs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">es</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">Zs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Implement Monte Carlo method / random number generator to select</span>
+        <span class="c1"># single stars and binaries from the grids of distributions</span>
+        <span class="c1"># Find index of M1v that is closest to M1.</span>
+        <span class="c1"># For M1 = 40 - M1_max Msun, adopt binary statistics of M1 = 40 Msun.</span>
+        <span class="c1"># For M1 = M_min - 0.8 Msun, adopt P and e dist of M1 = 0.8Msun, scale</span>
+        <span class="c1"># and interpolate the companion frequencies so that the binary star</span>
+        <span class="c1"># fraction of M1 = 0.08 Msun primaries is zero, and truncate the q</span>
+        <span class="c1"># distribution so that q &gt; q_min = M_min/M1</span>
+        <span class="k">for</span> <span class="n">M1</span> <span class="ow">in</span> <span class="n">M1s</span><span class="p">:</span>
+            <span class="n">indM1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">M1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">M1v</span><span class="p">)</span> <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">M1</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">M1v</span><span class="p">)))</span>
+            <span class="n">indM1</span> <span class="o">=</span> <span class="n">indM1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1"># Given M1, determine cumulative binary period distribution</span>
+            <span class="n">mycumPbindist</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cumPbindist</span><span class="p">[:,</span><span class="n">indM1</span><span class="p">])</span><span class="o">.</span><span class="n">flatten</span>
+            <span class="c1"># If M1 &lt; 0.8 Msun, rescale to appropriate binary star fraction</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">M1</span> <span class="o">&lt;=</span> <span class="mf">0.8</span><span class="p">):</span>
+                <span class="n">mycumPbindist</span> <span class="o">=</span> <span class="p">(</span><span class="n">mycumPbindist</span><span class="p">()</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">M1</span><span class="p">),</span>
+                                                             <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">([</span><span class="n">M_min</span><span class="p">,</span>
+                                                                       <span class="mf">0.8</span><span class="p">]),</span>
+                                                             <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+                                <span class="p">)</span><span class="o">.</span><span class="n">flatten</span>
+            <span class="c1"># Given M1, determine the binary star fraction</span>
+            <span class="k">if</span> <span class="n">all_binaries</span><span class="p">:</span>
+                <span class="n">mybinfrac</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mybinfrac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mycumPbindist</span><span class="p">())</span>
+            <span class="c1"># Generate random number myrand between 0 and 1</span>
+            <span class="n">myrand</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+            <span class="c1"># If random number &lt; binary star fraction, generate a binary</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">myrand</span> <span class="o">&lt;</span> <span class="n">mybinfrac</span><span class="p">):</span>
+                <span class="c1"># Given myrand, select P and corresponding index in logPv</span>
+                <span class="n">mylogP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">myrand</span><span class="p">,</span> <span class="n">mycumPbindist</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">logPv</span><span class="p">)</span>
+                <span class="n">indlogP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">logPv</span><span class="p">)</span>
+                                         <span class="o">==</span> <span class="nb">min</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">mylogP</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">logPv</span><span class="p">)))</span>
+                <span class="n">indlogP</span> <span class="o">=</span> <span class="n">indlogP</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="c1"># Given M1 &amp; P, select e from eccentricity distribution</span>
+                <span class="n">mye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(),</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">cumedist</span><span class="p">[:,</span><span class="n">indlogP</span><span class="p">,</span><span class="n">indM1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">ev</span><span class="p">)</span>
+                <span class="c1"># Given M1 &amp; P, determine mass ratio distribution.</span>
+                <span class="c1"># If M1 &lt; 0.8 Msun, truncate q distribution and consider only mass</span>
+                <span class="c1"># ratios q &gt; q_min = M_min / M1</span>
+                <span class="n">mycumqdist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumqdist</span><span class="p">[:,</span><span class="n">indlogP</span><span class="p">,</span><span class="n">indM1</span><span class="p">]</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+                <span class="k">if</span><span class="p">(</span><span class="n">M1</span> <span class="o">&lt;</span> <span class="mf">0.8</span><span class="p">):</span>
+                    <span class="n">q_min</span> <span class="o">=</span> <span class="n">M_min</span> <span class="o">/</span> <span class="n">M1</span>
+                    <span class="c1"># Calculate cumulative probability at q = q_min</span>
+                    <span class="n">cum_qmin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">q_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">,</span> <span class="n">mycumqdist</span><span class="p">)</span>
+                    <span class="c1"># Rescale and renormalize cumulative distribution for q &gt; q_min</span>
+                    <span class="n">mycumqdist</span> <span class="o">=</span> <span class="n">mycumqdist</span> <span class="o">-</span> <span class="n">cum_qmin</span>
+                    <span class="n">mycumqdist</span> <span class="o">=</span> <span class="n">mycumqdist</span> <span class="o">/</span> <span class="nb">max</span><span class="p">(</span><span class="n">mycumqdist</span><span class="p">)</span>
+                    <span class="c1"># Set probability = 0 where q &lt; q_min</span>
+                    <span class="n">mycumqdist</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">qv</span> <span class="o">&lt;=</span> <span class="n">q_min</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.0</span>
+                <span class="c1"># Given M1 &amp; P, select q from cumulative mass ratio distribution</span>
+                <span class="n">myq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(),</span> <span class="n">mycumqdist</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">qv</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># If instead random number &gt; binary star fraction, generate single</span>
+                <span class="c1"># star</span>
+                <span class="n">myq</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">mylogP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="n">mye</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="c1"># Get metallicity</span>
+            <span class="n">Zsun</span> <span class="o">=</span> <span class="mf">0.02</span>
+            <span class="n">logZ</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.3</span> <span class="o">+</span> <span class="p">(</span><span class="mf">0.176</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">2.3</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">()</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="n">Zsun</span><span class="o">*</span><span class="mi">10</span><span class="o">**</span><span class="n">logZ</span>
+            <span class="n">M2s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">M1</span><span class="o">*</span><span class="n">myq</span><span class="p">)</span>
+            <span class="n">logPs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mylogP</span><span class="p">)</span>
+            <span class="n">es</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mye</span><span class="p">)</span>
+            <span class="n">Zs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">M2s</span><span class="p">),</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">logPs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">es</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Zs</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.2.4
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.4/index.html">2.2</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
