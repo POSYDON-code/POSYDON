@@ -17,6 +17,8 @@ __authors__ = [
 import os
 import time
 
+from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
@@ -248,6 +250,7 @@ class SimulationProperties:
 
         return new_instance
 
+    #@profile
     def load_steps(self, metallicity=None, verbose=False):
         """Instantiate all step classes and set as instance attributes.
 
@@ -269,11 +272,32 @@ class SimulationProperties:
         if verbose:
             print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
 
+
+        # creating a track matching object
+        self.track_matcher = None
+
         # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
                 metallicity = step_kwargs.get('metallicity', metallicity)
+
+                if self.track_matcher is None and metallicity is not None:
+                    self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+                                            grid_name_strippedHe = None,
+                                            path=PATH_TO_POSYDON_DATA, metallicity = metallicity,
+                                            matching_method = "minimize",
+                                            matching_tolerance=1e-2,
+                                            matching_tolerance_hard=1e-1,
+                                            list_for_matching_HMS = None,
+                                            list_for_matching_HeStar = None,
+                                            list_for_matching_postMS = None,
+                                            record_matching = False,
+                                            verbose = False)
+
+                if name not in ["flow", "step_SN", "step_end"]:
+                    step_kwargs['track_matcher'] = self.track_matcher
+
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
         # track that all steps have been loaded

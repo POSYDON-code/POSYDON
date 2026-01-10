@@ -288,6 +288,7 @@ class BinaryPopulation:
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
 
+    #@profile
     def _safe_evolve(self, **kwargs):
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:

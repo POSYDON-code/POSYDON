@@ -1472,18 +1472,8 @@ class PSyGrid:
         hdf5 = self.hdf5
         # load initial/final_values
         self._say("\tLoading initial/final values...")
-        self.initial_values = hdf5['/grid/initial_values'][()]
-        self.final_values = hdf5['/grid/final_values'][()]
-
-        # change ASCII to UNICODE in termination flags in `final_values`
-        new_dtype = []
-        for dtype in self.final_values.dtype.descr:
-            if (dtype[0].startswith("termination_flag") or
-                (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
-                ("_state" in dtype[0]) or ("_class" in dtype[0])):
-                dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
-            new_dtype.append(dtype)
-        self.final_values = self.final_values.astype(new_dtype)
+        self.initial_values = hdf5['/grid/initial_values']
+        self.final_values = hdf5['/grid/final_values']
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
