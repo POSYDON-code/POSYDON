@@ -3,6 +3,11 @@ Module implementing initial-final (IF) interpolation.
 
 """
 
+__authors__ = [
+    "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>",
+]
+
+
 import numpy as np
 import os
 import pickle
@@ -12,6 +17,14 @@ from scipy.spatial import Delaunay
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.data_scaling import DataScaler, SCALING_OPTIONS
+from posydon.interpolation.preprocessing import (
+    normalize,
+    unnormalize,
+    find_normalization_evaluation_matrix, 
+    compute_statistics,
+    IN_SCALING_OPTIONS,
+    OUT_SCALING_OPTIONS)
+
 from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
@@ -22,6 +35,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import balanced_accuracy_score
 
 import sys
+import time
 
 eps = 1.0e-16
 
@@ -63,7 +77,7 @@ class IFInterpolator:
                 self.outside_convex_hull[key] / (self.outside_convex_hull[key] + self.inside_convex_hull[key])
             )
         if _print:
-            print(f"Total of {sum(pecentages) / len(percentages):.2f} outside of hul")
+            print(f"Total of {sum(percentages) / len(percentages):.2f} outside of hull")
 
         return dict(zip(self.discrete_out_keys, percentages))
 
@@ -74,25 +88,30 @@ class IFInterpolator:
                 [self.find_hyperparameters(key) for key in self.discrete_out_keys]
             )
         )
-        # self.out_scalers = dict(
-        #     zip(
-        #         self.discrete_out_keys,
-        #         [self.optimize_normalization(key) for key in self.discrete_out_keys]
-        #     )
-        # )
-        self.training = False
+        self.out_scalers = dict(
+            zip(
+                self.discrete_out_keys,
+                [self.optimize_normalization(key) for key in self.discrete_out_keys]
+            )
+        )
         
-    def interpolate(self, iv, klass):
+
+    def interpolate(self, iv, klass, sn_model):
 
         interpolated = []
         ics = {}
         weights = {}
 
-        for key, c in zip(self.discrete_out_keys, klass):
+        interpolation_class_ind = self.discrete_out_keys.index("interpolation_class")
+        sn_class_ind = self.discrete_out_keys.index(sn_model)
+        klass = [klass[interpolation_class_ind], klass[sn_class_ind]]
+        classification_schemes = ["interpolation_class", sn_model]
+
+        for key, c in zip(classification_schemes, klass):
 
             triangulation = self.training_grid["triangulations"][key][c]
 
-            simplex = triangulation.find_simplex(iv)
+            simplex = triangulation.find_simplex(iv)            
 
             if simplex == -1:
                 interpolated.extend(
@@ -109,19 +128,36 @@ class IFInterpolator:
             class_inds = self.training_grid["class_inds"][key][c]
 
             final_values = np.array(self.training_grid["final_values"][key][class_inds][vertices].tolist())
-
-            # if self.training:
-            #     final_values = self.normalize_output(final_values, c)
-
+            print("Before", final_values)
+            if np.isnan(final_values).any():
+                print("Do final values have NaNs?", np.isnan(final_values).any())
+            # if False or self.training:
+            #     if not np.isnan(final_values).any():
+            #         final_values = normalize(final_values, self._stats[0], self._stats[1], True)
+            print("After", final_values)
             barycentric_weights = self.compute_barycentric_coordinates(iv, triangulation.points[vertices])[..., np.newaxis]
-            weights[key] = barycentric_weights
+            if np.isnan(barycentric_weights).any():
+                print("Do barycentric weights have NaNs?", np.isnan(barycentric_weights).any())
 
+            weights[key] = barycentric_weights
+            print(final_values, barycentric_weights)
+            # if self.training:
+            # if not np.isnan(final_values).any():
+            #     final_values = unnormalize(
+            #         np.sum(final_values * barycentric_weights, axis = 0),
+            #         self._stats[0], self._stats[1], True
+            #     )
+            # else:
+            #     final_values = np.sum(final_values * barycentric_weights, axis = 0)
+
+            if np.isnan(final_values).any():
+                print("Output has nans")
             # denormalized = self.denormalize_output(
             #     np.sum(final_values * barycentric_weights, axis = 0), 
             #     klass
             # )
-            
-            interpolated.extend(np.sum(final_values * barycentric_weights, axis = 0))
+            interpolated.extend(final_values)
+
 
         meta_data = {
             "weights": weights, 
@@ -132,127 +168,187 @@ class IFInterpolator:
 
         return interpolated, meta_data
 
-    def evaluate(self, initial_values):
+    def evaluate(self, initial_values, sn_model = "S1_SN_MODEL_v2_01_SN_type"):
 
         if self.classifiers is None:
             sys.exit("Please find classifier hyperparameters before using interpolator")
         
         interpolation_class_ind = self.discrete_out_keys.index("interpolation_class")
 
-        if not self.training:
-            initial_values = ( np.log10(initial_values + eps) - self.iv_min ) / (self.iv_max - self.iv_min + eps)
-
-        classes = np.array([clasifier["classifier"].predict(initial_values) for clasifier in self.classifiers.values()]).T
+        classes = np.array([
+            cl["classifier"].predict(normalize(initial_values, cl["stats"][0], cl["stats"][1], cl["log"])) 
+            for cl in self.classifiers.values()]).T
 
         interpolated_values = []
         n = []
-
+        
         for iv, klass in zip(initial_values, classes):
             if klass[interpolation_class_ind] == "initial_MT":
                 continue
 
-            interpolated, meta_data = self.interpolate(iv, klass)
-            interpolated = self.apply_continuous_constraints(interpolated)
+            interpolated, meta_data = self.interpolate(iv, klass, sn_model)
+            interpolated = self.apply_continuous_constraints(interpolated, sn_model)
 
             interpolated_values.append(interpolated)
             n.append(meta_data)
 
         interpolated_values = np.array(interpolated_values)
         classes = np.array(classes)
-        print("interp_values", interpolated_values.shape)
+
         return interpolated_values, classes, n
 
     def find_hyperparameters(self, klass):
-
-        k_accuracies = []
         
+        input_matrix = []
+
         for k in range(1, self.max_k):
+            row = []
+            for opt in IN_SCALING_OPTIONS:
+                row.append(
+                    [k, opt]
+                )
+            input_matrix.append(row)
+
+        kwargs = {
+            "input_matrix": input_matrix,
+            "self": self,
+            "klass": klass
+        }
+
+        def kwargs_fnc(**kwargs):
+
+            kwargs = {
+                "self": kwargs["kwargs"]["self"],
+                "k": kwargs["item"][0],
+                "scaling": kwargs["item"][1]
+            }
+
+            return kwargs
+
+        def eval_fnc(self, k, scaling):
 
             validation_classifier = KNeighborsClassifier(n_neighbors = k, weights = "distance")
+
+            training_initial_values = self.training_grid["initial_values"]
+
+            stats = compute_statistics(training_initial_values, scaling)
+            training_initial_values = normalize(
+                training_initial_values, stats[0], stats[1], "log" in scaling)
+
             validation_classifier.fit(
-                self.training_grid["initial_values"], 
+                training_initial_values, 
                 self.training_grid["final_classes"][klass]
             )
 
-            predicted_classes = validation_classifier.predict(self.validation_grid["initial_values"])
-            
-            k_accuracies.append(
-                balanced_accuracy_score(
-                    predicted_classes, 
-                    self.validation_grid["final_classes"][klass]
-                )
+            validation_initial_values = self.validation_grid["initial_values"]
+            validation_initial_values = normalize(
+                validation_initial_values, stats[0], stats[1], "log" in scaling)
+            predicted_classes = validation_classifier.predict(validation_initial_values)
+
+            bacc = balanced_accuracy_score(
+                self.validation_grid["final_classes"][klass],
+                predicted_classes                
             )
 
-        self.k_accuracies = np.array(k_accuracies)
+            return bacc, stats
 
-        k_star = self.k_accuracies.argmax()
+        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs)
 
-        classifier = KNeighborsClassifier(n_neighbors = k_star, weights = "distance")
+        k_star = list(np.unravel_index(eval_matrix.argmax(), eval_matrix.shape))
+
+        classifier = KNeighborsClassifier(n_neighbors = k_star[0] + 1, weights = "distance")
+
+        training_initial_values = self.training_grid["initial_values"]
+
+        scaling = IN_SCALING_OPTIONS[k_star[1]]
+
+        stats = compute_statistics(training_initial_values, scaling)
+        training_initial_values = normalize(
+            training_initial_values, stats[0], stats[1], "log" in scaling)
+
         classifier.fit(
-            self.training_grid["initial_values"], 
+            training_initial_values, 
             self.training_grid["final_classes"][klass]
         )
 
-        return {"classifier": classifier, "k_star": k_star, "k_accuracies": k_accuracies}
+        return {
+            "classifier": classifier,
+            "stats": stat_matrix[*k_star],
+            "log": "log" in IN_SCALING_OPTIONS[k_star[1]],
+            "k_star": k_star, 
+            "eval_matrix": eval_matrix
+        }
 
     def optimize_normalization(self, key):
 
-        output_dim = len(self.out_key_dict[key])
-        classes = np.unique(self.training_grid["final_classes"][key])
+        input_matrix = []
 
-        all_scalers = []
-        scaler_accuracies = np.zeros(shape = (len(SCALING_OPTIONS), len(classes), output_dim))
+        labels = np.unique(self.training_grid["final_classes"][key])
+        labels = np.delete(labels, np.where(labels == "initial_MT")[0])
 
-        self.training = True
-        self.scaler_types = []
+        for label in labels:
+            row = []
+            for opt in OUT_SCALING_OPTIONS:
+                row.append(
+                    [label, opt]
+                )
+            input_matrix.append(row)
+    
+        kwargs = {
+            "input_matrix": input_matrix,
+            "self": self,
+            "key": key
+        }
 
-        for i, option in enumerate(SCALING_OPTIONS):
-            scalers = [[DataScaler() for _ in range(output_dim)] for _ in range(len(classes))]
+        def kwargs_fnc(**kwargs):
 
-            for j, klass in enumerate(classes):
-                for parameter in range(output_dim):
-                    param_min = np.nanmin(self.training_grid["final_values"][keys][:, parameter])
+            kwargs = {
+                "self": kwargs["kwargs"]["self"],
+                "key": kwargs["kwargs"]["key"],
+                "klass": kwargs["item"][0],
+                "scaling": kwargs["item"][1]
+            }
 
-                    if param_min < 0 and "log" in option:
-                        scalers[j][parameter].fit(self.training_grid["final_values"][keys][:, parameter], "none")
-                    else:
-                        scalers[j][parameter].fit(self.training_grid["final_values"][keys][:, parameter], option)
+            return kwargs
 
-            self.out_scalers = scalers
+        def eval_fnc(self, key, klass, scaling):
+            self.training = True
+            self.scaling = scaling
 
-            for j, klass in enumerate(self.classes):
+            klass_inds = np.where(self.validation_grid["final_classes"][key] == klass)[0]
 
-                class_mask = self.validation_grid["class_inds"][klass]
-                class_ivs = self.validation_grid["initial_values"][class_mask]
-                
-                interpolated_values, predicted_classes, _ = self.evaluate(class_ivs)
-                predicted_class_mask = np.where(predicted_classes != "initial_MT") # taking out mispredictions of initial MT
+            training_final_values = self.training_grid["final_values"][key][klass_inds]
+            self._stats = compute_statistics(training_final_values, scaling)
+            print("Does input have NaNs?", np.isnan(self.validation_grid["initial_values"][klass_inds]).any())
+            interpolated, classes, _ = self.evaluate(self.validation_grid["initial_values"][klass_inds])
 
-                relative_errors = np.abs(
-                    (interpolated_values - self.validation_grid["final_values"][keys][class_mask][predicted_class_mask]) 
-                    / (self.validation_grid["final_values"][keys][class_mask][predicted_class_mask] + eps)
-                ).mean(axis = 0)
+            classes = classes[np.where(classes[:, 0] != "initial_MT")[0]]
+            predicted_klass_inds = np.where((classes[:, 0] == klass) | (classes[:, 1] == klass))[0]
 
-                scaler_accuracies[i][j] = relative_errors
-
-            all_scalers.append(scalers)
-
-        all_scalers = np.array(all_scalers, dtype = object)
-
-        star_scalers = []
-        star_scaler_inds = scaler_accuracies.argmax(axis = 0)
-        self.scaler_accuracies = scaler_accuracies
-
-        for c in range(len(classes)):
-            star_scalers.append(
-                all_scalers[:, c][star_scaler_inds[c], np.arange(len(keys))]
+            # needs to be fixed to include any arbitrary SN model but this will do for now
+            ground_truth = np.concatenate(
+                [self.validation_grid["final_values"]["interpolation_class"], self.validation_grid["final_values"]["S1_SN_MODEL_v2_01_SN_type"]], axis = 1
             )
 
-        self.out_scalers = np.array(star_scalers, dtype = object)
-        self.normalize_triangulations()
+            errors = np.abs(
+                (interpolated[predicted_klass_inds] - ground_truth[klass_inds][predicted_klass_inds]) /
+                (ground_truth[klass_inds][predicted_klass_inds] + eps)
+            )
 
-        self.training = False
-        return np.array(star_scalers, dtype = object)
+            self.training = False
+
+            return errors.mean(), self._stats
+
+        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs)
+
+        opt = list(np.unravel_index(eval_matrix.argmax(), eval_matrix.shape))
+
+        return {
+            "stats": stat_matrix[opt],
+            "log": "log" in OUT_SCALING_OPTIONS[opt[1]],
+            "scaling": OUT_SCALING_OPTIONS[opt[1]], 
+            "eval_matrix": eval_matrix
+        }
 
     # =================== helper methods below ===========================
 
@@ -292,8 +388,8 @@ class IFInterpolator:
             ))
 
         return {
-            "initial_values": (initial_values - self.iv_min) / (self.iv_max - self.iv_min + eps),
-            "final_values": dict(zip(self.out_key_dict.keys(), [grid.final_values[valid_inds][keys] for keys in self.out_key_dict.values()])), # np.array(grid.final_values[self.continuous_out_keys][valid_inds].tolist()),
+            "initial_values": 10**initial_values,
+            "final_values": dict(zip(self.out_key_dict.keys(), [np.array(grid.final_values[valid_inds][keys].tolist()) for keys in self.out_key_dict.values()])), # np.array(grid.final_values[self.continuous_out_keys][valid_inds].tolist()),
             "final_classes": dict(zip(self.discrete_out_keys, np.array(grid.final_values[self.discrete_out_keys][valid_inds].tolist()).T)),
             "class_inds": class_inds,
         }
@@ -345,13 +441,14 @@ class IFInterpolator:
 
         return np.array(self.training_grid["final_values"][key][sorted_inds[0]].tolist())
 
-    def apply_continuous_constraints(self, interpolated):
+    def apply_continuous_constraints(self, interpolated, sn_model):
+        keys = self.out_key_dict["interpolation_class"] + self.out_key_dict[sn_model]
+
         sanitized = sanitize_interpolated_quantities(
-            dict(zip(self.continuous_out_keys, interpolated)),
+            dict(zip(keys, interpolated)),
             self.constraints, verbose=False
         )
-        
-        return np.array([sanitized[key] for key in self.continuous_out_keys])
+        return np.array([sanitized[key] for key in keys])
 
     def normalize_output(self, input, klass):
         class_ind = self.classes.index(klass)
@@ -386,4 +483,5 @@ class IFInterpolator:
             new_final_values[i] = self.normalize_output(np.array([fv]), klass)
 
         self.training_grid["final_values"][out_keys] = new_final_values
+
         

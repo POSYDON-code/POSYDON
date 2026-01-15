@@ -196,6 +196,7 @@ from posydon.visualization.plot_defaults import DEFAULT_LABELS
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
 
+import time
 
 # INITIAL-FINAL INTERPOLATOR
 class IFInterpolator:
@@ -269,12 +270,15 @@ class IFInterpolator:
         """
         ynums = {}
         ycats = {}
-
+        # s = time.time()
         for interpolator in self.interpolators:
             ynum, ycat = interpolator.evaluate(binary, sanitization_verbose)
 
             ynums = {**ynums, **ynum}
             ycats = {**ycats, **ycat}
+
+        # e = time.time()
+        # print(f"Iterated over {len(self.interpolators)} interpolators in {e - s}")
 
         return ynums, ycats
 
@@ -666,7 +670,11 @@ class BaseIFInterpolator:
 
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
+            # s = time.time()
             Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
+            # e = time.time()
+            
+            # print(f"Predicted one interpolator value in {e - s} seconds")
         else:
             Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
