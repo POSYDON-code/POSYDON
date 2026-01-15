@@ -402,7 +402,7 @@ class MergedStep(IsolatedStep):
                             setattr(merged_star, key, np.nan)
 
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-                massless_remnant = convert_star_to_massless_remnant(comp)
+                massless_remnant = convert_star_to_massless_remnant(star_base)
 
         #postMS + HeStar that is not in HeMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
