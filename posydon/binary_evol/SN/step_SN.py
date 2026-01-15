@@ -2551,56 +2551,6 @@ class StepSN(object):
                 ff = 1
         return ff
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-            
-            ((k1 * (mu4 * M4) + k2) < mu4):
-                # The prediction is a failed explosion
-                # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
-                else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
-            else:
-                # The prediction is a succesful explosion
-                m_rem = M4
-                f_fb = 0.0
-                state = 'NS'
-
-        return m_rem, f_fb, state
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     
 
 
