@@ -175,13 +175,24 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
-            return (A1*M1 + A2*M2 ) / (M1+M2)
+            
+            try:
+            	mass_weighted_avg_value=(A1*M1+A2*M2)/(M1+M2)
+            except TypeError:
+            	mass_weighted_avg_value= np.nan
+
+            if self.verbose:
+                print(abundance_name, mass_weight1, mass_weight2)
+                print("A_base, M_base_abundance, A_comp, M_comp_abundanc", A1, M1, A2, M2)
+                print("mass_weighted_avg= ", mass_weighted_avg_value)
+
+            return mass_weighted_avg_value
 
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
+                
                 #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
@@ -196,6 +207,8 @@ class MergedStep(IsolatedStep):
                 merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12")
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
+
+                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
