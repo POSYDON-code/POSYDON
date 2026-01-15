@@ -20,7 +20,8 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>", 
+    "Dimitris Souropanis <dsouropanis@ia.forth.gr>"
 ]
 
 __credits__ = [
@@ -2383,19 +2384,6 @@ class StepSN(object):
 
         return m_rem, f_fb, state
 
-
-
-
-
-
-
-
-
-
-
-
-
-
     def Maltsev25_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
 
@@ -2420,7 +2408,7 @@ class StepSN(object):
 
         """
         Muller_k_parameters = {
-            'M16': [0.005, 0.420]
+            'M16': [0.005, 0.420] # Section 3.1.1. of [8]_
         }
 
         if engine not in Muller_k_parameters.keys():
@@ -2452,13 +2440,12 @@ class StepSN(object):
                 m_rem = 1.25
                 f_fb = 0.0
                 state = 'NS'
-
                 
             # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
             # However, since this outcome depends on the mass-transfer (MT) history, we handle it
-            # in post-processing. For all CO core masses above 10, we assume a failed supernova
+            # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
             # with fallback = 1 at this stage.
-            elif CO_core_mass >= 10.0:
+            elif CO_core_mass >= 10.0: 
                 # Assuming BH formation by direct collapse
                 if conserve_hydrogen_envelope:
                     m_rem = star.mass
@@ -2478,44 +2465,35 @@ class StepSN(object):
                         state = 'BH'
                 else:
                     rem = self.NS_vs_fallbackBH(Xi, CO_core_mass, M4, mu4M4)
-                    if rem==2:
+                    if rem==2:  # successful SN with NS
                         m_rem = M4
                         f_fb = 0.0
                         state = 'NS'
-                    else:
+                    else:  # successful SN but with fallback BH
                         if conserve_hydrogen_envelope:
                             m_rem = star.mass
                         else:
                             m_rem = star.he_core_mass
-                            f_fb = 1.0
+                            f_fb = 0.99
                             state = 'BH'
-                        
-                        
 
         return m_rem, f_fb, state
-                    
 
     def NS_vs_fallbackBH(self, comp_val, mco_val, M4_val, mu4M4_val):
-        a, b = 1.75, -0.044
-    # conditions for guaranteed NS formation
+        a, b = 1.75, -0.044  # eq. (8) of [8]_
+        # conditions for guaranteed NS formation (eq. 7)
         if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
             rem = 2
-        else:
+        else: 
         # stochastic determination of the remnant type (NS versus fallback-BH)
             rand_number = random.uniform(0,1)
-            if rand_number <= 0.15:
-                rem_type = 3
+            if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
+                rem_type = 3 # fallback BH, although successful SN
             else:
-                rem_type = 2
-        return rem
-
-        
+                rem_type = 2 # NS formation
+        return rem    
                     
-                    
-
-                
-                    
-                    
+    # implemented from Maltsev+25               
     def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val):
         ff1, ff2 = [], []
         unclassified = True
