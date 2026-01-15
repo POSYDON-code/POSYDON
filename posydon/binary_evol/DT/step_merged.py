@@ -269,8 +269,7 @@ class MergedStep(IsolatedStep):
                     for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
-                        if key in [ "c12_c12", "center_gamma",
-                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
+                        if key in [ "c12_c12", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
 
                 merged_star.log_LHe = comp.log_LHe
