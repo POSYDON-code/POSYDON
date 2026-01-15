@@ -20,7 +20,7 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>", 
+    "Seth Gossage <seth.gossage@northwestern.edu>",
     "Dimitris Souropanis <dsouropanis@ia.forth.gr>"
 ]
 
@@ -258,8 +258,8 @@ class StepSN(object):
         Heger, A., and Pfahl, E. 2004, ApJ, 612, 1044. The Effects of Binary
         Evolution on the Dynamics of Core Collapse and Neutron Star Kicks
 
-    .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger, F.K. Roepke, 
-         E. Laplace, 2025,  A&A, 700, A20. Explodability criteria for the neutrino-driven 
+    .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger, F.K. Roepke,
+         E. Laplace, 2025,  A&A, 700, A20. Explodability criteria for the neutrino-driven
          supernova mechanism
     """
 
@@ -303,7 +303,7 @@ class StepSN(object):
         self.Couch20_engines = "Couch+20-engine"
         self.Maltsev25_engines = "Maltsev+25-engine"
 
-        
+
 
         self.mechanisms = [
             self.Fryer12_rapid,
@@ -313,7 +313,7 @@ class StepSN(object):
             self.Sukhbold16_engines,
             self.Patton20_engines,
             self.Couch20_engines,
-            self.Maltsev25_engines    
+            self.Maltsev25_engines
         ]
 
         if self.mechanism in self.mechanisms:
@@ -414,7 +414,7 @@ class StepSN(object):
                 self.mu4_interpolator = neighbors.KNeighborsRegressor(
                     n_neighbors, weights='distance')
                 self.mu4_interpolator.fit(CO_core_params_mu4, mu4_target)
-                
+
                 self.Xi_interpolator = neighbors.KNeighborsRegressor(
                     n_neighbors, weights='distance')
                 self.Xi_interpolator.fit(CO_core_params_Xi, Xi_target)
@@ -2404,7 +2404,7 @@ class StepSN(object):
             Fallback mass of the compact object in M_sun.
 
         References
-     
+
 
         """
         Muller_k_parameters = {
@@ -2431,7 +2431,7 @@ class StepSN(object):
             star.mu4 = mu4
             star.Xi = Xi
             star.sc = sc
-            
+
 
             k1 = Muller_k_parameters[engine][0]
             k2 = Muller_k_parameters[engine][1]
@@ -2440,12 +2440,12 @@ class StepSN(object):
                 m_rem = 1.25
                 f_fb = 0.0
                 state = 'NS'
-                
+
             # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
             # However, since this outcome depends on the mass-transfer (MT) history, we handle it
             # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
             # with fallback = 1 at this stage.
-            elif CO_core_mass >= 10.0: 
+            elif CO_core_mass >= 10.0:
                 # Assuming BH formation by direct collapse
                 if conserve_hydrogen_envelope:
                     m_rem = star.mass
@@ -2484,39 +2484,39 @@ class StepSN(object):
         # conditions for guaranteed NS formation (eq. 7)
         if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
             rem = 2
-        else: 
+        else:
         # stochastic determination of the remnant type (NS versus fallback-BH)
             rand_number = random.uniform(0,1)
             if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
                 rem_type = 3 # fallback BH, although successful SN
             else:
                 rem_type = 2 # NS formation
-        return rem    
-                    
-    # implemented from Maltsev+25               
+        return rem
+
+    # implemented from Maltsev+25
     def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val):
         ff1, ff2 = [], []
         unclassified = True
         comp_crit1, comp_crit2 = 0.314, 0.544 # compactness
         sc_crit1, sc_crit2 = 0.988, 1.169 # central specific entropy
         mu4M4_crit1, mu4M4_crit2 = 0.247, 0.421 # product of M4 and mu4
-        k1, k2 =  0.421, 0.005 
-        
+        k1, k2 =  0.421, 0.005
+
     # check whether criterion for failed SN is fulfilled
         if comp_val > comp_crit2 or sc_val > sc_crit2:
             ff2.append(0)
             ff = 0
-            unclassified = False       
+            unclassified = False
 
     # check whether criterion for successful SN is fulfilled
         if comp_val < comp_crit1 or sc_val < sc_crit1:
             ff1.append(1)
             ff = 1
             unclassified = False
-    
+
     # if there is contradiction or if the progenitor is unclassified based on comp & s_c
         if (len(ff1) > 0 and len(ff2) > 0) or unclassified:
-        
+
         # final fate classification based on mu4M4
             if mu4M4_val > mu4M4_crit2:
                 ff = 0
@@ -2529,7 +2529,7 @@ class StepSN(object):
                 ff = 1
         return ff
 
-    
+
 
 
 class Sukhbold16_corecollapse(object):
