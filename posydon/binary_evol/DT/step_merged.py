@@ -208,7 +208,8 @@ class MergedStep(IsolatedStep):
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
 
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
+                # The change of masses occurs after the calculation of weighted averages
+                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS) 
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -224,8 +225,6 @@ class MergedStep(IsolatedStep):
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
 
-                merged_star.mass = star_base.mass + comp.mass #TODO: in step_CEE we need to eject part of the (common) envelope
-
                 # weigheted mixing on the surface abundances of the whole comp with the envelope of star_base
                 merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
@@ -233,13 +232,15 @@ class MergedStep(IsolatedStep):
                 merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
 
+                # The change of masses occurs after the calculation of weighted averages
+                merged_star.mass = star_base.mass + comp.mass 
+
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
                     for substring in ["log_", "lg_", "surf_", "conv_", "lambda", "profile"]:
                         if (substring in key) :
                             setattr(merged_star, key, np.nan)
-                        if key in [ "c12_c12", "center_gamma",
-                                   "avg_c_in_c_core", "total_moment_of_inertia", "spin"]:
+                        if key in [ "c12_c12", "total_moment_of_inertia", "spin"]:
                             setattr(merged_star, key, np.nan)
 
                 merged_star.log_LHe = star_base.log_LHe
