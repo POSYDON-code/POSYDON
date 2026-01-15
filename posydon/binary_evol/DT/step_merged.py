@@ -93,12 +93,13 @@ class MergedStep(IsolatedStep):
         if self.verbose:
             print("Before Merger", binary.star_1.state, binary.star_2.state,
                   binary.state, binary.event)
-            print("M1 , M2, he_core_mass1, he_core_mass2: ",
+            print("M1 , M2, he_core_mass1, he_core_mass2, co_core_mass1, co_core_mass2: ",
                   binary.star_1.mass, binary.star_2.mass,
-                  binary.star_1.he_core_mass, binary.star_2.he_core_mass)
-            print("star_1.center_he4, star_2.center_he4, star_1.surface_he4, "
-                  "star_2.surface_he4: ", binary.star_1.center_he4,
-                  binary.star_2.center_he4, binary.star_1.surface_he4,
+                  binary.star_1.he_core_mass, binary.star_2.he_core_mass, binary.star_1.co_core_mass, binary.star_2.co_core_mass)
+            print("star_1.center_h1, star_2.center_h1, star_1.center_he4, star_1.center_c12, star_2.center_c12, "
+                  "star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",
+                  binary.star_1.center_h1, binary.star_2.center_h1, binary.star_1.center_he4,
+                  binary.star_2.center_he4, binary.star_1.center_c12, binary.star_2.center_c12, binary.star_1.surface_he4,
                   binary.star_2.surface_he4)
 
         if binary.state == "merged":
@@ -126,10 +127,16 @@ class MergedStep(IsolatedStep):
         if self.verbose:
             print("After Merger", binary.star_1.state, binary.star_2.state,
                   binary.state, binary.event)
-            print("M_merged , he_core_mass merged: ", binary.star_1.mass,
-                  binary.star_1.he_core_mass)
-            print("star_1.center_he4, star_1.surface_he4: ",
-                  binary.star_1.center_he4, binary.star_1.surface_he4)
+            if binary.event == 'oMerging1':
+                print("M_merged , he_core_mass merged, co_core_mass merged: ", binary.star_1.mass,
+                  binary.star_1.he_core_mass, binary.star_1.co_core_mass)
+                print("star_1.center_h1, star_1.center_he4, star_1.center_c12, star_1.surface_he4: ",
+                  binary.star_1.center_h1, binary.star_1.center_he4, binary.star_1.center_c12, binary.star_1.surface_he4)
+            elif binary.event=='oMerging2':
+                print("M_merged , he_core_mass merged, co_core_mass merged: ", binary.star_2.mass,
+                  binary.star_2.he_core_mass, binary.star_2.co_core_mass)
+                print("star_2.center_h1, star_2.center_he4, star_2.center_c12, star_2.surface_he4: ",
+                  binary.star_2.center_h1, binary.star_2.center_he4, binary.star_2.center_c12, binary.star_2.surface_he4)
 
         super().__call__(binary)
 
