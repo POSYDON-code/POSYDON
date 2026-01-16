@@ -22,8 +22,8 @@ from posydon.binary_evol.singlestar import (
     convert_star_to_massless_remnant,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.constants import Zsun, zams_table
 from posydon.utils.common_functions import check_state_of_star
+from posydon.utils.constants import Zsun, zams_table
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -49,7 +49,7 @@ class MergedStep(IsolatedStep):
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1, # [0-1) or "Schneider+2016" (dependent on mass ratio q; https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
-        HMS_HMS_merging_rejuvenation = True, # if True then total new abundances based on average abundance (Schneider+2016) 
+        HMS_HMS_merging_rejuvenation = True, # if True then total new abundances based on average abundance (Schneider+2016)
         list_for_matching_HMS = [
                 #["mass", "center_h1", "he_core_mass"],
                 #[20.0, 1.0, 10.0],
@@ -180,7 +180,7 @@ class MergedStep(IsolatedStep):
                 M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
             else:
                 M2 = getattr(star2, mass_weight2)
-            
+
             try:
             	mass_weighted_avg_value=(A1*M1+A2*M2)/(M1+M2)
             except TypeError:
@@ -218,7 +218,7 @@ class MergedStep(IsolatedStep):
                     Z_initial = Zinitial_div_Zsun*Zsun
                     X_initial = 1.0 - Y_initial - Z_initial
 
-                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS) 
+                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
 
                     X_average_merged = (star_base.total_mass_h1 + comp.total_mass_h1 - (1.-rel_mass_lost_HMS_HMS) * X_initial) / merged_star.mass
                     Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4 - (1.-rel_mass_lost_HMS_HMS) * Y_initial) / merged_star.mass
@@ -234,7 +234,7 @@ class MergedStep(IsolatedStep):
                     #in any case, the track_match after the step_merged will decide which parameter will be used for matching (center_h1, center_he4 or total_mass_h1)
 
                     for key in STARPROPERTIES:
-                    # these stellar attributes become np.nan as 
+                    # these stellar attributes become np.nan as
                         if key in [ "center_c12", "center_n14", "center_o16"]:
                             setattr(merged_star, key, np.nan)
 
@@ -254,7 +254,7 @@ class MergedStep(IsolatedStep):
                     merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
 
                     # The change of masses occurs after the calculation of weighted averages
-                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS) 
+                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
@@ -278,7 +278,7 @@ class MergedStep(IsolatedStep):
                 merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16", mass_weight1="H-rich_envelope_mass", mass_weight2="mass")
 
                 # The change of masses occurs after the calculation of weighted averages
-                merged_star.mass = star_base.mass + comp.mass 
+                merged_star.mass = star_base.mass + comp.mass
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
