@@ -22,6 +22,7 @@ from posydon.binary_evol.singlestar import (
     convert_star_to_massless_remnant,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.constants import Zsun, zams_table
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
@@ -47,10 +48,13 @@ class MergedStep(IsolatedStep):
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
-        rel_mass_lost_HMS_HMS = 0.1,
+        rel_mass_lost_HMS_HMS = 0.1, # [0-1) or "Schneider+2016" (dependent on mass ratio q; https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
+        HMS_HMS_merging_rejuvenation = True, # if True then total new abundances based on average abundance (Schneider+2016) 
         list_for_matching_HMS = [
-                ["mass", "center_h1", "he_core_mass"],
-                [20.0, 1.0, 10.0],
+                #["mass", "center_h1", "he_core_mass"],
+                #[20.0, 1.0, 10.0],
+                ["mass", "total_mass_h1", "he_core_mass"],
+                [20.0, 20.0, 10.0],
                 ["log_min_max", "min_max", "min_max"],
                 #[m_min_H, m_max_H], [0, None]
                 [None, None], [0, None]
@@ -192,25 +196,65 @@ class MergedStep(IsolatedStep):
         # MS + MS
         if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
-                #these stellar attributes change value
-                
-                #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
-                merged_star.center_h1 = mass_weighted_avg()
-                merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
-                merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
-                merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14")
-                merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16")
-                #TODO: should I check if the abundaces above end up in ~1 (?)
 
-                # weigheted mixing on the surface abundances
-                merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1")
-                merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4")
-                merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12")
-                merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
-                merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
+                q =  comp.mass/star_base.mass
+                # first we calculate the mass loss percentage:
+                if self.rel_mass_lost_HMS_HMS in "Schneider+2016":
+                    # Eq. of Schneider+2016
+                    rel_mass_lost_HMS_HMS = (0.3*q)/((1.+q)**2.)
+                else:
+                    rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS
 
-                # The change of masses occurs after the calculation of weighted averages
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS) 
+
+                if HMS_HMS_merging_rejuvenation :
+                    X_average1 = star_base.total_mass_h1 / star_base.mass
+                    X_average2 = comp.total_mass_h1 / comp.mass
+
+                    Zinitial_div_Zsun = star_base.metallicity
+                    if Zinitial_div_Zsun in zams_table.keys():
+                        Y_initial = zams_table[Zinitial_div_Zsun]
+                    else:
+                        raise KeyError(f"{Zinitial_div_Zsun} is a not defined metallicity")
+                    Z_initial = Zinitial_div_Zsun*Zsun
+                    X_initial = 1.0 - Y_initial - Z_initial
+
+                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS) 
+
+                    X_average_merged = (star_base.total_mass_h1 + comp.total_mass_h1 - (1.-rel_mass_lost_HMS_HMS) * X_initial) / merged_star.mass
+                    Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4 - (1.-rel_mass_lost_HMS_HMS) * Y_initial) / merged_star.mass
+
+                    merged_star.total_mass_h1 = X_average_merged * merged_star.mass
+                    merged_star.center_h1 = X_average_merged # this is only consistent with the merged_star.total_mass_h1 above if we assume full mixing during merger
+                    merged_star.surface_h1 = X_average_merged # this is only consistent with the merged_star.total_mass_h1 above if we assume full mixing during merger
+                    #in any case, the track_match after the step_merged will decide which parameter will be used for matching (center_h1, center_he4 or total_mass_h1)
+
+                    merged_star.total_mass_he4 = Y_average_merged * merged_star.mass
+                    merged_star.center_he4 = Y_average_merged # this is only consistent with the merged_star.total_mass_he4 above if we assume full mixing during merger
+                    merged_star.surface_he4 = Y_average_merged # this is only consistent with the merged_star.total_mass_he4 above if we assume full mixing during merger
+                    #in any case, the track_match after the step_merged will decide which parameter will be used for matching (center_h1, center_he4 or total_mass_h1)
+
+                    for key in STARPROPERTIES:
+                    # these stellar attributes become np.nan as 
+                        if key in [ "center_c12", "center_n14", "center_o16"]:
+                            setattr(merged_star, key, np.nan)
+
+                else:
+                    merged_star.center_h1 = mass_weighted_avg()
+                    merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
+                    merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
+                    merged_star.center_n14 = mass_weighted_avg(abundance_name = "center_n14")
+                    merged_star.center_o16 = mass_weighted_avg(abundance_name = "center_o16")
+                    #TODO: should I check if the abundaces above end up in ~1 (?)
+
+                    # weigheted mixing on the surface abundances
+                    merged_star.surface_h1 = mass_weighted_avg(abundance_name = "surface_h1")
+                    merged_star.surface_he4 = mass_weighted_avg(abundance_name = "surface_he4")
+                    merged_star.surface_c12 = mass_weighted_avg(abundance_name = "surface_c12")
+                    merged_star.surface_n14 = mass_weighted_avg(abundance_name = "surface_n14")
+                    merged_star.surface_o16 = mass_weighted_avg(abundance_name = "surface_o16")
+
+                    # The change of masses occurs after the calculation of weighted averages
+                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS) 
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
