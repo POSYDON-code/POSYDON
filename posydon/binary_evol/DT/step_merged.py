@@ -49,7 +49,7 @@ class MergedStep(IsolatedStep):
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
         rel_mass_lost_HMS_HMS = 0.1, # [0-1) or "Glebbeek+2013" (dependent on mass ratio q; Glebbeek E., Gaburov E., Portegies Zwart S., Pols O. R., 2013, MNRAS, 434, 3497)
-        HMS_HMS_merging_rejuvenation = True, # if True then new abundances based on total_mass_h1 or he4 
+        HMS_HMS_merging_rejuvenation = True, # if True then new abundances based on total_mass_h1 or he4
                                              # ("Schneider+2016"; i.e. Schneider, F. R. N., Podsiadlowski, P., Langer, N., Castro, N., & Fossati, L. 2016, MNRAS,457, 2355
                                              # https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
         list_for_matching_HMS = [
