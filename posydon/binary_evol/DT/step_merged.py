@@ -48,8 +48,10 @@ class MergedStep(IsolatedStep):
         grid_name_strippedHe=None,
         path=PATH_TO_POSYDON_DATA,
         merger_critical_rot = 0.4,
-        rel_mass_lost_HMS_HMS = 0.1, # [0-1) or "Schneider+2016" (dependent on mass ratio q; https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
-        HMS_HMS_merging_rejuvenation = True, # if True then total new abundances based on average abundance (Schneider+2016)
+        rel_mass_lost_HMS_HMS = 0.1, # [0-1) or "Glebbeek+2013" (dependent on mass ratio q; Glebbeek E., Gaburov E., Portegies Zwart S., Pols O. R., 2013, MNRAS, 434, 3497)
+        HMS_HMS_merging_rejuvenation = True, # if True then new abundances based on total_mass_h1 or he4 
+                                             # ("Schneider+2016"; i.e. Schneider, F. R. N., Podsiadlowski, P., Langer, N., Castro, N., & Fossati, L. 2016, MNRAS,457, 2355
+                                             # https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
         list_for_matching_HMS = [
                 #["mass", "center_h1", "he_core_mass"],
                 #[20.0, 1.0, 10.0],
@@ -199,8 +201,8 @@ class MergedStep(IsolatedStep):
 
                 q =  comp.mass/star_base.mass
                 # first we calculate the mass loss percentage:
-                if self.rel_mass_lost_HMS_HMS in "Schneider+2016":
-                    # Eq. of Schneider+2016
+                if self.rel_mass_lost_HMS_HMS == "Glebbeek+2013":
+                    # Eq. 4  of Glebbeek+2013
                     rel_mass_lost_HMS_HMS = (0.3*q)/((1.+q)**2.)
                 else:
                     rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS
