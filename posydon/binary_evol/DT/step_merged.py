@@ -81,6 +81,7 @@ class MergedStep(IsolatedStep):
 
         self.merger_critical_rot = merger_critical_rot
         self.rel_mass_lost_HMS_HMS = rel_mass_lost_HMS_HMS
+        self.HMS_HMS_merging_rejuvenation = HMS_HMS_merging_rejuvenation
 
         super().__init__(
         grid_name_Hrich=grid_name_Hrich,
@@ -208,7 +209,7 @@ class MergedStep(IsolatedStep):
                     rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS
 
 
-                if HMS_HMS_merging_rejuvenation :
+                if self.HMS_HMS_merging_rejuvenation : # according to Schneider+2016
                     X_average1 = star_base.total_mass_h1 / star_base.mass
                     X_average2 = comp.total_mass_h1 / comp.mass
 
