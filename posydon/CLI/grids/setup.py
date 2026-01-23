@@ -1,5 +1,6 @@
 import argparse
 import glob
+import logging
 import os
 import shutil
 import subprocess
@@ -33,8 +34,91 @@ GRAY = '\033[90m'
 CYAN = '\033[96m'
 YELLOW = '\033[93m'
 MAGENTA = '\033[95m'
+RED = '\033[91m'
 RESET = '\033[0m'
 BOLD = '\033[1m'
+
+# Setup logger
+logger = logging.getLogger(__name__)
+
+class ColoredFormatter(logging.Formatter):
+    """Custom formatter that adds colors to log level names."""
+
+    LEVEL_COLORS = {
+        'DEBUG': GRAY,
+        'INFO': CYAN,
+        'WARNING': YELLOW,
+        'ERROR': RED,
+        'CRITICAL': RED
+    }
+
+    def format(self, record):
+        # Get the color for this log level
+        color = self.LEVEL_COLORS.get(record.levelname, RESET)
+
+        # Create the formatted message with colored level name
+        formatted = f'[{color}{record.levelname}{RESET}] {record.getMessage()}'
+        return formatted
+
+def setup_logger(verbose=None):
+    """Setup logging configuration based on verbosity level.
+
+    Parameters
+    ----------
+    verbose : str or None, optional
+        Verbose logging option:
+        None = No verbose logging (INFO level to console only)
+        "console" = DEBUG level output to console
+        filename = DEBUG level output to specified file
+        Default is None.
+    """
+    if verbose is None:
+        level = logging.INFO
+        # Only setup console handler for INFO level
+        handler = logging.StreamHandler()
+        handler.setFormatter(ColoredFormatter())
+
+        # Configure the root logger
+        logging.basicConfig(
+            level=level,
+            handlers=[handler],
+            force=True
+        )
+    elif verbose == "console":
+        level = logging.DEBUG
+        print(f"{CYAN}DEBUG verbosity enabled: Detailed output will be shown on console.{RESET}")
+
+        # Create a custom handler with colored formatter
+        handler = logging.StreamHandler()
+        handler.setFormatter(ColoredFormatter())
+
+        # Configure the root logger
+        logging.basicConfig(
+            level=level,
+            handlers=[handler],
+            force=True
+        )
+    else:
+        # verbose is a filename
+        level = logging.DEBUG
+        print(f"{CYAN}DEBUG verbosity enabled: Detailed output will be logged to {verbose}.{RESET}")
+
+        # Create both file and console handlers
+        file_handler = logging.FileHandler(verbose)
+        console_handler = logging.StreamHandler()
+
+        # Use colored formatter for console, plain formatter for file
+        console_handler.setFormatter(ColoredFormatter())
+        file_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s',
+                                   datefmt='%Y-%m-%d %H:%M'))
+
+        # Configure the root logger
+        logging.basicConfig(
+            level=level,
+            handlers=[file_handler, console_handler],
+            force=True
+        )
+
 
 def check_file_exist(file_path, raise_error=True):
     """Check if a file exists at the given path
@@ -74,39 +158,47 @@ def setup_inlist_repository(inlist_repository, MESA_version):
         Path to the base to use for the run
     """
     POSYDON_inlist_URL = 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git'
-    print("We are setting up your inlist repository now")
+    logger.info("Loading repository for inlists.")
+
+    if inlist_repository is None:
+        # check if inlist_repository is provided
+        logger.info("No inlist_repository provided in inifile.")
+        logger.info('Using your home folder as the inlist repository')
+        inlist_repository = os.path.expanduser('~')
 
     # check if the inlist repository path exists
     if not os.path.exists(inlist_repository):
-        print(f"Creating inlist repository at {inlist_repository}")
+        logger.debug(f"Creating inlist repository at {inlist_repository}")
         os.makedirs(inlist_repository)
 
     # check if it contains anything and if not, clone the repo
     if os.listdir(inlist_repository):
-        print(os.listdir(inlist_repository))
-        print("Files found in inlist repository, assuming POSYDON inlist repository is already cloned!")
+        logger.debug(f"Files found in inlist repository: {os.listdir(inlist_repository)}")
+        logger.info("Assuming the POSYDON inlist repository is already cloned into this folder!")
     else:
         out = subprocess.run(['git', 'clone', POSYDON_inlist_URL, inlist_repository],
                                capture_output=True,
                                text=True,
                                check=True,)
-        print(out.stdout)
+        if out.stderr:
+            logger.error(out.stderr)
+        else:
+            logger.debug("Cloned the POSYDON inlist repository successfully.")
 
     # update the repository
-    print("Updating inlist repository")
+    logger.debug("Updating the inlist repository to the latest version.")
     # TODO: Re-enable git pull after testing
-    print("Currently disabled for testing purposes")
+    logger.debug("Currently disabled for testing purposes")
     # out = subprocess.run(['git', 'pull'],
     #                cwd=inlist_repository,
     #                capture_output=True,
     #                text=True,
     #                check=True,)
-    # print(out.stdout)
 
     # check if the base is available as a folder in the repository
     version_root_path = os.path.join(inlist_repository, MESA_version)
     if not os.path.exists(version_root_path):
-        print(version_root_path)
+        logger.error(version_root_path)
         raise ValueError("The provided MESA version does not exist in the inlist repository, please check your provided MESA version and try again.")
 
     return version_root_path
@@ -130,7 +222,7 @@ def setup_MESA_defaults(path_to_version):
         Dictionary of MESA default column files paths
     """
     MESA_DIR = os.environ['MESA_DIR']
-
+    logger.debug(f"Setting up MESA defaults from MESA_DIR: {MESA_DIR}")
     #----------------------------------
     #            Inlists
     #----------------------------------
@@ -260,6 +352,8 @@ def setup_POSYDON(path_to_version, base, system_type):
     # Setup POSYDON base path
     POSYDON_path = os.path.join(path_to_version, base)
     check_file_exist(POSYDON_path)
+
+    logger.debug(f"Setting up POSYDON configuration: {POSYDON_path}")
 
     #----------------------------------
     #            Inlists
@@ -415,7 +509,7 @@ def setup_user(user_mesa_inlists, user_mesa_extras):
     return user_inlists, user_extras, user_columns
 
 
-def resolve_configuration(keys, MESA_defaults, POSYDON_config, user_config, verbose=False):
+def resolve_configuration(keys, MESA_defaults, POSYDON_config, user_config, title="Configuration Priority"):
     """Resolve final configuration to use based on priority:
     user_config > POSYDON_config > MESA_defaults
 
@@ -429,17 +523,14 @@ def resolve_configuration(keys, MESA_defaults, POSYDON_config, user_config, verb
         Dictionary of POSYDON configuration paths
     user_config : dict
         Dictionary of user configuration paths
-    verbose : bool, optional
-        If True, print a visual priority table. Default is False.
+    title : str, optional
+        Title for logging output
 
     Returns
     -------
     final_config : dict
         Dictionary of final configuration paths to use
     """
-    if verbose:
-        print_priority_table(keys, MESA_defaults, POSYDON_config, user_config)
-
     final_config = {}
 
     for key in keys:
@@ -450,10 +541,14 @@ def resolve_configuration(keys, MESA_defaults, POSYDON_config, user_config, verb
         else:
             final_config[key] = MESA_defaults.get(key)
 
+    # Log at DEBUG level with detailed table
+    if logger.isEnabledFor(logging.DEBUG):
+        print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, final_config, title)
+
     return final_config
 
 
-def resolve_columns(MESA_default_columns, POSYDON_columns, user_columns, verbose=False):
+def resolve_columns(MESA_default_columns, POSYDON_columns, user_columns):
     """Resolve final columns to use based on priority:
     user_columns > POSYDON_columns > MESA_default_columns
 
@@ -465,23 +560,30 @@ def resolve_columns(MESA_default_columns, POSYDON_columns, user_columns, verbose
         Dictionary of POSYDON column files paths
     user_columns : dict
         Dictionary of user column files paths
-    verbose : bool, optional
-        If True, print a visual priority table. Default is False.
 
     Returns
     -------
     final_columns : dict
         Dictionary of final column files paths to use
     """
-    if verbose:
-        print_priority_table(column_types, MESA_default_columns,
-                           POSYDON_columns, user_columns,
-                           title="Column Files Priority")
-    return resolve_configuration(column_types, MESA_default_columns,
-                                POSYDON_columns, user_columns, verbose=False)
+    final_columns = resolve_configuration(column_types, MESA_default_columns,
+                                          POSYDON_columns, user_columns,
+                                          title="Column Files Priority")
+
+    # Log at INFO level which layer is used
+    logger.info(f"{BOLD}Column Files:{RESET}")
+    for name, filename in column_types.items():
+        if user_columns.get(name) is not None:
+            logger.info(f"  {name}: {MAGENTA}user{RESET}")
+        elif POSYDON_columns.get(name) is not None:
+            logger.info(f"  {name}: {YELLOW}POSYDON{RESET}")
+        else:
+            logger.info(f"  {name}: {CYAN}MESA{RESET}")
+
+    return final_columns
 
 
-def resolve_extras(MESA_default_extras, POSYDON_extras, user_extras, verbose=False):
+def resolve_extras(MESA_default_extras, POSYDON_extras, user_extras):
     """Resolve final extras to use based on priority:
     user_extras > POSYDON_extras > MESA_default_extras
 
@@ -493,24 +595,31 @@ def resolve_extras(MESA_default_extras, POSYDON_extras, user_extras, verbose=Fal
         Dictionary of POSYDON extras paths
     user_extras : dict
         Dictionary of user extras paths
-    verbose : bool, optional
-        If True, print a visual priority table. Default is False.
 
     Returns
     -------
     final_extras : dict
         Dictionary of final extras paths to use
     """
-    if verbose:
-        print_priority_table(extras_keys, MESA_default_extras,
-                           POSYDON_extras, user_extras,
-                           title="EXTRAS Files Priority")
-    return resolve_configuration(extras_keys, MESA_default_extras,
-                                POSYDON_extras, user_extras, verbose=False)
+    final_extras = resolve_configuration(extras_keys, MESA_default_extras,
+                                         POSYDON_extras, user_extras,
+                                         title="EXTRAS Files Priority")
+
+    # Log at INFO level which layer is used
+    logger.info(f"{BOLD}EXTRAS Files:{RESET}")
+    for key in extras_keys:
+        if user_extras.get(key) is not None:
+            logger.info(f"  {key}: {MAGENTA}user{RESET}")
+        elif POSYDON_extras.get(key) is not None:
+            logger.info(f"  {key}: {YELLOW}POSYDON{RESET}")
+        else:
+            logger.info(f"  {key}: {CYAN}MESA{RESET}")
+
+    return final_extras
 
 
-def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, title="Configuration Priority"):
-    """Print a visual table showing which configuration layer is used for each key.
+def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, final_config, title="Configuration Priority"):
+    """Log a visual table showing which configuration layer is used for each key.
 
     Parameters
     ----------
@@ -522,6 +631,8 @@ def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, title
         Dictionary of POSYDON configuration paths
     user_config : dict
         Dictionary of user configuration paths
+    final_config : dict
+        Dictionary of final resolved configuration paths
     title : str, optional
         Title for the table
     """
@@ -531,13 +642,13 @@ def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, title
     col_width = 12
 
     # Print title
-    print(f"\n{BOLD}{title}{RESET}")
-    print("=" * (max_key_len + col_width * 3 + 4))
+    logger.debug(f"{BOLD}{title}{RESET}")
+    logger.debug("=" * (max_key_len + col_width * 3 + 4))
 
     # Print header with colored column names
     header = f"{'Key':<{max_key_len}}  {CYAN}{'MESA':^{col_width}}{RESET}{YELLOW}{'POSYDON':^{col_width}}{RESET}{MAGENTA}{'user':^{col_width}}{RESET}"
-    print(f"{BOLD}{header}{RESET}")
-    print("-" * (max_key_len + col_width * 3 + 4))
+    logger.debug(f"{BOLD}{header}{RESET}")
+    logger.debug("-" * (max_key_len + col_width * 3 + 4))
 
     # Print each row
     for key in keys:
@@ -572,11 +683,11 @@ def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, title
             posydon_str = f"{GRAY}{posydon_mark}{RESET}"
             user_str = f"{GRAY}{user_mark}{RESET}"
 
-        # Print row
-        print(f"{key:<{max_key_len}}  {mesa_str:^{col_width+9}}{posydon_str:^{col_width+9}}{user_str:^{col_width+9}}")
+        # Log row
+        logger.debug(f"{key:<{max_key_len}}  {mesa_str:^{col_width+9}}{posydon_str:^{col_width+9}}{user_str:^{col_width+9}}")
 
-    print("=" * (max_key_len + col_width * 3 + 4))
-    print(f"{GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used\n")
+    logger.debug("=" * (max_key_len + col_width * 3 + 4))
+    logger.debug(f"{GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used.")
 
 def print_inlist_stacking_table(keys, MESA_defaults, POSYDON_config, user_config, title="Inlist Stacking"):
     """Print a visual table showing how inlists are stacked for each key.
@@ -602,7 +713,7 @@ def print_inlist_stacking_table(keys, MESA_defaults, POSYDON_config, user_config
     max_key_len = max(len(str(key)) for key in keys)
 
     # Print title
-    print(f"\n{BOLD}{title}{RESET}")
+    print(f"{BOLD}{title}{RESET}")
     print("=" * 80)
     print(f"{BOLD}{'Key':<{max_key_len}}  Layer Stack{RESET}")
     print("-" * 80)
@@ -645,7 +756,7 @@ def print_inlist_stacking_table(keys, MESA_defaults, POSYDON_config, user_config
 
     print("=" * 80)
     print(f"Note: Files at the top override parameters from files below")
-    print(f"{MAGENTA}user{RESET} (highest priority) → {YELLOW}POSYDON{RESET} (config) → {CYAN}MESA{RESET} (base)\n")
+    print(f"{MAGENTA}user{RESET} (highest priority) → {YELLOW}POSYDON{RESET} (config) → {CYAN}MESA{RESET} (base)")
 
 def print_inlist_parameter_override_table(key, mesa_params, posydon_params, user_params, final_params, show_details=False):
     """Print a table showing which layer each parameter comes from, similar to extras/columns tables.
@@ -685,7 +796,7 @@ def print_inlist_parameter_override_table(key, mesa_params, posydon_params, user
     # Print summary header
     overridden_count = sum(1 for p in all_params if (p in user_params and (p in mesa_params or p in posydon_params)) or
                           (p in posydon_params and p in mesa_params))
-    print(f"\n  {BOLD}Detailed Parameters:{RESET} {len(all_params)} total, {overridden_count} overridden")
+    print(f"  {BOLD}Detailed Parameters:{RESET} {len(all_params)} total, {overridden_count} overridden")
     print("  " + "=" * (max_param_len + col_width * 3 + 4))
 
     # Print header with colored column names
@@ -734,7 +845,7 @@ def print_inlist_parameter_override_table(key, mesa_params, posydon_params, user
 
 
 def print_inlist_parameter_override_table_v2(key, layer_params, final_params, show_details=False):
-    """Print a table showing which layer each parameter comes from (supports all layers).
+    """Log a table showing which layer each parameter comes from (supports all layers).
 
     Parameters
     ----------
@@ -799,21 +910,21 @@ def print_inlist_parameter_override_table_v2(key, layer_params, final_params, sh
         if count > 1:
             overridden_count += 1
 
-    # Print summary header
-    print(f"\n  {BOLD}Detailed Parameters:{RESET} {len(all_params)} total, {overridden_count} overridden")
+    # Log summary header
+    logger.debug(f"  {BOLD}Detailed Parameters:{RESET} {len(all_params)} total, {overridden_count} overridden")
     total_width = max_param_len + col_width * len(active_layers) + len(active_layers) * 2
-    print("  " + "=" * total_width)
+    logger.debug("  " + "=" * total_width)
 
-    # Print header with colored column names
+    # Log header with colored column names
     header_parts = [f"{'Parameter':<{max_param_len}}"]
     for layer_name in active_layers:
         color = layer_colors.get(layer_name, RESET)
         header_parts.append(f"{color}{layer_name:^{col_width}}{RESET}")
     header = "  ".join(header_parts)
-    print(f"  {BOLD}{header}{RESET}")
-    print("  " + "-" * total_width)
+    logger.debug(f"  {BOLD}{header}{RESET}")
+    logger.debug("  " + "-" * total_width)
 
-    # Print each parameter row
+    # Log each parameter row
     for param in all_params:
         # Determine which layer provides the final value (check in priority order: highest to lowest)
         # Priority: output > grid > user > POSYDON > MESA
@@ -837,18 +948,19 @@ def print_inlist_parameter_override_table_v2(key, layer_params, final_params, sh
             else:
                 row_parts.append(f"{mark:^{col_width}}")
 
-        print("  " + "  ".join(row_parts))
+        logger.debug("  " + "  ".join(row_parts))
 
-    print("  " + "=" * total_width)
-    print(f"  {GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used")
+    logger.debug("  " + "=" * total_width)
+    logger.debug(f"  {GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used")
 
 
 
 
 def print_inlist_summary_table_v2(all_keys, layer_counts):
-    """Print a summary table showing parameter counts per section at each layer.
+    """Log a summary table showing parameter counts per section at each layer.
 
     This version supports multiple layers including grid and output configurations.
+    Logs at INFO level.
 
     Parameters
     ----------
@@ -877,10 +989,10 @@ def print_inlist_summary_table_v2(all_keys, layer_counts):
                      if layer in layer_counts and any(layer_counts[layer].values())]
 
     num_layers = len(active_layers)
-    total_width = max_key_len + col_width * num_layers + (num_layers + 1)
+    total_width = max_key_len + col_width * num_layers + (num_layers + 4)
 
-    print(f"\n{BOLD}Parameter Count Summary{RESET}")
-    print("=" * total_width)
+    logger.info(f"{BOLD}Parameter Count Summary{RESET}")
+    logger.info("=" * total_width)
 
     # Print header with colored column names
     header_parts = [f"{'Section':<{max_key_len}}"]
@@ -888,8 +1000,8 @@ def print_inlist_summary_table_v2(all_keys, layer_counts):
         color = layer_colors.get(layer, RESET)
         header_parts.append(f"{color}{layer:^{col_width}}{RESET}")
     header = "  ".join(header_parts)
-    print(f"{BOLD}{header}{RESET}")
-    print("-" * total_width)
+    logger.info(f"{BOLD}{header}{RESET}")
+    logger.info("-" * total_width)
 
     # Print each section row
     for key in all_keys:
@@ -898,10 +1010,10 @@ def print_inlist_summary_table_v2(all_keys, layer_counts):
             count = layer_counts[layer].get(key, 0)
             color = layer_colors.get(layer, RESET)
             row_parts.append(f"{color}{count:^{col_width}}{RESET}")
-        print("  ".join(row_parts))
+        logger.info("  ".join(row_parts))
 
-    print("=" * total_width)
-    print(f"\nLayer priority (lowest → highest): {' → '.join(active_layers)}\n")
+    logger.info("=" * total_width)
+    logger.info(f"Layer priority (lowest → highest): {' → '.join(active_layers)}")
 
 def _get_section_from_key(key):
     """Determine the MESA inlist section based on the key name.
@@ -1028,12 +1140,15 @@ def _build_grid_parameter_layer(grid_parameters, final_inlists):
                 read_param: '.true.',
                 name_param: f"'{filename}'"
             }
+            # Log at DEBUG level which sections are affected by grid parameters
+            logger.debug(f"  Grid parameters affecting {section}: {', '.join(matching_params)}")
         else:
             grid_layer[section] = {}
 
-    #
-    print('Adding grid parameters to sections:',
-          ', '.join([sec for sec, params in grid_layer.items() if params]))
+    # Log at DEBUG level summary
+    affected_sections = [sec for sec, params in grid_layer.items() if params]
+    if affected_sections:
+        logger.debug(f"Grid parameters affect sections: {', '.join(affected_sections)}")
 
     return grid_layer
 
@@ -1099,9 +1214,15 @@ def _build_output_controls_layer(output_settings):
     if 'binary_history' in output_settings and not output_settings['binary_history']:
         output_layer['binary_controls']['history_interval'] = "-1"
 
-
-    print('Adding output control parameters to sections:',
-              ', '.join([sec for sec, params in output_layer.items() if params]))
+    # Log at DEBUG level which sections have output control parameters
+    affected_sections = [sec for sec, params in output_layer.items() if params]
+    if affected_sections:
+        logger.debug(f"Output control parameters affect sections: {', '.join(affected_sections)}")
+        for section in affected_sections:
+            params = output_layer[section]
+            if params:
+                param_list = ', '.join(params.keys())
+                logger.debug(f"  {section}: {param_list}")
 
     # Handle ZAMS filenames if provided
     if 'zams_filename_1' in output_settings and output_settings['zams_filename_1'] is not None:
@@ -1114,7 +1235,7 @@ def _build_output_controls_layer(output_settings):
 
 
 def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_type,
-                     grid_parameters=None, output_settings=None, verbose=False, show_details=False):
+                     grid_parameters=None, output_settings=None):
     """Resolve final inlists to use based on priority:
     output_settings > grid_parameters > user_inlists > POSYDON_inlists > MESA_default_inlists
 
@@ -1146,10 +1267,6 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
         Collection of grid parameter names. If provided, adds grid configuration layer.
     output_settings : dict, optional
         Dictionary of output settings. If provided, adds output control layer.
-    verbose : bool, optional
-        If True, print visual stacking and parameter count summary. Default is False.
-    show_details : bool, optional
-        If True, print detailed parameter-by-parameter tables. Default is False.
 
     Returns
     -------
@@ -1239,22 +1356,21 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
             layer_counts['output'][key] = 0
             layer_params['output'][key] = {}
 
+    # Log at INFO level: Parameter count summary
+    print_inlist_summary_table_v2(all_keys, layer_counts)
 
-    if show_details:
+    # Log at DEBUG level: Detailed parameter tables
+    if logger.isEnabledFor(logging.DEBUG):
         for key in all_keys:
             # Only show sections that have parameters in any layer
             if any(layer_params[layer][key] for layer in layer_params):
-                print(f"\n{BOLD}═══ {key} ═══{RESET}")
+                logger.debug(f"{BOLD}═══ {key} ═══{RESET}")
                 print_inlist_parameter_override_table_v2(
                     key,
                     layer_params,
                     final_inlists[key],
                     show_details=True
                 )
-
-
-    if verbose:
-        print_inlist_summary_table_v2(all_keys, layer_counts)
 
     # Return the final parameter dictionaries
     return final_inlists
@@ -1373,7 +1489,7 @@ def _write_binary_inlist(filepath, binary_controls, binary_job):
         _write_inlist_section(f, 'binary_controls', binary_controls)
         f.write(b'\n')
         _write_inlist_section(f, 'binary_job', binary_job)
-    print(f'Wrote inlist: {filepath}')
+    logger.debug(f'Wrote inlist: {filepath}')
 
 
 def _write_star_inlist(filepath, star_controls, star_job):
@@ -1392,7 +1508,7 @@ def _write_star_inlist(filepath, star_controls, star_job):
         _write_inlist_section(f, 'controls', star_controls)
         f.write(b'\n')
         _write_inlist_section(f, 'star_job', star_job)
-    print(f'Wrote inlist: {filepath}')
+    logger.debug(f'Wrote inlist: {filepath}')
 
 
 def _create_build_script(path):
@@ -1405,7 +1521,7 @@ def _create_build_script(path):
     """
     mk_filepath = os.path.join(path, 'mk')
     if os.path.exists(mk_filepath):
-        print(f"Warning: 'mk' file already exists. It will be overwritten.")
+        logger.warning(f"'mk' file already exists at {mk_filepath}. It will be overwritten.")
 
     with open(mk_filepath, 'w') as f:
         f.write(f'cd {os.path.join(path, "binary/make")}\n')
@@ -1415,9 +1531,13 @@ def _create_build_script(path):
         f.write(f'cd {os.path.join(path, "star2/make")}\n')
         f.write(f'make -f makefile_star\n')
 
-    print(f'Created build script: {mk_filepath}')
+    logger.debug(f'Created build script: {mk_filepath}')
     subprocess.run(['chmod', '755', mk_filepath])
-    subprocess.run(['./mk'], shell=True, cwd=path)
+    out = subprocess.run(['./mk'], shell=True, cwd=path, capture_output=True, text=True)
+    if out.returncode != 0:
+        logger.error(f"Building the MESA executables has failed!")
+        for line in out.stderr.strip().split('\n'):
+            logger.error(line)
 
 def _copy_columns(path, final_columns):
     """Copy column list files to the grid run folder.
@@ -1434,10 +1554,11 @@ def _copy_columns(path, final_columns):
     dict
         Dictionary mapping column types to destination paths in the grid run folder
     """
-    print('Using the following configuration layers for columns:')
+
+    logger.debug(f'{BOLD}COLUMN LISTS USED:{RESET}')
     out_paths = {}
     for key, value in final_columns.items():
-        print(f"  - {key}: {value}")
+        logger.debug(f"{key}:  {value}")
         dest = os.path.join(path, 'column_lists', column_types[key])
         shutil.copy(value, dest)
         out_paths[key] = dest
@@ -1453,7 +1574,7 @@ def _copy_extras(path, final_extras):
     final_extras : dict
         Dictionary mapping extras keys to file paths
     """
-    print('Using the following configuration layers for extras:')
+    logger.debug(f'{BOLD}EXTRAS USED:{RESET}')
 
     # Define destination mapping for each extras key
     extras_destinations = {
@@ -1470,7 +1591,7 @@ def _copy_extras(path, final_extras):
     }
 
     for key, value in final_extras.items():
-        print(f"  - {key}: {value}")
+        logger.debug(f"{key}: {value}")
 
         if key == 'mesa_dir':
             continue
@@ -1480,11 +1601,11 @@ def _copy_extras(path, final_extras):
                 dest = os.path.join(path, subdir, filename)
                 shutil.copy(value, dest)
         else:
-            print(f"Warning: Unrecognized extras key '{key}'. Copying to root.")
+            logger.warning(f"Unrecognized extras key '{key}'. Copying to root.")
             shutil.copy(value, path)
 
 
-def setup_grid_run_folder(path, final_columns, final_extras, final_inlists, verbose=False):
+def setup_grid_run_folder(path, final_columns, final_extras, final_inlists):
     """Set up the grid run folder by:
 
     1. Creating necessary subdirectories
@@ -1502,8 +1623,6 @@ def setup_grid_run_folder(path, final_columns, final_extras, final_inlists, verb
         Dictionary mapping extras keys to file paths
     final_inlists : dict
         Dictionary mapping inlist keys to parameter dictionaries
-    verbose : bool, optional
-        If True, print additional information
     """
     # Create directory structure
     subdirs = ['binary', 'binary/make', 'binary/src',
@@ -1515,7 +1634,7 @@ def setup_grid_run_folder(path, final_columns, final_extras, final_inlists, verb
         dir_path = os.path.join(path, subdir)
         os.makedirs(dir_path, exist_ok=True)
 
-    print(f"\nSetting up grid run folder at: {path}")
+    logger.debug(f"Setting up grid run folder at: {path}")
 
     # Copy columns and extras
     column_paths = _copy_columns(path, final_columns)
@@ -1525,7 +1644,7 @@ def setup_grid_run_folder(path, final_columns, final_extras, final_inlists, verb
     _create_build_script(path)
 
     # Write inlist files
-    print('\nWriting MESA inlist files:')
+    logger.debug(f'{BOLD}Writing MESA inlist files:{RESET}')
     inlist_binary_project = os.path.join(path, 'binary', 'inlist_project')
     inlist_star1_binary = os.path.join(path, 'binary', 'inlist1')
     inlist_star2_binary = os.path.join(path, 'binary', 'inlist2')
@@ -1546,6 +1665,8 @@ def setup_grid_run_folder(path, final_columns, final_extras, final_inlists, verb
     _write_star_inlist(inlist_star2_binary,
                        final_inlists['star2_controls'],
                        final_inlists['star2_job'])
+
+    logger.info('MESA inlist files written successfully.')
 
     # Essentials paths created in this functions
     output_paths = {
@@ -1659,7 +1780,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
     if submission_type == 'shell':
         script_name = 'grid_command.sh'
         if os.path.exists(script_name):
-            Pwarn(f'Replace {script_name}', "OverwriteWarning")
+            logger.warning(f'Replacing existing script: {script_name}')
 
         with open(script_name, 'w') as f:
             f.write('#!/bin/bash\n\n')
@@ -1680,7 +1801,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
             _write_cleanup_commands(f, slurm)
 
         os.system(f"chmod 755 {script_name}")
-        print(f"Created {script_name}")
+        logger.debug(f"Created {os.path.abspath(script_name)}")
 
     elif submission_type == 'slurm':
         # Generate main grid submission script

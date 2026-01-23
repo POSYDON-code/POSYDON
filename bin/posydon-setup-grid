@@ -4,6 +4,7 @@
 ##############################################################################
 import argparse
 import glob
+import logging
 import os
 import shutil
 import subprocess
@@ -21,6 +22,7 @@ from posydon.CLI.grids.setup import (
     resolve_inlists,
     setup_grid_run_folder,
     setup_inlist_repository,
+    setup_logger,
     setup_MESA_defaults,
     setup_POSYDON,
     setup_user,
@@ -30,6 +32,8 @@ from posydon.utils import configfile
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
 
+# Setup logger
+logger = logging.getLogger(__name__)
 
 ###############################################################################
 # DEFINE COMMANDLINE ARGUMENTS
@@ -54,8 +58,8 @@ def parse_commandline():
                         default='shell')
     parser.add_argument("-n", "--nproc",
                         help="number of processors", type=int, default=1)
-    parser.add_argument("--verbose", action="store_true", default=False,
-                        help="Run in Verbose Mode")
+    parser.add_argument("-v", "--verbose", nargs="?", const="console", default=None,
+                        help="Enable verbose logging. Optionally specify a filename to log to (e.g., -v logfile.txt). If no filename provided, logs to console.")
 
     args = parser.parse_args()
 
@@ -963,12 +967,17 @@ if __name__ == '__main__':
     ###########################################################################
     args = parse_commandline()
 
-    verbose = args.verbose if args.verbose else False
+    # Setup logging based on verbosity level
+    setup_logger(args.verbose)
     try:
         os.environ['MESA_DIR']
     except:
         raise ValueError("MESA_DIR must be defined in your environment "
                           "before you can run a grid of MESA runs")
+
+    # check if given file exists
+    if not os.path.isfile(args.inifile):
+        raise FileNotFoundError("The provided inifile does not exist, please check the path and try again")
 
     # Determine location of executables
     proc = subprocess.Popen(['which', 'posydon-run-grid'],
@@ -1000,19 +1009,16 @@ if __name__ == '__main__':
         raise ValueError("Please add psycris inifile to the [run_parameters] section of the inifile.")
 
     # Check if a base is provided for the run
-    if 'base' in user_mesa_inlists.keys() and user_mesa_inlists['base'] is not None and user_mesa_inlists['base'] != "":
-        print('base provided in inifile, copying base to run directory')
-        # check if inlist_repository is provided
-        if 'inlist_repository' not in user_mesa_inlists.keys():
-            print("No inlist_repository provided in inifile")
-            print('Using your home folder as the inlist repository')
-            user_mesa_inlists['inlist_repository'] = os.path.expanduser('~')
-    else:
+    if ('base' not in user_mesa_inlists.keys()
+        or user_mesa_inlists['base'] is None
+        or user_mesa_inlists['base'] == ""):
         raise ValueError("Please provide a base for the MESA run in the configuration file")
+
+    logger.debug(f'Base provided in inifile:\n{user_mesa_inlists["base"]}')
 
     # setup the inlist repository
     # MESA_version_base_path is the path to the base of the version in the inlist repository
-    MESA_version_root_path = setup_inlist_repository(user_mesa_inlists['inlist_repository'],
+    MESA_version_root_path = setup_inlist_repository(user_mesa_inlists.get('inlist_repository', None),
                                         user_mesa_inlists['mesa_version'])
 
     # Setup the MESA_default, which is always needed
@@ -1054,16 +1060,14 @@ if __name__ == '__main__':
                                     user_inlists,
                                     grid_parameters=grid_parameters,
                                     output_settings=user_output_settings,
-                                    system_type=user_mesa_inlists['system_type'],
-                                    verbose=verbose)
+                                    system_type=user_mesa_inlists['system_type'])
 
     # Setup the run directory with all necessary files
     # This also creates the inlists for the grid run
     output_paths = setup_grid_run_folder(args.run_directory,
                           final_columns,
                           final_extras,
-                          final_inlists,
-                          verbose=verbose)
+                          final_inlists)
 
     # Now we can create the mpi command line to run the grid
     if slurm['job_array']:
@@ -1149,7 +1153,8 @@ if __name__ == '__main__':
 
     # Generate submission scripts
     generate_submission_scripts(args.submission_type, command_line, slurm, nr_systems)
-    print("Setup complete! You can now submit your grid to the cluster.")
-    print("To submit, run the following command:")
+    logger.info("Setup complete! You can now submit your grid to the cluster.")
+
     if args.submission_type == 'slurm':
-        print(f"  sbatch submit_slurm.sh")
+        logger.info("To submit, run the following command:")
+        logger.info(f"  sbatch submit_slurm.sh")
