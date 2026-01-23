@@ -1885,3 +1885,388 @@ def construct_command_line(number_of_mpi_processes, path_to_grid,
                                        path_to_run_grid_exec,
                                        psycris_inifile)
     return command_line
+
+
+###############################################################################
+# VALIDATION AND ENVIRONMENT HELPERS
+###############################################################################
+
+def validate_environment():
+    """Validate that required environment variables are set.
+
+    Raises
+    ------
+    ValueError
+        If MESA_DIR is not set in the environment
+    """
+    if 'MESA_DIR' not in os.environ:
+        raise ValueError(
+            "MESA_DIR must be defined in your environment "
+            "before you can run a grid of MESA runs"
+        )
+
+
+def find_run_grid_executable():
+    """Find the posydon-run-grid executable in the system PATH.
+
+    Returns
+    -------
+    str
+        Path to the posydon-run-grid executable
+
+    Raises
+    ------
+    ValueError
+        If the executable cannot be found
+    """
+    proc = subprocess.Popen(
+        ['which', 'posydon-run-grid'],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE
+    )
+    (path_to_exec, err) = proc.communicate()
+
+    if not path_to_exec:
+        raise ValueError('Cannot locate posydon-run-grid executable in your path')
+
+    return path_to_exec.decode('utf-8').strip('\n')
+
+
+def validate_inifile(inifile_path):
+    """Validate that the inifile exists.
+
+    Parameters
+    ----------
+    inifile_path : str
+        Path to the inifile
+
+    Raises
+    ------
+    FileNotFoundError
+        If the inifile does not exist
+    """
+    if not os.path.isfile(inifile_path):
+        raise FileNotFoundError(
+            "The provided inifile does not exist, please check the path and try again"
+        )
+
+
+def validate_and_setup_run_parameters(run_parameters, grid_type):
+    """Validate run parameters and set defaults.
+
+    Parameters
+    ----------
+    run_parameters : dict
+        Dictionary of run parameters from the inifile
+    grid_type : str
+        Type of grid ('fixed' or 'dynamic')
+
+    Returns
+    -------
+    dict
+        Updated run parameters with defaults applied
+
+    Raises
+    ------
+    ValueError
+        If required parameters are missing or invalid
+    """
+    # Set defaults
+    if 'keep_profiles' not in run_parameters:
+        run_parameters['keep_profiles'] = False
+
+    if 'keep_photos' not in run_parameters:
+        run_parameters['keep_photos'] = False
+
+    # Validate grid path
+    grid_path = run_parameters.get('grid')
+    if grid_path is None or (not os.path.isfile(grid_path) and not os.path.isdir(grid_path)):
+        raise ValueError(
+            "Supplied grid does not exist, please check your path and try again"
+        )
+
+    # Validate dynamic grid requirements
+    if grid_type == 'dynamic' and 'psycris_inifile' not in run_parameters:
+        raise ValueError(
+            "Please add psycris inifile to the [run_parameters] section of the inifile."
+        )
+
+    return run_parameters
+
+
+def validate_mesa_inlists(user_mesa_inlists):
+    """Validate user MESA inlist configuration.
+
+    Parameters
+    ----------
+    user_mesa_inlists : dict
+        Dictionary of user MESA inlist settings
+
+    Raises
+    ------
+    ValueError
+        If required settings are missing
+    """
+    if ('base' not in user_mesa_inlists
+        or user_mesa_inlists['base'] is None
+        or user_mesa_inlists['base'] == ""):
+        raise ValueError(
+            "Please provide a base for the MESA run in the configuration file"
+        )
+
+
+###############################################################################
+# CONFIGURATION BUILDING
+###############################################################################
+
+def build_configuration_stack(user_mesa_inlists, user_mesa_extras, run_parameters):
+    """Build the complete configuration stack for the MESA grid.
+
+    This function orchestrates the layering of configurations:
+    MESA defaults → POSYDON defaults → User settings → Grid parameters
+
+    Parameters
+    ----------
+    user_mesa_inlists : dict
+        User MESA inlist settings from the inifile
+    user_mesa_extras : dict
+        User MESA extras settings from the inifile
+    run_parameters : dict
+        Run parameters from the inifile
+
+    Returns
+    -------
+    tuple
+        (final_columns, final_extras, final_inlists, nr_systems, grid_parameters, fixgrid_file_name)
+    """
+    # Setup the inlist repository
+    MESA_version_root_path = setup_inlist_repository(
+        user_mesa_inlists.get('inlist_repository', None),
+        user_mesa_inlists['mesa_version']
+    )
+
+    # Setup MESA defaults (always needed)
+    MESA_default_inlists, \
+    MESA_default_extras, \
+    MESA_default_columns = setup_MESA_defaults(MESA_version_root_path)
+
+    # Setup POSYDON configuration (handles MESA base internally)
+    POSYDON_inlists, \
+    POSYDON_extras, \
+    POSYDON_columns = setup_POSYDON(
+        MESA_version_root_path,
+        user_mesa_inlists['base'],
+        user_mesa_inlists['system_type']
+    )
+
+    # Extract user inlists, extras and columns
+    user_inlists, \
+    user_extras, \
+    user_columns = setup_user(user_mesa_inlists, user_mesa_extras)
+
+    # Build final columns dictionary
+    final_columns = resolve_columns(
+        MESA_default_columns,
+        POSYDON_columns,
+        user_columns
+    )
+
+    # Build final extras dictionary
+    final_extras = resolve_extras(
+        MESA_default_extras,
+        POSYDON_extras,
+        user_extras
+    )
+
+    # Read grid to get grid parameters
+    nr_systems, grid_parameters, fixgrid_file_name = read_grid_file(run_parameters['grid'])
+
+    # Extract output settings from user configuration
+    user_output_settings = get_additional_user_settings(mesa_inlists=user_mesa_inlists)
+
+    # Stack all inlist layers together
+    final_inlists = resolve_inlists(
+        MESA_default_inlists,
+        POSYDON_inlists,
+        user_inlists,
+        grid_parameters=grid_parameters,
+        output_settings=user_output_settings,
+        system_type=user_mesa_inlists['system_type']
+    )
+
+    return final_columns, final_extras, final_inlists, nr_systems, grid_parameters, fixgrid_file_name
+
+
+###############################################################################
+# COMMAND LINE BUILDING
+###############################################################################
+
+def build_command_line_for_grid(slurm, output_paths, fixgrid_file_name,
+                                 run_directory, run_parameters,
+                                 path_to_run_grid_exec, submission_type):
+    """Build the command line for running the grid.
+
+    Parameters
+    ----------
+    slurm : dict
+        SLURM configuration dictionary
+    output_paths : dict
+        Dictionary of output paths from setup_grid_run_folder
+    fixgrid_file_name : str
+        Path to the grid file
+    run_directory : str
+        Directory for output
+    run_parameters : dict
+        Run parameters from inifile
+    path_to_run_grid_exec : str
+        Path to the posydon-run-grid executable
+    submission_type : str
+        Type of submission ('shell' or 'slurm')
+
+    Returns
+    -------
+    str
+        The complete command line string
+    """
+    if slurm['job_array']:
+        command_line = construct_command_line(
+            1,
+            fixgrid_file_name,
+            output_paths['binary_executable'],
+            output_paths['star1_executable'],
+            output_paths['star2_executable'],
+            output_paths['inlist_binary_project'],
+            output_paths['inlist_star1_binary'],
+            output_paths['inlist_star2_binary'],
+            None,  # inlist_star1_formation
+            None,  # inlist_star2_formation
+            output_paths['star_history_columns'],
+            output_paths['binary_history_columns'],
+            output_paths['profile_columns'],
+            run_directory,
+            'fixed',
+            path_to_run_grid_exec,
+            keep_profiles=run_parameters['keep_profiles'],
+            keep_photos=run_parameters['keep_photos']
+        )
+        command_line += ' --grid-point-index $SLURM_ARRAY_TASK_ID'
+    else:
+        # MPI mode (for future dynamic grids)
+        command_line = construct_command_line(
+            slurm.get('number_of_mpi_tasks', 1) * slurm.get('number_of_nodes', 1),
+            fixgrid_file_name,
+            output_paths['binary_executable'],
+            output_paths['star1_executable'],
+            output_paths['star2_executable'],
+            output_paths['inlist_binary_project'],
+            output_paths['inlist_star1_binary'],
+            output_paths['inlist_star2_binary'],
+            None,  # inlist_star1_formation
+            None,  # inlist_star2_formation
+            output_paths['star_history_columns'],
+            output_paths['binary_history_columns'],
+            output_paths['profile_columns'],
+            run_directory,
+            'fixed',
+            path_to_run_grid_exec,
+            keep_profiles=run_parameters['keep_profiles'],
+            keep_photos=run_parameters['keep_photos']
+        )
+
+    # Add SLURM-specific options
+    if submission_type == 'slurm':
+        command_line += ' --job_end $SLURM_JOB_END_TIME'
+
+    # Add work directory if specified
+    if slurm.get('work_dir') and slurm['work_dir'] != '':
+        command_line += f' --temporary-directory {slurm["work_dir"]}'
+
+    return command_line
+
+
+###############################################################################
+# MAIN SETUP ENTRY POINT
+###############################################################################
+
+def run_setup(args):
+    """Main entry point for the grid setup process.
+
+    This function orchestrates the entire setup workflow:
+    1. Validate environment and inputs
+    2. Parse configuration file
+    3. Build configuration stack (MESA → POSYDON → User)
+    4. Setup run directory with all necessary files
+    5. Generate submission scripts
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Parsed command-line arguments containing:
+        - inifile: Path to the configuration file
+        - grid_type: 'fixed' or 'dynamic'
+        - run_directory: Output directory
+        - submission_type: 'shell' or 'slurm'
+        - nproc: Number of processors
+        - verbose: Verbosity setting
+    """
+    from posydon.utils import configfile
+
+    # Setup logging based on verbosity level
+    setup_logger(args.verbose)
+
+    # Validate environment
+    validate_environment()
+
+    # Validate inifile exists
+    validate_inifile(args.inifile)
+
+    # Find the run grid executable
+    path_to_run_grid_exec = find_run_grid_executable()
+
+    # Parse the configuration file
+    run_parameters, slurm, user_mesa_inlists, user_mesa_extras = configfile.parse_inifile(args.inifile)
+
+    # Validate and setup run parameters
+    run_parameters = validate_and_setup_run_parameters(run_parameters, args.grid_type)
+
+    # Validate MESA inlist configuration
+    validate_mesa_inlists(user_mesa_inlists)
+
+    logger.debug(f'Base provided in inifile:\n{user_mesa_inlists["base"]}')
+
+    # Build the complete configuration stack
+    final_columns, final_extras, final_inlists, \
+    nr_systems, grid_parameters, fixgrid_file_name = build_configuration_stack(
+        user_mesa_inlists,
+        user_mesa_extras,
+        run_parameters
+    )
+
+    # Setup the run directory with all necessary files
+    output_paths = setup_grid_run_folder(
+        args.run_directory,
+        final_columns,
+        final_extras,
+        final_inlists
+    )
+
+    # Build the command line
+    command_line = build_command_line_for_grid(
+        slurm,
+        output_paths,
+        fixgrid_file_name,
+        args.run_directory,
+        run_parameters,
+        path_to_run_grid_exec,
+        args.submission_type
+    )
+
+    # Generate submission scripts
+    generate_submission_scripts(args.submission_type, command_line, slurm, nr_systems)
+
+    logger.info("Setup complete! You can now submit your grid to the cluster.")
+
+    if args.submission_type == 'slurm':
+        logger.info("To submit, run the following command:")
+        logger.info("  sbatch submit_slurm.sh")
