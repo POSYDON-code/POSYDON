@@ -203,10 +203,15 @@ class MergedStep(IsolatedStep):
                 q =  comp.mass/star_base.mass
                 # first we calculate the mass loss percentage:
                 if self.rel_mass_lost_HMS_HMS == "Glebbeek+2013":
-                    # Eq. 4  of Glebbeek+2013
-                    rel_mass_lost_HMS_HMS = (0.3*q)/((1.+q)**2.)
+                    # Eq. 4 of Glebbeek+2013
+                    rel_mass_lost_HMS_HMS = (0.3 * q) / ((1.0 + q) ** 2.0)
+                elif isinstance(self.rel_mass_lost_HMS_HMS, (int, float)) and 0.0 <= self.rel_mass_lost_HMS_HMS < 1.0:
+                    rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS 
                 else:
-                    rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS
+                    raise ValueError(
+                        'rel_mass_lost_HMS_HMS must be either a float in [0, 1) '
+                        'or the string "Glebbeek+2013".'
+                    )
 
 
                 if self.HMS_HMS_merging_rejuvenation : # according to Schneider+2016
