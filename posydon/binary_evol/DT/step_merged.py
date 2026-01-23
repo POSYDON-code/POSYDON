@@ -53,9 +53,9 @@ class MergedStep(IsolatedStep):
                                              # ("Schneider+2016"; i.e. Schneider, F. R. N., Podsiadlowski, P., Langer, N., Castro, N., & Fossati, L. 2016, MNRAS,457, 2355
                                              # https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract)
         list_for_matching_HMS = [
-                #["mass", "center_h1", "he_core_mass"],
+                #["mass", "center_h1", "he_core_mass"], #mostly suggested for HMS_HMS_merging_rejuvenation = False
                 #[20.0, 1.0, 10.0],
-                ["mass", "total_mass_h1", "he_core_mass"],
+                ["mass", "total_mass_h1", "he_core_mass"], #mostly suggested for HMS_HMS_merging_rejuvenation = True
                 [20.0, 20.0, 10.0],
                 ["log_min_max", "min_max", "min_max"],
                 #[m_min_H, m_max_H], [0, None]
@@ -258,6 +258,8 @@ class MergedStep(IsolatedStep):
 
                     # The change of masses occurs after the calculation of weighted averages
                     merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
+                    merged_star.total_mass_h1 = merged_star.center_h1 * merged_star.mass # very simplified assumption of X_average_merged = merged_star.center_h1
+                    #^ should work ok for both center_h1 and total_mass_h1 matching with single stars models
 
                 for key in STARPROPERTIES:
                     # these stellar attributes become np.nan
