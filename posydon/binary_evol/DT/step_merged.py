@@ -206,7 +206,7 @@ class MergedStep(IsolatedStep):
                     # Eq. 4 of Glebbeek+2013
                     rel_mass_lost_HMS_HMS = (0.3 * q) / ((1.0 + q) ** 2.0)
                 elif isinstance(self.rel_mass_lost_HMS_HMS, (int, float)) and 0.0 <= self.rel_mass_lost_HMS_HMS < 1.0:
-                    rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS 
+                    rel_mass_lost_HMS_HMS = self.rel_mass_lost_HMS_HMS
                 else:
                     raise ValueError(
                         'rel_mass_lost_HMS_HMS must be either a float in [0, 1) '
