@@ -380,14 +380,40 @@ def setup_POSYDON(path_to_version, base, system_type):
     common_inlists_path = os.path.join(POSYDON_path, 'common_inlists')
     # Single star inlists
     if system_type == 'single_HMS':
-        # setup star1 inlists
-        POSYDON_inlists['star1_controls'] = [[os.path.join(common_inlists_path, 'inlist1')]]
-        POSYDON_inlists['star1_job'] = [[os.path.join(common_inlists_path, 'inlist1')]]
         # setup the paths to extra single star inlists
         single_star_inlist_path = os.path.join(POSYDON_path,
                                                'single_HMS',
                                                'single_star_inlist')
-        POSYDON_inlists['star1_controls'][0].append(single_star_inlist_path)
+
+        POSYDON_inlists['star1_job'] = [[os.path.join(common_inlists_path, 'inlist1')]]
+
+        POSYDON_inlists['star1_controls'] = [[os.path.join(common_inlists_path, 'inlist1'),
+                                              single_star_inlist_path]]
+
+    elif system_type == 'single_HeMS':
+        single_star_inlist_path = os.path.join(POSYDON_path,
+                                               'single_HMS',
+                                               'single_star_inlist')
+        # helium star inlists
+        helium_star_inlists_folder = os.path.join(POSYDON_path,
+                                                  'single_HeMS')
+        # get steps
+        helium_star_inlists_steps = sorted(glob.glob(os.path.join(helium_star_inlists_folder,
+                                                                    'inlist_step*')))
+        # The HeMS single star inlists has "three" steps
+        POSYDON_inlists['star1_controls'] = [
+            [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[0],], # step 0
+            [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[1],], # step 1
+            [os.path.join(common_inlists_path, 'inlist1'),single_star_inlist_path], # step 2
+
+        ]
+        POSYDON_inlists['star1_job'] = [
+            [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[0],], # step 0
+            [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[1],], # step 1
+            [os.path.join(common_inlists_path, 'inlist1'), single_star_inlist_path], # step 2
+
+        ]
+
 
     elif system_type == 'HMS-HMS':
         # setup the paths to common binary inlists
@@ -1002,6 +1028,7 @@ def _process_inlist_layer(inlist_paths, section):
     layer_params = {}
     if inlist_paths:
         for file_path in inlist_paths:
+            print(file_path)
             inlist_dict = utils.clean_inlist_file(file_path, section=section)[section]
             layer_params.update(inlist_dict)
     return layer_params
@@ -1268,10 +1295,6 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
             if key not in star1_keys:
                 final_inlists[key] = {}
 
-        final_inlists['binary_star1_job'] = {'create_pre_main_sequence_model': ".false.",
-                                             'load_saved_model': ".true.",
-                                             'saved_model_name': "'initial_star1_step0.mod'"}
-
         for key in star1_keys:
             section = _get_section_from_key(key)
             mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), _get_section_from_key(key))
@@ -1285,10 +1308,57 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
             final_inlists[f'{key}_0'].update(posydon_layer_params)
             final_inlists[f'{key}_0'].update(user_layer_params)
 
-            # To the first step, add in the saving of the initial model
-            if 'star1_job' in key:
-                final_inlists[f'{key}_0']['save_model_when_terminate'] = '.true.'
-                final_inlists[f'{key}_0']['save_model_filename'] = "'initial_star1_step0.mod'"
+        # To the first step, add in the saving of the initial model
+        final_inlists['star1_job_0']['save_model_when_terminate'] = '.true.'
+        final_inlists['star1_job_0']['save_model_filename'] = "'initial_star1_step0.mod'"
+        # TODO: can we remove this part?
+        # add specific to "save" the initial model loading in the binary star1 job
+        final_inlists['binary_star1_job'] = {'create_pre_main_sequence_model': ".false.",
+                                             'load_saved_model': ".true.",
+                                             'saved_model_name': "'initial_star1_step0.mod'"}
+
+
+    elif system_type == 'single_HeMS':
+        # skip binary or star2 sections for single star systems
+        star1_keys = [key for key in all_keys if 'binary' not in key and 'star2' not in key]
+         # set the other inlists as empty
+        for key in all_keys:
+            if key not in star1_keys:
+                final_inlists[key] = {}
+
+        nr_steps = len(POSYDON_inlists.get('star1_controls', []))
+        for i in range(nr_steps):
+            for key in star1_keys:
+                section = _get_section_from_key(key)
+                mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), _get_section_from_key(key))
+                print(POSYDON_inlists.get(key)[0])
+                posydon_layer_params = _process_inlist_layer(POSYDON_inlists.get(key)[i], section)
+                user_layer_params = _process_inlist_layer(user_inlists.get(key)[0], section)
+
+                final_inlists[f'{key}_{i}'] = {}
+                final_inlists[f'{key}_{i}'].update(mesa_layer_params)
+                final_inlists[f'{key}_{i}'].update(posydon_layer_params)
+                final_inlists[f'{key}_{i}'].update(user_layer_params)
+
+
+        # To the first step, add in the saving of the initial model
+        final_inlists['star1_job_0']['save_model_when_terminate'] = '.true.'
+        final_inlists['star1_job_0']['save_model_filename'] = "'initial_star1_step0.mod'"
+        # Pass the model from one step to the next
+        for i in range(1, nr_steps):
+            final_inlists[f'star1_job_{i}']['create_pre_main_sequence_model'] = ".false."
+            final_inlists[f'star1_job_{i}']['load_saved_model'] = ".true."
+            final_inlists[f'star1_job_{i}']['saved_model_name'] = "'initial_star1_step{0}.mod'".format(i-1)
+            final_inlists[f'star1_job_{i}']['save_model_when_terminate'] = '.true.'
+            final_inlists[f'star1_job_{i}']['save_model_filename'] = "'initial_star1_step{0}.mod'".format(i)
+
+
+        # TODO: can we remove this part?
+        # add specific to "save" the initial model loading in the binary star1 job
+        final_inlists['binary_star1_job'] = {'create_pre_main_sequence_model': ".false.",
+                                             'load_saved_model': ".true.",
+                                             'saved_model_name': f"'initial_star1_step{nr_steps-1}.mod'"}
+
 
 
     elif system_type == "HMS-HMS":
@@ -1358,10 +1428,17 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         layer_params['output']['binary_star2_controls']['zams_filename'] = f"'{output_settings['zams_filename_2']}'"
 
     if system_type == 'single_HMS':
-        for i in range(nr_steps):
-            final_inlists[f'star1_controls_{i}']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
-            layer_counts['output'][f'star1_controls_{i}'] = 1
-            layer_params['output'][f'star1_controls_{i}'] = {'zams_filename': f"'{output_settings['zams_filename_1']}'"}
+        final_inlists[f'star1_controls_0']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
+        layer_counts['output'][f'star1_controls_0'] = 1
+        layer_params['output'][f'star1_controls_0'] = {'zams_filename': f"'{output_settings['zams_filename_1']}'"}
+
+    if system_type == 'single_HeMS':
+        for i in range(0, nr_steps):
+            # remove zams filename from other steps
+            final_inlists[f'star1_controls_{i}'].pop('zams_filename', None)
+        # remove from binary
+        final_inlists['binary_star1_controls'].pop('zams_filename', None)
+        final_inlists['binary_star2_controls'].pop('zams_filename', None)
 
     # Add inlist_names layer for binary systems
     # This must happen after all other layers to use the constructed run_directory paths
