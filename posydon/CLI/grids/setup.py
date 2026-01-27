@@ -24,6 +24,8 @@ extras_keys = ['makefile_binary', 'makefile_star', 'binary_run',
 
 # define inlist keys
 inlist_keys = ['binary_controls', 'binary_job',
+               'binary_star1_controls', 'binary_star1_job',
+               'binary_star2_controls', 'binary_star2_job',
                'star1_controls', 'star1_job',
                'star2_controls', 'star2_job']
 
@@ -253,6 +255,19 @@ def setup_MESA_defaults(path_to_version):
     MESA_default_inlists['star2_job'] = [os.path.join(MESA_defaults_inlists_path,
                                                      'star',
                                                      'star_job.defaults')]
+    MESA_default_inlists['binary_star1_controls'] = [os.path.join(MESA_defaults_inlists_path,
+                                                                'star',
+                                                                'controls.defaults')]
+    MESA_default_inlists['binary_star1_job'] = [os.path.join(MESA_defaults_inlists_path,
+                                                            'star',
+                                                            'star_job.defaults')]
+    MESA_default_inlists['binary_star2_controls'] = [os.path.join(MESA_defaults_inlists_path,
+                                                                'star',
+                                                                'controls.defaults')]
+    MESA_default_inlists['binary_star2_job'] = [os.path.join(MESA_defaults_inlists_path,
+                                                           'star',
+                                                           'star_job.defaults')]
+
 
     #----------------------------------
     #              EXTRAS
@@ -361,61 +376,78 @@ def setup_POSYDON(path_to_version, base, system_type):
     #            Inlists
     #----------------------------------
     POSYDON_inlists = {}
-    # Common inlists
-    # TODOL these are not all needed for single stars.
+
     common_inlists_path = os.path.join(POSYDON_path, 'common_inlists')
-    POSYDON_inlists['binary_controls'] = [os.path.join(common_inlists_path, 'inlist_project')]
-    POSYDON_inlists['binary_job'] = [os.path.join(common_inlists_path, 'inlist_project')]
-    # setup star1 inlists for binaries
-    POSYDON_inlists['star1_controls'] = [os.path.join(common_inlists_path, 'inlist1')]
-    POSYDON_inlists['star1_job'] = [os.path.join(common_inlists_path, 'inlist1')]
-    # setup star2 inlists for binaries
-    POSYDON_inlists['star2_controls'] = [os.path.join(common_inlists_path, 'inlist2')]
-    POSYDON_inlists['star2_job'] = [os.path.join(common_inlists_path, 'inlist2')]
-
-
+    # Single star inlists
     if system_type == 'single_HMS':
+        # setup star1 inlists
+        POSYDON_inlists['star1_controls'] = [[os.path.join(common_inlists_path, 'inlist1')]]
+        POSYDON_inlists['star1_job'] = [[os.path.join(common_inlists_path, 'inlist1')]]
         # setup the paths to extra single star inlists
         single_star_inlist_path = os.path.join(POSYDON_path,
                                                'single_HMS',
                                                'single_star_inlist')
-        POSYDON_inlists['star1_controls'].append(single_star_inlist_path)
-    elif system_type == 'single_HeMS':
-        # setup the paths to extra single star He inlists
-        # The HeMS single star inlists have two steps
-        # step 1: create HeMS star
-        # step 2: evolve HeMS star
-        helium_star_inlist_step1 = os.path.join(POSYDON_path,
-                                                 'single_HeMS',
-                                                 'inlist_step1')
-        helium_star_inlist_step2 = os.path.join(POSYDON_path,
-                                                 'single_HeMS',
-                                                 'inlist_step2')
-        # We need to also include the HMS single star inlist to set up
-        # the single star evolution
-        single_star_inlist_path = os.path.join(POSYDON_path,
-                                               'single_HMS',
-                                               'single_star_inlist')
+        POSYDON_inlists['star1_controls'][0].append(single_star_inlist_path)
 
-        single_helium_inlists = [helium_star_inlist_step1,
-                                 helium_star_inlist_step2,
-                                 single_star_inlist_path]
+    elif system_type == 'HMS-HMS':
+        # setup the paths to common binary inlists
+        POSYDON_inlists['binary_controls'] = [[os.path.join(common_inlists_path, 'inlist_project')]]
+        POSYDON_inlists['binary_job'] = [[os.path.join(common_inlists_path, 'inlist_project')]]
+        # setup star1 inlists for binaries
+        POSYDON_inlists['binary_star1_controls'] = [[os.path.join(common_inlists_path, 'inlist1')]]
+        POSYDON_inlists['binary_star1_job'] = [[os.path.join(common_inlists_path, 'inlist1')]]
+        # setup star2 inlists for binaries
+        POSYDON_inlists['binary_star2_controls'] = [[os.path.join(common_inlists_path, 'inlist2')]]
+        POSYDON_inlists['binary_star2_job'] = [[os.path.join(common_inlists_path, 'inlist2')]]
 
-        # the helium star setup steps contain control & job in the same inlist files
-        POSYDON_inlists['star1_controls'].extend(single_helium_inlists)
-        # We don't need to add the single star inlist again for the hob,
-        # since it only contains controls section in the file
-        POSYDON_inlists['star1_job'].extend(single_helium_inlists)
+        POSYDON_inlists['star1_controls'] = [[]]
+        POSYDON_inlists['star1_job'] = [[]]
 
-    elif system_type in ['HMS-HeMS', 'HeMS-HeMS']:
-        pass
-    elif system_type in ['CO-HMS', 'CO-HeMS']:
-        pass
-    elif system_type in ['HMS-HMS']:
-        # the common inlists are sufficient
-        pass
-    else:
-        raise ValueError(f"System type {system_type} not recognized.")
+        POSYDON_inlists['star2_controls'] = [[]]
+        POSYDON_inlists['star2_job'] = [[]]
+
+    # if system_type == 'single_HMS':
+    #     # setup the paths to extra single star inlists
+    #     single_star_inlist_path = os.path.join(POSYDON_path,
+    #                                            'single_HMS',
+    #                                            'single_star_inlist')
+    #     POSYDON_inlists['star1_controls'].append(single_star_inlist_path)
+    # elif system_type == 'single_HeMS':
+    #     # setup the paths to extra single star He inlists
+    #     # The HeMS single star inlists have two steps
+    #     # step 1: create HeMS star
+    #     # step 2: evolve HeMS star
+    #     helium_star_inlist_step1 = os.path.join(POSYDON_path,
+    #                                              'single_HeMS',
+    #                                              'inlist_step1')
+    #     helium_star_inlist_step2 = os.path.join(POSYDON_path,
+    #                                              'single_HeMS',
+    #                                              'inlist_step2')
+    #     # We need to also include the HMS single star inlist to set up
+    #     # the single star evolution
+    #     single_star_inlist_path = os.path.join(POSYDON_path,
+    #                                            'single_HMS',
+    #                                            'single_star_inlist')
+
+    #     single_helium_inlists = [helium_star_inlist_step1,
+    #                              helium_star_inlist_step2,
+    #                              single_star_inlist_path]
+
+    #     # the helium star setup steps contain control & job in the same inlist files
+    #     POSYDON_inlists['star1_controls'].extend(single_helium_inlists)
+    #     # We don't need to add the single star inlist again for the hob,
+    #     # since it only contains controls section in the file
+    #     POSYDON_inlists['star1_job'].extend(single_helium_inlists)
+
+    # elif system_type in ['HMS-HeMS', 'HeMS-HeMS']:
+    #     pass
+    # elif system_type in ['CO-HMS', 'CO-HeMS']:
+    #     pass
+    # elif system_type in ['HMS-HMS']:
+    #     # the common inlists are sufficient
+    #     pass
+    # else:
+    #     raise ValueError(f"System type {system_type} not recognized.")
 
     #----------------------------------
     #            Extras
@@ -476,9 +508,9 @@ def setup_user(user_mesa_inlists, user_mesa_extras):
     user_inlists = {}
     for key in inlist_keys:
         if key not in user_mesa_inlists.keys():
-            user_inlists[key] = []
+            user_inlists[key] = [[]]
         else:
-            user_inlists[key] = [user_mesa_inlists[key]]
+            user_inlists[key] = [[user_mesa_inlists[key]]]
             check_file_exist(user_mesa_inlists[key])
 
     #----------------------------------
@@ -550,7 +582,6 @@ def resolve_configuration(keys, MESA_defaults, POSYDON_config, user_config, titl
 
     return final_config
 
-
 def resolve_columns(MESA_default_columns, POSYDON_columns, user_columns):
     """Resolve final columns to use based on priority:
     user_columns > POSYDON_columns > MESA_default_columns
@@ -585,7 +616,6 @@ def resolve_columns(MESA_default_columns, POSYDON_columns, user_columns):
 
     return final_columns
 
-
 def resolve_extras(MESA_default_extras, POSYDON_extras, user_extras):
     """Resolve final extras to use based on priority:
     user_extras > POSYDON_extras > MESA_default_extras
@@ -619,7 +649,6 @@ def resolve_extras(MESA_default_extras, POSYDON_extras, user_extras):
             logger.info(f"  {key}: {CYAN}MESA{RESET}")
 
     return final_extras
-
 
 def print_priority_table(keys, MESA_defaults, POSYDON_config, user_config, final_config, title="Configuration Priority"):
     """Log a visual table showing which configuration layer is used for each key.
@@ -761,7 +790,6 @@ def print_inlist_stacking_table(keys, MESA_defaults, POSYDON_config, user_config
     print(f"Note: Files at the top override parameters from files below")
     print(f"{MAGENTA}user{RESET} (highest priority) → {YELLOW}POSYDON{RESET} (config) → {CYAN}MESA{RESET} (base)")
 
-
 def print_inlist_parameter_override_table(key, layer_params, final_params, show_details=False):
     """Log a table showing which layer each parameter comes from (supports all layers).
 
@@ -870,9 +898,6 @@ def print_inlist_parameter_override_table(key, layer_params, final_params, show_
 
     logger.debug("  " + "=" * total_width)
     logger.debug(f"  {GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used")
-
-
-
 
 def print_inlist_summary_table_v2(all_keys, layer_counts):
     """Log a summary table showing parameter counts per section at each layer.
@@ -1045,6 +1070,18 @@ def _build_grid_parameter_layer(grid_parameters, final_inlists):
         'star2_job': ('read_extra_star_job_inlist1',
                      'extra_star_job_inlist1_name',
                      'inlist_grid_star2_job'),
+        'binary_star1_controls': ('read_extra_controls_inlist1',
+                                  'extra_controls_inlist1_name',
+                                  'inlist_grid_star1_binary_controls'),
+        'binary_star2_controls': ('read_extra_controls_inlist1',
+                                  'extra_controls_inlist1_name',
+                                  'inlist_grid_star2_binary_controls'),
+        'binary_star1_job': ('read_extra_star_job_inlist1',
+                             'extra_star_job_inlist1_name',
+                             'inlist_grid_star1_binary_job'),
+        'binary_star2_job': ('read_extra_star_job_inlist1',
+                             'extra_star_job_inlist1_name',
+                             'inlist_grid_star2_binary_job'),
     }
 
     # Check which sections have grid parameters
@@ -1091,24 +1128,28 @@ def _build_output_controls_layer(output_settings):
     output_layer = {
         'binary_controls': {},
         'binary_job': {},
-        'star1_controls': {},
+        'binary_star1_controls': {},
+        'binary_star1_job': {},
+        'binary_star2_controls': {},
+        'binary_star2_job': {},
         'star1_job': {},
+        'star1_controls': {},
+        'star2_job': {},
         'star2_controls': {},
-        'star2_job': {}
     }
 
     # Configuration: (config_key, section, enabled_param, filename_param, filename_value)
     output_config = [
-        ('final_profile_star1', 'star1_job', 'write_profile_when_terminate',
+        ('final_profile_star1', 'binary_star1_job', 'write_profile_when_terminate',
          'filename_for_profile_when_terminate', "'final_profile_star1.data'"),
-        ('final_profile_star2', 'star2_job', 'write_profile_when_terminate',
+        ('final_profile_star2', 'binary_star2_job', 'write_profile_when_terminate',
          'filename_for_profile_when_terminate', "'final_profile_star2.data'"),
-        ('final_model_star1', 'star1_job', 'save_model_when_terminate',
+        ('final_model_star1', 'binary_star1_job', 'save_model_when_terminate',
          'save_model_filename', "'final_star1.mod'"),
-        ('final_model_star2', 'star2_job', 'save_model_when_terminate',
+        ('final_model_star2', 'binary_star2_job', 'save_model_when_terminate',
          'save_model_filename', "'final_star2.mod'"),
-        ('history_star1', 'star1_controls', 'do_history_file', None, None),
-        ('history_star2', 'star2_controls', 'do_history_file', None, None),
+        ('history_star1', 'binary_star1_controls', 'do_history_file', None, None),
+        ('history_star2', 'binary_star2_controls', 'do_history_file', None, None),
     ]
 
     # Process each output configuration
@@ -1125,8 +1166,8 @@ def _build_output_controls_layer(output_settings):
     if 'history_interval' in output_settings:
         interval = output_settings['history_interval']
         output_layer['binary_controls']['history_interval'] = interval
-        output_layer['star1_controls']['history_interval'] = interval
-        output_layer['star2_controls']['history_interval'] = interval
+        output_layer['binary_star1_controls']['history_interval'] = interval
+        output_layer['binary_star2_controls']['history_interval'] = interval
 
     # Disable binary history if requested
     if 'binary_history' in output_settings and not output_settings['binary_history']:
@@ -1141,13 +1182,6 @@ def _build_output_controls_layer(output_settings):
             if params:
                 param_list = ', '.join(params.keys())
                 logger.debug(f"  {section}: {param_list}")
-
-    # Handle ZAMS filenames if provided
-    if 'zams_filename_1' in output_settings and output_settings['zams_filename_1'] is not None:
-       output_layer['star1_controls']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
-
-    if 'zams_filename_2' in output_settings and output_settings['zams_filename_2'] is not None:
-       output_layer['star2_controls']['zams_filename'] = f"'{output_settings['zams_filename_2']}'"
 
     return output_layer
 
@@ -1222,40 +1256,62 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         'inlist_names': {}
     }
 
-    # First pass: process file-based layers (MESA, POSYDON, user)
-    for key in all_keys:
-        # Determine the section based on the key name
-        section = _get_section_from_key(key)
-        if 'single' in system_type and ('binary' in key or 'star2' in key):
-            # Skip binary or star2 sections for single star systems
+    print(all_keys)
+    nr_steps = 1
+
+    if system_type == 'single_HMS':
+        # skip binary or star2 sections for single star systems
+        star1_keys = [key for key in all_keys if 'binary' not in key and 'star2' not in key]
+
+        # set the other inlists as empty
+        for key in all_keys:
+            if key not in star1_keys:
+                final_inlists[key] = {}
+
+        final_inlists['binary_star1_job'] = {'create_pre_main_sequence_model': ".false.",
+                                             'load_saved_model': ".true.",
+                                             'saved_model_name': "'initial_star1_step0.mod'"}
+
+        for key in star1_keys:
+            section = _get_section_from_key(key)
+            mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), _get_section_from_key(key))
+
+            # only a single step for single star HMS systems
+            posydon_layer_params = _process_inlist_layer(POSYDON_inlists.get(key)[0], section)
+            user_layer_params = _process_inlist_layer(user_inlists.get(key)[0], section)
+
+            final_inlists[f'{key}_0'] = {}
+            final_inlists[f'{key}_0'].update(mesa_layer_params)
+            final_inlists[f'{key}_0'].update(posydon_layer_params)
+            final_inlists[f'{key}_0'].update(user_layer_params)
+
+            # To the first step, add in the saving of the initial model
+            if 'star1_job' in key:
+                final_inlists[f'{key}_0']['save_model_when_terminate'] = '.true.'
+                final_inlists[f'{key}_0']['save_model_filename'] = "'initial_star1_step0.mod'"
+
+
+    elif system_type == "HMS-HMS":
+        # remove star job and controls for star1 if empty
+        HMS_HMS_keys = [key for key in all_keys if len(POSYDON_inlists.get(key, [])) > 0]
+        #First pass: process file-based layers (MESA, POSYDON, user)
+        for key in HMS_HMS_keys:
+
+            # Determine the section based on the key name
+            section = _get_section_from_key(key)
+
+            # Process each file-based layer
+            mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), section)
+            posydon_layer_params = _process_inlist_layer(POSYDON_inlists.get(key)[0], section)
+            user_layer_params = _process_inlist_layer(user_inlists.get(key)[0], section)
+
+            # Merge file-based layers (order matters: MESA first, then POSYDON, then user)
             final_inlists[key] = {}
-            layer_counts['MESA'][key] = 0
-            layer_counts['POSYDON'][key] = 0
-            layer_counts['user'][key] = 0
-            layer_params['MESA'][key] = {}
-            layer_params['POSYDON'][key] = {}
-            layer_params['user'][key] = {}
-            continue
+            final_inlists[key].update(mesa_layer_params)
+            final_inlists[key].update(posydon_layer_params)
+            final_inlists[key].update(user_layer_params)
 
-        # Process each file-based layer
-        mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), section)
-        posydon_layer_params = _process_inlist_layer(POSYDON_inlists.get(key), section)
-        user_layer_params = _process_inlist_layer(user_inlists.get(key), section)
-
-        # Merge file-based layers (order matters: MESA first, then POSYDON, then user)
-        final_inlists[key] = {}
-        final_inlists[key].update(mesa_layer_params)
-        final_inlists[key].update(posydon_layer_params)
-        final_inlists[key].update(user_layer_params)
-
-        # Store counts and parameters for summary
-        layer_counts['MESA'][key] = len(mesa_layer_params)
-        layer_counts['POSYDON'][key] = len(posydon_layer_params)
-        layer_counts['user'][key] = len(user_layer_params)
-
-        layer_params['MESA'][key] = mesa_layer_params
-        layer_params['POSYDON'][key] = posydon_layer_params
-        layer_params['user'][key] = user_layer_params
+    all_keys = sorted(final_inlists.keys())
 
     # Clean the final inlist parameters.
     # Needs to happen before adding grid/output layers!
@@ -1279,6 +1335,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
     # Build output controls layer if provided
     if output_settings:
         output_layer_dict = _build_output_controls_layer(output_settings)
+
         for key in all_keys:
             output_params = output_layer_dict.get(key, {})
             final_inlists[key].update(output_params)
@@ -1288,6 +1345,23 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         for key in all_keys:
             layer_counts['output'][key] = 0
             layer_params['output'][key] = {}
+
+    # Handle ZAMS filenames if provided
+    if output_settings and 'zams_filename_1' in output_settings and output_settings['zams_filename_1'] is not None:
+        final_inlists['binary_star1_controls']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
+        layer_counts['output']['binary_star1_controls'] += 1
+        layer_params['output']['binary_star1_controls']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
+
+    if output_settings and 'zams_filename_2' in output_settings and output_settings['zams_filename_2'] is not None:
+        final_inlists['binary_star2_controls']['zams_filename'] = f"'{output_settings['zams_filename_2']}'"
+        layer_counts['output']['binary_star2_controls'] += 1
+        layer_params['output']['binary_star2_controls']['zams_filename'] = f"'{output_settings['zams_filename_2']}'"
+
+    if system_type == 'single_HMS':
+        for i in range(nr_steps):
+            final_inlists[f'star1_controls_{i}']['zams_filename'] = f"'{output_settings['zams_filename_1']}'"
+            layer_counts['output'][f'star1_controls_{i}'] = 1
+            layer_params['output'][f'star1_controls_{i}'] = {'zams_filename': f"'{output_settings['zams_filename_1']}'"}
 
     # Add inlist_names layer for binary systems
     # This must happen after all other layers to use the constructed run_directory paths
@@ -1603,28 +1677,44 @@ def setup_grid_run_folder(path, final_columns, final_extras,
     _create_build_script(path)
 
     # Write inlist files
-    logger.debug(f'{BOLD}Writing MESA inlist files:{RESET}')
+    logger.debug(f'{BOLD}Writing inlist files:{RESET}')
     inlist_binary_project = os.path.join(path, 'binary', 'inlist_project')
     inlist_star1_binary = os.path.join(path, 'binary', 'inlist1')
     inlist_star2_binary = os.path.join(path, 'binary', 'inlist2')
 
-    # inlist_names(1) and inlist_names(2) are now set in resolve_inlists
-    # for binary systems, so no need to add them here
-
-    # Write all three inlist files
+    # Write all inlists
     _write_binary_inlist(inlist_binary_project,
-                         final_inlists['binary_controls'],
-                         final_inlists['binary_job'])
+                        final_inlists['binary_controls'],
+                        final_inlists['binary_job'])
 
     _write_star_inlist(inlist_star1_binary,
-                       final_inlists['star1_controls'],
-                       final_inlists['star1_job'])
+                    final_inlists['binary_star1_controls'],
+                    final_inlists['binary_star1_job'])
 
     _write_star_inlist(inlist_star2_binary,
-                       final_inlists['star2_controls'],
-                       final_inlists['star2_job'])
+                    final_inlists['binary_star2_controls'],
+                    final_inlists['binary_star2_job'])
 
-    logger.info('MESA inlist files written successfully.')
+    # check for additional single star inlists
+    # can be any number of steps
+    star1_steps = [key for key in final_inlists.keys() if 'star1_controls_' in key]
+    for step_key in star1_steps:
+        step_index = step_key.split('_')[-1]
+        inlists_star1 = os.path.join(path, 'star1', f'inlist_step{step_index}')
+        _write_star_inlist(inlists_star1,
+                            final_inlists[f'star1_controls_{step_index}'],
+                            final_inlists[f'star1_job_{step_index}'])
+
+
+    # single star inlists
+    #inlists_star1 = os.path.join(path, 'star1', 'inlist_step0')
+    #_write_star_inlist(inlists_star1,
+    #                    final_inlists['star1_controls'],
+    #                    final_inlists['star1_job'])
+
+
+
+    logger.info('Inlist files written successfully.')
 
     # Essentials paths created in this functions
     output_paths = {
