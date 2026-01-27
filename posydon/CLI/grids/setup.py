@@ -11,7 +11,6 @@ from posydon.active_learning.psy_cris.utils import parse_inifile
 from posydon.grids.psygrid import PSyGrid
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
-from posydon.utils.posydonwarning import Pwarn
 
 # Define column types and their filenames
 column_types = {'star_history_columns'  :'history_columns.list',
@@ -21,7 +20,7 @@ column_filenames = ['history_columns.list', 'binary_history_columns.list', 'prof
 
 # Define extras keys
 extras_keys = ['makefile_binary', 'makefile_star', 'binary_run',
-               'star_run', 'binary_extras', 'star_binary_extras', 'star1_extras', 'star2_extras',]
+               'star_run', 'run_binary_extras', 'run_star_binary_extras', 'run_star1_extras', 'run_star2_extras',]
 
 # define inlist keys
 inlist_keys = ['binary_controls', 'binary_job',
@@ -281,10 +280,10 @@ def setup_MESA_defaults(path_to_version):
                                                   'binary_run.f')
 
     # Extras files for binary evolution
-    MESA_default_extras['binary_extras'] = mesa_path('binary',
+    MESA_default_extras['run_binary_extras'] = mesa_path('binary',
                                                      'src',
                                                      'run_binary_extras.f')
-    MESA_default_extras['star_binary_extras'] = mesa_path('binary',
+    MESA_default_extras['run_star_binary_extras'] = mesa_path('binary',
                                                          'src',
                                                          'run_star_extras.f')
 
@@ -292,8 +291,8 @@ def setup_MESA_defaults(path_to_version):
     # During binary evolution, star_binary_extras is used for both stars.
     # #Both stars use the same single-star module extras file
     star_extras_path = mesa_path('star', 'src', 'run_star_extras.f')
-    MESA_default_extras['star1_extras'] = star_extras_path
-    MESA_default_extras['star2_extras'] = star_extras_path
+    MESA_default_extras['run_star1_extras'] = star_extras_path
+    MESA_default_extras['run_star2_extras'] = star_extras_path
 
     # Verify all extras files exist
     for _, path in MESA_default_extras.items():
@@ -343,14 +342,17 @@ def setup_POSYDON(path_to_version, base, system_type):
         Dictionary of POSYDON column files paths
     """
     # If user wants to use MESA base only, return empty dictionaries
-    if base == "MESA":
+    if base == "MESA" or base[0] == "MESA":
         POSYDON_columns = {name: None for name in column_types}
         POSYDON_inlists = {}
         POSYDON_extras = {key: None for key in extras_keys}
         return POSYDON_inlists, POSYDON_extras, POSYDON_columns
 
     # Setup POSYDON base path
-    POSYDON_path = os.path.join(path_to_version, base)
+    if len(base) == 2:
+        POSYDON_path = os.path.join(path_to_version, base[0], base[1])
+    else:
+        POSYDON_path = os.path.join(path_to_version, base[0], base[1], base[2])
     check_file_exist(POSYDON_path)
 
     logger.debug(f"Setting up POSYDON configuration: {POSYDON_path}")
@@ -389,7 +391,8 @@ def setup_POSYDON(path_to_version, base, system_type):
         helium_star_inlist_step2 = os.path.join(POSYDON_path,
                                                  'single_HeMS',
                                                  'inlist_step2')
-        # We need to also include the HMS single star inlist to set up the single star evolution
+        # We need to also include the HMS single star inlist to set up
+        # the single star evolution
         single_star_inlist_path = os.path.join(POSYDON_path,
                                                'single_HMS',
                                                'single_star_inlist')
@@ -419,13 +422,13 @@ def setup_POSYDON(path_to_version, base, system_type):
     #----------------------------------
 
     POSYDON_extras = {}
-    POSYDON_extras['binary_extras'] = os.path.join(POSYDON_path,
+    POSYDON_extras['run_binary_extras'] = os.path.join(POSYDON_path,
                                                    'extras_files',
                                                    'run_binary_extras.f')
-    POSYDON_extras['star_binary_extras'] = os.path.join(POSYDON_path,
+    POSYDON_extras['run_star_binary_extras'] = os.path.join(POSYDON_path,
                                                        'extras_files',
                                                        'run_star_extras.f')
-    POSYDON_extras['star1_extras'] = os.path.join(POSYDON_path,
+    POSYDON_extras['run_star1_extras'] = os.path.join(POSYDON_path,
                                                  'extras_files',
                                                  'run_star_extras.f')
 
@@ -758,93 +761,8 @@ def print_inlist_stacking_table(keys, MESA_defaults, POSYDON_config, user_config
     print(f"Note: Files at the top override parameters from files below")
     print(f"{MAGENTA}user{RESET} (highest priority) → {YELLOW}POSYDON{RESET} (config) → {CYAN}MESA{RESET} (base)")
 
-def print_inlist_parameter_override_table(key, mesa_params, posydon_params, user_params, final_params, show_details=False):
-    """Print a table showing which layer each parameter comes from, similar to extras/columns tables.
 
-    Parameters
-    ----------
-    key : str
-        The inlist key (e.g., 'binary_controls', 'star1_controls')
-    mesa_params : dict
-        Parameters from MESA defaults
-    posydon_params : dict
-        Parameters from POSYDON config
-    user_params : dict
-        Parameters from user config
-    final_params : dict
-        Final merged parameters
-    show_details : bool, optional
-        If True, show detailed parameter-by-parameter table. Default is False.
-    """
-    # Get all unique parameter names
-    all_params = sorted(set(list(mesa_params.keys()) +
-                           list(posydon_params.keys()) +
-                           list(user_params.keys())))
-
-    if not all_params:
-        return
-
-    # Only show detailed table if requested
-    if not show_details:
-        return
-
-    # Find the longest parameter name for formatting
-    max_param_len = max(len(str(param)) for param in all_params)
-    max_param_len = max(max_param_len, 15)  # Minimum width
-    col_width = 12
-
-    # Print summary header
-    overridden_count = sum(1 for p in all_params if (p in user_params and (p in mesa_params or p in posydon_params)) or
-                          (p in posydon_params and p in mesa_params))
-    print(f"  {BOLD}Detailed Parameters:{RESET} {len(all_params)} total, {overridden_count} overridden")
-    print("  " + "=" * (max_param_len + col_width * 3 + 4))
-
-    # Print header with colored column names
-    header = f"  {'Parameter':<{max_param_len}}  {CYAN}{'MESA':^{col_width}}{RESET}{YELLOW}{'POSYDON':^{col_width}}{RESET}{MAGENTA}{'user':^{col_width}}{RESET}"
-    print(f"{BOLD}{header}{RESET}")
-    print("  " + "-" * (max_param_len + col_width * 3 + 4))
-
-    # Print each parameter row
-    for param in all_params:
-        # Check which configs have this parameter
-        has_mesa = param in mesa_params
-        has_posydon = param in posydon_params
-        has_user = param in user_params
-
-        # Determine which one is used (priority: user > POSYDON > MESA)
-        used = 'user' if has_user else ('POSYDON' if has_posydon else ('MESA' if has_mesa else None))
-
-        # Format each column
-        mesa_mark = 'x' if has_mesa else ' '
-        posydon_mark = 'x' if has_posydon else ' '
-        user_mark = 'x' if has_user else ' '
-
-        # Apply colors - green for used, gray for available but not used
-        if used == 'MESA':
-            mesa_str = f"{GREEN}{mesa_mark}{RESET}"
-            posydon_str = f"{GRAY}{posydon_mark}{RESET}"
-            user_str = f"{GRAY}{user_mark}{RESET}"
-        elif used == 'POSYDON':
-            mesa_str = f"{GRAY}{mesa_mark}{RESET}"
-            posydon_str = f"{GREEN}{posydon_mark}{RESET}"
-            user_str = f"{GRAY}{user_mark}{RESET}"
-        elif used == 'user':
-            mesa_str = f"{GRAY}{mesa_mark}{RESET}"
-            posydon_str = f"{GRAY}{posydon_mark}{RESET}"
-            user_str = f"{GREEN}{user_mark}{RESET}"
-        else:
-            mesa_str = f"{GRAY}{mesa_mark}{RESET}"
-            posydon_str = f"{GRAY}{posydon_mark}{RESET}"
-            user_str = f"{GRAY}{user_mark}{RESET}"
-
-        # Print row
-        print(f"  {param:<{max_param_len}}  {mesa_str:^{col_width+9}}{posydon_str:^{col_width+9}}{user_str:^{col_width+9}}")
-
-    print("  " + "=" * (max_param_len + col_width * 3 + 4))
-    print(f"  {GREEN}Green{RESET} = used, {GRAY}Gray{RESET} = available but not used")
-
-
-def print_inlist_parameter_override_table_v2(key, layer_params, final_params, show_details=False):
+def print_inlist_parameter_override_table(key, layer_params, final_params, show_details=False):
     """Log a table showing which layer each parameter comes from (supports all layers).
 
     Parameters
@@ -1234,8 +1152,9 @@ def _build_output_controls_layer(output_settings):
     return output_layer
 
 
-def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_type,
-                     grid_parameters=None, output_settings=None):
+def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
+                    user_inlists, system_type, run_directory, grid_parameters=None,
+                    output_settings=None):
     """Resolve final inlists to use based on priority:
     output_settings > grid_parameters > user_inlists > POSYDON_inlists > MESA_default_inlists
 
@@ -1263,6 +1182,8 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
         Dictionary of user inlists paths
     system_type : str
         Type of binary system
+    run_directory : str
+        Path to the run directory where inlist files will be created
     grid_parameters : list or set, optional
         Collection of grid parameter names. If provided, adds grid configuration layer.
     output_settings : dict, optional
@@ -1287,7 +1208,8 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
         'POSYDON': {},
         'user': {},
         'grid': {},
-        'output': {}
+        'output': {},
+        'inlist_names': {}
     }
 
     # Track layer parameters for detailed printing if requested
@@ -1296,13 +1218,24 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
         'POSYDON': {},
         'user': {},
         'grid': {},
-        'output': {}
+        'output': {},
+        'inlist_names': {}
     }
 
     # First pass: process file-based layers (MESA, POSYDON, user)
     for key in all_keys:
         # Determine the section based on the key name
         section = _get_section_from_key(key)
+        if 'single' in system_type and ('binary' in key or 'star2' in key):
+            # Skip binary or star2 sections for single star systems
+            final_inlists[key] = {}
+            layer_counts['MESA'][key] = 0
+            layer_counts['POSYDON'][key] = 0
+            layer_counts['user'][key] = 0
+            layer_params['MESA'][key] = {}
+            layer_params['POSYDON'][key] = {}
+            layer_params['user'][key] = {}
+            continue
 
         # Process each file-based layer
         mesa_layer_params = _process_inlist_layer(MESA_default_inlists.get(key), section)
@@ -1356,6 +1289,32 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
             layer_counts['output'][key] = 0
             layer_params['output'][key] = {}
 
+    # Add inlist_names layer for binary systems
+    # This must happen after all other layers to use the constructed run_directory paths
+    if 'single' not in system_type.lower():
+        inlist_star1_binary = os.path.join(run_directory, 'binary', 'inlist1')
+        inlist_star2_binary = os.path.join(run_directory, 'binary', 'inlist2')
+
+        inlist_names_params = {
+            'inlist_names(1)': f"'{inlist_star1_binary}'",
+            'inlist_names(2)': f"'{inlist_star2_binary}'"
+        }
+        final_inlists['binary_job'].update(inlist_names_params)
+
+        # Track this layer
+        for key in all_keys:
+            if key == 'binary_job':
+                layer_counts['inlist_names'][key] = len(inlist_names_params)
+                layer_params['inlist_names'][key] = inlist_names_params
+            else:
+                layer_counts['inlist_names'][key] = 0
+                layer_params['inlist_names'][key] = {}
+    else:
+        # Single star systems don't need inlist_names
+        for key in all_keys:
+            layer_counts['inlist_names'][key] = 0
+            layer_params['inlist_names'][key] = {}
+
     # Log at INFO level: Parameter count summary
     print_inlist_summary_table_v2(all_keys, layer_counts)
 
@@ -1365,7 +1324,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists, user_inlists, system_
             # Only show sections that have parameters in any layer
             if any(layer_params[layer][key] for layer in layer_params):
                 logger.debug(f"{BOLD}═══ {key} ═══{RESET}")
-                print_inlist_parameter_override_table_v2(
+                print_inlist_parameter_override_table(
                     key,
                     layer_params,
                     final_inlists[key],
@@ -1584,15 +1543,14 @@ def _copy_extras(path, final_extras):
         'binary_run': [('binary/src', 'binary_run.f')],
         'star_run': [('star1/src', 'run.f'),
                      ('star2/src', 'run.f')],
-        'binary_extras': [('binary/src', 'run_binary_extras.f')],
-        'star_binary_extras': [('binary/src', 'run_star_extras.f')],
-        'star1_extras': [('star1/src', 'run_star_extras.f')],
-        'star2_extras': [('star2/src', 'run_star_extras.f')],
+        'run_binary_extras': [('binary/src', 'run_binary_extras.f')],
+        'run_star_binary_extras': [('binary/src', 'run_star_extras.f')],
+        'run_star1_extras': [('star1/src', 'run_star_extras.f')],
+        'run_star2_extras': [('star2/src', 'run_star_extras.f')],
     }
 
     for key, value in final_extras.items():
         logger.debug(f"{key}: {value}")
-
         if key == 'mesa_dir':
             continue
 
@@ -1605,7 +1563,8 @@ def _copy_extras(path, final_extras):
             shutil.copy(value, path)
 
 
-def setup_grid_run_folder(path, final_columns, final_extras, final_inlists):
+def setup_grid_run_folder(path, final_columns, final_extras,
+                          final_inlists):
     """Set up the grid run folder by:
 
     1. Creating necessary subdirectories
@@ -1649,9 +1608,8 @@ def setup_grid_run_folder(path, final_columns, final_extras, final_inlists):
     inlist_star1_binary = os.path.join(path, 'binary', 'inlist1')
     inlist_star2_binary = os.path.join(path, 'binary', 'inlist2')
 
-    # Add inlist names to binary_job section
-    final_inlists['binary_job']['inlist_names(1)'] = f"'{inlist_star1_binary}'"
-    final_inlists['binary_job']['inlist_names(2)'] = f"'{inlist_star2_binary}'"
+    # inlist_names(1) and inlist_names(2) are now set in resolve_inlists
+    # for binary systems, so no need to add them here
 
     # Write all three inlist files
     _write_binary_inlist(inlist_binary_project,
@@ -1807,7 +1765,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
         # Generate main grid submission script
         grid_script = 'job_array_grid_submit.slurm' if slurm['job_array'] else 'mpi_grid_submit.slurm'
         if os.path.exists(grid_script):
-            Pwarn(f'Replace {grid_script}', "OverwriteWarning")
+            logger.warning(f'Replace {grid_script}')
 
         array_size = nr_systems if slurm['job_array'] else None
         with open(grid_script, 'w') as f:
@@ -1818,7 +1776,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
         # Generate cleanup script
         cleanup_script = 'cleanup.slurm'
         if os.path.exists(cleanup_script):
-            Pwarn(f'Replace {cleanup_script}', "OverwriteWarning")
+            logger.warning(f'Replace {cleanup_script}')
 
         with open(cleanup_script, 'w') as f:
             _write_sbatch_header(f, slurm, job_type='cleanup')
@@ -1827,8 +1785,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
         # Generate wrapper run script
         run_script = 'run_grid.sh'
         if os.path.exists(run_script):
-            Pwarn(f'Replace {run_script}', "OverwriteWarning")
-
+            logger.warning(f'Replace {run_script}')
         with open(run_script, 'w') as f:
             f.write('#!/bin/bash\n')
             f.write(f'ID_GRID=$(sbatch --parsable {grid_script})\n')
@@ -1838,7 +1795,7 @@ def generate_submission_scripts(submission_type, command_line, slurm, nr_systems
             f.write('echo "cleanup.slurm submitted as "${ID_cleanup}\n')
 
         os.system(f"chmod 755 {run_script}")
-        print(f"Created {grid_script}, {cleanup_script}, and {run_script}")
+        logger.info(f"Created {grid_script}, {cleanup_script}, and {run_script}")
 
 
 def construct_command_line(number_of_mpi_processes, path_to_grid,
@@ -2020,7 +1977,7 @@ def validate_mesa_inlists(user_mesa_inlists):
 # CONFIGURATION BUILDING
 ###############################################################################
 
-def build_configuration_stack(user_mesa_inlists, user_mesa_extras, run_parameters):
+def build_configuration_stack(user_mesa_inlists, user_mesa_extras, run_parameters, run_directory):
     """Build the complete configuration stack for the MESA grid.
 
     This function orchestrates the layering of configurations:
@@ -2034,6 +1991,8 @@ def build_configuration_stack(user_mesa_inlists, user_mesa_extras, run_parameter
         User MESA extras settings from the inifile
     run_parameters : dict
         Run parameters from the inifile
+    run_directory : str
+        Path to the run directory where files will be created
 
     Returns
     -------
@@ -2090,9 +2049,10 @@ def build_configuration_stack(user_mesa_inlists, user_mesa_extras, run_parameter
         MESA_default_inlists,
         POSYDON_inlists,
         user_inlists,
+        system_type=user_mesa_inlists['system_type'],
+        run_directory=run_directory,
         grid_parameters=grid_parameters,
-        output_settings=user_output_settings,
-        system_type=user_mesa_inlists['system_type']
+        output_settings=user_output_settings
     )
 
     return final_columns, final_extras, final_inlists, nr_systems, grid_parameters, fixgrid_file_name
@@ -2240,7 +2200,8 @@ def run_setup(args):
     nr_systems, grid_parameters, fixgrid_file_name = build_configuration_stack(
         user_mesa_inlists,
         user_mesa_extras,
-        run_parameters
+        run_parameters,
+        args.run_directory
     )
 
     # Setup the run directory with all necessary files
