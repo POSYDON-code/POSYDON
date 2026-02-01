@@ -404,7 +404,7 @@ def setup_POSYDON(path_to_version, base, system_type):
         POSYDON_inlists['star1_controls'] = [
             [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[0],], # step 0
             [os.path.join(common_inlists_path, 'inlist1'), helium_star_inlists_steps[1],], # step 1
-            [os.path.join(common_inlists_path, 'inlist1'),single_star_inlist_path], # step 2
+            [os.path.join(common_inlists_path, 'inlist1'), single_star_inlist_path], # step 2
 
         ]
         POSYDON_inlists['star1_job'] = [
@@ -432,48 +432,36 @@ def setup_POSYDON(path_to_version, base, system_type):
         POSYDON_inlists['star2_controls'] = [[]]
         POSYDON_inlists['star2_job'] = [[]]
 
-    # if system_type == 'single_HMS':
-    #     # setup the paths to extra single star inlists
-    #     single_star_inlist_path = os.path.join(POSYDON_path,
-    #                                            'single_HMS',
-    #                                            'single_star_inlist')
-    #     POSYDON_inlists['star1_controls'].append(single_star_inlist_path)
-    # elif system_type == 'single_HeMS':
-    #     # setup the paths to extra single star He inlists
-    #     # The HeMS single star inlists have two steps
-    #     # step 1: create HeMS star
-    #     # step 2: evolve HeMS star
-    #     helium_star_inlist_step1 = os.path.join(POSYDON_path,
-    #                                              'single_HeMS',
-    #                                              'inlist_step1')
-    #     helium_star_inlist_step2 = os.path.join(POSYDON_path,
-    #                                              'single_HeMS',
-    #                                              'inlist_step2')
-    #     # We need to also include the HMS single star inlist to set up
-    #     # the single star evolution
-    #     single_star_inlist_path = os.path.join(POSYDON_path,
-    #                                            'single_HMS',
-    #                                            'single_star_inlist')
+    elif system_type == 'CO-HMS':
+        # Setup CO-HeMS inlist paths
+        common_project_inlist = os.path.join(common_inlists_path, 'inlist_project')
+        CO_HMS_inlists_path = os.path.join(POSYDON_path, 'CO-HMS')
+        CO_HMS_project_inlist = os.path.join(CO_HMS_inlists_path, 'inlist_project')
 
-    #     single_helium_inlists = [helium_star_inlist_step1,
-    #                              helium_star_inlist_step2,
-    #                              single_star_inlist_path]
+        POSYDON_inlists['binary_controls'] = [[common_project_inlist, CO_HMS_project_inlist]]
+        POSYDON_inlists['binary_job'] = [[common_project_inlist, CO_HMS_project_inlist]]
 
-    #     # the helium star setup steps contain control & job in the same inlist files
-    #     POSYDON_inlists['star1_controls'].extend(single_helium_inlists)
-    #     # We don't need to add the single star inlist again for the hob,
-    #     # since it only contains controls section in the file
-    #     POSYDON_inlists['star1_job'].extend(single_helium_inlists)
+        # setup star1 inlists for binaries
+        POSYDON_inlists['binary_star1_controls'] = [[os.path.join(common_inlists_path, 'inlist1'),
+                                                     os.path.join(CO_HMS_inlists_path, 'inlist1')]]
+        POSYDON_inlists['binary_star1_job'] = [[os.path.join(common_inlists_path, 'inlist1'),
+                                                    os.path.join(CO_HMS_inlists_path, 'inlist1')]]
+        # setup star2 inlists for binaries
+        POSYDON_inlists['binary_star2_controls'] = [[os.path.join(common_inlists_path, 'inlist2'),
+                                                     os.path.join(CO_HMS_inlists_path, 'inlist2')]]
+        POSYDON_inlists['binary_star2_job'] = [[os.path.join(common_inlists_path, 'inlist2'),
+                                                 os.path.join(CO_HMS_inlists_path,   'inlist2')]]
 
-    # elif system_type in ['HMS-HeMS', 'HeMS-HeMS']:
-    #     pass
-    # elif system_type in ['CO-HMS', 'CO-HeMS']:
-    #     pass
-    # elif system_type in ['HMS-HMS']:
-    #     # the common inlists are sufficient
-    #     pass
-    # else:
-    #     raise ValueError(f"System type {system_type} not recognized.")
+        POSYDON_inlists['star1_controls'] = [[]]
+        POSYDON_inlists['star1_job'] = [[]]
+        POSYDON_inlists['star2_controls'] = [[]]
+        POSYDON_inlists['star2_job'] = [[]]
+
+    elif system_type == 'CO-HeMS':
+        # Setup CO-HeMS inlist paths
+        common_project_inlist = os.path.join(common_inlists_path, 'inlist_project')
+        CO_HeMS_inlists_path = os.path.join(POSYDON_path, 'CO-HeMS')
+
 
     #----------------------------------
     #            Extras
@@ -1135,13 +1123,15 @@ def _build_grid_parameter_layer(grid_parameters, final_inlists):
     return grid_layer
 
 
-def _build_output_controls_layer(output_settings):
+def _build_output_controls_layer(output_settings, system_type):
     """Build a layer of inlist parameters for output control configurations.
 
     Parameters
     ----------
     output_settings : dict
         Dictionary of output settings from the configuration file
+    system_type : str
+        Type of binary system
 
     Returns
     -------
@@ -1183,6 +1173,9 @@ def _build_output_controls_layer(output_settings):
     for config_key, section, enabled_param, filename_param, filename_value in output_config:
         if config_key in output_settings:
             is_enabled = output_settings[config_key]
+            if (("star2" in config_key) and ((system_type == 'CO-HMS') or (system_type == 'CO-HeMS'))):
+                logger.warning(f"Output setting '{config_key}' is not applicable for system type '{system_type}' and will be ignored.")
+                is_enabled = False
             output_layer[section][enabled_param] = to_fortran_bool(is_enabled)
 
             # Set filename parameter if provided and feature is enabled
@@ -1360,8 +1353,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
                                              'saved_model_name': f"'initial_star1_step{nr_steps-1}.mod'"}
 
 
-
-    elif system_type == "HMS-HMS":
+    elif system_type == "HMS-HMS" or system_type == "CO-HMS":
         # remove star job and controls for star1 if empty
         HMS_HMS_keys = [key for key in all_keys if len(POSYDON_inlists.get(key, [])) > 0]
         #First pass: process file-based layers (MESA, POSYDON, user)
@@ -1380,6 +1372,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
             final_inlists[key].update(mesa_layer_params)
             final_inlists[key].update(posydon_layer_params)
             final_inlists[key].update(user_layer_params)
+
 
     all_keys = sorted(final_inlists.keys())
 
@@ -1404,7 +1397,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
 
     # Build output controls layer if provided
     if output_settings:
-        output_layer_dict = _build_output_controls_layer(output_settings)
+        output_layer_dict = _build_output_controls_layer(output_settings, system_type)
 
         for key in all_keys:
             output_params = output_layer_dict.get(key, {})
@@ -1415,6 +1408,8 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         for key in all_keys:
             layer_counts['output'][key] = 0
             layer_params['output'][key] = {}
+
+
 
     # Handle ZAMS filenames if provided
     if output_settings and 'zams_filename_1' in output_settings and output_settings['zams_filename_1'] is not None:
@@ -1439,6 +1434,7 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         # remove from binary
         final_inlists['binary_star1_controls'].pop('zams_filename', None)
         final_inlists['binary_star2_controls'].pop('zams_filename', None)
+
 
     # Add inlist_names layer for binary systems
     # This must happen after all other layers to use the constructed run_directory paths
