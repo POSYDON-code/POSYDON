@@ -12,6 +12,8 @@ import os
 import shutil
 import subprocess
 
+import pandas as pd
+
 from posydon.CLI.grids.inlist_manipulation import (
     Inlist,
     InlistManager,
@@ -19,6 +21,7 @@ from posydon.CLI.grids.inlist_manipulation import (
     MESAInlists,
 )
 from posydon.CLI.log import RESET, logger, setup_logger
+from posydon.grids.psygrid import PSyGrid
 from posydon.utils import configfile
 
 COLUMNS_FILES = {'star_history_columns':'history_columns.list',
@@ -99,6 +102,49 @@ def find_run_grid_executable():
         raise ValueError('Cannot locate posydon-run-grid executable in your path')
 
     return path_to_exec.decode('utf-8').strip('\n')
+
+def read_grid_file(filepath):
+    """Read grid file and return grid parameters as a dictionary.
+
+    Parameters
+    ----------
+    filepath : str
+        Path to the grid file
+
+    Returns
+    -------
+    number of grid points : int
+        Number of grid points in the grid
+    grid parameter names : set
+        Set of grid parameter names (column names)
+    fixgrid_file_name : str
+        Path to the fixed grid file used for the grid
+    """
+    # TODO: I"m not sure what the last option is for.
+    # Is it processing runs for a grid stored in a directory?
+    if '.csv' in filepath:
+        grid_df = pd.read_csv(filepath)
+        fixgrid_file_name = filepath
+    elif '.h5' in filepath:
+        psy_grid = PSyGrid()
+        psy_grid.load(filepath)
+        grid_df = psy_grid.get_pandas_initial_final()
+        psy_grid.close()
+        fixgrid_file_name = filepath
+    elif os.path.isdir(filepath):
+        PSyGrid().create(filepath, "./fixed_grid_results.h5", slim=True)
+        psy_grid = PSyGrid()
+        psy_grid.load("./fixed_grid_results.h5")
+        grid_df = psy_grid.get_pandas_initial_final()
+        psy_grid.close()
+        fixgrid_file_name = os.path.join(os.getcwd(), "fixed_grid_results.h5")
+    else:
+        raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
+
+    grid_parameters = set(grid_df.columns.tolist())
+    grid_parameters = [params.lower() for params in grid_parameters]
+
+    return (len(grid_df), grid_parameters, fixgrid_file_name)
 
 def read_configuration_file(inifile_path, grid_type):
     """Read and parse the configuration file for the grid setup.
@@ -360,7 +406,7 @@ def setup_MESA_defaults(path_to_version):
     return MESA_inlists, MESA_extras, MESA_columns
 
 
-def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
+def setup_POSYDON(path_to_version, base, system_type, mesa_inlists, run_directory, ZAMS_filenames):
     """Setup the POSYDON configuration inlists, extras and columns based on the provided base and system type.
 
     Parameters
@@ -373,7 +419,10 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
         System type to use for the POSYDON inlists
     mesa_inlists : MESAInlists
         The MESA default inlists to use as a base for the POSYDON inlists
-
+    run_directory : str
+        Directory where the run will be executed
+    ZAMS_filenames : list or str
+        Filename for the ZAMS model to be used
     Returns
     -------
     inlists : dict
@@ -383,8 +432,6 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
     POSYDON_columns : dict
         Dictionary of POSYDON column files paths
         """
-
-
     if base == "MESA" or base[0] == "MESA":
         POSYDON_columns = {name: None for name in COLUMNS_FILES.keys()}
         POSYDON_inlists = {}
@@ -403,6 +450,15 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
     logger.info('Requested POSYDON configuration:')
     logger.info(f"Base: {base}")
     logger.info(f"System type: {system_type}")
+
+    if len(ZAMS_filenames) == 2:
+        ZAMS_filename_1 = ZAMS_filenames[0]
+        ZAMS_filename_2 = ZAMS_filenames[1]
+    elif len(ZAMS_filenames) == 1:
+        ZAMS_filename_1 = ZAMS_filenames[0]
+        ZAMS_filename_2 = ZAMS_filenames[0]
+    else:
+        raise ValueError("ZAMS_filenames not understood")
 
     #----------------------------------
     #            Inlists
@@ -433,6 +489,8 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
                       'save_model_filename': "'initial_star1_step0.mod'"}
         combined_inlist.add_section(InlistSection(name='star_job',
                                                     parameters=parameters))
+        combined_inlist.add_section(InlistSection(name='controls',
+                                                  parameters={'zams_filename': f"'{ZAMS_filename_1}'"}))
         inlists.append_star1_inlist(combined_inlist)
 
         # TODO: Can we remove the lines below??
@@ -478,9 +536,17 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
 
 
     elif system_type == 'HMS-HMS':
+
         inlists.append_binary_inlist(mesa_base_project_inlist)
-        inlists.append_binary_star1_inlist(mesa_base_star_inlist1)
-        inlists.append_binary_star2_inlist(mesa_base_star_inlist2)
+
+        tmp_inlist = Inlist(name='binary_star1_inlist')
+        tmp_inlist.add_section(InlistSection(name='controls', parameters={'zams_filename': f"'{ZAMS_filename_1}'"}))
+        inlists.append_binary_star1_inlist(mesa_base_star_inlist1.merge(tmp_inlist))
+
+        tmp_inlist = Inlist(name='binary_star2_inlist')
+        tmp_inlist.add_section(InlistSection(name='controls', parameters={'zams_filename': f"'{ZAMS_filename_2}'"}))
+        inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(tmp_inlist))
+
 
     elif system_type == 'CO-HMS':
         co_hms_inlist1 = Inlist.from_file(f'{POSYDON_inlist_folder}/CO-HMS/inlist1')
@@ -488,6 +554,11 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
         co_hms_project = Inlist.from_file(f'{POSYDON_inlist_folder}/CO-HMS/inlist_project')
 
         inlists.append_binary_inlist(mesa_base_project_inlist.merge(co_hms_project))
+
+        co_hms_inlist1.add_section(InlistSection(name='controls', parameters={'zams_filename': f"'{ZAMS_filename_1}'"}))
+        # TODO: we don't really need the secondary....
+        co_hms_inlist2.add_section(InlistSection(name='controls', parameters={'zams_filename': f"'{ZAMS_filename_2}'"}))
+
         inlists.append_binary_star1_inlist(mesa_base_star_inlist1.merge(co_hms_inlist1))
         inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(co_hms_inlist2))
 
@@ -511,7 +582,27 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists):
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_0))
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_1))
         inlists.append_binary_star1_inlist(mesa_HMS_base)
-        inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(base_inlist2))
+
+        tmp_inlist = Inlist(name='binary_star2_inlist')
+        tmp_inlist.add_section(InlistSection(name='controls', parameters={'zams_filename': f"'{ZAMS_filename_2}'"}))
+
+        inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(base_inlist2).merge(tmp_inlist))
+
+
+    else:
+        raise ValueError(f"System type {system_type} not recognized. Please check your configuration file and try again.")
+
+    if not 'single' in system_type:
+        inlist_star1_binary = os.path.join(run_directory, 'binary', 'inlist1')
+        inlist_star2_binary = os.path.join(run_directory, 'binary', 'inlist2')
+
+        inlist_names_params = {
+            'inlist_names(1)': f"'{inlist_star1_binary}'",
+            'inlist_names(2)': f"'{inlist_star2_binary}'"
+        }
+        tmp_inlist = Inlist(name='binary_inlist')
+        tmp_inlist.add_section(InlistSection(name='binary_job', parameters=inlist_names_params))
+        inlists.binary_inlists[0] = inlists.binary_inlists[0].merge(tmp_inlist)
 
     #----------------------------------
     #            Extras
@@ -714,6 +805,7 @@ def setup_user(user_inlists, user_extras, POSYDON_inlists):
         else:
             POSYDON_inlists['binary_star2_inlists'][0] = POSYDON_inlists['binary_star2_inlists'][0].merge(binary_star2_inlist)
 
+
     #----------------------------------
     #            Extras
     #----------------------------------
@@ -844,6 +936,35 @@ def create_run_directory(run_directory, inlists, extras, columns):
 
     inlists.write_inlists(run_directory)
 
+def add_grid_parameters_to_inlists(inlists, grid_parameters):
+
+    nr, parameters, fixgrid_filename = read_grid_file(grid_parameters['grid'])
+    print(parameters)
+
+    # TODO: the old code added the extra read to the star1/star2 inlists.
+    # for key in inlists.keys():
+    #     if not 'star1' in key and not 'star2' in key:
+    #         continue
+    #     inlist_list = inlists[key]
+    #     for i in range(len(inlist_list)):
+    #         inlist = inlist_list[i]
+    #         for section in inlist.sections.keys():
+    #             for param in parameters:
+    #                 if param in inlist.sections[section].parameters:
+    #                     logger.debug(f'\t\t{param} is in {section} section of {inlist.name} inlist')
+    #                     tmp_key = 'star1' if 'star1' in key else 'star2'
+    #                     binary_key = 'binary_' if 'binary' in key else ''
+    #                     out_params = {f'read_extra_{section}_inlist1': True,
+    #                                   f'extra_{section}_inlist1_name': f"'inlist_grid_{tmp_key}_{binary_key}{section}'"}
+    #                     # add an read_extras to the inlist with the grid parameters
+    #                     tmp_inlist = Inlist(name=f'{key}')
+    #                     tmp_inlist.add_section(InlistSection(name=section,
+    #                                                           parameters=out_params))
+
+    #                     inlist_list[i] = inlist_list[i].merge(tmp_inlist)
+
+    return inlists
+
 
 def run_setup(args):
     """Run the setup process for POSYDON MESA grids.
@@ -881,28 +1002,42 @@ def run_setup(args):
 
     MESA_inlists, MESA_extras, MESA_columns = setup_MESA_defaults(posydon_inlist_repo_path)
 
+    print(user_inlists['zams_filename'])
+    if 'zams_filename' in user_inlists:
+        ZAMS_filenames =  (user_inlists['zams_filename'],
+                           user_inlists['zams_filename'])
+    elif 'zams_filename_1' in user_inlists and 'zams_filename_2' in user_inlists:
+        ZAMS_filenames = (user_inlists['zams_filename_1'],
+                           user_inlists['zams_filename_2'])
+    else:
+        ZAMS_filenames = (None, None)
+
+
     # Stacks the MESA inlists
     (POSYDON_inlists,
      POSYDON_extras,
      POSYDON_columns) = setup_POSYDON(posydon_inlist_repo_path,
                                       user_inlists['base'],
                                       user_inlists['system_type'],
-                                      MESA_inlists)
+                                      MESA_inlists,
+                                      run_directory,
+                                      ZAMS_filenames)
 
     user_inlists, user_extras, user_columns = setup_user(user_inlists, user_extras, POSYDON_inlists)
 
     # add grid parameters from run_parameters to the inlist stack.
 
+    # write/copy extras
     final_extras = resolve_files(MESA_extras, POSYDON_extras, user_extras, EXTRAS_FILES)
+
+    # write/copy columns
     final_columns = resolve_files(MESA_columns, POSYDON_columns, user_columns, COLUMNS_FILES.keys())
+
+    # Add grid_parameters to the POSYDON_inlists if needed, by creating a new inlist with the grid parameters and merging it on top of the existing stack.
+    POSYDON_inlists = add_grid_parameters_to_inlists(POSYDON_inlists, run_parameters)
 
     # create the run directory with the final inlists, extras and columns
     create_run_directory(run_directory, POSYDON_inlists, final_extras, final_columns)
-
-
-    # write/copy extras
-    # write/copy columns
-    # write/copy the makefiles
 
     # write/copy inlists
     # Build the configuration stack + write the run directory
