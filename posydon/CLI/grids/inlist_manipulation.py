@@ -51,6 +51,8 @@ class InlistSection:
     @staticmethod
     def _format_value(value) -> str:
         """Return value as-is (no formatting needed)"""
+        if isinstance(value, bool):
+            return '.true.' if value else '.false.'
         return value
 
     @staticmethod
@@ -147,8 +149,15 @@ class Inlist:
         lines = []
 
         # Add sections
-        for section in self.sections.values():
-            lines.append(section.to_fortran())
+        # sort sections controls before star_job and binary_control before binary_job
+        section_order = ['controls', 'star_job', 'binary_controls', 'binary_job']
+        for section_name in section_order:
+            if section_name in self.sections:
+                lines.append(self.sections[section_name].to_fortran())
+
+        for section_name, section in self.sections.items():
+            if section_name not in section_order:
+                lines.append(section.to_fortran())
 
         with open(filepath, 'w') as f:
             f.write("\n".join(lines))
@@ -292,6 +301,11 @@ class MESAInlists():
 
         return cleaned
 
+    def __repr__(self):
+        return (f"MESAInlists(path='{self.path}', "
+                f"base_star_inlist={self.base_star_inlist}, "
+                f"base_binary_inlist={self.base_binary_inlist})")
+
 class InlistManager:
     """Manages multiple inlists for different evolution steps/phases in MESA. Each entry in the lists corresponds to a different step/phase in the evolution sequence."""
 
@@ -301,6 +315,15 @@ class InlistManager:
         self.binary_star2_inlists = []
         self.star1_inlists = []
         self.star2_inlists = []
+
+    def keys(self):
+        return ['binary_inlists', 'binary_star1_inlists', 'binary_star2_inlists', 'star1_inlists', 'star2_inlists']
+
+    def __getitem__(self, key):
+        if key in self.keys():
+            return getattr(self, key)
+        else:
+            raise KeyError(f"InlistManager has no key '{key}'")
 
 
     def append_binary_inlist(self, inlist):
@@ -368,33 +391,3 @@ class InlistManager:
                                   'inlist_step0', 'inlist_step{}')
         self._write_inlist_group(self.star2_inlists, f'{output_dir}/star2',
                                   'inlist_step0', 'inlist_step{}')
-
-
-
-
-# class EvolutionStep:
-#     """Represents a single evolution step/phase in MESA."""
-#     def __init__(self, name, description, inlist):
-#         self.name = name
-#         self.description = description
-#         self.inlist = inlist
-
-
-# class EvolutionSequence:
-#     """Represents a sequence of evolution steps/phases in MESA."""
-#     def __init__(self, base_inlist):
-#         self.base_inlist = base_inlist
-#         self.steps = [] # list of EvolutionStep objects
-
-#     def add_step(self, step):
-#         """Add an evolution step to the sequence"""
-#         self.steps.append(step)
-
-#     def generate_inlists(self):
-#         """Generate inlists for each evolution step by merging with base inlist"""
-#         inlists = {}
-#         for step in self.steps:
-#             merged_inlist = self.base_inlist.merge(step.inlist)
-#             merged_inlist.name = f"{self.base_inlist.name}_{step.name}"
-#             inlists[step.name] = merged_inlist
-#         return inlists

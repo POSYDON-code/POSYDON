@@ -1448,14 +1448,6 @@ def resolve_inlists(MESA_default_inlists, POSYDON_inlists,
         }
         final_inlists['binary_job'].update(inlist_names_params)
 
-        # Track this layer
-        for key in all_keys:
-            if key == 'binary_job':
-                layer_counts['inlist_names'][key] = len(inlist_names_params)
-                layer_params['inlist_names'][key] = inlist_names_params
-            else:
-                layer_counts['inlist_names'][key] = 0
-                layer_params['inlist_names'][key] = {}
     else:
         # Single star systems don't need inlist_names
         for key in all_keys:

@@ -11,7 +11,7 @@ from unittest.mock import MagicMock, call, patch
 import pytest
 
 # import the module which will be tested
-import posydon.CLI.grids.setup as totest
+import posydon.CLI.grids.setup_old as totest
 
 
 class TestSetupMESADefaults:
