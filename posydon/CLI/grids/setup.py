@@ -481,6 +481,11 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists, run_director
     mesa_base_star_inlist1 = mesa_inlists.base_star_inlist.merge(base_inlist1)
     mesa_base_star_inlist2 = mesa_inlists.base_star_inlist.merge(base_inlist2)
 
+    # remove the zams_filename from the base inlists since we will add it in the POSYDON inlists based on the configuration, and we want to avoid confusion about which zams model is being used.
+    mesa_base_star_inlist1.controls.parameters.pop('zams_filename')
+    mesa_base_star_inlist2.controls.parameters.pop('zams_filename')
+    hems_step_0.controls.parameters.pop('zams_filename', None) # not all steps have zams_filename, so use pop with default value to avoid errors
+    hems_step_1.controls.parameters.pop('zams_filename', None)
 
     if system_type == 'single_HMS':
         combined_inlist = mesa_base_star_inlist1.merge(single_star_inlist)
@@ -569,16 +574,43 @@ def setup_POSYDON(path_to_version, base, system_type, mesa_inlists, run_director
         mesa_HMS_base = mesa_base_star_inlist1.merge(base_inlist1)
 
         inlists.append_binary_inlist(mesa_base_project_inlist.merge(co_inlist_project))
+
+        parameters = {'save_model_when_terminate': True,
+                      'save_model_filename': f"'initial_star1_step0.mod'"}
+
+        hems_step_0.add_section(InlistSection(name='star_job', parameters=parameters))
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_0))
+
+        parameters = {'load_saved_model': True,
+                      'saved_model_name': "'initial_star1_step0.mod'",
+                      'save_model_when_terminate': True,
+                      'save_model_filename': f"'initial_star1_step1.mod'"}
+
+        hems_step_1.add_section(InlistSection(name='star_job', parameters=parameters))
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_1))
-        inlists.append_binary_star1_inlist(mesa_HMS_base.merge(base_inlist1))
-        inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(base_inlist2).merge(co_inlist1))
+
+        parameters = {'load_saved_model': True,
+                      'saved_model_name': "'initial_star1_step1.mod'"}
+
+        co_inlist1.add_section(InlistSection(name='star_job', parameters=parameters))
+        inlists.append_binary_star1_inlist(mesa_HMS_base.merge(base_inlist1).merge(co_inlist1))
+
+        inlists.append_binary_star2_inlist(mesa_base_star_inlist2.merge(base_inlist2))
 
     elif system_type == 'HeMS-HMS':
 
         mesa_HMS_base = mesa_base_star_inlist1.merge(base_inlist1)
-
         inlists.append_binary_inlist(mesa_base_project_inlist)
+
+        parameters = {'save_model_when_terminate': True,
+                      'save_model_filename': f"'initial_star1_step0.mod'"}
+        hems_step_0.add_section(InlistSection(name='star_job', parameters=parameters))
+        parameters = {'load_saved_model': True,
+                      'saved_model_name': "'initial_star1_step0.mod'",
+                      'save_model_when_terminate': True,
+                      'save_model_filename': f"'initial_star1_step1.mod'"}
+        hems_step_1.add_section(InlistSection(name='star_job', parameters=parameters))
+
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_0))
         inlists.append_star1_inlist(mesa_HMS_base.merge(hems_step_1))
         inlists.append_binary_star1_inlist(mesa_HMS_base)
@@ -940,28 +972,30 @@ def add_grid_parameters_to_inlists(inlists, grid_parameters):
 
     nr, parameters, fixgrid_filename = read_grid_file(grid_parameters['grid'])
     print(parameters)
+    # TODO: the old code added the extra read to the binary_star1/star2 inlists.
+    # I think it should be added to star1/star2 inlists too for the single star case.
+    for key in inlists.keys():
+        print(key)
+        if not 'binary_star1' in key and not 'binary_star2' in key:
+            continue
+        print('here', key)
+        inlist_list = inlists[key]
+        for i in range(len(inlist_list)):
+            inlist = inlist_list[i]
+            for section in inlist.sections.keys():
+                for param in parameters:
+                    if param in inlist.sections[section].parameters:
+                        logger.debug(f'\t\t{param} is in {section} section of {inlist.name} inlist')
+                        tmp_key = 'star1' if 'star1' in key else 'star2'
+                        binary_key = 'binary_' if 'binary' in key else ''
+                        out_params = {f'read_extra_{section}_inlist1': True,
+                                      f'extra_{section}_inlist1_name': f"'inlist_grid_{tmp_key}_{binary_key}{section}'"}
+                        # add an read_extras to the inlist with the grid parameters
+                        tmp_inlist = Inlist(name=f'{key}')
+                        tmp_inlist.add_section(InlistSection(name=section,
+                                                              parameters=out_params))
 
-    # TODO: the old code added the extra read to the star1/star2 inlists.
-    # for key in inlists.keys():
-    #     if not 'star1' in key and not 'star2' in key:
-    #         continue
-    #     inlist_list = inlists[key]
-    #     for i in range(len(inlist_list)):
-    #         inlist = inlist_list[i]
-    #         for section in inlist.sections.keys():
-    #             for param in parameters:
-    #                 if param in inlist.sections[section].parameters:
-    #                     logger.debug(f'\t\t{param} is in {section} section of {inlist.name} inlist')
-    #                     tmp_key = 'star1' if 'star1' in key else 'star2'
-    #                     binary_key = 'binary_' if 'binary' in key else ''
-    #                     out_params = {f'read_extra_{section}_inlist1': True,
-    #                                   f'extra_{section}_inlist1_name': f"'inlist_grid_{tmp_key}_{binary_key}{section}'"}
-    #                     # add an read_extras to the inlist with the grid parameters
-    #                     tmp_inlist = Inlist(name=f'{key}')
-    #                     tmp_inlist.add_section(InlistSection(name=section,
-    #                                                           parameters=out_params))
-
-    #                     inlist_list[i] = inlist_list[i].merge(tmp_inlist)
+                        inlist_list[i] = inlist_list[i].merge(tmp_inlist)
 
     return inlists
 
@@ -986,7 +1020,7 @@ def run_setup(args):
 
     validate_input(args)
 
-    run_parameters, slurm, user_inlists, user_extras = read_configuration_file(args.inifile, args.grid_type)
+    run_parameters, slurm, user_inlists_params, user_extras = read_configuration_file(args.inifile, args.grid_type)
 
     # Setup the run directory
     run_directory = args.run_directory
@@ -995,20 +1029,20 @@ def run_setup(args):
 
     # Setup the POSYDON MESA inlist repository
     posydon_inlist_repo_path = setup_posydon_inlist_repository(
-        inlist_repository = user_inlists['inlist_repository'],
-        MESA_version      = user_inlists['MESA_version'],
-        repo_URL          = user_inlists['repo_URL'],
+        inlist_repository = user_inlists_params['inlist_repository'],
+        MESA_version      = user_inlists_params['MESA_version'],
+        repo_URL          = user_inlists_params['repo_URL'],
     )
 
     MESA_inlists, MESA_extras, MESA_columns = setup_MESA_defaults(posydon_inlist_repo_path)
 
-    print(user_inlists['zams_filename'])
-    if 'zams_filename' in user_inlists:
-        ZAMS_filenames =  (user_inlists['zams_filename'],
-                           user_inlists['zams_filename'])
-    elif 'zams_filename_1' in user_inlists and 'zams_filename_2' in user_inlists:
-        ZAMS_filenames = (user_inlists['zams_filename_1'],
-                           user_inlists['zams_filename_2'])
+    print(user_inlists_params['zams_filename'])
+    if 'zams_filename' in user_inlists_params:
+        ZAMS_filenames =  (user_inlists_params['zams_filename'],
+                           user_inlists_params['zams_filename'])
+    elif 'zams_filename_1' in user_inlists_params and 'zams_filename_2' in user_inlists_params:
+        ZAMS_filenames = (user_inlists_params['zams_filename_1'],
+                           user_inlists_params['zams_filename_2'])
     else:
         ZAMS_filenames = (None, None)
 
@@ -1017,13 +1051,13 @@ def run_setup(args):
     (POSYDON_inlists,
      POSYDON_extras,
      POSYDON_columns) = setup_POSYDON(posydon_inlist_repo_path,
-                                      user_inlists['base'],
-                                      user_inlists['system_type'],
+                                      user_inlists_params['base'],
+                                      user_inlists_params['system_type'],
                                       MESA_inlists,
                                       run_directory,
                                       ZAMS_filenames)
 
-    user_inlists, user_extras, user_columns = setup_user(user_inlists, user_extras, POSYDON_inlists)
+    user_inlists, user_extras, user_columns = setup_user(user_inlists_params, user_extras, POSYDON_inlists)
 
     # add grid parameters from run_parameters to the inlist stack.
 
@@ -1034,7 +1068,11 @@ def run_setup(args):
     final_columns = resolve_files(MESA_columns, POSYDON_columns, user_columns, COLUMNS_FILES.keys())
 
     # Add grid_parameters to the POSYDON_inlists if needed, by creating a new inlist with the grid parameters and merging it on top of the existing stack.
-    POSYDON_inlists = add_grid_parameters_to_inlists(POSYDON_inlists, run_parameters)
+    # TODO: remove if statement? This is to mimick the old code, which doesn't add
+    # the grid parameter to the single star inlist, but adds it to binary stars.
+    # I'm not sure if this is intentional or an oversight, but it seems more consistent to add the grid parameters to the single star inlist as well, since it can be used for both single and binary star runs.
+    if not 'single' in user_inlists_params['system_type']:
+        POSYDON_inlists = add_grid_parameters_to_inlists(POSYDON_inlists, run_parameters)
 
     # create the run directory with the final inlists, extras and columns
     create_run_directory(run_directory, POSYDON_inlists, final_extras, final_columns)
