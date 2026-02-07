@@ -65,7 +65,7 @@ class DoubleCO(detached_step):
         #                         f"{self.res.message}")
         # contact event triggered
         if self.res.status == 1:
-            binary.time = self.res.t[-1]
+            binary.time += self.res.t[-1]
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
