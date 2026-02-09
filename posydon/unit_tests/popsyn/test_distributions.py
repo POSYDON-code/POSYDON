@@ -110,6 +110,7 @@ class TestFlatMassRatio:
         q_values = np.linspace(custom_flat_ratio.q_min, custom_flat_ratio.q_max, 10)
         pdf_values = custom_flat_ratio.pdf(q_values)
         expected_pdf = custom_flat_ratio.norm * np.ones_like(q_values)
+        expected_pdf[0] = 0.0  # q_values[0] is equal to q_min, which is outside the valid range
         np.testing.assert_allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, custom_flat_ratio):
