@@ -587,6 +587,28 @@ class LogUniform():
 
         self.norm = self._calculate_normalization()
 
+    def __repr__(self):
+        """Return string representation of the distribution.
+
+        Returns
+        -------
+        str
+            String representation showing the distribution parameters.
+        """
+        return f"LogUniform(min={self.min}, max={self.max})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
+        return (f"<h3>Log-Uniform Distribution</h3>"
+                f"<p>min = {self.min}</p>"
+                f"<p>max = {self.max}</p>")
+
     def _calculate_normalization(self):
         """
         Calculate the normalization constant for the log-uniform distribution.
@@ -616,7 +638,7 @@ class LogUniform():
         valid = (x > 0) & (x >= self.min) & (x <= self.max)
         pdf_values = np.zeros_like(x, dtype=float)
 
-        pdf_values[valid] = self.norm
+        pdf_values[valid] = self.norm / x[valid]
 
         return pdf_values
 
@@ -948,9 +970,9 @@ class LogNormalSeparation:
     Parameters
     ----------
     mean : float, optional
-        Mean of the log10 distribution (default: 3.5, corresponding to ~3162 Rsun).
+        Mean of the log10 distribution (default: 0.85, corresponding to ~7.08 Rsun).
     sigma : float, optional
-        Standard deviation of the log10 distribution (default: 2.3).
+        Standard deviation of the log10 distribution (default: 0.37).
     min : float, optional
         Minimum orbital separation in solar radii (default: 5.0).
     max : float, optional
@@ -972,15 +994,15 @@ class LogNormalSeparation:
     normal distribution in log10 space.
     """
 
-    def __init__(self, mean=3.5, sigma=2.3, min=5.0, max=1e5):
+    def __init__(self, mean=0.85, sigma=0.37, min=5.0, max=1e5):
         """Initialize the log-normal separation distribution.
 
         Parameters
         ----------
         mean : float, optional
-            Mean of the log10 distribution (default: 3.5).
+            Mean of the log10 distribution (default: 0.85).
         sigma : float, optional
-            Standard deviation of the log10 distribution (default: 2.3).
+            Standard deviation of the log10 distribution (default: 0.37).
         min : float, optional
             Minimum orbital separation in solar radii (default: 5.0).
         max : float, optional
