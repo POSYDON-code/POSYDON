@@ -2338,6 +2338,69 @@ class TestPSyGrid:
         assert 'star_states' in PSyGrid.kwargs
         assert PSyGrid.kwargs['star_states'] is not None
 
+    def test_HR_binary_grid_with_states(self, PSyGrid, grid_path, monkeypatch):
+        """Test HR diagram with states=True for binary grids.
+
+        This test addresses issue #689 where plotting HR diagrams with
+        states=True on binary grids crashed due to incorrect column naming
+        conventions for binary vs single-star grids.
+        """
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
+
+        # Load the grid and ensure it's a binary grid
+        try:
+            PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+
+        # Ensure we're testing a binary grid
+        if not PSyGrid.config["binary"]:
+            # Skip this test if not a binary grid (default test grid is binary)
+            return
+
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+
+        # Test states with history1
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history1', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history1'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
+
+        # Test states with history2
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history2', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history2'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
+
+        # Test that using binary_history with states raises an error
+        PSyGrid.kwargs = None
+        with raises(ValueError, match="For binary grids with states=True, "\
+                                     +"history must be 'history1' or "\
+                                     +"'history2', not 'binary_history'"):
+            PSyGrid.HR(0, history='binary_history', states=True)
+
     def test_eq(self, PSyGrid, grid_path, capsys, monkeypatch):
         def mock_getitem(self, index):
             if (("description" in self.config) and (self.config["description"]\
