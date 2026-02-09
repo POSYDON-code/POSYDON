@@ -739,7 +739,7 @@ class ThermalEccentricity:
         """
         # Integral of 2*e from e_min to e_max is e_max^2 - e_min^2
         integral = self.e_max**2 - self.e_min**2
-        if integral == 0:
+        if integral == 0: # pragma: no cover
             raise ValueError("Cannot normalize distribution: e_min == e_max")
         return 1.0 / integral
 

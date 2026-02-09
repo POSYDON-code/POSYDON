@@ -102,7 +102,8 @@ class IMFBase(ABC):
         '''
         pass
 
-    def rvs(self, size=1, rng=None):
+    @abstractmethod
+    def rvs(self, size=1, rng=None): # pragma: no cover
         pass
 
 
