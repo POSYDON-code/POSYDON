@@ -37,9 +37,6 @@ import shutil
 
 import numpy as np
 import pandas as pd
-from astropy import constants as const
-from astropy.cosmology import Planck15 as cosmology
-from matplotlib import pyplot as plt
 from tqdm import tqdm
 
 import posydon.visualization.plot_pop as plot_pop
@@ -63,7 +60,7 @@ from posydon.popsyn.rate_calculation import (
 )
 from posydon.popsyn.star_formation_history import SFR_per_met_at_z
 from posydon.utils.common_functions import convert_metallicity_to_string
-from posydon.utils.constants import Zsun
+from posydon.utils.constants import Zsun, clight
 from posydon.utils.posydonwarning import Pwarn
 
 ###############################################################################
@@ -2102,7 +2099,7 @@ class TransientPopulation(Population):
         #].values
 
         # speed of light
-        c = const.c.to("Mpc/yr").value  # Mpc/yr
+        c = clight * 1.0227121650456949e-17 # cm/s to Mpc/yr
 
         # delta cosmic time bin
         deltaT = rates.MODEL["delta_t"] * 10**6  # yr
@@ -2128,7 +2125,9 @@ class TransientPopulation(Population):
             )  # Gyr
 
             t_events = t_birth + delay_time
-            hubble_time_mask = t_events <= cosmology.age(1e-08).value * 0.9999999
+            # Lazy import for astropy cosmology
+            from astropy.cosmology.Planck15 import age as astropy_age
+            hubble_time_mask = t_events <= astropy_age(1e-08).value * 0.9999999
 
             # get the redshift of the events
             z_events = np.full(t_events.shape, np.nan)
@@ -2234,6 +2233,7 @@ class TransientPopulation(Population):
 
         """
         if ax is None:
+            from matplotlib import pyplot as plt
             fig, ax = plt.subplots()
 
         # Validate model weights
