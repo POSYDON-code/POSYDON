@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from scipy.integrate import quad
 
+from posydon.utils.common_functions import inverse_sampler, rejection_sampler
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -100,6 +101,10 @@ class IMFBase(ABC):
         implemented in a subclass.
         '''
         pass
+
+    def rvs(self, size=1, rng=None):
+        pass
+
 
 class Salpeter(IMFBase):
     """
@@ -427,9 +432,6 @@ class Kroupa2001(IMFBase):
         if rng is None:
             rng = np.random.default_rng()
 
-        # Import here to avoid circular dependency
-        from posydon.utils.common_functions import inverse_sampler
-
         # Create discretized PDF for inverse sampling
         # Use more points near the breaks for better accuracy
         n_points = 2000
@@ -529,3 +531,35 @@ class Chabrier2003(IMFBase):
         C = (1.0 / (self.m_break * sqrt_2pi_sigma)) * np.exp(-log_term_break)
         powerlaw = C * (m / self.m_break) ** (-self.alpha)
         return np.where(m < self.m_break, lognormal, powerlaw)
+
+    def rvs(self, size=1, rng=None):
+        """Draw random samples from the Chabrier2003 IMF.
+
+        Uses inverse transform sampling with discretized PDF for the
+        combined lognormal and power-law distribution.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random mass samples in solar masses.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        # Create discretized PDF for inverse sampling
+        # Use more points near the transition for better accuracy
+        n_points = 2000
+        m_grid = np.linspace(self.m_min, self.m_max, n_points)
+        pdf_values = self.imf(m_grid)
+
+        # Sample using inverse transform method
+        masses = inverse_sampler(m_grid, pdf_values, size=size, rng=rng)
+
+        return masses
