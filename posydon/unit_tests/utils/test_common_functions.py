@@ -754,8 +754,10 @@ class TestFunctions:
                approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+        mock_rng = MockRNG()
         def mock_interp1d(x, y):
             if x[0] > x[-1]:
                 raise ValueError
@@ -786,7 +788,6 @@ class TestFunctions:
                                       +" function in rejection sampling"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(totest, "interp1d", mock_interp1d)
         tests = [(np.array([0.0, 1.0]), np.array([0.4, 0.6]), 5,\
                   np.array([0.0, 0.25, 0.5, 0.75, 1.0])),\
@@ -795,22 +796,24 @@ class TestFunctions:
                  (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 6,\
                   np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))]
         for (x, y, s, r) in tests:
-            assert np.allclose(totest.rejection_sampler(x=x, y=y, size=s),\
+            assert np.allclose(totest.rejection_sampler(x=x, y=y, size=s, rng=mock_rng),\
                                r)
         assert np.allclose(totest.rejection_sampler(x_lim=np.array([0.0,\
                                                                      1.0]),\
-                                                     pdf=mock_pdf, size=5),\
+                                                     pdf=mock_pdf, size=5, rng=mock_rng),\
                            np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
         assert np.allclose(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
                                                        y=np.array([0.2, 0.8]),\
                                                        x_lim=np.array([0.0,\
                                                                        1.0]),\
-                                                       pdf=mock_pdf, size=5),\
+                                                       pdf=mock_pdf, size=5, rng=mock_rng),\
                               np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
 
     def test_inverse_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+        mock_rng = MockRNG()
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
                                      +"arguments: 'x' and 'y'"):
@@ -826,21 +829,21 @@ class TestFunctions:
             totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                    y=np.array([-0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
-        assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
+        output = totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                   y=np.array([0.4, 0.6]),\
-                                                  size=5),\
+                                                  size=5, rng=mock_rng)
+        assert np.allclose(output,\
                            np.array([0.0, 0.29128785, 0.54950976, 0.78388218,\
                                      1.0]))
         assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                   y=np.array([0.6, 0.4]),\
-                                                  size=4),\
+                                                  size=4, rng=mock_rng),\
                            np.array([0.0, 0.2919872, 0.61952386, 1.0]))
         with warns(RuntimeWarning, match="invalid value encountered in "\
                                          +"divide"):
             assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                       y=np.array([0.5, 0.5]),\
-                                                      size=5),\
+                                                      size=5, rng=mock_rng),\
                                np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
     def test_histogram_sampler(self, monkeypatch):
