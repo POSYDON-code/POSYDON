@@ -34,7 +34,7 @@ __credits__ = [
 import copy
 import json
 import os
-
+import random
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -813,7 +813,8 @@ class StepSN(object):
 
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
-                                    self.Couch20_engines]:
+                                    self.Couch20_engines,
+                                    self.Maltsev25_engines]:
                 # The final remnant mass and and state
                 # is computed by the selected mechanism
 
@@ -2344,7 +2345,7 @@ class StepSN(object):
 
             CO_core_mass, C_core_abundance = self.get_CO_core_params(
                 star, self.approx_at_he_depletion)
-            M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
+            M4, mu4, Xi, sc = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             M4 = M4[0]
             mu4 = mu4[0]
             star.M4 = M4
@@ -2421,7 +2422,7 @@ class StepSN(object):
 
             CO_core_mass, C_core_abundance = self.get_CO_core_params(
                 star, self.approx_at_he_depletion)
-            M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
+            M4, mu4, Xi, sc = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             M4 = M4[0]
             mu4 = mu4[0]
             Xi=Xi[0]
@@ -2456,7 +2457,7 @@ class StepSN(object):
 
             elif (CO_core_mass < 10.0) and (CO_core_mass > 2.5):
                 ff = self.explod_crit(Xi, sc, mu4M4, mu4)
-                if ff=0:
+                if ff==0:
                     if conserve_hydrogen_envelope:
                         m_rem = star.mass
                     else:
@@ -2488,9 +2489,9 @@ class StepSN(object):
         # stochastic determination of the remnant type (NS versus fallback-BH)
             rand_number = random.uniform(0,1)
             if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
-                rem_type = 3 # fallback BH, although successful SN
+                rem = 3 # fallback BH, although successful SN
             else:
-                rem_type = 2 # NS formation
+                rem = 2 # NS formation
         return rem
 
     # implemented from Maltsev+25
