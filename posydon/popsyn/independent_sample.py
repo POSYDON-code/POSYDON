@@ -300,12 +300,8 @@ def generate_primary_masses(number_of_binaries=1,
 
     # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545
     elif primary_mass_scheme == 'Kroupa1993':
-        alpha = 2.7
-        normalization_constant = (1.0-alpha) / (primary_mass_max**(1-alpha)
-                                                - primary_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        primary_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+        imf = IMFs.Kroupa1993(alpha=2.7, m_min=primary_mass_min, m_max=primary_mass_max)
+        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
 
     # Kroupa P., 2001, MNRAS, 322, 231
     elif primary_mass_scheme == 'Kroupa2001':
