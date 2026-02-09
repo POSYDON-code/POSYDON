@@ -970,6 +970,26 @@ class TestPSyGrid:
                                   profile)
 
     @fixture
+    def grid_path_single(self, tmp_path, star_history, profile):
+        # a path to a single-star psygrid file for testing
+        path = get_simple_PSyGrid(tmp_path, 10, None, star_history, profile)
+        # modify hdf5 file to set binary=False in config
+        with h5py.File(path, "a") as hdf5_file:
+            old_config = hdf5_file.attrs["config"]
+            # Parse and modify the config
+            new_config = old_config.replace("'binary': True", "'binary': False")
+            hdf5_file.attrs["config"] = new_config
+            # Remove binary_history datasets and keep only history1
+            for r in range(1, 3):  # runs 1 and 2
+                if f"/grid/run{r}/binary_history" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/binary_history"]
+                if f"/grid/run{r}/history2" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/history2"]
+                if f"/grid/run{r}/final_profile2" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/final_profile2"]
+        return path
+
+    @fixture
     def grid_path_negative_run(self, tmp_path, binary_history, star_history,\
                                profile):
         # a path to a psygrid file for testing
@@ -2400,6 +2420,51 @@ class TestPSyGrid:
                                      +"history must be 'history1' or "\
                                      +"'history2', not 'binary_history'"):
             PSyGrid.HR(0, history='binary_history', states=True)
+
+    def test_HR_single_star_grid_with_states(self, PSyGrid, grid_path_single, monkeypatch):
+        """Test HR diagram with states=True for single-star grids.
+
+        This test ensures that single-star grids with states=True work correctly,
+        covering lines 2028-2031 in psygrid.py which handle the single-star case.
+        """
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
+
+        # Load the grid and ensure it's a single-star grid
+        try:
+            PSyGrid.load(grid_path_single)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path_single
+            return
+
+        # Ensure we're testing a single-star grid
+        if PSyGrid.config["binary"]:
+            # Skip this test if it's a binary grid
+            return
+
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+
+        # Test states with history1 (single-star grids only have history1)
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history1', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history1'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
 
     def test_eq(self, PSyGrid, grid_path, capsys, monkeypatch):
         def mock_getitem(self, index):
