@@ -669,7 +669,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     return np.squeeze(mdot_acc)
 
 
-def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
+def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None, rng=None):
     """Generate a sample from a 1d PDF using the acceptance-rejection method.
 
     Parameters
@@ -684,6 +684,8 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         The boundary where the pdf function is defined if passed as pdf.
     pdf : func
         The pdf function
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -691,6 +693,8 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         An array with `size` random numbers generated from the PDF.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     if pdf is None:
         if ((x is None) or (y is None)):
             raise ValueError("x and y PDF values must be specified if no PDF"
@@ -702,32 +706,32 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             idxs = np.argsort(x)
             pdf = interp1d(x.take(idxs), y.take(idxs))
 
-        x_rand = np.random.uniform(x.min(), x.max(), size)
-        y_rand = np.random.uniform(0, y.max(), size)
+        x_rand = rng.uniform(x.min(), x.max(), size)
+        y_rand = rng.uniform(0, y.max(), size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x.min(), x.max(), n)
-            y_rand = np.random.uniform(0, y.max(), n)
+            x_rand = rng.uniform(x.min(), x.max(), n)
+            y_rand = rng.uniform(0, y.max(), n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
     else:
         if x_lim is None:
             raise ValueError("x_lim must be specified for passed PDF function"
                              " in rejection sampling")
-        x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
-        pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
-        y_rand = np.random.uniform(0, pdf_max, size)
+        x_rand = rng.uniform(x_lim[0], x_lim[1], size)
+        pdf_max = max(pdf(rng.uniform(x_lim[0], x_lim[1], 50000)))
+        y_rand = rng.uniform(0, pdf_max, size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x_lim[0], x_lim[1], n)
-            y_rand = np.random.uniform(0, pdf_max, n)
+            x_rand = rng.uniform(x_lim[0], x_lim[1], n)
+            y_rand = rng.uniform(0, pdf_max, n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
 
     return values
 
 
-def inverse_sampler(x, y, size=1):
+def inverse_sampler(x, y, size=1, rng=None):
     """Sample from a PDF using the inverse-sampling method.
 
     Parameters
@@ -738,6 +742,8 @@ def inverse_sampler(x, y, size=1):
         The probablity density at `x` (or a scaled version of it).
     size : int
         Number of samples to generate.
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -745,6 +751,8 @@ def inverse_sampler(x, y, size=1):
         The sample drawn from the PDF.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     # x should be sorted
     assert np.all(np.diff(x) > 0)
     # y should be above 0
@@ -757,7 +765,7 @@ def inverse_sampler(x, y, size=1):
     total_area = cumsum_areas[-1]
 
     # start the inverse sampling
-    u = np.random.uniform(size=size)
+    u = rng.uniform(size=size)
     # index of "bin" where each sampled value corresponds too
     u_indices = np.searchsorted(cumsum_areas, u * total_area)
     # the area that should be covered from the end of the previous bin
@@ -779,7 +787,7 @@ def inverse_sampler(x, y, size=1):
     if n_where_nan:
         assert np.all(dy_bins[where_nan] == 0)
         sample[where_nan] = x[u_indices][where_nan] + (
-            dx_bins[where_nan] * np.random.uniform(size=n_where_nan))
+            dx_bins[where_nan] * rng.uniform(size=n_where_nan))
 
     # make sure that everything worked as expected
     assert np.all(np.isfinite(sample))

@@ -166,6 +166,39 @@ class Salpeter(IMFBase):
         valid = self._check_valid(m)
         return m ** (-self.alpha)
 
+    def rvs(self, size=1, rng=None):
+        """Draw random samples from the Salpeter IMF.
+
+        Uses analytical inverse transform sampling for efficiency.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random mass samples in solar masses.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        # Analytical inverse transform sampling
+        # For power law IMF: m^(-alpha), the inverse CDF is:
+        # m = (u * (m_max^(1-alpha) - m_min^(1-alpha)) + m_min^(1-alpha))^(1/(1-alpha))
+        normalization_constant = (1.0 - self.alpha) / (
+            self.m_max**(1.0 - self.alpha) - self.m_min**(1.0 - self.alpha)
+        )
+        u = rng.uniform(size=size)
+        masses = (u * (1.0 - self.alpha) / normalization_constant
+                  + self.m_min**(1.0 - self.alpha))**(1.0 / (1.0 - self.alpha))
+
+        return masses
+
+
 class Kroupa2001(IMFBase):
     """Initial Mass Function based on Kroupa (2001), which is
     defined as a broken power-law:
@@ -274,6 +307,42 @@ class Kroupa2001(IMFBase):
         out[mask2] = const1 * (m[mask2] / self.m1break) ** (-self.alpha2)
         out[mask3] = const2 * (m[mask3] / self.m2break) ** (-self.alpha3)
         return out
+
+    def rvs(self, size=1, rng=None):
+        """Draw random samples from the Kroupa2001 IMF.
+
+        Uses inverse transform sampling with discretized PDF for the
+        broken power-law distribution.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random mass samples in solar masses.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        # Import here to avoid circular dependency
+        from posydon.utils.common_functions import inverse_sampler
+
+        # Create discretized PDF for inverse sampling
+        # Use more points near the breaks for better accuracy
+        n_points = 2000
+        m_grid = np.linspace(self.m_min, self.m_max, n_points)
+        pdf_values = self.imf(m_grid)
+
+        # Sample using inverse transform method
+        masses = inverse_sampler(m_grid, pdf_values, size=size, rng=rng)
+
+        return masses
+
 
 class Chabrier2003(IMFBase):
     """Chabrier2003 Initial Mass Function (IMF), which is defined as
