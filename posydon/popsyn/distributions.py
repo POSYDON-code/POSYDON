@@ -638,7 +638,7 @@ class LogUniform():
         valid = (x > 0) & (x >= self.min) & (x <= self.max)
         pdf_values = np.zeros_like(x, dtype=float)
 
-        pdf_values[valid] = self.norm / x[valid]
+        pdf_values[valid] = self.norm / x[valid]  # PDF is constant in log space, so divide by x for linear space
 
         return pdf_values
 
