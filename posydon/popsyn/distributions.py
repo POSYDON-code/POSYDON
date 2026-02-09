@@ -125,7 +125,7 @@ class FlatMassRatio:
             Probability density at mass ratio q.
         """
         q = np.asarray(q)
-        valid = (q > self.q_min) & (q <= self.q_max)
+        valid = (q >= self.q_min) & (q <= self.q_max)
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.flat_mass_ratio(q[valid]) * self.norm
         return pdf_values
