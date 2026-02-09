@@ -45,24 +45,20 @@ class TestFlatMassRatio:
 
     def test_initialization_invalid_parameters(self):
         """Test that initialization raises ValueError for invalid parameters."""
-        # Test q_min not in (0, 1]
-        with pytest.raises(ValueError, match="q_min must be in \\(0, 1\\)"):
-            FlatMassRatio(q_min=0.0, q_max=0.5)
-
-        with pytest.raises(ValueError, match="q_min must be in \\(0, 1\\)"):
+        with pytest.raises(ValueError, match="q_min must be in \\[0, 1\\)"):
             FlatMassRatio(q_min=-0.1, q_max=0.5)
 
-        with pytest.raises(ValueError, match="q_min must be in \\(0, 1\\)"):
+        with pytest.raises(ValueError, match="q_min must be in \\[0, 1\\)"):
             FlatMassRatio(q_min=1.5, q_max=2.0)
 
         # Test q_max not in (0, 1]
-        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\)"):
+        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\]"):
             FlatMassRatio(q_min=0.1, q_max=0.0)
 
-        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\)"):
+        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\]"):
             FlatMassRatio(q_min=0.1, q_max=-0.1)
 
-        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\)"):
+        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\]"):
             FlatMassRatio(q_min=0.1, q_max=1.5)
 
         # Test q_min >= q_max

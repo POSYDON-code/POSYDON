@@ -39,19 +39,19 @@ class FlatMassRatio:
         Parameters
         ----------
         q_min : float, optional
-            Minimum mass ratio (default: 0.05). Must be in (0, 1].
+            Minimum mass ratio (default: 0.05). Must be in [0, 1).
         q_max : float, optional
             Maximum mass ratio (default: 1.0). Must be in (0, 1].
 
         Raises
         ------
         ValueError
-            If q_min or q_max are not in (0, 1], or if q_min >= q_max.
+            If q_min or q_max are not in valid range, or if q_min >= q_max.
         """
-        if not (0 < q_min <= 1):
-            raise ValueError("q_min must be in (0, 1)")
+        if not (0 <= q_min < 1):
+            raise ValueError("q_min must be in [0, 1)")
         if not (0 < q_max <= 1):
-            raise ValueError("q_max must be in (0, 1)")
+            raise ValueError("q_max must be in (0, 1]")
         if q_min >= q_max:
             raise ValueError("q_min must be less than q_max")
 
