@@ -7,7 +7,7 @@ From time to time, users might encounter issues during the installation of POSYD
 
 1. **Slow `conda` solving or installation taking hours:**
 
-    **Conda Version Requirements**: POSYDON has a complex dependency tree, and older conda versions (especially those from before 2023) use very slow dependency solvers that can take hours or may never complete the installation process. Modern conda versions (>= 2023) include the libmamba solver by default, which resolves dependencies efficiently in seconds to minutes.
+    **Conda Version Requirements**: POSYDON has a complex dependency tree, and older conda versions (especially those prior to v23.1.0) use very slow dependency solvers that can take hours or may never complete the installation process. Modern conda versions (>= 23.1.0) include the libmamba solver by default, which resolves dependencies efficiently in seconds to minutes.
 
     **Check your conda version and solver:**
 

@@ -15,7 +15,7 @@ Anaconda (Recommended)
 ----------------------
 
 .. important::
-    **Conda Version Requirements**: POSYDON requires a recent version of conda (version >= 2023) with the libmamba solver for efficient dependency resolution. Older conda versions (especially those from before 2023) may take an extremely long time (hours or more) to resolve dependencies and may fail to complete installation.
+    **Conda Version Requirements**: POSYDON requires a recent version of conda (version >= 23.1.0) with the libmamba solver for efficient dependency resolution. Older conda versions (especially those prior to v23.1.0) may take an extremely long time (hours or more) to resolve dependencies and may fail to complete installation.
 
     To check your conda version and solver configuration:
 
