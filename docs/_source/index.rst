@@ -68,7 +68,7 @@ How is this Documentation Structured?
    :titlesonly:
    :caption: POSYDON school material
 
-   POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-class-materials-2025>
+   POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-2025-School-Labs>
 
 .. toctree::
    :maxdepth: 1

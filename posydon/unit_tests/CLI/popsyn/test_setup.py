@@ -124,7 +124,7 @@ class TestSetupPopsynFunction:
     def test_setup_popsyn_function_too_few_binaries(self, mock_binarypop, mock_validate, mock_args):
         """Test that ValueError is raised when number of binaries is too small."""
         mock_binarypop.return_value = {
-            'metallicity': [1.0],
+            'metallicities': [1.0],
             'number_of_binaries': 5  # Less than job_array (10)
         }
 
@@ -146,7 +146,7 @@ class TestSetupPopsynFunction:
         # Setup mocks
         metallicities = [0.01, 1.0]
         mock_binarypop.return_value = {
-            'metallicity': metallicities,
+            'metallicities': metallicities,
             'number_of_binaries': 1000
         }
 
@@ -173,7 +173,7 @@ class TestSetupPopsynFunction:
         """Test that log directories are created for each metallicity."""
         metallicities = [0.1, 1.0]
         mock_binarypop.return_value = {
-            'metallicity': metallicities,
+            'metallicities': metallicities,
             'number_of_binaries': 1000
         }
 
@@ -210,7 +210,7 @@ class TestIntegration:
             'step_SN': (None, {'use_interp_values': False})
         }
         mock_binarypop.return_value = {
-            'metallicity': [1.0],
+            'metallicities': [1.0],
             'number_of_binaries': 100
         }
 
