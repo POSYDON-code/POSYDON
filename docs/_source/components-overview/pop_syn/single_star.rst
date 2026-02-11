@@ -119,7 +119,7 @@ Additional scalar properties are added during the evolution depending on which s
       * mean anomaly (radians)
 
   * - ``natal_kick_velocity``
-    - The natal kick velocity in km/s.
+    - The magnitude of the natal kick velocity in km/s.
   * - ``natal_kick_phi``
     - The natal kick azimuthal angle phi in radians.
   * - ``natal_kick_theta``
