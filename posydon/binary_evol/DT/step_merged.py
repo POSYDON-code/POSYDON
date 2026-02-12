@@ -193,7 +193,6 @@ class MergedStep(IsolatedStep):
             and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
                 #these stellar attributes change value
 
-                #TODO for key in ["center_h1", "center_he4", "center_c12", "center_n14","center_o16"]:
                 merged_star.center_h1 = mass_weighted_avg()
                 merged_star.center_he4 = mass_weighted_avg(abundance_name = "center_he4")
                 merged_star.center_c12 = mass_weighted_avg(abundance_name = "center_c12")
