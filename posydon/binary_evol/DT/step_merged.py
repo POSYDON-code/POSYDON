@@ -152,7 +152,6 @@ class MergedStep(IsolatedStep):
             is the star that is engulfed
         """
         #by default the stellar attributes that keep the same value from the
-        #merged_star = copy.copy(star_base)
         merged_star = star_base
 
         s1 = star_base.state
