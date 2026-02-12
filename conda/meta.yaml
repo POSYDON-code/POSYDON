@@ -1,10 +1,10 @@
 {% set name = "posydon" %}
-{% set data = load_setup_py_data(setup_file='../setup.py', from_recipe_dir=True) %}
+{% set version = "2.2.5" %}
 
 package:
   name: "{{ name|lower }}"
-  version: "{{ data.get('version') }}"
-
+  version: "{{ version }}"
+  
 source:
   path: ..
 
