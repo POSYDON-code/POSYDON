@@ -159,9 +159,9 @@ Binary events are defined according to the following table:
     - Description
   * - ``ZAMS``
     - Zero Age Main Sequence
-  * - ``CC1``
+  * - ``END1``
     - Core collapse of star 1.
-  * - ``CC2``
+  * - ``END2``
     - Core collapse of star 2.
   * - ``oRLO1``
     - The binary is at onset of Roche Lobe overflow, star 1 is overfilling the RL.

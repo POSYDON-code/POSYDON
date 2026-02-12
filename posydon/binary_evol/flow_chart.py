@@ -149,8 +149,8 @@ BINARY_STATES_CC = BINARY_STATES_ALL.copy()
 
 BINARY_EVENTS_ALL = [
     None,
-    'CC1',
-    'CC2',
+    'END1',
+    'END2',
     'ZAMS',
     'oRLO1',
     'oRLO2',
@@ -173,14 +173,14 @@ BINARY_EVENTS_ALL = [
 ]
 
 BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
-[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
+[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['END1','END2','MaxTime_exceeded','maxtime']]
 
 ## a list of known total binary states that can occur,
 ## but are not in the flow chart and will not be added to POSYDON
 UNDEFINED_STATES = []
 for s1 in STAR_STATES_CO:
     for b in ['disrupted', 'detached']:
-        UNDEFINED_STATES.append((s1, 'H-rich_Core_H_burning', b, 'CC2'))
+        UNDEFINED_STATES.append((s1, 'H-rich_Core_H_burning', b, 'END2'))
 
 # dynamically construct the flow chart
 POSYDON_FLOW_CHART = {}
@@ -279,8 +279,8 @@ for s1 in STAR_STATES_NORMALSTAR:
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
         for s2 in STAR_STATES_ALL:
-            POSYDON_FLOW_CHART[(s1, s2, b, 'CC1')] = 'step_SN'
-            POSYDON_FLOW_CHART[(s2, s1, b, 'CC2')] = 'step_SN'
+            POSYDON_FLOW_CHART[(s1, s2, b, 'END1')] = 'step_SN'
+            POSYDON_FLOW_CHART[(s2, s1, b, 'END2')] = 'step_SN'
 
 # Double compact objects. These can either be sent to the orbital evolution
 # due to GR step, or end the evolution by setting the 'step_dco' to end

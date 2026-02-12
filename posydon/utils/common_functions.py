@@ -1109,7 +1109,7 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
 
     binary_event : str
         Options are 'oRLO1' or 'oRLO2' (onset of RLO, the start of RLO),
-        'oCE1', 'oCE2', 'oDoubleCE1', 'oDoubleCE2', 'CC1', 'CC2'.
+        'oCE1', 'oCE2', 'oDoubleCE1', 'oDoubleCE2', 'END1', 'END2'.
 
     mass transfer case : str
         'caseA', 'caseB', etc.
@@ -1215,11 +1215,11 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     if ("Core_C_depleted" in state1
             or "Core_He_depleted" in state1
             or (gamma1 is not None and gamma1 >= 10.0)):    # WD formation
-        result[1] = "CC1"
+        result[1] = "END1"
     elif ("Core_C_depleted" in state2
           or "Core_He_depleted" in state2
           or (gamma2 is not None and gamma2 >= 10.0)):      # WD formation
-        result[1] = "CC2"
+        result[1] = "END2"
 
     return result
 
@@ -1384,10 +1384,10 @@ def flip_stars(binary):
         setattr(binary, 'event', 'oCE2')
     elif event == 'oCE2':
         setattr(binary, 'event', 'oCE1')
-    if event == 'CC1':
-        setattr(binary, 'event', 'CC2')
-    elif event == 'CC2':
-        setattr(binary, 'event', 'CC1')
+    if event == 'END1':
+        setattr(binary, 'event', 'END2')
+    elif event == 'END2':
+        setattr(binary, 'event', 'END1')
 
     state_history = np.array(getattr(binary, 'state_history'))
     cond_RLO2 = state_history == 'RLO1'
@@ -1397,10 +1397,10 @@ def flip_stars(binary):
     setattr(binary, 'state_history', state_history.tolist())
 
     event_history = np.array(getattr(binary, 'event_history'))
-    cond_CC2 = event_history == 'CC1'
-    cond_CC1 = event_history == 'CC2'
-    event_history[cond_CC2] = 'CC2'
-    event_history[cond_CC1] = 'CC1'
+    cond_END2 = event_history == 'END1'
+    cond_END1 = event_history == 'END2'
+    event_history[cond_END2] = 'END2'
+    event_history[cond_END1] = 'END1'
     cond_oRLO2 = event_history == 'oRLO1'
     cond_oRLO1 = event_history == 'oRLO2'
     event_history[cond_oRLO2] = 'oRLO2'

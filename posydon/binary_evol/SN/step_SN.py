@@ -432,14 +432,14 @@ class StepSN(object):
 
         # Check if the binary event is calling correctly the SN_step,
         # this should occour only on the first or second core-collapse
-        # CC1 and CC2 respectively.
-        if binary.event == "CC1":
+        # END1 and END2 respectively.
+        if binary.event == "END1":
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
             binary.update_star_states()
 
-        elif binary.event == "CC2":
+        elif binary.event == "END2":
             # collapse star
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
@@ -479,9 +479,9 @@ class StepSN(object):
             )
         # Cover the case where CC of the companion is immediately followed
         elif state1 in STAR_STATES_CO and state2 in STAR_STATES_C_DEPLETED:
-            binary.event = "CC2"
+            binary.event = "END2"
         elif state1 in STAR_STATES_C_DEPLETED and state2 in STAR_STATES_CO:
-            binary.event = "CC1"
+            binary.event = "END1"
 
         if self.verbose:
             print(f"End of step SN:\n", binary)
@@ -1412,7 +1412,7 @@ class StepSN(object):
 
         This function computes the supernova step of the binary object [1]_,
         [2]_. It checks which binary_state reached the core collapse flag,
-        either CC1 or CC2, and runs the step accordingly updating the binary
+        either END1 or END2, and runs the step accordingly updating the binary
         object.
 
         Geometry:
@@ -1452,10 +1452,10 @@ class StepSN(object):
 
         """
         # Check that the binary_state is calling correctly the SN_step
-        if binary.event != "CC1" and binary.event != "CC2":
+        if binary.event != "END1" and binary.event != "END2":
             raise ValueError("Something went wrong: invalid call of supernova step!")
 
-        if binary.event == "CC1":
+        if binary.event == "END1":
             if binary.star_1.SN_type == "WD":
                 # compute the new separaiton prior to reseting the binary prop.
                 new_separation = separation_evol_wind_loss(
@@ -1561,7 +1561,7 @@ class StepSN(object):
                 mean_anomaly = np.random.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_mean_anomaly = mean_anomaly
 
-        elif binary.event == "CC2":
+        elif binary.event == "END2":
             if binary.star_2.SN_type == "WD":
                 # compute new properties before resting existing binary prop.
                 new_separation = separation_evol_wind_loss(
@@ -1940,7 +1940,7 @@ class StepSN(object):
                     binary.true_anomaly_first_SN = true_anomaly
                     binary.first_SN_already_occurred = True
                 else:
-                    if binary.event == 'CC2':
+                    if binary.event == 'END2':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_2.spin_orbit_tilt_second_SN = tilt
                         binary.star_1.spin_orbit_tilt_second_SN = self.get_combined_tilt(
@@ -1950,7 +1950,7 @@ class StepSN(object):
                             true_anomaly_2 = true_anomaly
                             )
                         binary.true_anomaly_second_SN = true_anomaly
-                    elif binary.event == 'CC1':
+                    elif binary.event == 'END1':
                         # Assume progenitor has aligned with the preSN orbital angular momentum
                         binary.star_1.spin_orbit_tilt_second_SN = tilt
                         binary.star_2.spin_orbit_tilt_second_SN = self.get_combined_tilt(
@@ -1961,7 +1961,7 @@ class StepSN(object):
                             )
                         binary.true_anomaly_second_SN = true_anomaly
                     else:
-                        raise ValueError(f"Binary is in SN step but binary state is not CC1 or CC2: {binary.state}")
+                        raise ValueError(f"Binary is in SN step but binary state is not END1 or END2: {binary.state}")
 
                 # compute new orbital period before reseting the binary properties
                 binary.state = "detached"

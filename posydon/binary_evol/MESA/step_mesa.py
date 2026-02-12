@@ -1345,13 +1345,13 @@ class MS_MS_step(MesaGridStep):
             set_binary_to_failed(self.binary)
             raise GridError(f'The mass of m2 ({m2}) is outside the grid,'
                              'while the period is inside the grid.')
-        # redirect if CC1
+        # redirect if END1
         elif (state_1 == 'H-rich_Core_C_depleted'):
-            self.binary.event = 'CC1'
+            self.binary.event = 'END1'
             return
-        # redirect if CC2
+        # redirect if END2
         elif (state_2 == 'H-rich_Core_C_depleted'):
-            self.binary.event = 'CC2'
+            self.binary.event = 'END2'
             return
         else:
             set_binary_to_failed(self.binary)
@@ -1409,7 +1409,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'H-rich_Core_C_depleted':
-                self.binary.event = 'CC1'
+                self.binary.event = 'END1'
                 return
         # TODO: import states from flow_chart.py
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in FOR_RLO_STATES)
@@ -1417,7 +1417,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'H-rich_Core_C_depleted':
-                self.binary.event = 'CC2'
+                self.binary.event = 'END2'
                 return
         else:
             set_binary_to_failed(self.binary)
@@ -1527,7 +1527,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'stripped_He_Core_C_depleted':
-                self.binary.event = 'CC1'
+                self.binary.event = 'END1'
                 return
         # TODO: import states from flow_chart.py
         elif (state_1 in ["WD", "NS", "BH"] and (state_2 in CO_He_STATES)
@@ -1535,7 +1535,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'stripped_He_Core_C_depleted':
-                self.binary.event = 'CC2'
+                self.binary.event = 'END2'
                 return
         else:
             set_binary_to_failed(self.binary)
@@ -1639,7 +1639,7 @@ class CO_HeMS_step(MesaGridStep):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_1.state == 'stripped_He_Core_C_depleted':
-                self.binary.event = 'CC1'
+                self.binary.event = 'END1'
                 return
         # TODO: import states from flow_chart.py
         elif (state_1 in ['WD', 'NS', 'BH']
@@ -1647,7 +1647,7 @@ class CO_HeMS_step(MesaGridStep):
             self.flip_stars_before_step = True
             # catch and redirect double core collapse, this happens if q=1:
             if self.binary.star_2.state == 'stripped_He_Core_C_depleted':
-                self.binary.event = 'CC2'
+                self.binary.event = 'END2'
                 return
         else:
             set_binary_to_failed(self.binary)
@@ -1754,7 +1754,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if state_1 == 'H-rich_Core_C_depleted':
-                self.binary.event = 'CC1'
+                self.binary.event = 'END1'
                 return
         # TODO: import states from flow_chart.py
         elif (state_1 in FOR_RLO_STATES and (state_2 in FOR_RLO_STATES)
@@ -1762,7 +1762,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
             self.flip_stars_before_step = False
             # catch and redirect double core collapse, this happens if q=1:
             if state_2 == 'H-rich_Core_C_depleted':
-                self.binary.event = 'CC2'
+                self.binary.event = 'END2'
                 return
         else:
             set_binary_to_failed(self.binary)

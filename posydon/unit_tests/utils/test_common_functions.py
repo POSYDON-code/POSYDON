@@ -1177,11 +1177,11 @@ class TestFunctions:
         # examples: star 2 becomes WD
         binary.star_2.center_gamma = 10.0
         assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
-               ['undefined', 'CC2', 'None']
+               ['undefined', 'END2', 'None']
         # examples: star 1 becomes WD
         binary.star_1.center_gamma = 10.0
         assert totest.get_binary_state_and_event_and_mt_case(binary) ==\
-               ['undefined', 'CC1', 'None']
+               ['undefined', 'END1', 'None']
         # examples: no center_gamma_history
         binary.star_1.center_gamma_history=[]
         binary.star_2.center_gamma_history=[]
@@ -1197,7 +1197,7 @@ class TestFunctions:
                    interpolation_class='unstable_MT') == ['contact', e, 'None']
         # stable contact leading to WD formation
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
-               interpolation_class=None) == ['contact', 'CC1', 'None']
+               interpolation_class=None) == ['contact', 'END1', 'None']
 
     def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
@@ -1314,7 +1314,7 @@ class TestFunctions:
             assert binary.state_history[0] == n
         # examples: binary events
         tests = [('oRLO1', 'oRLO2'), ('oRLO2', 'oRLO1'), ('oCE1', 'oCE2'),\
-                 ('oCE2', 'oCE1'), ('CC1', 'CC2'), ('CC2', 'CC1')]
+                 ('oCE2', 'oCE1'), ('END1', 'END2'), ('END2', 'END1')]
         for (e, n) in tests:
             binary.event = e
             binary.event_history[0] = e

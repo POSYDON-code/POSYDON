@@ -1093,9 +1093,9 @@ class StepCEE(object):
         # explosion
         if donor.state == 'stripped_He_Core_He_depleted':
             if donor == binary.star_1:
-                binary.event = 'CC1'
+                binary.event = 'END1'
             elif donor == binary.star_2:
-                binary.event = 'CC2'
+                binary.event = 'END2'
 
         if verbose:
             print("CEE succesfully ejected")

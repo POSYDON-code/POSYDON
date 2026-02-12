@@ -506,9 +506,9 @@ class detached_step:
                 elif self.res.t_events[2]:
                     # reached t_max of track. End of life (possible collapse) of secondary
                     if secondary == binary.star_1:
-                        binary.event = "CC1"
+                        binary.event = "END1"
                     else:
-                        binary.event = "CC2"
+                        binary.event = "END2"
 
                     self.track_matcher.get_star_final_values(secondary)
                     self.track_matcher.get_star_profile(secondary)
@@ -532,9 +532,9 @@ class detached_step:
                 elif self.res.t_events[3]:
                     # reached t_max of track. End of life (possible collapse) of primary
                     if secondary == binary.star_1:
-                        binary.event = "CC2"
+                        binary.event = "END2"
                     else:
-                        binary.event = "CC1"
+                        binary.event = "END1"
 
                     self.track_matcher.get_star_final_values(primary)
                     self.track_matcher.get_star_profile(primary)

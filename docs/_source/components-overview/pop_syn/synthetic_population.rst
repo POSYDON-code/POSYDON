@@ -321,7 +321,7 @@ If you like to write to a folder, you can use :code:`plot_dir='path/to/dir'` and
 .. code-block:: python
 
     # plot the HMS-HMS grid at 1e-4 with S1_spin and q=0.7
-    plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], prop='S1_spin', prop_range=[0,0.3], save_fig=False, channel='ZAMS_oRLO1_CC1_oRLO2_CC2_END')
+    plot_popsyn_over_grid_slice('HMS-HMS', 1e-4, slices=[0.7], prop='S1_spin', prop_range=[0,0.3], save_fig=False, channel='ZAMS_oRLO1_END1_oRLO2_END2_END')
 
 
 Rates
