@@ -178,7 +178,7 @@ class MergedStep(IsolatedStep):
 
             try:
             	mass_weighted_avg_value=(A1*M1+A2*M2)/(M1+M2)
-            except TypeError:
+            except (TypeError, ZeroDivisionError):
             	mass_weighted_avg_value= np.nan
 
             if self.verbose:
