@@ -94,8 +94,8 @@ class DoubleCO(detached_step):
                             t_span=(t0, self.max_time),
                             y0=[a, e,
                                 secondary.omega0, primary.omega0],
-                            rtol=1e-10,
-                            atol=1e-10,
+                            rtol=1e-6,
+                            atol=1e-9,
                             dense_output=True)
 
             except Exception as e:
