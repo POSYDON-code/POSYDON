@@ -66,6 +66,7 @@ class DoubleCO(detached_step):
         # contact event triggered
         if self.res.status == 1:
             binary.eccentricity = 0.0
+            binary.orbital_period = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
         # max time reached
