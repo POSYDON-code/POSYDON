@@ -170,7 +170,7 @@
 <span class="sd">    &#39;&#39;&#39;</span>
 
     <span class="c1"># Find and select the INI file</span>
-    <span class="n">ini_files</span> <span class="o">=</span> <span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;*.ini&#39;</span><span class="p">))</span>
+    <span class="n">ini_files</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">glob</span><span class="o">.</span><span class="n">glob</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">run_folder</span><span class="p">,</span> <span class="s1">&#39;*.ini&#39;</span><span class="p">)))</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">ini_files</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="s2">&quot;No INI file found in the run folder.&quot;</span><span class="p">)</span>
 
