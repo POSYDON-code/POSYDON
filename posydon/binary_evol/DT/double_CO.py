@@ -92,7 +92,7 @@ class DoubleCO(detached_step):
                                 method="BDF",
                                 t_span=(0, self.max_time-t0),
                                 y0=[a, e,
-                                secondary.omega0, primary.omega0],
+                                    secondary.omega0, primary.omega0],
                                 rtol=1e-10,
                                 atol=1e-10,
                                 dense_output=True)
