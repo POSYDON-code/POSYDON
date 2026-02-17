@@ -2006,12 +2006,30 @@ class PSyGrid:
             raise TypeError('Invalid idx = {}!'.format(idx))
 
         if states:
-            from posydon.binary_evol.singlestar import SingleStar
             star_states = []
-            for run in runs:
-                star = SingleStar.from_run(run, history=True, profile=False)
-                star_states.append(check_state_of_star_history_array(
-                    star, N=len(star.mass_history)))
+            # Check if this is a binary grid
+            if self.config["binary"]:
+                from posydon.binary_evol.binarystar import BinaryStar
+                for run in runs:
+                    binary = BinaryStar.from_run(run, history=True, profiles=False)
+                    # Extract the appropriate star based on history parameter
+                    if history == 'history1':
+                        star = binary.star_1
+                    elif history == 'history2':
+                        star = binary.star_2
+                    else:
+                        raise ValueError(
+                            f"For binary grids with states=True, history must be "
+                            f"'history1' or 'history2', not '{history}'"
+                        )
+                    star_states.append(check_state_of_star_history_array(
+                        star, N=len(star.mass_history)))
+            else:
+                from posydon.binary_evol.singlestar import SingleStar
+                for run in runs:
+                    star = SingleStar.from_run(run, history=True, profile=False)
+                    star_states.append(check_state_of_star_history_array(
+                        star, N=len(star.mass_history)))
         else:
             star_states = None
 

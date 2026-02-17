@@ -5,20 +5,49 @@ Common Installation Issues
 
 From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn't covered here, please `report the issue <https://github.com/POSYDON-code/POSYDON/issues>`_ so we can assist you and possibly update this page for the benefit of others.
 
-1. **Slow `conda` solving:**
+1. **Slow `conda` solving or installation taking hours:**
 
-`conda` can be very slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster.
-It creates many small files, which can be difficult for HPC clusters to handle.
-One way to speed up the installation is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_).
-Please proceed at your own discretion, as this has not been fully vetted. Alternatively, you can install the `libmamba` solver to speed up the solving process for new installations in a `conda` environment.
-To install the `libmamba` solver, run the following command in your `conda` environment of choice or `base` `conda` environment:
+    **Conda Version Requirements**: POSYDON has a complex dependency tree, and older conda versions (especially those prior to v23.1.0) use very slow dependency solvers that can take hours or may never complete the installation process. Modern conda versions (>= 23.1.0) include the libmamba solver by default, which resolves dependencies efficiently in seconds to minutes.
 
-```bash
-conda install conda-libmamba-solver
-```
+    **Check your conda version and solver:**
 
-This will install the `libmamba` solver, which is a drop-in replacement for the default `conda` solver.
-This should speed up solving the environment and installing packages but is not guaranteed to work in all cases.
+    .. code-block:: bash
+
+        conda --version
+        conda config --show solver
+
+    **Solutions:**
+
+    a. **Update conda** (Recommended): If you have administrative access or can install conda locally, we strongly recommend updating to the latest conda version (2025 or later), which includes the fast libmamba solver by default:
+
+       .. code-block:: bash
+
+           # Update conda in your base environment
+           conda update -n base conda
+
+           # Or install a fresh conda distribution from https://www.anaconda.com/download
+
+    b. **Install and configure the libmamba solver** (For existing conda installations):
+
+       If you cannot update conda but have version 4.12 or later, you can install and configure the libmamba solver:
+
+       .. code-block:: bash
+
+           # Install the libmamba solver
+           conda install -n base conda-libmamba-solver
+
+           # Set libmamba as the default solver
+           conda config --set solver libmamba
+
+           # Verify the configuration
+           conda config --show solver
+
+    c. **Use mamba** (Alternative): Another option is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_). However, this approach has not been fully vetted with POSYDON.
+
+    .. note::
+        If you're on an HPC cluster with an old system-wide conda installation (e.g., conda 2021.11), you may need to install a recent conda version locally in your home directory rather than using the system version.
+
+    `conda` can also be slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster, as it creates many small files which can be difficult for HPC clusters to handle. The libmamba solver helps with this issue as well.
 
 2. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
