@@ -85,19 +85,17 @@ class DoubleCO(detached_step):
         a = binary.separation * constants.Rsun / 100_000
         e = binary.eccentricity
         status = -1
-
         while status == -1 and n < 6:
             try:
                 res = solve_ivp(self.evo,
-                                events=self.evo.ev_contact,
-                                method="BDF",
-                            t_span=(t0, self.max_time),
+                            events=self.evo.ev_contact,
+                            method="BDF",
+                            t_span=(0, self.max_time-t0),
                             y0=[a, e,
-                                secondary.omega0, primary.omega0],
+                            secondary.omega0, primary.omega0],
                             rtol=1e-10,
                             atol=1e-10,
                             dense_output=True)
-
             except Exception as e:
                 set_binary_to_failed(binary)
                 raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
@@ -107,11 +105,34 @@ class DoubleCO(detached_step):
             n += 1
             a = res.y[0][-1]
             e = res.y[1][-1]
-            time_sol.append(res.t)
+            time_sol.append(t0)
             sol.append(res)
 
-        return res
+        # combine results from multiple solve_ivp calls if needed
+        if len(sol) == 1:
+            output_solution = sol[0]
+        else:
+            class CombinedSolution:
+                pass
+            output_solution = CombinedSolution()
+            output_solution.t = np.concatenate([t0+t.t for t, t0 in zip(sol, time_sol)])
+            output_solution.y = np.hstack([s.y for s in sol])
+            output_solution.status = sol[-1].status
+            output_solution.message = sol[-1].message
+            output_solution.t_events = sol[-1].t_events
+            output_solution.y_events = sol[-1].y_events
+            output_solution.success = sol[-1].success
 
+            # dynamically create a combined sol method that can interpolate across the combined solution
+            def combined_sol(t):
+                for s, t0 in zip(sol, time_sol):
+                    if t0 <= t <= t0 + s.t[-1]:
+                        return s.sol(t - t0)
+                raise ValueError(f"Time {t} is out of bounds for the combined solution.")
+
+            output_solution.sol = combined_sol
+
+        return output_solution
 
 
 class double_CO_evolution(detached_evolution):
@@ -171,6 +192,12 @@ class double_CO_evolution(detached_evolution):
                 / (1 - e ** 2) ** (5 / 2) / a ** 4 / c ** 5
                 * (1 + (121 / 304) * e ** 2)
                 * constants.secyer)
+
+        # Sanitize output to prevent propagation of inf/NaN
+        if not np.isfinite(da_gr):
+            da_gr = 0.0
+        if not np.isfinite(de_gr):
+            de_gr = 0.0
 
         self.da += da_gr
         self.de += de_gr
