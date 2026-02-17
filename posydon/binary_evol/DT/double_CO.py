@@ -92,11 +92,11 @@ class DoubleCO(detached_step):
                 res = solve_ivp(self.evo,
                                 events=self.evo.ev_contact,
                                 method="BDF",
-                            t_span=(t0, self.max_time),
+                            t_span=(0, self.max_time-t0),
                             y0=[a, e,
                                 secondary.omega0, primary.omega0],
-                            rtol=1e-6,
-                            atol=1e-9,
+                            rtol=1e-10,
+                            atol=1e-10,
                             dense_output=True)
 
             except Exception as e:
@@ -110,6 +110,9 @@ class DoubleCO(detached_step):
             e = res.y[1][-1]
             time_sol.append(res.t)
             sol.append(res)
+
+        # shift final time array of solution to account for previous binary lifetime
+        res.t += binary.time
 
         return res
 
