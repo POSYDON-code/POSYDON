@@ -132,7 +132,9 @@ class DoubleCO(detached_step):
         else:
             output_solution = CombinedSolution()
             output_solution.t = np.concatenate([t0+t.t for t, t0 in zip(sol, time_sol)])
-            output_solution.y = np.hstack([s.y for s in sol])
+            combined_y = np.hstack([s.y for s in sol])
+            combined_y[0] = combined_y[0] * 100_000 / constants.Rsun
+            output_solution.y = combined_y
             output_solution.status = sol[-1].status
             output_solution.message = sol[-1].message
             output_solution.t_events = sol[-1].t_events
