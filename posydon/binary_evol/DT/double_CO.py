@@ -100,12 +100,12 @@ class DoubleCO(detached_step):
                 set_binary_to_failed(binary)
                 raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
 
+            time_sol.append(t0)
             t0 += res.t[-1]
             status = res.status
             n += 1
             a = res.y[0][-1]
             e = res.y[1][-1]
-            time_sol.append(t0)
             sol.append(res)
 
 
