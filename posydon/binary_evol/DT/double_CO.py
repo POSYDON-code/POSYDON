@@ -52,10 +52,10 @@ class DoubleCO(detached_step):
 
         super().__call__(binary)
 
-        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
-        binary.orbital_period = orbital_period_from_separation(
-            binary.separation, binary.star_1.mass, binary.star_2.mass
-        )
+        #binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
+        ##binary.orbital_period = orbital_period_from_separation(
+        #    binary.separation, binary.star_1.mass, binary.star_2.mass
+        #)
         binary.V_sys = binary.V_sys_history[-1]
 
         #if self.res.status == -1:
@@ -115,13 +115,19 @@ class DoubleCO(detached_step):
         if len(sol) == 1:
             output_solution = CombinedSolution()
             output_solution.t = sol[0].t + t0
-            output_solution.y = sol[0].y
+            output_solution.y = sol[0].y.copy()
+            output_solution.y[0] = output_solution.y[0] * 100_000 / constants.Rsun
             output_solution.status = sol[0].status
             output_solution.message = sol[0].message
             output_solution.t_events = sol[0].t_events
             output_solution.y_events = sol[0].y_events
             output_solution.success = sol[0].success
-            output_solution.sol = lambda t: sol[0].sol(t - t0)
+            # Wrap sol() to convert separation from km to Rsun
+            def wrapped_sol(t):
+                result = sol[0].sol(t - t0)
+                result[0] = result[0] * 100_000 / constants.Rsun
+                return result
+            output_solution.sol = wrapped_sol
 
         else:
             output_solution = CombinedSolution()
@@ -137,7 +143,9 @@ class DoubleCO(detached_step):
             def combined_sol(t):
                 for s, t0 in zip(sol, time_sol):
                     if t0 <= t <= t0 + s.t[-1]:
-                        return s.sol(t - t0)
+                        result = s.sol(t - t0)
+                        result[0] = result[0] * 100_000 / constants.Rsun
+                        return result
                 raise ValueError(f"Time {t} is out of bounds for the combined solution.")
 
             output_solution.sol = combined_sol
