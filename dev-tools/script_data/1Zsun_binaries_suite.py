@@ -19,7 +19,7 @@ from posydon.utils.common_functions import orbital_separation_from_period
 
 target_rows = 12
 line_length = 140
-columns_to_show = ['step_names', 'state', 'event', 'S1_state', 'S1_mass', 'S2_state', 'S2_mass', 'orbital_period']
+columns_to_show = ['step_names', 'state', 'event', 'S1_state', 'S1_mass', 'S2_state', 'S2_mass', 'orbital_period', 'time']
 
 def load_inlist(verbose):
 
