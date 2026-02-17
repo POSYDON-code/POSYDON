@@ -88,14 +88,14 @@ class DoubleCO(detached_step):
         while status == -1 and n < 6:
             try:
                 res = solve_ivp(self.evo,
-                            events=self.evo.ev_contact,
-                            method="BDF",
-                            t_span=(0, self.max_time-t0),
-                            y0=[a, e,
-                            secondary.omega0, primary.omega0],
-                            rtol=1e-10,
-                            atol=1e-10,
-                            dense_output=True)
+                                events=self.evo.ev_contact,
+                                method="BDF",
+                                t_span=(0, self.max_time-t0),
+                                y0=[a, e,
+                                secondary.omega0, primary.omega0],
+                                rtol=1e-10,
+                                atol=1e-10,
+                                dense_output=True)
             except Exception as e:
                 set_binary_to_failed(binary)
                 raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
