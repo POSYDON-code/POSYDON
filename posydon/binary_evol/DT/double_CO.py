@@ -108,12 +108,22 @@ class DoubleCO(detached_step):
             time_sol.append(t0)
             sol.append(res)
 
+
+        class CombinedSolution:
+            pass
         # combine results from multiple solve_ivp calls if needed
         if len(sol) == 1:
-            output_solution = sol[0]
+            output_solution = CombinedSolution()
+            output_solution.t = sol[0].t + t0
+            output_solution.y = sol[0].y
+            output_solution.status = sol[0].status
+            output_solution.message = sol[0].message
+            output_solution.t_events = sol[0].t_events
+            output_solution.y_events = sol[0].y_events
+            output_solution.success = sol[0].success
+            output_solution.sol = lambda t: sol[0].sol(t - t0)
+
         else:
-            class CombinedSolution:
-                pass
             output_solution = CombinedSolution()
             output_solution.t = np.concatenate([t0+t.t for t, t0 in zip(sol, time_sol)])
             output_solution.y = np.hstack([s.y for s in sol])
