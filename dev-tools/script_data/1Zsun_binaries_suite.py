@@ -759,6 +759,62 @@ def evolve_binaries(verbose):
                         properties = sim_prop)
     evolve_binary(binary)
 
+    ########################################
+    # double CO step
+    ########################################
+    # NS + WD example
+    star1 = SingleStar(**{'mass': 7.939736047577677,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
+    star1 = SingleStar(**{'mass': 6.661421823348241,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
+
+    binary = BinaryStar(star1, star2,
+                        **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
+                        'orbital_period': 28.576933942881404, 'eccentricity': 0.0},
+                        properties = sim_prop)
+    evolve_binary(binary)
+    # BH + NS example
+    star1 = SingleStar(**{'mass': 22.69609546427504,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 2.051704135150374, 1.73468853754093, 3.299716078528058]})
+    star2 = SingleStar(**{'mass': 16.39690317352072,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 5.934599002039066, 2.4331072903106974, 1.9933166215820504]})
+
+    binary = BinaryStar(star1, star2,
+                        **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
+                        'orbital_period': 70.37960820393167, 'eccentricity': 0.0},
+                        properties = sim_prop)
+    evolve_binary(binary)
+    # WD + WD example
+    star1 = SingleStar(**{'mass': 6.661421823348241,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
+    star2 = SingleStar(**{'mass': 6.661421823348241,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
+
+    binary = BinaryStar(star1, star2,
+                        **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
+                        'orbital_period': 28.576933942881404, 'eccentricity': 0.0},
+                        properties = sim_prop)
+    evolve_binary(binary)
+    # NS + NS example
+    star1 = SingleStar(**{'mass': 16.458995075687447,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 3.661376360771944, 0.7219969332243381, 4.919284439555057]})
+    star2 = SingleStar(**{'mass': 12.580980419413521,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 4.944467687452352, 1.2845384190953326, 1.6806849171480245]})
+
+    binary = BinaryStar(star1, star2,
+                        **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
+                        'orbital_period': 247.4244399689946, 'eccentricity': 0.0},
+                        properties = sim_prop)
+    evolve_binary(binary)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Evolve binaries for validation.')
     parser.add_argument('--verbose', '-v', action='store_true', default=False,
