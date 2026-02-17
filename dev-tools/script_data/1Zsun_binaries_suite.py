@@ -815,6 +815,20 @@ def evolve_binaries(verbose):
                         properties = sim_prop)
     evolve_binary(binary)
 
+    # BH + BH
+    star1 = SingleStar(**{'mass': 31.077951593283725,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 1.9047595342945016, 0.7097181927314352, 2.892753852818733]})
+    star2 = SingleStar(**{'mass': 27.8239810278115,
+                        'state': 'H-rich_Core_H_burning',
+                        'natal_kick_array': [0.0, 4.004970175991886, 2.2544428565691472, 3.420828590003044]})
+
+    binary = BinaryStar(star1, star2,
+                        **{'time': 0.0, 'state': 'detached', 'event': 'ZAMS',
+                        'orbital_period': 27.429155057946318, 'eccentricity': 0.0},
+                        properties = sim_prop)
+    evolve_binary(binary)
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Evolve binaries for validation.')
     parser.add_argument('--verbose', '-v', action='store_true', default=False,
