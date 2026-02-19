@@ -8,7 +8,10 @@ __authors__ = [
 ]
 
 
+from decimal import Decimal
+
 import numpy as np
+from mpmath import mp, mpf
 from scipy.integrate import solve_ivp
 
 import posydon.utils.constants as constants
@@ -136,18 +139,18 @@ class DoubleCO(detached_step):
                         break
                 if not appended:
                     raise ValueError(f"Time {t} is out of bounds for the combined solution.")
-                
+
             solutions = np.array(solutions).T
 
             # convert separation back from [km] to [Rsun]
             solutions[0] *= 100_000 / constants.Rsun
-            
+
             return solutions
 
         output_solution.sol = combined_sol
 
         return output_solution
-    
+
     def get_time_after_evo(self, binary):
         """
             After detached evolution, this uses the ODESolver result
@@ -177,7 +180,7 @@ class DoubleCO(detached_step):
         def adjust_timepts(t):
             # set last element to be same scale as final time point from solve_ivp
             t[-1] = self.res.t[-1]
-            
+
             # adjust each time point to proper scale for interpolants
             for j, time in enumerate(t[:-1]):
                 #print(time)
@@ -197,7 +200,7 @@ class DoubleCO(detached_step):
             if t[-1] < self.res.t[-1] + self.res.time_sols[-1] - binary.time:
                 t = np.hstack([t, self.res.t[-1] + self.res.time_sols[-1] - binary.time])
             t = adjust_timepts(t)
-                
+
         elif (self.n_o_steps_history is not None and self.n_o_steps_history > 0):
             t_step = (self.res.t[-1] + self.res.time_sols[-1] - binary.time) / self.n_o_steps_history
             t = np.arange(0, self.res.t[-1] + self.res.time_sols[-1] - binary.time + t_step/2.0, t_step)[1:]
