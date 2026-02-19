@@ -22,9 +22,6 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.posydonerror import NumericalError
 
-from decimal import Decimal
-from mpmath import mp, mpf
-
 
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
