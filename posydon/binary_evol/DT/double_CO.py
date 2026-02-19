@@ -9,7 +9,6 @@ __authors__ = [
 
 
 import numpy as np
-from mpmath import mp, mpf
 from scipy.integrate import solve_ivp
 
 import posydon.utils.constants as constants
