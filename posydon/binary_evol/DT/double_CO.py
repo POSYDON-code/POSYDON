@@ -8,8 +8,6 @@ __authors__ = [
 ]
 
 
-from decimal import Decimal
-
 import numpy as np
 from mpmath import mp, mpf
 from scipy.integrate import solve_ivp
