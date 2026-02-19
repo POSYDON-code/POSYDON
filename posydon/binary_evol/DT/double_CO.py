@@ -22,6 +22,9 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.posydonerror import NumericalError
 
+from decimal import Decimal
+from mpmath import mp, mpf
+
 
 def event(terminal, direction=0):
     """Return a helper function to set attributes for solve_ivp events."""
@@ -52,10 +55,6 @@ class DoubleCO(detached_step):
 
         super().__call__(binary)
 
-        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
-        binary.orbital_period = orbital_period_from_separation(
-            binary.separation, binary.star_1.mass, binary.star_2.mass
-        )
         binary.V_sys = binary.V_sys_history[-1]
 
         #if self.res.status == -1:
@@ -65,6 +64,8 @@ class DoubleCO(detached_step):
         #                         f"{self.res.message}")
         # contact event triggered
         if self.res.status == 1:
+            binary.time = self.res.t[-1] + self.res.time_sols[-1]
+            binary.time_history[-1] = self.res.t[-1] + self.res.time_sols[-1]
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
@@ -112,38 +113,107 @@ class DoubleCO(detached_step):
         class CombinedSolution:
             pass
         # combine results from multiple solve_ivp calls if needed
-        if len(sol) == 1:
-            output_solution = CombinedSolution()
-            output_solution.t = sol[0].t + t0
-            output_solution.y = sol[0].y
-            output_solution.status = sol[0].status
-            output_solution.message = sol[0].message
-            output_solution.t_events = sol[0].t_events
-            output_solution.y_events = sol[0].y_events
-            output_solution.success = sol[0].success
-            output_solution.sol = lambda t: sol[0].sol(t-t0)
 
+        output_solution = CombinedSolution()
+        output_solution.t = np.concatenate([s.t for s in sol])
+        output_solution.y = np.hstack([s.y for s in sol])
+        output_solution.status = sol[-1].status
+        output_solution.message = sol[-1].message
+        output_solution.t_events = sol[-1].t_events
+        output_solution.y_events = sol[-1].y_events
+        output_solution.success = sol[-1].success
+        output_solution.time_sols = time_sol
+        output_solution.time_arrs = [s.t for s in sol]
 
-        else:
-            output_solution = CombinedSolution()
-            output_solution.t = np.concatenate([t0+t.t for t, t0 in zip(sol, time_sol)])
-            output_solution.y = np.hstack([s.y for s in sol])
-            output_solution.status = sol[-1].status
-            output_solution.message = sol[-1].message
-            output_solution.t_events = sol[-1].t_events
-            output_solution.y_events = sol[-1].y_events
-            output_solution.success = sol[-1].success
+        # dynamically create a combined sol method that can interpolate across the combined solution
+        def combined_sol(t):
 
-            # dynamically create a combined sol method that can interpolate across the combined solution
-            def combined_sol(t):
-                for s, t0 in zip(sol, time_sol):
-                    if t0 <= t <= t0 + s.t[-1]:
-                        return s.sol(t - t0)
-                raise ValueError(f"Time {t} is out of bounds for the combined solution.")
+            t = np.array(t)
+            solutions = []
+            for time in t:
+                appended = False
+                for s in sol[::-1]:
+                    if 0 <= time <= s.t[-1]:
+                        solutions.append(s.sol(time))
+                        appended = True
+                        break
+                if not appended:
+                    raise ValueError(f"Time {t} is out of bounds for the combined solution.")
+                
+            solutions = np.array(solutions).T
 
-            output_solution.sol = combined_sol
+            # convert separation back from [km] to [Rsun]
+            solutions[0] *= 100_000 / constants.Rsun
+            
+            return solutions
+
+        output_solution.sol = combined_sol
 
         return output_solution
+    
+    def get_time_after_evo(self, binary):
+        """
+            After detached evolution, this uses the ODESolver result
+        to determine what the current time is.
+
+        Parameters
+        ----------
+        res : ODESolver object
+            This is the ODESolver object produced by SciPy's
+            solve_ivp function that contains calculated values
+            of the stars evolution through the detached step.
+
+        binary: BinaryStar object
+            A binary star object, containing the binary system's properties.
+
+        Returns
+        -------
+        t : float or array[float]
+            This is the time elapsed as a result of detached
+            evolution in years. This is a float unless the
+            user specifies a timestep (see `n_o_steps_history`
+            or `dt`) to use via the simulation properties ini
+            file, in which case it is an array.
+
+        """
+
+        def adjust_timepts(t):
+            # set last element to be same scale as final time point from solve_ivp
+            t[-1] = self.res.t[-1]
+            
+            # adjust each time point to proper scale for interpolants
+            for j, time in enumerate(t[:-1]):
+                #print(time)
+                for k, time_array in enumerate(self.res.time_arrs):
+                    if time <= max(time_array):
+                        # time is at the right scale, go to the next one
+                        t[j] = time
+                        break
+                    else:
+                        # shift to next timescale and search again
+                        time -= max(time_array)
+
+            return t
+
+        if self.dt is not None and self.dt > 0:
+            t = np.arange(0, self.res.t[-1] + self.res.time_sols[-1] - binary.time + self.dt/2.0, self.dt)[1:]
+            if t[-1] < self.res.t[-1] + self.res.time_sols[-1] - binary.time:
+                t = np.hstack([t, self.res.t[-1] + self.res.time_sols[-1] - binary.time])
+            t = adjust_timepts(t)
+                
+        elif (self.n_o_steps_history is not None and self.n_o_steps_history > 0):
+            t_step = (self.res.t[-1] + self.res.time_sols[-1] - binary.time) / self.n_o_steps_history
+            t = np.arange(0, self.res.t[-1] + self.res.time_sols[-1] - binary.time + t_step/2.0, t_step)[1:]
+
+            if t[-1] < self.res.t[-1] + self.res.time_sols[-1] - binary.time:
+                t = np.hstack([t, self.res.t[-1] + self.res.time_sols[-1] - binary.time])
+
+            t = adjust_timepts(t)
+
+        else:  # self.dt is None and self.n_o_steps_history is None
+            t = np.array([self.res.t[-1]])
+
+        return t
 
 
 class double_CO_evolution(detached_evolution):
