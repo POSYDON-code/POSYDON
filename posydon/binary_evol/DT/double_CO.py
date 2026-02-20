@@ -64,8 +64,11 @@ class DoubleCO(detached_step):
         # contact event triggered
         if self.res.status == 1:
             binary.time = self.res.t[-1] + self.res.time_sols[-1]
-            if tlen_after_evo - prior_tlen >= 1:
-                binary.time_history[-1] = self.res.t[-1] + self.res.time_sols[-1]
+            num_new_times = tlen_after_evo - prior_tlen
+            if num_new_times >= 1:
+                for i in range(num_new_times - 1):
+                    binary.time_history[prior_tlen + i] += binary.time_history[prior_tlen-1]
+            binary.time_history[-1] = self.res.t[-1] + self.res.time_sols[-1]
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
