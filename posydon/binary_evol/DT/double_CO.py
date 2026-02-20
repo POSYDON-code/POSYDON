@@ -67,7 +67,7 @@ class DoubleCO(detached_step):
             num_new_times = tlen_after_evo - prior_tlen
             if num_new_times >= 1:
                 for i in range(num_new_times - 1):
-                    binary.time_history[prior_tlen + i] += binary.time_history[prior_tlen-1]
+                    binary.time_history[prior_tlen + i] = self.res.real_time[i]
             binary.time_history[-1] = self.res.t[-1] + self.res.time_sols[-1]
             binary.eccentricity = 0.0
             binary.state = "contact"
@@ -137,6 +137,9 @@ class DoubleCO(detached_step):
                 appended = False
                 for s in sol[::-1]:
                     if 0 <= time <= s.t[-1]:
+                        print("t = ", time)
+                        print("t_final = ", s.t[-1])
+                        print("a [Rsun] = ", s.sol(time)[0] * 100_000 / constants.Rsun)
                         solutions.append(s.sol(time))
                         appended = True
                         break
@@ -180,38 +183,44 @@ class DoubleCO(detached_step):
 
         """
 
-        def adjust_timepts(t):
-            # set last element to be same scale as final time point from solve_ivp
-            t[-1] = self.res.t[-1]
-
-            # adjust each time point to proper scale for interpolants
-            for j, time in enumerate(t[:-1]):
-                #print(time)
-                for k, time_array in enumerate(self.res.time_arrs):
-                    if time <= max(time_array):
-                        # time is at the right scale, go to the next one
-                        t[j] = time
-                        break
-                    else:
-                        # shift to next timescale and search again
-                        time -= max(time_array)
-
-            return t
-
         if self.dt is not None and self.dt > 0:
-            t = np.arange(0, self.res.t[-1] + self.res.time_sols[-1] - binary.time + self.dt/2.0, self.dt)[1:]
-            if t[-1] < self.res.t[-1] + self.res.time_sols[-1] - binary.time:
-                t = np.hstack([t, self.res.t[-1] + self.res.time_sols[-1] - binary.time])
-            t = adjust_timepts(t)
+
+            t = np.array([])
+            real_time = np.array([])
+            for k, time_arr in enumerate(self.res.time_arrs):
+                t_chunk = np.arange(time_arr[0], time_arr[-1] + self.dt/2.0, self.dt)[1:]
+
+                if len(t_chunk) == 0:
+                    continue
+
+                # ensure last element matches (rounding can mess things up for small numbers)
+                if t_chunk[-1] != time_arr[-1]:
+                    t_chunk[-1] = time_arr[-1]
+
+                t = np.hstack([t, t_chunk])
+                real_time = np.hstack([real_time, t_chunk + self.res.time_sols[k]])
+
+            if t[-1] != self.res.t[-1]:
+                t[-1] = self.res.t[-1]
+                real_time[-1] = self.res.t[-1] + self.res.time_sols[-1]
+            # store this for later
+            self.res.real_time = real_time
 
         elif (self.n_o_steps_history is not None and self.n_o_steps_history > 0):
-            t_step = (self.res.t[-1] + self.res.time_sols[-1] - binary.time) / self.n_o_steps_history
-            t = np.arange(0, self.res.t[-1] + self.res.time_sols[-1] - binary.time + t_step/2.0, t_step)[1:]
 
-            if t[-1] < self.res.t[-1] + self.res.time_sols[-1] - binary.time:
-                t = np.hstack([t, self.res.t[-1] + self.res.time_sols[-1] - binary.time])
+            t = np.array([])
+            real_time = np.array([])
+            for k, time_arr in enumerate(self.res.time_arrs):
+                t_step = (time_arr[-1] - time_arr[0]) / self.n_o_steps_history
+                t_chunk = np.arange(time_arr[0], time_arr[-1] + t_step/2.0, t_step)[1:]
 
-            t = adjust_timepts(t)
+                if t_chunk[-1] != time_arr[-1]:
+                    t_chunk[-1] = time_arr[-1]
+
+                t = np.hstack([t, t_chunk])
+                real_time = np.hstack([real_time, t_chunk + self.res.time_sols[k]])
+
+            self.res.real_time = real_time
 
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
