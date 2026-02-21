@@ -50,9 +50,7 @@ class DoubleCO(detached_step):
 
     def __call__(self, binary):
 
-        prior_tlen = len(binary.time_history)
         super().__call__(binary)
-        tlen_after_evo = len(binary.time_history)
 
         binary.V_sys = binary.V_sys_history[-1]
 
@@ -63,12 +61,9 @@ class DoubleCO(detached_step):
         #                         f"{self.res.message}")
         # contact event triggered
         if self.res.status == 1:
-            binary.time = self.res.t[-1] + self.res.time_sols[-1]
-            num_new_times = tlen_after_evo - prior_tlen
-            if num_new_times >= 1:
-                for i in range(num_new_times - 1):
-                    binary.time_history[prior_tlen + i] = self.res.real_time[i]
-            binary.time_history[-1] = self.res.t[-1] + self.res.time_sols[-1]
+            binary.time = self.res.real_time[-1]
+            for k, real_time in enumerate(self.res.real_time[::-1]):
+                binary.time_history[-(k+1)] = real_time
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
@@ -224,6 +219,7 @@ class DoubleCO(detached_step):
 
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
+            self.res.real_time = t + self.res.time_sols[-1]
 
         return t
 
