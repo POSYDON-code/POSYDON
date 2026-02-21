@@ -132,9 +132,6 @@ class DoubleCO(detached_step):
                 appended = False
                 for s in sol[::-1]:
                     if 0 <= time <= s.t[-1]:
-                        print("t = ", time)
-                        print("t_final = ", s.t[-1])
-                        print("a [Rsun] = ", s.sol(time)[0] * 100_000 / constants.Rsun)
                         solutions.append(s.sol(time))
                         appended = True
                         break
