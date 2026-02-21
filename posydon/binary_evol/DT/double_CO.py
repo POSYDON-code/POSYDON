@@ -174,14 +174,17 @@ class DoubleCO(detached_step):
             evolution in years. This is a float unless the
             user specifies a timestep (see `n_o_steps_history`
             or `dt`) to use via the simulation properties ini
-            file, in which case it is an array.
+            file, in which case it is an array. For DCO objects,
+            this needs to be on the time scale of the inerpolants
+            from solve_ivp, so does not represent the real binary
+            time. This is corrected later in the __call__ method.
 
         """
 
+        t = np.array([])
+        real_time = np.array([])
         if self.dt is not None and self.dt > 0:
 
-            t = np.array([])
-            real_time = np.array([])
             for k, time_arr in enumerate(self.res.time_arrs):
                 t_chunk = np.arange(time_arr[0], time_arr[-1] + self.dt/2.0, self.dt)[1:]
 
@@ -198,13 +201,9 @@ class DoubleCO(detached_step):
             if t[-1] != self.res.t[-1]:
                 t[-1] = self.res.t[-1]
                 real_time[-1] = self.res.t[-1] + self.res.time_sols[-1]
-            # store this for later
-            self.res.real_time = real_time
 
         elif (self.n_o_steps_history is not None and self.n_o_steps_history > 0):
 
-            t = np.array([])
-            real_time = np.array([])
             for k, time_arr in enumerate(self.res.time_arrs):
                 t_step = (time_arr[-1] - time_arr[0]) / self.n_o_steps_history
                 t_chunk = np.arange(time_arr[0], time_arr[-1] + t_step/2.0, t_step)[1:]
@@ -215,11 +214,12 @@ class DoubleCO(detached_step):
                 t = np.hstack([t, t_chunk])
                 real_time = np.hstack([real_time, t_chunk + self.res.time_sols[k]])
 
-            self.res.real_time = real_time
-
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
-            self.res.real_time = t + self.res.time_sols[-1]
+            real_time = t + self.res.time_sols[-1]
+
+        # store this for later to convert time back to real time
+        self.res.real_time = real_time
 
         return t
 
