@@ -62,8 +62,9 @@ class DoubleCO(detached_step):
         # contact event triggered
         if self.res.status == 1:
             binary.time = self.res.real_time[-1]
-            for k, real_time in enumerate(self.res.real_time[::-1]):
-                binary.time_history[-(k+1)] = real_time
+            if len(self.res.real_time) > 1:
+                for k, real_time in enumerate(self.res.real_time[::-1]):
+                    binary.time_history[-(k+1)] = real_time
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
