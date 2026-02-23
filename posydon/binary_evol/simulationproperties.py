@@ -43,7 +43,7 @@ class SimulationProperties:
                        step_CE = (NullStep(), {}),
                        step_end = (NullStep(), {}),
                        extra_hooks = [],
-                       verbose=False):
+                       **kwargs):
 
         """Construct the simulation properties object.
 
@@ -117,8 +117,11 @@ class SimulationProperties:
             'extra_post_evolve') and the corresponding function.
         """
 
+        self.kwargs = kwargs
+        verbose = self.kwargs.get('verbose', False)
+
         # gather kwargs
-        self.kwargs = {"flow": flow}
+        self.kwargs["flow"] = flow
 
         step_kwargs = {"step_HMS_HMS": step_HMS_HMS,
                        "step_CO_HeMS": step_CO_HeMS,
