@@ -2,9 +2,9 @@ import os
 import shutil
 import tracemalloc
 
-from tabulate import tabulate
 import pandas as pd
 from binaries_suite import write_binary_to_screen
+from tabulate import tabulate
 
 from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
@@ -15,13 +15,13 @@ def print_pop_settings(population):
 
     print("Population settings:")
 
-    ignore_kwargs = ["extra_columns", "only_select_columns", "scalar_names", 
+    ignore_kwargs = ["extra_columns", "only_select_columns", "scalar_names",
                      "include_S1", "S1_kwargs", "include_S2", "S2_kwargs",
                      "population_properties", "warnings_verbose", "history_verbose",
-                      "error_checking_verbose", "use_MPI", "read_samples_from_file", 
-                      "RANK", "size", "optimize_ram", "ram_per_cpu", 
+                      "error_checking_verbose", "use_MPI", "read_samples_from_file",
+                      "RANK", "size", "optimize_ram", "ram_per_cpu",
                       "dump_rate", "tqdm", "temp_directory", "breakdown_to_df"]
-    
+
     for key, val in population.kwargs.items():
         if key in ignore_kwargs:
             continue
@@ -36,7 +36,7 @@ def test_popruns():
     print("Evolving BinaryPopulation...\n")
 
     print_pop_settings(pop)
-    
+
     pop.evolve(breakdown_to_df=False, optimize_ram=False, tqdm=False)
 
     #print(pop.manager.binaries)
