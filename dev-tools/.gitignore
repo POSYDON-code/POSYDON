@@ -1,14 +1,5 @@
-# Remove the accidentally staged clone
-git rm --cached -r workdirs/
-
-# Create .gitignore
-cat > .gitignore << 'EOF'
 workdirs/
 outputs/
 logs/
 baselines/
 test_*.h5
-EOF
-
-git add .gitignore
-
