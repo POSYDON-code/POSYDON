@@ -1,18 +1,19 @@
 """Detached evolution for double compact-object binaries.
 
-The ODEs are non-dimensionalized using the initial orbital separation a₀
-and the characteristic gravitational-wave inspiral timescale
+The Peters (1964) equations are solved using the substitution s = -ln(alpha),
+where α = a/a₀ is the dimensionless separation.  This eliminates the
+singular α⁻³ and α⁻⁴ prefactors that cause "step size smaller than
+machine epsilon" failures for tight compact-object binaries (especially
+BH-BH systems whose contact separation α_contact is extremely small).
 
-    t₀ = (5/64) c⁵ a₀⁴ / (G³ M m₁ m₂)
+With this substitution, the Peters equations become:
 
-so that the Peters (1964) equations become unit-free with O(1) coefficients:
+    de/ds  = -(19/12) e (1-e^2)(1 + 121/304 e^2) / F(e)
+    dτ/ds  = exp(-4s) (1-e^2)^(7/2) / F(e)
 
-    dα/dτ = −1 / [α³ (1−e²)^(7/2)] × (1 + 73/24 e² + 37/96 e⁴)
-    de/dτ = −(19/12) e / [α⁴ (1−e²)^(5/2)] × (1 + 121/304 e²)
-
-where α = a/a₀ and τ = t/t₀.  This avoids the "step size smaller than
-machine epsilon" failures that occur when solve_ivp works with physical
-units spanning many orders of magnitude.
+where F(e) = 1 + 73/24 e² + 37/96 e⁴, and the characteristic timescale
+is t₀ = (5/64) c^5 a0^4 / (G^3 M m_1 m_2).  The eccentricity ODE is now
+autonomous (independent of s), and the system is non-stiff.
 """
 
 
@@ -25,6 +26,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.integrate import solve_ivp
+from scipy.interpolate import PchipInterpolator
 
 import posydon.utils.constants as constants
 from posydon.binary_evol.DT.step_detached import detached_evolution, detached_step
@@ -45,32 +47,63 @@ def _event(terminal, direction=0):
     return dec
 
 
-class _ScaledDenseOutput:
-    """Wrapper around OdeSolution that maps dimensionless ↔ physical units.
+class _SLogDenseOutput:
+    """Dense output for the s = -ln(alpha) formulation of the Peters equations.
+
+    Inverts the monotone τ(s) mapping via a PCHIP interpolant, then
+    evaluates the native ODE dense output in s-space and converts back
+    to physical variables [separation_Rsun, eccentricity, ω_sec, ω_pri].
 
     Parameters
     ----------
     sol : OdeSolution
-        The dense output from solve_ivp in dimensionless variables.
-    a0_km : float
-        Initial separation scale factor [km].
+        Dense output from solve_ivp in s-space.
+    a0_Rsun : float
+        Initial separation [Rsun].
     t_scale : float
-        Characteristic timescale [yr].
+        Characteristic GW timescale [yr].
     t0_phys : float
-        Physical time at the start of integration [yr].
+        Physical time at integration start [yr].
+    s_vals : array
+        Independent-variable values produced by the solver.
+    tau_vals : array
+        Corresponding dimensionless-time values τ(s).
     """
 
-    def __init__(self, sol, a0_km, t_scale, t0_phys):
+    def __init__(self, sol, a0_Rsun, t_scale, t0_phys, s_vals, tau_vals):
         self.sol = sol
-        self.a0_km = a0_km
+        self.a0_Rsun = a0_Rsun
         self.t_scale = t_scale
         self.t0_phys = t0_phys
+        # Near contact dtau/ds ≈ exp(−4s) → 0, so consecutive tau values
+        # can be identical to machine precision.  Keep only points where
+        # tau strictly increases so that PchipInterpolator is happy.
+        tau_vals = np.asarray(tau_vals, dtype=float)
+        s_vals = np.asarray(s_vals, dtype=float)
+        mask = np.concatenate(([True], np.diff(tau_vals) > 0))
+        tau_mono = tau_vals[mask]
+        s_mono = s_vals[mask]
+        if len(tau_mono) >= 2:
+            self._tau_to_s = PchipInterpolator(tau_mono, s_mono)
+        else:
+            # Fallback: constant (binary barely evolved)
+            _s0 = s_mono[0] if len(s_mono) else 0.0
+            self._tau_to_s = lambda tau: np.full_like(
+                np.asarray(tau, dtype=float), _s0)
 
     def __call__(self, t_phys):
+        # convert to dimensionless time
         tau = (np.asarray(t_phys) - self.t0_phys) / self.t_scale
-        y = self.sol(tau)
-        y[0] = y[0] * self.a0_km          # α → km
-        return y
+        # convert to s-space
+        s = np.asarray(self._tau_to_s(tau))
+        raw = self.sol(s)              # [ecc, tau, secondary.omega, primary.omega]
+        result = np.empty_like(raw)
+        alpha = np.exp(-s)
+        result[0] = alpha * self.a0_Rsun  # separation (Rsun)
+        result[1] = raw[0]                # eccentricity
+        result[2] = raw[2]                # omega_sec
+        result[3] = raw[3]                # omega_pri
+        return result
 
 
 class DoubleCO(detached_step):
@@ -90,94 +123,90 @@ class DoubleCO(detached_step):
     def __call__(self, binary):
         super().__call__(binary)
 
-        # Convert final separation from km → Rsun
-        binary.separation = self.res.y[0][-1] * 1e5 / constants.Rsun
-        binary.orbital_period = orbital_period_from_separation(
-            binary.separation, binary.star_1.mass, binary.star_2.mass
-        )
         binary.V_sys = binary.V_sys_history[-1]
 
-        # contact event triggered
         if self.res.status == 1:
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
-        # max time reached (status == 0)
+
         elif self.res.status != -1:
             binary.time = self.max_time
             binary.eccentricity = self.res.y[1][-1]
             binary.state = "detached"
             binary.event = "maxtime"
 
-    # ------------------------------------------------------------------
-    #  Dimensionless ODE integration
-    # ------------------------------------------------------------------
     def solve_ODEs(self, binary, primary, secondary):
-        """Solve the dimensionless Peters (1964) equations for GW inspiral.
+        """Solve the Peters (1964) GW inspiral.
 
-        The equations are scaled so that all dependent variables are O(1),
-        eliminating the "step size < machine epsilon" problem that plagues
-        the dimensional formulation.  A single call to ``solve_ivp`` is
-        sufficient.
+        We do two transformations to the standard Peters equations:
+        1. We remove the dimensionality by using the dimensionless separation \alpha = a/a0 and
+           dimensionless time \tau = t / t0, where a0 is the initial separation
+           and t0 is the characteristic GW timescale.
+        2. We then substitute s = -ln(\alpha) to eliminate the singularity in the Peters equations,
+           which removes the alpha^-3 and alpha^-4 prefactors that cause numerical issues for tight binaries.
         """
         self.max_time = binary.properties.max_simulation_time
         t0_phys = binary.time                                     # [yr]
 
         # --- physical scales ------------------------------------------------
-        a0_km = binary.separation * constants.Rsun / 1e5          # [km]
+        a0_Rsun = binary.separation                               # [Rsun]
+        a0_km = a0_Rsun * constants.Rsun / 1e5                    # [km]
         e0 = binary.eccentricity
         a0_cgs = a0_km * 1e5                                      # [cm]
 
         m1_cgs = primary.mass * constants.msol                     # [g]
         m2_cgs = secondary.mass * constants.msol                   # [g]
-        G = constants.standard_cgrav                               # [cm³ g⁻¹ s⁻²]
-        c = constants.clight                                       # [cm s⁻¹]
+        G = constants.standard_cgrav                               # [cm^3 g^-1 s^02]
+        c = constants.clight                                       # [cm s^-1]
 
         # characteristic GW inspiral timescale  [yr]
         t_scale = ((5.0 / 64.0) * c**5 * a0_cgs**4
                    / (G**3 * (m1_cgs + m2_cgs) * m1_cgs * m2_cgs)
                    / constants.secyer)
 
-        # dimensionless contact threshold  α_contact = (r1 + r2) / a0
+        # dimensionless contact threshold  \alpha_contact = (r1 + r2) / a0
         r1_km = (CO_radius(primary.mass, primary.state)
                  * constants.Rsun / 1e5)                           # [km]
         r2_km = (CO_radius(secondary.mass, secondary.state)
                  * constants.Rsun / 1e5)                           # [km]
+
+        # Unitless separation at contact.
         alpha_contact = (r1_km + r2_km) / a0_km
 
-        # dimensionless integration limits
+        # dimensionless max-time limit
         tau_max = (self.max_time - t0_phys) / t_scale
 
-        # --- dimensionless RHS (Peters 1964) --------------------------------
-        def rhs(tau, y):
-            alpha, ecc = y[0], y[1]
+        s_contact = -np.log(alpha_contact)
+
+        def rhs(s, y):
+            ecc = y[0]
             e2 = ecc * ecc
             one_minus_e2 = 1.0 - e2
 
-            dalpha = (-1.0
-                      / (alpha**3 * one_minus_e2**3.5)
-                      * (1.0 + (73.0 / 24.0) * e2
-                         + (37.0 / 96.0) * e2 * e2))
+            f_e = 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
+            g_e = 1.0 + (121.0 / 304.0) * e2
 
-            decc = (-(19.0 / 12.0) * ecc
-                    / (alpha**4 * one_minus_e2**2.5)
-                    * (1.0 + (121.0 / 304.0) * e2))
+            decc_ds = -(19.0 / 12.0) * ecc * one_minus_e2 * g_e / f_e
+            dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / f_e
 
-            # ω_sec and ω_pri are constant for DCO (no tides / MB)
-            return [dalpha, decc, 0.0, 0.0]
+            # primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)
+            return [decc_ds, dtau_ds, 0.0, 0.0]
 
-        # --- contact event: α hits α_contact from above --------------------
-        @_event(True, -1)
-        def ev_contact(tau, y):
-            return y[0] - alpha_contact
+        # --- max-time event: tau reaches tau_max before contact ---------------
+        @_event(True, +1)
+        def ev_maxtime(s, y):
+            return y[1] - tau_max
 
         # --- integrate -------------------------------------------------------
+        # State vector: [e, tau, secondary.omega, primary.omega]
+        # Independent variable: s = −ln(a/a0), from 0 to s_contact
         try:
             res = solve_ivp(rhs,
-                            events=ev_contact,
-                            method="BDF",
-                            t_span=(0.0, tau_max),
-                            y0=[1.0, e0,
+                            events=ev_maxtime,
+                            method="RK45",
+                            t_span=(0.0, s_contact),
+                            y0=[e0, 0.0,
                                 secondary.omega0, primary.omega0],
                             rtol=1e-10,
                             atol=1e-10,
@@ -185,23 +214,47 @@ class DoubleCO(detached_step):
         except Exception as exc:
             set_binary_to_failed(binary)
             raise NumericalError(
-                "SciPy encountered an error while solving dimensionless "
-                f"GR equations: {exc}"
+                "SciPy encountered an error while solving "
+                f"GR equations (s-formulation): {exc}"
             )
 
         # --- map solution back to physical units ----------------------------
-        # Wrap dense output *before* mutating res.t (need original tau range)
-        res.sol = _ScaledDenseOutput(res.sol, a0_km, t_scale, t0_phys)
+        s_vals = res.t.copy()
+        alpha_vals = np.exp(-s_vals)
+        ecc_vals = res.y[0].copy()
+        tau_vals = res.y[1].copy()
 
-        res.y[0] = res.y[0] * a0_km                               # α → km
-        res.t = res.t * t_scale + t0_phys                          # τ → yr
+        # Wrap dense output to convert from s-space back to physical variables
+        res.sol = _SLogDenseOutput(res.sol, a0_Rsun, t_scale, t0_phys,
+                                   s_vals, tau_vals)
 
+        # Map solver status to the convention expected by __call__:
+        #   status  0 -> reached s_contact -> contact  -> report as 1
+        #   status  1 -> maxtime event     -> no merge -> report as 0
+        #   status −1 -> solver failure                -> keep as −1
+        if res.status == 0:
+            res.status = 1   # contact
+        elif res.status == 1:
+            res.status = 0   # maxtime
+
+        # Rearrange state vector from [ecc, tau, secondary.omega, primary.omega] in s-space
+        #                            to [sep_Rsun, ecc, secondary.omega, primary.omega]
+        res.y[0] = alpha_vals * a0_Rsun                            # sep (Rsun)
+        res.y[1] = ecc_vals                                        # ecc
+        # res.y[2], res.y[3] unchanged (omegas are constant for DCO)
+
+        res.t = tau_vals * t_scale + t0_phys                       # tau -> yr
+
+        # Convert events from s-space to physical units
         for i in range(len(res.t_events)):
             if len(res.t_events[i]) > 0:
-                res.t_events[i] = res.t_events[i] * t_scale + t0_phys
-        for i in range(len(res.y_events)):
-            if len(res.y_events[i]) > 0:
-                res.y_events[i][:, 0] *= a0_km
+                s_ev = res.t_events[i].copy()
+                alpha_ev = np.exp(-s_ev)
+                ecc_ev = res.y_events[i][:, 0].copy()
+                tau_ev = res.y_events[i][:, 1].copy()
+                res.y_events[i][:, 0] = alpha_ev * a0_Rsun         # sep (Rsun)
+                res.y_events[i][:, 1] = ecc_ev                     # ecc
+                res.t_events[i] = tau_ev * t_scale + t0_phys       # yr
 
         return res
 
