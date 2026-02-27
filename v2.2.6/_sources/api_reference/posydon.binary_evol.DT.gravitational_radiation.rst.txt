@@ -1,0 +1,17 @@
+posydon.binary\_evol.DT.gravitational\_radiation
+================================================
+
+.. automodule:: posydon.binary_evol.DT.gravitational_radiation
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.binary\_evol.DT.gravitational\_radiation.default\_gravrad
+-----------------------------------------------------------------
+
+.. automodule:: posydon.binary_evol.DT.gravitational_radiation.default_gravrad
+   :members:
+   :show-inheritance:
+   :undoc-members:
