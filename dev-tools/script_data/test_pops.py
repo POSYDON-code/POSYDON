@@ -1,9 +1,8 @@
 import os
 import shutil
-import tracemalloc
-
-import warnings
 import traceback
+import tracemalloc
+import warnings
 
 import pandas as pd
 from binaries_suite import write_binary_to_screen
@@ -12,7 +11,6 @@ from tabulate import tabulate
 from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import PopulationRunner
-
 
 line_length = 140
 path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_population_params.ini")
@@ -49,7 +47,7 @@ def print_warnings(captured_warnings):
                 print("")
     else:
         print(f"No warning(s) raised during evolution\n\n")
-    
+
 
 def test_binpop_evolve(popevo_kwargs, verbose=False):
 
@@ -95,7 +93,7 @@ def test_binpop_evolve(popevo_kwargs, verbose=False):
             print("\n")
             print("=" * line_length)
 
-    
+
 def test_popruns():
 
     kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":False}
@@ -108,7 +106,7 @@ def test_popruns():
     #print(pop.manager.binaries)
     #write_binary_to_screen(pop.manager.binaries[0])
 
-    
+
 
     # ================================================================================
 
