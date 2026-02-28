@@ -74,7 +74,8 @@ MODEL = {"prescription": 'alpha-lambda',
                                               # assuming a final separation where the inner core RLOF starts.
          # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
          "metallicity": None,
-         "record_matching": False
+         "record_matching": False,
+         "track_matcher": None
          }
 
 
@@ -190,18 +191,19 @@ class StepCEE(object):
                         ["log_min_max", "min_max", "min_max"],
                         [0.1, 300], [0.0, None]
                     ]
-        self.track_matcher = TrackMatcher(grid_name_Hrich = None,
-                                    grid_name_strippedHe = None,
-                                    path=PATH_TO_POSYDON_DATA,
-                                    metallicity = self.metallicity,
-                                    matching_method = "minimize",
-                                    matching_tolerance=1e-2,
-                                    matching_tolerance_hard=1e-1,
-                                    list_for_matching_HMS = list_for_matching_HMS,
-                                    list_for_matching_HeStar = None,
-                                    list_for_matching_postMS = None,
-                                    record_matching = self.record_matching,
-                                    verbose = self.verbose)
+        #self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+        #                            grid_name_strippedHe = None,
+        #                            path=PATH_TO_POSYDON_DATA,
+        #                            metallicity = self.metallicity,
+        #                            matching_method = "minimize",
+        #                            matching_tolerance=1e-2,
+        #                            matching_tolerance_hard=1e-1,
+        #                            list_for_matching_HMS = list_for_matching_HMS,
+        #                            list_for_matching_HeStar = None,
+        #                            list_for_matching_postMS = None,
+        #                            record_matching = self.record_matching,
+        #                            verbose = self.verbose)
+        self.track_matcher = kwargs.get('track_matcher', None)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion

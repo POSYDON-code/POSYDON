@@ -36,7 +36,8 @@ from posydon.binary_evol.DT.magnetic_braking.prescriptions import (
     RVJ83_braking,
 )
 from posydon.binary_evol.DT.tides.default_tides import default_tides
-from posydon.binary_evol.DT.track_match import TrackMatcher
+
+#from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.DT.winds.default_winds import (
     default_sep_from_winds,
     default_spin_from_winds,
@@ -237,7 +238,8 @@ class detached_step:
             matching_tolerance_hard=1e-1,
             list_for_matching_HMS=None,
             list_for_matching_postMS=None,
-            list_for_matching_HeStar=None
+            list_for_matching_HeStar=None,
+            **kwargs
     ):
         """Initialize the step. See class documentation for details."""
         self.dt = dt
@@ -272,17 +274,18 @@ class detached_step:
         self.KEYS = DEFAULT_TRANSLATED_KEYS
 
         # creating a track matching object
-        self.track_matcher = TrackMatcher(grid_name_Hrich = grid_name_Hrich,
-                                          grid_name_strippedHe = grid_name_strippedHe,
-                                          path=path, metallicity = metallicity,
-                                          matching_method = matching_method,
-                                          matching_tolerance=matching_tolerance,
-                                          matching_tolerance_hard=matching_tolerance_hard,
-                                          list_for_matching_HMS = list_for_matching_HMS,
-                                          list_for_matching_HeStar = list_for_matching_HeStar,
-                                          list_for_matching_postMS = list_for_matching_postMS,
-                                          record_matching = record_matching,
-                                          verbose = self.verbose)
+        #self.track_matcher = TrackMatcher(grid_name_Hrich = grid_name_Hrich,
+        #                                  grid_name_strippedHe = grid_name_strippedHe,
+        #                                  path=path, metallicity = metallicity,
+        #                                  matching_method = matching_method,
+        #                                  matching_tolerance=matching_tolerance,
+        #                                  matching_tolerance_hard=matching_tolerance_hard,
+        #                                  list_for_matching_HMS = list_for_matching_HMS,
+        #                                  list_for_matching_HeStar = list_for_matching_HeStar,
+        #                                  list_for_matching_postMS = list_for_matching_postMS,
+        #                                  record_matching = record_matching,
+        #                                  verbose = self.verbose)
+        self.track_matcher = kwargs.get('track_matcher', None)
 
         # create evolution handler object
         self.init_evo_kwargs()
@@ -308,6 +311,7 @@ class detached_step:
         """Return the name of evolution step."""
         return "Detached Step."
 
+    #@profile
     def __call__(self, binary):
         """
             Evolve the binary through detached evolution until RLO or
