@@ -273,7 +273,52 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
                 else:
                     fin_vals_run += [np.nan]
             fin_vals += [tuple(fin_vals_run)]
-        for i in range(7, n_runs+1):
+        if n_runs >= 7:
+            # run7: stable MT with non-None He_depletion values (to test 231->234)
+            fin_vals_run = []
+            for (k, t) in fin_dtypes:
+                if k in BH_types:
+                    fin_vals_run += [binary_history[k][-1]]
+                elif k[3:] in SH_types:
+                    fin_vals_run += [star_history[k[3:]][-1]]
+                elif k == 'S1_avg_c_in_c_core_at_He_depletion':
+                    fin_vals_run += [0.35]  # non-None value to test 231->234
+                elif k == 'S2_avg_c_in_c_core_at_He_depletion':
+                    fin_vals_run += [0.25]  # non-None value to test 231->234
+                elif k == 'S1_co_core_mass_at_He_depletion':
+                    fin_vals_run += [0.9]  # non-None value to test 231->234
+                elif k == 'S2_co_core_mass_at_He_depletion':
+                    fin_vals_run += [0.8]  # non-None value to test 231->234
+                elif k == 'termination_flag_1':
+                    fin_vals_run += ["Primary has depleted central carbon"]
+                elif k == 'termination_flag_2':
+                    fin_vals_run += ["Case_C1"]  # needed to enter He depletion block
+                elif k == 'interpolation_class':
+                    fin_vals_run += ["stable_MT"]
+                else:
+                    fin_vals_run += [np.nan]
+            fin_vals += [tuple(fin_vals_run)]
+        if n_runs >= 8:
+            # run8: stable MT with contact case AB (to test line 476 fallback)
+            fin_vals_run = []
+            for (k, t) in fin_dtypes:
+                if k in BH_types:
+                    fin_vals_run += [binary_history[k][-1]]
+                elif k[3:] in SH_types:
+                    fin_vals_run += [star_history[k[3:]][-1]]
+                elif k in ['S1_avg_c_in_c_core_at_He_depletion',\
+                           'S1_co_core_mass_at_He_depletion']:
+                    fin_vals_run += [None]
+                elif k == 'termination_flag_1':
+                    fin_vals_run += ["Primary has depleted central carbon"]
+                elif k == 'termination_flag_2':
+                    fin_vals_run += ["case_Ac1/Bc1"]  # contact case AB not in dict
+                elif k == 'interpolation_class':
+                    fin_vals_run += ["stable_MT"]
+                else:
+                    fin_vals_run += [np.nan]
+            fin_vals += [tuple(fin_vals_run)]
+        for i in range(9, n_runs+1):
             # ith run: no MT, WD
             fin_vals_run = []
             for (k, t) in fin_dtypes:

@@ -67,6 +67,13 @@ MT_CASE_BC = 6
 MT_CASE_NONBURNING = 8
 MT_CASE_UNDETERMINED = 9
 
+# Offset for contact cases:
+# Star 1 donor during contact: base_case + MT_CASE_CONTACT_OFFSET
+# Star 2 donor during contact: base_case + MT_CASE_STAR2_OFFSET
+#                                         + MT_CASE_CONTACT_OFFSET
+MT_CASE_STAR2_OFFSET = 10
+MT_CASE_CONTACT_OFFSET = 20
+
 # All cases meaning RLO is happening
 ALL_RLO_CASES = set([MT_CASE_A, MT_CASE_B, MT_CASE_C,
                      MT_CASE_BA, MT_CASE_BB, MT_CASE_BC,
@@ -1112,14 +1119,16 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
         'oCE1', 'oCE2', 'oDoubleCE1', 'oDoubleCE2', 'CC1', 'CC2'.
 
     mass transfer case : str
-        'caseA', 'caseB', etc.
+        'case_Ac1', 'case_Bc2', etc. During contact, the MT case is
+        preserved with a 'c' modifier (e.g., 'case_Ac1' means case A
+        contact with star 1 as the dominant donor).
 
     Examples
     --------
     If 'detached' then returns ['detached', None, None].
 
-    If 'contact' then returns ['contact', None] or ['oCE1', 'oDoubleCE1'] or
-    ['oDoubleCE2',  None].
+    If 'contact' then returns ['contact', None, 'case_Ac1'] or
+    ['contact', 'oCE1', 'case_Ac1'] or ['contact', 'oDoubleCE1', 'case_Ac1'].
 
     If RLO then returns either ['RLO1',  None, 'caseXX'] or
     ['RLO2',  None, 'caseXX'] or maybe ['RLO2',  'oRLO2', 'caseXX'].
@@ -1178,10 +1187,18 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     no_rlof = (mt_flag_1 == MT_CASE_NO_RLO) and (mt_flag_2 == MT_CASE_NO_RLO)
 
     if rlof1 and rlof2:                             # contact condition
-        result = ['contact', None, 'None']
+        # Compute contact MT case from the dominating donor
+        if dominating_star1:
+            contact_mt_int = mt_flag_1 + MT_CASE_CONTACT_OFFSET
+            contact_mt_str = cumulative_mass_transfer_string([contact_mt_int])
+        else:
+            contact_mt_int = (mt_flag_2 + MT_CASE_STAR2_OFFSET
+                              + MT_CASE_CONTACT_OFFSET)
+            contact_mt_str = cumulative_mass_transfer_string([contact_mt_int])
+        result = ['contact', None, contact_mt_str]
         if interpolation_class == 'unstable_MT':
             if rl_overflow1>=rl_overflow2:           # star 1 initiated CE
-                result = ['contact', 'oCE1', 'None']
+                result = ['contact', 'oCE1', contact_mt_str]
                 # Check for double CE
                 comp_star = binary.star_2
                 if comp_star.state not in ["H-rich_Core_H_burning",
@@ -1189,7 +1206,7 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
                                            "NS", "BH"]:
                     result[1] = "oDoubleCE1"
             else:                                   # star 2 initiated CE
-                result = ['contact', 'oCE2', 'None']
+                result = ['contact', 'oCE2', contact_mt_str]
                 # Check for double CE
                 comp_star = binary.star_1
                 if comp_star.state not in ["H-rich_Core_H_burning",
@@ -1645,7 +1662,11 @@ def cumulative_mass_transfer_string(cumulative_integers):
             result += "?"
         elif integer == MT_CASE_NO_RLO:
             result += "no_RLO"
-        elif ((integer in MT_CASE_TO_STR) or (integer-10 in MT_CASE_TO_STR)):
+        elif ((integer in MT_CASE_TO_STR)
+              or ((integer - MT_CASE_STAR2_OFFSET) in MT_CASE_TO_STR)
+              or ((integer - MT_CASE_CONTACT_OFFSET) in MT_CASE_TO_STR)
+              or ((integer - MT_CASE_STAR2_OFFSET
+                   - MT_CASE_CONTACT_OFFSET) in MT_CASE_TO_STR)):
             if not added_case_word:
                 result += "case_"
                 added_case_word = True
@@ -1653,8 +1674,23 @@ def cumulative_mass_transfer_string(cumulative_integers):
                 result += "/"
             if integer in MT_CASE_TO_STR:
                 result += MT_CASE_TO_STR[integer] + '1' # from star 1
-            else:
-                result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+            elif (integer - MT_CASE_STAR2_OFFSET) in MT_CASE_TO_STR:
+                result += MT_CASE_TO_STR[integer-MT_CASE_STAR2_OFFSET] \
+                          + '2' # from star 2
+            elif (integer - MT_CASE_CONTACT_OFFSET) in MT_CASE_TO_STR:
+                result += MT_CASE_TO_STR[
+                    integer-MT_CASE_CONTACT_OFFSET] \
+                          + 'c1' # contact, star 1 donating
+            elif (integer - MT_CASE_STAR2_OFFSET
+                  - MT_CASE_CONTACT_OFFSET) in MT_CASE_TO_STR:
+                result += MT_CASE_TO_STR[
+                    integer-MT_CASE_STAR2_OFFSET
+                    -MT_CASE_CONTACT_OFFSET] \
+                          + 'c2' # contact, star 2 donating
+            else:  # pragma: no cover
+                # This branch is logically unreachable since the outer elif
+                # condition guarantees one of the inner branches will match
+                raise ValueError(f"Unexpected MT case logic error: {integer}")
         else:
             Pwarn("Unknown MT case: {}".format(integer),\
                   "InappropriateValueWarning")
@@ -1678,28 +1714,53 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
 
     """
     if shift_cases:
-        case_1_min = MT_CASE_NO_RLO
-        case_1_max = MT_CASE_UNDETERMINED
-        case_2_min = case_1_min+10
-        case_2_max = case_1_max+10
+        # Track earliest possible base MT case per star (for shifting).
+        # Contact and non-contact cases from the same star share the same
+        # base minimum: once case B happens, case A can't follow.
+        case_1_base_min = MT_CASE_NO_RLO
+        case_2_base_min = MT_CASE_NO_RLO
         corrected_MT_cases = []
         for MT in MT_cases:
-            if (MT<=case_1_max):
-                # star 1 is donor
-                if (MT<case_1_min): # replace MT case
-                    corrected_MT_cases.append(case_1_min)
+            # Determine donor star and contact offset
+            if MT >= MT_CASE_CONTACT_OFFSET + MT_CASE_STAR2_OFFSET:
+                # star 2, contact
+                offset = MT_CASE_CONTACT_OFFSET + MT_CASE_STAR2_OFFSET
+                base = MT - offset
+                if base < case_2_base_min:
+                    corrected_MT_cases.append(case_2_base_min + offset)
                 else:
                     corrected_MT_cases.append(MT)
-                if (MT>case_1_min): # update earliest possible MT case
-                    case_1_min = MT
-            elif (MT<=case_2_max):
-                # star 2 is donor
-                if (MT<case_2_min): # replace MT case
-                    corrected_MT_cases.append(case_2_min)
+                if base > case_2_base_min:
+                    case_2_base_min = base
+            elif MT >= MT_CASE_CONTACT_OFFSET:
+                # star 1, contact
+                offset = MT_CASE_CONTACT_OFFSET
+                base = MT - offset
+                if base < case_1_base_min:
+                    corrected_MT_cases.append(case_1_base_min + offset)
                 else:
                     corrected_MT_cases.append(MT)
-                if (MT>case_2_min): # update earliest possible MT case
-                    case_2_min = MT
+                if base > case_1_base_min:
+                    case_1_base_min = base
+            elif MT >= MT_CASE_STAR2_OFFSET:
+                # star 2, no contact
+                offset = MT_CASE_STAR2_OFFSET
+                base = MT - offset
+                if base < case_2_base_min:
+                    corrected_MT_cases.append(case_2_base_min + offset)
+                else:
+                    corrected_MT_cases.append(MT)
+                if base > case_2_base_min:
+                    case_2_base_min = base
+            elif MT >= 0:
+                # star 1, no contact
+                base = MT
+                if base < case_1_base_min:
+                    corrected_MT_cases.append(case_1_base_min)
+                else:
+                    corrected_MT_cases.append(MT)
+                if base > case_1_base_min:
+                    case_1_base_min = base
             else:
                 # unknown donor
                 Pwarn("MT case with unknown donor: {}".format(MT),\

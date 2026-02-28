@@ -1457,7 +1457,7 @@ class Population(PopulationIO):
         def get_mt_history(row):
             if (
                 pd.notna(row["mt_history_HMS_HMS"])
-                and row["mt_history_HMS_HMS"] == "Stable contact phase"
+                and "contact" in row["mt_history_HMS_HMS"].lower()
             ):
                 return row["channel"].replace("oRLO1", "oRLO1-contact")
             # reverse is already included in the interpolation class now!

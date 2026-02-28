@@ -9,6 +9,8 @@ __authors__ = [
 ]
 
 
+import re
+
 import numpy as np
 
 # TODO: rename the varaible, these are termination flags that indicates
@@ -73,6 +75,7 @@ TF2_POOL_UNKNOWN = [
     'None'
     ]
 
+# Legacy pool kept for backward compatibility with old grid data
 TF2_POOL_CONT = [
     'contact_during_MS'
     ]
@@ -138,10 +141,24 @@ TF2_POOL_BB = [
 #    'case_B2/C2'
 #    ]
 
+
+def _strip_contact_markers(tf2):
+    """Strip contact 'c' markers from a TF2 string.
+
+    E.g., 'case_Ac1' -> 'case_A1', 'case_Ac1/Bc2' -> 'case_A1/B2'
+    """
+    return re.sub(r'c([12])', r'\1', tf2)
+
+
+def _has_contact(tf2):
+    """Check if any MT case in the TF2 string has a contact marker."""
+    return bool(re.search(r'c[12]', tf2))
+
+
 def combine_TF12(IC, TF2, verbose=False):
     """Get the combination of interpolation classion and termination flag 2."""
     N = len(IC)
-    TF12 = np.array(['unknown']*N, dtype='U25')
+    TF12 = np.array(['unknown']*N, dtype='U30')
 
     # mask unknown cases during history TF2
     TF2 = [(tf[1:] if tf.startswith("?case") else tf) for tf in TF2]
@@ -156,72 +173,88 @@ def combine_TF12(IC, TF2, verbose=False):
         elif IC[i] == 'stable_reverse_MT':
             TF12[i] = 'Reverse stable MT'
         elif IC[i] == 'stable_MT':
-            if '1' in TF2[i] and '2' in TF2[i]:
+            # Check for contact markers in the TF2 string
+            is_contact = _has_contact(TF2[i])
+            contact_prefix = 'contact ' if is_contact else ''
+            # Strip contact markers for base classification
+            tf2_base = _strip_contact_markers(TF2[i])
+            if '1' in tf2_base and '2' in tf2_base:
                 TF12[i] = 'Reverse stable MT'
-            elif TF2[i] in TF2_POOL_CONT:
+            elif tf2_base in TF2_POOL_CONT:
+                # Legacy: old grid data with 'contact_during_MS'
                 TF12[i] = 'Stable contact'
-            elif TF2[i] in TF2_POOL_A:
-                TF12[i] = 'Stable case A'
-            elif TF2[i] in TF2_POOL_B:
-                TF12[i] = 'Stable case B'
-            elif TF2[i] in TF2_POOL_C:
-                TF12[i] = 'Stable case C'
-            elif TF2[i] in TF2_POOL_BA:
-                TF12[i] = 'Stable case BA'
-            elif TF2[i] in TF2_POOL_BB:
-                TF12[i] = 'Stable case BB'
-#            elif TF2[i] in TF2_POOL_AB:
-#                TF12[i] = 'Stable case AB'
-#            elif TF2[i] in TF2_POOL_AC:
-#                TF12[i] = 'Stable case AC'
-#            elif TF2[i] in TF2_POOL_ABB:
-#                TF12[i] = 'Stable case ABB'
-#            elif TF2[i] in TF2_POOL_BC:
-#                TF12[i] = 'Stable case BC'
-            elif 'case_nonburning' in TF2[i]:
-                TF12[i] = 'Stable case n'
-            elif '/' in TF2[i]:
+            elif tf2_base in TF2_POOL_A:
+                TF12[i] = 'Stable {}case A'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_B:
+                TF12[i] = 'Stable {}case B'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_C:
+                TF12[i] = 'Stable {}case C'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_BA:
+                TF12[i] = 'Stable {}case BA'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_BB:
+                TF12[i] = 'Stable {}case BB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_AB:
+#                TF12[i] = 'Stable {}case AB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_AC:
+#                TF12[i] = 'Stable {}case AC'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_ABB:
+#                TF12[i] = 'Stable {}case ABB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_BC:
+#                TF12[i] = 'Stable {}case BC'.format(contact_prefix)
+            elif 'case_nonburning' in tf2_base:
+                TF12[i] = 'Stable {}case n'.format(contact_prefix)
+            elif '/' in tf2_base:
                 # multiple cases, split them up
-                MTcases = TF2[i].split('/')
+                MTcases = tf2_base.split('/')
                 # record first case
-                TF12[i] = 'Stable '+MTcases[0].replace('_',' ')[:-1]
+                TF12[i] = 'Stable {}'\
+                           .format(contact_prefix)+MTcases[0]\
+                           .replace('_',' ')[:-1]
                 # record last case
                 if 'nonburning' in MTcases[-1]:
                     TF12[i] += 'n'
                 else:
                     TF12[i] += MTcases[-1][:-1]
         elif IC[i] == 'unstable_MT':
-            if '1' in TF2[i] and '2' in TF2[i]:
+            # Check for contact markers in the TF2 string
+            is_contact = _has_contact(TF2[i])
+            contact_prefix = 'contact ' if is_contact else ''
+            # Strip contact markers for base classification
+            tf2_base = _strip_contact_markers(TF2[i])
+            if '1' in tf2_base and '2' in tf2_base:
                 TF12[i] = 'Reverse unstable MT'
-            elif TF2[i] in TF2_POOL_CONT:
+            elif tf2_base in TF2_POOL_CONT:
+                # Legacy: old grid data with 'contact_during_MS'
                 TF12[i] = 'Unstable contact'
-            elif TF2[i] in TF2_POOL_A:
-                TF12[i] = 'Unstable case A'
-            elif TF2[i] in TF2_POOL_B:
-                TF12[i] = 'Unstable case B'
-            elif TF2[i] in TF2_POOL_C:
-                TF12[i] = 'Unstable case C'
-            elif TF2[i] in TF2_POOL_BA:
-                TF12[i] = 'Unstable case BA'
-            elif TF2[i] in TF2_POOL_BB:
-                TF12[i] = 'Unstable case BB'
-#            elif TF2[i] in TF2_POOL_AB:
-#                TF12[i] = 'Unstable case AB'
-#            elif TF2[i] in TF2_POOL_AC:
-#                TF12[i] = 'Unstable case AC'
-#            elif TF2[i] in TF2_POOL_ABB:
-#                TF12[i] = 'Unstable case ABB'
-#            elif TF2[i] in TF2_POOL_BC:
-#                TF12[i] = 'Unstable case BC'
-            elif TF2[i] in TF2_POOL_UNSTABLE:
+            elif tf2_base in TF2_POOL_A:
+                TF12[i] = 'Unstable {}case A'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_B:
+                TF12[i] = 'Unstable {}case B'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_C:
+                TF12[i] = 'Unstable {}case C'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_BA:
+                TF12[i] = 'Unstable {}case BA'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_BB:
+                TF12[i] = 'Unstable {}case BB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_AB:
+#                TF12[i] = 'Unstable {}case AB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_AC:
+#                TF12[i] = 'Unstable {}case AC'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_ABB:
+#                TF12[i] = 'Unstable {}case ABB'.format(contact_prefix)
+#            elif tf2_base in TF2_POOL_BC:
+#                TF12[i] = 'Unstable {}case BC'.format(contact_prefix)
+            elif tf2_base in TF2_POOL_UNSTABLE:
                 TF12[i] = "Unstable L2 RLOF"
-            elif 'case_nonburning' in TF2[i]:
-                TF12[i] = 'Unstable case n'
-            elif '/' in TF2[i]:
+            elif 'case_nonburning' in tf2_base:
+                TF12[i] = 'Unstable {}case n'.format(contact_prefix)
+            elif '/' in tf2_base:
                 # multiple cases, split them up
-                MTcases = TF2[i].split('/')
+                MTcases = tf2_base.split('/')
                 # record first case
-                TF12[i] = 'Unstable '+MTcases[0].replace('_',' ')[:-1]
+                TF12[i] = 'Unstable {}'\
+                           .format(contact_prefix)+MTcases[0]\
+                           .replace('_',' ')[:-1]
                 # record last case
                 if 'nonburning' in MTcases[-1]:
                     TF12[i] += 'n'

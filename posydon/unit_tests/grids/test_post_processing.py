@@ -173,7 +173,9 @@ class TestFunctions:
     @fixture
     def grid_path(self, tmp_path, binary_history, star_history, profile):
         # a path to a psygrid file for testing
-        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile)
+        # Using n_runs=8 to include run7 (He depletion) and run8 (contact case)
+        return get_PSyGrid(tmp_path, 1, binary_history, star_history, profile,
+                           n_runs=8)
 
     @fixture
     def link_SN_data(self):
@@ -403,7 +405,7 @@ class TestFunctions:
         with warns(POSYDONWarning): # warnings from SN
             MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9, keys)
         # examples: run 2 only
         MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
                                                             index=2)
@@ -433,7 +435,7 @@ class TestFunctions:
                     MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                                 test_PSyGrid, star_2_CO=False)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9, keys)
         # examples: less SN MODELS
         TEST_MODELS = {}
         for m,v in totest.SN_MODELS.items():
@@ -446,21 +448,21 @@ class TestFunctions:
         for k in keys:
             if 'SN_MODEL_v2_01' in k:
                 assert k not in EXTRA_COLUMNS
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7,\
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9,\
                             [k for k in keys if 'SN_MODEL_v2_01' not in k])
         # examples: single
         with warns(POSYDONWarning): # warnings from SN
             MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid,\
                                         single_star=True)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 9, keys)
         # examples: failing check_state_of_star
         with monkeypatch.context() as mp:
             mp.setattr(totest, "check_state_of_star", mock_check_state_of_star)
             with warns(POSYDONWarning): # warnings from SN
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9, keys)
         # examples: failing collapse_star
         with monkeypatch.context() as mp:
             mp.setattr(totest.StepSN, "collapse_star", mock_collapse_star)
@@ -472,7 +474,7 @@ class TestFunctions:
                         MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                                     test_PSyGrid)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9, keys)
         # examples: single and failing collapse_star
         with monkeypatch.context() as mp:
             mp.setattr(totest.StepSN, "collapse_star", mock_collapse_star)
@@ -485,7 +487,7 @@ class TestFunctions:
                                                     test_PSyGrid,\
                                                     single_star=True)
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 9, keys)
         # examples: verbose
         with warns(POSYDONWarning): # warnings from SN
             with warns(InappropriateValueWarning, match="Failed to print "\
@@ -494,7 +496,7 @@ class TestFunctions:
                                             test_PSyGrid, verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS(EXTRA_COLUMNS, 9, keys)
         assert "Error during" in output
         assert "core collapse prescrition!" in output
         assert "The error was raised by" in output
@@ -517,7 +519,7 @@ class TestFunctions:
                                             verbose=True)
         output = capsys.readouterr().out
         assert MESA_dirs == test_PSyGrid.MESA_dirs
-        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
+        check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 9, keys)
         assert "Error during" in output
         assert "core collapse prescrition!" in output
         assert "in CEE_parameters_from_core_abundance_thresholds" in output

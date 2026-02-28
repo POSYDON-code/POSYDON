@@ -231,6 +231,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                     if ((star.avg_c_in_c_core_at_He_depletion is None) or
                         (star.co_core_mass_at_He_depletion is None)):
                         calculate_Patton20_values_at_He_depl(star)
+                    else:
+                        pass
                 EXTRA_COLUMNS[f'S{j+1}_avg_c_in_c_core_at_He_depletion'].append(
                     star.avg_c_in_c_core_at_He_depletion)
                 EXTRA_COLUMNS[f'S{j+1}_co_core_mass_at_He_depletion'].append(
@@ -467,7 +469,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
         # add MT history column by combining TF1 and TF2
         if not single_star:
             combined_TF12 = combine_TF12([IC], [TF2])
-            mt_history = DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][combined_TF12[0]][3]
+            combined_key = combined_TF12[0]
+            if combined_key in DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12']:
+                mt_history = DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][combined_key][3]
+            else:
+                # Fallback for contact or other combined labels not yet
+                # registered in plot_defaults
+                mt_history = combined_key
             EXTRA_COLUMNS['mt_history'].append(mt_history)
 
         # check dataset completeness

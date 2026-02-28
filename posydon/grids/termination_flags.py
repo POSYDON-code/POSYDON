@@ -27,6 +27,7 @@ import os
 import numpy as np
 
 from posydon.utils.common_functions import (
+    MT_CASE_CONTACT_OFFSET,
     cumulative_mass_transfer_flag,
     infer_mass_transfer_case,
     infer_star_state,
@@ -122,9 +123,11 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     Returns
     -------
     flag_system_evolution_history : string
-        Possible flags are: "None", "initial_RLOF", "contact_during_MS",
+        Possible flags are: "None", "initial_RLOF",
         "no_RLOF", a cumulative MT flag, e.g, "case_A1/B1/A2" where the
-        index indicates the donor star.
+        index indicates the donor star. Contact phases are indicated with
+        a 'c' modifier, e.g., "case_Ac1" means case A with contact, star 1
+        donating.
 
     """
     if mesa_flag in TF1_POOL_ERROR:
@@ -143,8 +146,8 @@ def get_mass_transfer_flag(binary_history, history1, history2,
     where_rl_rel_2 = rel2 > RL_RELATIVE_OVERFLOW_THRESHOLD
     where_rl_rel_1_dominates = rel1 >= rel2
     where_rl_rel_2_dominates = rel1 < rel2
-    if np.any(where_rl_rel_1 & where_rl_rel_2):
-        return "contact_during_MS"
+    # Track contact timesteps (both stars overflow simultaneously)
+    where_contact = where_rl_rel_1 & where_rl_rel_2
     where_transfer = rate > LG_MTRANSFER_RATE_THRESHOLD
     where_rlof_1 = (where_rl_rel_1 | where_transfer) & where_rl_rel_1_dominates
     where_rlof_2 = (where_rl_rel_2 | where_transfer) & where_rl_rel_2_dominates
@@ -169,6 +172,9 @@ def get_mass_transfer_flag(binary_history, history1, history2,
             mt_case = infer_mass_transfer_case(
                 rl_relative_overflow=rel_overflow[index],
                 lg_mtransfer_rate=rate[index], donor_state=star_state)
+            # Add contact offset if both stars overflow at this timestep
+            if where_contact[index]:
+                mt_case += MT_CASE_CONTACT_OFFSET
             mass_transfer_cases.append(mt_case)
         MT[where_rlof] = mass_transfer_cases
 
@@ -187,8 +193,11 @@ def get_mass_transfer_flag(binary_history, history1, history2,
             mt_case = infer_mass_transfer_case(
                 rl_relative_overflow=rel_overflow[index],
                 lg_mtransfer_rate=rate[index], donor_state=star_state)
-            mass_transfer_cases.append(mt_case)
-        MT[where_rlof] = [t+10 for t in mass_transfer_cases] # shift by 10
+            # shift by 10 for star 2, add contact offset if applicable
+            contact_offset = MT_CASE_CONTACT_OFFSET if where_contact[index] \
+                             else 0
+            mass_transfer_cases.append(mt_case + 10 + contact_offset)
+        MT[where_rlof] = mass_transfer_cases
 
     flag = cumulative_mass_transfer_flag([t for t in MT if t is not None], shift_cases=True)
     return flag

@@ -77,8 +77,11 @@ class TestElements:
                     'DEFAULT_CE_OPTION_FOR_LAMBDA', 'He_MS_lifetime',\
                     'LG_MTRANSFER_RATE_THRESHOLD', 'LOG10_BURNING_THRESHOLD',\
                     'MT_CASE_A', 'MT_CASE_B', 'MT_CASE_BA', 'MT_CASE_BB',\
-                    'MT_CASE_BC', 'MT_CASE_C', 'MT_CASE_NONBURNING',\
+                    'MT_CASE_BC', 'MT_CASE_C',\
+                    'MT_CASE_CONTACT_OFFSET',\
+                    'MT_CASE_NONBURNING',\
                     'MT_CASE_NO_RLO', 'MT_CASE_TO_STR',\
+                    'MT_CASE_STAR2_OFFSET',\
                     'MT_CASE_UNDETERMINED', 'MT_STR_TO_CASE',\
                     'Pwarn', 'REL_LOG10_BURNING_THRESHOLD',\
                     'RICHNESS_STATES', 'RL_RELATIVE_OVERFLOW_THRESHOLD',\
@@ -175,6 +178,12 @@ class TestElements:
 
     def test_instance_MT_CASE_NONBURNING(self):
         assert isinstance(totest.MT_CASE_NONBURNING, int)
+
+    def test_instance_MT_CASE_CONTACT_OFFSET(self):
+        assert isinstance(totest.MT_CASE_CONTACT_OFFSET, int)
+
+    def test_instance_MT_CASE_STAR2_OFFSET(self):
+        assert isinstance(totest.MT_CASE_STAR2_OFFSET, int)
 
     def test_instance_MT_CASE_UNDETERMINED(self):
         assert isinstance(totest.MT_CASE_UNDETERMINED, int)
@@ -401,6 +410,12 @@ class TestValues:
 
     def test_value_MT_CASE_NONBURNING(self):
         assert totest.MT_CASE_NONBURNING == 8
+
+    def test_value_MT_CASE_CONTACT_OFFSET(self):
+        assert totest.MT_CASE_CONTACT_OFFSET == 20
+
+    def test_value_MT_CASE_STAR2_OFFSET(self):
+        assert totest.MT_CASE_STAR2_OFFSET == 10
 
     def test_value_MT_CASE_UNDETERMINED(self):
         assert totest.MT_CASE_UNDETERMINED == 9
@@ -1145,24 +1160,24 @@ class TestFunctions:
         tests = [(None, None), ('unstable_MT', 'oDoubleCE1')]
         for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
-                   interpolation_class=IC) == ['contact', e, 'None']
+                   interpolation_class=IC) == ['contact', e, 'case_Ac1']
         ## classical CE initiated by star 1
         binary.star_2.state = "BH"
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='unstable_MT') == ['contact', 'oCE1',\
-                                                      'None']
+                                                      'case_Ac1']
         binary.star_2.state = "test_state"
         ## both stars overfill RL leading to double CE initiated by star 2
         binary.rl_relative_overflow_2 = 2.0
         tests = [(None, None), ('unstable_MT', 'oDoubleCE2')]
         for (IC, e) in tests:
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
-                   interpolation_class=IC) == ['contact', e, 'None']
+                   interpolation_class=IC) == ['contact', e, 'case_Ac2']
         ## classical CE initiated by star 2
         binary.star_1.state = "BH"
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
                interpolation_class='unstable_MT') == ['contact', 'oCE2',\
-                                                      'None']
+                                                      'case_Ac2']
         binary.star_1.state = "test_state"
         ## donor is star 2
         binary.rl_relative_overflow_1 = None
@@ -1189,15 +1204,16 @@ class TestFunctions:
                ['detached', None, 'None']
         # both stars overfill RL leading to double CE while WD condition is
         # fulfilled as well
-        tests = [(2.0, 1.0, 'oDoubleCE1'), (1.0, 2.0, 'oDoubleCE2')]
-        for (ro1, ro2, e) in tests:
+        tests = [(2.0, 1.0, 'oDoubleCE1', 'case_Ac1'),
+                 (1.0, 2.0, 'oDoubleCE2', 'case_Ac2')]
+        for (ro1, ro2, e, mt) in tests:
             binary.rl_relative_overflow_1 = ro1
             binary.rl_relative_overflow_2 = ro2
             assert totest.get_binary_state_and_event_and_mt_case(binary,\
-                   interpolation_class='unstable_MT') == ['contact', e, 'None']
+                   interpolation_class='unstable_MT') == ['contact', e, mt]
         # stable contact leading to WD formation
         assert totest.get_binary_state_and_event_and_mt_case(binary,\
-               interpolation_class=None) == ['contact', 'CC1', 'None']
+               interpolation_class=None) == ['contact', 'CC1', 'case_Ac2']
 
     def test_get_binary_state_and_event_and_mt_case_array(self, binary,\
                                                           monkeypatch):
@@ -1546,6 +1562,11 @@ class TestFunctions:
         with warns(InappropriateValueWarning, match="Unknown MT case:"):
             # unknown case
             totest.cumulative_mass_transfer_string([-1])
+        # examples: unknown MT case followed by a valid case (loop continues)
+        with warns(InappropriateValueWarning, match="Unknown MT case:"):
+            result = totest.cumulative_mass_transfer_string(\
+                         [-1, totest.MT_CASE_A])
+            assert result == "case_A1"
         # examples: no cases
         assert totest.cumulative_mass_transfer_string([]) == "?"
         # examples: undetermined
@@ -1559,6 +1580,27 @@ class TestFunctions:
             assert totest.cumulative_mass_transfer_string([c, 10+c]) ==\
                    "case_" + totest.MT_CASE_TO_STR[c] + "1/"\
                    + totest.MT_CASE_TO_STR[c] + "2"
+        # examples: contact cases (c1 and c2 suffixes)
+        for c in totest.ALL_RLO_CASES:
+            # star 1 contact (case + 20)
+            assert totest.cumulative_mass_transfer_string(\
+                [c + totest.MT_CASE_CONTACT_OFFSET]) ==\
+                   "case_" + totest.MT_CASE_TO_STR[c] + "c1"
+            # star 2 contact (case + 30)
+            assert totest.cumulative_mass_transfer_string(\
+                [c + totest.MT_CASE_STAR2_OFFSET
+                   + totest.MT_CASE_CONTACT_OFFSET]) ==\
+                   "case_" + totest.MT_CASE_TO_STR[c] + "c2"
+        # examples: multiple contact c2 cases (test loop continuation after c2)
+        # This tests branch 1684->1660 (continuing the for loop after c2 case)
+        # We need c2 followed by another element for the loop to continue
+        assert totest.cumulative_mass_transfer_string(\
+            [totest.MT_CASE_A + totest.MT_CASE_STAR2_OFFSET
+             + totest.MT_CASE_CONTACT_OFFSET,
+             totest.MT_CASE_B + totest.MT_CASE_STAR2_OFFSET
+             + totest.MT_CASE_CONTACT_OFFSET,
+             totest.MT_CASE_C + totest.MT_CASE_STAR2_OFFSET
+             + totest.MT_CASE_CONTACT_OFFSET]) == "case_Ac2/Bc2/Cc2"
 
     def test_cumulative_mass_transfer_flag(self):
         # missing argument
@@ -1571,7 +1613,7 @@ class TestFunctions:
             totest.cumulative_mass_transfer_flag(None)
         with warns(EvolutionWarning, match="MT case with unknown donor:"):
             with warns(InappropriateValueWarning):
-                totest.cumulative_mass_transfer_flag([30], shift_cases=True)
+                totest.cumulative_mass_transfer_flag([-1], shift_cases=True)
         # examples:
         assert totest.cumulative_mass_transfer_flag([totest.MT_CASE_A,\
                                                      totest.MT_CASE_B,\
@@ -1588,6 +1630,38 @@ class TestFunctions:
                                                      10+totest.MT_CASE_A],\
                                                     shift_cases=True) ==\
                'case_A1/B1/A2/B1/B2'
+        # examples: with contact cases and shift_cases=True
+        # star 1 contact: case + CONTACT_OFFSET (e.g., 1 + 20 = 21 for A)
+        # star 2 contact: case + STAR2_OFFSET + CONTACT_OFFSET (e.g., 1 + 10 + 20 = 31)
+        # Test case B followed by case A in contact should shift to case B
+        # Note: after shifting [B,A] becomes [B,B], then cumulative merges to [B]
+        assert totest.cumulative_mass_transfer_flag([\
+                    totest.MT_CASE_B + totest.MT_CASE_CONTACT_OFFSET,\
+                    totest.MT_CASE_A + totest.MT_CASE_CONTACT_OFFSET],\
+                                                    shift_cases=True) ==\
+               'case_Bc1'
+        # Test star 2 contact cases with shifting
+        assert totest.cumulative_mass_transfer_flag([\
+                    totest.MT_CASE_B + totest.MT_CASE_STAR2_OFFSET\
+                        + totest.MT_CASE_CONTACT_OFFSET,\
+                    totest.MT_CASE_A + totest.MT_CASE_STAR2_OFFSET\
+                        + totest.MT_CASE_CONTACT_OFFSET],\
+                                                    shift_cases=True) ==\
+               'case_Bc2'
+        # Test advancing minimum for star 1 contact (A then B)
+        assert totest.cumulative_mass_transfer_flag([\
+                    totest.MT_CASE_A + totest.MT_CASE_CONTACT_OFFSET,\
+                    totest.MT_CASE_B + totest.MT_CASE_CONTACT_OFFSET],\
+                                                    shift_cases=True) ==\
+               'case_Ac1/Bc1'
+        # Test advancing minimum for star 2 contact (A then B)
+        assert totest.cumulative_mass_transfer_flag([\
+                    totest.MT_CASE_A + totest.MT_CASE_STAR2_OFFSET\
+                        + totest.MT_CASE_CONTACT_OFFSET,\
+                    totest.MT_CASE_B + totest.MT_CASE_STAR2_OFFSET\
+                        + totest.MT_CASE_CONTACT_OFFSET],\
+                                                    shift_cases=True) ==\
+               'case_Ac2/Bc2'
 
     def test_get_i_He_depl(self):
         # missing argument

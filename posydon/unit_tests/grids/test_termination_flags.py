@@ -27,7 +27,8 @@ class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = {'LG_MTRANSFER_RATE_THRESHOLD',\
-                    'MIN_COUNT_INITIAL_RLO_BOUNDARY', 'Pwarn',\
+                    'MIN_COUNT_INITIAL_RLO_BOUNDARY',\
+                    'MT_CASE_CONTACT_OFFSET', 'Pwarn',\
                     'RL_RELATIVE_OVERFLOW_THRESHOLD',\
                     'STAR_HISTORY_VARIABLES', 'TF1_POOL_ERROR',\
                     'TF1_POOL_INITIAL_RLO', 'TF1_POOL_STABLE',\
@@ -258,11 +259,14 @@ class TestFunctions:
         assert totest.get_mass_transfer_flag(binary_history, star_history,\
                                              star_history, start_at_RLO=True)\
                == "case_A1"
-        # examples: contact
+        # examples: contact (both stars overflow simultaneously)
         binary_history["rl_relative_overflow_2"][0] = 1\
          + totest.RL_RELATIVE_OVERFLOW_THRESHOLD
-        assert totest.get_mass_transfer_flag(binary_history, None, None) ==\
-               "contact_during_MS"
+        # With contact, the actual MT case is computed (not early return),
+        # requiring valid star histories. Star 1 dominates (equal overflow).
+        assert totest.get_mass_transfer_flag(binary_history, star_history,\
+                                             star_history, start_at_RLO=True)\
+               == "case_Ac1"
         # examples: case A2
         binary_history["rl_relative_overflow_1"][0] = \
          totest.RL_RELATIVE_OVERFLOW_THRESHOLD

@@ -247,6 +247,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
         'case_A1':
             ['s', 2, 'tab:blue', 'case A1'],
+        'case_Ac1':
+            ['s', 2, 'tab:blue', 'case Ac1'],
         'case_A1/B1':
             ['s', 2, 'tab:green', 'case A1/B1'],
         'case_A1/B1/A1':
@@ -280,6 +282,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
 
         'case_A2':
             ['o', 2, 'tab:blue', 'case A2'],
+        'case_Ac2':
+            ['o', 2, 'tab:blue', 'case Ac2'],
         'case_A2/B2':
             ['o', 2, 'tab:green', 'case A2/B2'],
         'case_A2/B2/A2':
@@ -472,6 +476,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
     'combined_TF12': {
         'Stable contact':
             ['s', 2, list_of_colors[3], 'Stable contact phase'],
+        'Stable contact case A':
+            ['s', 2, list_of_colors[3], 'Stable contact during MS'],
+        'Stable contact case B':
+            ['s', 2, list_of_colors[3], 'Stable contact during postMS'],
+        'Stable contact case C':
+            ['s', 2, list_of_colors[3], 'Stable contact during postMS'],
+        'Stable contact case BA':
+            ['s', 2, list_of_colors[3], 'Stable contact during stripped He star'],
+        'Stable contact case BB':
+            ['s', 2, list_of_colors[3], 'Stable contact during stripped He star'],
+        'Stable contact case n':
+            ['s', 2, list_of_colors[3], 'Stable contact while non burning'],
         'Stable case A':
             ['s', 2, list_of_colors[2], 'Last stable RLOF during MS'],
         'Stable case B':
@@ -519,6 +535,18 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, list_of_colors[1], 'Last stable RLOF while non burning'],
         'Unstable contact':
             ['D', 1, list_of_colors[3], 'Unstable contact phase'],
+        'Unstable contact case A':
+            ['D', 1, list_of_colors[3], 'Unstable contact during MS'],
+        'Unstable contact case B':
+            ['D', 1, list_of_colors[3], 'Unstable contact during postMS'],
+        'Unstable contact case C':
+            ['D', 1, list_of_colors[3], 'Unstable contact during postMS'],
+        'Unstable contact case BA':
+            ['D', 1, list_of_colors[3], 'Unstable contact during stripped He star'],
+        'Unstable contact case BB':
+            ['D', 1, list_of_colors[3], 'Unstable contact during stripped He star'],
+        'Unstable contact case n':
+            ['D', 1, list_of_colors[3], 'Unstable contact while non burning'],
         'Unstable case A':
             ['D', 1, list_of_colors[2], 'Unstable RLOF during MS'],
         'Unstable case B':

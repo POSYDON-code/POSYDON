@@ -275,6 +275,15 @@ for s1 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE1')] = 'step_CE'
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE2')] = 'step_CE'
 
+# Stable contact cases: contact with no CE event
+# These are resolved like CE (the binary is in contact/overflow)
+for s1 in STAR_STATES_NORMALSTAR:
+    for s2 in STAR_STATES_NORMALSTAR:
+        POSYDON_FLOW_CHART[(s1, s2, 'contact', None)] = 'step_CE'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', None)] = 'step_CE'
+        POSYDON_FLOW_CHART[(s1, s2, 'contact', 'CC1')] = 'step_SN'
+        POSYDON_FLOW_CHART[(s2, s1, 'contact', 'CC2')] = 'step_SN'
+
 
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
