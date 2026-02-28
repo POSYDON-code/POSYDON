@@ -38,6 +38,7 @@ import pandas as pd
 import psutil
 from tqdm import tqdm
 
+import posydon
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.binary_evol.singlestar import SingleStar, properties_massless_remnant
@@ -77,7 +78,8 @@ saved_ini_parameters = ['metallicity',
                    'orbital_separation_scheme',
                    'orbital_separation_min',
                    'orbital_separation_max',
-                   'eccentricity_scheme']
+                   'eccentricity_scheme',
+                   'posydon_version']
 
 
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
@@ -587,7 +589,10 @@ class BinaryPopulation:
             # store population metadata
             tmp_df = pd.DataFrame()
             for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
+                if c == 'posydon_version':
+                    tmp_df[c] = [posydon.__version__]
+                else:
+                    tmp_df[c] = [self.kwargs[c]]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(
@@ -938,7 +943,10 @@ class PopulationManager:
             # store population metadata
             tmp_df = pd.DataFrame()
             for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
+                if c == 'posydon_version':
+                    tmp_df[c] = [posydon.__version__]
+                else:
+                    tmp_df[c] = [self.kwargs[c]]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(
