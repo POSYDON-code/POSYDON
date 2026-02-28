@@ -39,8 +39,10 @@ class TestElements:
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
-                    'join_lists', 'kepler3_a', 'np', 'os', 'pd',\
-                    'read_EEP_data_file', 'read_MESA_data_file', 'secyear'}
+                    'inspiral_timescale_from_orbital_period',\
+                    'inspiral_timescale_from_separation',\
+                    'join_lists', 'kepler3_a', 'np', 'orbital_separation_from_period',\
+                    'os', 'pd', 'read_EEP_data_file', 'read_MESA_data_file', 'secyear'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\

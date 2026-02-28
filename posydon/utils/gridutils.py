@@ -6,6 +6,11 @@ import os
 import numpy as np
 import pandas as pd
 
+from posydon.utils.common_functions import (
+    inspiral_timescale_from_orbital_period,
+    inspiral_timescale_from_separation,
+    orbital_separation_from_period,
+)
 from posydon.utils.constants import Msun, Rsun, clight
 from posydon.utils.constants import secyer as secyear
 from posydon.utils.constants import standard_cgrav as cgrav
@@ -260,8 +265,14 @@ def T_merger_P(P, m1, m2):
     float
         Merger time (Gyr)
 
+    .. deprecated::
+        Use
+        :func:`posydon.utils.common_functions.inspiral_timescale_from_orbital_period`
+        instead. Note that function takes ``eccentricity`` as an additional
+        argument and returns the result in Myr rather than Gyr.
+
     """
-    return T_merger_a(kepler3_a(P, m1, m2), m1, m2)
+    return inspiral_timescale_from_orbital_period(m1, m2, P, 0.0) / 1000.0
 
 
 def beta_gw(m1, m2):
@@ -300,9 +311,13 @@ def kepler3_a(P, m1, m2):
     float
         Semi-major axis (Rsun) using Kepler's third law.
 
+    .. deprecated::
+        Use
+        :func:`posydon.utils.common_functions.orbital_separation_from_period`
+        instead.
+
     """
-    return ((P * 24.0 * 3600.0)**2.0
-            * cgrav * (m1 + m2) * Msun / (4.0 * np.pi**2))**(1.0 / 3.0) / Rsun
+    return orbital_separation_from_period(P, m1, m2)
 
 
 def T_merger_a(a, m1, m2):
@@ -322,8 +337,14 @@ def T_merger_a(a, m1, m2):
     float
         Merger time (Gyr) following Peters (1964), eq. (5.10).
 
+    .. deprecated::
+        Use
+        :func:`posydon.utils.common_functions.inspiral_timescale_from_separation`
+        instead. Note that function takes ``eccentricity`` as an additional
+        argument and returns the result in Myr rather than Gyr.
+
     """
-    return (a * Rsun)**4 / (4. * beta_gw(m1, m2) * Msun**3) / (secyear * 1.0e9)
+    return inspiral_timescale_from_separation(m1, m2, a, 0.0) / 1000.0
 
 
 def convert_output_to_table(
