@@ -20,7 +20,8 @@ __authors__ = [
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Dimitris Souropanis <dsouropanis@ia.forth.gr>"
 ]
 
 __credits__ = [
@@ -33,6 +34,7 @@ __credits__ = [
 import copy
 import json
 import os
+import random
 
 import numpy as np
 import pandas as pd
@@ -131,6 +133,9 @@ class StepSN(object):
 
         * 'Couch+20-engine': Uses the results from [6]_
         to describe the collapse of the star.
+
+        * 'Maltsev+25-engine': Uses the results from [8]_
+        to describe the collapse of the star
 
     engine : str
         Engine used for supernova remnanrt outcome propierties for the
@@ -254,6 +259,9 @@ class StepSN(object):
         Heger, A., and Pfahl, E. 2004, ApJ, 612, 1044. The Effects of Binary
         Evolution on the Dynamics of Core Collapse and Neutron Star Kicks
 
+    .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger, F.K. Roepke,
+         E. Laplace, 2025,  A&A, 700, A20. Explodability criteria for the neutrino-driven
+         supernova mechanism
     """
 
     def __init__(self, **kwargs):
@@ -294,6 +302,9 @@ class StepSN(object):
         self.Sukhbold16_engines = "Sukhbold+16-engine"
         self.Patton20_engines = "Patton&Sukhbold20-engine"
         self.Couch20_engines = "Couch+20-engine"
+        self.Maltsev25_engines = "Maltsev+25-engine"
+
+
 
         self.mechanisms = [
             self.Fryer12_rapid,
@@ -302,7 +313,8 @@ class StepSN(object):
             self.direct_collapse_hecore,
             self.Sukhbold16_engines,
             self.Patton20_engines,
-            self.Couch20_engines
+            self.Couch20_engines,
+            self.Maltsev25_engines
         ]
 
         if self.mechanism in self.mechanisms:
@@ -332,7 +344,7 @@ class StepSN(object):
                     path_engine_dataset=self.path_to_Couch_datasets,
                     verbose=self.verbose)
 
-            elif self.mechanism == self.Patton20_engines:
+            elif self.mechanism in (self.Patton20_engines, self.Maltsev25_engines):
                 self.path_to_Patton_datasets = path_to_Patton_datasets
 
                 def format_data_Patton20(file_name):
@@ -387,6 +399,10 @@ class StepSN(object):
                     'Kepler_mu4_table.dat')
                 CO_core_params_M4, M4_target = format_data_Patton20(
                     'Kepler_M4_table.dat')
+                CO_core_params_Xi, Xi_target = format_data_Patton20(
+                    'Kepler_Xi_table.dat')
+                CO_core_params_sc, sc_target = format_data_Patton20(
+                    'Kepler_sc_table.dat')
 
                 n_neighbors = 5
 
@@ -399,6 +415,14 @@ class StepSN(object):
                 self.mu4_interpolator = neighbors.KNeighborsRegressor(
                     n_neighbors, weights='distance')
                 self.mu4_interpolator.fit(CO_core_params_mu4, mu4_target)
+
+                self.Xi_interpolator = neighbors.KNeighborsRegressor(
+                    n_neighbors, weights='distance')
+                self.Xi_interpolator.fit(CO_core_params_Xi, Xi_target)
+
+                self.sc_interpolator = neighbors.KNeighborsRegressor(
+                    n_neighbors, weights='distance')
+                self.sc_interpolator.fit(CO_core_params_sc, sc_target)
                 if self.verbose:
                     print('Done')
         else:
@@ -790,7 +814,8 @@ class StepSN(object):
 
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
-                                    self.Couch20_engines]:
+                                    self.Couch20_engines,
+                                    self.Maltsev25_engines]:
                 # The final remnant mass and and state
                 # is computed by the selected mechanism
 
@@ -1391,6 +1416,21 @@ class StepSN(object):
                 state = 'NS'
             else:
                 m_rembar, f_fb, state = self.Patton20_corecollapse(star,
+                                                self.engine,
+                                                self.conserve_hydrogen_envelope)
+
+        elif self.mechanism == self.Maltsev25_engines:
+            if star.SN_type == "ECSN":
+                if self.ECSN == 'Podsiadlowski+04':
+                    m_proto = 1.38
+                else:
+                    m_proto = m_core
+                f_fb = 0.0
+                m_fb = 0.0
+                m_rembar = m_proto + m_fb
+                state = 'NS'
+            else:
+                m_rembar, f_fb, state = self.Maltsev25_corecollapse(star,
                                                 self.engine,
                                                 self.conserve_hydrogen_envelope)
         else:
@@ -2254,8 +2294,11 @@ class StepSN(object):
         """Get the M4 and mu4 using Patton+20."""
         M4 = self.M4_interpolator.predict([[C_core_abundance, CO_core_mass]])
         mu4 = self.mu4_interpolator.predict([[C_core_abundance, CO_core_mass]])
+        Xi = self.Xi_interpolator.predict([[C_core_abundance, CO_core_mass]])
+        sc = self.sc_interpolator.predict([[C_core_abundance, CO_core_mass]])
 
-        return M4, mu4
+
+        return M4, mu4, Xi, sc
 
     def Patton20_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
         """Compute supernova final remnant mass and fallback fraction.
@@ -2303,7 +2346,7 @@ class StepSN(object):
 
             CO_core_mass, C_core_abundance = self.get_CO_core_params(
                 star, self.approx_at_he_depletion)
-            M4, mu4 = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
+            M4, mu4, Xi, sc = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             M4 = M4[0]
             mu4 = mu4[0]
             star.M4 = M4
@@ -2342,6 +2385,153 @@ class StepSN(object):
                 state = 'NS'
 
         return m_rem, f_fb, state
+
+    def Maltsev25_corecollapse(self, star, engine, conserve_hydrogen_envelope=False):
+        """Compute supernova final remnant mass and fallback fraction.
+
+        It uses the results from [8]_. The prediction for the core-collapse
+        outcome is performed using the C core mass and its C abundance.
+        The criterion by [8]_ is used to determine the final outcome.
+
+        Parameters
+        ----------
+            star : obj
+                Star object of a collapsing star containing the MESA profile.
+
+        Returns
+        -------
+        m_rem : double
+            Remnant mass of the compact object in M_sun.
+        f_fb : double
+            Fallback mass of the compact object in M_sun.
+
+        References
+
+
+        """
+        Muller_k_parameters = {
+            'M16': [0.005, 0.420] # Section 3.1.1. of [8]_
+        }
+
+        if engine not in Muller_k_parameters.keys():
+            raise ValueError("Engine " + engine + " is not avaiable for the "
+                             "Maltsev+25 core-collapse prescription, "
+                             "please choose one of the following engines to "
+                             "compute the collapse: \n" + "\n".join(
+                                list(Muller_k_parameters.keys())))
+        else:
+
+            CO_core_mass, C_core_abundance = self.get_CO_core_params(
+                star, self.approx_at_he_depletion)
+            M4, mu4, Xi, sc = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
+            M4 = M4[0]
+            mu4 = mu4[0]
+            Xi=Xi[0]
+            sc=sc[0]
+            mu4M4=mu4*M4
+            star.M4 = M4
+            star.mu4 = mu4
+            star.Xi = Xi
+            star.sc = sc
+
+
+            k1 = Muller_k_parameters[engine][0]
+            k2 = Muller_k_parameters[engine][1]
+
+            if CO_core_mass <= 2.5:
+                m_rem = 1.25
+                f_fb = 0.0
+                state = 'NS'
+
+            # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
+            # However, since this outcome depends on the mass-transfer (MT) history, we handle it
+            # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
+            # with fallback = 1 at this stage.
+            elif CO_core_mass >= 10.0:
+                # Assuming BH formation by direct collapse
+                if conserve_hydrogen_envelope:
+                    m_rem = star.mass
+                else:
+                    m_rem = star.he_core_mass
+                f_fb = 1.0
+                state = 'BH'
+
+            elif (CO_core_mass < 10.0) and (CO_core_mass > 2.5):
+                ff = self.explod_crit(Xi, sc, mu4M4, mu4)
+                if ff==0:
+                    if conserve_hydrogen_envelope:
+                        m_rem = star.mass
+                    else:
+                        m_rem = star.he_core_mass
+                        f_fb = 1.0
+                        state = 'BH'
+                else:
+                    rem = self.NS_vs_fallbackBH(Xi, CO_core_mass, M4, mu4M4)
+                    if rem==2:  # successful SN with NS
+                        m_rem = M4
+                        f_fb = 0.0
+                        state = 'NS'
+                    else:  # successful SN but with fallback BH
+                        if conserve_hydrogen_envelope:
+                            m_rem = star.mass
+                        else:
+                            m_rem = star.he_core_mass
+                            f_fb = 0.99
+                            state = 'BH'
+
+        return m_rem, f_fb, state
+
+    def NS_vs_fallbackBH(self, comp_val, mco_val, M4_val, mu4M4_val):
+        a, b = 1.75, -0.044  # eq. (8) of [8]_
+        # conditions for guaranteed NS formation (eq. 7)
+        if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
+            rem = 2
+        else:
+        # stochastic determination of the remnant type (NS versus fallback-BH)
+            rand_number = random.uniform(0,1)
+            if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
+                rem = 3 # fallback BH, although successful SN
+            else:
+                rem = 2 # NS formation
+        return rem
+
+    # implemented from Maltsev+25
+    def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val):
+        ff1, ff2 = [], []
+        unclassified = True
+        comp_crit1, comp_crit2 = 0.314, 0.544 # compactness
+        sc_crit1, sc_crit2 = 0.988, 1.169 # central specific entropy
+        mu4M4_crit1, mu4M4_crit2 = 0.247, 0.421 # product of M4 and mu4
+        k1, k2 =  0.421, 0.005
+
+    # check whether criterion for failed SN is fulfilled
+        if comp_val > comp_crit2 or sc_val > sc_crit2:
+            ff2.append(0)
+            ff = 0
+            unclassified = False
+
+    # check whether criterion for successful SN is fulfilled
+        if comp_val < comp_crit1 or sc_val < sc_crit1:
+            ff1.append(1)
+            ff = 1
+            unclassified = False
+
+    # if there is contradiction or if the progenitor is unclassified based on comp & s_c
+        if (len(ff1) > 0 and len(ff2) > 0) or unclassified:
+
+        # final fate classification based on mu4M4
+            if mu4M4_val > mu4M4_crit2:
+                ff = 0
+            elif mu4M4_val < mu4M4_crit1:
+                ff = 1
+        # final fate classification based on reversed Ertl criterion
+            elif k2 + k1*mu4M4_val - mu4_val > 0:
+                ff = 0
+            else:
+                ff = 1
+        return ff
+
+
 
 
 class Sukhbold16_corecollapse(object):
