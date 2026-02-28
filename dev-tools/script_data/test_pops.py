@@ -2,6 +2,9 @@ import os
 import shutil
 import tracemalloc
 
+import warnings
+import traceback
+
 import pandas as pd
 from binaries_suite import write_binary_to_screen
 from tabulate import tabulate
@@ -11,9 +14,12 @@ from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import PopulationRunner
 
 
+line_length = 140
+path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_population_params.ini")
+
 def print_pop_settings(population):
 
-    print("Population settings:")
+    print("\nPopulation settings:")
 
     ignore_kwargs = ["extra_columns", "only_select_columns", "scalar_names",
                      "include_S1", "S1_kwargs", "include_S2", "S2_kwargs",
@@ -28,23 +34,83 @@ def print_pop_settings(population):
         else:
             print(f"\t {key} : {val}")
 
+    print("\n")
+
+def print_warnings(captured_warnings):
+    # Show warnings if any were captured
+    if captured_warnings:
+        print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
+        for i, warning in enumerate(captured_warnings[:3], 1):  # Show max 3 warnings
+            print(f"   {i}. {warning['category']}: {warning['message']}")
+        if len(captured_warnings) > 3:
+            print(f"   ... and {len(captured_warnings) - 3} more warning(s)")
+        elif len(captured_warnings) <= 3:
+            for i in range(4-len(captured_warnings)):
+                print("")
+    else:
+        print(f"No warning(s) raised during evolution\n\n")
+    
+
+def test_binpop_evolve(popevo_kwargs, verbose=False):
+
+    # Capture warnings during evolution
+    captured_warnings = []
+
+    def warning_handler(message, category, filename, lineno, file=None, line=None):
+        captured_warnings.append({
+            'message': str(message),
+            'category': category.__name__,
+            'filename': filename,
+            'lineno': lineno
+        })
+
+    # Set up warning capture
+    old_showwarning = warnings.showwarning
+    warnings.showwarning = warning_handler
+
+    #pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
+    #pop.evolve(breakdown_to_df=False, optimize_ram=False, tqdm=False)
+
+    try:
+        pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
+        if verbose:
+            print_pop_settings(pop)
+
+        print("Running BinaryPopulation.evolve() with settings:")
+        for key, val in popevo_kwargs.items():
+            print(f"\t {key} : {val}")
+
+        print("\nEvolving BinaryPopulation...\n")
+        pop.evolve(**popevo_kwargs)
+
+        print_warnings(captured_warnings)
+        print("Done!")
+        print("=" * line_length)
+
+    except Exception as e:
+            #print("=" * line_length)
+            print_warnings(captured_warnings)
+            print(f"🚨 Binary Population Evolution Failed!\n")
+            traceback.print_exc(limit=3)
+            print("\n")
+            print("=" * line_length)
+
+    
 def test_popruns():
 
-    path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_population_params.ini")
+    kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":False}
+    test_binpop_evolve(kwargs, verbose=True)
 
-    pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
-    print("Evolving BinaryPopulation...\n")
-
-    print_pop_settings(pop)
-
-    pop.evolve(breakdown_to_df=False, optimize_ram=False, tqdm=False)
+    # test saving
+    kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":False}
+    test_binpop_evolve(kwargs, verbose=False)
 
     #print(pop.manager.binaries)
-    write_binary_to_screen(pop.manager.binaries[0])
+    #write_binary_to_screen(pop.manager.binaries[0])
 
-    print("Done!")
+    
 
-    #del pop
+    # ================================================================================
 
     #poprun = PopulationRunner(my_ini_filename, verbose=False)
     #print('Number of binary populations:',len(poprun.binary_populations))

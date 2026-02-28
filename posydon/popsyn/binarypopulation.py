@@ -324,6 +324,19 @@ class BinaryPopulation:
 
         kw = self.kwargs.copy()
 
+        # Create temporary directory if it doesn't exist
+        # Built to handle MPI
+        if self.JOB_ID is None and self.comm is None:
+            if not os.path.exists(temp_directory):
+                os.makedirs(temp_directory)
+        else:
+            # Create a directory for parallel runs
+            if not os.path.exists(temp_directory):
+                try:
+                    os.makedirs(temp_directory)
+                except FileExistsError:
+                    pass
+
         filenames = []
 
         for j, index in enumerate(indices_for_iter):
@@ -475,19 +488,6 @@ class BinaryPopulation:
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
-
-        # Create temporary directory if it doesn't exist
-        # Built to handle MPI
-        if self.JOB_ID is None and self.comm is None:
-            if not os.path.exists(temp_directory):
-                os.makedirs(temp_directory)
-        else:
-            # Create a directory for parallel runs
-            if not os.path.exists(temp_directory):
-                try:
-                    os.makedirs(temp_directory)
-                except FileExistsError:
-                    pass
 
         if self.JOB_ID is None and self.comm is None:
             if optimize_ram:
