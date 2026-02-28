@@ -766,7 +766,7 @@ def evolve_binaries(verbose):
     star1 = SingleStar(**{'mass': 7.939736047577677,
                         'state': 'H-rich_Core_H_burning',
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
-    star1 = SingleStar(**{'mass': 6.661421823348241,
+    star2 = SingleStar(**{'mass': 6.661421823348241,
                         'state': 'H-rich_Core_H_burning',
                         'natal_kick_array': [0.0, 0.0, 0.0, 0.0]})
 
