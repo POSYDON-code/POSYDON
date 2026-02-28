@@ -37,34 +37,33 @@ import shutil
 
 import numpy as np
 import pandas as pd
-from astropy import constants as const
-from astropy.cosmology import Planck15 as cosmology
-from matplotlib import pyplot as plt
 from tqdm import tqdm
 
-import posydon.visualization.plot_pop as plot_pop
-from posydon.binary_evol.simulationproperties import SimulationProperties
-from posydon.popsyn.binarypopulation import (
+# Heavy imports are lazily loaded where needed to speed up module initialization
+# import posydon.visualization.plot_pop as plot_pop  # Lazy: only in plotting methods
+# from posydon.binary_evol.simulationproperties import SimulationProperties  # Lazy: only in PopulationRunner
+from posydon.popsyn.binarypopulation import (  # BinaryPopulation,  # Lazy: only in PopulationRunner
     HISTORY_MIN_ITEMSIZE,
     ONELINE_MIN_ITEMSIZE,
-    BinaryPopulation,
     saved_ini_parameters,
 )
-from posydon.popsyn.io import binarypop_kwargs_from_ini
-from posydon.popsyn.norm_pop import calculate_model_weights
-from posydon.popsyn.rate_calculation import (
-    DEFAULT_SFH_MODEL,
-    get_comoving_distance_from_redshift,
-    get_cosmic_time_from_redshift,
-    get_redshift_bin_centers,
-    get_redshift_bin_edges,
-    get_shell_comoving_volume,
-    redshift_from_cosmic_time_interpolator,
-)
-from posydon.popsyn.star_formation_history import SFR_per_met_at_z
-from posydon.utils.common_functions import convert_metallicity_to_string
-from posydon.utils.constants import Zsun
-from posydon.utils.posydonwarning import Pwarn
+
+# from posydon.popsyn.io import binarypop_kwargs_from_ini  # Lazy: only in __init__ methods
+# from posydon.popsyn.norm_pop import calculate_model_weights  # Lazy: only in TransientPopulation
+# Rate calculation imports are lazily loaded in TransientPopulation/Rates classes
+# from posydon.popsyn.rate_calculation import (
+#     DEFAULT_SFH_MODEL,
+#     get_comoving_distance_from_redshift,
+#     get_cosmic_time_from_redshift,
+#     get_redshift_bin_centers,
+#     get_redshift_bin_edges,
+#     get_shell_comoving_volume,
+#     redshift_from_cosmic_time_interpolator,
+# )
+# from posydon.popsyn.star_formation_history import SFR_per_met_at_z  # Lazy: only in TransientPopulation
+# from posydon.utils.common_functions import convert_metallicity_to_string  # Lazy: where needed
+# from posydon.utils.constants import Zsun, clight  # Lazy: where needed
+# from posydon.utils.posydonwarning import Pwarn  # Lazy: where needed
 
 ###############################################################################
 
@@ -117,6 +116,11 @@ class PopulationRunner:
         if ".ini" not in path_to_ini:
             raise ValueError("You did not provide a valid path_to_ini!")
         else:
+            from posydon.binary_evol.simulationproperties import SimulationProperties
+            from posydon.popsyn.binarypopulation import BinaryPopulation
+            from posydon.popsyn.io import binarypop_kwargs_from_ini
+            from posydon.utils.common_functions import convert_metallicity_to_string
+
             self.pop_params = binarypop_kwargs_from_ini(path_to_ini)
             self.solar_metallicities = self.pop_params["metallicities"]
             self.verbose = verbose
@@ -172,6 +176,8 @@ class PopulationRunner:
             The binary population whose files have to be merged.
 
         """
+        from posydon.utils.common_functions import convert_metallicity_to_string
+
         Zstr = convert_metallicity_to_string(pop.metallicity)
         fname = Zstr + "_Zsun_population.h5"
         if os.path.exists(fname) and not overwrite:
@@ -1071,6 +1077,8 @@ class Population(PopulationIO):
 
         # if an ini file is given, read the parameters from the ini file
         if ini_file is not None:
+            from posydon.popsyn.io import binarypop_kwargs_from_ini
+
             self.ini_params = binarypop_kwargs_from_ini(ini_file)
             self._save_ini_params(filename)
             self._load_ini_params(filename)
@@ -1084,6 +1092,8 @@ class Population(PopulationIO):
 
         # check if pop contains mass_per_metallicity table
         if "/mass_per_metallicity" in keys and metallicity is None:
+            from posydon.utils.constants import Zsun
+
             self._load_mass_per_metallicity(filename)
             self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
@@ -1094,6 +1104,9 @@ class Population(PopulationIO):
 
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
         if metallicity is not None and ini_file is not None:
+            from posydon.utils.constants import Zsun
+            from posydon.utils.posydonwarning import Pwarn
+
             if "/mass_per_metallicity" in keys:
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
@@ -1281,6 +1294,8 @@ class Population(PopulationIO):
                 }
 
             if "metallicity" not in self.oneline.columns:
+                from posydon.utils.posydonwarning import Pwarn
+
                 Pwarn("No metallicity column in oneline dataframe! Using the "
                       "metallicity of the population file and adding it to the"
                       " oneline.", "ReplaceValueWarning")
@@ -1725,6 +1740,8 @@ class Population(PopulationIO):
         # it can happen that no systems are selected, in which case nothing has been appended to the file in the loop
         with pd.HDFStore(self.filename, mode="r") as store:
             if '/transients/'+transient_name not in store.keys():
+                from posydon.utils.posydonwarning import Pwarn
+
                 Pwarn("No systems selected for the transient population!", "POSYDONWarning")
                 return None
 
@@ -1913,6 +1930,8 @@ class TransientPopulation(Population):
         if simulation_parameters is None:
             simulation_parameters = self.ini_params
         else:
+            from posydon.utils.posydonwarning import Pwarn
+
             # check for different parameters
             for key in simulation_parameters.keys():
                 if key not in self.ini_params:
@@ -1951,6 +1970,8 @@ class TransientPopulation(Population):
             pop_data['S2_mass_i'] = np.minimum(S1_tmp, S2_tmp)
             del S1_tmp, S2_tmp
 
+            from posydon.popsyn.norm_pop import calculate_model_weights
+
             calculated_weights =  calculate_model_weights(
                                                     pop_data=pop_data,
                                                     M_sim=M_sim,
@@ -1961,6 +1982,8 @@ class TransientPopulation(Population):
                 model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
 
         with pd.HDFStore(self.filename, mode="a") as store:
+            from posydon.utils.posydonwarning import Pwarn
+
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
                 del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
@@ -2041,6 +2064,15 @@ class TransientPopulation(Population):
         >>> transient_population = TransientPopulation('filename.h5', 'transient_name')
         >>> transient_population.calculate_cosmic_weights('IllustrisTNG', MODEL_in=DEFAULT_SFH_MODEL)
         """
+        from posydon.popsyn.rate_calculation import (
+            DEFAULT_SFH_MODEL,
+            get_comoving_distance_from_redshift,
+            get_cosmic_time_from_redshift,
+            redshift_from_cosmic_time_interpolator,
+        )
+        from posydon.popsyn.star_formation_history import SFR_per_met_at_z
+        from posydon.utils.constants import Zsun, clight
+
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
         if MODEL_in is None:
@@ -2102,7 +2134,7 @@ class TransientPopulation(Population):
         #].values
 
         # speed of light
-        c = const.c.to("Mpc/yr").value  # Mpc/yr
+        c = clight * 1.0227121650456949e-17 # cm/s to Mpc/yr
 
         # delta cosmic time bin
         deltaT = rates.MODEL["delta_t"] * 10**6  # yr
@@ -2128,7 +2160,9 @@ class TransientPopulation(Population):
             )  # Gyr
 
             t_events = t_birth + delay_time
-            hubble_time_mask = t_events <= cosmology.age(1e-08).value * 0.9999999
+            # Lazy import for astropy cosmology
+            from astropy.cosmology.Planck15 import age as astropy_age
+            hubble_time_mask = t_events <= astropy_age(1e-08).value * 0.9999999
 
             # get the redshift of the events
             z_events = np.full(t_events.shape, np.nan)
@@ -2188,6 +2222,9 @@ class TransientPopulation(Population):
         if model_weight_identifier is None:
             raise ValueError("Model weight identifier not provided!")
 
+        import posydon.visualization.plot_pop as plot_pop
+        from posydon.utils.constants import Zsun
+
         efficiency = self.efficiency(model_weight_identifier, channels)
 
 
@@ -2234,6 +2271,7 @@ class TransientPopulation(Population):
 
         """
         if ax is None:
+            from matplotlib import pyplot as plt
             fig, ax = plt.subplots()
 
         # Validate model weights
@@ -2287,6 +2325,7 @@ class TransientPopulation(Population):
             Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.
 
         """
+        import posydon.visualization.plot_pop as plot_pop
 
         plot_pop.plot_popsyn_over_grid_slice(
             pop=self, grid_type=grid_type, met_Zsun=met_Zsun, **kwargs
@@ -2546,6 +2585,8 @@ class Rates(TransientPopulation):
         pandas.DataFrame
             DataFrame containing the intrinsic rate density values.
         """
+        from posydon.popsyn.rate_calculation import get_shell_comoving_volume
+
         z_events = self.z_events.to_numpy()
         weights = self.weights.to_numpy()
         z_horizon = self.edges_redshift_bins
@@ -2762,6 +2803,7 @@ class Rates(TransientPopulation):
             If the specified channel is not present in the transient population.
 
         """
+        import posydon.visualization.plot_pop as plot_pop
 
         if prop not in self.columns:
             raise ValueError(
@@ -2814,6 +2856,7 @@ class Rates(TransientPopulation):
 
     def plot_intrinsic_rate(self, channels=False, **kwargs):
         """Plot the intrinsic rate density of the transient population."""
+        import posydon.visualization.plot_pop as plot_pop
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
 
@@ -2875,6 +2918,8 @@ class Rates(TransientPopulation):
             redshift corresponding to edges of these bins.
 
         """
+        from posydon.popsyn.rate_calculation import get_redshift_bin_edges
+
         return get_redshift_bin_edges(self.MODEL["delta_t"])
 
     @property
@@ -2889,4 +2934,6 @@ class Rates(TransientPopulation):
             redshift corresponding to center of these bins.
 
         """
+        from posydon.popsyn.rate_calculation import get_redshift_bin_centers
+
         return get_redshift_bin_centers(self.MODEL["delta_t"])
