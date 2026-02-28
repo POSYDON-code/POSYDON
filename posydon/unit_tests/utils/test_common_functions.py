@@ -89,7 +89,7 @@ class TestElements:
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    '_horner_eval', 'beaming', 'beta_gw', 'bondi_hoyle',\
+                    'beaming', 'beta_gw', 'bondi_hoyle',\
                     'calculate_H2recombination_energy',\
                     'calculate_Mejected_for_integrated_binding_energy',\
                     'calculate_Patton20_values_at_He_depl',\
