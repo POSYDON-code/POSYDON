@@ -6,14 +6,7 @@ import os
 import numpy as np
 import pandas as pd
 
-from posydon.utils.common_functions import (
-    inspiral_timescale_from_orbital_period,
-    inspiral_timescale_from_separation,
-    orbital_separation_from_period,
-)
-from posydon.utils.constants import Msun, Rsun, clight
-from posydon.utils.constants import secyer as secyear
-from posydon.utils.constants import standard_cgrav as cgrav
+from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
 
@@ -248,105 +241,6 @@ def get_final_proposed_points(proposed_x, grid_x, proposed_y, grid_y):
     return mapped_x, mapped_y
 
 
-def T_merger_P(P, m1, m2):
-    """Merger time given initial orbital period and masses of binary.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr)
-
-    .. deprecated::
-        Use
-        :func:`posydon.utils.common_functions.inspiral_timescale_from_orbital_period`
-        instead. Note that function takes ``eccentricity`` as an additional
-        argument and returns the result in Myr rather than Gyr.
-
-    """
-    return inspiral_timescale_from_orbital_period(m1, m2, P, 0.0) / 1000.0
-
-
-def beta_gw(m1, m2):
-    """Evaluate the "beta" (equation 5.9) from Peters (1964).
-
-    Parameters
-    ----------
-    m1 : float
-        Mass of the first star.
-    m2 : type
-        Mass of the second star.
-
-    Returns
-    -------
-    float
-        Peters' beta in cgs units.
-
-    """
-    return 64. / 5. * cgrav**3 / clight**5 * m1 * m2 * (m1 + m2)
-
-
-def kepler3_a(P, m1, m2):
-    """Calculate the semimajor axis of a binary from its period and masses.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star.
-    m2 : type
-        Mass of second star.
-
-    Returns
-    -------
-    float
-        Semi-major axis (Rsun) using Kepler's third law.
-
-    .. deprecated::
-        Use
-        :func:`posydon.utils.common_functions.orbital_separation_from_period`
-        instead.
-
-    """
-    return orbital_separation_from_period(P, m1, m2)
-
-
-def T_merger_a(a, m1, m2):
-    """Merger time given initial orbital separation and masses of binary.
-
-    Parameters
-    ----------
-    a : float
-        Orbital separation (Rsun).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr) following Peters (1964), eq. (5.10).
-
-    .. deprecated::
-        Use
-        :func:`posydon.utils.common_functions.inspiral_timescale_from_separation`
-        instead. Note that function takes ``eccentricity`` as an additional
-        argument and returns the result in Myr rather than Gyr.
-
-    """
-    return inspiral_timescale_from_separation(m1, m2, a, 0.0) / 1000.0
-
-
 def convert_output_to_table(
     output_file, binary_history_file=None,
     star1_history_file=None, star2_history_file=None, column_names=[
@@ -464,10 +358,11 @@ def convert_output_to_table(
                 values["C_core_2(Msun)"] = hist["c_core_mass"].iloc[-1]
 
             if binary_history_file is not None:
-                tmerge = T_merger_P(
-                    binary_history["period_days"].iloc[-1],
+                tmerge = inspiral_timescale_from_orbital_period(
                     binary_history["star_1_mass"].iloc[-1],
-                    binary_history["star_2_mass"].iloc[-1])
+                    binary_history["star_2_mass"].iloc[-1],
+                    binary_history["period_days"].iloc[-1],
+                    0.0) / 1000.0
                 max_lg_mtransfer_rate = binary_history[
                     "lg_mtransfer_rate"].max()
 
