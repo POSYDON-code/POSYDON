@@ -177,7 +177,7 @@ class DoubleCO(detached_step):
         # State vector: [e, tau, secondary.omega, primary.omega]
         # Independent variable: s = −ln(a/a0), from 0 to s_contact
         try:
-            res = solve_ivp(rhs,
+            res = solve_ivp(self.evo.rhs,
                             events=ev_maxtime,
                             method="RK45",
                             t_span=(0.0, s_contact),
