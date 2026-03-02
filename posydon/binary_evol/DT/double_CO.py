@@ -1,19 +1,4 @@
 """Detached evolution for double compact-object binaries.
-
-The Peters (1964) equations are solved using the substitution s = -ln(alpha),
-where α = a/a₀ is the dimensionless separation.  This eliminates the
-singular α⁻³ and α⁻⁴ prefactors that cause "step size smaller than
-machine epsilon" failures for tight compact-object binaries (especially
-BH-BH systems whose contact separation α_contact is extremely small).
-
-With this substitution, the Peters equations become:
-
-    de/ds  = -(19/12) e (1-e^2)(1 + 121/304 e^2) / F(e)
-    dτ/ds  = exp(-4s) (1-e^2)^(7/2) / F(e)
-
-where F(e) = 1 + 73/24 e² + 37/96 e⁴, and the characteristic timescale
-is t₀ = (5/64) c^5 a0^4 / (G^3 M m_1 m_2).  The eccentricity ODE is now
-autonomous (independent of s), and the system is non-stiff.
 """
 
 
