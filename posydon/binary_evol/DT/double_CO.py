@@ -75,7 +75,7 @@ class _SLogDenseOutput:
         self.a0_Rsun = a0_Rsun
         self.t_scale = t_scale
         self.t0_phys = t0_phys
-        # Near contact dtau/ds ≈ exp(−4s) → 0, so consecutive tau values
+        # Near contact dtau/ds ≈ exp(−4s) -> 0, so consecutive tau values
         # can be identical to machine precision.  Keep only points where
         # tau strictly increases so that PchipInterpolator is happy.
         tau_vals = np.asarray(tau_vals, dtype=float)
@@ -179,20 +179,6 @@ class DoubleCO(detached_step):
 
         s_contact = -np.log(alpha_contact)
 
-        def rhs(s, y):
-            ecc = y[0]
-            e2 = ecc * ecc
-            one_minus_e2 = 1.0 - e2
-
-            f_e = 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
-            g_e = 1.0 + (121.0 / 304.0) * e2
-
-            decc_ds = -(19.0 / 12.0) * ecc * one_minus_e2 * g_e / f_e
-            dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / f_e
-
-            # primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)
-            return [decc_ds, dtau_ds, 0.0, 0.0]
-
         # --- max-time event: tau reaches tau_max before contact ---------------
         @_event(True, +1)
         def ev_maxtime(s, y):
@@ -237,11 +223,11 @@ class DoubleCO(detached_step):
         elif res.status == 1:
             res.status = 0   # maxtime
 
-        # Rearrange state vector from [ecc, tau, secondary.omega, primary.omega] in s-space
-        #                            to [sep_Rsun, ecc, secondary.omega, primary.omega]
+        # Rearrange state vector in s-space
+        # from [ecc, tau, secondary.omega, primary.omega]
+        # to   [sep_Rsun, ecc, secondary.omega, primary.omega]
         res.y[0] = alpha_vals * a0_Rsun                            # sep (Rsun)
         res.y[1] = ecc_vals                                        # ecc
-        # res.y[2], res.y[3] unchanged (omegas are constant for DCO)
 
         res.t = tau_vals * t_scale + t0_phys                       # tau -> yr
 
@@ -276,3 +262,26 @@ class double_CO_evolution(detached_evolution):
         self.do_wind_loss = False
         self.do_stellar_evolution_and_spin_from_winds = False
         self.do_gravitational_radiation = True
+
+    def rhs(s, y):
+        """Right-hand side of the ODE system in s-space.
+
+        Parameters
+        ----------
+        s : float
+            Independent variable, s = -ln(a/a0).
+        y : array_like
+            State vector at s, [ecc, tau, secondary.omega, primary.omega].
+        """
+        ecc = y[0]
+        e2 = ecc * ecc
+        one_minus_e2 = 1.0 - e2
+
+        f_e = 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
+        g_e = 1.0 + (121.0 / 304.0) * e2
+
+        decc_ds = -(19.0 / 12.0) * ecc * one_minus_e2 * g_e / f_e
+        dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / f_e
+
+        # primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)
+        return [decc_ds, dtau_ds, 0.0, 0.0]
