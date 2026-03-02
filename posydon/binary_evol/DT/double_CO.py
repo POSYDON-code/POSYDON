@@ -35,7 +35,7 @@ def _event(terminal, direction=0):
 class _SLogDenseOutput:
     """Dense output for the s = -ln(alpha) formulation of the Peters equations.
 
-    Inverts the monotone τ(s) mapping via a PCHIP interpolant, then
+    Inverts the monotone tau(s) mapping via a PCHIP interpolant, then
     evaluates the native ODE dense output in s-space and converts back
     to physical variables [separation_Rsun, eccentricity, ω_sec, ω_pri].
 
@@ -52,7 +52,7 @@ class _SLogDenseOutput:
     s_vals : array
         Independent-variable values produced by the solver.
     tau_vals : array
-        Corresponding dimensionless-time values τ(s).
+        Corresponding dimensionless-time values tau(s).
     """
 
     def __init__(self, sol, a0_Rsun, t_scale, t0_phys, s_vals, tau_vals):
