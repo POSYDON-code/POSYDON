@@ -445,7 +445,7 @@ class MergedStep(IsolatedStep):
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)
                 massless_remnant = convert_star_to_massless_remnant(star_base)
 
-        #postMS + PostHeMS
+        # postMS + postHeMS
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS):
 
@@ -498,7 +498,7 @@ class MergedStep(IsolatedStep):
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)
                 massless_remnant = convert_star_to_massless_remnant(comp)
 
-        # PostHeMS + postMS (the opposite of above)
+        # postHeMS + postMS (the opposite of above)
         elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
             and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
 
@@ -551,7 +551,7 @@ class MergedStep(IsolatedStep):
                 merged_star.state = check_state_of_star(merged_star, star_CO=False)
                 massless_remnant = convert_star_to_massless_remnant(star_base)
 
-        # HeStar + HeStar
+        # He star + He star
         elif (s1 in STAR_STATES_HE_RICH
             and s2 in STAR_STATES_HE_RICH):
 
