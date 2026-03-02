@@ -1,6 +1,11 @@
-from ._version import get_versions
+from importlib.metadata import PackageNotFoundError, version
 
-__version__ = get_versions()['version']
+try:
+    __version__ = version("posydon")
+except PackageNotFoundError:
+    # Package is not installed
+    __version__ = "unknown"
+
 __author__ = "Tassos Fragos <Anastasios.Fragkos@unige.ch>"
 __credits__ = [
     "Emmanouil Zapartas <ezapartas@gmail.com>",
@@ -19,5 +24,3 @@ __credits__ = [
     "Ying Qin <<yingqin2013@hotmail.com>",
     "Aaron Dotter <aaron.dotter@gmail.com>",
 ]
-
-del get_versions
