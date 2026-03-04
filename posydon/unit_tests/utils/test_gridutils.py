@@ -31,16 +31,17 @@ class TestElements:
         ## does not clear the warning registy correctly.
         if hasattr(totest, '__warningregistry__'):
             del totest.__warningregistry__
-        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Msun', 'Pwarn', 'Rsun',\
-                    'T_merger_P', 'T_merger_a', '__authors__', '__builtins__',\
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Pwarn',\
+                    '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'add_field',\
-                    'beta_gw', 'cgrav', 'clean_inlist_file', 'clight',\
+                    'clean_inlist_file',\
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
-                    'join_lists', 'kepler3_a', 'np', 'os', 'pd',\
-                    'read_EEP_data_file', 'read_MESA_data_file', 'secyear'}
+                    'inspiral_timescale_from_orbital_period',\
+                    'join_lists', 'np', 'os', 'pd',\
+                    'read_EEP_data_file', 'read_MESA_data_file'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -82,18 +83,6 @@ class TestElements:
 
     def test_instance_get_final_proposed_points(self):
         assert isroutine(totest.get_final_proposed_points)
-
-    def test_instance_T_merger_P(self):
-        assert isroutine(totest.T_merger_P)
-
-    def test_instance_beta_gw(self):
-        assert isroutine(totest.beta_gw)
-
-    def test_instance_kepler3_a(self):
-        assert isroutine(totest.kepler3_a)
-
-    def test_instance_T_merger_a(self):
-        assert isroutine(totest.T_merger_a)
 
     def test_instance_convert_output_to_table(self):
         assert isroutine(totest.convert_output_to_table)
@@ -554,57 +543,6 @@ class TestFunctions:
                                                  np.linspace(0.1, 0.5, 3))
         assert np.allclose(mx, np.array([0.1, 0.3, 0.3, 0.5]))
         assert np.allclose(my, np.array([0.3, 0.3, 0.5, 0.5]))
-
-    def test_T_merger_P(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.T_merger_P()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(0.37210532488, abs=6e-12)),\
-                 (2.0, 15.0, 30.0, approx(2.36272153666, abs=6e-12)),\
-                 (1.0, 30.0, 30.0, approx(0.20477745195, abs=6e-12)),\
-                 (1.0, 15.0, 60.0, approx(0.22058982311, abs=6e-12))]
-        for (P, m1, m2, r) in tests:
-            assert totest.T_merger_P(P, m1, m2) == r
-
-    def test_beta_gw(self):
-        # missing argument
-        with raises(TypeError, match="missing 2 required positional "\
-                                     +"arguments: 'm1' and 'm2'"):
-            totest.beta_gw()
-        # examples
-        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
-                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
-                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
-        for (m1, m2, r) in tests:
-            assert totest.beta_gw(m1, m2) == r
-
-    def test_kepler3_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.kepler3_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
-                 (2.0, 15.0, 30.0, approx(23.7544118733, abs=6e-11)),\
-                 (1.0, 30.0, 30.0, approx(16.4703892879, abs=6e-11)),\
-                 (1.0, 15.0, 60.0, approx(17.7421890201, abs=6e-11))]
-        for (P, m1, m2, r) in tests:
-            assert totest.kepler3_a(P, m1, m2) == r
-
-    def test_T_merger_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'a', 'm1', and 'm2'"):
-            totest.T_merger_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(7.42053829341e-06, abs=6e-18)),\
-                 (2.0, 15.0, 30.0, approx(1.18728612695e-04, abs=6e-16)),\
-                 (1.0, 30.0, 30.0, approx(2.78270186003e-06, abs=6e-18)),\
-                 (1.0, 15.0, 60.0, approx(2.22616148802e-06, abs=6e-18))]
-        for (a, m1, m2, r) in tests:
-            assert totest.T_merger_a(a, m1, m2) == r
 
     def test_convert_output_to_table(self, no_path, out_path,\
                                      MESA_BH_data_tight_orbit,\
