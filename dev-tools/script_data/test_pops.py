@@ -1,16 +1,20 @@
 import os
 import shutil
-import traceback
 import tracemalloc
+
 import warnings
+import traceback
 
 import pandas as pd
+from pandas.testing import assert_frame_equal
 from binaries_suite import write_binary_to_screen
 from tabulate import tabulate
 
 from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
+from posydon.popsyn.synthetic_population import Population
 from posydon.popsyn.synthetic_population import PopulationRunner
+
 
 line_length = 140
 path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_population_params.ini")
@@ -47,7 +51,7 @@ def print_warnings(captured_warnings):
                 print("")
     else:
         print(f"No warning(s) raised during evolution\n\n")
-
+    
 
 def test_binpop_evolve(popevo_kwargs, verbose=False):
 
@@ -93,20 +97,46 @@ def test_binpop_evolve(popevo_kwargs, verbose=False):
             print("\n")
             print("=" * line_length)
 
-
+    return pop
+    
 def test_popruns():
 
     kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":False}
-    test_binpop_evolve(kwargs, verbose=True)
+    pop1 = test_binpop_evolve(kwargs, verbose=True)
 
     # test saving
     kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":False}
-    test_binpop_evolve(kwargs, verbose=False)
+    pop2 = test_binpop_evolve(kwargs, verbose=False)
+
+    loaded_pop = Population("batches/evolution.combined.h5")
+    #print(loaded_pop.history)
+
+    df2 = pop1.to_df()
+    dflist = [df2.loc[i] for i in range(10)]
+
+    for i, df in enumerate(dflist):
+        df1 = df#.drop(columns=["step_times"])
+        df2 = loaded_pop.history[i]#.drop(columns=["step_times"])
+        cols = ['time', 'step_names', 'state', 'event', 'S1_state', 'S2_state', 'S1_mass', 'S2_mass', 'orbital_period']
+        df1 = df1[cols]
+        df2 = df2[cols]
+        try:
+            assert_frame_equal(df1, df2)
+            print(i)
+        except AssertionError as e:
+            print(e)
+            print(df1)
+            print(df2)
+            break
+        if i == len(loaded_pop.history):
+            break
+
+    print("Done!")
 
     #print(pop.manager.binaries)
     #write_binary_to_screen(pop.manager.binaries[0])
 
-
+    
 
     # ================================================================================
 
