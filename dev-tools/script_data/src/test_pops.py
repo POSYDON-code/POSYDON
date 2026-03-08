@@ -2,7 +2,7 @@ import os
 import traceback
 import warnings
 
-from formatting import line_length
+from formatting import line_length, columns_to_show
 from pandas.testing import assert_frame_equal
 from utils import print_pop_settings, print_warnings
 
@@ -77,9 +77,8 @@ def test_popruns():
     print("⚔️ Checking that binaries in RAM match those retrieved from I/O...")
     for i, ram_df in enumerate(ram_dflist):
         io_df = loaded_pop.history[i]
-        cols = ['time', 'step_names', 'state', 'event', 'S1_state', 'S2_state', 'S1_mass', 'S2_mass', 'orbital_period']
-        ram_df = ram_df[cols]
-        io_df = io_df[cols]
+        ram_df = ram_df[columns_to_show]
+        io_df = io_df[columns_to_show]
         try:
             assert_frame_equal(ram_df, io_df)
         except AssertionError as e:
