@@ -386,7 +386,8 @@ class LazyHDF5:
     def __init__(self, dataset, dtype_set=None):
         self._dataset = dataset
         self._dtype_set = dtype_set
-        self._dtype_list = list(self._dtype_set.items())
+        if self._dtype_set is not None:
+            self._dtype_list = list(self._dtype_set.items())
 
     def __getitem__(self, idx):
         data = self._dataset[idx]
