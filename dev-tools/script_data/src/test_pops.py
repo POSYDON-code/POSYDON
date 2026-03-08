@@ -55,7 +55,7 @@ def test_binpop_evolve(population, popevo_kwargs, verbose=False):
     return population
 
 def compare_io_to_ram(loaded_pop, pop_in_ram):
-     
+
     # check that binaries match between pop runs w/ fixed entropy
     # and that saved/loaded binaries match those from a memory loaded run
     df_from_ram = pop_in_ram.to_df()
