@@ -84,8 +84,8 @@ def test_popruns():
         except AssertionError as e:
             print("🚨 A binary from I/O does not equal the same binary stored in RAM:")
             print(e)
-            print("Binary in RAM: ", ram_df)
-            print("Binary from I/O", io_df)
+            print("Binary in RAM:\n", ram_df)
+            print("Binary from I/O:\n", io_df)
             return
         if i == len(loaded_pop.history):
             break
@@ -98,7 +98,7 @@ def test_popruns():
     # ================================================================================
     print("Test PopulationRunner with multiple metallicities...")
     poprun = PopulationRunner(path_to_multiZ_params, verbose=True)
-    print('Number of binary populations:',len(poprun.binary_populations))
+    print('Number of binary populations:', len(poprun.binary_populations))
     print('Metallicities:', poprun.solar_metallicities)
     print('Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
     print("🚀 Evolving PopulationRunner...")
