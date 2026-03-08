@@ -2,7 +2,7 @@ import os
 import traceback
 import warnings
 
-from formatting import line_length, columns_to_show
+from formatting import columns_to_show, line_length
 from pandas.testing import assert_frame_equal
 from utils import print_pop_settings, print_warnings
 
