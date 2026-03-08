@@ -98,9 +98,9 @@ def test_popruns():
     # ================================================================================
     print("Test PopulationRunner with multiple metallicities...")
     poprun = PopulationRunner(path_to_multiZ_params, verbose=True)
-    print('Number of binary populations:', len(poprun.binary_populations))
-    print('Metallicities:', poprun.solar_metallicities)
-    print('Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
+    print('\t Number of binary populations:', len(poprun.binary_populations))
+    print('\t Metallicities:', poprun.solar_metallicities)
+    print('\t Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
     print("🚀 Evolving PopulationRunner...")
     poprun.evolve(overwrite=True)
     print("✅ PopulationRunner evolved successfully.")
