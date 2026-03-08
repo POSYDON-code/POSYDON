@@ -669,7 +669,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     return np.squeeze(mdot_acc)
 
 
-def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
+def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None, rng=None):
     """Generate a sample from a 1d PDF using the acceptance-rejection method.
 
     Parameters
@@ -691,6 +691,9 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         An array with `size` random numbers generated from the PDF.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
+
     if pdf is None:
         if ((x is None) or (y is None)):
             raise ValueError("x and y PDF values must be specified if no PDF"
@@ -702,26 +705,26 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             idxs = np.argsort(x)
             pdf = interp1d(x.take(idxs), y.take(idxs))
 
-        x_rand = np.random.uniform(x.min(), x.max(), size)
-        y_rand = np.random.uniform(0, y.max(), size)
+        x_rand = rng.uniform(x.min(), x.max(), size)
+        y_rand = rng.uniform(0, y.max(), size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x.min(), x.max(), n)
-            y_rand = np.random.uniform(0, y.max(), n)
+            x_rand = rng.uniform(x.min(), x.max(), n)
+            y_rand = rng.uniform(0, y.max(), n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
     else:
         if x_lim is None:
             raise ValueError("x_lim must be specified for passed PDF function"
                              " in rejection sampling")
-        x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
-        pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
-        y_rand = np.random.uniform(0, pdf_max, size)
+        x_rand = rng.uniform(x_lim[0], x_lim[1], size)
+        pdf_max = max(pdf(rng.uniform(x_lim[0], x_lim[1], 50000)))
+        y_rand = rng.uniform(0, pdf_max, size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x_lim[0], x_lim[1], n)
-            y_rand = np.random.uniform(0, pdf_max, n)
+            x_rand = rng.uniform(x_lim[0], x_lim[1], n)
+            y_rand = rng.uniform(0, pdf_max, n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
 
     return values
