@@ -40,7 +40,7 @@ def test_binpop_evolve(population, popevo_kwargs, verbose=False):
         population.evolve(**popevo_kwargs)
 
         print_warnings(captured_warnings)
-        print("✅ Population evolved successfully.")
+        print("✅ BinaryPopulation evolved successfully.")
         print("=" * line_length)
 
     except Exception as e:
@@ -67,7 +67,7 @@ def test_popruns():
     # test same but w/ saving/loading binaries
     print("🚀 Evolving a population and saving binaries to a hdf5 file.")
     kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":True}
-    pop_io = test_binpop_evolve(pop, kwargs, verbose=False)
+    _ = test_binpop_evolve(pop, kwargs, verbose=False)
     loaded_pop = Population("batches/evolution.combined.h5")
 
     # check that binaries match between pop runs w/ fixed entropy
@@ -96,7 +96,6 @@ def test_popruns():
 
     # TEST POPRUNNER
     # This is RAM heavy and may fail on personal computers
-
     # ================================================================================
     print("Test PopulationRunner with multiple metallicities...")
     poprun = PopulationRunner(path_to_multiZ_params, verbose=True)
@@ -105,7 +104,7 @@ def test_popruns():
     print('Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
     print("🚀 Evolving PopulationRunner...")
     poprun.evolve(overwrite=True)
-    #print("Done!")
+    print("✅ PopulationRunner evolved successfully.")
 
 
 if __name__ == "__main__":
