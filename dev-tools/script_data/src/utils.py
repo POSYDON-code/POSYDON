@@ -24,7 +24,7 @@ def print_pop_settings(population):
                      "population_properties", "warnings_verbose", "history_verbose",
                       "error_checking_verbose", "use_MPI", "read_samples_from_file",
                       "RANK", "size", "optimize_ram", "ram_per_cpu",
-                      "dump_rate", "tqdm", "temp_directory", "breakdown_to_df"]
+                      "dump_rate", "tqdm", "breakdown_to_df"]
 
     for key, val in population.kwargs.items():
         if key in ignore_kwargs:
