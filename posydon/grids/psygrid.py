@@ -386,23 +386,27 @@ class LazyHDF5:
     def __init__(self, dataset, dtype_set=None):
         self._dataset = dataset
         self._dtype_set = dtype_set
+        self._dtype_list = list(self._dtype_set.items())
 
-    def __getitem__(self, name):
-        data = self._dataset[name]
+    def __getitem__(self, idx):
+        data = self._dataset[idx]
         if self._dtype_set is not None:
-            data = data.astype(self._dtype_set[name])
+            if type(idx) == str:
+                data = data.astype(self._dtype_set[idx])
+            else:
+                data = data.astype(self._dtype_list)
         return data
 
     def __array__(self):
         data = self._dataset[()]
         if self._dtype_set is not None:
-            data = data.astype(list(self._dtype_set.items()))
+            data = data.astype(self._dtype_list)
         return data
 
     @property
     def dtype(self):
         if self._dtype_set is not None:
-            return np.dtype(list(self._dtype_set.items()))
+            return np.dtype(self._dtype_list)
         return self._dataset.dtype
 
     @property
