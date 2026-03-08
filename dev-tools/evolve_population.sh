@@ -77,8 +77,9 @@ conda activate "$FULL_PATH/conda_env"
 echo "📦 Installing POSYDON"
 pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
-echo "🚀 Running evolve_binaries.py"
+echo "🚀 Running test_pops.py"
 # # Run the Python script and capture output (stdout and stderr)
-python script_data/1Zsun_binaries_suite.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
+OUT_DIR=$FULL_PATH/script_data/output/population_tests
+python script_data/src/test_pops.py > $OUT_DIR/evolve_pop_$BRANCH.out 2>&1
 
-echo -e "✅ Script completed. Output saved to \n$FULL_PATH/evolve_binaries_$BRANCH.out"
+echo -e "✅ Script completed. Output saved to \n$OUT_DIR/evolve_pop_$BRANCH.out"
