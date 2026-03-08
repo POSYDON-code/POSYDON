@@ -382,6 +382,36 @@ GRIDPROPERTIES = {
     "accept_missing_profile": False,
 }
 
+class LazyHDF5:
+    def __init__(self, dataset, dtype_set=None):
+        self._dataset = dataset
+        self._dtype_set = dtype_set
+
+    def __getitem__(self, name):
+        data = self._dataset[name]
+        if self._dtype_set is not None:
+            data = data.astype(self._dtype_set[name])
+        return data
+
+    def __array__(self):
+        data = self._dataset[()]
+        if self._dtype_set is not None:
+            data = data.astype(list(self._dtype_set.items()))
+        return data
+
+    @property
+    def dtype(self):
+        if self._dtype_set is not None:
+            return np.dtype(list(self._dtype_set.items()))
+        return self._dataset.dtype
+
+    @property
+    def shape(self):
+        return self._dataset.shape
+
+    def __len__(self):
+        return len(self._dataset)
+
 
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
@@ -1476,13 +1506,16 @@ class PSyGrid:
         self.final_values = hdf5['/grid/final_values']
 
         # change ASCII to UNICODE in termination flags in `final_values`
-        #new_dtype = []
-        #for dtype in self.final_values.dtype.descr:
-        #    if (dtype[0].startswith("termination_flag") or
-        #        (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
-        #        ("_state" in dtype[0]) or ("_class" in dtype[0])):
-        #        dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
-        #    new_dtype.append(dtype)
+        new_dtype = {}
+        for dtype in self.final_values.dtype.descr:
+            if (dtype[0].startswith("termination_flag") or
+                (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
+                ("_state" in dtype[0]) or ("_class" in dtype[0])):
+                dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
+            new_dtype[dtype[0]] = dtype[1]
+
+        self.initial_values = LazyHDF5(self.initial_values)
+        self.final_values = LazyHDF5(self.final_values, new_dtype)
         #self.final_values = self.final_values.astype(new_dtype)
 
         # load MESA dirs
