@@ -1,6 +1,7 @@
 from posydon.binary_evol.binarystar import BinaryStar, SingleStar
 from posydon.utils.common_functions import orbital_separation_from_period
 
+
 def get_test_binaries(sim_prop):
 
     test_binaries = []

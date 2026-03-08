@@ -1,4 +1,5 @@
-from formatting import line_length, columns_to_show, target_rows
+from formatting import columns_to_show, line_length, target_rows
+
 
 def print_warnings(captured_warnings):
     # Show warnings if any were captured

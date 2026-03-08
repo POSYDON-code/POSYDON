@@ -1,13 +1,14 @@
 import os
 import traceback
 import warnings
+
+from formatting import line_length
 from pandas.testing import assert_frame_equal
+from utils import print_pop_settings, print_warnings
 
 from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import Population, PopulationRunner
-from utils import print_warnings, print_pop_settings
-from formatting import line_length
 
 path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_population_params.ini")
 path_to_multiZ_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/test_multiZ_population_params.ini")
@@ -30,7 +31,7 @@ def test_binpop_evolve(population, popevo_kwargs, verbose=False):
     warnings.showwarning = warning_handler
 
     try:
-        
+
         print("Running BinaryPopulation.evolve() with settings:")
         for key, val in popevo_kwargs.items():
             print(f"\t {key} : {val}")

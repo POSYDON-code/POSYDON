@@ -11,11 +11,12 @@ import os
 import signal
 import warnings
 
-from posydon.binary_evol.simulationproperties import SimulationProperties
-from utils import print_warnings, write_binary_to_screen, print_failed_binary
 from binary_test_cases import get_test_binaries
-from posydon.config import PATH_TO_POSYDON
 from formatting import line_length
+from utils import print_failed_binary, print_warnings, write_binary_to_screen
+
+from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.config import PATH_TO_POSYDON
 
 path_to_default_params = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/1Zsun_binaries_params.ini")
 
