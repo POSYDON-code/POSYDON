@@ -31,6 +31,11 @@ COLUMNS_TO_SHOW = ['step_names', 'state', 'event',
                    'S1_state', 'S1_mass',
                    'S2_state', 'S2_mass', 'orbital_period']
 
+# Suppress fragmentation warnings from POSYDON internals.
+# The .copy() calls below already handle the actual performance impact;
+# these warnings are just noise from to_df() building DataFrames column-by-column.
+# warnings.filterwarnings("ignore", message=".*DataFrame is highly fragmented.*")
+
 def load_inlist(metallicity, verbose, ini_path=None):
     """Load simulation properties from ini file and configure for given metallicity.
 
@@ -157,6 +162,7 @@ def evolve_binary(binary, h5file, binary_id):
 
     print(f"Binary {binary_id}")
     evolution_df = None
+    error_df = None
 
     try:
         binary.evolve()
@@ -166,16 +172,11 @@ def evolve_binary(binary, h5file, binary_id):
     except Exception as e:
         print_failed_binary(binary, e)
 
-        # Save error to separate table (different schema from evolution)
         error_df = pd.DataFrame([{
             "binary_id": int(binary_id),
             "exception_type": type(e).__name__,
             "exception_message": str(e)
         }])
-        error_string_cols = error_df.select_dtypes([object]).columns
-        error_min_itemsize = {col: 1000 for col in error_string_cols}
-        h5file.append("errors", error_df, format="table",
-                      min_itemsize=error_min_itemsize)
 
     finally:
         warnings.showwarning = old_showwarning
@@ -193,23 +194,11 @@ def evolve_binary(binary, h5file, binary_id):
             if "binary_id" not in evolution_df.columns:
                 evolution_df["binary_id"] = int(binary_id)
 
-            # Defragment
+            # Defragment the DataFrame from POSYDON's column-by-column construction
             evolution_df = evolution_df.copy()
-
-            # Determine min_itemsize from the dataframe we're actually saving
-            string_cols = evolution_df.select_dtypes([object]).columns
-            min_itemsize = {col: 500 for col in string_cols}
-            h5file.append("evolution", evolution_df, format="table",
-                          data_columns=True, min_itemsize=min_itemsize)
 
         # Save warnings
         if captured_warnings:
-            warn_df = pd.DataFrame(captured_warnings)
-            # Ensure consistent string column sizes for warnings table
-            warn_string_cols = warn_df.select_dtypes([object]).columns
-            warn_min_itemsize = {col: 1000 for col in warn_string_cols}
-            h5file.append("warnings", warn_df, format="table",
-                          min_itemsize=warn_min_itemsize)
             print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
             for i, w in enumerate(captured_warnings[:3], 1):
                 print(f"   {i}. {w['category']}: {w['message'][:80]}")
@@ -220,8 +209,6 @@ def evolve_binary(binary, h5file, binary_id):
 
         print(f"✅ Finished binary {binary_id}")
         print("=" * LINE_LENGTH)
-
-
 
 def get_test_binaries(metallicity, sim_prop):
     """Return the list of test binaries as (star1_kwargs, star2_kwargs, binary_kwargs, description) tuples.
@@ -647,7 +634,38 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
 
     sim_prop = load_inlist(metallicity, verbose, ini_path)
     test_binaries = get_test_binaries(metallicity, sim_prop)
+    
+    # Collect all results in memory, then write once at the end.
+    # This avoids repeated HDFStore.append() calls, each of which
+    # reconciles schemas, checks string sizing, and flushes to disk.
+    all_evolution_dfs = []
+    all_error_dfs = []
+    all_warning_dfs = []
+    
+    for binary_id, (s1_kw, s2_kw, bin_kw, description) in enumerate(test_binaries):
+        print(f"\n[{binary_id}/{len(test_binaries)-1}] {description}")
 
+        star_1 = SingleStar(**s1_kw)
+        star_2 = SingleStar(**s2_kw)
+
+        # Add separation from period if not explicitly provided
+        if 'separation' not in bin_kw and 'orbital_period' in bin_kw:
+            bin_kw['separation'] = orbital_separation_from_period(
+                bin_kw['orbital_period'], star_1.mass, star_2.mass
+            )
+
+        binary = BinaryStar(star_1, star_2, **bin_kw, properties=sim_prop)
+        evo_df, err_df, warn_list = evolve_binary(binary, binary_id)
+
+        if evo_df is not None:
+            all_evolution_dfs.append(evo_df)
+        if err_df is not None:
+            all_error_dfs.append(err_df)
+        if warn_list:
+            all_warning_dfs.append(pd.DataFrame(warn_list))
+
+
+    # ── Single-pass HDF5 write ──────────────────────────────────────────
     with pd.HDFStore(output_path, mode="w") as h5file:
         # Save metadata
         meta_df = pd.DataFrame([{
@@ -656,20 +674,26 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
         }])
         h5file.put("metadata", meta_df, format="table")
 
-        for binary_id, (s1_kw, s2_kw, bin_kw, description) in enumerate(test_binaries):
-            print(f"\n[{binary_id}/{len(test_binaries)-1}] {description}")
+        if all_evolution_dfs:
+            combined_evo = pd.concat(all_evolution_dfs, ignore_index=True)
+            string_cols = combined_evo.select_dtypes([object]).columns
+            min_itemsize = {col: 500 for col in string_cols}
+            h5file.put("evolution", combined_evo, format="table",
+                       data_columns=True, min_itemsize=min_itemsize)
 
-            star_1 = SingleStar(**s1_kw)
-            star_2 = SingleStar(**s2_kw)
+        if all_error_dfs:
+            combined_err = pd.concat(all_error_dfs, ignore_index=True)
+            err_string_cols = combined_err.select_dtypes([object]).columns
+            err_min_itemsize = {col: 1000 for col in err_string_cols}
+            h5file.put("errors", combined_err, format="table",
+                       min_itemsize=err_min_itemsize)
 
-            # Add separation from period if not explicitly provided
-            if 'separation' not in bin_kw and 'orbital_period' in bin_kw:
-                bin_kw['separation'] = orbital_separation_from_period(
-                    bin_kw['orbital_period'], star_1.mass, star_2.mass
-                )
-
-            binary = BinaryStar(star_1, star_2, **bin_kw, properties=sim_prop)
-            evolve_binary(binary, h5file, binary_id)
+        if all_warning_dfs:
+            combined_warn = pd.concat(all_warning_dfs, ignore_index=True)
+            warn_string_cols = combined_warn.select_dtypes([object]).columns
+            warn_min_itemsize = {col: 1000 for col in warn_string_cols}
+            h5file.put("warnings", combined_warn, format="table",
+                       min_itemsize=warn_min_itemsize)
 
     print(f"\n{'=' * LINE_LENGTH}")
     print(f"  All {len(test_binaries)} binaries complete. Results saved to {output_path}")
