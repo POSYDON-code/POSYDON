@@ -14,6 +14,7 @@ import argparse
 import os
 import sys
 import warnings
+
 import pandas as pd
 
 from posydon.binary_evol.binarystar import BinaryStar, SingleStar
@@ -26,7 +27,7 @@ AVAILABLE_METALLICITIES = [2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]
 # Display settings
 TARGET_ROWS = 12
 LINE_LENGTH = 80
-COLUMNS_TO_SHOW = ['step_names', 'state', 'event', 
+COLUMNS_TO_SHOW = ['step_names', 'state', 'event',
                    'S1_state', 'S1_mass',
                    'S2_state', 'S2_mass', 'orbital_period']
 
@@ -150,9 +151,9 @@ def evolve_binary(binary, h5file, binary_id):
     # Set up warning capture
     old_showwarning = warnings.showwarning
     warnings.showwarning = warning_handler
-    
+
     print(f"Binary {binary_id}")
-    evolution_df = None 
+    evolution_df = None
 
     try:
         binary.evolve()
@@ -171,7 +172,7 @@ def evolve_binary(binary, h5file, binary_id):
 
     finally:
         warnings.showwarning = old_showwarning
-        
+
         # Ensure we always have a dataframe
         if evolution_df is not None:
             # Decode bytes columns if needed
@@ -212,9 +213,9 @@ def evolve_binary(binary, h5file, binary_id):
 
         print(f"✅ Finished binary {binary_id}")
         print("=" * LINE_LENGTH)
-        
-        
-        
+
+
+
 def get_test_binaries(metallicity, sim_prop):
     """Return the list of test binaries as (star1_kwargs, star2_kwargs, binary_kwargs, description) tuples.
 
