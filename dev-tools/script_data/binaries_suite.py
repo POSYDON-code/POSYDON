@@ -634,14 +634,14 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
 
     sim_prop = load_inlist(metallicity, verbose, ini_path)
     test_binaries = get_test_binaries(metallicity, sim_prop)
-    
+
     # Collect all results in memory, then write once at the end.
     # This avoids repeated HDFStore.append() calls, each of which
     # reconciles schemas, checks string sizing, and flushes to disk.
     all_evolution_dfs = []
     all_error_dfs = []
     all_warning_dfs = []
-    
+
     for binary_id, (s1_kw, s2_kw, bin_kw, description) in enumerate(test_binaries):
         print(f"\n[{binary_id}/{len(test_binaries)-1}] {description}")
 
