@@ -19,11 +19,11 @@ Authors: Elizabeth Teng
 """
 
 import argparse
-import os
 import sys
-
+import os
 import numpy as np
 import pandas as pd
+
 
 # Columns that represent qualitative (categorical) evolution properties.
 # Any column matching these names will be compared as exact string matches
@@ -79,30 +79,6 @@ def compare_evolution_tables(base_df, cand_df, rtol, atol):
     for bid in common_ids:
         b = base_df[base_df['binary_id'] == bid].reset_index(drop=True)
         c = cand_df[cand_df['binary_id'] == bid].reset_index(drop=True)
-
-        # ── Error status changes ──────────────────────────────────────
-        base_failed = 'exception_type' in b.columns and b['exception_type'].notna().any()
-        cand_failed = 'exception_type' in c.columns and c['exception_type'].notna().any()
-
-        if base_failed != cand_failed:
-            if cand_failed:
-                exc = c['exception_type'].dropna().iloc[0] if 'exception_type' in c.columns else "unknown"
-                msg = c['exception_message'].dropna().iloc[0] if 'exception_message' in c.columns else ""
-                struct_diffs.append(f"Binary {bid}: NEWLY FAILING ({exc}: {msg})")
-            else:
-                struct_diffs.append(f"Binary {bid}: NEWLY PASSING (was failing in baseline)")
-            continue
-
-        if base_failed and cand_failed:
-            b_exc = str(b['exception_type'].dropna().iloc[0]) if 'exception_type' in b.columns else ""
-            c_exc = str(c['exception_type'].dropna().iloc[0]) if 'exception_type' in c.columns else ""
-            b_msg = str(b['exception_message'].dropna().iloc[0]) if 'exception_message' in b.columns else ""
-            c_msg = str(c['exception_message'].dropna().iloc[0]) if 'exception_message' in c.columns else ""
-            if b_exc != c_exc:
-                struct_diffs.append(f"Binary {bid}: error type changed ('{b_exc}' -> '{c_exc}')")
-            if b_msg != c_msg:
-                struct_diffs.append(f"Binary {bid}: error message changed ('{b_msg}' -> '{c_msg}')")
-            continue
 
         # ── Step count ────────────────────────────────────────────────
         if len(b) != len(c):
@@ -260,6 +236,52 @@ def compare_warnings_tables(base_df, cand_df):
     return diffs
 
 
+def compare_errors_tables(base_df, cand_df):
+    """Compare error tables between baseline and candidate.
+
+    Returns list of diff strings.
+    """
+    diffs = []
+
+    if base_df is None and cand_df is None:
+        return diffs
+    if base_df is None and cand_df is not None:
+        cand_ids = sorted(cand_df['binary_id'].unique()) if 'binary_id' in cand_df.columns else []
+        diffs.append(f"Candidate has {len(cand_df)} error(s) (binaries {cand_ids}), baseline has none")
+        return diffs
+    if base_df is not None and cand_df is None:
+        base_ids = sorted(base_df['binary_id'].unique()) if 'binary_id' in base_df.columns else []
+        diffs.append(f"Baseline has {len(base_df)} error(s) (binaries {base_ids}), candidate has none")
+        return diffs
+
+    # Compare per-binary errors
+    if 'binary_id' in base_df.columns and 'binary_id' in cand_df.columns:
+        base_ids = set(base_df['binary_id'].unique())
+        cand_ids = set(cand_df['binary_id'].unique())
+
+        for bid in sorted(cand_ids - base_ids):
+            row = cand_df[cand_df['binary_id'] == bid].iloc[0]
+            exc = row.get('exception_type', 'unknown')
+            diffs.append(f"Binary {bid}: NEWLY FAILING in candidate ({exc})")
+
+        for bid in sorted(base_ids - cand_ids):
+            diffs.append(f"Binary {bid}: NEWLY PASSING in candidate (was failing in baseline)")
+
+        for bid in sorted(base_ids & cand_ids):
+            b_row = base_df[base_df['binary_id'] == bid].iloc[0]
+            c_row = cand_df[cand_df['binary_id'] == bid].iloc[0]
+            b_exc = str(b_row.get('exception_type', ''))
+            c_exc = str(c_row.get('exception_type', ''))
+            b_msg = str(b_row.get('exception_message', ''))
+            c_msg = str(c_row.get('exception_message', ''))
+            if b_exc != c_exc:
+                diffs.append(f"Binary {bid}: error type changed ('{b_exc}' -> '{c_exc}')")
+            if b_msg != c_msg:
+                diffs.append(f"Binary {bid}: error message changed")
+
+    return diffs
+
+
 def read_table_safe(store, key):
     """Read a table from HDFStore, returning None if it doesn't exist."""
     try:
@@ -347,12 +369,19 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
             cand_warn = read_table_safe(cand_store, '/warnings')
             warn_diffs.extend(compare_warnings_tables(base_warn, cand_warn))
 
+            # ── Errors table ──────────────────────────────────────────
+            base_err = read_table_safe(base_store, '/errors')
+            cand_err = read_table_safe(cand_store, '/errors')
+            error_diffs = compare_errors_tables(base_err, cand_err)
+            struct_diffs.extend(error_diffs)
+
             # ── Extra/missing top-level keys ──────────────────────────
+            ignored_keys = {'/evolution', '/warnings', '/errors', '/metadata'}
             for k in sorted(base_keys - cand_keys):
-                if k not in ['/evolution', '/warnings', '/metadata']:
+                if k not in ignored_keys:
                     struct_diffs.append(f"Table '{k}' missing in candidate")
             for k in sorted(cand_keys - base_keys):
-                if k not in ['/evolution', '/warnings', '/metadata']:
+                if k not in ignored_keys:
                     struct_diffs.append(f"Table '{k}' extra in candidate")
 
     except Exception as e:

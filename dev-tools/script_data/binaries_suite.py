@@ -43,6 +43,7 @@ def load_inlist(metallicity, verbose, ini_path=None):
         SimulationProperties object with loaded steps
     """
     if ini_path is None:
+        # Look for ini file relative to this script's location
         script_dir = os.path.dirname(os.path.abspath(__file__))
         ini_path = os.path.join(script_dir, 'binaries_params.ini')
 
@@ -53,9 +54,12 @@ def load_inlist(metallicity, verbose, ini_path=None):
 
     metallicity_kwargs = {'metallicity': metallicity, 'verbose': verbose}
 
-    metallicity_steps = ['step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO',
-                        'step_CO_HeMS_RLO', 'step_detached', 'step_disrupted',
-                        'step_merged', 'step_initially_single']
+    # Apply metallicity to all steps that need it
+    metallicity_steps = [
+        'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO',
+        'step_CO_HeMS_RLO', 'step_detached', 'step_disrupted',
+        'step_merged', 'step_initially_single'
+    ]
     for step_name in metallicity_steps:
         if step_name in sim_kwargs:
             sim_kwargs[step_name][1].update(metallicity_kwargs)
@@ -101,7 +105,6 @@ def print_failed_binary(binary,e,  max_error_lines=3):
         df = binary.to_df(**{'extra_columns':{'step_names':'str'}})
         if len(df) > 0:
             # Select only the desired columns
-
             available_columns = [col for col in COLUMNS_TO_SHOW if col in df.columns]
             df_filtered = df[available_columns].reset_index(drop=True)
 
@@ -163,12 +166,16 @@ def evolve_binary(binary, h5file, binary_id):
     except Exception as e:
         print_failed_binary(binary, e)
 
-        # If evolution fails, create a minimal df with error info
-        evolution_df = pd.DataFrame([{
+        # Save error to separate table (different schema from evolution)
+        error_df = pd.DataFrame([{
             "binary_id": int(binary_id),
             "exception_type": type(e).__name__,
             "exception_message": str(e)
         }])
+        error_string_cols = error_df.select_dtypes([object]).columns
+        error_min_itemsize = {col: 1000 for col in error_string_cols}
+        h5file.append("errors", error_df, format="table",
+                      min_itemsize=error_min_itemsize)
 
     finally:
         warnings.showwarning = old_showwarning
@@ -191,7 +198,7 @@ def evolve_binary(binary, h5file, binary_id):
 
             # Determine min_itemsize from the dataframe we're actually saving
             string_cols = evolution_df.select_dtypes([object]).columns
-            min_itemsize = {col: 100 for col in string_cols}
+            min_itemsize = {col: 500 for col in string_cols}
             h5file.append("evolution", evolution_df, format="table",
                           data_columns=True, min_itemsize=min_itemsize)
 
@@ -200,7 +207,7 @@ def evolve_binary(binary, h5file, binary_id):
             warn_df = pd.DataFrame(captured_warnings)
             # Ensure consistent string column sizes for warnings table
             warn_string_cols = warn_df.select_dtypes([object]).columns
-            warn_min_itemsize = {col: 200 for col in warn_string_cols}
+            warn_min_itemsize = {col: 1000 for col in warn_string_cols}
             h5file.append("warnings", warn_df, format="table",
                           min_itemsize=warn_min_itemsize)
             print(f"⚠️  {len(captured_warnings)} warning(s) raised during evolution:")
