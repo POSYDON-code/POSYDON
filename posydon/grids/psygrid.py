@@ -1536,7 +1536,7 @@ class PSyGrid:
         if lazy:
             self.initial_values = LazyHDF5(initial_values)
             self.final_values = LazyHDF5(final_values, new_dtype)
-        else:
+        else: # pragma: no cover
             self.initial_values = initial_values[()]
             self.final_values = final_values[()]
             new_dtype = list(new_dtype.items())
