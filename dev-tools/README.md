@@ -10,6 +10,19 @@ Validation suite for POSYDON binary evolution. Evolves a fixed set of test binar
 ./validate_binaries.sh feature/my-branch
 ```
 
+Results are written to `outputs/<branch>/`. After validation, check:
+
+- `outputs/<branch>/comparison_summary.txt` for a pass/fail overview across all metallicities
+- `outputs/<branch>/comparison_<Z>Zsun.txt` for detailed per-metallicity diff reports
+- `logs/<branch>/evolve_<Z>Zsun.log` for the full evolution output of each metallicity
+
+By default, all eight POSYDON metallicities are run. To validate only a subset, pass a quoted space-separated list as the third argument:
+
+```bash
+./generate_baseline.sh main "" "1 0.45"
+./validate_binaries.sh feature/my-branch main "1 0.45"
+```
+
 ## Scripts
 
 ### `validate_binaries.sh`
@@ -49,7 +62,13 @@ python binaries_suite.py --output results.h5 --metallicity 1
 
 ### `compare_runs.py`
 
-Compares two HDF5 files produced by `binaries_suite.py`. Reports three categories of differences: structural (missing binaries, step count changes, new errors), qualitative (state/event/step name changes), and quantitative (numeric value changes).
+Compares two HDF5 files produced by `binaries_suite.py` and reports differences in three categories:
+
+- **Structural**: missing or extra binaries, evolution step count changes, binaries that newly fail or newly pass, missing HDF5 tables.
+- **Qualitative**: changes to categorical columns such as state, event, step name, SN type, interpolation class, and mass transfer history.
+- **Quantitative**: changes to any numeric column. By default, comparison is exact (bitwise identical floats). Use `--loose` for slightly relaxed tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly.
+
+The script also compares warning and error tables, reporting new, removed, or changed warnings per binary.
 
 ```bash
 python compare_runs.py baseline.h5 candidate.h5 [--loose] [--rtol VALUE] [--atol VALUE] [--verbose]
@@ -58,6 +77,40 @@ python compare_runs.py baseline.h5 candidate.h5 [--loose] [--rtol VALUE] [--atol
 ### `binaries_params.ini`
 
 Configuration file for `SimulationProperties`. Defines the POSYDON evolution steps, supernova prescriptions, common envelope parameters, and output column selections. Metallicity is overridden at runtime by `binaries_suite.py`.
+
+## Running Scripts Manually
+
+The shell scripts handle cloning, environment setup, and orchestration. If you already have POSYDON installed in your current environment, you can run the Python scripts directly.
+
+### Evolving binaries
+
+```bash
+# Evolve all 44 test binaries at solar metallicity
+python binaries_suite.py --output my_results.h5 --metallicity 1
+
+# Evolve at a specific metallicity with verbose output
+python binaries_suite.py --output my_results.h5 --metallicity 0.01 --verbose
+
+# Use a custom ini file
+python binaries_suite.py --output my_results.h5 --metallicity 1 --ini /path/to/custom.ini
+```
+
+The output HDF5 contains three tables: `evolution` (per-step binary data), `errors` (binaries that failed), and `warnings` (warnings raised during evolution).
+
+### Comparing two result files
+
+```bash
+# Exact comparison
+python compare_runs.py file_a.h5 file_b.h5
+
+# Relaxed tolerances
+python compare_runs.py file_a.h5 file_b.h5 --loose
+
+# Custom tolerances with verbose diagnostics
+python compare_runs.py file_a.h5 file_b.h5 --rtol 1e-8 --atol 1e-12 --verbose
+```
+
+The two files do not need to come from the shell pipeline; any pair of HDF5 files produced by `binaries_suite.py` can be compared.
 
 ## Directory Structure
 
