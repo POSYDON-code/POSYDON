@@ -346,7 +346,7 @@ class SimulationProperties:
                                         list_for_matching_postMS = None,
                                         record_matching = False,
                                         verbose = False)
-            
+
         # pass TrackMatcher reference (except for flow, step_SN, step_end)
         if step_name not in ["flow", "step_SN", "step_end"]:
             step_kwargs['track_matcher'] = self.track_matcher

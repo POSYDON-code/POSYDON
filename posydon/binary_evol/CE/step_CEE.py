@@ -34,6 +34,8 @@ __authors__ = [
 ]
 
 
+import copy
+
 import numpy as np
 import pandas as pd
 
@@ -57,7 +59,6 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
-import copy
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
