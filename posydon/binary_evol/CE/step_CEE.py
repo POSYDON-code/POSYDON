@@ -57,6 +57,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
+import copy
 
 MODEL = {"prescription": 'alpha-lambda',
          "common_envelope_efficiency": 1.0,
@@ -204,6 +205,9 @@ class StepCEE(object):
         #                            record_matching = self.record_matching,
         #                            verbose = self.verbose)
         self.track_matcher = kwargs.get("track_matcher", None)
+        #self.track_matcher.list_for_matching_HMS = list_for_matching_HMS
+        #self.track_matcher.train_scalers()
+        #self.track_matcher = copy.deepcopy(self.track_matcher)
 
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""

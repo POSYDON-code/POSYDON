@@ -279,24 +279,6 @@ class SimulationProperties:
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
                 metallicity = step_kwargs.get('metallicity', metallicity)
-                
-                # create track matching object
-                if self.track_matcher is None and metallicity is not None:
-                    self.track_matcher = TrackMatcher(grid_name_Hrich = None,
-                                            grid_name_strippedHe = None,
-                                            path=PATH_TO_POSYDON_DATA, metallicity = metallicity,
-                                            matching_method = "minimize",
-                                            matching_tolerance=1e-2,
-                                            matching_tolerance_hard=1e-1,
-                                            list_for_matching_HMS = None,
-                                            list_for_matching_HeStar = None,
-                                            list_for_matching_postMS = None,
-                                            record_matching = False,
-                                            verbose = False)
-
-                if name not in ["flow", "step_SN", "step_end"]:
-                    step_kwargs['track_matcher'] = self.track_matcher
-    
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
         # track that all steps have been loaded
@@ -350,6 +332,24 @@ class SimulationProperties:
                 Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).",
                         "MissingValueWarning")
                 metallicity = 1.0
+
+            # create TrackMatcher object if needed
+            if self.track_matcher is None:
+                self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+                                        grid_name_strippedHe = None,
+                                        path=PATH_TO_POSYDON_DATA, metallicity = metallicity,
+                                        matching_method = "minimize",
+                                        matching_tolerance=1e-2,
+                                        matching_tolerance_hard=1e-1,
+                                        list_for_matching_HMS = None,
+                                        list_for_matching_HeStar = None,
+                                        list_for_matching_postMS = None,
+                                        record_matching = False,
+                                        verbose = False)
+            
+        # pass TrackMatcher reference (except for flow, step_SN, step_end)
+        if step_name not in ["flow", "step_SN", "step_end"]:
+            step_kwargs['track_matcher'] = self.track_matcher
 
         # This if should never trigger after __init__, unless the step is
         # entirely new and non-standard
