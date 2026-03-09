@@ -397,7 +397,7 @@ class LazyHDF5:
             else:
                 data = data.astype(self._dtype_list)
         return data
-    
+
     def __setitem__(self, idx, value):
         # materialize full array in memory
         arr = self.__array__()
