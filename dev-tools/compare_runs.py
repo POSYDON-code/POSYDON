@@ -19,12 +19,21 @@ Authors: Elizabeth Teng
 """
 
 import argparse
+<<<<<<< HEAD
 import sys
 import os
 import numpy as np
 import pandas as pd
 
 
+=======
+import os
+import sys
+
+import numpy as np
+import pandas as pd
+
+>>>>>>> d0eaf915cf9f6c5ab67263acb5537facb676c1b8
 # Columns that represent qualitative (categorical) evolution properties.
 # Any column matching these names will be compared as exact string matches
 # and reported under "QUALITATIVE" differences.
@@ -438,4 +447,8 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     main()
+=======
+    main()
+>>>>>>> d0eaf915cf9f6c5ab67263acb5537facb676c1b8
