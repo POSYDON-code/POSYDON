@@ -31,11 +31,6 @@ COLUMNS_TO_SHOW = ['step_names', 'state', 'event',
                    'S1_state', 'S1_mass',
                    'S2_state', 'S2_mass', 'orbital_period']
 
-# Suppress fragmentation warnings from POSYDON internals.
-# The .copy() calls below already handle the actual performance impact;
-# these warnings are just noise from to_df() building DataFrames column-by-column.
-# warnings.filterwarnings("ignore", message=".*DataFrame is highly fragmented.*")
-
 def load_inlist(metallicity, verbose, ini_path=None):
     """Load simulation properties from ini file and configure for given metallicity.
 
@@ -134,14 +129,19 @@ def print_failed_binary(binary,e,  max_error_lines=3):
 
     print("-" * LINE_LENGTH)
 
-def evolve_binary(binary, h5file, binary_id):
+def evolve_binary(binary, binary_id):
     """
-    Evolves a single binary, prints its evolution, and saves to HDF5.
+    Evolves a single binary, prints its evolution, and returns results.
 
     Args:
         binary: BinaryStar object
-        h5file: open pd.HDFStore object for writing
         binary_id: unique identifier for this binary
+
+    Returns:
+        tuple of (evolution_df, error_df, captured_warnings)
+        evolution_df: DataFrame or None
+        error_df: DataFrame or None
+        captured_warnings: list of dicts
     """
 
     # Capture warnings during evolution
@@ -209,6 +209,8 @@ def evolve_binary(binary, h5file, binary_id):
 
         print(f"✅ Finished binary {binary_id}")
         print("=" * LINE_LENGTH)
+        
+    return evolution_df, error_df, captured_warnings
 
 def get_test_binaries(metallicity, sim_prop):
     """Return the list of test binaries as (star1_kwargs, star2_kwargs, binary_kwargs, description) tuples.
