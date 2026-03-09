@@ -1501,8 +1501,8 @@ class PSyGrid:
             it was defined during the initialization (argument: `filepath`).
 
         lazy : bool (default: True)
-            If True, load hdf5 files lazily. This means that MESA data 
-            will not be loaded into RAM (which can be in the GB range). 
+            If True, load hdf5 files lazily. This means that MESA data
+            will not be loaded into RAM (which can be in the GB range).
             This comes at a small cost to I/O.
 
         """
