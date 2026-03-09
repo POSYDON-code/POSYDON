@@ -392,11 +392,20 @@ class LazyHDF5:
     def __getitem__(self, idx):
         data = self._dataset[idx]
         if self._dtype_set is not None:
-            if type(idx) == str:
+            if isinstance(idx, str):
                 data = data.astype(self._dtype_set[idx])
             else:
                 data = data.astype(self._dtype_list)
         return data
+    
+    def __setitem__(self, idx, value):
+        # materialize full array in memory
+        arr = self.__array__()
+        # write new value
+        arr[idx] = value
+
+        self._dataset = arr
+
 
     def __array__(self):
         data = self._dataset[()]
