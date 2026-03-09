@@ -1,5 +1,3 @@
-# dev-tools
-
 Validation suite for POSYDON binary evolution. Evolves a fixed set of test binaries on a candidate branch and compares results against a stored baseline to catch regressions.
 
 ## Quick Start
@@ -16,7 +14,7 @@ Validation suite for POSYDON binary evolution. Evolves a fixed set of test binar
 
 ### `validate_binaries.sh`
 
-Top-level entry point. Evolves test binaries on a candidate branch, then compares results against a baseline.
+Top-level entry point. Evolves test binaries on a candidate branch, then compares results against an existing baseline.
 
 ```bash
 ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE]
@@ -77,11 +75,3 @@ dev-tools/
 ├── logs/                     # per-metallicity evolution logs (per branch)
 └── workdirs/                 # cloned repos and conda environments (per branch)
 ```
-
-## Available Metallicities
-
-The suite supports metallicities (in solar units): 2, 1, 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001. All are run by default; pass a quoted subset to limit, e.g. `"1 0.45"`.
-
-## Authors
-
-Max Briel, Elizabeth Teng
