@@ -420,10 +420,10 @@ class LazyHDF5:
         return self._dataset.dtype
 
     @property
-    def shape(self): # pragma: no cove
+    def shape(self): # pragma: no cover
         return self._dataset.shape
 
-    def __len__(self): # pragma: no cove
+    def __len__(self): # pragma: no cover
         return len(self._dataset)
 
 
