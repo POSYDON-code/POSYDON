@@ -267,6 +267,29 @@ class TestGetMeanMass:
 
         assert "q_min must be less than q_max" in str(excinfo.value)
 
+    def test_q_min_greater_than_q_max_computed_error(self):
+        # Test the validation error when computed q_min > q_max
+        # This happens when secondary_mass_min/primary_mass_min > secondary_mass_max/primary_mass_max
+        params = {
+            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_min': 5,
+            'primary_mass_max': 10,
+            'secondary_mass_min': 4,  # 4/5 = 0.8
+            'secondary_mass_max': 6,  # 6/10 = 0.6, so q_min (0.8) > q_max (0.6)
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+
+        with pytest.raises(ValueError) as excinfo:
+            norm_pop.get_mean_mass(params)
+
+        assert "q_min must be less than q_max" in str(excinfo.value)
+
     def test_mean_mass_without_q_bounds(self):
         # Test the branch where q_min and q_max are computed from secondary masses
         params = {
@@ -284,10 +307,9 @@ class TestGetMeanMass:
             'orbital_period_max': 6000,
         }
 
-        # This should not raise an error and should return a valid mean mass
-        result = norm_pop.get_mean_mass(params)
-        assert isinstance(result, (float, np.floating))
-        assert result > 0
+        mean_mass = norm_pop.get_mean_mass(params)
+        assert mean_mass > 0
+
 
 class TestGetPdf:
     def test_single_star_pdf(self):

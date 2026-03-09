@@ -16,6 +16,7 @@ __authors__ = [
 import numpy as np
 from scipy.stats import truncnorm
 
+from posydon.popsyn import IMFs, distributions
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
 
@@ -130,45 +131,11 @@ def generate_orbital_periods(primary_masses,
 
     # Sana H., et al., 2012, Science, 337, 444
     if orbital_period_scheme == 'Sana+12_period_extended':
-        # compute periods as if all M1 <= 15Msun (where pi = 0.0)
-        orbital_periods_M_lt_15 = 10**RNG.uniform(
-            low=np.log10(orbital_period_min),
-            high=np.log10(orbital_period_max),
-            size=number_of_binaries)
-
-        # compute periods as if all M1 > 15Msun
-        def pdf(logp):
-            pi = 0.55
-            beta = 1 - pi
-            A = np.log10(10**0.15)**(-pi)*(np.log10(10**0.15)
-                                           - np.log10(orbital_period_min))
-            B = 1./beta*(np.log10(orbital_period_max)**beta
-                         - np.log10(10**0.15)**beta)
-            C = 1./(A + B)
-            pdf = np.zeros(len(logp))
-
-            for j, logp_j in enumerate(logp):
-                # for logP<=0.15 days, the pdf is uniform
-                if np.log10(orbital_period_min) <= logp_j and logp_j < 0.15:
-                    pdf[j] = C*0.15**(-pi)
-
-                # original Sana H., et al., 2012, Science, 337, 444
-                elif 0.15 <= logp_j and logp_j < np.log10(orbital_period_max):
-                    pdf[j] = C*logp_j**(-pi)
-
-                else:
-                    pdf[j] = 0.
-
-            return pdf
-
-        orbital_periods_M_gt_15 = 10**(rejection_sampler(
-            size=number_of_binaries,
-            x_lim=[np.log10(orbital_period_min), np.log10(orbital_period_max)],
-            pdf=pdf))
-
-        orbital_periods = np.where(primary_masses <= 15.0,
-                                   orbital_periods_M_lt_15,
-                                   orbital_periods_M_gt_15)
+        period_dist = distributions.Sana12Period(
+            p_min=orbital_period_min,
+            p_max=orbital_period_max
+        )
+        orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
     else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
@@ -216,10 +183,11 @@ def generate_orbital_separations(number_of_binaries=1,
                          "orbital separation scheme.")
 
     if orbital_separation_scheme == 'log_uniform':
-        orbital_separations = 10**RNG.uniform(
-            low=np.log10(orbital_separation_min),
-            high=np.log10(orbital_separation_max),
-            size=number_of_binaries)
+        sep_dist = distributions.LogUniform(
+            min=orbital_separation_min,
+            max=orbital_separation_max
+        )
+        orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
 
     if orbital_separation_max < orbital_separation_min:
         raise ValueError("`orbital_separation_max` must be "
@@ -233,20 +201,13 @@ def generate_orbital_separations(number_of_binaries=1,
                 "`log_orbital_separation_mean`, "
                 "`log_orbital_separation_sigma`.")
 
-        # Set limits for truncated normal distribution
-        a_low = (np.log10(orbital_separation_min)
-                 - log_orbital_separation_mean) / log_orbital_separation_sigma
-        a_high = (np.log10(orbital_separation_max)
-                  - log_orbital_separation_mean) / log_orbital_separation_sigma
-
-        # generate orbital separations from a truncted normal distribution
-        log_orbital_separations = truncnorm.rvs(
-            a_low, a_high,
-            loc=log_orbital_separation_mean,
-            scale=log_orbital_separation_sigma,
-            size=number_of_binaries,
-            random_state=RNG)
-        orbital_separations = 10**log_orbital_separations
+        sep_dist = distributions.LogNormalSeparation(
+            mean=log_orbital_separation_mean,
+            sigma=log_orbital_separation_sigma,
+            min=orbital_separation_min,
+            max=orbital_separation_max
+        )
+        orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
 
     else:
         pass
@@ -284,11 +245,14 @@ def generate_eccentricities(number_of_binaries=1,
         raise ValueError("You must provide an allowed eccentricity scheme.")
 
     if eccentricity_scheme == 'thermal':
-        eccentricities = np.sqrt(RNG.uniform(size=number_of_binaries))
+        ecc_dist = distributions.ThermalEccentricity()
+        eccentricities = ecc_dist.rvs(size=number_of_binaries, rng=RNG)
     elif eccentricity_scheme == 'uniform':
-        eccentricities = RNG.uniform(size=number_of_binaries)
+        ecc_dist = distributions.UniformEccentricity()
+        eccentricities = ecc_dist.rvs(size=number_of_binaries, rng=RNG)
     elif eccentricity_scheme == 'zero':
-        eccentricities = np.zeros(number_of_binaries)
+        ecc_dist = distributions.ZeroEccentricity()
+        eccentricities = ecc_dist.rvs(size=number_of_binaries, rng=RNG)
     else:
         # This should never be reached
         pass
@@ -331,30 +295,18 @@ def generate_primary_masses(number_of_binaries=1,
 
     # Salpeter E. E., 1955, ApJ, 121, 161
     if primary_mass_scheme == 'Salpeter':
-        alpha = 2.35
-        normalization_constant = (1.0-alpha) / (primary_mass_max**(1-alpha)
-                                                - primary_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        primary_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+        imf = IMFs.Salpeter(alpha=2.35, m_min=primary_mass_min, m_max=primary_mass_max)
+        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
 
     # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545
     elif primary_mass_scheme == 'Kroupa1993':
-        alpha = 2.7
-        normalization_constant = (1.0-alpha) / (primary_mass_max**(1-alpha)
-                                                - primary_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        primary_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+        imf = IMFs.Kroupa1993(alpha=2.7, m_min=primary_mass_min, m_max=primary_mass_max)
+        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
 
     # Kroupa P., 2001, MNRAS, 322, 231
     elif primary_mass_scheme == 'Kroupa2001':
-        alpha = 2.3
-        normalization_constant = (1.0-alpha) / (primary_mass_max**(1-alpha)
-                                                - primary_mass_min**(1-alpha))
-        random_variable = RNG.uniform(size=number_of_binaries)
-        primary_masses = (random_variable*(1.0-alpha)/normalization_constant
-                          + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
+        imf = IMFs.Kroupa2001(m_min=primary_mass_min, m_max=primary_mass_max)
+        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
     else:
         pass
 
@@ -404,13 +356,18 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        mass_ratio_min = np.max([secondary_mass_min / primary_masses,
-                                 np.ones(len(primary_masses))*0.05], axis=0)
-        mass_ratio_max = np.min([secondary_mass_max / primary_masses,
-                                 np.ones(len(primary_masses))], axis=0)
-        secondary_masses = (
-            (mass_ratio_max - mass_ratio_min) * RNG.uniform(
-                size=number_of_binaries) + mass_ratio_min) * primary_masses
+        # Calculate mass ratio bounds for each primary mass
+        q_min = secondary_mass_min / primary_masses
+        q_max = np.minimum(secondary_mass_max / primary_masses, 1.0)
+
+        # Sample mass ratios using the distribution class
+        # For mass-dependent bounds, we need to sample individually
+        mass_ratios = np.zeros(number_of_binaries)
+        for i in range(number_of_binaries):
+            q_dist = distributions.FlatMassRatio(q_min=q_min[i], q_max=q_max[i])
+            mass_ratios[i] = q_dist.rvs(size=1, rng=RNG)[0]
+
+        secondary_masses = primary_masses * mass_ratios
 
     if secondary_mass_scheme == 'q=1':
         secondary_masses = primary_masses
