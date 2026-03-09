@@ -87,7 +87,6 @@ def setup_popsyn_function(args):
     validate_ini_file(args.ini_file)
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
-
     # warn if mass ratio q = M2/M1 could fall below 0.05
     if synpop_params['secondary_mass_scheme'] == 'flat_mass_ratio':
         q_min_possible = (synpop_params['secondary_mass_min']
@@ -103,7 +102,8 @@ def setup_popsyn_function(args):
                 f"default grids.",
                 "InappropriateValueWarning"
             )
-    metallicities = synpop_params['metallicity']
+
+    metallicities = synpop_params['metallicities']
     if synpop_params['number_of_binaries'] / args.job_array < 1:
         raise ValueError("The number of binaries is less than the job array"
                          " length. Please increase the number of binaries or"
