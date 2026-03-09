@@ -1534,13 +1534,16 @@ class PSyGrid:
             new_dtype[dtype[0]] = dtype[1]
 
         if lazy:
-            self.initial_values = LazyHDF5(initial_values)
-            self.final_values = LazyHDF5(final_values, new_dtype)
+            initial_values = LazyHDF5(initial_values)
+            final_values = LazyHDF5(final_values, new_dtype)
         else: # pragma: no cover
-            self.initial_values = initial_values[()]
-            self.final_values = final_values[()]
+            initial_values = initial_values[()]
+            final_values = final_values[()]
             new_dtype = list(new_dtype.items())
-            self.final_values = self.final_values.astype(new_dtype)
+            final_values = final_values.astype(new_dtype)
+
+        self.initial_values = initial_values
+        self.final_values = final_values
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
