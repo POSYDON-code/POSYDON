@@ -209,7 +209,7 @@ def evolve_binary(binary, binary_id):
 
         print(f"✅ Finished binary {binary_id}")
         print("=" * LINE_LENGTH)
-        
+
     return evolution_df, error_df, captured_warnings
 
 def get_test_binaries(metallicity, sim_prop):
