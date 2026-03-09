@@ -17,12 +17,12 @@ __authors__ = [
 import os
 import time
 
+from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
 
-from posydon.binary_evol.DT.track_match import TrackMatcher
-from posydon.config import PATH_TO_POSYDON_DATA
 
 class NullStep:
     """An evolution step that does nothing but is used to initialize."""
@@ -271,7 +271,7 @@ class SimulationProperties:
         if verbose:
             print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
 
-        
+
         self.track_matcher = None
 
         # for every other step, give it a metallicity and load each step
@@ -279,7 +279,7 @@ class SimulationProperties:
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
                 metallicity = step_kwargs.get('metallicity', metallicity)
-                
+
                 # create track matching object
                 if self.track_matcher is None and metallicity is not None:
                     self.track_matcher = TrackMatcher(grid_name_Hrich = None,
@@ -296,7 +296,7 @@ class SimulationProperties:
 
                 if name not in ["flow", "step_SN", "step_end"]:
                     step_kwargs['track_matcher'] = self.track_matcher
-    
+
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
         # track that all steps have been loaded
