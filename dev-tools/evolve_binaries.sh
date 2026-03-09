@@ -106,7 +106,7 @@ echo "📦 Installing POSYDON"
 pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/    /'
 
 # ── Run Suite for Each Metallicity ────────────────────────────────────────
-SUITE_SCRIPT="$SCRIPT_DIR/script_data/binaries_suite.py"
+SUITE_SCRIPT="$SCRIPT_DIR/binaries_suite.py"
 FAILED=0
 
 for Z in $METALLICITIES; do
