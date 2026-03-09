@@ -1526,7 +1526,7 @@ class PSyGrid:
 
         # change ASCII to UNICODE in termination flags in `final_values`
         new_dtype = {}
-        for dtype in self.final_values.dtype.descr:
+        for dtype in final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
@@ -1534,8 +1534,8 @@ class PSyGrid:
             new_dtype[dtype[0]] = dtype[1]
 
         if lazy:
-            self.initial_values = LazyHDF5(self.initial_values)
-            self.final_values = LazyHDF5(self.final_values, new_dtype)
+            self.initial_values = LazyHDF5(initial_values)
+            self.final_values = LazyHDF5(final_values, new_dtype)
         else:
             self.initial_values = initial_values[()]
             self.final_values = final_values[()]
