@@ -1491,7 +1491,7 @@ class PSyGrid:
         mode = "a" if writeable else "r"
         self.hdf5 = h5py.File(self.filepath, mode, **driver_args)
 
-    def load(self, filepath=None):
+    def load(self, filepath=None, lazy=True):
         """Load up a previously created PSyGrid object from an HDF5 file.
 
         Parameters
@@ -1499,6 +1499,11 @@ class PSyGrid:
         filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
+
+        lazy : bool (default: True)
+            If True, load hdf5 files lazily. This means that MESA data 
+            will not be loaded into RAM (which can be in the GB range). 
+            This comes at a small cost to I/O.
 
         """
         self._say("Loading HDF5 grid...")
@@ -1516,8 +1521,8 @@ class PSyGrid:
         hdf5 = self.hdf5
         # load initial/final_values
         self._say("\tLoading initial/final values...")
-        self.initial_values = hdf5['/grid/initial_values']
-        self.final_values = hdf5['/grid/final_values']
+        initial_values = hdf5['/grid/initial_values']
+        final_values = hdf5['/grid/final_values']
 
         # change ASCII to UNICODE in termination flags in `final_values`
         new_dtype = {}
@@ -1528,9 +1533,14 @@ class PSyGrid:
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype[dtype[0]] = dtype[1]
 
-        self.initial_values = LazyHDF5(self.initial_values)
-        self.final_values = LazyHDF5(self.final_values, new_dtype)
-        #self.final_values = self.final_values.astype(new_dtype)
+        if lazy:
+            self.initial_values = LazyHDF5(self.initial_values)
+            self.final_values = LazyHDF5(self.final_values, new_dtype)
+        else:
+            self.initial_values = initial_values[()]
+            self.final_values = final_values[()]
+            new_dtype = list(new_dtype.items())
+            self.final_values = self.final_values.astype(new_dtype)
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
