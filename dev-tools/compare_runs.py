@@ -19,11 +19,11 @@ Authors: Elizabeth Teng
 """
 
 import argparse
-import sys
 import os
+import sys
+
 import numpy as np
 import pandas as pd
-
 
 # Columns that represent qualitative (categorical) evolution properties.
 # Any column matching these names will be compared as exact string matches
