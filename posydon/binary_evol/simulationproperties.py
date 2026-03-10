@@ -341,87 +341,83 @@ class SimulationProperties:
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
 
         step_func = step_tup[0]
-        step_kwargs = step_tup[1]
+        step_kwargs = step_tup[1].copy()
 
-        if (metallicity is None) and (step_name not in ignore_for_met):
-            metallicity = step_kwargs.get('metallicity', metallicity)
-            if metallicity is not None:
-                pass
-            # if still None:
-            else:
-                Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).",
-                        "MissingValueWarning")
-                metallicity = 1.0
-        # give step a metallicity and load it as a class attribute
+        # check/assign metallicity to the step
         if step_name not in ignore_for_met:
-            step_kwargs.update({'metallicity':float(metallicity)})
+            metallicity = step_kwargs.get('metallicity', metallicity)
+            if metallicity is None:
+                Pwarn(f"{step_name} not assigned a metallicity. "
+                    "Defaulting to Z = Zsun (solar).",
+                    "MissingValueWarning")
+                metallicity = 1.0
+            step_kwargs['metallicity'] = float(metallicity)
 
-        # create TrackMatcher object if needed
+        # check/create a TrackMatcher object if needed
+        matcher_key = (metallicity, step_name)
         if step_name in steps_with_matching:
-            z_str = convert_metallicity_to_string(metallicity)
-            # set up GRIDInterpolator objects for all TrackMatchers
-            try:
-                _ = self.grids_Hrich[metallicity]
-            except KeyError:
-                self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
-                                                         z_str+'_Zsun.h5')
-                grid_path_Hrich = os.path.join(self.grid_path,
-                                               self.grid_names_Hrich[metallicity])
-                self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
+            matcher_needed = matcher_key not in self.track_matchers
+            if matcher_needed:
+                step_kwargs, matcher_kwargs = self._separate_matcher_kwargs(step_kwargs)
+                self.create_track_matcher(metallicity, step_name, matcher_kwargs)
 
-            try:
-                _ = self.grids_strippedHe[metallicity]
-            except KeyError:
-                self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
-                                                         z_str+'_Zsun.h5')
-                grid_path_strippedHe = os.path.join(self.grid_path,
-                                                    self.grid_names_strippedHe[metallicity])
-                self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
-
-            # Create TrackMatcher object as needed, passing GRIDInterpolators
-            step_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
-            step_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
-            if step_name not in self.track_matchers.keys():
-                # update TrackMatcher kwargs with any step specs
-                track_match_kwargs = DEFAULT_MATCH_SETTINGS.copy()
-                for key, val in step_kwargs.items():
-                    if key in track_match_kwargs.keys():
-                        track_match_kwargs.update({key: val})
-                    else:
-                        pass
-                # peel off TrackMatcher kwargs from step_kwargs
-                for key in track_match_kwargs.keys():
-                    _ = step_kwargs.pop(key, None)
-
-                self.track_matchers[step_name] = TrackMatcher(**track_match_kwargs)
-                step_kwargs['track_matcher'] = self.track_matchers[step_name]
-
-        # This if should never trigger after __init__, unless the step is
-        # entirely new and non-standard
-        if step_name not in self.kwargs.keys():
-            self.kwargs[step_name] = step_tup
+            step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
 
         if verbose:
             print(step_name, step_tup, end='\n')
 
-        # steps like step_end do not take kwargs, so try loading with
-        # kwargs first, then without if that fails. This mostly matters
-        # if a user has re-mapped a step to one that does not take kwargs.
+        # Try to load the step
         try:
             setattr(self, step_name, step_func(**step_kwargs))
-
         except TypeError as e:
             Pwarn(f"Error loading step {step_name}: {e}", "StepWarning")
             print(f"Loading {step_name} without arguments.")
             setattr(self, step_name, step_func())
 
         # check if all steps have been loaded
-        for name, tup in self.kwargs.items():
-            if isinstance(tup, tuple):
-                if hasattr(self, name):
-                    self.steps_loaded = True
-                else:
-                    self.steps_loaded = False
+        self.steps_loaded = all(hasattr(self, name) 
+                                for name, tup in self.kwargs.items() 
+                                if isinstance(tup, tuple)
+)
+
+    def _separate_matcher_kwargs(self, step_kwargs):
+        matcher_kwargs = DEFAULT_MATCH_SETTINGS.copy()
+        for key, val in step_kwargs.items():
+            if key in matcher_kwargs:
+                matcher_kwargs.update({key: val})
+        # peel off TrackMatcher kwargs from step_kwargs
+        except_keys = ["metallicity", "verbose"]
+        for key in matcher_kwargs:
+            if key in except_keys:
+                continue
+            _ = step_kwargs.pop(key, None)
+
+        return step_kwargs, matcher_kwargs
+
+    def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
+
+        z_str = convert_metallicity_to_string(metallicity)
+        # set up GRIDInterpolator objects for all TrackMatchers
+        # (only if one hasn't been created already for a given metallicity)
+        if metallicity not in self.grids_Hrich:
+            self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
+                                                        z_str+'_Zsun.h5')
+            grid_path_Hrich = os.path.join(self.grid_path,
+                                            self.grid_names_Hrich[metallicity])
+            self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
+
+        if metallicity not in self.grids_strippedHe:
+            self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
+                                                        z_str+'_Zsun.h5')
+            grid_path_strippedHe = os.path.join(self.grid_path,
+                                                self.grid_names_strippedHe[metallicity])
+            self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
+
+        # Create TrackMatcher object as needed, passing GRIDInterpolators
+        matcher_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
+        matcher_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
+        self.track_matchers[(metallicity, step_name)] = TrackMatcher(**matcher_kwargs)
+            
 
     def close(self):
         """Close hdf5 files before exiting."""
