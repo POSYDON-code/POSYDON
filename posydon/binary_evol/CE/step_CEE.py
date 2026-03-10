@@ -182,7 +182,7 @@ class StepCEE(object):
         self.metallicity = metallicity
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
- 
+
         # set TrackMatcher reference
         self.track_matcher = kwargs.get("track_matcher", None)
 

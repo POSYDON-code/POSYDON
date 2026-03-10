@@ -230,7 +230,7 @@ class detached_step:
             verbose=False,
             matching_method="minimize",
             **kwargs):
-        
+
         """Initialize the step. See class documentation for details."""
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
