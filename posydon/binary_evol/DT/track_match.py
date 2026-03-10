@@ -38,7 +38,6 @@ from posydon.binary_evol.flow_chart import (
 )
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.utils.common_functions import (
     convert_metallicity_to_string,
     set_binary_to_failed,
@@ -48,7 +47,6 @@ from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONErr
 from posydon.utils.posydonwarning import Pwarn
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
-
 
 val_names = [" ", "mass", "log_R", "center_h1", "surface_h1",
                 "he_core_mass", "center_he4", "surface_he4",
@@ -60,6 +58,20 @@ row_str = " ".join(str_fmts)
 DIVIDER_STR = "_"*len(row_str.format(*[""]*len(str_fmts)))
 # MAJOR.MINOR version of imported scipy package
 SCIPY_VER = float('.'.join(scipy.__version__.split('.')[:2]))
+
+DEFAULT_MATCH_SETTINGS = {"grid_Hrich":None,
+                          "grid_strippedHe":None,
+                          "path":PATH_TO_POSYDON_DATA,
+                          "metallicity":None,
+                          "matching_method":"minimize",
+                          "matching_tolerance":1e-2,
+                          "matching_tolerance_hard":1e-1,
+                          "list_for_matching_HMS":None,
+                          "list_for_matching_HeStar":None,
+                          "list_for_matching_postMS":None,
+                          "list_for_matching_postHeMS":None,
+                          "record_matching":False,
+                          "verbose":False}
 
 class TrackMatcher:
     """
@@ -253,22 +265,7 @@ class TrackMatcher:
 
     """
 
-    def __init__(
-            self,
-            grid_name_Hrich,
-            grid_name_strippedHe,
-            path=PATH_TO_POSYDON_DATA,
-            metallicity=None,
-            matching_method="minimize",
-            matching_tolerance=1e-2,
-            matching_tolerance_hard=1e-1,
-            list_for_matching_HMS=None,
-            list_for_matching_postMS=None,
-            list_for_matching_HeStar=None,
-            list_for_matching_postHeMS=None,
-            record_matching=False,
-            verbose=False
-    ):
+    def __init__(self, **kwargs):
 
         # MESA history column names used as matching metrics
         # TODO: should this be singlestar.STARPROPERTIES? An
@@ -291,19 +288,19 @@ class TrackMatcher:
 
         # =====================================================================
 
-        self.metallicity = convert_metallicity_to_string(metallicity)
-        self.matching_method = matching_method
-        self.matching_tolerance = matching_tolerance # DEFAULT: 1e-2
-        self.matching_tolerance_hard = matching_tolerance_hard # DEFAULT: 1e-1
+        for kwarg in kwargs:
+            if kwarg not in DEFAULT_MATCH_SETTINGS.keys():
+                raise POSYDONError(f"Unexpected keyword argument {kwarg} "
+                                    "passed to TrackMatcher. Expected "
+                                    f"kwargs: {DEFAULT_MATCH_SETTINGS.keys()}")
+            else:
+                # set attributes for all kwargs, using defaults if not specified
+                setattr(self, kwarg, kwargs.get(kwarg, DEFAULT_MATCH_SETTINGS[kwarg]))
+
+        self.metallicity = convert_metallicity_to_string(self.metallicity)
 
         self.initial_mass = None
         self.rootm = None
-        self.verbose = verbose
-
-        self.list_for_matching_HMS = list_for_matching_HMS
-        self.list_for_matching_postMS = list_for_matching_postMS
-        self.list_for_matching_HeStar = list_for_matching_HeStar
-        self.list_for_matching_postHeMS = list_for_matching_postHeMS
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -330,19 +327,6 @@ class TrackMatcher:
 
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
-
-        # should grids just get passed to this?
-        if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join('single_HMS',
-                                           self.metallicity+'_Zsun.h5')
-        grid_path_Hrich = os.path.join(path, grid_name_Hrich)
-        self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
-
-        if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join('single_HeMS',
-                                                self.metallicity+'_Zsun.h5')
-        grid_path_strippedHe = os.path.join(path, grid_name_strippedHe)
-        self.grid_strippedHe = GRIDInterpolator(grid_path_strippedHe)
 
         # =====================================================================
 
@@ -421,8 +405,6 @@ class TrackMatcher:
             ["min_max", "min_max"],
             [m_min_He, m_max_He], [t_min_He, t_max_He]
         ]
-
-        self.record_matching = record_matching
 
         # create and train scalers
         self.create_root0_h()

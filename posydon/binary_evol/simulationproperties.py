@@ -17,11 +17,13 @@ __authors__ = [
 import os
 import time
 
-from posydon.binary_evol.DT.track_match import TrackMatcher
+from posydon.binary_evol.DT.track_match import TrackMatcher, DEFAULT_MATCH_SETTINGS
+from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 
 class NullStep:
@@ -194,6 +196,15 @@ class SimulationProperties:
 
         self.preload_imports()
 
+        # To hold TrackMatcher objects per step, if needed.
+        self.track_matchers = {}
+
+        self.grid_path = PATH_TO_POSYDON_DATA
+        self.grid_name_Hrich = None
+        self.grid_Hrich = None
+        self.grid_name_strippedHe = None
+        self.grid_strippedHe = None
+
     def preload_imports(self):
         """
             Preload the imports of detached_step and MesaGridStep to avoid
@@ -205,9 +216,11 @@ class SimulationProperties:
         """
 
         from posydon.binary_evol.DT.step_detached import detached_step
+        from posydon.binary_evol.CE.step_CEE import StepCEE
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
 
         self._detached_step = detached_step
+        self._step_CE = StepCEE
         self._MesaGridStep = MesaGridStep
 
     @classmethod
@@ -317,13 +330,18 @@ class SimulationProperties:
 
         # these steps and the flow do not require a metallicity
         ignore_for_met = ["flow", "step_SN", "step_end"]
+        steps_with_matching = ["step_detached", "step_CE",
+                               "step_isolated", "step_dco",
+                               "step_merged", "step_disrupted"]
 
         # grab kwargs from ini file for given step
         if os.path.isfile(from_ini):
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
 
+        step_func = step_tup[0]
+        step_kwargs = step_tup[1]
+
         if (metallicity is None) and (step_name not in ignore_for_met):
-            step_kwargs = step_tup[1]
             metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is not None:
                 pass
@@ -332,43 +350,60 @@ class SimulationProperties:
                 Pwarn(f"{step_name} not assigned a metallicity. Defaulting to Z = Zsun (solar).",
                         "MissingValueWarning")
                 metallicity = 1.0
+        # give step a metallicity and load it as a class attribute
+        if step_name not in ignore_for_met:
+            step_kwargs.update({'metallicity':float(metallicity)})
 
-            # create TrackMatcher object if needed
-            if self.track_matcher is None:
-                self.track_matcher = TrackMatcher(grid_name_Hrich = None,
-                                        grid_name_strippedHe = None,
-                                        path=PATH_TO_POSYDON_DATA, metallicity = metallicity,
-                                        matching_method = "minimize",
-                                        matching_tolerance=1e-2,
-                                        matching_tolerance_hard=1e-1,
-                                        list_for_matching_HMS = None,
-                                        list_for_matching_HeStar = None,
-                                        list_for_matching_postMS = None,
-                                        record_matching = False,
-                                        verbose = False)
-            
-        # pass TrackMatcher reference (except for flow, step_SN, step_end)
-        if step_name not in ["flow", "step_SN", "step_end"]:
-            step_kwargs['track_matcher'] = self.track_matcher
+        # create TrackMatcher object if needed
+        if step_name in steps_with_matching:
+            z_str = convert_metallicity_to_string(metallicity)
+            # set up GRIDInterpolator objects for all TrackMatchers
+            if self.grid_Hrich is None:
+                if self.grid_name_Hrich is None:
+                    self.grid_name_Hrich = os.path.join('single_HMS',
+                                                         z_str+'_Zsun.h5')
+                grid_path_Hrich = os.path.join(self.grid_path, self.grid_name_Hrich)
+                self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
+
+            if self.grid_strippedHe is None:
+                if self.grid_name_strippedHe is None:
+                    self.grid_name_strippedHe = os.path.join('single_HeMS',
+                                                             z_str+'_Zsun.h5')
+                grid_path_strippedHe = os.path.join(self.grid_path, self.grid_name_strippedHe)
+                self.grid_strippedHe = GRIDInterpolator(grid_path_strippedHe)
+
+            step_kwargs['grid_Hrich'] = self.grid_Hrich
+            step_kwargs['grid_strippedHe'] = self.grid_strippedHe
+
+            # Create TrackMatcher object as needed, passing GRIDInterpolators
+            if step_name not in self.track_matchers.keys():
+                # update TrackMatcher kwargs with any step specs
+                track_match_kwargs = DEFAULT_MATCH_SETTINGS.copy()
+                for key, val in step_kwargs.items():
+                    if key in track_match_kwargs.keys():
+                        track_match_kwargs.update({key: val})
+                    else:
+                        pass
+                # peel off TrackMatcher kwargs from step_kwargs
+                for key in track_match_kwargs.keys():
+                    _ = step_kwargs.pop(key, None)
+
+                self.track_matchers[step_name] = TrackMatcher(**track_match_kwargs)
+                step_kwargs['track_matcher'] = self.track_matchers[step_name]
 
         # This if should never trigger after __init__, unless the step is
         # entirely new and non-standard
         if step_name not in self.kwargs.keys():
             self.kwargs[step_name] = step_tup
 
-        # give step a metallicity and load it as a class attribute
-        if step_name not in ignore_for_met:
-            step_tup[1].update({'metallicity':float(metallicity)})
         if verbose:
             print(step_name, step_tup, end='\n')
-
-        step_func, kwargs = step_tup
 
         # steps like step_end do not take kwargs, so try loading with
         # kwargs first, then without if that fails. This mostly matters
         # if a user has re-mapped a step to one that does not take kwargs.
         try:
-            setattr(self, step_name, step_func(**kwargs))
+            setattr(self, step_name, step_func(**step_kwargs))
 
         except TypeError as e:
             Pwarn(f"Error loading step {step_name}: {e}", "StepWarning")
@@ -391,9 +426,12 @@ class SimulationProperties:
         for step_func in all_step_funcs:
             if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
-            elif isinstance(step_func, self._detached_step):
-                for grid_interpolator in [step_func.track_matcher.grid_Hrich, step_func.track_matcher.grid_strippedHe]:
-                    grid_interpolator.close()
+            #elif isinstance(step_func, self._detached_step) or \
+            #     isinstance(step_func, self._step_CE):
+            #    for grid_interpolator in [step_func.track_matcher.grid_Hrich, step_func.track_matcher.grid_strippedHe]:
+            #        grid_interpolator.close()
+        self.grid_Hrich.close()
+        self.grid_strippedHe.close()
 
     def pre_evolve(self, binary):
         """Functions called before a binary evolves.

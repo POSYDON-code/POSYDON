@@ -227,20 +227,10 @@ class detached_step:
             magnetic_braking_mode="RVJ83",
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False,
-            record_matching=False,
             verbose=False,
-            grid_name_Hrich=None,
-            grid_name_strippedHe=None,
-            metallicity=None,
-            path=PATH_TO_POSYDON_DATA,
             matching_method="minimize",
-            matching_tolerance=1e-2,
-            matching_tolerance_hard=1e-1,
-            list_for_matching_HMS=None,
-            list_for_matching_postMS=None,
-            list_for_matching_HeStar=None,
-            **kwargs
-    ):
+            **kwargs):
+        
         """Initialize the step. See class documentation for details."""
         self.dt = dt
         self.n_o_steps_history = n_o_steps_history
@@ -273,18 +263,7 @@ class detached_step:
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
 
-        # creating a track matching object
-        #self.track_matcher = TrackMatcher(grid_name_Hrich = grid_name_Hrich,
-        #                                  grid_name_strippedHe = grid_name_strippedHe,
-        #                                  path=path, metallicity = metallicity,
-        #                                  matching_method = matching_method,
-        #                                  matching_tolerance=matching_tolerance,
-        #                                  matching_tolerance_hard=matching_tolerance_hard,
-        #                                  list_for_matching_HMS = list_for_matching_HMS,
-        #                                  list_for_matching_HeStar = list_for_matching_HeStar,
-        #                                  list_for_matching_postMS = list_for_matching_postMS,
-        #                                  record_matching = record_matching,
-        #                                  verbose = self.verbose)
+        # Set TrackMatcher reference
         self.track_matcher = kwargs.get('track_matcher', None)
 
         # create evolution handler object
