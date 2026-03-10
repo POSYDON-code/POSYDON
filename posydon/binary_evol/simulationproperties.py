@@ -360,12 +360,12 @@ class SimulationProperties:
         if step_name in steps_with_matching:
             z_str = convert_metallicity_to_string(metallicity)
             # set up GRIDInterpolator objects for all TrackMatchers
-            try: 
+            try:
                 _ = self.grids_Hrich[metallicity]
             except KeyError:
                 self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
                                                          z_str+'_Zsun.h5')
-                grid_path_Hrich = os.path.join(self.grid_path, 
+                grid_path_Hrich = os.path.join(self.grid_path,
                                                self.grid_names_Hrich[metallicity])
                 self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
 
@@ -374,7 +374,7 @@ class SimulationProperties:
             except KeyError:
                 self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
                                                          z_str+'_Zsun.h5')
-                grid_path_strippedHe = os.path.join(self.grid_path, 
+                grid_path_strippedHe = os.path.join(self.grid_path,
                                                     self.grid_names_strippedHe[metallicity])
                 self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
 
