@@ -375,8 +375,8 @@ class SimulationProperties:
             setattr(self, step_name, step_func())
 
         # check if all steps have been loaded
-        self.steps_loaded = all(hasattr(self, name) 
-                                for name, tup in self.kwargs.items() 
+        self.steps_loaded = all(hasattr(self, name)
+                                for name, tup in self.kwargs.items()
                                 if isinstance(tup, tuple)
 )
 
@@ -417,7 +417,7 @@ class SimulationProperties:
         matcher_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
         matcher_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
         self.track_matchers[(metallicity, step_name)] = TrackMatcher(**matcher_kwargs)
-            
+
 
     def close(self):
         """Close hdf5 files before exiting."""
