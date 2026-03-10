@@ -202,10 +202,10 @@ class SimulationProperties:
 
         # Should possibly be a section in sim props .ini file
         self.grid_path = PATH_TO_POSYDON_DATA
-        self.grid_name_Hrich = None
-        self.grid_Hrich = None
-        self.grid_name_strippedHe = None
-        self.grid_strippedHe = None
+        self.grid_names_Hrich = {}
+        self.grids_Hrich = {}
+        self.grid_names_strippedHe = {}
+        self.grids_strippedHe = {}
 
     def preload_imports(self):
         """
@@ -360,24 +360,27 @@ class SimulationProperties:
         if step_name in steps_with_matching:
             z_str = convert_metallicity_to_string(metallicity)
             # set up GRIDInterpolator objects for all TrackMatchers
-            if self.grid_Hrich is None:
-                if self.grid_name_Hrich is None:
-                    self.grid_name_Hrich = os.path.join('single_HMS',
+            try: 
+                _ = self.grids_Hrich[metallicity]
+            except KeyError:
+                self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
                                                          z_str+'_Zsun.h5')
-                grid_path_Hrich = os.path.join(self.grid_path, self.grid_name_Hrich)
-                self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
+                grid_path_Hrich = os.path.join(self.grid_path, 
+                                               self.grid_names_Hrich[metallicity])
+                self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
 
-            if self.grid_strippedHe is None:
-                if self.grid_name_strippedHe is None:
-                    self.grid_name_strippedHe = os.path.join('single_HeMS',
-                                                             z_str+'_Zsun.h5')
-                grid_path_strippedHe = os.path.join(self.grid_path, self.grid_name_strippedHe)
-                self.grid_strippedHe = GRIDInterpolator(grid_path_strippedHe)
-
-            step_kwargs['grid_Hrich'] = self.grid_Hrich
-            step_kwargs['grid_strippedHe'] = self.grid_strippedHe
+            try:
+                _ = self.grids_strippedHe[metallicity]
+            except KeyError:
+                self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
+                                                         z_str+'_Zsun.h5')
+                grid_path_strippedHe = os.path.join(self.grid_path, 
+                                                    self.grid_names_strippedHe[metallicity])
+                self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
 
             # Create TrackMatcher object as needed, passing GRIDInterpolators
+            step_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
+            step_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
             if step_name not in self.track_matchers.keys():
                 # update TrackMatcher kwargs with any step specs
                 track_match_kwargs = DEFAULT_MATCH_SETTINGS.copy()
