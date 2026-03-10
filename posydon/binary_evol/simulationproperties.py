@@ -265,7 +265,6 @@ class SimulationProperties:
 
         return new_instance
 
-    @profile
     def load_steps(self, metallicity=None, verbose=False):
         """Instantiate all step classes and set as instance attributes.
 
