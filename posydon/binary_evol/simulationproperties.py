@@ -265,6 +265,7 @@ class SimulationProperties:
 
         return new_instance
 
+    @profile
     def load_steps(self, metallicity=None, verbose=False):
         """Instantiate all step classes and set as instance attributes.
 
@@ -429,8 +430,10 @@ class SimulationProperties:
             if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
 
-        self.grid_Hrich.close()
-        self.grid_strippedHe.close()
+        if self.grid_Hrich is not None:
+            self.grid_Hrich.close()
+        if self.grid_name_strippedHe is not None:
+            self.grid_strippedHe.close()
 
     def pre_evolve(self, binary):
         """Functions called before a binary evolves.
