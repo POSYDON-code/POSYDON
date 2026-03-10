@@ -17,13 +17,13 @@ __authors__ = [
 import os
 import time
 
-from posydon.binary_evol.DT.track_match import DEFAULT_MATCH_SETTINGS, TrackMatcher
-from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.binary_evol.DT.track_match import TrackMatcher, DEFAULT_MATCH_SETTINGS
 from posydon.interpolation.interpolation import GRIDInterpolator
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
-from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.common_functions import convert_metallicity_to_string
 
 
 class NullStep:
@@ -197,8 +197,10 @@ class SimulationProperties:
         self.preload_imports()
 
         # To hold TrackMatcher objects per step, if needed.
+        # maybe get rid of this
         self.track_matchers = {}
 
+        # Should possibly be a section in sim props .ini file
         self.grid_path = PATH_TO_POSYDON_DATA
         self.grid_name_Hrich = None
         self.grid_Hrich = None
@@ -215,8 +217,8 @@ class SimulationProperties:
         failure occurs, hence the need for something like this.
         """
 
-        from posydon.binary_evol.CE.step_CEE import StepCEE
         from posydon.binary_evol.DT.step_detached import detached_step
+        from posydon.binary_evol.CE.step_CEE import StepCEE
         from posydon.binary_evol.MESA.step_mesa import MesaGridStep
 
         self._detached_step = detached_step
@@ -426,10 +428,7 @@ class SimulationProperties:
         for step_func in all_step_funcs:
             if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
-            #elif isinstance(step_func, self._detached_step) or \
-            #     isinstance(step_func, self._step_CE):
-            #    for grid_interpolator in [step_func.track_matcher.grid_Hrich, step_func.track_matcher.grid_strippedHe]:
-            #        grid_interpolator.close()
+
         self.grid_Hrich.close()
         self.grid_strippedHe.close()
 
