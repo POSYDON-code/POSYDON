@@ -33,14 +33,10 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-
-import copy
-
 import numpy as np
 import pandas as pd
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_H_RICH,

@@ -85,7 +85,6 @@ class MergedStep(IsolatedStep):
         *args,
         **kwargs)
 
-
     def __call__(self,binary):
 
         merged_star_properties = self.merged_star_properties
