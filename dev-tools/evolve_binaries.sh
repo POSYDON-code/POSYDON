@@ -77,17 +77,23 @@ conda activate "$FULL_PATH/conda_env"
 echo "📦 Installing POSYDON"
 pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 
-echo "🚀 Running binaries_suite.py"
-# # Run the Python script and capture output (stdout and stderr)
-OUT_DIR=$FULL_PATH/script_data/output/binary_star_tests
-
 # copy branch's default .ini file for testing and make one into a multi-metallicity .ini file for pop synth tests
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/default_test_params.ini
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 sed -i 's/metallicities *= *\[1\.\]/metallicities = [1., 0.1]/' $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 
-# run binary test suite
+# override environment's PATH_TO_POSYDON variable to point to the current branch's clone
+# for these tests
 PATH_TO_POSYDON=$FULL_PATH
-python script_data/src/binaries_suite.py > $OUT_DIR/evolve_binaries_$BRANCH.out 2>&1
 
+# Run binary evolution tests and capture output (stdout and stderr)
+OUT_DIR=$FULL_PATH/script_data/output/binary_star_tests
+echo "🚀 Running binaries_suite.py"
+python script_data/src/binaries_suite.py > $OUT_DIR/evolve_binaries_$BRANCH.out 2>&1
+echo -e "✅ Script completed. Output saved to \n$OUT_DIR/evolve_binaries_$BRANCH.out"
+
+# Run population synthesis tests and capture output (stdout and stderr)
+OUT_DIR=$FULL_PATH/script_data/output/population_tests
+echo "🚀 Running popsynth_suite.py"
+python script_data/src/popsynth_suite.py > $OUT_DIR/evolve_pop_$BRANCH.out 2>&1
 echo -e "✅ Script completed. Output saved to \n$OUT_DIR/evolve_binaries_$BRANCH.out"
