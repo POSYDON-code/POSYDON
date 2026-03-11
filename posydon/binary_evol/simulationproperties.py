@@ -428,10 +428,10 @@ class SimulationProperties:
             if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
 
-        if self.grid_Hrich is not None:
-            self.grid_Hrich.close()
-        if self.grid_name_strippedHe is not None:
-            self.grid_strippedHe.close()
+        for metallicity in self.grids_Hrich:
+            self.grids_Hrich[metallicity].close()
+        for metallicity in  self.grids_strippedHe:
+            self.grids_strippedHe[metallicity].close()
 
     def pre_evolve(self, binary):
         """Functions called before a binary evolves.
