@@ -66,7 +66,7 @@ Compares two HDF5 files produced by `binaries_suite.py` and reports differences 
 
 - **Structural**: missing or extra binaries, evolution step count changes, binaries that newly fail or newly pass, missing HDF5 tables.
 - **Qualitative**: changes to categorical columns such as state, event, step name, SN type, interpolation class, and mass transfer history.
-- **Quantitative**: changes to any numeric column. By default, comparison is exact (bitwise identical floats). Use `--loose` for slightly relaxed tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly.
+- **Quantitative**: changes to any numeric column. By default, comparison is exact (bitwise identical floats). Use `--loose` for slightly relaxed tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly as per [np.allclose](https://numpy.org/devdocs/reference/generated/numpy.allclose.html).
 
 The script also compares warning and error tables, reporting new, removed, or changed warnings per binary.
 
