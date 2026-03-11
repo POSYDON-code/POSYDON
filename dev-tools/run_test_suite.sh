@@ -2,7 +2,7 @@
 
 # Script usage: ./run_test_suite.sh <branch>
 # This script clones the POSYDON repo to the specified branch (defaults to 'main'),
-# copies script_data/ to it, runs binaries_suite.py and popsynth_suite.py, and 
+# copies script_data/ to it, runs binaries_suite.py and popsynth_suite.py, and
 # saves output to evolve_binaries.out and evolve_pop.out
 
 # Set default branch to 'main' if not provided
@@ -83,7 +83,7 @@ cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_dat
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 sed -i 's/metallicities *= *\[1\.\]/metallicities = [1., 0.1]/' $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 
-# override environment's PATH_TO_POSYDON variable to point to the 
+# override environment's PATH_TO_POSYDON variable to point to the
 # current branch's clone for these tests
 PATH_TO_POSYDON=$CLONE_DIR
 
