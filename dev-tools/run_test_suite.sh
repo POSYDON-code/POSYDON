@@ -82,7 +82,7 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/default_test_params.ini
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 sed -i 's/dump_rate[[:space:]]*=[[:space:]]*[0-9]\+/dump_rate = 5/' $FULL_PATH/script_data/inlists/default_test_params.ini
-sed -i 's/metallicities *= *\[1\.\]/metallicities = [1., 0.1]/' $FULL_PATH/script_data/inlists/multiZ_test_params.ini
+sed -i 's/metallicities[[:space:]]*=[[:space:]]*\[1\.\]/metallicities = [1., 0.1]/' $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 
 # override environment's PATH_TO_POSYDON variable to point to the
 # current branch's clone for these tests
