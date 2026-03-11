@@ -1,57 +1,86 @@
 #!/bin/bash
 
-# Script usage: ./evolve_binaries.sh <branch>
-# This script clones the POSYDON repo to the specified branch (defaults to 'main'),
-# copies evolve_binaries.py, runs it, and saves output to evolve_binaries.out
+# =============================================================================
+# evolve_binaries.sh — Clone a POSYDON branch, install it, and run the
+# binary validation suite at all requested metallicities.
+#
+# Usage:
+#   ./evolve_binaries.sh <branch> [sha] [metallicities]
+#
+# Examples:
+#   ./evolve_binaries.sh main                          # all metallicities
+#   ./evolve_binaries.sh feature/my-fix abc123f        # specific commit
+#   ./evolve_binaries.sh main "" "1 0.45 0.1"          # subset of metallicities
+#
+# Output structure:
+#   outputs/<branch>/candidate_<Z>Zsun.h5   — evolution results per metallicity
+#   logs/<branch>/evolve_<Z>Zsun.log        — log per metallicity
+#   workdirs/POSYDON_<branch>/              — cloned repo + conda env
+# =============================================================================
 
-# Set default branch to 'main' if not provided
-BRANCH=${1:-main}
-REPO_URL="https://github.com/POSYDON-code/POSYDON"
-
-if [[ -n "$2" ]]; then
-    SHA=$2
-    WORK_DIR="POSYDON_${BRANCH}_${SHA}"
-else
-    WORK_DIR="POSYDON_$BRANCH"
+set -euo pipefail
+# Load git if needed
+if ! command -v git >/dev/null 2>&1; then
+    if command -v module >/dev/null 2>&1; then
+        module load git
+    fi
 fi
 
-# Remove existing directory if it exists
+# ── Configuration ──────────────────────────────────────────────────────────
+ALL_METALLICITIES="2 1 0.45 0.2 0.1 0.01 0.001 0.0001"
+
+BRANCH=${1:-main}
+SHA=${2:-}
+METALLICITIES=${3:-$ALL_METALLICITIES}
+
+REPO_URL="https://github.com/POSYDON-code/POSYDON"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Sanitize branch name for filesystem
+SAFE_BRANCH="${BRANCH//\//_}"
+
+
+# Directories (all relative to SCRIPT_DIR, the dev-tools root)
+WORK_DIR="$SCRIPT_DIR/workdirs/POSYDON_${SAFE_BRANCH}"
+OUTPUT_DIR="$SCRIPT_DIR/outputs/${SAFE_BRANCH}"
+LOG_DIR="$SCRIPT_DIR/logs/${SAFE_BRANCH}"
+CLONE_DIR="$WORK_DIR/POSYDON"
+
+mkdir -p "$OUTPUT_DIR" "$LOG_DIR"
+
+# ── Conda Setup ────────────────────────────────────────────────────────────
+echo "🔧 Initializing conda"
+CONDA_SH=""
+for candidate in \
+    "$HOME/miniconda3/etc/profile.d/conda.sh" \
+    "$HOME/anaconda3/etc/profile.d/conda.sh" \
+    "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"; do
+    if [ -f "$candidate" ]; then
+        CONDA_SH="$candidate"
+        break
+    fi
+done
+
+if [ -z "$CONDA_SH" ]; then
+    if command -v conda >/dev/null 2>&1; then
+        CONDA_SH="$(conda info --base)/etc/profile.d/conda.sh"
+    else
+        echo "ERROR: Could not find conda installation." >&2
+        exit 1
+    fi
+fi
+source "$CONDA_SH"
+
+# ── Clone Repository ──────────────────────────────────────────────────────
 if [ -d "$WORK_DIR" ]; then
-    echo "🗑️  Removing existing directory: $WORK_DIR"
+    echo "🗑️ Removing existing work directory: $WORK_DIR"
     rm -rf "$WORK_DIR"
 fi
-
-echo "📁 Creating working directory: $WORK_DIR"
-# Create the working directory
 mkdir -p "$WORK_DIR"
 
-FULL_PATH="$(realpath "$WORK_DIR")"
-CLONE_DIR="$FULL_PATH/POSYDON"
-
-echo "📋 Copying script_data folder"
-# copy the script_data folder
-cp -r "./script_data" "$WORK_DIR"
-
-cd "$WORK_DIR"
-
-# Initialize conda for bash
-echo "🔧 Initializing conda"
-# Source conda's shell integration
-if [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    source "$HOME/miniconda3/etc/profile.d/conda.sh"
-elif [ -f "$HOME/anaconda3/etc/profile.d/conda.sh" ]; then
-    source "$HOME/anaconda3/etc/profile.d/conda.sh"
-elif [ -f "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh" ]; then
-    source "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"
-else
-    echo -e "\033[31mError: Could not find conda installation. Please check your conda setup.\033[0m"
-    exit 1
-fi
-
-# Clone the repository to the specified branch
 echo "🔄 Cloning POSYDON repository (branch: $BRANCH)"
-if ! git clone -b "$BRANCH" "$REPO_URL" "$CLONE_DIR" 2>&1 | sed 's/^/  /'; then
-    echo -e "\033[31mError: Failed to clone branch '$BRANCH'. Please check if the branch exists.\033[0m"
+if ! git clone -b "$BRANCH" "$REPO_URL" "$CLONE_DIR" 2>&1 | sed 's/^/    /'; then
+    echo "ERROR: Failed to clone branch '$BRANCH'." >&2
     exit 1
 fi
 
@@ -66,19 +95,59 @@ if [[ -n "$SHA" ]]; then
     cd -
 fi
 
-# Create conda environment for POSYDON v2
-echo "🐍 Creating conda environment"
-conda create --prefix="$FULL_PATH/conda_env" python=3.11 -y -q 2>&1 | sed 's/^/  /'
+# ── Create Conda Environment ─────────────────────────────────────────────
+ENV_PREFIX="$WORK_DIR/conda_env"
 
-echo "⚡ Activating conda environment"
-conda activate "$FULL_PATH/conda_env"
+echo "🐍 Creating conda environment at $ENV_PREFIX"
+conda create --prefix="$ENV_PREFIX" python=3.11 -y -q 2>&1 | sed 's/^/    /'
+conda activate "$ENV_PREFIX"
 
-# install POSYDON manually
 echo "📦 Installing POSYDON"
-pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/  /'
+pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/    /'
 
-echo "🚀 Running evolve_binaries.py"
-# # Run the Python script and capture output (stdout and stderr)
-python script_data/1Zsun_binaries_suite.py > $FULL_PATH/evolve_binaries_$BRANCH.out 2>&1
+# ── Run Suite for Each Metallicity ────────────────────────────────────────
+SUITE_SCRIPT="$SCRIPT_DIR/binaries_suite.py"
+FAILED=0
 
-echo -e "✅ Script completed. Output saved to \n$FULL_PATH/evolve_binaries_$BRANCH.out"
+for Z in $METALLICITIES; do
+    OUTPUT_FILE="$OUTPUT_DIR/candidate_${Z}Zsun.h5"
+    LOG_FILE="$LOG_DIR/evolve_${Z}Zsun.log"
+
+    echo ""
+    echo "============================================================"
+    echo "  🚀 Evolving binaries for Z = ${Z} Zsun"
+    echo "  Output: $OUTPUT_FILE"
+    echo "  Log:    $LOG_FILE"
+    echo "============================================================"
+
+    if python "$SUITE_SCRIPT" \
+        --metallicity "$Z" \
+        --output "$OUTPUT_FILE" \
+        2>&1 | tee "$LOG_FILE"; then
+
+        if [ ! -f "$OUTPUT_FILE" ]; then
+            echo "WARNING: Output file not created for Z=${Z}" >&2
+            FAILED=$((FAILED + 1))
+        else
+            echo "  Z=${Z} Zsun complete."
+        fi
+    else
+        echo "WARNING: Suite failed for Z=${Z}. Check $LOG_FILE" >&2
+        FAILED=$((FAILED + 1))
+    fi
+done
+
+# ── Deactivate Environment ────────────────────────────────────────────────
+conda deactivate
+
+echo ""
+echo "============================================================"
+if [ $FAILED -eq 0 ]; then
+    echo "✅ All metallicities completed successfully."
+else
+    echo "Completed with $FAILED failure(s)."
+fi
+echo "  Outputs in: $OUTPUT_DIR/"
+echo "============================================================"
+
+exit $FAILED
