@@ -10,9 +10,9 @@ from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import Population, PopulationRunner
 
-base_dir = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/")
-path_to_default_params = os.path.join(base_dir, "inlists/population_test_params.ini")
-path_to_multiZ_params = os.path.join(base_dir, "inlists/test_multiZ_population_params.ini")
+base_dir = os.path.join(PATH_TO_POSYDON, "script_data/")
+path_to_default_params = os.path.join(base_dir, "inlists/default_test_params.ini")
+path_to_multiZ_params = os.path.join(base_dir, "inlists/multiZ_test_params.ini")
 path_to_popout = os.path.join(base_dir, "output/population_tests/batches")
 
 def test_binpop_evolve(population, popevo_kwargs, verbose=False):
