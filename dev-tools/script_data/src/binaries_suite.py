@@ -18,8 +18,9 @@ from utils import print_failed_binary, print_warnings, write_binary_to_screen
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.config import PATH_TO_POSYDON
 
-base_dir = os.path.join(PATH_TO_POSYDON, "script_data/")
-path_to_default_params = os.path.join(base_dir, "inlists/default_test_params.ini")
+base_dir =os.path.dirname(PATH_TO_POSYDON)
+script_dir = os.path.join(PATH_TO_POSYDON, "script_data/")
+path_to_default_params = os.path.join(script_dir, "inlists/default_test_params.ini")
 
 def load_inlist(verbose):
 

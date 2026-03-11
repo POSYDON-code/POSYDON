@@ -1,8 +1,9 @@
 #!/bin/bash
 
-# Script usage: ./evolve_binaries.sh <branch>
+# Script usage: ./run_test_suite.sh <branch>
 # This script clones the POSYDON repo to the specified branch (defaults to 'main'),
-# copies evolve_binaries.py, runs it, and saves output to evolve_binaries.out
+# copies script_data/ to it, runs binaries_suite.py and popsynth_suite.py, and 
+# saves output to evolve_binaries.out and evolve_pop.out
 
 # Set default branch to 'main' if not provided
 BRANCH=${1:-main}
@@ -82,18 +83,18 @@ cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_dat
 cp $CLONE_DIR/posydon/popsyn/population_params_default.ini $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 sed -i 's/metallicities *= *\[1\.\]/metallicities = [1., 0.1]/' $FULL_PATH/script_data/inlists/multiZ_test_params.ini
 
-# override environment's PATH_TO_POSYDON variable to point to the current branch's clone
-# for these tests
-PATH_TO_POSYDON=$FULL_PATH
+# override environment's PATH_TO_POSYDON variable to point to the 
+# current branch's clone for these tests
+PATH_TO_POSYDON=$CLONE_DIR
 
 # Run binary evolution tests and capture output (stdout and stderr)
 OUT_DIR=$FULL_PATH/script_data/output/binary_star_tests
 echo "🚀 Running binaries_suite.py"
 python script_data/src/binaries_suite.py > $OUT_DIR/evolve_binaries_$BRANCH.out 2>&1
-echo -e "✅ Script completed. Output saved to \n$OUT_DIR/evolve_binaries_$BRANCH.out"
+echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_binaries_$BRANCH.out"
 
 # Run population synthesis tests and capture output (stdout and stderr)
 OUT_DIR=$FULL_PATH/script_data/output/population_tests
 echo "🚀 Running popsynth_suite.py"
 python script_data/src/popsynth_suite.py > $OUT_DIR/evolve_pop_$BRANCH.out 2>&1
-echo -e "✅ Script completed. Output saved to \n$OUT_DIR/evolve_binaries_$BRANCH.out"
+echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_binaries_$BRANCH.out"
