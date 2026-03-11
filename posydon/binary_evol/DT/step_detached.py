@@ -226,7 +226,6 @@ class detached_step:
             do_stellar_evolution_and_spin_from_winds=True,
             RLO_orbit_at_orbit_with_same_am=False,
             verbose=False,
-            matching_method="minimize",
             **kwargs):
 
         """Initialize the step. See class documentation for details."""
@@ -243,17 +242,7 @@ class detached_step:
         self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
         self.verbose = verbose
 
-        if self.verbose:
-            print(
-                dt,
-                n_o_steps_history,
-                matching_method,
-                do_wind_loss,
-                do_tides,
-                do_gravitational_radiation,
-                do_magnetic_braking,
-                magnetic_braking_mode,
-                do_stellar_evolution_and_spin_from_winds)
+
 
         self.translate = DEFAULT_TRANSLATION
 
@@ -267,6 +256,17 @@ class detached_step:
         # create evolution handler object
         self.init_evo_kwargs()
         self.evo = detached_evolution(**self.evo_kwargs)
+
+        if self.verbose:
+            print(dt,
+                  n_o_steps_history,
+                  self.track_matcher.matching_method,
+                  do_wind_loss,
+                  do_tides,
+                  do_gravitational_radiation,
+                  do_magnetic_braking,
+                  magnetic_braking_mode,
+                  do_stellar_evolution_and_spin_from_winds)
 
         return
 
