@@ -17,8 +17,8 @@
 # Tolerance flags (passed through to compare_runs.py):
 #   --loose            Use relaxed floating-point tolerances
 #                      (rtol=1e-12, atol=1e-15 unless overridden)
-#   --rtol VALUE       Set explicit relative tolerance
-#   --atol VALUE       Set explicit absolute tolerance
+#   --rtol VALUE       Set explicit relative tolerance as per np.allclose
+#   --atol VALUE       Set explicit absolute tolerance as per np.allclose
 #
 #   --rtol and --atol can be combined with --loose (explicit values take
 #   precedence over the --loose defaults) or used on their own without --loose.
