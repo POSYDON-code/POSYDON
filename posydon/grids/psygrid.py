@@ -382,6 +382,50 @@ GRIDPROPERTIES = {
     "accept_missing_profile": False,
 }
 
+class LazyHDF5:
+    def __init__(self, dataset, dtype_set=None):
+        self._dataset = dataset
+        self._dtype_set = dtype_set
+        if self._dtype_set is not None:
+            self._dtype_list = list(self._dtype_set.items())
+
+    def __getitem__(self, idx):
+        data = self._dataset[idx]
+        if self._dtype_set is not None:
+            if isinstance(idx, str):
+                data = data.astype(self._dtype_set[idx])
+            else:
+                data = data.astype(self._dtype_list)
+        return data
+
+    def __setitem__(self, idx, value):
+        # materialize full array in memory
+        arr = self.__array__()
+        # write new value
+        arr[idx] = value
+
+        self._dataset = arr
+
+
+    def __array__(self):
+        data = self._dataset[()]
+        if self._dtype_set is not None:
+            data = data.astype(self._dtype_list)
+        return data
+
+    @property
+    def dtype(self):
+        if self._dtype_set is not None:
+            return np.dtype(self._dtype_list)
+        return self._dataset.dtype
+
+    @property
+    def shape(self): # pragma: no cover
+        return self._dataset.shape
+
+    def __len__(self): # pragma: no cover
+        return len(self._dataset)
+
 
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
@@ -1447,7 +1491,7 @@ class PSyGrid:
         mode = "a" if writeable else "r"
         self.hdf5 = h5py.File(self.filepath, mode, **driver_args)
 
-    def load(self, filepath=None):
+    def load(self, filepath=None, lazy=True):
         """Load up a previously created PSyGrid object from an HDF5 file.
 
         Parameters
@@ -1455,6 +1499,11 @@ class PSyGrid:
         filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
+
+        lazy : bool (default: True)
+            If True, load hdf5 files lazily. This means that MESA data
+            will not be loaded into RAM (which can be in the GB range).
+            This comes at a small cost to I/O.
 
         """
         self._say("Loading HDF5 grid...")
@@ -1472,18 +1521,29 @@ class PSyGrid:
         hdf5 = self.hdf5
         # load initial/final_values
         self._say("\tLoading initial/final values...")
-        self.initial_values = hdf5['/grid/initial_values'][()]
-        self.final_values = hdf5['/grid/final_values'][()]
+        initial_values = hdf5['/grid/initial_values']
+        final_values = hdf5['/grid/final_values']
 
         # change ASCII to UNICODE in termination flags in `final_values`
-        new_dtype = []
-        for dtype in self.final_values.dtype.descr:
+        new_dtype = {}
+        for dtype in final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
-            new_dtype.append(dtype)
-        self.final_values = self.final_values.astype(new_dtype)
+            new_dtype[dtype[0]] = dtype[1]
+
+        if lazy:
+            initial_values = LazyHDF5(initial_values)
+            final_values = LazyHDF5(final_values, new_dtype)
+        else: # pragma: no cover
+            initial_values = initial_values[()]
+            final_values = final_values[()]
+            new_dtype = list(new_dtype.items())
+            final_values = final_values.astype(new_dtype)
+
+        self.initial_values = initial_values
+        self.final_values = final_values
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")

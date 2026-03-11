@@ -25,28 +25,18 @@ class IsolatedStep(detached_step):
     """
 
     def __init__(self,
-        grid_name_Hrich=None,
-        grid_name_strippedHe=None,
-        path=PATH_TO_POSYDON_DATA,
-        #dt=None,
-        #n_o_steps_history=None,
-        do_wind_loss=False,
-        do_tides=False,
-        do_gravitational_radiation=False,
-        do_magnetic_braking=False,
-        *args, **kwargs):
-        super().__init__(
-        grid_name_Hrich=grid_name_Hrich,
-        grid_name_strippedHe=grid_name_strippedHe,
-        path=path,
-        #dt=dt,
-        #n_o_steps_history=n_o_steps_history,
-        do_wind_loss=do_wind_loss,
-        do_tides=do_tides,
-        do_gravitational_radiation=do_gravitational_radiation,
-        do_magnetic_braking=do_magnetic_braking,
-        *args,
-        **kwargs)
+                 do_wind_loss=False,
+                 do_tides=False,
+                 do_gravitational_radiation=False,
+                 do_magnetic_braking=False,
+                 *args, **kwargs):
+
+        super().__init__(do_wind_loss=do_wind_loss,
+                         do_tides=do_tides,
+                         do_gravitational_radiation=do_gravitational_radiation,
+                         do_magnetic_braking=do_magnetic_braking,
+                         *args,
+                         **kwargs)
 
 
 

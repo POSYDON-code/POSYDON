@@ -141,7 +141,8 @@ class MesaGridStep:
             stop_var_name=None,
             stop_value=None,
             stop_interpolate=True,
-            verbose=False):
+            verbose=False,
+            **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
 
         Parameters

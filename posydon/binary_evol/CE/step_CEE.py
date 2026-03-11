@@ -33,12 +33,10 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
-
 import numpy as np
 import pandas as pd
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
-from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_H_RICH,
@@ -74,7 +72,7 @@ MODEL = {"prescription": 'alpha-lambda',
                                               # assuming a final separation where the inner core RLOF starts.
          # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
          "metallicity": None,
-         "record_matching": False
+         "track_matcher": None
          }
 
 
@@ -151,14 +149,13 @@ class StepCEE(object):
             mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
             verbose=MODEL['verbose'],
             metallicity = MODEL['metallicity'],
-            record_matching = MODEL['record_matching'],
             **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
         if kwargs:
-            for key in kwargs:
-                if key not in MODEL:
-                    raise ValueError(key + " is not a valid parameter name!")
+            #for key in kwargs:
+            #    if key not in MODEL:
+            #        raise ValueError(key + " is not a valid parameter name!")
             for varname in MODEL:
                 default_value = MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
@@ -179,29 +176,12 @@ class StepCEE(object):
                 common_envelope_option_after_succ_CEE
             self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
         self.metallicity = metallicity
-        self.record_matching = record_matching
         self.verbose = verbose
         self.path_to_posydon = PATH_TO_POSYDON
 
+        # set TrackMatcher reference
+        self.track_matcher = kwargs.get("track_matcher", None)
 
-        list_for_matching_HMS = [
-                        ["mass", "center_h1", "he_core_mass"],
-                        [20.0, 1.0, 10.0],
-                        ["log_min_max", "min_max", "min_max"],
-                        [0.1, 300], [0.0, None]
-                    ]
-        self.track_matcher = TrackMatcher(grid_name_Hrich = None,
-                                    grid_name_strippedHe = None,
-                                    path=PATH_TO_POSYDON_DATA,
-                                    metallicity = self.metallicity,
-                                    matching_method = "minimize",
-                                    matching_tolerance=1e-2,
-                                    matching_tolerance_hard=1e-1,
-                                    list_for_matching_HMS = list_for_matching_HMS,
-                                    list_for_matching_HeStar = None,
-                                    list_for_matching_postMS = None,
-                                    record_matching = self.record_matching,
-                                    verbose = self.verbose)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
