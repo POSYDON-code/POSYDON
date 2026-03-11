@@ -17,7 +17,7 @@ __authors__ = [
 import os
 import time
 
-from posydon.binary_evol.DT.track_match import DEFAULT_MATCH_SETTINGS, TrackMatcher
+from posydon.binary_evol.track_match import DEFAULT_MATCH_SETTINGS, TrackMatcher
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.popsyn.io import simprop_kwargs_from_ini
@@ -375,8 +375,8 @@ class SimulationProperties:
             setattr(self, step_name, step_func())
 
         # check if all steps have been loaded
-        self.steps_loaded = all(hasattr(self, name)
-                                for name, tup in self.kwargs.items()
+        self.steps_loaded = all(hasattr(self, name) 
+                                for name, tup in self.kwargs.items() 
                                 if isinstance(tup, tuple)
 )
 
@@ -417,7 +417,7 @@ class SimulationProperties:
         matcher_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
         matcher_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
         self.track_matchers[(metallicity, step_name)] = TrackMatcher(**matcher_kwargs)
-
+            
 
     def close(self):
         """Close hdf5 files before exiting."""
