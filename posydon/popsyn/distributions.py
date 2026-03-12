@@ -363,7 +363,8 @@ class Sana12Period():
         if m1.size == 1:
             m1 = np.full(size, m1[0])
         elif m1.size != size:
-            raise ValueError(f"m1 must be a single value or have size={size}")
+            raise ValueError(f"m1 must be a single value or have size={size}"
+                                      f"\n m1 = {m1}\n m1.size = {m1.size}")
 
         # Import here to avoid circular dependency
         from posydon.utils.common_functions import rejection_sampler
