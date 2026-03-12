@@ -111,10 +111,6 @@ class DoubleCO(detached_step):
         binary.V_sys = binary.V_sys_history[-1]
 
         if self.res.status == 1:
-            binary.time = self.res.real_time[-1]
-            if len(self.res.real_time) > 1:
-                for k, real_time in enumerate(self.res.real_time[::-1]):
-                    binary.time_history[-(k+1)] = real_time
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
