@@ -101,7 +101,7 @@ def get_mass_ratio_pdf(kwargs):
                 axis=0)
 
             # Use FlatMassRatio distribution class
-            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum),
+            q_dist = lambda q: np.where((q > minimum) & (q <= maximum),
                                         1/(maximum - minimum),
                                         0)
             return q_dist
