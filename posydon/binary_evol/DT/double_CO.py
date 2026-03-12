@@ -252,7 +252,7 @@ class double_CO_evolution(detached_evolution):
         self.do_stellar_evolution_and_spin_from_winds = False
         self.do_gravitational_radiation = True
 
-    def rhs(s, y):
+    def rhs(self, s, y):
         """Right-hand side of the ODE system in s-space.
 
         Parameters
