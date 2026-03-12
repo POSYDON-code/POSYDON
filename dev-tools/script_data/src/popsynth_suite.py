@@ -48,7 +48,7 @@ def test_binpop_evolve(population, popevo_kwargs, verbose=False):
 
     except Exception as e:
             print_warnings(captured_warnings)
-            print(f"🚨 Binary Population Evolution Failed!\n")
+            print(f"🚨 BinaryPopulation evolution failed!\n")
             traceback.print_exc(limit=3)
             print("\n")
             print("=" * line_length)
