@@ -77,48 +77,63 @@ MODEL = {"prescription": 'alpha-lambda',
          "record_matching": False
          }
 
-
-# common_envelope_option_for_lambda:
-# 1) 'default_lambda': using for lambda the constant value of
-# common_envelope_lambda_default parameter
-# 2) 'lambda_from_grid_final_values': using lambda parameter from MESA history
-# which was calulated ni the same way as method (5) below
-# 3) 'lambda_from_profile_gravitational': calculating the lambda parameter
-# from the donor's profile by using the gravitational binding energy from the
-# surface to the core (needing "mass", and "radius" as columns in the profile)
-# 4) 'lambda_from_profile_gravitational_plus_internal': as above but taking
-# into account a factor of common_envelope_alpha_thermal * internal energy too
-# in the binding energy (needing also "energy" as column in the profile)
-# 5) 'lambda_from_profile_gravitational_plus_internal_minus_recombination':
-# as above but not taking into account the recombination energy in the internal
-# energy (needing also "y_mass_fraction_He", "x_mass_fraction_H",
-# "neutral_fraction_H", "neutral_fraction_He", and "avg_charge_He" as column
-# in the profile)
-# the mass fraction of an element which is used as threshold to define a core,
-
 class StepCEE(object):
-    """Compute supernova final remnant mass, fallback fraction & stellar state.
+    """Handle common envelope evolution (CEE) for binary systems.
 
-    This consider the nearest neighboor of the He core mass of the star,
-    previous to the collapse. Considering a set of data for which the He core
-    mass of the compact object projenitos previous the collapse, the final
-    remnant mass and final stellar state of the compact object is known.
+    This class computes the outcome of a common envelope phase for binary
+    systems containing a giant star. It calculates how much the orbit must
+    shrink in order to expel the envelope using the alpha-prescription.
+    If at the required post-CEE separation one of the stars fills its Roche lobe,
+    the system is considered a merger. Otherwise, the envelope is lost,
+    leaving a binary system with the core of the donor star (which initiates
+    the unstable CEE) and the core of the companion.
+
+    If stellar profiles are available, the lambda parameter for the donor
+    can be calculated directly from the profile. Otherwise, default values
+    are used. The evolution is computed using a specified prescription
+    (e.g., alpha-lambda) which determines the final state of the binary
+    based on energy budget considerations.
 
     Parameters
     ----------
     verbose : bool
-        If True, the messages will be prited in the console.
+        If True, the messages will be printed in the console.
 
     Keyword Arguments
     -----------------
     prescription : str
-        Prescription to use for computing the prediction of common enevelope
+        Prescription to use for computing the prediction of common envelope
         evolution. Available options are:
 
-        * 'alpha-lambda' : Considers the the alpha-lambda prescription
+        * 'alpha-lambda' : Considers the alpha-lambda prescription
           described in [1]_ and [2]_ to predict the outcome of the common
           envelope evolution. If the profile of the donor star is available
           then it is used to compute the value of lambda.
+
+    common_envelope_option_for_lambda : str
+        Method for calculating the lambda parameter. Available options are:
+
+        * 'default_lambda' : Use a constant value from the
+          `common_envelope_lambda_default` parameter.
+
+        * 'lambda_from_grid_final_values' : Use the lambda parameter from
+          MESA history, calculated using the same method as option 5 below.
+
+        * 'lambda_from_profile_gravitational' : Calculate lambda from the
+          donor's profile using the gravitational binding energy from the
+          surface to the core (requires "mass" and "radius" columns in the
+          profile).
+
+        * 'lambda_from_profile_gravitational_plus_internal' : As above,
+          but also accounting for a factor of `common_envelope_alpha_thermal`
+          times the internal energy in the binding energy (requires also
+          "energy" column in the profile).
+
+        * 'lambda_from_profile_gravitational_plus_internal_minus_recombination' :
+          As above, but excluding the recombination energy from the internal
+          energy calculation (requires also "y_mass_fraction_He",
+          "x_mass_fraction_H", "neutral_fraction_H", "neutral_fraction_He",
+          and "avg_charge_He" columns in the profile).
 
     References
     ----------
