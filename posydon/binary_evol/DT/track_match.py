@@ -52,10 +52,10 @@ MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
 
 val_names = [" ", "mass", "log_R", "center_h1", "surface_h1",
                 "he_core_mass", "center_he4", "surface_he4",
-                "center_c12"]
+                "center_c12", "co_core_mass"]
 str_fmts = ["{:>14}", "{:>9}","{:>9}",
             "{:>9}",  "{:>10}",  "{:>12}",
-            "{:>10}",  "{:>11}",  "{:>10}"]
+            "{:>10}",  "{:>11}",  "{:>10}", "{:>12}"]
 row_str = " ".join(str_fmts)
 DIVIDER_STR = "_"*len(row_str.format(*[""]*len(str_fmts)))
 # MAJOR.MINOR version of imported scipy package
@@ -285,7 +285,8 @@ class TrackMatcher:
                 "surface_he4",
                 "surface_h1",
                 "log_R",
-                "center_c12"
+                "center_c12",
+                "co_core_mass"
             ]
         )
 
@@ -743,7 +744,8 @@ class TrackMatcher:
                     f'surface_he4 = {star.surface_he4:.4f}, ',
                     f'surface_h1 = {star.surface_h1:.4f}, ',
                     f'he_core_mass = {star.he_core_mass:.3f}, ',
-                    f'center_c12 = {star.center_c12:.4f}'
+                    f'center_c12 = {star.center_c12:.4f},',
+                    f'co_core_mass = {star.co_core_mass:.3f}'
                 )
 
             # done with matching attempts
