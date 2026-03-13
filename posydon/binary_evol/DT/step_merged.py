@@ -250,7 +250,11 @@ class MergedStep(IsolatedStep):
 
                 for abundance_name in parameters_to_mix:
                     #TODO: should I check if the abundaces above end up in ~1 (?)
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="mass", mass_weight2='mass'))
+                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                comp,
+                                                                                abundance_name=abundance_name,
+                                                                                mass_weight1="mass",
+                                                                                mass_weight2='mass'))
 
                 # The change of masses occurs after the calculation of weighted averages
                 merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
@@ -272,7 +276,11 @@ class MergedStep(IsolatedStep):
                 # companion with the envelope of star_base
                 parameters_to_mix = ["surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
                 for abundance_name in parameters_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="H-rich_envelope_mass", mass_weight2="mass"))
+                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                comp,
+                                                                                abundance_name=abundance_name,
+                                                                                mass_weight1="H-rich_envelope_mass",
+                                                                                mass_weight2="mass"))
 
                 # The change of masses occurs after the calculation of weighted averages
                 # Note that the he core mass is unchanged, which means that
@@ -297,7 +305,11 @@ class MergedStep(IsolatedStep):
 
                 parameters_to_mix = ["surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
                 for abundance_name in parameters_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight2="H-rich_envelope_mass", mass_weight1="mass"))
+                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                comp,
+                                                                                abundance_name=abundance_name,
+                                                                                mass_weight1="mass",
+                                                                                mass_weight2="H-rich_envelope_mass",))
 
                 # The change of masses occurs after the calculation of weighted averages
                 merged_star.mass = star_base.mass + comp.mass
@@ -326,7 +338,11 @@ class MergedStep(IsolatedStep):
                     mass_weight2 = 'he_core_mass'
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1=mass_weight1, mass_weight2=mass_weight2))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name = abundance_name,
+                                                                                    mass_weight1 = mass_weight1,
+                                                                                    mass_weight2 = mass_weight2))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -350,7 +366,11 @@ class MergedStep(IsolatedStep):
                     mass_weight2='co_core_mass'
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1=mass_weight1, mass_weight2=mass_weight2))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name=abundance_name,
+                                                                                    mass_weight1=mass_weight1,
+                                                                                    mass_weight2=mass_weight2))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -361,7 +381,11 @@ class MergedStep(IsolatedStep):
 
                 # Weighted mixing on the surface abundances based on the envelopes of the two stars
                 for abundance_name in additional_parameter_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="H-rich_envelope_mass", mass_weight2="H-rich_envelope_mass"))
+                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                comp,
+                                                                                abundance_name=abundance_name,
+                                                                                mass_weight1="H-rich_envelope_mass",
+                                                                                mass_weight2="H-rich_envelope_mass"))
 
                 # Add total and core masses after calculations of weighted average
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
@@ -387,7 +411,11 @@ class MergedStep(IsolatedStep):
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="he_core_mass", mass_weight2="he_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name=abundance_name,
+                                                                                    mass_weight1="he_core_mass",
+                                                                                    mass_weight2="he_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -402,7 +430,7 @@ class MergedStep(IsolatedStep):
                 # add total and core masses after abundance mass weighted calculations
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
+                    setattr(merged_star, key, current)
 
                 # Set parameters that are not expected to be meaningful after a merger to np.nan
                 self._apply_nan_attributes(merged_star)
@@ -422,7 +450,11 @@ class MergedStep(IsolatedStep):
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with only Helium cores, not CO cores
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="he_core_mass", mass_weight2="he_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name=abundance_name,
+                                                                                    mass_weight1="he_core_mass",
+                                                                                    mass_weight2="he_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -436,7 +468,7 @@ class MergedStep(IsolatedStep):
                 # add total and core masses after weighted averages above
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
+                    setattr(merged_star, key, current)
 
                 # Set parameters that are not expected to be meaningful after a merger to np.nan
                 self._apply_nan_attributes(merged_star)
@@ -457,7 +489,11 @@ class MergedStep(IsolatedStep):
 
                     for abundance_name in parameters_to_mix:
                         setattr(merged_star, abundance_name,
-                                self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="he_core_mass"))
+                                self.mass_weighted_avg(star_base,
+                                                       comp,
+                                                       abundance_name=abundance_name,
+                                                       mass_weight1="he_core_mass",
+                                                       mass_weight2="he_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -479,7 +515,11 @@ class MergedStep(IsolatedStep):
 
                     for abundance_name in parameters_to_mix:
                         setattr(merged_star, abundance_name,
-                                self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="co_core_mass"))
+                                self.mass_weighted_avg(star_base,
+                                                       comp,
+                                                       abundance_name=abundance_name,
+                                                       mass_weight1="co_core_mass",
+                                                       mass_weight2="co_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -489,7 +529,7 @@ class MergedStep(IsolatedStep):
                 # add total and core masses
                 for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
                     current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
+                    setattr(merged_star, key, current)
 
                 # Set parameters that are not expected to be meaningful after a merger to np.nan
                 self._apply_nan_attributes(merged_star)
@@ -511,7 +551,11 @@ class MergedStep(IsolatedStep):
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="he_core_mass", mass_weight2="he_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name=abundance_name,
+                                                                                    mass_weight1="he_core_mass",
+                                                                                    mass_weight2="he_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -561,7 +605,11 @@ class MergedStep(IsolatedStep):
                 if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="he_core_mass", mass_weight2="he_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                     comp,
+                                                                                     abundance_name=abundance_name,
+                                                                                     mass_weight1="he_core_mass",
+                                                                                     mass_weight2="he_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -582,7 +630,11 @@ class MergedStep(IsolatedStep):
                 elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="co_core_mass", mass_weight2="co_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                    comp,
+                                                                                    abundance_name=abundance_name,
+                                                                                    mass_weight1="co_core_mass",
+                                                                                    mass_weight2="co_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
@@ -597,7 +649,11 @@ class MergedStep(IsolatedStep):
                 # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
                 additional_parameter_to_mix = ['surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16']
                 for abundance_name in additional_parameter_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="He-rich_envelope_mass", mass_weight2="He-rich_envelope_mass"))
+                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                comp,
+                                                                                abundance_name=abundance_name,
+                                                                                mass_weight1="He-rich_envelope_mass",
+                                                                                mass_weight2="He-rich_envelope_mass"))
 
                 # Set parameters that are not expected to be meaningful after a merger to np.nan
                 self._apply_nan_attributes(merged_star)
@@ -628,7 +684,11 @@ class MergedStep(IsolatedStep):
                 elif (comp.co_core_mass is not None and star_base.co_core_mass > 0):
 
                     for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="co_core_mass", mass_weight2="co_core_mass"))
+                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                                     comp,
+                                                                                     abundance_name=abundance_name,
+                                                                                     mass_weight1="co_core_mass",
+                                                                                     mass_weight2="co_core_mass"))
 
                     setattr(merged_star, "center_gamma", np.nan)
 
