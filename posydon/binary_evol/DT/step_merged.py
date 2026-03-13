@@ -195,7 +195,7 @@ class MergedStep(IsolatedStep):
 
         return mass_weighted_avg_value
 
-    def _apply_nan_attributes(self, star, extra_nan_keys=set()):
+    def _apply_nan_attributes(self, star, extra_nan_keys=None):
         """Set to np.nan the attributes of the star that are not expected to be meaningful after a merger event.
 
         Parameters set to np.nan are:
@@ -211,6 +211,9 @@ class MergedStep(IsolatedStep):
         extra_nan_keys: set of str
             Set of keys to be set to np.nan in addition to the default ones.
         """
+        if extra_nan_keys is None:
+            extra_nan_keys = set()
+
         _NAN_SUBSTRINGS = ("log_", "lg_", "surf_", "conv_", "lambda", "profile")
         _NAN_KEYS = set(["c12_c12", "total_moment_of_inertia", "spin"])
 
