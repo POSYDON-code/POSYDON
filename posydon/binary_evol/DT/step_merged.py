@@ -164,22 +164,22 @@ class MergedStep(IsolatedStep):
         A2 = getattr(star2, abundance_name, np.nan)
 
         if mass_weight1 == "mass":
-            M1 = getattr(star1, "mass")
+            M1 = getattr(star1, "mass", np.nan)
         elif mass_weight1 == "H-rich_envelope_mass":
-            M1 = getattr(star1, "mass") - getattr(star1, "he_core_mass")
+            M1 = getattr(star1, "mass", np.nan) - getattr(star1, "he_core_mass", np.nan)
         elif mass_weight1 == "He-rich_envelope_mass":
-            M1 = getattr(star1, "he_core_mass") - getattr(star1, "co_core_mass")
+            M1 = getattr(star1, "he_core_mass", np.nan) - getattr(star1, "co_core_mass", np.nan)
         else:
-            M1 = getattr(star1, mass_weight1)
+            M1 = getattr(star1, mass_weight1, np.nan)
 
         if mass_weight2 == "mass":
-            M2 = getattr(star2, "mass")
+            M2 = getattr(star2, "mass", np.nan)
         elif mass_weight2 == "H-rich_envelope_mass":
-            M2 = getattr(star2, "mass") - getattr(star2, "he_core_mass")
+            M2 = getattr(star2, "mass", np.nan) - getattr(star2, "he_core_mass", np.nan)
         elif mass_weight2 == "He-rich_envelope_mass":
-            M2 = getattr(star2, "he_core_mass") - getattr(star2, "co_core_mass")
+            M2 = getattr(star2, "he_core_mass", np.nan) - getattr(star2, "co_core_mass", np.nan)
         else:
-            M2 = getattr(star2, mass_weight2)
+            M2 = getattr(star2, mass_weight2, np.nan)
 
         den = M1 + M2
         if not (np.isfinite(A1) and np.isfinite(A2) and np.isfinite(M1) and np.isfinite(M2)):
