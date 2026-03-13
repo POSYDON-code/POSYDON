@@ -162,6 +162,10 @@ class MergedStep(IsolatedStep):
         # give NaN if the abundance is not defined for one of the stars
         A1 = getattr(star1, abundance_name, np.nan)
         A2 = getattr(star2, abundance_name, np.nan)
+        if A1 is None:
+            A1 = np.nan
+        if A2 is None:
+            A2 = np.nan
 
         if mass_weight1 == "mass":
             M1 = getattr(star1, "mass", np.nan)
@@ -172,6 +176,9 @@ class MergedStep(IsolatedStep):
         else:
             M1 = getattr(star1, mass_weight1, np.nan)
 
+        if M1 is None:
+            M1 = np.nan
+
         if mass_weight2 == "mass":
             M2 = getattr(star2, "mass", np.nan)
         elif mass_weight2 == "H-rich_envelope_mass":
@@ -180,6 +187,9 @@ class MergedStep(IsolatedStep):
             M2 = getattr(star2, "he_core_mass", np.nan) - getattr(star2, "co_core_mass", np.nan)
         else:
             M2 = getattr(star2, mass_weight2, np.nan)
+
+        if M2 is None:
+            M2 = np.nan
 
         den = M1 + M2
         if not (np.isfinite(A1) and np.isfinite(A2) and np.isfinite(M1) and np.isfinite(M2)):
