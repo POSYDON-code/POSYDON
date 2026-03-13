@@ -159,8 +159,9 @@ class MergedStep(IsolatedStep):
         mass_weight2 : str or None
             Mass attribute for star2.
         """
-        A1 = getattr(star1, abundance_name)
-        A2 = getattr(star2, abundance_name)
+        # give NaN if the abundance is not defined for one of the stars
+        A1 = getattr(star1, abundance_name, np.nan)
+        A2 = getattr(star2, abundance_name, np.nan)
 
         if mass_weight1 == "mass":
             M1 = getattr(star1, "mass")
