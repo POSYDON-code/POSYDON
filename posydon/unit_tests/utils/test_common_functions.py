@@ -849,6 +849,16 @@ class TestFunctions:
         class MockRNG:
             def uniform(self, low=0.0, high=1.0, size=1):
                 return np.linspace(low, high, num=size)
+            def choice(self, a, size=None, replace=True, p=None):
+                if isinstance(a, int):
+                    a = np.arange(a)
+                sample = []
+                for (v, q) in zip(a, p):
+                    sample += round(size*q) * [v]
+                if len(sample) < size:
+                    sample += (size-len(sample)) * [a[-1]]
+                return np.array(sample[:size])
+
         mock_rng = MockRNG()
         def mock_choice(a, size=None, replace=True, p=None):
             if isinstance(a, int):
