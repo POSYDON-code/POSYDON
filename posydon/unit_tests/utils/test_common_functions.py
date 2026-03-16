@@ -800,7 +800,7 @@ class TestFunctions:
                                r)
         assert np.allclose(totest.rejection_sampler(x_lim=np.array([0.0,\
                                                                      1.0]),\
-                                                     pdf=mock_pdf, size=5),\
+                                                     pdf=mock_pdf, size=5, rng=mock_rng),\
                            np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
         assert np.allclose(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
                                                        y=np.array([0.2, 0.8]),\
