@@ -846,8 +846,10 @@ class TestFunctions:
                                np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
     def test_histogram_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+        mock_rng = MockRNG()
         def mock_choice(a, size=None, replace=True, p=None):
             if isinstance(a, int):
                 a=np.arange(a)
@@ -872,20 +874,19 @@ class TestFunctions:
             totest.histogram_sampler(x_edges=np.array([0.0, 1.0]),\
                                      y=np.array([0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(np.random, "choice", mock_choice)
         assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                       0.5,\
                                                                       1.0]),\
                                                     y=np.array([0.2, 0.8]),\
-                                                    size=5),\
+                                                    size=5, rng=mock_rng),\
                            np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
         assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                          0.5,\
                                                                          1.0]\
                                                        ), y=np.array([0.2,\
                                                                       0.8]),\
-                                                       size=4),\
+                                                       size=4, rng=mock_rng),\
                               np.array([0.0, 0.5, 0.75, 1.0]))
 
     def test_read_histogram_from_file(self, csv_path_failing_3_data_lines,\
