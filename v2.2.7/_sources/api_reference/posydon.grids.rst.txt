@@ -1,0 +1,65 @@
+posydon.grids
+=============
+
+.. automodule:: posydon.grids
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.grids.SN\_MODELS
+------------------------
+
+.. automodule:: posydon.grids.SN_MODELS
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.downsampling
+--------------------------
+
+.. automodule:: posydon.grids.downsampling
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.io
+----------------
+
+.. automodule:: posydon.grids.io
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.post\_processing
+------------------------------
+
+.. automodule:: posydon.grids.post_processing
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.psygrid
+---------------------
+
+.. automodule:: posydon.grids.psygrid
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.scrubbing
+-----------------------
+
+.. automodule:: posydon.grids.scrubbing
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.grids.termination\_flags
+--------------------------------
+
+.. automodule:: posydon.grids.termination_flags
+   :members:
+   :show-inheritance:
+   :undoc-members:
