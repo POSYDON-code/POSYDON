@@ -305,7 +305,29 @@ def calculate_model_weights(pop_data,
                             M_sim,
                             simulation_parameters,
                             population_parameters):
-    '''reweight each model in the simulation to the requested population'''
+    """Reweight each model in the simulation to the requested population
+
+    Uses the PDF of the simulation and the PDF of the requested population to calculate
+    the weights for each model in the simulation to match the requested population.
+
+    Parameters
+    ----------
+    pop_data : dict
+        Dictionary containing the population data
+    M_sim : float
+        Mass of the simulation
+    simulation_parameters : dict
+        Dictionary containing the simulation parameters
+    population_parameters : dict
+        Dictionary containing the population parameters
+
+    Returns
+    -------
+    output : ndarray of floats
+        Weights for each model in the simulation to match the requested population
+        This has the units of likelihood of the systems per unit mass (Msun^-1).
+
+    """
 
     f_b_sim = simulation_parameters['binary_fraction_const']
     f_b_pop = population_parameters['binary_fraction_const']
