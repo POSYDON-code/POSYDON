@@ -164,7 +164,8 @@ def generate_orbital_periods(primary_masses,
         orbital_periods_M_gt_15 = 10**(rejection_sampler(
             size=number_of_binaries,
             x_lim=[np.log10(orbital_period_min), np.log10(orbital_period_max)],
-            pdf=pdf))
+            pdf=pdf,
+            rng=RNG))
 
         orbital_periods = np.where(primary_masses <= 15.0,
                                    orbital_periods_M_lt_15,
