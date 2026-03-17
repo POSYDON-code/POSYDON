@@ -214,59 +214,55 @@ class detached_step:
 
     """
 
-    def __init__(
-            self,
-            dt=None,
-            n_o_steps_history=None,
-            do_wind_loss=True,
-            do_tides=True,
-            do_gravitational_radiation=True,
-            do_magnetic_braking=True,
-            magnetic_braking_mode="RVJ83",
-            do_stellar_evolution_and_spin_from_winds=True,
-            RLO_orbit_at_orbit_with_same_am=False,
-            verbose=False,
-            **kwargs):
+    # settings in .ini will override
+    DEFAULT_SETTINGS = {"dt": None,
+                        "n_o_steps_history": None,
+                        "do_wind_loss": True,
+                        "do_tides": True,
+                        "do_gravitational_radiation": True,
+                        "do_magnetic_braking": True,
+                        "magnetic_braking_mode": "RVJ83",
+                        "do_stellar_evolution_and_spin_from_winds": True,
+                        "RLO_orbit_at_orbit_with_same_am": False,
+                        "metallicity": None,
+                        "track_matcher": None,
+                        "verbose": False}
+
+    def __init__(self, **kwargs):
 
         """Initialize the step. See class documentation for details."""
-        self.dt = dt
-        self.n_o_steps_history = n_o_steps_history
-        self.do_wind_loss = do_wind_loss
-        self.do_tides = do_tides
-        self.do_gravitational_radiation = do_gravitational_radiation
-        self.do_magnetic_braking = do_magnetic_braking
-        self.magnetic_braking_mode = magnetic_braking_mode
-        self.do_stellar_evolution_and_spin_from_winds = (
-            do_stellar_evolution_and_spin_from_winds
-        )
-        self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
-        self.verbose = verbose
-
-
+        # read kwargs to initialize the class
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_SETTINGS:
+                    raise ValueError(key + " is not a valid parameter name!")
+            for varname in self.DEFAULT_SETTINGS:
+                default_value = self.DEFAULT_SETTINGS[varname]
+                setattr(self, varname, kwargs.get(varname, default_value))
+        else:
+            for varname in self.DEFAULT_SETTINGS:
+                default_value = self.DEFAULT_SETTINGS[varname]
+                setattr(self, varname, default_value)
 
         self.translate = DEFAULT_TRANSLATION
-
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
-
-        # Set TrackMatcher reference
-        self.track_matcher = kwargs.get('track_matcher', None)
 
         # create evolution handler object
         self.init_evo_kwargs()
         self.evo = detached_evolution(**self.evo_kwargs)
 
         if self.verbose:
-            print(dt,
-                  n_o_steps_history,
+            print(self.dt,
+                  self.n_o_steps_history,
                   self.track_matcher.matching_method,
-                  do_wind_loss,
-                  do_tides,
-                  do_gravitational_radiation,
-                  do_magnetic_braking,
-                  magnetic_braking_mode,
-                  do_stellar_evolution_and_spin_from_winds)
+                  self.do_wind_loss,
+                  self.do_tides,
+                  self.do_gravitational_radiation,
+                  self.do_magnetic_braking,
+                  self.magnetic_braking_mode,
+                  self.do_stellar_evolution_and_spin_from_winds)
 
         return
 

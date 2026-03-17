@@ -56,26 +56,6 @@ from posydon.utils.common_functions import (
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 
-MODEL = {"prescription": 'alpha-lambda',
-         "common_envelope_efficiency": 1.0,
-         "common_envelope_lambda_default": 0.5,
-         "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
-         "common_envelope_option_for_HG_star": "optimistic",
-         "common_envelope_alpha_thermal": 1.0,
-         "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
-         "core_definition_He_fraction": 0.1,
-         "CEE_tolerance_err": 0.001,
-         "verbose": False,
-         "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-         "mass_loss_during_CEE_merged": False, # If False, then no mass loss from this step for a merged star
-                                              # If True, then we remove mass according to the alpha-lambda prescription
-                                              # assuming a final separation where the inner core RLOF starts.
-         # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-         "metallicity": None,
-         "track_matcher": None
-         }
-
-
 # common_envelope_option_for_lambda:
 # 1) 'default_lambda': using for lambda the constant value of
 # common_envelope_lambda_default parameter
@@ -127,60 +107,41 @@ class StepCEE(object):
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
         planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
+    DEFAULT_KWARGS = {"prescription": 'alpha-lambda',
+                      "common_envelope_efficiency": 1.0,
+                      "common_envelope_lambda_default": 0.5,
+                      "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
+                      "common_envelope_option_for_HG_star": "optimistic",
+                      "common_envelope_alpha_thermal": 1.0,
+                      "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
+                      "core_definition_He_fraction": 0.1,
+                      "CEE_tolerance_err": 0.001,
+                      "verbose": False,
+                      "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
+                      "mass_loss_during_CEE_merged": False, 
+                      # If False, then no mass loss from this step for a merged star
+                      # If True, then we remove mass according to the alpha-lambda prescription
+                      # assuming a final separation where the inner core RLOF starts.
+                      # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
+                      "metallicity": None,
+                      "track_matcher": None
+                      }
 
-    def __init__(
-            self, prescription=MODEL['prescription'],
-            common_envelope_efficiency=MODEL['common_envelope_efficiency'],
-            common_envelope_lambda_default=MODEL[
-                'common_envelope_lambda_default'],
-            common_envelope_option_for_lambda=MODEL[
-                'common_envelope_option_for_lambda'],
-            common_envelope_option_for_HG_star=MODEL[
-                'common_envelope_option_for_HG_star'],
-            common_envelope_option_after_succ_CEE=MODEL[
-                'common_envelope_option_after_succ_CEE'],
-            common_envelope_alpha_thermal=MODEL[
-                'common_envelope_alpha_thermal'],
-            core_definition_H_fraction=MODEL[
-                'core_definition_H_fraction'],
-            core_definition_He_fraction=MODEL[
-                'core_definition_He_fraction'],
-            CEE_tolerance_err=MODEL['CEE_tolerance_err'],
-            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
-            verbose=MODEL['verbose'],
-            metallicity = MODEL['metallicity'],
-            **kwargs):
+
+    def __init__(self, **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
         if kwargs:
-            #for key in kwargs:
-            #    if key not in MODEL:
-            #        raise ValueError(key + " is not a valid parameter name!")
-            for varname in MODEL:
-                default_value = MODEL[varname]
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise ValueError(key + " is not a valid parameter name!")
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            self.prescription = prescription
-            self.common_envelope_efficiency = common_envelope_efficiency
-            self.common_envelope_lambda_default = \
-                common_envelope_lambda_default
-            self.common_envelope_option_for_lambda = \
-                common_envelope_option_for_lambda
-            self.common_envelope_option_for_HG_star = \
-                common_envelope_option_for_HG_star
-            self.common_envelope_alpha_thermal = common_envelope_alpha_thermal
-            self.core_definition_H_fraction = core_definition_H_fraction
-            self.core_definition_He_fraction = core_definition_He_fraction
-            self.CEE_tolerance_err = CEE_tolerance_err
-            self.common_envelope_option_after_succ_CEE = \
-                common_envelope_option_after_succ_CEE
-            self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
-        self.metallicity = metallicity
-        self.verbose = verbose
-        self.path_to_posydon = PATH_TO_POSYDON
-
-        # set TrackMatcher reference
-        self.track_matcher = kwargs.get("track_matcher", None)
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, default_value)
 
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
@@ -805,11 +766,12 @@ class StepCEE(object):
     def CEE_simple_alpha_prescription(
             self, binary, donor, comp_star, lambda1_CE, mc1_i, rc1_i,
             donor_type, lambda2_CE, mc2_i, rc2_i, comp_type, double_CE=False,
-            verbose=False, common_envelope_option_after_succ_CEE=MODEL[
-                'common_envelope_option_after_succ_CEE'],
-            core_definition_H_fraction=MODEL['core_definition_H_fraction'],
-            core_definition_He_fraction=MODEL['core_definition_He_fraction'],
-            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged']):
+            verbose=False, 
+            common_envelope_option_after_succ_CEE=\
+            DEFAULT_KWARGS['common_envelope_option_after_succ_CEE'],
+            core_definition_H_fraction=DEFAULT_KWARGS['core_definition_H_fraction'],
+            core_definition_He_fraction=DEFAULT_KWARGS['core_definition_He_fraction'],
+            mass_loss_during_CEE_merged=DEFAULT_KWARGS['mass_loss_during_CEE_merged']):
         """Apply the alpha-lambda common-envelope prescription.
 
         It uses energetics to calculate the shrinakge of the orbit

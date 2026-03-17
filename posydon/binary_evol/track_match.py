@@ -26,6 +26,7 @@ from posydon.binary_evol.DT.key_library import (
     DEFAULT_PROFILE_KEYS,
     DEFAULT_TRANSLATED_KEYS,
     KEYS_POSITIVE,
+    DEFAULT_FINAL_KEYS
 )
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
@@ -58,20 +59,6 @@ row_str = " ".join(str_fmts)
 DIVIDER_STR = "_"*len(row_str.format(*[""]*len(str_fmts)))
 # MAJOR.MINOR version of imported scipy package
 SCIPY_VER = float('.'.join(scipy.__version__.split('.')[:2]))
-
-DEFAULT_MATCH_SETTINGS = {"grid_Hrich":None,
-                          "grid_strippedHe":None,
-                          "path":PATH_TO_POSYDON_DATA,
-                          "metallicity":None,
-                          "matching_method":"minimize",
-                          "matching_tolerance":1e-2,
-                          "matching_tolerance_hard":1e-1,
-                          "list_for_matching_HMS":None,
-                          "list_for_matching_HeStar":None,
-                          "list_for_matching_postMS":None,
-                          "list_for_matching_postHeMS":None,
-                          "record_matching":False,
-                          "verbose":False}
 
 class TrackMatcher:
     """
@@ -265,6 +252,20 @@ class TrackMatcher:
 
     """
 
+    DEFAULT_KWARGS = {"grid_Hrich":None,
+                      "grid_strippedHe":None,
+                      "path":PATH_TO_POSYDON_DATA,
+                      "metallicity":None,
+                      "matching_method":"minimize",
+                      "matching_tolerance":1e-2,
+                      "matching_tolerance_hard":1e-1,
+                      "list_for_matching_HMS":None,
+                      "list_for_matching_HeStar":None,
+                      "list_for_matching_postMS":None,
+                      "list_for_matching_postHeMS":None,
+                      "record_matching":False,
+                      "verbose":False}
+
     def __init__(self, **kwargs):
 
         # MESA history column names used as matching metrics
@@ -272,30 +273,25 @@ class TrackMatcher:
         #       error is thrown when (possibly user defined)
         #       matching metrics don't exist in this array.
         #       That's not very flexible...
-        self.root_keys = np.array(
-            [
-                "age",
-                "mass",
-                "he_core_mass",
-                "center_h1",
-                "center_he4",
-                "surface_he4",
-                "surface_h1",
-                "log_R",
-                "center_c12"
-            ]
-        )
+        self.root_keys = np.array(["age", "mass", "he_core_mass", 
+                                   "center_h1", "center_he4",
+                                   "surface_he4", "surface_h1",
+                                   "center_c12", "log_R"])
 
         # =====================================================================
-
-        for kwarg in kwargs:
-            if kwarg not in DEFAULT_MATCH_SETTINGS.keys():
-                raise POSYDONError(f"Unexpected keyword argument {kwarg} "
-                                    "passed to TrackMatcher. Expected "
-                                    f"kwargs: {DEFAULT_MATCH_SETTINGS.keys()}")
-            else:
-                # set attributes for all kwargs, using defaults if not specified
-                setattr(self, kwarg, kwargs.get(kwarg, DEFAULT_MATCH_SETTINGS[kwarg]))
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise POSYDONError(f"Unexpected keyword argument {key} "
+                                        "passed to TrackMatcher. Expected "
+                                        f"kwargs: {self.DEFAULT_KWARGS.keys()}")
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, kwargs.get(varname, default_value))
+        else:
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, default_value)
 
         self.metallicity = convert_metallicity_to_string(self.metallicity)
 
@@ -308,30 +304,15 @@ class TrackMatcher:
 
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
-        self.KEYS = DEFAULT_TRANSLATED_KEYS #KEYS #DEFAULT_TRANSLATED_KEYS
+        self.KEYS = DEFAULT_TRANSLATED_KEYS
         self.KEYS_POSITIVE = KEYS_POSITIVE
-
         # keys for the final value interpolation
-        self.final_keys = (
-            'avg_c_in_c_core_at_He_depletion',
-            'co_core_mass_at_He_depletion',
-            'm_core_CE_1cent',
-            'm_core_CE_10cent',
-            'm_core_CE_30cent',
-            'm_core_CE_pure_He_star_10cent',
-            'r_core_CE_1cent',
-            'r_core_CE_10cent',
-            'r_core_CE_30cent',
-            'r_core_CE_pure_He_star_10cent'
-        )
-
+        self.final_keys = DEFAULT_FINAL_KEYS
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
-
         # =====================================================================
 
         # Initialize the matching lists:
-
         # min/max ranges of initial masses for each grid
         m_min_H = np.min(self.grid_Hrich.grid_mass)
         m_max_H = np.max(self.grid_Hrich.grid_mass)
@@ -410,6 +391,22 @@ class TrackMatcher:
         self.create_root0_h()
         self.create_root0_he()
         self.train_scalers()
+
+    @classmethod
+    def separate_kwargs(cls, step_kwargs):
+
+        matcher_kwargs = cls.DEFAULT_KWARGS.copy()
+        for key, val in step_kwargs.items():
+            if key in matcher_kwargs:
+                matcher_kwargs.update({key: val})
+        # peel off TrackMatcher kwargs from step_kwargs
+        except_keys = ["metallicity", "verbose"]
+        for key in matcher_kwargs:
+            if key in except_keys:
+                continue
+            _ = step_kwargs.pop(key, None)
+
+        return step_kwargs, matcher_kwargs
 
     def train_scalers(self):
 

@@ -17,7 +17,7 @@ __authors__ = [
 import os
 import time
 
-from posydon.binary_evol.track_match import DEFAULT_MATCH_SETTINGS, TrackMatcher
+from posydon.binary_evol.track_match import TrackMatcher
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.popsyn.io import simprop_kwargs_from_ini
@@ -32,6 +32,13 @@ class NullStep:
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
+
+    # these steps and the flow do not require a metallicity
+    ignore_for_met = ["flow", "step_SN", "step_end"]
+    steps_with_matching = ["step_detached", "step_CE",
+                            "step_isolated", "step_dco",
+                            "step_merged", "step_disrupted",
+                            "step_initially_single"]
 
     def __init__(self, flow=({}, {}),
                        step_HMS_HMS = (NullStep(), {}),
@@ -283,11 +290,6 @@ class SimulationProperties:
         -------
         None
         """
-        if verbose:
-            print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
-
-
-        self.track_matcher = None
 
         # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
@@ -329,12 +331,9 @@ class SimulationProperties:
         -------
         None
         """
-
-        # these steps and the flow do not require a metallicity
-        ignore_for_met = ["flow", "step_SN", "step_end"]
-        steps_with_matching = ["step_detached", "step_CE",
-                               "step_isolated", "step_dco",
-                               "step_merged", "step_disrupted"]
+        
+        if verbose:
+            print(f"Loading {step_name}...")
 
         # grab kwargs from ini file for given step
         if os.path.isfile(from_ini):
@@ -343,8 +342,37 @@ class SimulationProperties:
         step_func = step_tup[0]
         step_kwargs = step_tup[1].copy()
 
+        # check to make sure the step has a... 
+        # 1) metallicity assigned (if needed)
+        # 2) TrackMatcher assigned (if needed)
+        step_kwargs = self.check_step(metallicity, step_name, 
+                                      step_kwargs, verbose)
+
+        # Try to load the step
+        try:
+            setattr(self, step_name, step_func(**step_kwargs))
+            if verbose:
+                if step_kwargs:
+                    print("step_kwargs: ")
+                    kw_list = [f"\t{key}: {val}" for key, val in step_kwargs.items()]
+                    print("\n".join(kw_list))
+                print(f"{step_name} loaded successfully.")
+                print()
+
+        except TypeError as e:
+            Pwarn(f"Error loading {step_name}: {e}", "StepWarning")
+            print(f"Loading {step_name} without arguments.")
+            setattr(self, step_name, step_func())
+
+        # check if all steps have been loaded
+        self.steps_loaded = all(hasattr(self, name)
+                                for name, tup in self.kwargs.items()
+                                if isinstance(tup, tuple))
+
+    def check_step(self, metallicity, step_name, step_kwargs, verbose=False):
+
         # check/assign metallicity to the step
-        if step_name not in ignore_for_met:
+        if step_name not in self.ignore_for_met:
             metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is None:
                 Pwarn(f"{step_name} not assigned a metallicity. "
@@ -353,46 +381,22 @@ class SimulationProperties:
                 metallicity = 1.0
             step_kwargs['metallicity'] = float(metallicity)
 
-        # check/create a TrackMatcher object if needed
+        # each metallicity/step combo could require
+        # a unique TrackMatcher, so check for that
         matcher_key = (metallicity, step_name)
-        if step_name in steps_with_matching:
+        if step_name in self.steps_with_matching:
             matcher_needed = matcher_key not in self.track_matchers
             if matcher_needed:
-                step_kwargs, matcher_kwargs = self._separate_matcher_kwargs(step_kwargs)
+                # create TrackMatcher if needed
+                step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
-
+            
+            if verbose:
+                kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
+                print(f"matcher_kwargs: \n" + "\n".join(kw_list))
             step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
 
-        if verbose:
-            print(step_name, step_tup, end='\n')
-
-        # Try to load the step
-        try:
-            setattr(self, step_name, step_func(**step_kwargs))
-        except TypeError as e:
-            Pwarn(f"Error loading step {step_name}: {e}", "StepWarning")
-            print(f"Loading {step_name} without arguments.")
-            setattr(self, step_name, step_func())
-
-        # check if all steps have been loaded
-        self.steps_loaded = all(hasattr(self, name)
-                                for name, tup in self.kwargs.items()
-                                if isinstance(tup, tuple)
-)
-
-    def _separate_matcher_kwargs(self, step_kwargs):
-        matcher_kwargs = DEFAULT_MATCH_SETTINGS.copy()
-        for key, val in step_kwargs.items():
-            if key in matcher_kwargs:
-                matcher_kwargs.update({key: val})
-        # peel off TrackMatcher kwargs from step_kwargs
-        except_keys = ["metallicity", "verbose"]
-        for key in matcher_kwargs:
-            if key in except_keys:
-                continue
-            _ = step_kwargs.pop(key, None)
-
-        return step_kwargs, matcher_kwargs
+        return step_kwargs
 
     def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
 

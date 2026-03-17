@@ -24,19 +24,9 @@ class IsolatedStep(detached_step):
 
     """
 
-    def __init__(self,
-                 do_wind_loss=False,
-                 do_tides=False,
-                 do_gravitational_radiation=False,
-                 do_magnetic_braking=False,
-                 *args, **kwargs):
+    def __init__(self, *args, **kwargs):
 
-        super().__init__(do_wind_loss=do_wind_loss,
-                         do_tides=do_tides,
-                         do_gravitational_radiation=do_gravitational_radiation,
-                         do_magnetic_braking=do_magnetic_braking,
-                         *args,
-                         **kwargs)
+        super().__init__(*args, **kwargs)
 
 
 
