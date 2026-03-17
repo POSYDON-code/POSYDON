@@ -884,7 +884,6 @@ class TestFunctions:
             totest.histogram_sampler(x_edges=np.array([0.0, 1.0]),\
                                      y=np.array([0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(np.random, "choice", mock_choice)
         assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                       0.5,\
                                                                       1.0]),\
