@@ -331,7 +331,7 @@ class SimulationProperties:
         -------
         None
         """
-        
+
         if verbose:
             print(f"Loading {step_name}...")
 
@@ -342,10 +342,10 @@ class SimulationProperties:
         step_func = step_tup[0]
         step_kwargs = step_tup[1].copy()
 
-        # check to make sure the step has a... 
+        # check to make sure the step has a...
         # 1) metallicity assigned (if needed)
         # 2) TrackMatcher assigned (if needed)
-        step_kwargs = self.check_step(metallicity, step_name, 
+        step_kwargs = self.check_step(metallicity, step_name,
                                       step_kwargs, verbose)
 
         # Try to load the step
@@ -390,7 +390,7 @@ class SimulationProperties:
                 # create TrackMatcher if needed
                 step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
-            
+
             if verbose:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
                 print(f"matcher_kwargs: \n" + "\n".join(kw_list))

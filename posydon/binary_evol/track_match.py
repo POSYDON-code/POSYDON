@@ -23,10 +23,10 @@ from scipy.optimize import minimize, root
 
 import posydon.utils.constants as const
 from posydon.binary_evol.DT.key_library import (
+    DEFAULT_FINAL_KEYS,
     DEFAULT_PROFILE_KEYS,
     DEFAULT_TRANSLATED_KEYS,
     KEYS_POSITIVE,
-    DEFAULT_FINAL_KEYS
 )
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
@@ -273,7 +273,7 @@ class TrackMatcher:
         #       error is thrown when (possibly user defined)
         #       matching metrics don't exist in this array.
         #       That's not very flexible...
-        self.root_keys = np.array(["age", "mass", "he_core_mass", 
+        self.root_keys = np.array(["age", "mass", "he_core_mass",
                                    "center_h1", "center_he4",
                                    "surface_he4", "surface_h1",
                                    "center_c12", "log_R"])
