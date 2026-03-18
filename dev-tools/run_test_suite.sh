@@ -98,4 +98,4 @@ echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_binaries_$BRAN
 OUT_DIR=$FULL_PATH/script_data/output/population_tests
 echo "🚀 Running popsynth_suite.py"
 python script_data/src/popsynth_suite.py > $OUT_DIR/evolve_pop_$BRANCH.out 2>&1
-echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_binaries_$BRANCH.out"
+echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_pop_$BRANCH.out"
