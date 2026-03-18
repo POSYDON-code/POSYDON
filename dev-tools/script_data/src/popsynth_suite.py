@@ -102,7 +102,7 @@ def print_testinfo(test_title, population, popevo_kwargs):
 
 def check_test(pop_in_ram, load_pop=False):
 
-    # if we have population in RAM, check that the number 
+    # if we have population in RAM, check that the number
     # stored in RAM matches the number we expected to run
     if pop_in_ram and not load_pop:
         num_binaries = pop_in_ram.number_of_binaries
