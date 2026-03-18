@@ -268,7 +268,7 @@ class SimulationProperties:
 
         return new_instance
 
-    def load_steps(self, metallicity=None, verbose=False):
+    def load_steps(self, metallicity=None, RNG=None, verbose=False):
         """Instantiate all step classes and set as instance attributes.
 
         Parameters
@@ -292,7 +292,7 @@ class SimulationProperties:
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
                 metallicity = step_kwargs.get('metallicity', metallicity)
-                self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
+                self.load_a_step(name, tup, metallicity=metallicity, RNG=RNG, verbose=verbose)
 
         if verbose:
             if self.steps_loaded:
@@ -300,7 +300,7 @@ class SimulationProperties:
             else:
                 print("Not all steps were loaded successfully. Check warnings for details.")
 
-    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, RNG=None, from_ini='', verbose=False):
         """
         Instantiate and attach a simulation step to this object.
 
@@ -362,12 +362,12 @@ class SimulationProperties:
         if os.path.isfile(from_ini):
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
 
-        if step_name is not "flow":
+        if step_name != "flow":
             # check to make sure the step has a...
             # 1) metallicity assigned (if needed)
             # 2) TrackMatcher assigned (if needed)
-            step_tup = self.check_step(metallicity, step_name,
-                                    step_tup, verbose)
+            step_tup = self.check_step(metallicity, RNG, step_name,
+                                       step_tup, verbose)
 
         step_func, step_kwargs = step_tup
 
@@ -392,7 +392,7 @@ class SimulationProperties:
                                 for name, tup in self.kwargs.items()
                                 if isinstance(tup, tuple))
 
-    def check_step(self, metallicity, step_name, step_tup, verbose=False):
+    def check_step(self, metallicity, RNG, step_name, step_tup, verbose=False):
         """
         Validate and update configuration for an evolution step.
 
@@ -456,6 +456,9 @@ class SimulationProperties:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
                 print(f"matcher_kwargs: \n" + "\n".join(kw_list))
             step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
+
+        if "RNG" in step_func.DEFAULT_KWARGS:
+            step_kwargs['RNG'] = RNG
 
         return step_tup
 
