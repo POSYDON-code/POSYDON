@@ -791,7 +791,7 @@ class detached_evolution:
 
     The stellar properties required for these calculations are obtained
     from interpolated single-star evolution tracks associated with the
-    ``SingleStar`` objects (binary components) and their 
+    ``SingleStar`` objects (binary components) and their
     PChipInterpolator2 objects.
 
     Parameters
