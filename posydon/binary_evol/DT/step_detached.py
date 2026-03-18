@@ -162,7 +162,7 @@ class detached_step:
     """
 
     # settings in .ini will override
-    DEFAULT_SETTINGS = {"dt": None,
+    DEFAULT_KWARGS = {"dt": None,
                         "n_o_steps_history": None,
                         "do_wind_loss": True,
                         "do_tides": True,
@@ -181,14 +181,14 @@ class detached_step:
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in self.DEFAULT_SETTINGS:
+                if key not in self.DEFAULT_KWARGS:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in self.DEFAULT_SETTINGS:
-                default_value = self.DEFAULT_SETTINGS[varname]
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            for varname in self.DEFAULT_SETTINGS:
-                default_value = self.DEFAULT_SETTINGS[varname]
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, default_value)
 
         self.translate = DEFAULT_TRANSLATION

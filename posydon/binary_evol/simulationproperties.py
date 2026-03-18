@@ -368,20 +368,21 @@ class SimulationProperties:
         # grab kwargs from ini file for given step
         if os.path.isfile(from_ini):
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
-
-        step_func = step_tup[0]
-        step_kwargs = step_tup[1].copy()
-
-        # check to make sure the step has a...
-        # 1) metallicity assigned (if needed)
-        # 2) TrackMatcher assigned (if needed)
-        step_kwargs = self.check_step(metallicity, step_name,
-                                      step_kwargs, verbose)
+            
+        if step_name is not "flow":
+            # check to make sure the step has a...
+            # 1) metallicity assigned (if needed)
+            # 2) TrackMatcher assigned (if needed)
+            step_tup = self.check_step(metallicity, step_name,
+                                    step_tup, verbose)
+            
+        step_func, step_kwargs = step_tup
 
         # Try to load the step
         try:
             setattr(self, step_name, step_func(**step_kwargs))
             if verbose:
+                print(f"Class: {step_func}")
                 if step_kwargs:
                     print("step_kwargs: ")
                     kw_list = [f"\t{key}: {val}" for key, val in step_kwargs.items()]
@@ -398,7 +399,7 @@ class SimulationProperties:
                                 for name, tup in self.kwargs.items()
                                 if isinstance(tup, tuple))
 
-    def check_step(self, metallicity, step_name, step_kwargs, verbose=False):
+    def check_step(self, metallicity, step_name, step_tup, verbose=False):
         """
         Validate and update configuration for an evolution step.
 
@@ -436,9 +437,11 @@ class SimulationProperties:
         - TrackMatcher objects are stored in ``self.track_matchers`` and reused
         for repeated `(metallicity, step_name)` combinations.
         """
+        step_func, step_kwargs = step_tup
 
         # check/assign metallicity for the step
-        if step_name not in self.ignore_for_met:
+        #if step_name not in self.ignore_for_met:
+        if "metallicity" in step_func.DEFAULT_KWARGS:
             metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is None:
                 Pwarn(f"{step_name} not assigned a metallicity. "
@@ -450,7 +453,7 @@ class SimulationProperties:
         # each metallicity/step combo could require
         # a unique TrackMatcher, so check for that
         matcher_key = (metallicity, step_name)
-        if step_name in self.steps_with_matching:
+        if "track_matcher" in step_func.DEFAULT_KWARGS:
             matcher_needed = matcher_key not in self.track_matchers
             if matcher_needed:
                 # create TrackMatcher if needed
@@ -462,7 +465,7 @@ class SimulationProperties:
                 print(f"matcher_kwargs: \n" + "\n".join(kw_list))
             step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
 
-        return step_kwargs
+        return step_tup
 
     def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
         """
