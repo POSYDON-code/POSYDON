@@ -121,17 +121,17 @@ def check_test(pop_in_ram, load_pop=False):
 def test_popruns():
 
     print("Performing population run tests...")
-
     pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
     pop.kwargs.update({"temp_directory": path_to_popout})
     print_pop_settings(pop)
+
+    # DO TESTS:
 
     # test simple run, stays in RAM
     kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":True}
     print_testinfo("TEST: 01", pop, kwargs)
     pop_in_ram = test_binpop_evolve(pop, kwargs, verbose=True)
     check_test(pop_in_ram, load_pop=False)
-
 
     # test same but w/ saving/loading binaries
     kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":True}
@@ -143,9 +143,7 @@ def test_popruns():
     kwargs = {"optimize_ram":True, "breakdown_to_df":False, "tqdm":True}
     print_testinfo("TEST: 03", pop, kwargs)
     _ = test_binpop_evolve(pop, kwargs, verbose=True)
-    # This comparison FAILS at the moment...because of ordering in combined .h5?
-    # check_test(pop_in_ram, load_pop=True)
-    # compare_io_to_ram(loaded_pop, pop_in_ram)
+    check_test(pop_in_ram, load_pop=True)
 
     # TEST POPRUNNER
     # This is RAM heavy and may fail on personal computers
