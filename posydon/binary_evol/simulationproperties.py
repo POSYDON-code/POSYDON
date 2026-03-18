@@ -333,7 +333,7 @@ class SimulationProperties:
 
         metallicity : float, optional
             Metallicity (Z) to assign to the step if required and not already
-            specified in the step keyword arguments. Default supported values 
+            specified in the step keyword arguments. Default supported values
             are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.
 
         from_ini : str, optional
@@ -424,7 +424,7 @@ class SimulationProperties:
         Returns
         -------
         dict
-            The updated ``step_kwargs`` dictionary, containing a validated 
+            The updated ``step_kwargs`` dictionary, containing a validated
             ``metallicity`` entry and potentially a ``track_matcher`` object.
 
         Notes
