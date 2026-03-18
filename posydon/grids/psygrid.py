@@ -395,8 +395,8 @@ class LazyHDF5:
     dtypes either per-field (for structured arrays) or for the selected field
     when accessed by name.
 
-    Assignments (via __setitem__) trigger full materialization of the dataset 
-    in memory, after which the internal storage is replaced by the in-memory 
+    Assignments (via __setitem__) trigger full materialization of the dataset
+    in memory, after which the internal storage is replaced by the in-memory
     array.
 
     Parameters
