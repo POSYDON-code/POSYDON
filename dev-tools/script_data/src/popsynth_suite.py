@@ -81,6 +81,43 @@ def compare_io_to_ram(loaded_pop, pop_in_ram):
     print("✅ Binaries from I/O match those in RAM.")
     print("=" * line_length)
 
+def print_testinfo(test_title, population, popevo_kwargs):
+
+    # print test title str
+    numchar = (line_length - len(test_title)) // 2
+    print("=" * numchar + test_title + "=" * numchar)
+
+    optimize_ram = popevo_kwargs.get("optimize_ram", False)
+    breakdown_to_df = popevo_kwargs.get("breakdown_to_df", False)
+    N_binaries = population.number_of_binaries
+
+    # print expected behavior based on settings
+    if not breakdown_to_df and not optimize_ram:
+        print(f"🚀 Evolving a population and storing {N_binaries} binaries in RAM.")
+    elif breakdown_to_df and not optimize_ram:
+        print("🚀 Evolving a population and saving binaries to a hdf5 file.")
+    elif optimize_ram and not breakdown_to_df:
+        num_batch_files = population.number_of_binaries // population.kwargs["dump_rate"]
+        print(f"🚀 Evolving a population and saving to {num_batch_files} batch files.")
+
+def check_test(pop_in_ram, load_pop=False):
+
+    # if we have population in RAM, check that the number 
+    # stored in RAM matches the number we expected to run
+    if pop_in_ram and not load_pop:
+        num_binaries = pop_in_ram.number_of_binaries
+        num_in_ram = len(pop_in_ram.manager.binaries)
+        print(f"🔍 Checking that we have {num_binaries} binaries in RAM...")
+        assert num_binaries == num_in_ram, \
+            f"🚨 Number of binaries in RAM ({num_in_ram}) " \
+            f"does not equal the number specified to run ({num_binaries})."
+        print(f"✅ Successfully ran and stored {num_in_ram} binaries in RAM.")
+
+    elif pop_in_ram and load_pop:
+        save_fn = os.path.join(path_to_popout, "evolution.combined.h5")
+        loaded_pop = Population(save_fn)
+        compare_io_to_ram(loaded_pop, pop_in_ram)
+
 def test_popruns():
 
     print("Performing population run tests...")
@@ -90,41 +127,24 @@ def test_popruns():
     print_pop_settings(pop)
 
     # test simple run, stays in RAM
-    test_str = " TEST: 01 "
-    numchar = (line_length - len(test_str)) // 2
-    print("=" * numchar + test_str + "=" * numchar)
-    print(f"🚀 Evolving a population and storing {pop.number_of_binaries} binaries in RAM.")
     kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":True}
+    print_testinfo("TEST: 01", pop, kwargs)
     pop_in_ram = test_binpop_evolve(pop, kwargs, verbose=True)
-    print(f"🔍 Checking that we have {pop.number_of_binaries} binaries in RAM...")
-    num_in_ram = len(pop_in_ram.manager.binaries)
-    assert pop.number_of_binaries == num_in_ram, \
-        f"🚨 Number of binaries in RAM ({num_in_ram}) " \
-        f"does not equal the number specified to run ({pop.number_of_binaries})."
-    print(f"✅ Successfully ran and stored {num_in_ram} binaries in RAM.")
+    check_test(pop_in_ram, load_pop=False)
+
 
     # test same but w/ saving/loading binaries
-    test_str = " TEST: 02 "
-    numchar = (line_length - len(test_str)) // 2
-    print("=" * numchar + test_str + "=" * numchar)
-    print("🚀 Evolving a population and saving binaries to a hdf5 file.")
     kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":True}
+    print_testinfo("TEST: 02", pop, kwargs)
     _ = test_binpop_evolve(pop, kwargs, verbose=False)
-    save_fn = os.path.join(path_to_popout, "evolution.combined.h5")
-    loaded_pop = Population(save_fn)
-    compare_io_to_ram(loaded_pop, pop_in_ram)
+    check_test(pop_in_ram, load_pop=True)
 
     # test optimize RAM run w/ batch saving
-    test_str = " TEST: 03 "
-    numchar = (line_length - len(test_str)) // 2
-    print("=" * numchar + test_str + "=" * numchar)
-    num_batch_files = int(pop.number_of_binaries/pop.kwargs["dump_rate"])
-    print(f"🚀 Evolving a population and saving to {num_batch_files} batch files.")
     kwargs = {"optimize_ram":True, "breakdown_to_df":False, "tqdm":True}
+    print_testinfo("TEST: 03", pop, kwargs)
     _ = test_binpop_evolve(pop, kwargs, verbose=True)
-    save_fn = os.path.join(path_to_popout, "evolution.combined.h5")
-    loaded_pop = Population(save_fn)
     # This comparison FAILS at the moment...because of ordering in combined .h5?
+    # check_test(pop_in_ram, load_pop=True)
     # compare_io_to_ram(loaded_pop, pop_in_ram)
 
     # TEST POPRUNNER
