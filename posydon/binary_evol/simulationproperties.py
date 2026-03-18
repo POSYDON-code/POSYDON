@@ -33,13 +33,6 @@ class NullStep:
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
-    # these steps and the flow do not require a metallicity
-    ignore_for_met = ["flow", "step_SN", "step_end"]
-    steps_with_matching = ["step_detached", "step_CE",
-                            "step_isolated", "step_dco",
-                            "step_merged", "step_disrupted",
-                            "step_initially_single"]
-
     def __init__(self, flow=({}, {}),
                        step_HMS_HMS = (NullStep(), {}),
                        step_CO_HeMS = (NullStep(), {}),
@@ -440,7 +433,6 @@ class SimulationProperties:
         step_func, step_kwargs = step_tup
 
         # check/assign metallicity for the step
-        #if step_name not in self.ignore_for_met:
         if "metallicity" in step_func.DEFAULT_KWARGS:
             metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is None:
