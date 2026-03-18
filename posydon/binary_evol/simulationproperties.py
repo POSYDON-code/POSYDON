@@ -493,7 +493,7 @@ class SimulationProperties:
         """
 
         z_str = convert_metallicity_to_string(metallicity)
-        # set up GRIDInterpolator objects for all TrackMatchers
+        # set up GRIDInterpolator objects
         # (only if one hasn't been created already for a given metallicity)
         if metallicity not in self.grids_Hrich:
             self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
@@ -501,7 +501,6 @@ class SimulationProperties:
             grid_path_Hrich = os.path.join(self.grid_path,
                                             self.grid_names_Hrich[metallicity])
             self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
-
         if metallicity not in self.grids_strippedHe:
             self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
                                                         z_str+'_Zsun.h5')
