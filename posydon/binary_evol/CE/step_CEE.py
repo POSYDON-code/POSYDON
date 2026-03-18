@@ -118,7 +118,7 @@ class StepCEE(object):
                       "CEE_tolerance_err": 0.001,
                       "verbose": False,
                       "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-                      "mass_loss_during_CEE_merged": False, 
+                      "mass_loss_during_CEE_merged": False,
                       # If False, then no mass loss from this step for a merged star
                       # If True, then we remove mass according to the alpha-lambda prescription
                       # assuming a final separation where the inner core RLOF starts.
@@ -766,7 +766,7 @@ class StepCEE(object):
     def CEE_simple_alpha_prescription(
             self, binary, donor, comp_star, lambda1_CE, mc1_i, rc1_i,
             donor_type, lambda2_CE, mc2_i, rc2_i, comp_type, double_CE=False,
-            verbose=False, 
+            verbose=False,
             common_envelope_option_after_succ_CEE=\
             DEFAULT_KWARGS['common_envelope_option_after_succ_CEE'],
             core_definition_H_fraction=DEFAULT_KWARGS['core_definition_H_fraction'],
