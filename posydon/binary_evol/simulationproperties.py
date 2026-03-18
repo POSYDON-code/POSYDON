@@ -209,6 +209,9 @@ class SimulationProperties:
 
         # Should possibly be a section in sim props .ini file
         self.grid_path = PATH_TO_POSYDON_DATA
+        # These hold GRIDInterpolator objects
+        # and associated grid names for ea. metallicity
+        # (intended keys are metallicities):
         self.grid_names_Hrich = {}
         self.grids_Hrich = {}
         self.grid_names_strippedHe = {}
@@ -298,38 +301,62 @@ class SimulationProperties:
                 metallicity = step_kwargs.get('metallicity', metallicity)
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
-        # track that all steps have been loaded
+        # track that all steps have been loaded (DEPRECATED?)
         self.steps_loaded = True
 
     def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
-        """Instantiate one step class and set as instance attribute.
+        """
+        Instantiate and attach a simulation step to this object.
+
+        This method creates an instance of a step class and assigns it as an
+        attribute of SimulationProperties using ``step_name`` as the attribute
+        name. Step keyword arguments may be provided directly via ``step_tup``
+        or loaded from an `.ini` configuration file. Before instantiation,
+        step arguments are validated and augmented (e.g., assigning metallicity
+        and creating a TrackMatcher if required).
 
         Parameters
         ----------
         step_name : str
+            Name of the evolution step. The created step instance will be
+            attached to the object as ``self.<step_name>``. See
+            ``SimulationProperties.__init__`` for the standard set of steps.
 
-            This string is the name of the evolution step. See
-            SimulationProperties.__init__ for the full standard set.
+        step_tup : tuple, optional
+            Tuple of the form ``(step_class, kwargs_dict)`` where:
 
-        step_tup : tuple
-            A tuple whose first element is the step class and whose
-            second is a dictionary representing the step's kwargs.
+            - ``step_class`` is the class representing the step.
+            - ``kwargs_dict`` is a dictionary of keyword arguments used to
+            initialize the step.
 
-        metallicity : float
-            A metallicity (Z) may be provided to automatically assign
-            to the step as it is loaded. Should be one of e.g., 2.0, 1.0,
-            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
-            metallicities available in your POSYDON_DATA grids.
+            Default is ``(NullStep, {})``.
 
-        from_ini : str
-            Path to a .ini file to read step options from.
+        metallicity : float, optional
+            Metallicity (Z) to assign to the step if required and not already
+            specified in the step keyword arguments. Default supported values 
+            are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.
 
-        verbose : bool
-            Print extra information.
+        from_ini : str, optional
+            Path to an `.ini` file containing step configuration. If provided
+            and the file exists, the step class and keyword arguments for
+            ``step_name`` are loaded from this file and override ``step_tup``.
+
+        verbose : bool, optional
+            If True, print detailed information about step loading and the
+            keyword arguments used to instantiate the step.
 
         Returns
         -------
         None
+
+        Notes
+        -----
+        - Step keyword arguments are processed by ``self.check_step`` before
+        instantiation. This may assign a metallicity and/or attach a
+        ``TrackMatcher`` if required for the step.
+        - The instantiated step is stored as an attribute of SimulationProperties.
+        - After loading, ``self.steps_loaded`` is updated to indicate whether
+        all configured steps have been successfully attached.
         """
         
         if verbose:
@@ -370,8 +397,45 @@ class SimulationProperties:
                                 if isinstance(tup, tuple))
 
     def check_step(self, metallicity, step_name, step_kwargs, verbose=False):
+        """
+        Validate and update configuration for an evolution step.
 
-        # check/assign metallicity to the step
+        This method ensures that a valid metallicity is assigned to the step
+        (unless the step is excluded from metallicity handling) and that a
+        corresponding TrackMatcher exists if the step requires track matching.
+        If a TrackMatcher for the `(metallicity, step_name)` combination does
+        not yet exist, it is created and stored.
+
+        Parameters
+        ----------
+        metallicity : float or None
+            Default metallicity value to use for the step if not explicitly
+            provided in ``step_kwargs``.
+        step_name : str
+            Name of the pipeline step being checked.
+        step_kwargs : dict
+            Keyword arguments for the step. This dictionary may be modified
+            in-place to include validated metallicity and/or a TrackMatcher
+            instance.
+        verbose : bool, optional
+            If True, print the keyword arguments used to construct the
+            TrackMatcher.
+
+        Returns
+        -------
+        dict
+            The updated ``step_kwargs`` dictionary, containing a validated 
+            ``metallicity`` entry and potentially a ``track_matcher`` object.
+
+        Notes
+        -----
+        - If metallicity is not provided for a step that requires it, a warning
+        is issued and a default value of ``Z = 1.0`` (solar metallicity) is used.
+        - TrackMatcher objects are stored in ``self.track_matchers`` and reused
+        for repeated `(metallicity, step_name)` combinations.
+        """
+
+        # check/assign metallicity for the step
         if step_name not in self.ignore_for_met:
             metallicity = step_kwargs.get('metallicity', metallicity)
             if metallicity is None:
@@ -399,6 +463,34 @@ class SimulationProperties:
         return step_kwargs
 
     def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
+        """
+        Create and store a TrackMatcher for a given metallicity and step.
+
+        This method ensures that the required stellar evolution grids
+        (H-rich and stripped-He) are loaded for the specified metallicity.
+        If the corresponding GRIDInterpolator objects do not yet exist,
+        they are created and cached. The interpolators are then passed to
+        a TrackMatcher instance, which is stored internally.
+
+        Parameters
+        ----------
+        metallicity : float
+            Stellar metallicity used to select the appropriate grid files.
+        step_name : str
+            Identifier for the evolutionary step associated with this
+            TrackMatcher.
+        matcher_kwargs : dict
+            Keyword arguments used to initialize the TrackMatcher. This
+            dictionary will be updated in-place with the following keys:
+            'grid_Hrich' and 'grid_strippedHe'.
+
+        Notes
+        -----
+        - GRIDInterpolator objects are created only once per metallicity
+        and reused for subsequent TrackMatcher creations.
+        - The created TrackMatcher is stored in ``self.track_matchers``
+        using the key ``(metallicity, step_name)``.
+        """
 
         z_str = convert_metallicity_to_string(metallicity)
         # set up GRIDInterpolator objects for all TrackMatchers
@@ -417,11 +509,10 @@ class SimulationProperties:
                                                 self.grid_names_strippedHe[metallicity])
             self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
 
-        # Create TrackMatcher object as needed, passing GRIDInterpolators
+        # Create TrackMatcher object as needed, passing GRIDInterpolator references
         matcher_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
         matcher_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
         self.track_matchers[(metallicity, step_name)] = TrackMatcher(**matcher_kwargs)
-
 
     def close(self):
         """Close hdf5 files before exiting."""
