@@ -85,73 +85,6 @@ class detached_step:
 
     Parameters
     ----------
-    path : str
-        Path to the directory that contains POSYDON data HDF5 files. Defaults
-        to the PATH_TO_POSYDON_DATA environment variable. Used for track
-        matching.
-
-    metallicity : float
-        The metallicity of the grid. This should be one of the eight
-        supported metallicities:
-
-            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
-
-        and this will be converted to a corresponding string (e.g.,
-        1e+00 --> "1e+00_Zsun"). Used for track matching.
-
-    matching_method : str
-        Method to find the best match between a star from a previous step and a
-        point in a single star evolution track. Options:
-
-            "root": Tries to find a root of two matching quantities. It is
-                    possible to not find one, causing the evolution to fail.
-
-            "minimize": Minimizes the sum of squares of differences of
-                        various quantities between the previous evolution step and
-                        a stellar evolution track.
-
-        Used for track matching.
-
-    grid_name_Hrich : str
-        Name of the single star H-rich grid h5 file,
-        including its parent directory. This is set to
-        (for example):
-
-            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'
-
-        by default if not specified. Used for track matching.
-
-    grid_name_strippedHe : str
-        Name of the single star He-rich grid h5 file. This is
-        set to (for example):
-
-            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
-
-        by default if not specified. Used for track matching.
-
-    list_for_matching_HMS : list
-        A list of mixed type that specifies properties of the matching
-        process for HMS stars. Used for track matching.
-
-    list_for_matching_postMS : list
-        A list of mixed type that specifies properties of the matching
-        process for postMS stars. Used for track matching.
-
-    list_for_matching_HeStar : list
-        A list of mixed type that specifies properties of the matching
-        process for He stars. Used for track matching.
-
-    record_matching : bool
-        Whether properties of the matched star(s) should be recorded in the
-        binary evolution history. Used for track matching.
-
-    Attributes
-    ----------
-    KEYS : list[str]
-        Contains keywords corresponding to MESA data column names
-        which are used to extract quantities from the single star
-        evolution grids.
-
     dt : float
         The timestep size, in years, to be appended to the history of the
         binary. None means only the final step. Note: do not select very
@@ -201,16 +134,30 @@ class detached_step:
         evolved until RLO commences once again, but without changing the
         orbit.
 
-    translate : dict
-        Dictionary containing data column name (key) translations between
-        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).
-
     track_matcher : TrackMatcher object
         The TrackMatcher object performs functions related to matching
         binary stellar evolution components to single star evolution models.
 
     verbose : bool
         True if we want to print stuff.
+
+    Attributes
+    ----------
+    KEYS : list[str]
+        Contains keywords corresponding to MESA data column names
+        which are used to extract quantities from the single star
+        evolution grids.
+
+    translate : dict
+        Dictionary containing data column name (key) translations between
+        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).
+
+    evo : detached_evolution
+        Handler object responsible for performing the detached binary
+        evolution.
+
+    evo_kwargs : dict
+        Keyword arguments used to initialize ``detached_evolution``.
 
     """
 
@@ -826,6 +773,102 @@ class detached_step:
                     getattr(obj, key + "_history").extend(history)
 
 class detached_evolution:
+    """
+    ODE system describing the evolution of a detached binary.
+
+    This class defines the differential equations governing the orbital
+    evolution and stellar spin evolution of a detached binary system.
+    It is designed to be passed directly to ``scipy.integrate.solve_ivp``,
+    with ``__call__`` returning the derivatives of the system state.
+
+    The evolution can include contributions from several physical processes:
+
+    - Stellar wind mass loss
+    - Tidal interactions
+    - Magnetic braking
+    - Gravitational wave radiation
+    - Spin evolution from stellar winds and structural changes
+
+    The stellar properties required for these calculations are obtained
+    from interpolated single-star evolution tracks associated with the
+    ``SingleStar`` objects (binary components) and their 
+    PChipInterpolator2 objects.
+
+    Parameters
+    ----------
+    primary : SingleStar, optional
+        Primary star of the binary (typically the more evolved star).
+        These must have an ``interp1d`` interpolator to return stellar
+        properties as a function of time.
+
+    secondary : SingleStar, optional
+        Secondary star of the binary.
+
+    do_wind_loss : bool, optional
+        If True, include orbital evolution due to stellar wind mass loss.
+
+    do_tides : bool, optional
+        If True, include tidal interactions affecting orbital separation,
+        eccentricity, and stellar spin.
+
+    do_magnetic_braking : bool, optional
+        If True, include stellar spin evolution due to magnetic braking.
+
+    magnetic_braking_mode : {"RVJ83", "M15", "G18", "CARB"}, optional
+        Magnetic braking prescription:
+
+        - RVJ83 — Rappaport, Verbunt & Joss (1983)
+        - M15 — Matt et al. (2015)
+        - G18 — Garraffo et al. (2018)
+        - CARB — Van & Ivanova (2019)
+
+    do_stellar_evolution_and_spin_from_winds : bool, optional
+        If True, include spin evolution caused by stellar structural
+        evolution and angular momentum loss from winds.
+
+    do_gravitational_radiation : bool, optional
+        If True, include orbital evolution from gravitational wave emission.
+
+    verbose : bool, optional
+        If True, print diagnostic information during the integration.
+
+    Attributes
+    ----------
+    primary : SingleStar
+        Primary star used in the evolution.
+
+    secondary : SingleStar
+        Secondary star used in the evolution.
+
+    a : float
+        Current orbital separation (solar radii).
+
+    e : float
+        Current orbital eccentricity.
+
+    phys_keys : list of str
+        Names of stellar quantities tracked from the interpolated stellar
+        evolution models.
+
+    t : float
+        Current system age during integration.
+
+    Notes
+    -----
+    The system state vector ``y`` evolved by ``solve_ivp`` is defined as::
+
+        y = [a, e, omega_secondary, omega_primary]
+
+    where
+
+    - ``a`` is the orbital separation (R☉)
+    - ``e`` is the orbital eccentricity
+    - ``omega_secondary`` is the spin angular velocity of the secondary (rad/yr)
+    - ``omega_primary`` is the spin angular velocity of the primary (rad/yr)
+
+    Event functions defined in this class detect important transitions such
+    as Roche-lobe overflow or reaching the end of a stellar evolution track.
+    """
 
     def __init__(self, primary=None, secondary=None,
                     do_wind_loss=True,
@@ -1135,7 +1178,7 @@ class detached_evolution:
         y[3] = np.max([y[3], 0])
         self.primary.latest["omega"] = y[3]
 
-        # store current delta(t)/time
+        # store current time
         self.t = t
 
     def __call__(self, t, y):
