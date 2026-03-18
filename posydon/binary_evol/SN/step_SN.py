@@ -405,7 +405,7 @@ class StepSN(object):
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
         return "StepSN:\n" + \
-            "\n".join([f"{key} = {getattr(self, key)}" for key in self.DEFAULT_KWARGS])
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
     def _reset_other_star_properties(self, star):
