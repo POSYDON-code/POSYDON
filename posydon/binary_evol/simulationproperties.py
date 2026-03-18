@@ -301,8 +301,11 @@ class SimulationProperties:
                 metallicity = step_kwargs.get('metallicity', metallicity)
                 self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
 
-        # track that all steps have been loaded (DEPRECATED?)
-        self.steps_loaded = True
+        if verbose:
+            if self.steps_loaded:
+                print("All steps loaded successfully.")
+            else:
+                print("Not all steps were loaded successfully. Check warnings for details.")
 
     def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
         """
@@ -383,8 +386,7 @@ class SimulationProperties:
                     print("step_kwargs: ")
                     kw_list = [f"\t{key}: {val}" for key, val in step_kwargs.items()]
                     print("\n".join(kw_list))
-                print(f"{step_name} loaded successfully.")
-                print()
+                print(f"{step_name} loaded successfully.\n")
 
         except TypeError as e:
             Pwarn(f"Error loading {step_name}: {e}", "StepWarning")
