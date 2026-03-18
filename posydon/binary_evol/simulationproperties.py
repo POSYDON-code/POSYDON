@@ -361,14 +361,14 @@ class SimulationProperties:
         # grab kwargs from ini file for given step
         if os.path.isfile(from_ini):
             step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
-            
+
         if step_name is not "flow":
             # check to make sure the step has a...
             # 1) metallicity assigned (if needed)
             # 2) TrackMatcher assigned (if needed)
             step_tup = self.check_step(metallicity, step_name,
                                     step_tup, verbose)
-            
+
         step_func, step_kwargs = step_tup
 
         # Try to load the step
