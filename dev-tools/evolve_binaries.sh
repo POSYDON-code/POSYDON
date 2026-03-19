@@ -120,21 +120,26 @@ for Z in $METALLICITIES; do
     echo "  Log:    $LOG_FILE"
     echo "============================================================"
 
-    if python "$SUITE_SCRIPT" \
+    python "$SUITE_SCRIPT" \
         --metallicity "$Z" \
         --output "$OUTPUT_FILE" \
-        2>&1 | tee "$LOG_FILE"; then
+        2>&1 | tee "$LOG_FILE"
+    EXIT_CODE=${PIPESTATUS[0]}
 
-        if [ ! -f "$OUTPUT_FILE" ]; then
-            echo "WARNING: Output file not created for Z=${Z}" >&2
-            FAILED=$((FAILED + 1))
-        else
-            echo "  Z=${Z} Zsun complete."
-        fi
-    else
-        echo "WARNING: Suite failed for Z=${Z}. Check $LOG_FILE" >&2
+    if [ $EXIT_CODE -eq 137 ]; then
+        echo "ERROR: Process killed (likely OOM) for Z=${Z}. Exit code 137 (SIGKILL)." >&2
+        echo "  Consider increasing job memory." >&2
         FAILED=$((FAILED + 1))
+    elif [ $EXIT_CODE -ne 0 ]; then
+        echo "WARNING: Suite failed for Z=${Z} (exit code $EXIT_CODE). Check $LOG_FILE" >&2
+        FAILED=$((FAILED + 1))
+    elif [ ! -f "$OUTPUT_FILE" ]; then
+        echo "WARNING: Output file not created for Z=${Z}" >&2
+        FAILED=$((FAILED + 1))
+    else
+        echo "  Z=${Z} Zsun complete."
     fi
+
 done
 
 # ── Deactivate Environment ────────────────────────────────────────────────
