@@ -794,7 +794,7 @@ def inverse_sampler(x, y, size=1, rng=None):
     return sample
 
 
-def histogram_sampler(x_edges, y, size=1):
+def histogram_sampler(x_edges, y, size=1, rng=None):
     """Sample from an empirical PDF represented by a histogram.
 
     Parameters
@@ -805,6 +805,8 @@ def histogram_sampler(x_edges, y, size=1):
         The counts (or a scaled version of them) of the histogram.
     size : int
         Number of random values to produce.
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -812,13 +814,15 @@ def histogram_sampler(x_edges, y, size=1):
         The random sample.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     assert np.all(y >= 0.0)
 
     # make sure that the lengths of the input arrays are correct
     n_bins = len(y)
     assert n_bins > 0 and len(x_edges) == n_bins + 1
     # first decide which will be the bin of each element in the sample
-    bin_sample = np.random.choice(n_bins, replace=True, p=y/sum(y), size=size)
+    bin_sample = rng.choice(n_bins, replace=True, p=y/sum(y), size=size)
 
     sample = np.ones(size) * np.nan
 
@@ -826,7 +830,7 @@ def histogram_sampler(x_edges, y, size=1):
     bins_found = set(bin_sample)
     for bin_index in bins_found:
         in_this_bin = np.argwhere(bin_sample == bin_index)[:, 0]
-        sample[in_this_bin] = np.random.uniform(
+        sample[in_this_bin] = rng.uniform(
             x_edges[bin_index], x_edges[bin_index+1], size=len(in_this_bin))
 
     assert(np.all(np.isfinite(sample)))
