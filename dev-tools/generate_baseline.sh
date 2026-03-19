@@ -101,6 +101,24 @@ if [ -d "$CLONE_DIR" ]; then
     ACTUAL_SHA=$(cd "$CLONE_DIR" && git rev-parse HEAD 2>/dev/null || echo "unknown")
 fi
 
+# Extract PATH_TO_POSYDON_DATA from the first available baseline HDF5 file
+POSYDON_DATA_PATH="unknown"
+for Z in $METALLICITIES; do
+    H5="$BASELINE_DIR/baseline_${Z}Zsun.h5"
+    if [ -f "$H5" ]; then
+        POSYDON_DATA_PATH=$(python -c "
+import pandas as pd
+with pd.HDFStore('$H5', mode='r') as s:
+    print(s['/metadata']['path_to_posydon_data'].iloc[0])
+" 2>&1) || {
+            echo "  WARNING: Could not read POSYDON data path from $H5"
+            echo "  ($POSYDON_DATA_PATH)"
+            POSYDON_DATA_PATH="unknown"
+        }
+        break
+    fi
+done
+
 INFO_FILE="$BASELINE_DIR/baseline_info.txt"
 cat > "$INFO_FILE" << EOF
 POSYDON Binary Validation Baseline
@@ -112,6 +130,7 @@ Mode:          $([ "$PROMOTE" = true ] && echo "promoted from existing outputs" 
 Generated:     $(date -u '+%Y-%m-%d %H:%M:%S UTC')
 Metallicities: $METALLICITIES
 Files:         $COPIED
+POSYDON data:  $POSYDON_DATA_PATH
 EOF
 
 echo ""
