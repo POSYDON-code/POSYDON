@@ -968,7 +968,7 @@ class MesaGridStep:
             tmp_lg_mdot = np.log10(
                 10**fv[key_bh] + cf.bondi_hoyle(
                     binary, accretor, donor, idx=-1,
-                    wind_disk_criteria=True, 
+                    wind_disk_criteria=True,
                     RNG=self.RNG, scheme='Kudritzki+2000'))
 
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]

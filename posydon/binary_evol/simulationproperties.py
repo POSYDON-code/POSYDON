@@ -16,6 +16,7 @@ __authors__ = [
 
 import os
 import time
+
 import numpy as np
 
 from posydon.binary_evol.track_match import TrackMatcher
@@ -301,7 +302,7 @@ class SimulationProperties:
             else:
                 print("Not all steps were loaded successfully. Check warnings for details.")
 
-    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, 
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None,
                     RNG=np.random.default_rng(), from_ini='', verbose=False):
         """
         Instantiate and attach a simulation step to this object.
