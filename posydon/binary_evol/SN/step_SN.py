@@ -249,8 +249,8 @@ class StepSN(object):
         "sigma_kick_ECSN": 20.0,
         "mean_kick_ECSN": None,
         # other
-        "verbose": False,
-        "RNG": np.random.default_rng()
+        "RNG": np.random.default_rng(),
+        "verbose": False
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
