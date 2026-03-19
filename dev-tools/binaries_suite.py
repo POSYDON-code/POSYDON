@@ -667,6 +667,24 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
         if warn_list:
             all_warning_dfs.append(pd.DataFrame(warn_list))
 
+    # ── Completeness check ──────────────────────────────────────────
+    expected_ids = set(range(len(test_binaries)))
+    evolved_ids = set()
+    errored_ids = set()
+
+    for df in all_evolution_dfs:
+        if 'binary_id' in df.columns:
+            evolved_ids.update(df['binary_id'].unique())
+    for df in all_error_dfs:
+        if 'binary_id' in df.columns:
+            errored_ids.update(df['binary_id'].unique())
+
+    accounted_ids = evolved_ids | errored_ids
+    missing_ids = sorted(expected_ids - accounted_ids)
+
+    if missing_ids:
+        print(f"\n⚠️  WARNING: {len(missing_ids)} binary(ies) unaccounted for: {missing_ids}")
+        print(f"  These produced neither evolution output nor a caught error.")
 
     # ── Single-pass HDF5 write ──────────────────────────────────────────
     with pd.HDFStore(output_path, mode="w") as h5file:
@@ -674,6 +692,10 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
         meta_df = pd.DataFrame([{
             'metallicity': metallicity,
             'n_binaries': len(test_binaries),
+            'n_evolved': len(evolved_ids),
+            'n_errored': len(errored_ids),
+            'n_missing': len(missing_ids),
+            'missing_ids': str(missing_ids) if missing_ids else '',
             'path_to_posydon_data': PATH_TO_POSYDON_DATA,
         }])
         h5file.put("metadata", meta_df, format="table")
