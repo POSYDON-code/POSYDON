@@ -121,6 +121,7 @@ def check_test(pop_in_ram, load_pop=False):
 def test_popruns():
 
     print("Performing population run tests...")
+    print(f"Reading inlist: {path_to_default_params}")
     pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
     pop.kwargs.update({"temp_directory": path_to_popout})
     print_pop_settings(pop)
@@ -152,6 +153,7 @@ def test_popruns():
     numchar = (line_length - len(test_str)) // 2
     print("=" * numchar + test_str + "=" * numchar)
     print("Test PopulationRunner with multiple metallicities...")
+    print(f"Reading inlist: {path_to_multiZ_params}")
     poprun = PopulationRunner(path_to_multiZ_params, verbose=True)
     print('\t Number of binary populations:', len(poprun.binary_populations))
     print('\t Metallicities:', poprun.solar_metallicities)

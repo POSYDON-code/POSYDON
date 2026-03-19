@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Script to evolve a few binaries.
 Used for validation of the branch.
@@ -19,11 +18,12 @@ from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.config import PATH_TO_POSYDON
 
 base_dir =os.path.dirname(PATH_TO_POSYDON)
-script_dir = os.path.join(PATH_TO_POSYDON, "script_data/")
+script_dir = os.path.join(base_dir, "script_data/")
 path_to_default_params = os.path.join(script_dir, "inlists/default_test_params.ini")
 
 def load_inlist(verbose):
 
+    print(f"Reading inlist: {path_to_default_params}")
     sim_prop = SimulationProperties.from_ini(path_to_default_params)
     sim_prop.load_steps(verbose=verbose, metallicity=1.0)
 
