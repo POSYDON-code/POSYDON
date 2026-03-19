@@ -25,7 +25,7 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.DT.gravitational_radiation.default_gravrad import (
     default_gravrad,
 )
-from posydon.binary_evol.DT.key_library import (
+from posydon.utils.key_library import (
     DEFAULT_TRANSLATED_KEYS,
     DEFAULT_TRANSLATION,
 )
