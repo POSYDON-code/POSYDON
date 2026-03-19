@@ -49,9 +49,16 @@ def classify_column(col, dtype):
     return 'qualitative'
 
 
-def compare_evolution_tables(base_df, cand_df, rtol, atol):
+def compare_evolution_tables(base_df, cand_df, rtol, atol,
+                             base_error_ids=None, cand_error_ids=None):
     """Compare two evolution DataFrames, reporting per-binary diffs.
-
+ 
+    Args:
+        base_error_ids: set of binary IDs that errored in the baseline run.
+        cand_error_ids: set of binary IDs that errored in the candidate run.
+        Binaries present in these sets are excluded from MISSING/EXTRA
+        reporting here, since they are already covered by compare_errors_tables.
+ 
     Returns:
         dict with keys 'quantitative', 'qualitative', 'structural'
         each mapping to a list of diff strings.
@@ -68,10 +75,14 @@ def compare_evolution_tables(base_df, cand_df, rtol, atol):
     base_ids = set(base_df['binary_id'].unique())
     cand_ids = set(cand_df['binary_id'].unique())
 
-    # Missing/extra binaries
+    # Missing/extra binaries (excluding those already reported under errors)
     for bid in sorted(base_ids - cand_ids):
+        if bid in cand_error_ids:
+            continue  # candidate errored; reported by compare_errors_tables
         struct_diffs.append(f"Binary {bid}: MISSING in candidate")
     for bid in sorted(cand_ids - base_ids):
+        if bid in base_error_ids:
+            continue  # baseline errored; reported by compare_errors_tables
         struct_diffs.append(f"Binary {bid}: EXTRA in candidate")
 
     common_ids = sorted(base_ids & cand_ids)
@@ -342,6 +353,15 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
                 print(f"Baseline keys:  {sorted(base_keys)}")
                 print(f"Candidate keys: {sorted(cand_keys)}")
 
+            # ── Errors table (read early so IDs are available for evolution comparison)
+            base_err = read_table_safe(base_store, '/errors')
+            cand_err = read_table_safe(cand_store, '/errors')
+ 
+            base_error_ids = set(base_err['binary_id'].unique()) \
+                if base_err is not None and 'binary_id' in base_err.columns else set()
+            cand_error_ids = set(cand_err['binary_id'].unique()) \
+                if cand_err is not None and 'binary_id' in cand_err.columns else set()
+
             # ── Evolution table ───────────────────────────────────────
             base_evol = read_table_safe(base_store, '/evolution')
             cand_evol = read_table_safe(cand_store, '/evolution')
@@ -359,7 +379,8 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
                     print(f"Baseline:  {n_base} binaries, {len(base_evol)} total rows")
                     print(f"Candidate: {n_cand} binaries, {len(cand_evol)} total rows")
 
-                evol_results = compare_evolution_tables(base_evol, cand_evol, rtol, atol)
+                evol_results = compare_evolution_tables(base_evol, cand_evol, rtol, atol,
+                                                       base_error_ids, cand_error_ids)
                 quant_diffs.extend(evol_results['quantitative'])
                 qual_diffs.extend(evol_results['qualitative'])
                 struct_diffs.extend(evol_results['structural'])
@@ -369,9 +390,7 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
             cand_warn = read_table_safe(cand_store, '/warnings')
             warn_diffs.extend(compare_warnings_tables(base_warn, cand_warn))
 
-            # ── Errors table ──────────────────────────────────────────
-            base_err = read_table_safe(base_store, '/errors')
-            cand_err = read_table_safe(cand_store, '/errors')
+            # ── Errors table (comparison) ──────────────────────────────────────────
             error_diffs = compare_errors_tables(base_err, cand_err)
             struct_diffs.extend(error_diffs)
 
