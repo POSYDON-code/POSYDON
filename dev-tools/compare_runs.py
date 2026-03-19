@@ -52,13 +52,13 @@ def classify_column(col, dtype):
 def compare_evolution_tables(base_df, cand_df, rtol, atol,
                              base_error_ids=None, cand_error_ids=None):
     """Compare two evolution DataFrames, reporting per-binary diffs.
- 
+
     Args:
         base_error_ids: set of binary IDs that errored in the baseline run.
         cand_error_ids: set of binary IDs that errored in the candidate run.
         Binaries present in these sets are excluded from MISSING/EXTRA
         reporting here, since they are already covered by compare_errors_tables.
- 
+
     Returns:
         dict with keys 'quantitative', 'qualitative', 'structural'
         each mapping to a list of diff strings.
@@ -356,7 +356,7 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
             # ── Errors table (read early so IDs are available for evolution comparison)
             base_err = read_table_safe(base_store, '/errors')
             cand_err = read_table_safe(cand_store, '/errors')
- 
+
             base_error_ids = set(base_err['binary_id'].unique()) \
                 if base_err is not None and 'binary_id' in base_err.columns else set()
             cand_error_ids = set(cand_err['binary_id'].unique()) \

@@ -19,9 +19,9 @@ import pandas as pd
 
 from posydon.binary_evol.binarystar import BinaryStar, SingleStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.common_functions import orbital_separation_from_period
-from posydon.config import PATH_TO_POSYDON_DATA
 
 AVAILABLE_METALLICITIES = [2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]
 
