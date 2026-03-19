@@ -119,6 +119,29 @@ with pd.HDFStore('$H5', mode='r') as s:
     fi
 done
 
+# Check completeness from HDF5 metadata
+INCOMPLETE=""
+for Z in $METALLICITIES; do
+    DST="$BASELINE_DIR/baseline_${Z}Zsun.h5"
+    if [ -f "$DST" ]; then
+        MISSING=$(python3 -c "
+import pandas as pd, sys
+try:
+    with pd.HDFStore('$DST', mode='r') as s:
+        m = s['/metadata']
+        n = int(m['n_missing'].iloc[0])
+        if n > 0:
+            print(f'Z={Z}: {n} missing — {m[\"missing_ids\"].iloc[0]}')
+except Exception as e:
+    print(f'Z={Z}: could not read metadata ({e})', file=sys.stderr)
+" 2>/dev/null)
+        if [ -n "$MISSING" ]; then
+            echo "  ⚠️  $MISSING"
+            INCOMPLETE="${INCOMPLETE}  ${MISSING}\n"
+        fi
+    fi
+done
+
 INFO_FILE="$BASELINE_DIR/baseline_info.txt"
 cat > "$INFO_FILE" << EOF
 POSYDON Binary Validation Baseline
@@ -132,6 +155,12 @@ Metallicities: $METALLICITIES
 Files:         $COPIED
 POSYDON data:  $POSYDON_DATA_PATH
 EOF
+
+if [ -n "$INCOMPLETE" ]; then
+    printf "\nINCOMPLETE BASELINES:\n%b\n" "$INCOMPLETE" >> "$INFO_FILE"
+    echo ""
+    echo "⚠️  WARNING: Some baselines have missing binaries. See $INFO_FILE"
+fi
 
 echo ""
 echo "============================================================"
