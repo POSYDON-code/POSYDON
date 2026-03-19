@@ -22,12 +22,6 @@ import scipy
 from scipy.optimize import minimize, root
 
 import posydon.utils.constants as const
-from posydon.utils.key_library import (
-    DEFAULT_FINAL_KEYS,
-    DEFAULT_PROFILE_KEYS,
-    DEFAULT_TRANSLATED_KEYS,
-    KEYS_POSITIVE,
-)
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_FOR_HMS_MATCHING,
@@ -44,6 +38,12 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
 )
 from posydon.utils.interpolators import SingleStarInterpolator
+from posydon.utils.key_library import (
+    DEFAULT_FINAL_KEYS,
+    DEFAULT_PROFILE_KEYS,
+    DEFAULT_TRANSLATED_KEYS,
+    KEYS_POSITIVE,
+)
 from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONError
 from posydon.utils.posydonwarning import Pwarn
 
