@@ -25,10 +25,6 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.DT.gravitational_radiation.default_gravrad import (
     default_gravrad,
 )
-from posydon.utils.key_library import (
-    DEFAULT_TRANSLATED_KEYS,
-    DEFAULT_TRANSLATION,
-)
 from posydon.binary_evol.DT.magnetic_braking.prescriptions import (
     CARB_braking,
     G18_braking,
@@ -57,6 +53,10 @@ from posydon.utils.common_functions import (
     roche_lobe_radius,
     set_binary_to_failed,
     zero_negative_values,
+)
+from posydon.utils.key_library import (
+    DEFAULT_TRANSLATED_KEYS,
+    DEFAULT_TRANSLATION,
 )
 from posydon.utils.posydonerror import (
     ClassificationError,
