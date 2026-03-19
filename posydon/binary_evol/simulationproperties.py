@@ -230,7 +230,8 @@ class SimulationProperties:
         self._MesaGridStep = MesaGridStep
 
     @classmethod
-    def from_ini(cls, path, metallicity = None, load_steps=False, verbose=False, **override_sim_kwargs):
+    def from_ini(cls, path, metallicity = None, load_steps=False, RNG=np.random.default_rng(),
+                 verbose=False, **override_sim_kwargs):
         """Create a SimulationProperties instance from an inifile.
 
         Parameters
@@ -247,8 +248,18 @@ class SimulationProperties:
         load_steps : bool
             Whether or not evolution steps should be automatically loaded.
 
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the simulation. Defaults to a new NumPy Generator instance
+            created via ``np.random.default_rng()``.
+
         verbose : bool
             Print useful info.
+
+        **override_sim_kwargs
+            Additional keyword arguments that override values specified
+            in the .ini file when constructing the SimulationProperties
+            instance.
 
         Returns
         -------
@@ -265,6 +276,7 @@ class SimulationProperties:
         if load_steps:
             # Load the steps and required data
             new_instance.load_steps(metallicity=metallicity,
+                                    RNG=RNG,
                                     verbose=verbose)
 
         return new_instance
