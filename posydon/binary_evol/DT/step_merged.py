@@ -217,9 +217,14 @@ class MergedStep(IsolatedStep):
             mass_weighted_avg_value = (A1 * M1 + A2 * M2) / den
 
         if self.verbose:
-            print(abundance_name, mass_weight1, mass_weight2)
-            print("A_base, M_base_abundance, A_comp, M_comp_abundance", A1, M1, A2, M2)
-            print("mass_weighted_avg= ", mass_weighted_avg_value)
+            print(f"Mass weighted average for {abundance_name}:\n"
+                  f"weight 1: {mass_weight1}\n"
+                  f"weight 2: {mass_weight2}\n"
+                  f"A_base = {A1}\n"
+                  f"M_base_abundance = {M1}\n"
+                  f"A_comp = {A2}\n"
+                  f"M_comp_abundance = {M2}\n"
+                  f"mass_weighted_avg = {mass_weighted_avg_value}\n")
 
         return mass_weighted_avg_value
 
