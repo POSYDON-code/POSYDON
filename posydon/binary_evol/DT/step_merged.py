@@ -254,7 +254,136 @@ class MergedStep(IsolatedStep):
             if any(sub in key for sub in _NAN_SUBSTRINGS) or (key in extra_nan_keys) or (key in _NAN_KEYS):
                 setattr(star, key, np.nan)
 
+    def star_type(self, state):
+        if state in LIST_ACCEPTABLE_STATES_FOR_HMS:
+            return "HMS"
+        elif state in LIST_ACCEPTABLE_STATES_FOR_POSTMS:
+            return "postMS"
+        elif state in LIST_ACCEPTABLE_STATES_FOR_HeMS:
+            return "HeMS"
+        elif state in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS:
+            return "postHeMS"
+        elif state in ["WD", "NS", "BH"]:
+            return state
+        
+    def mix_cores(self, merged_star, star_base, comp):
+
+        parameters_to_mix = ["center_h1", "center_he4", "center_c12",  
+                             "center_n14", "center_o16", "avg_c_in_c_core"]
+
+        # both have CO cores
+        # can trigger: postMS-postMS, postMS-postHeMS
+        if (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
+
+            #TODO : maybe he_core_mass makes more sense?
+            mass_weight1='co_core_mass'
+            mass_weight2='co_core_mass'
+            setattr(merged_star, "center_gamma", np.nan)
+        
+        # both have Helium cores
+        # can trigger: postMS-postMS, postMS-HeMS, HeMS-postMS, postMS-postHeMS
+        elif (star_base.co_core_mass == 0 and comp.co_core_mass == 0) & \
+             (star_base.he_core_mass > 0 and comp.he_core_mass > 0):
+            
+            mass_weight1 = 'he_core_mass'
+            mass_weight2 = 'he_core_mass'
+            setattr(merged_star, "center_gamma", np.nan)
+
+        # star_base He core and companion CO core
+        # can trigger: postMS-postMS, HeMS-postMS, postMS-postHeMS
+        elif (star_base.co_core_mass == 0 and comp.co_core_mass > 0):
+
+            for abundance_name in parameters_to_mix:
+                setattr(merged_star, abundance_name, getattr(comp, abundance_name))
+
+            setattr(merged_star, "center_gamma", comp.center_gamma)
+            return
+        
+        # star_base CO core and comp He core
+        # can trigger: postMS-postMS, postMS-HeMS, postMS-postHeMS
+        elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0) & \
+             (comp.he_core_mass > 0):
+            # the central abundances are kept as the ones of star_base
+            return
+        # both have H cores
+        elif not (star_base.he_core_mass and comp.he_core_mass):
+            mass_weight1 = "mass"
+            mass_weight2 = "mass" 
+
+        else:
+            Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
+            return
+
+        for abundance_name in parameters_to_mix:
+            setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                        comp,
+                                                                        abundance_name = abundance_name,
+                                                                        mass_weight1 = mass_weight1,
+                                                                        mass_weight2 = mass_weight2))
+
+    def mix_envelope(self, merged_star, star_base, comp):
+        
+        mass_weight = [None, None]
+        for i, star in enumerate([star_base, comp]):
+            if self.star_type(star) == "HeMS":
+                mass_weight[i] = "He-rich_envelope_mass"
+            elif self.star_type(star) == "HMS":
+                mass_weight[i] = "mass"
+            # post HMS
+            else:
+                mass_weight[i] = "H-rich_envelope_mass"
+
+        parameters_to_mix = ["surface_h1", "surface_he4", "surface_c12", 
+                             "surface_n14", "surface_o16"]
+
+        # Weighted mixing on the surface abundances based on the envelopes of the two stars
+        for abundance_name in parameters_to_mix:
+            setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
+                                                                        comp,
+                                                                        abundance_name=abundance_name,
+                                                                        mass_weight1=mass_weight[0],
+                                                                        mass_weight2=mass_weight[1]))
+        
+    def set_post_merger(self, merged_star, star_base, comp):
+
+        if merged_star.merger_type == "HMS-HMS":
+            # The change of masses occurs after the calculation of weighted averages
+            merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
+
+            # Set parameters that are not expected to be meaningful after a merger to np.nan
+            extra_nan_keys = set(["center_gamma", "avg_c_in_c_core", "envelope_binding_energy"])
+
+        elif merged_star.merger_type == "postMS-HMS" or \
+             merged_star.merger_type == "HMS-postMS":
+            # The change of masses occurs after the calculation of weighted averages
+            # Note that the he core mass is unchanged, which means that
+            # adding the mass changes the envelope mass only.
+            merged_star.mass = star_base.mass + comp.mass
+
+            # Set parameters that are not expected to be meaningful after a merger to np.nan
+            extra_nan_keys = None
+
+            # Set burning luminosities and star state.
+            merged_star.log_LHe = star_base.log_LHe
+            merged_star.log_LZ = star_base.log_LZ
+        
+        else:
+            # add total and core masses
+            for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
+                current = getattr(star_base, key) + getattr(comp, "mass")
+                setattr(merged_star, key,current)
+
+            # Set parameters that are not expected to be meaningful after a merger to np.nan
+            extra_nan_keys = None
+
+        self._apply_nan_attributes(merged_star, extra_nan_keys=extra_nan_keys)
+        merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
+        massless_remnant = convert_star_to_massless_remnant(comp)
+
+        return massless_remnant
+        
     def merged_star_properties(self, star_base, comp):
+
         """Set the properties of the merged star after a merger event.
 
         Generally, the Roche lobe overflowing star becomes star_base, except
@@ -270,489 +399,91 @@ class MergedStep(IsolatedStep):
         comp: Single Star
             The star that is engulfed by star_base.
         """
+
         # By default the stellar attributes are kept from star_base.
         merged_star = star_base
-
-        s1 = star_base.state
-        s2 = comp.state
+        state1 = star_base.state
+        state2 = comp.state
+        merged_star.merger_type = "-".join([self.star_type(state1),
+                                            self.star_type(state2)])
 
         # MS + MS
-        if ( s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
-                # Mix central and surface abundances of the two stars with
-                # mass-weighted averages based on the total masses of the two stars.
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16",
-                                    "surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
-
-                for abundance_name in parameters_to_mix:
-                    #TODO: should I check if the abundaces above end up in ~1 (?)
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                comp,
-                                                                                abundance_name=abundance_name,
-                                                                                mass_weight1="mass",
-                                                                                mass_weight2='mass'))
-
-                # The change of masses occurs after the calculation of weighted averages
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star,
-                                           extra_nan_keys=set(["center_gamma",
-                                                               "avg_c_in_c_core",
-                                                               "envelope_binding_energy"]))
-
-                # Set companion to a massless remnant.
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        if (merged_star.merger_type == "HMS-HMS"):
+            # Mix central and surface abundances of the two stars with
+            # mass-weighted averages based on the total masses of the two stars.
+            self.mix_envelope(merged_star, star_base, comp)
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # postMS + MS
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_HMS):
-
-                # weighted mixing on the surface abundances of the whole
-                # companion with the envelope of star_base
-                parameters_to_mix = ["surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
-                for abundance_name in parameters_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                comp,
-                                                                                abundance_name=abundance_name,
-                                                                                mass_weight1="H-rich_envelope_mass",
-                                                                                mass_weight2="mass"))
-
-                # The change of masses occurs after the calculation of weighted averages
-                # Note that the he core mass is unchanged, which means that
-                # adding the mass changes the envelope mass only.
-                merged_star.mass = star_base.mass + comp.mass
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # Set burning luminosities and star state.
-                merged_star.log_LHe = star_base.log_LHe
-                merged_star.log_LZ = star_base.log_LZ
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif (merged_star.merger_type == "postMS-HMS"):
+            # weighted mixing on the surface abundances of the whole
+            # companion with the envelope of star_base
+            self.mix_envelope(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # MS + postMS (the opposite of above)
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_HMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
-
-                merged_star = comp
-
-                parameters_to_mix = ["surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
-                for abundance_name in parameters_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                comp,
-                                                                                abundance_name=abundance_name,
-                                                                                mass_weight1="mass",
-                                                                                mass_weight2="H-rich_envelope_mass",))
-
-                # The change of masses occurs after the calculation of weighted averages
-                merged_star.mass = star_base.mass + comp.mass
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # Set burning luminosities and star state.
-                merged_star.log_LHe = comp.log_LHe
-                merged_star.log_LZ = comp.log_LZ
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-
-                massless_remnant = convert_star_to_massless_remnant(star_base)
+        elif (merged_star.merger_type == "HMS-postMS"):
+            merged_star = comp
+            self.mix_envelope(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, comp, star_base)
 
         # postMS + postMS
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
-                # Weighted central abundances if merging cores.
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16",
-                                     'avg_c_in_c_core']
-
-                # two stars with Helium cores
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
-                    mass_weight1 = 'he_core_mass'
-                    mass_weight2 = 'he_core_mass'
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name = abundance_name,
-                                                                                    mass_weight1 = mass_weight1,
-                                                                                    mass_weight2 = mass_weight2))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # star_base with CO core and the comp has a He core
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0):
-                    pass # the central abundances are kept as the ones of star_base
-
-                # Companion with CO core and the star_base has a He core
-                elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, getattr(comp, abundance_name))
-
-                    setattr(merged_star, "center_gamma", comp.center_gamma)
-
-                # both stars have CO cores
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-
-                    #TODO : maybe he_core_mass makes more sense?
-                    mass_weight1='co_core_mass'
-                    mass_weight2='co_core_mass'
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name=abundance_name,
-                                                                                    mass_weight1=mass_weight1,
-                                                                                    mass_weight2=mass_weight2))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                additional_parameter_to_mix = ['surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16']
-
-                # Weighted mixing on the surface abundances based on the envelopes of the two stars
-                for abundance_name in additional_parameter_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                comp,
-                                                                                abundance_name=abundance_name,
-                                                                                mass_weight1="H-rich_envelope_mass",
-                                                                                mass_weight2="H-rich_envelope_mass"))
-
-                # Add total and core masses after calculations of weighted average
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif (merged_star.merger_type == "postMS-postMS"):
+            # Weighted central abundances if merging cores.
+            self.mix_cores(merged_star, star_base, comp)
+            self.mix_envelope(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # postMS + HeMS
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_HeMS):
-                # Keep surface abundances from star_base.
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-
-                # Weighted central abundances if merging cores.
-                # two stars with only Helium cores, not CO cores
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name=abundance_name,
-                                                                                    mass_weight1="he_core_mass",
-                                                                                    mass_weight2="he_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # star_base with CO core and the comp has just a He core (is a HeMS star)
-                # Keep central abundances as those from star_base.
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0):
-                    pass
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses after abundance mass weighted calculations
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key, current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif (merged_star.merger_type == "postMS-HeMS"):
+            # Keep surface abundances from star_base.
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # HeMS + postMS (the opposite of above)
-        elif (s1 in  LIST_ACCEPTABLE_STATES_FOR_HeMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
-                # surface abundances from comp
-                merged_star = comp
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-
-                # Weighted central abundances if merging cores. Else only from comp
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0: # two stars with only Helium cores, not CO cores
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name=abundance_name,
-                                                                                    mass_weight1="he_core_mass",
-                                                                                    mass_weight2="he_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # star_base is the HeMS Star and comp has a CO core
-                # the central abundances are kept from comp
-                elif (star_base.co_core_mass == 0 and comp.co_core_mass > 0):
-                    pass
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses after weighted averages above
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key, current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(star_base)
+        elif (merged_star.merger_type == "HeMS-postMS"):
+            # surface abundances from comp
+            merged_star = comp
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, comp, star_base)
 
         # postMS + postHeMS
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS):
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-
-                # Weighted central abundances if merging cores
-                # Two stars with Helium cores
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name,
-                                self.mass_weighted_avg(star_base,
-                                                       comp,
-                                                       abundance_name=abundance_name,
-                                                       mass_weight1="he_core_mass",
-                                                       mass_weight2="he_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # Star_base with CO core and the comp has a He core
-                # the central abundances are kept as the ones of star_base
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0):
-                    pass
-
-                # comp with CO core and the star_base has a He core
-                elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, getattr(comp, abundance_name))
-
-                    setattr(merged_star, "center_gamma", comp.center_gamma)
-
-                # both stars have CO cores
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name,
-                                self.mass_weighted_avg(star_base,
-                                                       comp,
-                                                       abundance_name=abundance_name,
-                                                       mass_weight1="co_core_mass",
-                                                       mass_weight2="co_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key, current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif (merged_star.merger_type == "postMS-postHeMS"):
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # postHeMS + postMS (the opposite of above)
-        elif (s1 in LIST_ACCEPTABLE_STATES_FOR_POSTHeMS
-            and s2 in LIST_ACCEPTABLE_STATES_FOR_POSTMS):
-
-                merged_star = comp
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-
-                # weighted central abundances if merging cores
-                # two stars with Helium cores
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name=abundance_name,
-                                                                                    mass_weight1="he_core_mass",
-                                                                                    mass_weight2="he_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # star_base with CO core and the comp has a He core
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, getattr(star_base, abundance_name))
-
-                    setattr(merged_star, "center_gamma", star_base.center_gamma)
-
-                # comp with CO core and the star_base has a He core
-                # the central abundances are kept as the ones of comp
-                elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0):
-                    pass
-
-                # both stars have CO cores
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base, comp, abundance_name=abundance_name, mass_weight1="co_core_mass", mass_weight2="co_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(star_base)
+        elif (merged_star.merger_type == "postHeMS-postMS"):
+            merged_star = comp
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, comp, star_base)
 
         # He star + He star
-        elif (s1 in STAR_STATES_HE_RICH
-            and s2 in STAR_STATES_HE_RICH):
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-                # weighted central abundances if merging cores. Else only from star_base
-                # two stars with Helium cores
-                if star_base.co_core_mass == 0 and comp.co_core_mass == 0:
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                     comp,
-                                                                                     abundance_name=abundance_name,
-                                                                                     mass_weight1="he_core_mass",
-                                                                                     mass_weight2="he_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                # star_base with CO core and the comp has a He core
-                # the central abundances are kept as the ones of star_base
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass == 0):
-                    pass
-
-                # comp with CO core and the star_base has a He core
-                elif (comp.co_core_mass > 0 and star_base.co_core_mass == 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, getattr(comp, abundance_name))
-
-                    setattr(merged_star, "center_gamma", comp.center_gamma)
-
-                # both stars have CO cores
-                elif (star_base.co_core_mass > 0 and comp.co_core_mass > 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                    comp,
-                                                                                    abundance_name=abundance_name,
-                                                                                    mass_weight1="co_core_mass",
-                                                                                    mass_weight2="co_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, key)
-                    setattr(merged_star, key,current)
-
-                # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
-                additional_parameter_to_mix = ['surface_h1', 'surface_he4', 'surface_c12', 'surface_n14', 'surface_o16']
-                for abundance_name in additional_parameter_to_mix:
-                    setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                comp,
-                                                                                abundance_name=abundance_name,
-                                                                                mass_weight1="He-rich_envelope_mass",
-                                                                                mass_weight2="He-rich_envelope_mass"))
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                # TODO for sure this needs testing!
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif (merged_star.merger_type == "HeMS-HeMS"):
+            # weigheted mixing on the surface abundances based on the He-rich envelopes of the two stars
+            self.mix_envelope(merged_star, star_base, comp)
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # Star + WD
-        elif (s1 in STAR_STATES_NOT_CO
-            and s2 in ["WD"]):
-
-                parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16", "avg_c_in_c_core"]
-                # WD is considered a stripped CO core
-                # WD would always be the comp, it cannot be the engulfing star (so no need to do the opposite stars case below)
-
-                # weighted central abundances if merging cores. Else only from star_base
-                # comp with CO core and the star_base has not
-                if (comp.co_core_mass is not None and star_base.co_core_mass == 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, getattr(comp, abundance_name))
-
-                    setattr(merged_star, "center_gamma", comp.center_gamma)
-
-
-                # Star_base with CO core and the comp is a WD (so has a CO core)
-                elif (comp.co_core_mass is not None and star_base.co_core_mass > 0):
-
-                    for abundance_name in parameters_to_mix:
-                        setattr(merged_star, abundance_name, self.mass_weighted_avg(star_base,
-                                                                                     comp,
-                                                                                     abundance_name=abundance_name,
-                                                                                     mass_weight1="co_core_mass",
-                                                                                     mass_weight2="co_core_mass"))
-
-                    setattr(merged_star, "center_gamma", np.nan)
-
-                else:
-                    Pwarn("Unexpected combination of CO core masses during merging", "EvolutionWarning")
-
-                # add total and core masses
-                for key in ["mass", "he_core_mass", "c_core_mass", "o_core_mass", "co_core_mass"]:
-                    current = getattr(star_base, key) + getattr(comp, "mass")
-                    setattr(merged_star, key,current)
-
-                # Set parameters that are not expected to be meaningful after a merger to np.nan
-                self._apply_nan_attributes(merged_star)
-
-                merged_star.state = check_state_of_star(merged_star, star_CO=False)  # TODO for sure this needs testing!
-                massless_remnant = convert_star_to_massless_remnant(comp)
+        elif ("-WD" in merged_star.merger_type):
+            self.mix_cores(merged_star, star_base, comp)
+            massless_remnant = self.set_post_merger(merged_star, star_base, comp)
 
         # Star + NS/BH
-        elif (s1 in STAR_STATES_NOT_CO
-            and s2 in ["NS", "BH"]):
-                # TODO: potentially flag a Thorne-Zytkov object
-                massless_remnant = convert_star_to_massless_remnant(star_base)
-
-                ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
-                return massless_remnant, comp
+        elif ("-NS" in merged_star.merger_type or "-BH" in merged_star.merger_type):
+            # TODO: potentially flag a Thorne-Zytkov object
+            massless_remnant = convert_star_to_massless_remnant(star_base)
+            ## in this case, want CO companion object to stay the same, and base star to be assigned massless remnant
+            return massless_remnant, comp
+        
         else:
-            raise ModelError(f"Combination of merging star states not expected: {s1} {s2}")
+            raise ModelError(f"Combination of merging star states not expected:\n"
+                             f"Star 1: {state1}\n"
+                             f"Star 2: {state2}\n")
+        
         # ad hoc spin of merged star to be used in the detached step
         merged_star.surf_avg_omega_div_omega_crit = self.merger_critical_rot
-
         return merged_star, massless_remnant
+    
