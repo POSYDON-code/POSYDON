@@ -11,7 +11,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.integrate import solve_ivp
-from scipy.interpolate import PchipInterpolator
+from scipy.optimize import brentq
 
 import posydon.utils.constants as constants
 from posydon.binary_evol.DT.step_detached import detached_evolution, detached_step
@@ -32,12 +32,12 @@ def _event(terminal, direction=0):
     return dec
 
 
-class _SLogDenseOutput:
+class _SBrentqDenseOutput:
     """Dense output for the s = -ln(alpha) formulation of the Peters equations.
 
-    Inverts the monotone tau(s) mapping via a PCHIP interpolant, then
-    evaluates the native ODE dense output in s-space and converts back
-    to physical variables [separation_Rsun, eccentricity, ω_sec, ω_pri].
+    Inverts the monotone tau(s) mapping via ``brentq`` root-finding on the
+    native ODE dense output, then converts back to physical variables
+    [separation_Rsun, eccentricity, ω_sec, ω_pri].
 
     Parameters
     ----------
@@ -49,45 +49,41 @@ class _SLogDenseOutput:
         Characteristic GW timescale [yr].
     t0_phys : float
         Physical time at integration start [yr].
-    s_vals : array
-        Independent-variable values produced by the solver.
-    tau_vals : array
-        Corresponding dimensionless-time values tau(s).
+    s_lo : float
+        Lower bound of s integration range.
+    s_hi : float
+        Upper bound of s integration range.
     """
 
-    def __init__(self, sol, a0_Rsun, t_scale, t0_phys, s_vals, tau_vals):
+    def __init__(self, sol, a0_Rsun, t_scale, t0_phys, s_lo, s_hi):
         self.sol = sol
         self.a0_Rsun = a0_Rsun
         self.t_scale = t_scale
         self.t0_phys = t0_phys
-        # Near contact dtau/ds ≈ exp(−4s) -> 0, so consecutive tau values
-        # can be identical to machine precision.  Keep only points where
-        # tau strictly increases so that PchipInterpolator is happy.
-        tau_vals = np.asarray(tau_vals, dtype=float)
-        s_vals = np.asarray(s_vals, dtype=float)
-        mask = np.concatenate(([True], np.diff(tau_vals) > 0))
-        tau_mono = tau_vals[mask]
-        s_mono = s_vals[mask]
-        if len(tau_mono) >= 2:
-            self._tau_to_s = PchipInterpolator(tau_mono, s_mono)
-        else:
-            # Fallback: constant (binary barely evolved)
-            _s0 = s_mono[0] if len(s_mono) else 0.0
-            self._tau_to_s = lambda tau: np.full_like(
-                np.asarray(tau, dtype=float), _s0)
+        self.s_lo = float(s_lo)
+        self.s_hi = float(s_hi)
 
     def __call__(self, t_phys):
-        # convert to dimensionless time
-        tau = (np.asarray(t_phys) - self.t0_phys) / self.t_scale
-        # convert to s-space
-        s = np.asarray(self._tau_to_s(tau))
-        raw = self.sol(s)              # [ecc, tau, secondary.omega, primary.omega]
-        result = np.empty_like(raw)
-        alpha = np.exp(-s)
-        result[0] = alpha * self.a0_Rsun  # separation (Rsun)
-        result[1] = raw[0]                # eccentricity
-        result[2] = raw[2]                # omega_sec
-        result[3] = raw[3]                # omega_pri
+        t_phys = np.atleast_1d(np.asarray(t_phys, dtype=float))
+        tau_target = (t_phys - self.t0_phys) / self.t_scale
+
+        n = len(tau_target)
+        result = np.empty((4, n))
+        for i in range(n):
+            s_star = brentq(
+                lambda s: self.sol(s)[1] - tau_target[i],
+                self.s_lo, self.s_hi,
+                xtol=1e-14, rtol=1e-14,
+            )
+            raw = self.sol(s_star)          # [l, tau, omega_sec, omega_pri]
+            alpha = np.exp(-s_star)
+            result[0, i] = alpha * self.a0_Rsun   # separation (Rsun)
+            result[1, i] = np.exp(raw[0])          # eccentricity = exp(l)
+            result[2, i] = raw[2]                  # omega_sec
+            result[3, i] = raw[3]                  # omega_pri
+
+        if result.shape[1] == 1:
+            return result[:, 0]
         return result
 
 
@@ -170,14 +166,17 @@ class DoubleCO(detached_step):
             return y[1] - tau_max
 
         # --- integrate -------------------------------------------------------
-        # State vector: [e, tau, secondary.omega, primary.omega]
+        # State vector: [l, tau, secondary.omega, primary.omega]
+        #   where l = ln(e) and tau = t/t0
         # Independent variable: s = −ln(a/a0), from 0 to s_contact
+        l0 = (np.log(e0) if e0 > 0
+              else np.log(np.finfo(float).tiny))
         try:
             res = solve_ivp(self.evo.rhs,
                             events=ev_maxtime,
                             method="RK45",
                             t_span=(0.0, s_contact),
-                            y0=[e0, 0.0,
+                            y0=[l0, 0.0,
                                 secondary.omega0, primary.omega0],
                             rtol=1e-10,
                             atol=1e-10,
@@ -192,12 +191,13 @@ class DoubleCO(detached_step):
         # --- map solution back to physical units ----------------------------
         s_vals = res.t.copy()
         alpha_vals = np.exp(-s_vals)
-        ecc_vals = res.y[0].copy()
+        l_vals = res.y[0].copy()
+        ecc_vals = np.exp(l_vals)
         tau_vals = res.y[1].copy()
 
-        # Wrap dense output to convert from s-space back to physical variables
-        res.sol = _SLogDenseOutput(res.sol, a0_Rsun, t_scale, t0_phys,
-                                   s_vals, tau_vals)
+        # Wrap dense output to convert from ln-space back to physical variables
+        res.sol = _SBrentqDenseOutput(res.sol, a0_Rsun, t_scale, t0_phys,
+                                      s_vals[0], s_vals[-1])
 
         # Map solver status to the convention expected by __call__:
         #   status  0 -> reached s_contact -> contact  -> report as 1
@@ -208,8 +208,8 @@ class DoubleCO(detached_step):
         elif res.status == 1:
             res.status = 0   # maxtime
 
-        # Rearrange state vector in s-space
-        # from [ecc, tau, secondary.omega, primary.omega]
+        # Rearrange state vector in ln-space
+        # from [l, tau, secondary.omega, primary.omega]
         # to   [sep_Rsun, ecc, secondary.omega, primary.omega]
         res.y[0] = alpha_vals * a0_Rsun                            # sep (Rsun)
         res.y[1] = ecc_vals                                        # ecc
@@ -221,7 +221,8 @@ class DoubleCO(detached_step):
             if len(res.t_events[i]) > 0:
                 s_ev = res.t_events[i].copy()
                 alpha_ev = np.exp(-s_ev)
-                ecc_ev = res.y_events[i][:, 0].copy()
+                l_ev = res.y_events[i][:, 0].copy()
+                ecc_ev = np.exp(l_ev)
                 tau_ev = res.y_events[i][:, 1].copy()
                 res.y_events[i][:, 0] = alpha_ev * a0_Rsun         # sep (Rsun)
                 res.y_events[i][:, 1] = ecc_ev                     # ecc
@@ -248,25 +249,51 @@ class double_CO_evolution(detached_evolution):
         self.do_stellar_evolution_and_spin_from_winds = False
         self.do_gravitational_radiation = True
 
-    def rhs(self, s, y):
-        """Right-hand side of the ODE system in s-space.
+    def __call__(self, s, y):
+        """Differential equation describing the orbital evolution of a double
+        compact object binary.
+
 
         Parameters
         ----------
         s : float
             Independent variable, s = -ln(a/a0).
         y : array_like
-            State vector at s, [ecc, tau, secondary.omega, primary.omega].
+            State vector at s, [l, tau, secondary.omega, primary.omega],
+            where l = ln(e) and tau = t / t0.
         """
-        ecc = y[0]
-        e2 = ecc * ecc
+
+        if self.do_gravitational_radiation:
+            return self.rhs(s, y)
+
+
+
+
+    def rhs(self, s, y):
+        """Right-hand side of the ODE system in ln-space.
+
+        Parameters
+        ----------
+        s : float
+            Independent variable, s = -ln(a/a0).
+        y : array_like
+            State vector at s, [l, tau, secondary.omega, primary.omega],
+            where l = ln(e).
+        """
+        l = y[0]
+        e = np.exp(l)
+        e2 = e * e
+
+        if e2 >= 1.0:
+            return [0.0, 0.0, 0.0, 0.0]
+
         one_minus_e2 = 1.0 - e2
 
         f_e = 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
         g_e = 1.0 + (121.0 / 304.0) * e2
 
-        decc_ds = -(19.0 / 12.0) * ecc * one_minus_e2 * g_e / f_e
+        dl_ds = -(19.0 / 12.0) * one_minus_e2 * g_e / f_e
         dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / f_e
 
         # primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)
-        return [decc_ds, dtau_ds, 0.0, 0.0]
+        return [dl_ds, dtau_ds, 0.0, 0.0]
