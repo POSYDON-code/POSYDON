@@ -96,11 +96,15 @@ class MergedStep(IsolatedStep):
             print("M1 , M2, he_core_mass1, he_core_mass2, co_core_mass1, co_core_mass2: ",
                   binary.star_1.mass, binary.star_2.mass,
                   binary.star_1.he_core_mass, binary.star_2.he_core_mass, binary.star_1.co_core_mass, binary.star_2.co_core_mass)
-            print("star_1.center_h1, star_2.center_h1, star_1.center_he4, star_1.center_c12, star_2.center_c12, "
-                  "star_2.center_he4, star_1.surface_he4, star_2.surface_he4: ",
-                  binary.star_1.center_h1, binary.star_2.center_h1, binary.star_1.center_he4,
-                  binary.star_2.center_he4, binary.star_1.center_c12, binary.star_2.center_c12, binary.star_1.surface_he4,
-                  binary.star_2.surface_he4)
+            print(f"star_1.center_h1 = {binary.star_1.center_h1}\n"
+                  f"star_2.center_h1 = {binary.star_2.center_h1}\n"
+                  f"star_1.center_he4 = {binary.star_1.center_he4}\n"
+                  f"star_2.center_he4 = {binary.star_2.center_he4}\n"
+                  f"star_1.center_c12 = {binary.star_1.center_c12}\n"
+                  f"star_2.center_c12 = {binary.star_2.center_c12}\n"
+                  f"star_1.surface_he4 = {binary.star_1.surface_he4}\n"
+                  f"star_2.surface_he4 = {binary.star_2.surface_he4}\n"
+                  f"_____________\n")
 
         if binary.state == "merged":
             if binary.event == 'oMerging1':
