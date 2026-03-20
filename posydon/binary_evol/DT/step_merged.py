@@ -125,8 +125,12 @@ class MergedStep(IsolatedStep):
         binary.event = None
 
         if self.verbose:
-            print("After Merger", binary.star_1.state, binary.star_2.state,
-                  binary.state, binary.event)
+            print("After Merger:\n"
+                  f"_____________\n"
+                  f"star_1.state = {binary.star_1.state}\n"
+                  f"star_2.state = {binary.star_2.state}\n"
+                  f"binary.state = {binary.state}\n"
+                  f"binary.event = {binary.event}\n")
             if binary.event == 'oMerging1':
                 print(f"M_merged = {binary.star_1.mass}\n"
                       f"he_core_mass merged = {binary.star_1.he_core_mass}\n"
