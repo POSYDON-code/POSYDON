@@ -133,10 +133,13 @@ class MergedStep(IsolatedStep):
                 print("star_1.center_h1, star_1.center_he4, star_1.center_c12, star_1.surface_he4: ",
                   binary.star_1.center_h1, binary.star_1.center_he4, binary.star_1.center_c12, binary.star_1.surface_he4)
             elif binary.event=='oMerging2':
-                print("M_merged , he_core_mass merged, co_core_mass merged: ", binary.star_2.mass,
-                  binary.star_2.he_core_mass, binary.star_2.co_core_mass)
-                print("star_2.center_h1, star_2.center_he4, star_2.center_c12, star_2.surface_he4: ",
-                  binary.star_2.center_h1, binary.star_2.center_he4, binary.star_2.center_c12, binary.star_2.surface_he4)
+                print(f"M_merged = {binary.star_2.mass}\n"
+                      f"he_core_mass merged = {binary.star_2.he_core_mass}\n"
+                      f"co_core_mass merged = {binary.star_2.co_core_mass}\n")
+                print(f"star_2.center_h1 = {binary.star_2.center_h1}\n"
+                      f"star_2.center_he4 = {binary.star_2.center_he4}\n"
+                      f"star_2.center_c12 = {binary.star_2.center_c12}\n"
+                      f"star_2.surface_he4 = {binary.star_2.surface_he4}\n")
 
         super().__call__(binary)
 
