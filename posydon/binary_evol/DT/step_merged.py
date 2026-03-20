@@ -91,8 +91,12 @@ class MergedStep(IsolatedStep):
         merged_star_properties = self.merged_star_properties
 
         if self.verbose:
-            print("Before Merger", binary.star_1.state, binary.star_2.state,
-                  binary.state, binary.event)
+            print("Before Merger:\n"
+                  f"_____________\n"
+                  f"star_1.state = {binary.star_1.state}\n"
+                  f"star_2.state = {binary.star_2.state}\n"
+                  f"binary.state = {binary.state}\n"
+                  f"binary.event = {binary.event}\n")
             print("M1 , M2, he_core_mass1, he_core_mass2, co_core_mass1, co_core_mass2: ",
                   binary.star_1.mass, binary.star_2.mass,
                   binary.star_1.he_core_mass, binary.star_2.he_core_mass, binary.star_1.co_core_mass, binary.star_2.co_core_mass)
