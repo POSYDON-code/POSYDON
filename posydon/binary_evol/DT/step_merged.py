@@ -92,7 +92,7 @@ class MergedStep(IsolatedStep):
 
         if self.verbose:
             print("Before Merger:\n"
-                  f"_____________\n"
+                  f"_____________\n")
             print(f"M1 = {binary.star_1.mass}\n"
                   f"M2 = {binary.star_2.mass}\n"
                   f"he_core_mass1 = {binary.star_1.he_core_mass}\n"
