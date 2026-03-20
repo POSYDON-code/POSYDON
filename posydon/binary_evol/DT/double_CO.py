@@ -141,7 +141,8 @@ class DoubleCO(detached_step):
         G = constants.standard_cgrav                               # [cm^3 g^-1 s^02]
         c = constants.clight                                       # [cm s^-1]
 
-        # characteristic GW inspiral timescale  [yr]
+        # Characteristic circular inspiral timescale t0 = a0^4 / (beta) [yr],
+        # where beta = (64/5) * G^3 * m1 * m2 * M / c^5.
         t_scale = ((5.0 / 64.0) * c**5 * a0_cgs**4
                    / (G**3 * (m1_cgs + m2_cgs) * m1_cgs * m2_cgs)
                    / constants.secyer)
@@ -267,7 +268,22 @@ class double_CO_evolution(detached_evolution):
             return self.rhs(s, y)
 
 
+    def _g(e2):
+        """Peters (1964) f(e): denominator function for the da/dt equation.
 
+        Defined as f(e) = 1 + (73/24)e^2 + (37/96)e^4 in Peters (1964), Eq. 5.11.
+        Named _g here to match the GW-integration convention.
+        """
+        return 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
+
+
+    def _f(e2):
+        """Peters (1964) g(e): numerator function for the de/dt equation.
+
+        Defined as g(e) = 1 + (121/304)e^2 in Peters (1964), Eq. 5.13.
+        Named _f here to match the GW-integration convention.
+        """
+        return 1.0 + (121.0 / 304.0) * e2
 
     def rhs(self, s, y):
         """Right-hand side of the ODE system in ln-space.
@@ -288,12 +304,11 @@ class double_CO_evolution(detached_evolution):
             return [0.0, 0.0, 0.0, 0.0]
 
         one_minus_e2 = 1.0 - e2
+        G = self._g(e2)
+        F = self._f(e2)
 
-        f_e = 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
-        g_e = 1.0 + (121.0 / 304.0) * e2
-
-        dl_ds = -(19.0 / 12.0) * one_minus_e2 * g_e / f_e
-        dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / f_e
+        dl_ds = -(19.0 / 12.0) * one_minus_e2 * F / G
+        dtau_ds = np.exp(-4.0 * s) * one_minus_e2**3.5 / G
 
         # primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)
         return [dl_ds, dtau_ds, 0.0, 0.0]
