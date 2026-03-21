@@ -129,7 +129,7 @@ class MergedStep(IsolatedStep):
         else:
             raise ValueError("step_merged initiated but binary is not in valid merging state!")
 
-        binary.event = None
+        #binary.event = None
 
         if self.verbose:
             print("After Merger:\n"
