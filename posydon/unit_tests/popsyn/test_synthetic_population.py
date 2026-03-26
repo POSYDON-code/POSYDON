@@ -24,11 +24,7 @@ warnings.simplefilter("always")
 import os
 import shutil
 
-from posydon.unit_tests._helper_functions_for_tests.population import (
-    make_ini,
-    make_test_pop,
-)
-
+from posydon.unit_tests._helper_functions_for_tests.population import make_test_pop, make_ini
 
 # define test classes collecting several test functions
 class TestElements:
@@ -87,12 +83,12 @@ class TestPopulationRunner:
                 self.combined = True
         def dummy_kwargs(path):
             return {
-                "metallicity": 0.1,
+                "metallicities": 0.1,
                 "temp_directory": "tmp_dir",
                 "verbose": False}
         def dummy_kwargs_list(path):
             return {
-                "metallicity": [0.1,1.],
+                "metallicities": [0.1,1.],
                 "temp_directory": "tmp_dir",
                 "verbose": False}
         def dummy_merge(pop,overwrite):
@@ -102,6 +98,7 @@ class TestPopulationRunner:
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
         monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: "0.1")
+        monkeypatch.setattr(totest.SimulationProperties, "from_ini", staticmethod(lambda path: None))
         run = totest.PopulationRunner(make_ini(tmp_path))
         # overwrite=False, directory doesn't exist
         monkeypatch.setattr(os.path, "exists", lambda path: False)
@@ -138,12 +135,13 @@ class TestPopulationRunner:
 
         def dummy_kwargs(path):
             return {
-                "metallicity": 0.1,
+                "metallicities": 0.1,
                 "temp_directory": "tmp_dir",
                 "verbose": False}
 
         monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
         monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
+        monkeypatch.setattr(totest.SimulationProperties, "from_ini", staticmethod(lambda path: None))
         monkeypatch.setattr(totest, "convert_metallicity_to_string",
                             lambda x: str(os.path.join(tmp_path, "0.1")))
 
@@ -660,8 +658,8 @@ class TestPopulation:
 
             def select(self, start=None, stop=None, columns=None):
                 data = [
-                    {"interp_class_HMS_HMS": "initial_MT", "mt_history_HMS_HMS": "Stable contact phase"},
-                    {"interp_class_HMS_HMS": "stable_MT", "mt_history_HMS_HMS": None},
+                    {"interp_class_HMS_HMS": "stable_MT", "mt_history_HMS_HMS": "Stable contact phase"},
+                    {"interp_class_HMS_HMS": "no_MT", "mt_history_HMS_HMS": None},
                     {"interp_class_HMS_HMS": "stable_reverse_MT", "mt_history_HMS_HMS": None},
                     {"interp_class_HMS_HMS": "no_MT", "mt_history_HMS_HMS": None},
                 ]
