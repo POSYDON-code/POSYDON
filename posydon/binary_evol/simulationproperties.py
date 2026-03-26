@@ -240,9 +240,9 @@ class SimulationProperties:
 
         path_str = os.path.abspath(path_str)
             
-        if not os.path.exists(path_str) and path_str is not None:
-            # should trigger data download if someone happened to put the default path manually?
-            raise GridError(f"Path does not exist: {path_str}")
+        #if not os.path.exists(path_str) and path_str is not None:
+        #    # should trigger data download if someone happened to put the default path manually?
+        #    raise GridError(f"Path does not exist: {path_str}")
 
         setattr(self, path_name, path_str)
 
