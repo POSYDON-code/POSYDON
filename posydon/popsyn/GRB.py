@@ -1,5 +1,5 @@
-# This code is currently not being actively used, and is not covered by unit tests. 
-# To test this file, remove it from the 'omit' blocks in POSYDON/setup.cfg. 
+# This code is currently not being actively used, and is not covered by unit tests.
+# To test this file, remove it from the 'omit' blocks in POSYDON/setup.cfg.
 
 __author__ = ['Simone Bavera <Simone.Bavera@unige.ch>']
 
