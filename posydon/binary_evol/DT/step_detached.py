@@ -163,17 +163,18 @@ class detached_step:
 
     # settings in .ini will override
     DEFAULT_KWARGS = {"dt": None,
-                        "n_o_steps_history": None,
-                        "do_wind_loss": True,
-                        "do_tides": True,
-                        "do_gravitational_radiation": True,
-                        "do_magnetic_braking": True,
-                        "magnetic_braking_mode": "RVJ83",
-                        "do_stellar_evolution_and_spin_from_winds": True,
-                        "RLO_orbit_at_orbit_with_same_am": False,
-                        "metallicity": None,
-                        "track_matcher": None,
-                        "verbose": False}
+                      "n_o_steps_history": None,
+                      "do_wind_loss": True,
+                      "do_tides": True,
+                      "do_gravitational_radiation": True,
+                      "do_magnetic_braking": True,
+                      "magnetic_braking_mode": "RVJ83",
+                      "do_stellar_evolution_and_spin_from_winds": True,
+                      "RLO_orbit_at_orbit_with_same_am": False,
+                      "metallicity": None,
+                      "track_matcher": None,
+                      "RNG": np.random.default_rng(),
+                      "verbose": False}
 
     def __init__(self, **kwargs):
 
@@ -224,12 +225,12 @@ class detached_step:
             "magnetic_braking_mode": self.magnetic_braking_mode,
             "do_stellar_evolution_and_spin_from_winds": self.do_stellar_evolution_and_spin_from_winds,
             "do_gravitational_radiation": self.do_gravitational_radiation,
-            "verbose": self.verbose,
-        }
+            "verbose": self.verbose}
 
     def __repr__(self):
         """Return the name of evolution step."""
-        return "Detached Step."
+        return "detached_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
     def __call__(self, binary):
         """
@@ -352,7 +353,7 @@ class detached_step:
             elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
-                    wind_disk_criteria=True, scheme='Kudritzki+2000'))
+                    wind_disk_criteria=True, RNG=self.RNG, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t) + 1:] = np.log10(mdot_acc[:-1])
             else:

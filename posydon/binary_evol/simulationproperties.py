@@ -17,6 +17,8 @@ __authors__ = [
 import os
 import time
 
+import numpy as np
+
 from posydon.binary_evol.track_match import TrackMatcher
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.interpolation import GRIDInterpolator
@@ -229,7 +231,8 @@ class SimulationProperties:
         self._MesaGridStep = MesaGridStep
 
     @classmethod
-    def from_ini(cls, path, metallicity = None, load_steps=False, verbose=False, **override_sim_kwargs):
+    def from_ini(cls, path, metallicity = None, load_steps=False, RNG=np.random.default_rng(),
+                 verbose=False, **override_sim_kwargs):
         """Create a SimulationProperties instance from an inifile.
 
         Parameters
@@ -246,8 +249,18 @@ class SimulationProperties:
         load_steps : bool
             Whether or not evolution steps should be automatically loaded.
 
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the simulation. Defaults to a new NumPy Generator instance
+            created via ``np.random.default_rng()``.
+
         verbose : bool
             Print useful info.
+
+        **override_sim_kwargs
+            Additional keyword arguments that override values specified
+            in the .ini file when constructing the SimulationProperties
+            instance.
 
         Returns
         -------
@@ -264,11 +277,12 @@ class SimulationProperties:
         if load_steps:
             # Load the steps and required data
             new_instance.load_steps(metallicity=metallicity,
+                                    RNG=RNG,
                                     verbose=verbose)
 
         return new_instance
 
-    def load_steps(self, metallicity=None, verbose=False):
+    def load_steps(self, metallicity=None, RNG=np.random.default_rng(), verbose=False):
         """Instantiate all step classes and set as instance attributes.
 
         Parameters
@@ -292,7 +306,7 @@ class SimulationProperties:
             if isinstance(tup, tuple):
                 step_kwargs = tup[1]
                 metallicity = step_kwargs.get('metallicity', metallicity)
-                self.load_a_step(name, tup, metallicity=metallicity, verbose=verbose)
+                self.load_a_step(name, tup, metallicity=metallicity, RNG=RNG, verbose=verbose)
 
         if verbose:
             if self.steps_loaded:
@@ -300,7 +314,8 @@ class SimulationProperties:
             else:
                 print("Not all steps were loaded successfully. Check warnings for details.")
 
-    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None, from_ini='', verbose=False):
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None,
+                    RNG=np.random.default_rng(), from_ini='', verbose=False):
         """
         Instantiate and attach a simulation step to this object.
 
@@ -366,8 +381,8 @@ class SimulationProperties:
             # check to make sure the step has a...
             # 1) metallicity assigned (if needed)
             # 2) TrackMatcher assigned (if needed)
-            step_tup = self.check_step(metallicity, step_name,
-                                    step_tup, verbose)
+            step_tup = self.check_step(metallicity, RNG, step_name,
+                                       step_tup, verbose)
 
         step_func, step_kwargs = step_tup
 
@@ -392,7 +407,7 @@ class SimulationProperties:
                                 for name, tup in self.kwargs.items()
                                 if isinstance(tup, tuple))
 
-    def check_step(self, metallicity, step_name, step_tup, verbose=False):
+    def check_step(self, metallicity, RNG, step_name, step_tup, verbose=False):
         """
         Validate and update configuration for an evolution step.
 
@@ -456,6 +471,9 @@ class SimulationProperties:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
                 print(f"matcher_kwargs: \n" + "\n".join(kw_list))
             step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
+
+        if "RNG" in step_func.DEFAULT_KWARGS:
+            step_kwargs['RNG'] = RNG
 
         return step_tup
 

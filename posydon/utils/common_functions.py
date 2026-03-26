@@ -507,7 +507,7 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2002'):
+                RNG=np.random.default_rng(), scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -629,7 +629,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
             pass
 
     n = np.sqrt((G * (m_acc + m) * Msun) / ((radius * Rsun)**3))
-    t0 = np.random.rand(len(sep)) * 2 * np.pi / n
+    t0 = RNG.random(len(sep)) * 2 * np.pi / n
     E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
                np.ones_like(sep) * np.pi / 2,
                maxiter=100)
