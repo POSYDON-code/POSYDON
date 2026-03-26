@@ -225,6 +225,45 @@ class SimulationProperties:
         self.grids_strippedHe = {}
 
     def set_path(self, path_name, path_str):
+        """
+        Set and normalize a grid path attribute that points to one of the 
+        MESA grids needed for binary evolution. By default, these are the 
+        grids inside of the directory name held in $PATH_TO_POSYDON_DATA.
+
+        For example, for the step_HMS_HMS, the grid would be 
+
+            $PATH_TO_POSYDON_DATA/HMS-HMS/<metallicity>_Zsun.h5
+
+        by default. The grid HDF5 file names themselves are expected to 
+        follow formats like so: 1e+00_Zsun.h5, 1e-04_Zsun.h5, etc.
+
+        If ``path_str`` is ``None``, a default path is assigned based on
+        ``path_name`` using ``self.default_grid_paths``. If ``path_name`` is not
+        recognized, a ``GridError`` is raised listing the valid options.
+
+        The resulting path is converted to an absolute path before being stored
+        as an attribute of the instance.
+
+        Parameters
+        ----------
+        path_name : str
+            Name of the grid path attribute to set. Must be a key in
+            ``self.default_grid_paths`` if ``path_str`` is ``None``.
+
+        path_str : str or None
+            Path to assign. If ``None``, a default path corresponding to
+            ``path_name`` is used.
+
+        Raises
+        ------
+        GridError
+            If ``path_name`` is not recognized and no default path can be assigned.
+
+        Notes
+        -----
+        The path is not validated for existence here; only normalization to an
+        absolute path is performed.
+        """
 
         # construct path to *_Zsun.h5 files if not specified
         if path_str is None:
@@ -239,10 +278,6 @@ class SimulationProperties:
                                 f"{valid_names}\n")
 
         path_str = os.path.abspath(path_str)
-
-        #if not os.path.exists(path_str) and path_str is not None:
-        #    # should trigger data download if someone happened to put the default path manually?
-        #    raise GridError(f"Path does not exist: {path_str}")
 
         setattr(self, path_name, path_str)
 
