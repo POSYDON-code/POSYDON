@@ -26,6 +26,7 @@ from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import age_of_universe
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.posydonerror import GridError
 
 
 class NullStep:
@@ -34,6 +35,17 @@ class NullStep:
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
+
+    # each value in this dict represents the expected path for the respective grid. 
+    # A user may specify their own full path to a custom grid in the [grid_paths]
+    # section of their .ini file. I.e., HMS-HMS_path = 'path/to/my_own_grid/' to 
+    # override these defaults.
+    default_grid_paths = {"single_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HMS"),
+                          "single_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HeMS"),
+                          "HMS_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "HMS-HMS"),
+                          "CO_HMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HMS_RLO"),
+                          "CO_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS"),
+                          "CO_HeMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS_RLO")}
 
     def __init__(self, flow=({}, {}),
                        step_HMS_HMS = (NullStep(), {}),
@@ -169,12 +181,6 @@ class SimulationProperties:
                     "(i) a class deriving from EvolveHooks and a kwargs dict, "
                     "or (ii) the name of the extra function and the callable.")
 
-        # Binary parameters and parameterizations
-        self.initial_rotation = 0.0
-        self.mass_transfer_efficiency = 1.0
-
-        self.common_envelope_efficiency = 1.0
-
         # Limits on simulation
         if not hasattr(self, 'max_simulation_time'):
             self.max_simulation_time = age_of_universe
@@ -202,15 +208,43 @@ class SimulationProperties:
         # maybe get rid of this
         self.track_matchers = {}
 
-        # Should possibly be a section in sim props .ini file
-        self.grid_path = PATH_TO_POSYDON_DATA
+        for grid_name in self.default_grid_paths:
+            try:
+                self.set_path(grid_name, self.kwargs[grid_name])
+            except KeyError as e:
+                Pwarn(f"{grid_name} is not set in the kwargs passed to SimulationProperties. "
+                      f"Falling back to the default: {self.default_grid_paths[grid_name]}", 
+                      "ReplaceValueWarning")
+                
+                self.set_path(grid_name, self.default_grid_paths[grid_name])
+
         # These hold GRIDInterpolator objects
         # and associated grid names for ea. metallicity
         # (intended keys are metallicities):
-        self.grid_names_Hrich = {}
         self.grids_Hrich = {}
-        self.grid_names_strippedHe = {}
         self.grids_strippedHe = {}
+
+    def set_path(self, path_name, path_str):
+
+        # construct path to *_Zsun.h5 files if not specified
+        if path_str is None:
+            if path_name in self.default_grid_paths:
+                path_str = self.default_grid_paths[path_name]
+            else:
+                valid_names = "\n".join(f"{k} = <your-path-or-None>" for k in self.default_grid_paths)
+                raise GridError(f'Trying to assign a grid path for "{path_name}".\n'
+                                "This is an unrecognized path name. Please check "
+                                "the [grid_paths] section of your .ini file.\n\n"
+                                "Valid path variable names are:\n"
+                                f"{valid_names}\n")
+            
+        path_str = os.path.abspath(path_str)
+            
+        if not os.path.exists(path_str):
+            # should trigger data download if someone happened to put the default path manually?
+            raise GridError(f"Path does not exist: {path_str}")
+
+        setattr(self, path_name, path_str)
 
     def preload_imports(self):
         """
@@ -453,9 +487,18 @@ class SimulationProperties:
             if metallicity is None:
                 Pwarn(f"{step_name} not assigned a metallicity. "
                     "Defaulting to Z = Zsun (solar).",
-                    "MissingValueWarning")
+                    "ReplaceValueWarning")
                 metallicity = 1.0
             step_kwargs['metallicity'] = float(metallicity)
+            print(step_name, step_kwargs['metallicity'])
+
+        # These steps need these grids:
+        step_grid_map = {"step_HMS_HMS": self.HMS_HMS_path,
+                         "step_CO_HMS_RLO": self.CO_HMS_RLO_path,
+                         "step_CO_HeMS": self.CO_HeMS_path,
+                         "step_CO_HeMS_RLO": self.CO_HeMS_RLO_path}
+        if step_name in step_grid_map:
+            step_kwargs['grid_path'] = step_grid_map[step_name]
 
         # each metallicity/step combo could require
         # a unique TrackMatcher, so check for that
@@ -508,19 +551,13 @@ class SimulationProperties:
         """
 
         z_str = convert_metallicity_to_string(metallicity)
-        # set up GRIDInterpolator objects
+        # set up GRIDInterpolator objects (for HMS and HeMS)
         # (only if one hasn't been created already for a given metallicity)
         if metallicity not in self.grids_Hrich:
-            self.grid_names_Hrich[metallicity] = os.path.join('single_HMS',
-                                                        z_str+'_Zsun.h5')
-            grid_path_Hrich = os.path.join(self.grid_path,
-                                            self.grid_names_Hrich[metallicity])
+            grid_path_Hrich = os.path.join(self.single_HMS_path, f"{z_str}_Zsun.h5")
             self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
         if metallicity not in self.grids_strippedHe:
-            self.grid_names_strippedHe[metallicity] = os.path.join('single_HeMS',
-                                                        z_str+'_Zsun.h5')
-            grid_path_strippedHe = os.path.join(self.grid_path,
-                                                self.grid_names_strippedHe[metallicity])
+            grid_path_strippedHe = os.path.join(self.single_HeMS_path, f"{z_str}_Zsun.h5")
             self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
 
         # Create TrackMatcher object as needed, passing GRIDInterpolator references

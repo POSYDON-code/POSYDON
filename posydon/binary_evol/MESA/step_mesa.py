@@ -127,8 +127,7 @@ class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
 
     DEFAULT_KWARGS = {'metallicity': None,
-                      'grid_name': None,
-                      'path': PATH_TO_POSYDON_DATA,
+                      'grid_path': None,
                       'interpolation_path': None,
                       'interpolation_filename': None,
                       'interpolation_method': 'nearest_neighbour',
@@ -197,12 +196,15 @@ class MesaGridStep:
                 and self.interpolation_method != 'nearest_neighbour'):
             raise ValueError('Track interpolation is currently supported only '
                              'by the nearest neighbour interpolation method!')
+        
+        z_str = convert_metallicity_to_string(self.metallicity)
+        self.grid_name = os.path.join(self.grid_path, f"{z_str}_Zsun.h5")
 
         # we load NN any time stop_at_max_time requested - regardless
         # of interp method
         if (self.stop_method == 'stop_at_max_time'
                 or self.interpolation_method == 'nearest_neighbour'):
-            self.load_psyTrackInterp(self.grid_name)
+            self.load_psyTrackInterp()
 
         self.grid_name = self.grid_name.replace('_%d', '')
 
@@ -213,14 +215,13 @@ class MesaGridStep:
 
             # Set the interpolation path
             if self.interpolation_path is None:
-                self.interpolation_path = os.path.join(self.path,
-                    os.path.split(self.grid_name)[0],
+                self.interpolation_path = os.path.join(self.grid_path,
                     'interpolators/%s' % self.interpolation_method)
 
             # Set the interpolation filename
             if self.interpolation_filename is None:
                 self.interpolation_filename = os.path.join(self.interpolation_path,
-                    os.path.split(self.grid_name)[1].replace('h5', 'pkl'))
+                    os.path.basename(self.grid_name).replace('h5', 'pkl'))
             else:
                 self.interpolation_filename = os.path.join(self.interpolation_path,
                                                       self.interpolation_filename)
@@ -258,17 +259,16 @@ class MesaGridStep:
         self.m2_min, self.m2_max = initial_values_min_max('star_2_mass')
         self.p_min, self.p_max = initial_values_min_max('period_days')
 
-    def load_psyTrackInterp(self, grid_name):
+    def load_psyTrackInterp(self):
         """Load the interpolator that has been trained on the grid."""
         # Check if interpolation files exist
-        filename = os.path.join(self.path,grid_name)
-        if not (os.path.exists(filename.replace('%d','0')) or
-                os.path.exists(filename.replace('_%d',''))):
+        if not (os.path.exists(self.grid_name.replace('%d','0')) or
+                os.path.exists(self.grid_name.replace('_%d',''))):
             data_download()
 
         if self.verbose:
-            print("loading psyTrackInterp: {}".format(filename))
-        self._psyTrackInterp = psyTrackInterp(filename,
+            print("loading psyTrackInterp: {}".format(self.grid_name))
+        self._psyTrackInterp = psyTrackInterp(self.grid_name,
                                               interp_in_q=self.interp_in_q,
                                               verbose=self.verbose)
         self._psyTrackInterp.train()
@@ -1266,16 +1266,11 @@ class MesaGridStep:
 class MS_MS_step(MesaGridStep):
     """Class for performing the MESA step for a MS-MS binary."""
 
-    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a MS_MS_step instance."""
         self.grid_type = 'HMS_HMS'
         self.interp_in_q = True
-        if grid_name is None:
-            metallicity = convert_metallicity_to_string(metallicity)
-            grid_name = 'HMS-HMS/' + metallicity + '_Zsun.h5'
-        super().__init__(metallicity=metallicity,
-                         grid_name=grid_name,
-                         *args, **kwargs)
+        super().__init__(*args, **kwargs)
         # special stuff for my step goes here
 
         # set mass ratio
@@ -1363,21 +1358,21 @@ class MS_MS_step(MesaGridStep):
                              'binary.event = %s and not H-rich_Core_H_burning '
                              '- H-rich_Core_H_burning - * - ZAMS'
                              % (state_1, state_2, event))
+        
+    def __repr__(self):
+        """Return the name of evolution step and settings."""
+        return "MS_MS_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
 class CO_HMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HMS_RLO binary."""
 
-    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a CO_HMS_RLO_step instance."""
         self.grid_type = 'CO_HMS_RLO'
         self.interp_in_q = False
-        if grid_name is None:
-            metallicity = convert_metallicity_to_string(metallicity)
-            grid_name = 'CO-HMS_RLO/' + metallicity + '_Zsun.h5'
-        super().__init__(metallicity=metallicity,
-                         grid_name=grid_name,
-                         *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
@@ -1478,21 +1473,21 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
+        
+    def __repr__(self):
+        """Return the name of evolution step and settings."""
+        return "CO_HMS_RLO_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
 class CO_HeMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS_RLO binary."""
 
-    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a CO_HeMS_RLO_step instance."""
         self.grid_type = 'CO_HeMS_RLO'
         self.interp_in_q = False
-        if grid_name is None:
-            metallicity = convert_metallicity_to_string(metallicity)
-            grid_name = 'CO-HeMS_RLO/' + metallicity + '_Zsun.h5'
-        super().__init__(metallicity=metallicity,
-                         grid_name=grid_name,
-                         *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(self, binary):
         """Evolve a binary using the MESA step."""
@@ -1593,21 +1588,21 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
+        
+    def __repr__(self):
+        """Return the name of evolution step and settings."""
+        return "CO_HeMS_RLO_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
 class CO_HeMS_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS binary."""
 
-    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a CO_HeMS_step instance."""
         self.grid_type = 'CO_HeMS'
         self.interp_in_q = False
-        if grid_name is None:
-            metallicity = convert_metallicity_to_string(metallicity)
-            grid_name = 'CO-HeMS/' + metallicity + '_Zsun.h5'
-        super().__init__(metallicity=metallicity,
-                         grid_name=grid_name,
-                         *args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __call__(self, binary):
         """Apply the CO_HeMS step to a BinaryStar object."""
@@ -1689,6 +1684,11 @@ class CO_HeMS_step(MesaGridStep):
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
             return
+        
+    def __repr__(self):
+        """Return the name of evolution step and settings."""
+        return "CO_HeMS_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
 class HMS_HMS_RLO_step(MesaGridStep):
@@ -1697,16 +1697,11 @@ class HMS_HMS_RLO_step(MesaGridStep):
     we evolve them first with step detached and map to the HMS-HMS RLO grid
     using `initial_eccentricity_flow_chart`."""
 
-    def __init__(self, metallicity=1., grid_name=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         """Initialize a HMS_HMS_RLO_step instance."""
         self.grid_type = 'HMS_HMS_RLO'
         self.interp_in_q = True
-        if grid_name is None:
-            metallicity = convert_metallicity_to_string(metallicity)
-            grid_name = 'HMS-HMS_RLO/' + metallicity + '_Zsun.h5'
-        super().__init__(metallicity=metallicity,
-                         grid_name=grid_name,
-                         *args, **kwargs)
+        super().__init__(*args, **kwargs)
         # special stuff for my step goes here
         # If nothing to do, no init necessary
 
@@ -1839,3 +1834,8 @@ class HMS_HMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_HMS_HMS_RLO"
             return
+        
+    def __repr__(self):
+        """Return the name of evolution step and settings."""
+        return "HMS_HMS_RLO_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])

@@ -494,6 +494,10 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
 
             parser_dict[section] = hooks_list
 
+        if section == "grid_paths":
+
+            parser_dict.update(sect_dict)
+
     return parser_dict
 
 
