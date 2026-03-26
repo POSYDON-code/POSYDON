@@ -24,7 +24,11 @@ warnings.simplefilter("always")
 import os
 import shutil
 
-from posydon.unit_tests._helper_functions_for_tests.population import make_test_pop, make_ini
+from posydon.unit_tests._helper_functions_for_tests.population import (
+    make_ini,
+    make_test_pop,
+)
+
 
 # define test classes collecting several test functions
 class TestElements:

@@ -9,12 +9,12 @@ __authors__ = [
 ]
 
 import os
+
 import h5py
 import numpy as np
 import pandas as pd
 
 from posydon.popsyn.synthetic_population import Population
-
 
 # helper functions
 
@@ -76,7 +76,7 @@ def make_test_pop(
     """
 
     # history and oneline tables
-    
+
     if history_rows is None:
         history_rows = [{"binary_index": 0, "event": "start", "time": 0.0},
                         {"binary_index": 0, "event": "end",   "time": 1.0},
