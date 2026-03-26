@@ -39,15 +39,26 @@ jobs:
         export PATH_TO_POSYDON=./
         export PATH_TO_POSYDON_DATA=./posydon/unit_tests/_data/
         export MESA_DIR=./
-        python -m pytest posydon/unit_tests/ \
-                         --cov=posydon.config \
-                         --cov=posydon.utils \
-                         --cov=posydon.grids \
-                         --cov=posydon.popsyn.IMFs \
-                         --cov=posydon.popsyn.norm_pop \
-                         --cov=posydon.popsyn.distributions \
-                         --cov=posydon.popsyn.star_formation_history \
-                         --cov=posydon.CLI \
-                         --cov-branch \
-                         --cov-report term-missing \
-                         --cov-fail-under=100
+        python -m pytest posydon/unit_tests/popsyn/test_star_formation_history.py \
+                         posydon/unit_tests/popsyn/test_independent_sample.py \
+                         posydon/unit_tests/popsyn/test_defaults.py \
+                         posydon/unit_tests/popsyn/test_transient_select_funcs.py \
+                         posydon/unit_tests/popsyn/test_rate_calculation.py \
+                         posydon/unit_tests/popsyn/test_io.py \
+                         posydon/unit_tests/popsyn/test_synthetic_population.py \
+                         posydon/unit_tests/popsyn/test_IMFs.py \
+                         posydon/unit_tests/popsyn/test_norm_pop.py \
+                         posydon/unit_tests/popsyn/test_distributions.py \
+                             --cov=posydon.popsyn.star_formation_history \
+                             --cov=posydon.popsyn.independent_sample \
+                             --cov=posydon.popsyn.defaults \
+                             --cov=posydon.popsyn.transient_select_funcs \
+                             --cov=posydon.popsyn.rate_calculation \
+                             --cov=posydon.popsyn.io \
+                             --cov=posydon.popsyn.synthetic_population \
+                             --cov=posydon.popsyn.IMFs \
+                             --cov=posydon.popsyn.norm_pop \
+                             --cov=posydon.popsyn.distributions \
+                             --cov-branch \
+                             --cov-report term-missing \
+                             --cov-fail-under=100

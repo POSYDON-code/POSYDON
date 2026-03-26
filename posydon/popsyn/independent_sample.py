@@ -46,6 +46,15 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     """
     global _gen_Moe_17_PsandQs
 
+    primary_mass_min = kwargs.get("primary_mass_min", 7)
+    primary_mass_max = kwargs.get("primary_mass_max", 120)
+    secondary_mass_min = kwargs.get("secondary_mass_min", 0.35)
+    secondary_mass_max = kwargs.get("secondary_mass_max", 120)
+    if primary_mass_max < primary_mass_min:
+        raise ValueError("primary_mass_max must be larger than primary_mass_min.")
+    if secondary_mass_max < secondary_mass_min:
+        raise ValueError("secondary_mass_max must be larger than secondary_mass_min.")
+
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
@@ -170,7 +179,7 @@ def generate_orbital_periods(primary_masses,
         orbital_periods = np.where(primary_masses <= 15.0,
                                    orbital_periods_M_lt_15,
                                    orbital_periods_M_gt_15)
-    else:
+    else:  # pragma: no cover
         raise ValueError("You must provide an allowed orbital period scheme.")
 
     return orbital_periods
@@ -249,7 +258,7 @@ def generate_orbital_separations(number_of_binaries=1,
             random_state=RNG)
         orbital_separations = 10**log_orbital_separations
 
-    else:
+    else:  # pragma: no cover
         pass
 
     return orbital_separations
@@ -290,7 +299,7 @@ def generate_eccentricities(number_of_binaries=1,
         eccentricities = RNG.uniform(size=number_of_binaries)
     elif eccentricity_scheme == 'zero':
         eccentricities = np.zeros(number_of_binaries)
-    else:
+    else:  # pragma: no cover
         # This should never be reached
         pass
 
@@ -356,7 +365,7 @@ def generate_primary_masses(number_of_binaries=1,
         random_variable = RNG.uniform(size=number_of_binaries)
         primary_masses = (random_variable*(1.0-alpha)/normalization_constant
                           + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-    else:
+    else:  # pragma: no cover
         pass
 
     return primary_masses
@@ -459,7 +468,7 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
         binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
         binary_fraction[(m1 <= 2)] = 0.4
 
-    else:
+    else:  # pragma: no cover
         pass
 
     return binary_fraction

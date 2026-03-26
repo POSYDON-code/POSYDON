@@ -294,9 +294,9 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     These have to be present and a valid value. If not, the function will raise an error!
 
     '''
-    available_sensitiveies = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
-    if sensitivity not in available_sensitiveies:
-        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitiveies}')
+    available_sensitivities = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
+    if sensitivity not in available_sensitivities:
+        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitivities}')
     else:
         sel_eff = selection_effects.KNNmodel(grid_path=PATH_TO_PDET_GRID,
                                                       sensitivity_key=sensitivity)
