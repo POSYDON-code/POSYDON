@@ -162,6 +162,19 @@ DEFAULT_PROFILE_KEYS = (
     'avg_charge_He'
 )
 
+DEFAULT_FINAL_KEYS = (
+            'avg_c_in_c_core_at_He_depletion',
+            'co_core_mass_at_He_depletion',
+            'm_core_CE_1cent',
+            'm_core_CE_10cent',
+            'm_core_CE_30cent',
+            'm_core_CE_pure_He_star_10cent',
+            'r_core_CE_1cent',
+            'r_core_CE_10cent',
+            'r_core_CE_30cent',
+            'r_core_CE_pure_He_star_10cent'
+        )
+
 
 # states to ID an HMS star
 # TODO: build these from the other lists to (hopefully)
