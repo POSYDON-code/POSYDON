@@ -25,8 +25,8 @@ from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import age_of_universe
-from posydon.utils.posydonwarning import Pwarn
 from posydon.utils.posydonerror import GridError
+from posydon.utils.posydonwarning import Pwarn
 
 
 class NullStep:
@@ -36,9 +36,9 @@ class NullStep:
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
-    # each value in this dict represents the expected path for the respective grid. 
+    # each value in this dict represents the expected path for the respective grid.
     # A user may specify their own full path to a custom grid in the [grid_paths]
-    # section of their .ini file. I.e., HMS-HMS_path = 'path/to/my_own_grid/' to 
+    # section of their .ini file. I.e., HMS-HMS_path = 'path/to/my_own_grid/' to
     # override these defaults.
     default_grid_paths = {"single_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HMS"),
                           "single_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HeMS"),
@@ -213,9 +213,9 @@ class SimulationProperties:
                 self.set_path(grid_name, self.kwargs[grid_name])
             except KeyError as e:
                 Pwarn(f"{grid_name} is not set in the kwargs passed to SimulationProperties. "
-                      f"Falling back to the default: {self.default_grid_paths[grid_name]}", 
+                      f"Falling back to the default: {self.default_grid_paths[grid_name]}",
                       "ReplaceValueWarning")
-                
+
                 self.set_path(grid_name, self.default_grid_paths[grid_name])
 
         # These hold GRIDInterpolator objects
@@ -237,7 +237,7 @@ class SimulationProperties:
                                 "the [grid_paths] section of your .ini file.\n\n"
                                 "Valid path variable names are:\n"
                                 f"{valid_names}\n")
-            
+
         path_str = os.path.abspath(path_str)
             
         if not os.path.exists(path_str) and path_str is not None:

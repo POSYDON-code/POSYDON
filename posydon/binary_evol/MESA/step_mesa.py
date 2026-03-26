@@ -196,7 +196,7 @@ class MesaGridStep:
                 and self.interpolation_method != 'nearest_neighbour'):
             raise ValueError('Track interpolation is currently supported only '
                              'by the nearest neighbour interpolation method!')
-        
+
         z_str = convert_metallicity_to_string(self.metallicity)
         self.grid_name = os.path.join(self.grid_path, f"{z_str}_Zsun.h5")
 
@@ -1358,7 +1358,7 @@ class MS_MS_step(MesaGridStep):
                              'binary.event = %s and not H-rich_Core_H_burning '
                              '- H-rich_Core_H_burning - * - ZAMS'
                              % (state_1, state_2, event))
-        
+
     def __repr__(self):
         """Return the name of evolution step and settings."""
         return "MS_MS_step:\n" + \
@@ -1473,7 +1473,7 @@ class CO_HMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HMS_RLO"
             return
-        
+
     def __repr__(self):
         """Return the name of evolution step and settings."""
         return "CO_HMS_RLO_step:\n" + \
@@ -1588,7 +1588,7 @@ class CO_HeMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_CO_HeMS_RLO"
             return
-        
+
     def __repr__(self):
         """Return the name of evolution step and settings."""
         return "CO_HeMS_RLO_step:\n" + \
@@ -1684,7 +1684,7 @@ class CO_HeMS_step(MesaGridStep):
             self.binary.state = 'detached'
             self.binary.event = 'redirect_from_CO_HeMS'
             return
-        
+
     def __repr__(self):
         """Return the name of evolution step and settings."""
         return "CO_HeMS_step:\n" + \
@@ -1834,7 +1834,7 @@ class HMS_HMS_RLO_step(MesaGridStep):
             self.binary.state = "detached"
             self.binary.event = "redirect_from_HMS_HMS_RLO"
             return
-        
+
     def __repr__(self):
         """Return the name of evolution step and settings."""
         return "HMS_HMS_RLO_step:\n" + \
