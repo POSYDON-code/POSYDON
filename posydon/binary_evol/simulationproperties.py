@@ -226,15 +226,15 @@ class SimulationProperties:
 
     def set_path(self, path_name, path_str):
         """
-        Set and normalize a grid path attribute that points to one of the 
-        MESA grids needed for binary evolution. By default, these are the 
+        Set and normalize a grid path attribute that points to one of the
+        MESA grids needed for binary evolution. By default, these are the
         grids inside of the directory name held in $PATH_TO_POSYDON_DATA.
 
-        For example, for the step_HMS_HMS, the grid would be 
+        For example, for the step_HMS_HMS, the grid would be
 
             $PATH_TO_POSYDON_DATA/HMS-HMS/<metallicity>_Zsun.h5
 
-        by default. The grid HDF5 file names themselves are expected to 
+        by default. The grid HDF5 file names themselves are expected to
         follow formats like so: 1e+00_Zsun.h5, 1e-04_Zsun.h5, etc.
 
         If ``path_str`` is ``None``, a default path is assigned based on
