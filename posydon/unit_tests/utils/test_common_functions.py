@@ -696,10 +696,12 @@ class TestFunctions:
             assert totest.beaming(binary) == r
 
     def test_bondi_hoyle(self, binary, monkeypatch):
-        def mock_rand(shape):
-            return np.zeros(shape)
-        def mock_rand2(shape):
-            return np.full(shape, 0.1)
+        class MockRNG:
+            def random(self, shape):
+                return np.zeros(shape)
+        class MockRNG2:
+            def random(self, shape):
+                return np.full(shape, 0.1)
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'binary', 'accretor', and "\
@@ -725,32 +727,32 @@ class TestFunctions:
                                              +"associated with a value"):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
-        monkeypatch.setattr(np.random, "rand", mock_rand)
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        rng = MockRNG()
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                approx(3.92668160462e-17, abs=6e-29)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') ==\
+                                  RNG=rng, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') ==\
+                                  RNG=rng, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') == 1e-99
+                                  RNG=rng, scheme='Kudritzki+2000') == 1e-99
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False) ==\
+                                  RNG=rng, wind_disk_criteria=False) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
-        monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
+        rng = MockRNG2() # other angle
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False) ==\
+                                  wind_disk_criteria=False, RNG=rng) ==\
                approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
