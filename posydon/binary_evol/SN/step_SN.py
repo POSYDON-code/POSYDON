@@ -86,24 +86,6 @@ path_to_Patton_datasets = os.path.join(PATH_TO_POSYDON_DATA,
 path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
-SN_MODEL = {
-    # kick physics
-    "kick": True,
-    "kick_normalisation": 'one_over_mass',
-    "kick_prescription": 'maxwellian',
-    "sigma_kick_CCSN_NS": 265.0,
-    "mean_kick_CCSN_NS": None,
-    "sigma_kick_CCSN_BH": 265.0,
-    "mean_kick_CCSN_BH": None,
-    "sigma_kick_ECSN": 20.0,
-    "mean_kick_ECSN": None,
-    # other
-    "verbose": False,
-}
-# add core collapse physics
-SN_MODEL.update(DEFAULT_SN_MODEL)
-
-
 class StepSN(object):
     """The supernova step in POSYDON.
 
@@ -255,21 +237,36 @@ class StepSN(object):
         Evolution on the Dynamics of Core Collapse and Neutron Star Kicks
 
     """
+    DEFAULT_KWARGS = {
+        # kick physics
+        "kick": True,
+        "kick_normalisation": 'one_over_mass',
+        "kick_prescription": 'maxwellian',
+        "sigma_kick_CCSN_NS": 265.0,
+        "mean_kick_CCSN_NS": None,
+        "sigma_kick_CCSN_BH": 265.0,
+        "mean_kick_CCSN_BH": None,
+        "sigma_kick_ECSN": 20.0,
+        "mean_kick_ECSN": None,
+        # other
+        "verbose": False,
+    }
+    # add core collapse physics
+    DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+
 
     def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in SN_MODEL:
+                if key not in self.DEFAULT_KWARGS:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, kwargs.get(varname, default_value))
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, kwargs.get(varname, self.DEFAULT_KWARGS[varname]))
         else:
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, default_value)
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, self.DEFAULT_KWARGS[varname])
 
         # backward compatibility for kick
         if (self.kick_normalisation == 'asym_ej'
@@ -407,7 +404,7 @@ class StepSN(object):
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
         return "StepSN:\n" + \
-            "\n".join([f"{key} = {getattr(self, key)}" for key in SN_MODEL])
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
     def _reset_other_star_properties(self, star):

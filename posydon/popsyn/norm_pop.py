@@ -100,23 +100,25 @@ def get_mass_ratio_pdf(kwargs):
                 [kwargs['secondary_mass_max'] / m1, np.ones(len(m1))],
                 axis=0)
 
-            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum),
+            # Use FlatMassRatio distribution class
+            q_dist = lambda q: np.where((q > minimum) & (q <= maximum),
                                         1/(maximum - minimum),
                                         0)
             return q_dist
         q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
     elif kwargs['secondary_mass_scheme'] == 'flat_mass_ratio':
         # flat mass ratio, where bounds are given
-        q_pdf = lambda q, m1=None: np.where(
-                                (q > kwargs['q_min']) & (q <= kwargs['q_max']),
-                                1/(kwargs['q_max'] - kwargs['q_min']),
-                                0)
+        from posydon.popsyn.distributions import FlatMassRatio
+        q_dist = FlatMassRatio(q_min=kwargs['q_min'], q_max=kwargs['q_max'])
+        q_pdf = lambda q, m1=None: q_dist.pdf(q)
 
     else:
         # default to a flat distribution
         Pwarn("The secondary_mass_scheme is not defined use a flat mass ratio "
               "distribution in (0,1].", "UnsupportedModelWarning")
-        q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
+        from posydon.popsyn.distributions import FlatMassRatio
+        q_dist = FlatMassRatio(q_min=0.0, q_max=1.0)
+        q_pdf = lambda q, m1=None: q_dist.pdf(q)
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
