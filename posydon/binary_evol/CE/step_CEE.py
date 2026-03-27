@@ -56,24 +56,6 @@ from posydon.utils.common_functions import (
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 
-MODEL = {"prescription": 'alpha-lambda',
-         "common_envelope_efficiency": 1.0,
-         "common_envelope_lambda_default": 0.5,
-         "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
-         "common_envelope_option_for_HG_star": "optimistic",
-         "common_envelope_alpha_thermal": 1.0,
-         "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
-         "core_definition_He_fraction": 0.1,
-         "CEE_tolerance_err": 0.001,
-         "verbose": False,
-         "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-         "mass_loss_during_CEE_merged": False, # If False, then no mass loss from this step for a merged star
-                                              # If True, then we remove mass according to the alpha-lambda prescription
-                                              # assuming a final separation where the inner core RLOF starts.
-         # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-         "metallicity": None,
-         "record_matching": False
-         }
 
 class StepCEE(object):
     """Handle common envelope evolution (CEE) for binary systems.
