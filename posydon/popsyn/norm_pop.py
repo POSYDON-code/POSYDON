@@ -315,13 +315,52 @@ def calculate_model_weights(pop_data,
     Parameters
     ----------
     pop_data : dict
-        Dictionary containing the population data
+        Dictionary containing the population data.
+        This needs to contain the following keys:
+        - `S1_mass_i`: initial mass of the primary
+        - `S2_mass_i`: initial mass of the secondary
+        - `orbital_period_i`: initial orbital period
+        - `state_i`: initial state of the system (e.g. 'initially_single_star' for single stars)
+        These are used to calculate the PDF for each model in the simulation.
+
     M_sim : float
         Mass of the simulation
     simulation_parameters : dict
-        Dictionary containing the simulation parameters
+        Dictionary containing the simulation parameters.
+        This is used to calculate the PDF of the simulation.
+        The parameters in this dictionary are the initial conditions of the population.
+        The following parameters are required to be present in the dictionary:
+        - `primary_mass_scheme`
+        - `primary_mass_min`
+        - `primary_mass_max`
+        - `secondary_mass_scheme`
+        - `secondary_mass_min`
+        - `secondary_mass_max`
+        - `binary_fraction_scheme`
+        - `binary_fraction_const`
+        - `orbital_scheme`
+        - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
+        - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
+
     population_parameters : dict
-        Dictionary containing the population parameters
+        Dictionary containing the population parameters, which is the requested population to which we want to reweight the simulation. This is used to calculate the PDF of the requested population.
+        The parameters in this dictionary are the initial conditions of the population you want to reweight to.
+        The following parameters are required to be present in the dictionary:
+        - `primary_mass_scheme`
+        - `primary_mass_min`
+        - `primary_mass_max`
+        - `secondary_mass_scheme`
+        - `secondary_mass_min`
+        - `secondary_mass_max`
+        - `binary_fraction_scheme`
+        - `binary_fraction_const`
+        - `orbital_scheme`
+        - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
+        - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     Returns
     -------
