@@ -10,16 +10,16 @@ import os
 import shutil
 import signal
 import warnings
-import pandas as pd
-import numpy as np
 
+import numpy as np
+import pandas as pd
 from binary_test_cases import get_test_binaries
-from formatting import LINE_LENGTH, AVAILABLE_METALLICITIES
+from formatting import AVAILABLE_METALLICITIES, LINE_LENGTH
 from utils import print_failed_binary, print_warnings, write_binary_to_screen
 
+from posydon.binary_evol.binarystar import BinaryStar, SingleStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
-from posydon.binary_evol.binarystar import BinaryStar, SingleStar
 from posydon.utils.common_functions import orbital_separation_from_period
 
 #base_dir =os.path.dirname(PATH_TO_POSYDON)
@@ -156,7 +156,7 @@ def evolve_binaries(metallicity, output_path, verbose, ini_path=None):
     print(f"  Evolving test binaries at Z = {metallicity} Zsun")
     print(f"  Output: {output_path}")
     print(f"{'=' * LINE_LENGTH}\n")
-    
+
     sim_prop = load_inlist(ini_path, metallicity, verbose)
     test_binaries = get_test_binaries(metallicity)
 

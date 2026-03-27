@@ -1,4 +1,4 @@
-from formatting import columns_to_show, LINE_LENGTH, target_rows
+from formatting import LINE_LENGTH, columns_to_show, target_rows
 
 
 def print_warnings(captured_warnings):
