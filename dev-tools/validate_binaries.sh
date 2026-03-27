@@ -73,13 +73,15 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEV_TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="${DEV_TOOLS_DIR}/script_data"
+SRC_DIR="${SCRIPT_DIR}/src"
 SAFE_CANDIDATE="${CANDIDATE_BRANCH//\//_}"
 SAFE_BASELINE="${BASELINE_BRANCH//\//_}"
 
 BASELINE_DIR="$SCRIPT_DIR/baselines/${SAFE_BASELINE}"
-OUTPUT_DIR="$SCRIPT_DIR/outputs/${SAFE_CANDIDATE}"
-SUMMARY_FILE="$OUTPUT_DIR/comparison_summary.txt"
+BINARY_OUTPUT_DIR="$SCRIPT_DIR/output/binary_star_tests/${SAFE_CANDIDATE}"
+SUMMARY_FILE="$BINARY_OUTPUT_DIR/comparison_summary.txt"
 
 # ── Build compare_runs.py flags ───────────────────────────────────────────
 COMPARE_FLAGS=""
@@ -136,7 +138,7 @@ echo "  Found $BASELINE_COUNT baseline file(s)."
 # ── Step 1: Evolve binaries on candidate branch ──────────────────────────
 echo ""
 echo "Step 1: Evolving binaries on candidate branch '$CANDIDATE_BRANCH'..."
-"$SCRIPT_DIR/evolve_binaries.sh" "$CANDIDATE_BRANCH" "" "$METALLICITIES"
+"$DEV_TOOLS_DIR/run_test_suite.sh" "$CANDIDATE_BRANCH" "" "$METALLICITIES"
 
 # ── Step 2: Compare each metallicity ─────────────────────────────────────
 echo ""
@@ -148,7 +150,7 @@ FAIL=0
 SKIP=0
 
 # Initialize summary
-mkdir -p "$OUTPUT_DIR"
+mkdir -p "$BINARY_OUTPUT_DIR"
 cat > "$SUMMARY_FILE" << EOF
 POSYDON Binary Validation — Comparison Summary
 ================================================
@@ -164,8 +166,8 @@ for Z in $METALLICITIES; do
     TOTAL=$((TOTAL + 1))
 
     BASELINE_FILE="$BASELINE_DIR/baseline_${Z}Zsun.h5"
-    CANDIDATE_FILE="$OUTPUT_DIR/candidate_${Z}Zsun.h5"
-    COMPARISON_FILE="$OUTPUT_DIR/comparison_${Z}Zsun.txt"
+    CANDIDATE_FILE="$BINARY_OUTPUT_DIR/candidate_${Z}Zsun.h5"
+    COMPARISON_FILE="$BINARY_OUTPUT_DIR/comparison_${Z}Zsun.txt"
 
     echo ""
     echo "--- Z = ${Z} Zsun ---"
@@ -186,7 +188,7 @@ for Z in $METALLICITIES; do
 
     # $COMPARE_FLAGS is intentionally unquoted so it word-splits into
     # separate arguments for compare_runs.py.
-    if python "$SCRIPT_DIR/compare_runs.py" "$BASELINE_FILE" "$CANDIDATE_FILE" \
+    if python "$SRC_DIR/compare_runs.py" "$BASELINE_FILE" "$CANDIDATE_FILE" \
         $COMPARE_FLAGS \
         2>&1 | tee "$COMPARISON_FILE"; then
         echo "  PASS: No differences"

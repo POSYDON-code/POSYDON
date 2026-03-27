@@ -1,4 +1,4 @@
-from formatting import columns_to_show, line_length, target_rows
+from formatting import columns_to_show, LINE_LENGTH, target_rows
 
 
 def print_warnings(captured_warnings):
@@ -50,7 +50,7 @@ def write_binary_to_screen(binary):
     # Reset index to use a counter instead of NaN
     df_filtered = df_filtered.reset_index(drop=True)
 
-    print("=" * line_length)
+    print("=" * LINE_LENGTH)
 
     # Print the DataFrame
     df_string = df_filtered.to_string(index=True, float_format='%.3f')
@@ -68,12 +68,12 @@ def write_binary_to_screen(binary):
             for i in range(empty_lines_needed):
                 print("")
 
-    print("-" * line_length)
+    print("-" * LINE_LENGTH)
 
 
 def print_failed_binary(binary, e, max_error_lines=3):
 
-    print("=" * line_length)
+    print("=" * LINE_LENGTH)
     print(f"🚨 Binary Evolution Failed!")
     print(f"Exception: {type(e).__name__}")
     print(f"Message: {e}")
@@ -109,4 +109,4 @@ def print_failed_binary(binary, e, max_error_lines=3):
     except Exception as inner_e:
         print(f"\nCould not retrieve binary state: {inner_e}")
 
-    print("-" * line_length)
+    print("-" * LINE_LENGTH)

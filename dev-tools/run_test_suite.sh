@@ -34,7 +34,7 @@ SHA=${2:-}
 METALLICITIES=${3:-$ALL_METALLICITIES}
 
 REPO_URL="https://github.com/POSYDON-code/POSYDON"
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/script_data"
 
 # Sanitize branch name for filesystem
 SAFE_BRANCH="${BRANCH//\//_}"
@@ -42,11 +42,12 @@ SAFE_BRANCH="${BRANCH//\//_}"
 
 # Directories (all relative to SCRIPT_DIR, the dev-tools root)
 WORK_DIR="$SCRIPT_DIR/workdirs/POSYDON_${SAFE_BRANCH}"
-OUTPUT_DIR="$SCRIPT_DIR/outputs/${SAFE_BRANCH}"
+BINARY_OUTPUT_DIR="$SCRIPT_DIR/output/binary_star_tests/${SAFE_BRANCH}"
+POP_OUTPUT_DIR="$SCRIPT_DIR/output/population_tests/${SAFE_BRANCH}"
 LOG_DIR="$SCRIPT_DIR/logs/${SAFE_BRANCH}"
 CLONE_DIR="$WORK_DIR/POSYDON"
 
-mkdir -p "$OUTPUT_DIR" "$LOG_DIR"
+mkdir -p ${LOG_DIR} ${BINARY_OUTPUT_DIR}
 
 # ── Conda Setup ────────────────────────────────────────────────────────────
 echo "🔧 Initializing conda"
@@ -106,11 +107,20 @@ echo "📦 Installing POSYDON"
 pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/    /'
 
 # ── Run Suite for Each Metallicity ────────────────────────────────────────
-SUITE_SCRIPT="$SCRIPT_DIR/binaries_suite.py"
+SUITE_SCRIPT="$SCRIPT_DIR/src/binaries_suite.py"
 FAILED=0
 
+# override environment's PATH_TO_POSYDON variable to point to the
+# current branch's clone for these tests
+#PATH_TO_POSYDON=$CLONE_DIR
+
+# copy this branch's default .ini file to perform tests
+DEFAULT_INI="${CLONE_DIR}/posydon/popsyn/population_params_default.ini"
+TEST_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_params.ini"
+cp $DEFAULT_INI $TEST_INI
+
 for Z in $METALLICITIES; do
-    OUTPUT_FILE="$OUTPUT_DIR/candidate_${Z}Zsun.h5"
+    OUTPUT_FILE="$BINARY_OUTPUT_DIR/candidate_${Z}Zsun.h5"
     LOG_FILE="$LOG_DIR/evolve_${Z}Zsun.log"
 
     echo ""
@@ -123,6 +133,7 @@ for Z in $METALLICITIES; do
     python "$SUITE_SCRIPT" \
         --metallicity "$Z" \
         --output "$OUTPUT_FILE" \
+        --ini "$TEST_INI" \
         2>&1 | tee "$LOG_FILE"
     EXIT_CODE=${PIPESTATUS[0]}
 
@@ -158,7 +169,7 @@ if [ $FAILED -eq 0 ]; then
 else
     echo "Completed with $FAILED failure(s)."
 fi
-echo "  Outputs in: $OUTPUT_DIR/"
+echo "  Outputs in: $BINARY_OUTPUT_DIR/"
 echo "============================================================"
 
 exit $FAILED
