@@ -126,22 +126,23 @@ POSYDON_TO_MESA = {
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
 
-    def __init__(
-            self,
-            metallicity,
-            grid_name,
-            path=PATH_TO_POSYDON_DATA,
-            interpolation_path=None,
-            interpolation_filename=None,
-            interpolation_method="linear3c_kNN",
-            save_initial_conditions=True,
-            track_interpolation=False,
-            stop_method='stop_at_max_time',     # "stop_at_end",
-            stop_star="star_1",
-            stop_var_name=None,
-            stop_value=None,
-            stop_interpolate=True,
-            verbose=False):
+    DEFAULT_KWARGS = {'metallicity': None,
+                      'grid_name': None,
+                      'path': PATH_TO_POSYDON_DATA,
+                      'interpolation_path': None,
+                      'interpolation_filename': None,
+                      'interpolation_method': 'nearest_neighbour',
+                      'save_initial_conditions': True,
+                      'track_interpolation': False,
+                      'stop_method': 'stop_at_max_time', # "stop_at_end"
+                      'stop_star': 'star_1',
+                      'stop_var_name': None,
+                      'stop_value': None,
+                      'stop_interpolate': True,
+                      'RNG': np.random.default_rng(),
+                      'verbose': False}
+
+    def __init__(self, **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
 
         Parameters
@@ -179,13 +180,18 @@ class MesaGridStep:
                stop_value
 
         """
-        # class variable
-        self.path = path
-        self.interpolation_method = interpolation_method
-        self.save_initial_conditions = save_initial_conditions
-        self.track_interpolation = track_interpolation
-        self.stop_method = stop_method
-        self.verbose = verbose
+        # read kwargs to initialize the class
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise ValueError(key + " is not a valid parameter name!")
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, kwargs.get(varname, default_value))
+        else:
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, default_value)
 
         if (self.track_interpolation
                 and self.interpolation_method != 'nearest_neighbour'):
@@ -196,9 +202,9 @@ class MesaGridStep:
         # of interp method
         if (self.stop_method == 'stop_at_max_time'
                 or self.interpolation_method == 'nearest_neighbour'):
-            self.load_psyTrackInterp(grid_name)
+            self.load_psyTrackInterp(self.grid_name)
 
-        grid_name = grid_name.replace('_%d', '')
+        self.grid_name = self.grid_name.replace('_%d', '')
 
         # Check interpolation method provided
         self.supported_interp_methods = ['linear_kNN', 'linear3c_kNN',
@@ -206,20 +212,20 @@ class MesaGridStep:
         if self.interpolation_method in self.supported_interp_methods:
 
             # Set the interpolation path
-            if interpolation_path is None:
-                interpolation_path = os.path.join(self.path,
-                    os.path.split(grid_name)[0],
+            if self.interpolation_path is None:
+                self.interpolation_path = os.path.join(self.path,
+                    os.path.split(self.grid_name)[0],
                     'interpolators/%s' % self.interpolation_method)
 
             # Set the interpolation filename
-            if interpolation_filename is None:
-                interpolation_filename = os.path.join(interpolation_path,
-                    os.path.split(grid_name)[1].replace('h5', 'pkl'))
+            if self.interpolation_filename is None:
+                self.interpolation_filename = os.path.join(self.interpolation_path,
+                    os.path.split(self.grid_name)[1].replace('h5', 'pkl'))
             else:
-                interpolation_filename = os.path.join(interpolation_path,
-                                                      interpolation_filename)
+                self.interpolation_filename = os.path.join(self.interpolation_path,
+                                                      self.interpolation_filename)
 
-            self.load_Interp(interpolation_filename)
+            self.load_Interp(self.interpolation_filename)
 
             if (not (hasattr(self, '_psyTrackInterp')
                      or hasattr(self, '_Interp'))):
@@ -233,10 +239,6 @@ class MesaGridStep:
         # we drop the history
         self.flush_history = False
         self.flush_entries = None
-        self.stop_star = stop_star
-        self.stop_var_name = stop_var_name
-        self.stop_value = stop_value
-        self.stop_interpolate = stop_interpolate
         self._find_boundaries()
 
     def _find_boundaries(self):
@@ -774,7 +776,7 @@ class MesaGridStep:
             key_bh = POSYDON_TO_MESA['star']['lg_mdot']+'_%d' % (k_bh+1)
             tmp_lg_mdot = np.log10(10**cb_bh[key_bh][-1] + cf.bondi_hoyle(
                 binary, accretor, donor, idx=-1,
-                wind_disk_criteria=True, scheme='Kudritzki+2000'))
+                wind_disk_criteria=True, RNG=self.RNG, scheme='Kudritzki+2000'))
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
 
             if 10**tmp_lg_mdot > mdot_edd:
@@ -787,7 +789,7 @@ class MesaGridStep:
                 history_of_attribute = (np.log10(
                     10**cb_bh[key_bh][0] + cf.bondi_hoyle(
                         binary, accretor, donor, idx=len_binary_hist,
-                        wind_disk_criteria=True, scheme='Kudritzki+2000')))
+                        wind_disk_criteria=True, RNG=self.RNG, scheme='Kudritzki+2000')))
                 if 10**history_of_attribute > edd:
                     history_of_attribute = np.log10(edd)
                 accretor.lg_mdot_history.append(history_of_attribute)
@@ -799,6 +801,7 @@ class MesaGridStep:
                 # hence we loop one back range(-N-1,-1)
                 tmp_h = [cf.bondi_hoyle(binary, accretor, donor, idx=i,
                                         wind_disk_criteria=True,
+                                        RNG=self.RNG,
                                         scheme='Kudritzki+2000')
                          for i in range(-length_hist-1, -1)]
                 tmp_edd = [cf.eddington_limit(binary, idx=i)[0]
@@ -965,7 +968,8 @@ class MesaGridStep:
             tmp_lg_mdot = np.log10(
                 10**fv[key_bh] + cf.bondi_hoyle(
                     binary, accretor, donor, idx=-1,
-                    wind_disk_criteria=True, scheme='Kudritzki+2000'))
+                    wind_disk_criteria=True,
+                    RNG=self.RNG, scheme='Kudritzki+2000'))
 
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
             if 10**tmp_lg_mdot > mdot_edd:

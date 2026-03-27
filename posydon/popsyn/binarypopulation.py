@@ -304,7 +304,7 @@ class BinaryPopulation:
                     modified_tup = (step_function, step_kwargs)
                     self.population_properties.kwargs[step_name] = modified_tup
 
-            self.population_properties.load_steps()
+            self.population_properties.load_steps(RNG=self.RNG)
 
         indices = kwargs.get('indices', list(range(self.number_of_binaries)))
 
