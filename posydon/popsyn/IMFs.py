@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 from scipy.integrate import quad
 
-from posydon.utils.common_functions import inverse_sampler, rejection_sampler
+from posydon.utils.common_functions import inverse_sampler
 from posydon.utils.posydonwarning import Pwarn
 
 

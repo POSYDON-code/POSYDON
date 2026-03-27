@@ -13,12 +13,12 @@ class FlatMassRatio:
 
     A uniform distribution for mass ratios q = m2/m1 within specified bounds.
     This distribution assigns equal probability to all mass ratios within the
-    given range [q_min, q_max].
+    given range (q_min, q_max], exclusive bottom, inclusive top.
 
     Parameters
     ----------
     q_min : float, optional
-        Minimum mass ratio (default: 0.05). Must be in (0, 1].
+        Minimum mass ratio (default: 0.05). Must be in [0, 1).
     q_max : float, optional
         Maximum mass ratio (default: 1.0). Must be in (0, 1].
 
@@ -363,7 +363,8 @@ class Sana12Period():
         if m1.size == 1:
             m1 = np.full(size, m1[0])
         elif m1.size != size:
-            raise ValueError(f"m1 must be a single value or have size={size}")
+            raise ValueError(f"m1 must be a single value or have size={size}"
+                                      f"\n m1 = {m1}\n m1.size = {m1.size}")
 
         # Import here to avoid circular dependency
         from posydon.utils.common_functions import rejection_sampler
