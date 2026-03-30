@@ -905,6 +905,11 @@ class TestZavala21:
         result = zavala.fSFR(z, met_bins)
         for row in result:
             np.testing.assert_allclose(np.sum(row), 1.0)
+            
+        # Test with redshift below minimum (covers L839-846 warning branch)
+        z_low = np.array([-0.1, 2.0])
+        result = chruslinska_model.fSFR(z_low, met_bins)
+        assert result.shape == (2, 3)
 
 class TestGetSFHModel:
     """Tests for the get_SFH_model function."""
