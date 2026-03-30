@@ -818,9 +818,6 @@ class TestChruslinska21:
         result = chruslinska_model.fSFR(z_low, met_bins)
         assert result.shape == (2, 3)
 
-
-
-
 class TestZavala21:
     """Tests for the Zavala21 SFH model with mocked data loading."""
 
