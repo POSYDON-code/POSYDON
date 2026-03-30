@@ -139,8 +139,8 @@ class TestBinaryGenerator:
             RNG=rng, metallicity=1.0, sampler=mock_sampler,
             star_formation='burst', max_simulation_time=13.8e9)
         with raises(ValueError, match="Allowed orbital schemes"):
-            gen.draw_initial_samples(orbital_scheme='invalid', number_of_binaries=1)            
-            
+            gen.draw_initial_samples(orbital_scheme='invalid', number_of_binaries=1)
+
     def test_draw_initial_samples_no_number_of_binaries(self, generator):
         """When number_of_binaries not in kwargs, defaults to 1 for kicks."""
         output = generator.draw_initial_samples(orbital_scheme='separation')
