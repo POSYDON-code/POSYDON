@@ -12,13 +12,10 @@ import posydon.popsyn.rate_calculation as totest
 np = totest.np
 sp = totest.sp
 
-from inspect import isclass, isroutine
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import approx, fixture, raises, warns
 from scipy.interpolate import CubicSpline
-
 
 # define test classes collecting several test functions
 class TestElements:
@@ -47,27 +44,6 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
-
-    def test_instance_get_shell_comoving_volume(self):
-        assert isroutine(totest.get_shell_comoving_volume)
-
-    def test_instance_get_comoving_distance_from_redshift(self):
-        assert isroutine(totest.get_comoving_distance_from_redshift)
-
-    def test_instance_get_cosmic_time_from_redshift(self):
-        assert isroutine(totest.get_cosmic_time_from_redshift)
-
-    def test_instance_redshift_from_cosmic_time_interpolator(self):
-        assert isroutine(totest.redshift_from_cosmic_time_interpolator)
-
-    def test_instance_get_redshift_from_cosmic_time(self):
-        assert isroutine(totest.get_redshift_from_cosmic_time)
-
-    def test_instance_get_redshift_bin_edges(self):
-        assert isroutine(totest.get_redshift_bin_edges)
-
-    def test_instance_get_redshift_bin_centers(self):
-        assert isroutine(totest.get_redshift_bin_centers)
 
 class TestFunctions:
 
