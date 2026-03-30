@@ -15,6 +15,7 @@ np = totest.np
 # module you like to test
 from pytest import approx, fixture, raises
 
+
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
@@ -120,7 +121,7 @@ class TestMoe17PsandQs:
             n_M1=3, n_logP=5, n_q=5, n_e=10)
         assert model.numM1 == 3
 
-    # __call__ 
+    # __call__
 
     def test_call_single_mass(self, small_model):
         """Generate sample for a single primary mass."""
@@ -178,7 +179,7 @@ class TestMoe17PsandQs:
         M2, P, e, Z = model(0.5, M_min=0.08, all_binaries=False)
         assert len(M2) == 1
         assert Z[0] > 0
-        
+
     def test_call_low_mass_q_truncation(self):
         """M1 < 0.8 inside the binary path should truncate q distribution."""
         model = totest.Moe_17_PsandQs(

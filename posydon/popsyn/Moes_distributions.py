@@ -376,7 +376,7 @@ class Moe_17_PsandQs():
         return ("<h3>Moe and Di Stefano 2017 distributions on a grid of</h3>"
                 f"<p>n_M1={self.numM1}</p><p>n_logP={self.numlogP}</p>"
                 f"<p>n_q={self.numq}</p><p>n_e={self.nume}</p>")
-    
+
     def __call__(self, M1, M_min=0.08, M_max=150.0, all_binaries=True):
         """Initializing the class.
 
