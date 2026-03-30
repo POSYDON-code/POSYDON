@@ -200,7 +200,7 @@ class TestFunctions:
                            formation_channels_chunk=None, S1_S2='S1')
         assert not df.empty
         assert 'channel' not in df.columns
-        
+
     def test_chi_eff(self,array,nan_array,wrong_array):
         # missing argument
         with raises(TypeError,match="missing 6 required positional arguments"):
