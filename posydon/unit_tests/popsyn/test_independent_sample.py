@@ -55,7 +55,7 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="Allowed orbital schemes are separation or period."):
             totest.generate_independent_samples('test')
-            
+
         # bad mass ranges
         with raises(ValueError, match="primary_mass_max must be larger than primary_mass_min."):
             totest.generate_independent_samples(
@@ -90,17 +90,17 @@ class TestFunctions:
         assert isinstance(orb_p, np.ndarray)
         assert len(orb_p) == 1
         assert all(np.isfinite(m1_p))
-    
+
     def test_use_Moe_17_PsandQs(self):
-        
+
         # returns True for Moe+17-PsandQs secondary_mass_scheme
         assert totest.use_Moe_17_PsandQs(secondary_mass_scheme='Moe+17-PsandQs') is True
-        
+
         # returns True for Moe+17-PsandQs orbital_period_scheme with period scheme
         assert totest.use_Moe_17_PsandQs(
             orbital_scheme='period',
             orbital_period_scheme='Moe+17-PsandQs') is True
-        
+
         # returns True for Moe+17-PsandQs eccentricity_scheme
         assert totest.use_Moe_17_PsandQs(eccentricity_scheme='Moe+17-PsandQs') is True
         # returns False for non-Moe schemes
@@ -109,7 +109,7 @@ class TestFunctions:
             orbital_scheme='period',
             orbital_period_scheme='Sana+12_period_extended',
             eccentricity_scheme='zero') is False
-   
+
     def test_generate_orbital_periods(self):
         # missing argument
         with raises(TypeError, match="missing 1 required positional argument: 'primary_masses'"):
@@ -139,7 +139,7 @@ class TestFunctions:
             totest.generate_orbital_separations(orbital_separation_min=10.,
                                                 orbital_separation_max=1.)
 
-        # bad input: min > max with log_normal 
+        # bad input: min > max with log_normal
         with raises(ValueError, match="`orbital_separation_max` must be"):
             totest.generate_orbital_separations(
                 orbital_separation_scheme='log_normal',
@@ -267,5 +267,5 @@ class TestFunctions:
         for (m1, f) in tests_moe:
             result = totest.generate_binary_fraction(
                 binary_fraction_scheme='Moe+17-massdependent', m1=m1)
-            assert result[0] == f            
-            
+            assert result[0] == f
+

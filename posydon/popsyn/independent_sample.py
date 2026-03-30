@@ -411,7 +411,7 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
     elif not isinstance(m1,np.ndarray):
         m1 = np.asarray(m1)
     binary_fraction = np.zeros_like(m1, dtype=float)
-    
+
     # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options:
         raise ValueError("You must provide an allowed binary fraction scheme.")

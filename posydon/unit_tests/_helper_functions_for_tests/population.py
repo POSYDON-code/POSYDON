@@ -9,16 +9,17 @@ __authors__ = [
 ]
 
 import os
+
 import h5py
 import numpy as np
 import pandas as pd
 
-from posydon.popsyn.synthetic_population import (
-    Population, TransientPopulation, Rates
-)
 from posydon.popsyn.rate_calculation import (
-    DEFAULT_SFH_MODEL, get_redshift_bin_centers, get_cosmic_time_from_redshift
+    DEFAULT_SFH_MODEL,
+    get_cosmic_time_from_redshift,
+    get_redshift_bin_centers,
 )
+from posydon.popsyn.synthetic_population import Population, Rates, TransientPopulation
 
 # helper functions
 
@@ -135,7 +136,7 @@ def make_test_pop(
         "posydon_version": "test",
     }
     ini_df = pd.DataFrame({k: [v] for k, v in ini_params.items()})
-    
+
 
     # mass_per_metallicity
     mass_df = pd.DataFrame(

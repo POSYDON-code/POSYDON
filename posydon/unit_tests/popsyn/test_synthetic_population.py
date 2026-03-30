@@ -25,8 +25,12 @@ import os
 import shutil
 
 from posydon.unit_tests._helper_functions_for_tests.population import (
-    make_test_pop, make_ini, make_test_transient_pop, make_test_rates
+    make_ini,
+    make_test_pop,
+    make_test_rates,
+    make_test_transient_pop,
 )
+
 
 # define test classes collecting several test functions
 class TestElements:
@@ -1224,8 +1228,9 @@ class TestRates:
 
         # Add rates structure
         from posydon.popsyn.rate_calculation import (
-            DEFAULT_SFH_MODEL, get_redshift_bin_centers,
+            DEFAULT_SFH_MODEL,
             get_cosmic_time_from_redshift,
+            get_redshift_bin_centers,
         )
         MODEL = dict(DEFAULT_SFH_MODEL)
         z_birth = get_redshift_bin_centers(MODEL["delta_t"])

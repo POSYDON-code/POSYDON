@@ -2831,7 +2831,7 @@ class Rates(TransientPopulation):
         met_val = np.log10(self.centers_metallicity_bins)
         bin_met = np.zeros(len(met_val) + 1)
         # if more than one metallicty bin
-        if len(met_val) > 1: 
+        if len(met_val) > 1:
             bin_met[0] = met_val[0] - (met_val[1] - met_val[0]) / 2.0
             bin_met[-1] = met_val[-1] + (met_val[-1] - met_val[-2]) / 2.0
             bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.0
