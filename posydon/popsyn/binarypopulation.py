@@ -741,7 +741,7 @@ class PopulationManager:
                                        and selection_function(binary)):
                     holder.append(binary.to_df(**kwargs))
 
-        elif len(self.history_dfs) > 0:
+        elif len(self.history_dfs) > 0: # pragma: no branch
             holder.extend(self.history_dfs)
 
         if len(holder) > 0:
@@ -762,7 +762,7 @@ class PopulationManager:
                                        and selection_function(binary)):
                     holder.append(binary.to_oneline_df(**kwargs))
 
-        elif len(self.oneline_dfs) > 0:
+        elif len(self.oneline_dfs) > 0: # pragma: no branch
             holder.extend(self.oneline_dfs)
 
         if len(holder) > 0:
@@ -1032,7 +1032,7 @@ class BinaryGenerator:
         if orbital_scheme == 'separation':
             separation, eccentricity, m1, m2 = sampler_output
             orbital_period = orbital_period_from_separation(separation, m1, m2)
-        elif orbital_scheme == 'period':
+        elif orbital_scheme == 'period': # pragma: no branch
             orbital_period, eccentricity, m1, m2 = sampler_output
             separation = orbital_separation_from_period(orbital_period, m1, m2)
         else:

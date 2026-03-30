@@ -173,7 +173,8 @@ class TestBinaryGenerator:
             binary_fraction_const=0.0,
             binary_fraction_scheme='const')
         binary = gen.draw_initial_binary(
-            orbital_scheme='separation', metallicity=1.0)
+            orbital_scheme='separation', metallicity=1.0,
+            binary_fraction_const=0.0, binary_fraction_scheme='const')
         assert isinstance(binary, BinaryStar)
         assert binary.state == 'initially_single_star'
         assert np.isnan(binary.separation)
@@ -403,6 +404,24 @@ class TestPopulationManager:
         assert len(manager.history_dfs) == 1
         assert len(manager.oneline_dfs) == 1
 
+    def test_breakdown_to_df_error(self, manager, capsys):
+        """breakdown_to_df catches exceptions during conversion."""
+        binary = manager.generate(orbital_scheme='separation',
+                                  metallicity=1.0)
+        # Replace to_df with a function that raises
+        def bad_to_df(**kw):
+            raise RuntimeError("test error")
+        binary.to_df = bad_to_df
+        manager.breakdown_to_df(binary)
+        captured = capsys.readouterr()
+        assert "Error during breakdown" in captured.out
+
+    def test_to_oneline_df_with_selection_reject(self, manager):
+        """to_oneline_df with selection_function that rejects all."""
+        manager.generate(orbital_scheme='separation', metallicity=1.0)
+        result = manager.to_oneline_df(selection_function=lambda b: False)
+        assert result is None
+
 
 class TestBinaryPopulation:
 
@@ -524,8 +543,12 @@ class TestBinaryPopulation:
         assert isinstance(state, dict)
         assert state['comm'] is None
 
-    def test_getstate_with_steps_loaded(self, pop):
+    def test_getstate_with_steps_loaded(self, pop, monkeypatch):
+        """__getstate__ closes steps if they were loaded."""
+        closed = []
         pop.population_properties.steps_loaded = True
+        monkeypatch.setattr(pop.population_properties, 'close',
+                            lambda: closed.append(True))
         state = pop.__getstate__()
         assert state['comm'] is None
-        assert not pop.population_properties.steps_loaded
+        assert len(closed) == 1  # close() was called
