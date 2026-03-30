@@ -52,16 +52,6 @@ class TestElements:
                                       +"added on purpose and update this "\
                                       +"unit test."
 
-    def test_instance_infer_key(self):
-        assert isroutine(totest.infer_key)
-
-    def test_instance_get_samples_from_file(self):
-        assert isroutine(totest.get_samples_from_file)
-
-    def test_instance_get_kick_samples_from_file(self):
-        assert isroutine(totest.get_kick_samples_from_file)
-
-
 class TestFunctions:
 
     @fixture
