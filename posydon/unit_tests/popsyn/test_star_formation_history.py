@@ -777,6 +777,16 @@ class TestChruslinska21:
         chruslinska_model.SFR_data = np.zeros_like(chruslinska_model.SFR_data)
         with pytest.raises(AssertionError):
             result = chruslinska_model.mean_metallicity(z_values)
+            
+    def test_lowest_z_bin(self, chruslinska_model, mock_chruslinska_data):
+        """Test that if z is below the lowest bin, it uses the lowest bin."""
+        z_values = np.array([-1.0, 0.0, 0.5])
+        met_bins = np.array([0.001, 0.01, 0.02, 0.03])
+
+        result = chruslinska_model.fSFR(z_values, met_bins)
+
+        # The value at -1.0 should be the same as at 0.0
+        assert np.allclose(result[0], result[1])
 
     def test_csfrd_calculation(self, chruslinska_model, mock_chruslinska_data):
         """Test the CSFRD method."""
@@ -812,11 +822,6 @@ class TestChruslinska21:
         chruslinska_model.SFR_data[0] = np.zeros_like(chruslinska_model.SFR_data[0])
         result = chruslinska_model.fSFR(z, met_bins)
         np.testing.assert_allclose(result[0], np.zeros_like(result[0]))
-
-        # Test with redshift below minimum (covers L839-846 warning branch)
-        z_low = np.array([-0.1, 2.0])
-        result = chruslinska_model.fSFR(z_low, met_bins)
-        assert result.shape == (2, 3)
 
 class TestZavala21:
     """Tests for the Zavala21 SFH model with mocked data loading."""
