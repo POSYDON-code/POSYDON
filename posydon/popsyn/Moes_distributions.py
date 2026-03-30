@@ -367,12 +367,12 @@ class Moe_17_PsandQs():
             # save to grid
             self.cumPbindist[:,i] = mycumPbindist
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         return ("Moe and Di Stefano 2017 distributions on a grid of "
                 f"n_M1={self.numM1}, n_logP={self.numlogP}, n_q={self.numq}, and "
                 f"n_e={self.nume}")
 
-    def _repr_html_(self):
+    def _repr_html_(self): # pragma: no cover
         return ("<h3>Moe and Di Stefano 2017 distributions on a grid of</h3>"
                 f"<p>n_M1={self.numM1}</p><p>n_logP={self.numlogP}</p>"
                 f"<p>n_q={self.numq}</p><p>n_e={self.nume}</p>")

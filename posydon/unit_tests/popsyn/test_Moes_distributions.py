@@ -178,6 +178,16 @@ class TestMoe17PsandQs:
         M2, P, e, Z = model(0.5, M_min=0.08, all_binaries=False)
         assert len(M2) == 1
         assert Z[0] > 0
+        
+    def test_call_low_mass_q_truncation(self):
+        """M1 < 0.8 inside the binary path should truncate q distribution."""
+        model = totest.Moe_17_PsandQs(
+            n_M1=5, n_logP=10, n_q=10, n_e=20,
+            RNG=np.random.default_rng(seed=42))
+        M2, P, e, Z = model(0.5, M_min=0.08, all_binaries=True)
+        assert len(M2) == 1
+        # M2 = M1 * q, and q >= q_min = M_min/M1 = 0.08/0.5 = 0.16
+        assert M2[0] >= 0.08 * 0.99  # M2 >= M_min (small tolerance)
 
     def test_call_metallicity_range(self, small_model):
         """Metallicities should be within the expected range."""
