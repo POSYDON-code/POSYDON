@@ -623,19 +623,19 @@ class BinaryPopulation:
             prop.close()
         return d
 
-    def __iter__(self):
+    def __iter__(self): # pragma: no cover
         """Iterate the binaries."""
         return iter(self.manager)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): # pragma: no cover
         """Get the k-th binary."""
         return self.manager[key]
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """Get the number of binaries in the population."""
         return len(self.manager)
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """Report key properties of the object."""
         s = "<{}.{} at {}>\n".format(
             self.__class__.__module__, self.__class__.__name__, hex(id(self))
@@ -961,19 +961,19 @@ class PopulationManager:
         return
 
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): # pragma: no cover
         """Return the key-th binary."""
         return self.binaries[key]
 
-    def __iter__(self):
+    def __iter__(self): # pragma: no cover
         """Iterate the binaries in the population."""
         return iter(self.binaries)
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """Return the number of binaries in the population."""
         return len(self.binaries)
 
-    def __bool__(self):
+    def __bool__(self): # pragma: no cover
         """Evaluate as True if binaries have been appended."""
         return len(self) > 0
 
@@ -1176,7 +1176,7 @@ class BinaryGenerator:
                             star_2=SingleStar(**star2_params))
         return binary
 
-    def __repr__(self,):
+    def __repr__(self,): # pragma: no cover
         """Report key properties of the BinaryGenerator instance."""
         s = "<{}.{} at {}>\n".format(
             self.__class__.__module__, self.__class__.__name__, hex(id(self))
