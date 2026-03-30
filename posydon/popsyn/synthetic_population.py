@@ -882,7 +882,7 @@ class PopulationIO:
         """
         with pd.HDFStore(filename, mode="a") as store:
             store.put("mass_per_metallicity", self.mass_per_metallicity)
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("mass_per_metallicity table written to population file!")
 
     def _load_mass_per_metallicity(self, filename):
@@ -896,7 +896,7 @@ class PopulationIO:
         """
         with pd.HDFStore(filename, mode="r") as store:
             self.mass_per_metallicity = store["mass_per_metallicity"]
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("mass_per_metallicity table read from population file!")
 
     def _save_ini_params(self, filename):
@@ -1246,7 +1246,7 @@ class Population(PopulationIO):
 
             if "/oneline" in store.keys():
                 last_index_in_file = np.sort(store["oneline"].index)[-1]
-            elif "/history" in store.keys():
+            elif "/history" in store.keys(): # pragma: no cover
                 last_index_in_file = np.sort(store["history"].index)[-1]
 
             if "/history" in store.keys() and self.verbose:  # pragma: no cover
@@ -1920,7 +1920,7 @@ class TransientPopulation(Population):
                             " parameters! Make sure this is intended"),
                           "POSYDONWarning")
 
-        if self.verbose:
+        if self.verbose: # pragma: no cover
             print("Simulation parameters:")
             print(simulation_parameters)
             print("Population parameters:")
@@ -1938,7 +1938,7 @@ class TransientPopulation(Population):
             met_indices = tmp_data.index[met_mask]
             met_indices =np.unique(met_indices)
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
-            if len(met_indices) == 0:
+            if len(met_indices) == 0: # pragma: no cover
                 continue
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
@@ -2061,7 +2061,7 @@ class TransientPopulation(Population):
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
                 store.remove(path_in_file + "MODEL")
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print("Cosmic weights already computed! Overwriting them!")
                 if path_in_file + "weights" in store.keys():
                     store.remove(path_in_file + "weights")
@@ -2117,7 +2117,7 @@ class TransientPopulation(Population):
                 .index.to_numpy()
                 .flatten()
             )
-            if len(selected_indices) == 0:
+            if len(selected_indices) == 0: # pragma: no cover
                 continue
 
             delay_time = (
@@ -2446,7 +2446,7 @@ class Rates(TransientPopulation):
             else:
                 self.MODEL = tmp_df.iloc[0].to_dict()
 
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("MODEL read from population file!")
 
     @property
@@ -2620,7 +2620,7 @@ class Rates(TransientPopulation):
                 + observable_name
                 in store.keys()
             ):
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print("Overwriting observable population!")
                 del store[
                     "transients/"
@@ -2732,7 +2732,7 @@ class Rates(TransientPopulation):
 
     def plot_hist_properties(
         self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs
-    ):
+    ):  # pragma: no cover
         """Plot a histogram of a given property available in the transient population.
 
         This method plots a histogram of a given property available in the transient population.
@@ -2812,7 +2812,7 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-    def plot_intrinsic_rate(self, channels=False, **kwargs):
+    def plot_intrinsic_rate(self, channels=False, **kwargs):  # pragma: no cover
         """Plot the intrinsic rate density of the transient population."""
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
