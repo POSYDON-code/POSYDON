@@ -73,9 +73,9 @@ class TestElements:
         assert isinstance(totest.default_kwargs['number_of_binaries'], int), \
             "number_of_binaries should be an integer"
 
-    def test_instance_metallicity(self):
-        assert isinstance(totest.default_kwargs['metallicities'], float), \
-            "metallicities should be a float"
+    def test_instance_metallicities(self):
+        assert isinstance(totest.default_kwargs['metallicities'], list), \
+            "metallicities should be a list"
 
     def test_instance_star_formation(self):
         assert isinstance(totest.default_kwargs['star_formation'], str), \
