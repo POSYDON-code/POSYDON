@@ -991,11 +991,20 @@ class TestTransientPopulation:
         def mock_calc_weights(pop_data, M_sim, simulation_parameters,
                               population_parameters):
             return np.ones(len(pop_data)) * 0.5
+        
+        def mock_SFR(z, met_bins, SFH_MODEL):
+            return np.ones((len(z), len(met_bins) - 1)) * 1e-3
 
         monkeypatch.setattr(
             "posydon.popsyn.synthetic_population.calculate_model_weights",
             mock_calc_weights,
         )
+
+        monkeypatch.setattr(
+            "posydon.popsyn.synthetic_population.SFR_per_met_at_z",
+            mock_SFR,
+        )
+
         tpop.calculate_model_weights("mw1")
 
         # Call calculate_cosmic_weights
