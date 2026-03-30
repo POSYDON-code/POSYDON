@@ -37,12 +37,11 @@ class TestElements:
                     'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES', \
                     'clean_binary_history_df', 'clean_binary_oneline_df', \
                     'parse_inifile', 'simprop_kwargs_from_ini', \
-                    'binarypop_kwargs_from_ini', 'create_run_script_text', \
-                    'create_merge_script_text', \
+                    'binarypop_kwargs_from_ini', \
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__', \
                     'ConfigParser', 'ast', 'importlib', 'os', 'errno', \
-                    'pprint', 'np', 'pd','SimulationProperties']
+                    'pprint', 'np', 'pd',]
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -392,62 +391,3 @@ class MyDummyClass:
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
         assert binkwargs['RANK'] is None
         assert binkwargs['size'] is None
-
-
-    def test_create_run_script_text(self):
-        # missing argument
-        with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
-            totest.create_run_script_text()
-        # bad input
-        with raises(NameError, match="name 'testfile' is not defined"):
-            totest.create_run_script_text(testfile.ini)
-        # example
-        out = textwrap.dedent("""\
-            from posydon.popsyn.binarypopulation import BinaryPopulation
-            from posydon.popsyn.io import binarypop_kwargs_from_ini
-            from posydon.utils.common_functions import convert_metallicity_to_string
-            import argparse
-            if __name__ == "__main__":
-                parser = argparse.ArgumentParser()
-                parser.add_argument('metallicity', type=float)
-                args = parser.parse_args()
-                ini_kw = binarypop_kwargs_from_ini('testfile.ini')
-                ini_kw['metallicity'] = args.metallicity
-                str_met = convert_metallicity_to_string(args.metallicity)
-                ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']
-                synpop = BinaryPopulation(**ini_kw)
-                synpop.evolve()""")
-        assert totest.create_run_script_text('testfile.ini') == out
-
-
-    def test_create_merge_script_text(self):
-        # missing argument
-        with raises(TypeError, match="missing 1 required positional argument: 'ini_file'"):
-            totest.create_merge_script_text()
-        # bad input
-        with raises(NameError, match="name 'testfile' is not defined"):
-            totest.create_merge_script_text(testfile.ini)
-        # example
-        out = textwrap.dedent("""\
-            from posydon.popsyn.binarypopulation import BinaryPopulation
-            from posydon.popsyn.io import binarypop_kwargs_from_ini
-            from posydon.utils.common_functions import convert_metallicity_to_string
-            import argparse
-            import os
-            if __name__ == "__main__":
-                parser = argparse.ArgumentParser()
-                parser.add_argument("metallicity", type=float)
-                args = parser.parse_args()
-                ini_kw = binarypop_kwargs_from_ini("testfile.ini")
-                ini_kw["metallicity"] = args.metallicity
-                str_met = convert_metallicity_to_string(args.metallicity)
-                ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]
-                synpop = BinaryPopulation(**ini_kw)
-                path_to_batch = ini_kw["temp_directory"]
-                tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]
-                tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))
-                synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)
-                print("done")
-                if len(os.listdir(path_to_batch)) == 0:
-                    os.rmdir(path_to_batch)""")
-        assert totest.create_merge_script_text('testfile.ini') == out
