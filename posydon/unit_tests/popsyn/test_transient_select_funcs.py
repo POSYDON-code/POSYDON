@@ -247,7 +247,7 @@ class TestFunctions:
         assert result[0] > 0
         # theta_2=0 means a2_perp=0, so chi_p comes from a1 term
         assert result[1] == approx(0.9, abs=1e-12)  # a1 * sin(pi/2) = 0.9
-        
+
     def test_m_chirp(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'm_2'"):
