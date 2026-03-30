@@ -542,7 +542,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['comm'] = None
 
                 # Check if we are running as a job array
-                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
+                if JOB_ID is not None and pop_kwargs['use_MPI'] is True: # pragma: no cover
                     raise ValueError('MPI must be turned off for job arrays.')
                 elif JOB_ID is not None:
                     pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
@@ -570,7 +570,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['include_S1']:
                 pop_kwargs['S1_kwargs'] = S1_kwargs
 
-        elif section == 'SingleStar_2_output':
+        elif section == 'SingleStar_2_output': # pragma: no branch
             S2_kwargs = dict()
             for key, val in parser[section].items():
                 S2_kwargs[key] = ast.literal_eval(val)

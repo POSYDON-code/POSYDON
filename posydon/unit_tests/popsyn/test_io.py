@@ -25,22 +25,19 @@ from inspect import isclass, isroutine
 # module you like to test
 from pytest import approx, fixture, raises, warns
 
-from posydon.binary_evol.simulationproperties import SimulationProperties
-
-
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['BINARYPROPERTIES_DTYPES', 'OBJECT_FIXED_SUB_DTYPES', \
-                    'STARPROPERTIES_DTYPES', 'EXTRA_BINARY_COLUMNS_DTYPES', \
-                    'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES', \
-                    'clean_binary_history_df', 'clean_binary_oneline_df', \
-                    'parse_inifile', 'simprop_kwargs_from_ini', \
-                    'binarypop_kwargs_from_ini', \
-                    '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__', \
-                    'ConfigParser', 'ast', 'importlib', 'os', 'errno', \
+        elements = ['BINARYPROPERTIES_DTYPES', 'OBJECT_FIXED_SUB_DTYPES',
+                    'STARPROPERTIES_DTYPES', 'EXTRA_BINARY_COLUMNS_DTYPES',
+                    'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES',
+                    'clean_binary_history_df', 'clean_binary_oneline_df',
+                    'parse_inifile', 'simprop_kwargs_from_ini',
+                    'binarypop_kwargs_from_ini',
+                    '__builtins__', '__cached__', '__doc__', '__file__',
+                    '__loader__', '__name__', '__package__', '__spec__',
+                    'ConfigParser', 'ast', 'importlib', 'os', 'errno',
                     'pprint', 'np', 'pd',]
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
@@ -129,14 +126,6 @@ class TestFunctions:
 
         [SingleStar_2_output]
         include_S2 = False
-
-        [flow]
-        import = ['builtins', 'int']
-
-        [extra_hooks]
-        import_1 = ['builtins', 'int']
-        absolute_import_1 = None
-        kwargs_1 = {}
         """
         file_path = os.path.join(tmp_path, "binpop.ini")
         with open(file_path, "w") as f:
@@ -162,14 +151,6 @@ class TestFunctions:
 
         [SingleStar_2_output]
         include_S2 = False
-
-        [flow]
-        import = ['builtins', 'int']
-
-        [extra_hooks]
-        import_1 = ['builtins', 'int']
-        absolute_import_1 = None
-        kwargs_1 = {}
         """
         file_path = os.path.join(tmp_path, "binpop_mpi.ini")
         with open(file_path, "w") as f:
@@ -202,14 +183,6 @@ class TestFunctions:
         only_select_columns = [
             'log_L',
             'lg_mdot']
-
-        [flow]
-        import = ['builtins', 'int']
-
-        [extra_hooks]
-        import_1 = ['builtins', 'int']
-        absolute_import_1 = None
-        kwargs_1 = {}
         """
         file_path = os.path.join(tmp_path, "binpop_stars.ini")
         with open(file_path, "w") as f:
@@ -333,6 +306,11 @@ class TestFunctions:
         assert hooks[1][0] is dummy_cls
         assert hooks[1][1] == {}
 
+        # test with 'only' parameter
+        simkwargs_only = totest.simprop_kwargs_from_ini(sim_ini, only='step_HMS_HMS')
+        assert 'step_HMS_HMS' in simkwargs_only
+        assert 'flow' not in simkwargs_only
+
         # absolute imports
         dummy_code = """
 class MyDummyClass:
@@ -363,11 +341,8 @@ class MyDummyClass:
         monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "123")
         with raises(ValueError, match="MPI must be turned off for job arrays."):
             totest.binarypop_kwargs_from_ini(binpop_ini_mpi)
-        # example: include s1 and s2
-        class DummySimProps:
-            def __init__(self, **kwargs):
-                self.config = kwargs
-        monkeypatch.setattr(totest, "SimulationProperties", DummySimProps)
+            
+        # example: include S1 and S2
         monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "456")
         monkeypatch.setenv("SLURM_ARRAY_TASK_ID", "4")
         monkeypatch.setenv("SLURM_ARRAY_TASK_MIN", "2")
@@ -377,6 +352,7 @@ class MyDummyClass:
         assert "only_select_columns" in binkwargs["S1_kwargs"]
         assert "S2_kwargs" in binkwargs
         assert "log_L" in binkwargs["S2_kwargs"]["only_select_columns"]
+        
         # example: environment variables
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
         assert binkwargs["JOB_ID"] == 456
@@ -384,10 +360,14 @@ class MyDummyClass:
         assert binkwargs["size"] == 10
         assert isinstance(binkwargs, dict)
         assert binkwargs["metallicity"] == [0.02]
-        assert isinstance(binkwargs["population_properties"], DummySimProps)
-        assert "flow" in binkwargs["population_properties"].config
+        assert binkwargs["comm"] is None
+
         # example: no Job ID, no MPI
         monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
+        monkeypatch.delenv('SLURM_ARRAY_TASK_ID', raising=False)
+        monkeypatch.delenv('SLURM_ARRAY_TASK_MIN', raising=False)
+        monkeypatch.delenv('SLURM_ARRAY_TASK_COUNT', raising=False)
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
         assert binkwargs['RANK'] is None
         assert binkwargs['size'] is None
+        assert binkwargs['comm'] is None
