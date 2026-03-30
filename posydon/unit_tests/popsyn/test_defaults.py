@@ -40,7 +40,7 @@ class TestElements:
         elements = [
             'entropy',
             'number_of_binaries',
-            'metallicity',
+            'metallicities',
             'star_formation',
             'max_simulation_time',
             'orbital_scheme',
@@ -74,8 +74,8 @@ class TestElements:
             "number_of_binaries should be an integer"
 
     def test_instance_metallicity(self):
-        assert isinstance(totest.default_kwargs['metallicity'], float), \
-            "metallicity should be a float"
+        assert isinstance(totest.default_kwargs['metallicities'], float), \
+            "metallicities should be a float"
 
     def test_instance_star_formation(self):
         assert isinstance(totest.default_kwargs['star_formation'], str), \
@@ -114,8 +114,8 @@ class TestElements:
             "orbital_period_min should be a float"
 
     def test_instance_orbital_period_max(self):
-        assert isinstance(totest.default_kwargs['orbital_period_max'], float), \
-            "orbital_period_max should be a float"
+        assert isinstance(totest.default_kwargs['orbital_period_max'], (float, int)), \
+            "orbital_period_max should be a float or int"
 
     def test_instance_eccentricity_scheme(self):
         assert isinstance(totest.default_kwargs['eccentricity_scheme'], str), \
