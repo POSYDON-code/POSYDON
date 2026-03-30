@@ -111,7 +111,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
 
-    if any(formation_channels_chunk != None):
+    if formation_channels_chunk is not None:
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
