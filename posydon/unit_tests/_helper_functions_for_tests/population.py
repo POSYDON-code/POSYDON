@@ -291,8 +291,11 @@ def make_test_rates(
     base_path = "/transients/" + transient_name + "/rates/" + SFH_identifier + "/"
 
     with pd.HDFStore(tpop.filename, "a") as store:
-        # MODEL table
-        store.put(base_path + "MODEL", pd.DataFrame(MODEL, index=[0]))
+        # MODEL table — mirror _write_MODEL_data logic for dlogZ lists
+        if (MODEL["dlogZ"] is not None) and (not isinstance(MODEL["dlogZ"], float)):
+            store.put(base_path + "MODEL", pd.DataFrame(MODEL))
+        else:
+            store.put(base_path + "MODEL", pd.DataFrame(MODEL, index=[0]))
 
         # birth table
         store.put(base_path + "birth", pd.DataFrame({"z": z_birth, "t": t_birth}))

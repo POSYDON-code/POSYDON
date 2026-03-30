@@ -1915,7 +1915,7 @@ class TransientPopulation(Population):
         else:
             # check for different parameters
             for key in simulation_parameters.keys():
-                if key not in self.ini_params:
+                if key not in self.ini_params: # pragma: no branch
                     Pwarn((f"Parameter {key} not found in the population"
                             " parameters! Make sure this is intended"),
                           "POSYDONWarning")
