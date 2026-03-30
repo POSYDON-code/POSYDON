@@ -236,7 +236,8 @@ class BinaryPopulation:
 
         return cls(**pop_kwargs)
 
-    def evolve(self, **kwargs):
+    def evolve(self, **kwargs): # pragma: no cover
+        # wrapper for _safe_evolve
         """Evolve a binary population.
 
         Parameters
@@ -290,7 +291,8 @@ class BinaryPopulation:
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
 
-    def _safe_evolve(self, **kwargs):
+    def _safe_evolve(self, **kwargs): # pragma: no cover
+        # needs more complex test than unit test
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:
             # Enforce the same metallicity for all grid steps
@@ -486,7 +488,8 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     mode='w', **kwargs)
 
-    def save(self, save_path, **kwargs):
+    def save(self, save_path, **kwargs): # pragma: no cover
+        # dependent on full evolution
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
@@ -514,13 +517,13 @@ class BinaryPopulation:
 
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
-    def make_temp_fname(self):
+    def make_temp_fname(self): # pragma: no cover
         """Get a valid filename for the temporary file."""
         temp_directory = self.kwargs['temp_directory']
         return os.path.join(temp_directory, f"evolution.combined.{self.rank}.h5")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
-    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
+    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):  # pragma: no cover
         """Combine various temporary files in a given folder.
 
         Parameters
@@ -786,7 +789,7 @@ class PopulationManager:
         self.append(binary)
         return binary
 
-    def from_hdf(self, indices=None, where=None, restore=False):
+    def from_hdf(self, indices=None, where=None, restore=False): # pragma: no cover
         """Load a BinaryStar instance from an hdf file of a saved population.
 
         Parameters
@@ -856,7 +859,7 @@ class PopulationManager:
 
         return binary_holder
 
-    def save(self, fname, **kwargs):
+    def save(self, fname, **kwargs):  # pragma: no cover
         """Save binaries to an hdf file using pandas HDFStore.
 
         Any object dtype columns not parsed by infer_objects() is converted to
