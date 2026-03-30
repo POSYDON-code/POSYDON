@@ -47,15 +47,6 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     """
     global _gen_Moe_17_PsandQs
 
-    primary_mass_min = kwargs.get("primary_mass_min", 7)
-    primary_mass_max = kwargs.get("primary_mass_max", 120)
-    secondary_mass_min = kwargs.get("secondary_mass_min", 0.35)
-    secondary_mass_max = kwargs.get("secondary_mass_max", 120)
-    if primary_mass_max < primary_mass_min:
-        raise ValueError("primary_mass_max must be larger than primary_mass_min.")
-    if secondary_mass_max < secondary_mass_min:
-        raise ValueError("secondary_mass_max must be larger than secondary_mass_min.")
-
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 

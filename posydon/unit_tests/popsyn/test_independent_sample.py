@@ -55,17 +55,6 @@ class TestFunctions:
         with raises(ValueError, match="Allowed orbital schemes are separation or period."):
             totest.generate_independent_samples('test')
 
-        # bad mass ranges
-        with raises(ValueError, match="primary_mass_max must be larger than primary_mass_min."):
-            totest.generate_independent_samples(
-                'period', primary_mass_min=200, primary_mass_max=10,
-                RNG=np.random.default_rng(seed=42))
-
-        with raises(ValueError, match="secondary_mass_max must be larger than secondary_mass_min."):
-            totest.generate_independent_samples(
-                'period', secondary_mass_min=200, secondary_mass_max=10,
-                RNG=np.random.default_rng(seed=42))
-
         # separation scheme
         orb, ecc, m1, m2 = totest.generate_independent_samples(
             orbital_scheme='separation',
