@@ -20,8 +20,8 @@ from inspect import isclass, isroutine
 from pytest import approx, fixture, raises
 
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.binary_evol.singlestar import SingleStar
 
 
 # define test classes collecting several test functions
