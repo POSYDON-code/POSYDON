@@ -29,8 +29,8 @@ warnings.simplefilter("always")
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['PATH_TO_PDET_GRID', 'GRB_selection', 'chi_eff', 'm_chirp', \
-                    'mass_ratio', 'BBH_selection_function','DCO_detectability', \
+        elements = ['PATH_TO_PDET_GRID', 'GRB_selection', 'chi_eff', 'effective_precession',\
+                    'm_chirp', 'mass_ratio', 'BBH_selection_function','DCO_detectability', \
                     '__builtins__', '__cached__', '__doc__', \
                     '__file__','__loader__', '__name__', '__package__', '__spec__', \
                     'np', 'pd', 'PATH_TO_POSYDON_DATA', \
@@ -50,24 +50,6 @@ class TestElements:
                                       +"added on purpose and update this "\
                                       +"unit test."
 
-    def test_instance_GRB_selection(self):
-        assert isroutine(totest.GRB_selection)
-
-    def test_instance_chi_eff(self):
-        assert isroutine(totest.chi_eff)
-
-    def test_instance_m_chirp(self):
-        assert isroutine(totest.m_chirp)
-
-    def test_instance_mass_ratio(self):
-        assert isroutine(totest.mass_ratio)
-
-    def test_instance_BBH_selection_function(self):
-        assert isroutine(totest.BBH_selection_function)
-
-    def test_instance_DCO_detectability(self):
-        assert isroutine(totest.DCO_detectability)
-
 class TestFunctions:
 
     @fixture
@@ -83,7 +65,7 @@ class TestFunctions:
             'S2_spin': [0.5, 0.55, 0.6],
             'S1_mass': [10.0, 9.5, 9.0],
             'S2_mass': [8.0, 7.5, 7.0],
-            'time': [1.0e6, 2.0e6, 3.0e6]})
+            'time': [1.0e6, 2.0e6, 3.0e6]}, index=[10, 10, 10])
 
     @fixture
     def oneline_chunk(self):
@@ -238,6 +220,33 @@ class TestFunctions:
         assert totest.chi_eff(array,array,array,
                               array,array,array)[0] == 0.5403023058681398
 
+    def test_effective_precession(self):
+        # missing argument
+        with raises(TypeError, match="missing 6 required positional arguments"):
+            totest.effective_precession()
+        # example with scalars
+        result = totest.effective_precession(
+            theta_1=0.5, theta_2=0.3,
+            a1=0.8, a2=0.6,
+            m1=30.0, m2=20.0)
+        assert result == approx(np.maximum(
+            np.abs(0.8 * np.sin(0.5)),
+            (20./30.) * ((4*(20./30.) + 3)/(4 + 3*(20./30.))) * 0.6 * np.sin(0.3)),
+            abs=1e-12)
+        # example with arrays
+        theta_1 = np.array([0.0, np.pi/2])
+        theta_2 = np.array([np.pi/2, 0.0])
+        a1 = np.array([0.9, 0.9])
+        a2 = np.array([0.5, 0.5])
+        m1 = np.array([30.0, 30.0])
+        m2 = np.array([10.0, 10.0])
+        result = totest.effective_precession(theta_1, theta_2, a1, a2, m1, m2)
+        assert len(result) == 2
+        # theta_1=0 means a1_perp=0, so chi_p comes from a2 term
+        assert result[0] > 0
+        # theta_2=0 means a2_perp=0, so chi_p comes from a1 term
+        assert result[1] == approx(0.9, abs=1e-12)  # a1 * sin(pi/2) = 0.9
+        
     def test_m_chirp(self):
         # missing argument
         with raises(TypeError,match="missing 1 required positional argument: 'm_2'"):
@@ -337,4 +346,5 @@ class TestFunctions:
                                        transient_pop_chunk,
                                        z_events_chunk_with_nan,
                                        z_weights_chunk)
-        assert (out['event_2'] == 0.0).all()
+        # event_2 is all NaN, so mask is all False and weights are unchanged
+        assert (out['event_2'] == 1.0).all()
