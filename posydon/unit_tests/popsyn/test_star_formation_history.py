@@ -777,7 +777,7 @@ class TestChruslinska21:
         chruslinska_model.SFR_data = np.zeros_like(chruslinska_model.SFR_data)
         with pytest.raises(AssertionError):
             result = chruslinska_model.mean_metallicity(z_values)
-            
+
     def test_lowest_z_bin(self, chruslinska_model, mock_chruslinska_data):
         """Test that if z is below the lowest bin, it uses the lowest bin."""
         z_values = np.array([-1.0, 0.0, 0.5])
