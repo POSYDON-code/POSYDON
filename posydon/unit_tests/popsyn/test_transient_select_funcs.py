@@ -141,7 +141,6 @@ class TestFunctions:
         return pd.DataFrame({
             'event_1': [0.1, np.nan],
             'event_2': [0.2, 0.3]})
-
     @fixture
     def z_events_chunk_with_nan(self):
         return pd.DataFrame({
@@ -179,11 +178,6 @@ class TestFunctions:
         assert 'S1_mass_postSN' in df.columns
         assert df['time'].iloc[0] == 3.0  # 3 Myr = 3e6 years * 1e-6
         assert df['channel'].iloc[0] == 'foo_CC1'
-        # example with no formation channels
-        df = totest.GRB_selection(history_chunk, oneline_chunk.copy(),
-                           formation_channels_chunk=None, S1_S2='S1')
-        assert not df.empty
-        assert 'channel' not in df.columns
         # example with S2
         chunk = oneline_chunk.copy()
         chunk['S1_m_disk_radiated'] = [0.0]
@@ -194,12 +188,19 @@ class TestFunctions:
         assert 'S2_mass_postSN' in df.columns
         assert 'metallicity' in df.columns
         assert 'channel' in df.columns
-        # example with no disk radiation
+        # example with no disk radiation (empty selection)
         chunk = oneline_chunk.copy()
         chunk['S1_m_disk_radiated'] = [0.0]
-        df = totest.GRB_selection(history_chunk, chunk, formation_channels_chunk=None,S1_S2='S1')
+        df = totest.GRB_selection(history_chunk, chunk,
+                           formation_channels_chunk=None, S1_S2='S1')
         assert df.empty
-
+        # example with no formation channels
+        # example with no formation channels
+        df = totest.GRB_selection(history_chunk, oneline_chunk.copy(),
+                           formation_channels_chunk=None, S1_S2='S1')
+        assert not df.empty
+        assert 'channel' not in df.columns
+        
     def test_chi_eff(self,array,nan_array,wrong_array):
         # missing argument
         with raises(TypeError,match="missing 6 required positional arguments"):
@@ -326,25 +327,25 @@ class TestFunctions:
                                      z_weights_chunk)
         # example: basic functionality
         out = totest.DCO_detectability('O3actual_H1L1V1', transient_pop_chunk,
-                                z_events_chunk, z_weights_chunk)
+                                z_events_chunk, z_weights_chunk.copy())
         assert isinstance(out, pd.DataFrame)
         assert out.shape == z_weights_chunk.shape
         assert (out.values <= 1.0).all()
         # example: missing q
         transient = transient_pop_chunk.drop(columns=['q'])
         out = totest.DCO_detectability('O3actual_H1L1V1', transient,
-                                z_events_chunk, z_weights_chunk)
+                                z_events_chunk, z_weights_chunk.copy())
         assert not out.empty
         # example: missing chi_eff
         transient = transient_pop_chunk.drop(columns=['chi_eff'])
         out = totest.DCO_detectability('O3actual_H1L1V1', transient,
-                                z_events_chunk, z_weights_chunk)
+                                z_events_chunk, z_weights_chunk.copy())
         assert not out.empty
         assert (out.values <= 1.0).all()
         # example: masking for nans in z_events_chunk
         out = totest.DCO_detectability('O3actual_H1L1V1',
                                        transient_pop_chunk,
                                        z_events_chunk_with_nan,
-                                       z_weights_chunk)
+                                       z_weights_chunk.copy())
         # event_2 is all NaN, so mask is all False and weights are unchanged
         assert (out['event_2'] == 1.0).all()
