@@ -17,6 +17,7 @@ sp = totest.sp
 from pytest import approx, fixture, raises, warns
 from scipy.interpolate import CubicSpline
 
+
 # define test classes collecting several test functions
 class TestElements:
 

@@ -14,7 +14,9 @@ np = totest.np
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import re
+
 from pytest import approx, raises
+
 
 # define test classes collecting several test functions
 class TestElements:
