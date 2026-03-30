@@ -268,4 +268,3 @@ class TestFunctions:
             result = totest.generate_binary_fraction(
                 binary_fraction_scheme='Moe+17-massdependent', m1=m1)
             assert result[0] == f
-

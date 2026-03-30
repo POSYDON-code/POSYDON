@@ -25,6 +25,7 @@ from inspect import isclass, isroutine
 # module you like to test
 from pytest import approx, fixture, raises, warns
 
+
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
@@ -341,7 +342,7 @@ class MyDummyClass:
         monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "123")
         with raises(ValueError, match="MPI must be turned off for job arrays."):
             totest.binarypop_kwargs_from_ini(binpop_ini_mpi)
-            
+
         # example: include S1 and S2
         monkeypatch.setenv("SLURM_ARRAY_JOB_ID", "456")
         monkeypatch.setenv("SLURM_ARRAY_TASK_ID", "4")
@@ -352,7 +353,7 @@ class MyDummyClass:
         assert "only_select_columns" in binkwargs["S1_kwargs"]
         assert "S2_kwargs" in binkwargs
         assert "log_L" in binkwargs["S2_kwargs"]["only_select_columns"]
-        
+
         # example: environment variables
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
         assert binkwargs["JOB_ID"] == 456
