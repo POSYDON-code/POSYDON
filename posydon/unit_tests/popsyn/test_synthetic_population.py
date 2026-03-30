@@ -991,7 +991,7 @@ class TestTransientPopulation:
         def mock_calc_weights(pop_data, M_sim, simulation_parameters,
                               population_parameters):
             return np.ones(len(pop_data)) * 0.5
-        
+
         def mock_SFR(z, met_bins, SFH_MODEL):
             return np.ones((len(z), len(met_bins) - 1)) * 1e-3
 

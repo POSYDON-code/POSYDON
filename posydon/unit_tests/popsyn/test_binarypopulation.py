@@ -20,8 +20,8 @@ from inspect import isclass, isroutine
 from pytest import approx, fixture, raises
 
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.binary_evol.singlestar import SingleStar
 
 
 # define test classes collecting several test functions
@@ -129,10 +129,18 @@ class TestBinaryGenerator:
         assert len(output['S1_mass']) == 3
         assert all(np.isfinite(output['S1_mass']))
 
-    def test_draw_initial_samples_bad_scheme(self, generator):
+    def test_draw_initial_samples_bad_scheme(self):
+        """Cover the else branch in draw_initial_samples itself."""
+        rng = np.random.default_rng(seed=42)
+        def mock_sampler(orbital_scheme, **kwargs):
+            # Returns data without validating scheme
+            return np.array([100.0]), np.array([0.1]), np.array([10.0]), np.array([5.0])
+        gen = totest.BinaryGenerator(
+            RNG=rng, metallicity=1.0, sampler=mock_sampler,
+            star_formation='burst', max_simulation_time=13.8e9)
         with raises(ValueError, match="Allowed orbital schemes"):
-            generator.draw_initial_samples(orbital_scheme='invalid')
-
+            gen.draw_initial_samples(orbital_scheme='invalid', number_of_binaries=1)            
+            
     def test_draw_initial_samples_no_number_of_binaries(self, generator):
         """When number_of_binaries not in kwargs, defaults to 1 for kicks."""
         output = generator.draw_initial_samples(orbital_scheme='separation')
