@@ -560,10 +560,25 @@ class TestPopulation:
 
         # /history and /oneline exist, yes ini_parameters, no mass_per_metallicity
         filename_no_mass = os.path.join(tmp_path, "pop_no_mass.h5")
+        full_ini = pd.DataFrame({
+            "metallicity": [0.02], "number_of_binaries": [1],
+            "binary_fraction_scheme": ["const"], "binary_fraction_const": [0.7],
+            "star_formation": ["burst"], "max_simulation_time": [13800000000.0],
+            "primary_mass_scheme": ["Kroupa2001"],
+            "primary_mass_min": [0.01], "primary_mass_max": [200.0],
+            "secondary_mass_scheme": ["flat_mass_ratio"],
+            "secondary_mass_min": [0.0005], "secondary_mass_max": [200.0],
+            "orbital_scheme": ["period"],
+            "orbital_period_scheme": ["Sana+12_period_extended"],
+            "orbital_period_min": [0.35], "orbital_period_max": [6000.0],
+            "orbital_separation_scheme": ["log_uniform"],
+            "orbital_separation_min": [5.0], "orbital_separation_max": [100000.0],
+            "eccentricity_scheme": ["zero"], "posydon_version": ["test"],
+        })
         with pd.HDFStore(filename_no_mass, "w") as store:
             store.put("history", history_df, format="table")
             store.put("oneline", oneline_df, format="table")
-            store.put("ini_parameters", pd.DataFrame({"Parameter": ["metallicity"], "Value": [0.02]}), format="table")
+            store.put("ini_parameters", full_ini, format="table")
         with raises(ValueError, match='does not contain a mass_per_metallicity table'):
             totest.Population(str(filename_no_mass))
 

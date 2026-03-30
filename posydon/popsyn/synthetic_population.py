@@ -2063,11 +2063,11 @@ class TransientPopulation(Population):
                 store.remove(path_in_file + "MODEL")
                 if self.verbose: # pragma: no cover
                     print("Cosmic weights already computed! Overwriting them!")
-                if path_in_file + "weights" in store.keys():
+                if path_in_file + "weights" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "weights")
-                if path_in_file + "z_events" in store.keys():
+                if path_in_file + "z_events" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "z_events")
-                if path_in_file + "birth" in store.keys():
+                if path_in_file + "birth" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "birth")
 
         self._write_MODEL_data(self.filename, path_in_file, MODEL)
@@ -2831,12 +2831,12 @@ class Rates(TransientPopulation):
         met_val = np.log10(self.centers_metallicity_bins)
         bin_met = np.zeros(len(met_val) + 1)
         # if more than one metallicty bin
-        if len(met_val) > 1:
+        if len(met_val) > 1: 
             bin_met[0] = met_val[0] - (met_val[1] - met_val[0]) / 2.0
             bin_met[-1] = met_val[-1] + (met_val[-1] - met_val[-2]) / 2.0
             bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.0
         # one metallicty bin
-        elif len(met_val) == 1:
+        elif len(met_val) == 1: # pragma: no branch
             if self.MODEL["dlogZ"] is None:
                 bin_met[0] = -9
                 bin_met[-1] = 0
@@ -2845,7 +2845,7 @@ class Rates(TransientPopulation):
                 bin_met[-1] = met_val[0] + self.MODEL["dlogZ"] / 2.0
             elif isinstance(self.MODEL["dlogZ"], list) or isinstance(
                 self.MODEL["dlogZ"], np.array
-            ):
+            ):  # pragma: no branch
                 bin_met[0] = self.MODEL["dlogZ"][0]
                 bin_met[-1] = self.MODEL["dlogZ"][1]
 
