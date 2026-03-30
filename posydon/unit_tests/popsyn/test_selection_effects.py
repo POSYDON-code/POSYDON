@@ -18,6 +18,7 @@ KNeighborsRegressor = totest.KNeighborsRegressor
 # module you like to test
 from pytest import approx, fixture, raises, warns
 
+
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
