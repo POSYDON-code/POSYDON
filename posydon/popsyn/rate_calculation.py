@@ -1,4 +1,4 @@
-__author__ = [
+__authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
 ]
