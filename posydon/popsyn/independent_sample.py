@@ -59,7 +59,8 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
+    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs): # pragma: no cover
+    # this requires an integration test with actual external datafiles. No unit test
         # initialize generator for Moe+17-PsandQs
         if _gen_Moe_17_PsandQs is None:
             _gen_Moe_17_PsandQs = Moe_17_PsandQs(**kwargs)
@@ -133,7 +134,7 @@ def generate_orbital_periods(primary_masses,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
-    """Randomaly generate orbital periods for a sample of binaries."""
+    """Randomly generate orbital periods for a sample of binaries."""
     RNG = kwargs.get('RNG', np.random.default_rng())
 
     # Check inputs
@@ -145,7 +146,7 @@ def generate_orbital_periods(primary_masses,
             p_max=orbital_period_max
         )
         orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
-    else: # pragma: no cover
+    else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
     return orbital_periods
@@ -410,8 +411,6 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
     elif not isinstance(m1,np.ndarray):
         m1 = np.asarray(m1)
     binary_fraction = np.zeros_like(m1, dtype=float)
-    else:
-        pass
     
     # Input parameter checks
     if binary_fraction_scheme not in binary_fraction_scheme_options:
