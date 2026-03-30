@@ -25,10 +25,8 @@ import os
 import shutil
 
 from posydon.unit_tests._helper_functions_for_tests.population import (
-    make_ini,
-    make_test_pop,
+    make_test_pop, make_ini, make_test_transient_pop, make_test_rates
 )
-
 
 # define test classes collecting several test functions
 class TestElements:
@@ -588,6 +586,11 @@ class TestPopulation:
         assert isinstance(pop.history, totest.History)
         assert isinstance(pop.oneline, totest.Oneline)
 
+        # Population with formation_channels already in the file
+        pop.calculate_formation_channels(mt_history=False)
+        pop_fc = totest.Population(pop.filename)
+        assert pop_fc.formation_channels is not None
+
         pop_with_metallicity = totest.Population(
             str(pop.filename), metallicity=0.02, ini_file=str(tmp_path / "dummy.ini")
         )
@@ -640,6 +643,14 @@ class TestPopulation:
         df = pd.read_hdf(out_file, "mass_per_metallicity")
         assert "number_of_systems" in df.columns
 
+        # export with formation channels present
+        pop_fc = make_test_pop(tmp_path, filename="pop_fc.h5")
+        pop_fc.calculate_formation_channels(mt_history=False)
+        fc_export = str(tmp_path / "fc_export.h5")
+        pop_fc.export_selection([0], fc_export, overwrite=True, history_chunksize=1)
+        with pd.HDFStore(fc_export, "r") as store:
+            assert "/formation_channels" in store.keys()
+
         # multiple metallicities error
         class DummyNoMet:
             columns = ["foo"]
@@ -691,57 +702,588 @@ class TestPopulation:
         with pd.HDFStore(pop.filename, "r") as store:
             assert "/formation_channels" in store.keys()
 
-    def test_create_transient_population(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+        # mt_history=True but mt_history_HMS_HMS not in oneline columns
+        class DummyOnelineNoMT:
+            columns = ["interp_class_HMS_HMS"]
+            number_of_systems = 4
+
+            def select(self, start=None, stop=None, columns=None):
+                data = [
+                    {"interp_class_HMS_HMS": "no_MT"},
+                    {"interp_class_HMS_HMS": "no_MT"},
+                    {"interp_class_HMS_HMS": "no_MT"},
+                    {"interp_class_HMS_HMS": "no_MT"},
+                ]
+                selected = data[start:stop]
+                while len(selected) < (stop - start):
+                    selected.append(data[-1])
+                df = pd.DataFrame(selected)
+                if columns is not None:
+                    df = df[columns]
+                return df
+
+        pop2 = make_test_pop(tmp_path, filename="pop_nomt.h5")
+        pop2.oneline = DummyOnelineNoMT()
+        pop2.chunksize = 2
+        with raises(ValueError, match="mt_history_HMS_HMS not saved"):
+            pop2.calculate_formation_channels(mt_history=True)
+
+    def test_create_transient_population(self, tmp_path):
+        pop = make_test_pop(
+            tmp_path,
+            filename="ctp.h5",
+            oneline_rows=[
+                {"binary_index": 0, "S1_mass_i": 10.0, "S2_mass_i": 5.0,
+                 "state_i": "initial", "metallicity": 0.02,
+                 "interp_class_HMS_HMS": "initial_MT",
+                 "mt_history_HMS_HMS": "Stable"},
+                {"binary_index": 1, "S1_mass_i": 8.0, "S2_mass_i": 4.0,
+                 "state_i": "initial", "metallicity": 0.02,
+                 "interp_class_HMS_HMS": "no_MT",
+                 "mt_history_HMS_HMS": None},
+            ],
+        )
+
+        # bad input: hist_cols missing 'time'
+        def dummy_func(hist, one, fc):
+            return pd.DataFrame({"time": [1.0], "metallicity": [0.02]})
+
+        with raises(ValueError, match="requires a time column"):
+            pop.create_transient_population(
+                dummy_func, "bad", hist_cols=["event"]
+            )
+
+        # func returns df missing 'time'
+        def func_no_time(hist, one, fc):
+            return pd.DataFrame({"metallicity": [0.02]})
+
+        with raises(ValueError, match="requires a time column"):
+            pop.create_transient_population(
+                func_no_time, "bad2", hist_cols=["time", "event"]
+            )
+
+        # func returns df missing 'metallicity'
+        def func_no_met(hist, one, fc):
+            return pd.DataFrame({"time": [1.0]})
+
+        with raises(ValueError, match="requires a metallicity column"):
+            pop.create_transient_population(
+                func_no_met, "bad3", hist_cols=["time", "event"]
+            )
+
+        # func returns df with duplicate columns
+        def func_dup_cols(hist, one, fc):
+            df = pd.DataFrame({"time": [1.0], "metallicity": [0.02]})
+            df = pd.concat([df, df[["time"]]], axis=1)
+            return df
+
+        with raises(ValueError, match="duplicate columns"):
+            pop.create_transient_population(
+                func_dup_cols, "bad4", hist_cols=["time", "event"]
+            )
+
+        # happy path
+        def good_func(hist, one, fc):
+            n = len(one)
+            return pd.DataFrame({
+                "time": np.ones(n) * 100.0,
+                "metallicity": np.ones(n) * 0.02,
+                "channel": ["ch_A"] * n,
+            })
+
+        result = pop.create_transient_population(
+            good_func, "BBH", hist_cols=["time", "event"]
+        )
+        assert isinstance(result, totest.TransientPopulation)
+        assert result.transient_name == "BBH"
+        with pd.HDFStore(pop.filename, "r") as store:
+            assert "/transients/BBH" in store.keys()
+
+        # default hist_cols and oneline_cols (None) -> uses all columns
+        result_defaults = pop.create_transient_population(
+            good_func, "BBH_defaults"
+        )
+        assert isinstance(result_defaults, totest.TransientPopulation)
+
+        # with formation_channels present
+        pop.calculate_formation_channels(mt_history=False)
+        result_fc = pop.create_transient_population(
+            good_func, "BBH_fc", hist_cols=["time", "event"]
+        )
+        assert isinstance(result_fc, totest.TransientPopulation)
+
+        # with oneline_cols specified
+        result_onecols = pop.create_transient_population(
+            good_func, "BBH_onecols",
+            hist_cols=["time", "event"],
+            oneline_cols=["S1_mass_i", "state_i"],
+        )
+        assert isinstance(result_onecols, totest.TransientPopulation)
+
+        # overwrite existing transient
+        result2 = pop.create_transient_population(
+            good_func, "BBH", hist_cols=["time", "event"]
+        )
+        assert isinstance(result2, totest.TransientPopulation)
+
+        # func that returns empty df -> None return
+        def empty_func(hist, one, fc):
+            return pd.DataFrame(columns=["time", "metallicity", "channel"])
+
+        result_none = pop.create_transient_population(
+            empty_func, "empty_trans", hist_cols=["time", "event"]
+        )
+        assert result_none is None
 
 class TestTransientPopulation:
 
-    def test_select(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_calculate_model_weights(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_calculate_cosmic_weights(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_efficiency(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
+    def test_init(self, tmp_path):
+        tpop = make_test_transient_pop(tmp_path, filename="tp_init.h5")
+        assert tpop.transient_name == "test_transient"
+
+        # bad transient name
+        with raises(ValueError, match="is not a valid transient population"):
+            totest.TransientPopulation(tpop.filename, "nonexistent")
+
+    def test_select(self, tmp_path):
+        tpop = make_test_transient_pop(tmp_path, filename="tp_sel.h5")
+
+        # select all
+        df = tpop.select()
+        assert isinstance(df, pd.DataFrame)
+        assert len(df) == 2
+        assert "time" in df.columns
+        assert "metallicity" in df.columns
+
+        # select with start/stop
+        df_slice = tpop.select(start=0, stop=1)
+        assert len(df_slice) == 1
+
+        # select specific columns
+        df_cols = tpop.select(columns=["time"])
+        assert list(df_cols.columns) == ["time"]
+
+    def test_calculate_model_weights(self, tmp_path, monkeypatch):
+        # Build a population with the columns calculate_model_weights needs
+        oneline_rows = [
+            {"binary_index": 0, "S1_mass_i": 10.0, "S2_mass_i": 5.0,
+             "orbital_period_i": 3.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "initial_MT",
+             "mt_history_HMS_HMS": "Stable"},
+            {"binary_index": 1, "S1_mass_i": 8.0, "S2_mass_i": 4.0,
+             "orbital_period_i": 5.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "no_MT",
+             "mt_history_HMS_HMS": None},
+        ]
+        tpop = make_test_transient_pop(
+            tmp_path, filename="tp_mw.h5", oneline_rows=oneline_rows,
+        )
+
+        # Monkeypatch calculate_model_weights to return known values
+        def mock_calc_weights(pop_data, M_sim, simulation_parameters,
+                              population_parameters):
+            return np.ones(len(pop_data)) * 0.5
+
+        monkeypatch.setattr(
+            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            mock_calc_weights,
+        )
+
+        result = tpop.calculate_model_weights("test_weights")
+        assert isinstance(result, pd.DataFrame)
+        assert "test_weights" in result.columns
+        assert len(result) == 2
+        assert (result["test_weights"] == 0.5).all()
+
+        # Verify it was stored in the HDF5 file
+        with pd.HDFStore(tpop.filename, "r") as store:
+            key = "/transients/test_transient/weights/test_weights"
+            assert key in store.keys()
+
+        # Overwrite warning on second call
+        result2 = tpop.calculate_model_weights("test_weights")
+        assert isinstance(result2, pd.DataFrame)
+
+        # Custom simulation_parameters triggers warning for unknown key
+        with warns(match="not found in the population"):
+            tpop.calculate_model_weights(
+                "test_weights2",
+                simulation_parameters={"fake_key": 999},
+            )
+
+        # Custom population_parameters (exercises the non-None branch)
+        custom_pop_params = {
+            'number_of_binaries': 100,
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
+            'star_formation': 'burst',
+            'max_simulation_time': 13800000000.0,
+            'primary_mass_scheme': 'Kroupa2001',
+            'primary_mass_min': 0.01,
+            'primary_mass_max': 200,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.0005,
+            'secondary_mass_max': 200,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6e3,
+            'eccentricity_scheme': 'zero',
+        }
+        result3 = tpop.calculate_model_weights(
+            "test_weights3", population_parameters=custom_pop_params,
+        )
+        assert isinstance(result3, pd.DataFrame)
+
+    def test_calculate_cosmic_weights(self, tmp_path, monkeypatch):
+        oneline_rows = [
+            {"binary_index": 0, "S1_mass_i": 10.0, "S2_mass_i": 5.0,
+             "orbital_period_i": 3.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "initial_MT",
+             "mt_history_HMS_HMS": "Stable"},
+            {"binary_index": 1, "S1_mass_i": 8.0, "S2_mass_i": 4.0,
+             "orbital_period_i": 5.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "no_MT",
+             "mt_history_HMS_HMS": None},
+        ]
+        tpop = make_test_transient_pop(
+            tmp_path, filename="tp_cw.h5", oneline_rows=oneline_rows,
+        )
+
+        # First, store model weights (required by calculate_cosmic_weights)
+        def mock_calc_weights(pop_data, M_sim, simulation_parameters,
+                              population_parameters):
+            return np.ones(len(pop_data)) * 0.5
+
+        monkeypatch.setattr(
+            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            mock_calc_weights,
+        )
+        tpop.calculate_model_weights("mw1")
+
+        # Call calculate_cosmic_weights
+        rates = tpop.calculate_cosmic_weights("SFH_test", "mw1")
+        assert isinstance(rates, totest.Rates)
+        assert rates.SFH_identifier == "SFH_test"
+
+        # Verify HDF5 structure
+        with pd.HDFStore(tpop.filename, "r") as store:
+            base = "/transients/test_transient/rates/SFH_test/"
+            assert base + "MODEL" in store.keys()
+            assert base + "weights" in store.keys()
+            assert base + "z_events" in store.keys()
+            assert base + "birth" in store.keys()
+
+        # Bad model_weights identifier
+        with raises(ValueError, match="Model weights not present"):
+            tpop.calculate_cosmic_weights("SFH2", "nonexistent_weights")
+
+        # Overwrite on second call
+        rates2 = tpop.calculate_cosmic_weights("SFH_test", "mw1")
+        assert isinstance(rates2, totest.Rates)
+
+        # Custom MODEL_in (exercises the MODEL_in is not None branch)
+        rates3 = tpop.calculate_cosmic_weights(
+            "SFH_custom", "mw1",
+            MODEL_in={"delta_t": 200},
+        )
+        assert isinstance(rates3, totest.Rates)
+        assert rates3.MODEL["delta_t"] == 200
+
+    def test_efficiency(self, tmp_path, monkeypatch):
+        oneline_rows = [
+            {"binary_index": 0, "S1_mass_i": 10.0, "S2_mass_i": 5.0,
+             "orbital_period_i": 3.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "initial_MT",
+             "mt_history_HMS_HMS": "Stable"},
+            {"binary_index": 1, "S1_mass_i": 8.0, "S2_mass_i": 4.0,
+             "orbital_period_i": 5.0, "eccentricity_i": 0.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "no_MT",
+             "mt_history_HMS_HMS": None},
+        ]
+        transient_rows = [
+            {"time": 100.0, "metallicity": 0.02, "channel": "ch_A"},
+            {"time": 200.0, "metallicity": 0.02, "channel": "ch_B"},
+        ]
+        tpop = make_test_transient_pop(
+            tmp_path, filename="tp_eff.h5",
+            oneline_rows=oneline_rows,
+            transient_rows=transient_rows,
+        )
+
+        # Store model weights
+        def mock_calc_weights(pop_data, M_sim, simulation_parameters,
+                              population_parameters):
+            return np.ones(len(pop_data)) * 0.5
+
+        monkeypatch.setattr(
+            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            mock_calc_weights,
+        )
+        tpop.calculate_model_weights("eff_weights")
+
+        # Without channels
+        eff = tpop.efficiency("eff_weights", channels=False)
+        assert isinstance(eff, pd.DataFrame)
+        assert "total" in eff.columns
+        assert len(eff) == 1  # one metallicity
+        assert eff["total"].iloc[0] > 0
+
+        # With channels
+        eff_ch = tpop.efficiency("eff_weights", channels=True)
+        assert "total" in eff_ch.columns
+        assert "ch_A" in eff_ch.columns
+        assert "ch_B" in eff_ch.columns
 
 class TestRates:
 
-    def test_select_rate_slice(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_calculate_intrinsic_rate_density(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_calculate_observable_population(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_observable_population(self):
-        # missing argument
-        # bad input
-        # examples
-        pass
-    def test_edges_metallicity_bins(self):
-        # TODO: needs Rates object setup
-        pass
+    def test_init(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_init.h5")
+        assert rates.SFH_identifier == "test_SFH"
+        assert rates.transient_name == "test_transient"
+        assert hasattr(rates, "MODEL")
+
+        # bad SFH_identifier
+        with raises(ValueError, match="is not a valid SFH_identifier"):
+            totest.Rates(rates.filename, "test_transient", "nonexistent")
+
+    def test_select_rate_slice(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_srs.h5")
+
+        # bad key
+        with raises(ValueError, match="key not in"):
+            rates.select_rate_slice("invalid_key")
+
+        # valid keys
+        w = rates.select_rate_slice("weights")
+        assert isinstance(w, pd.DataFrame)
+        assert len(w) == 2
+
+        z = rates.select_rate_slice("z_events")
+        assert isinstance(z, pd.DataFrame)
+        assert len(z) == 2
+
+        b = rates.select_rate_slice("birth")
+        assert isinstance(b, pd.DataFrame)
+        assert "z" in b.columns
+        assert "t" in b.columns
+
+        # with start/stop
+        w_slice = rates.select_rate_slice("weights", start=0, stop=1)
+        assert len(w_slice) == 1
+
+    def test_calculate_intrinsic_rate_density(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_ird.h5")
+
+        result = rates.calculate_intrinsic_rate_density(channels=False)
+        assert isinstance(result, pd.DataFrame)
+        assert "total" in result.columns
+        assert len(result) > 0
+
+        # Stored in file
+        with pd.HDFStore(rates.filename, "r") as store:
+            assert rates.base_path + "intrinsic_rate_density" in store.keys()
+
+        # Access via property
+        stored = rates.intrinsic_rate_density
+        pd.testing.assert_frame_equal(stored, result)
+
+    def test_calculate_intrinsic_rate_density_channels(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_ird_ch.h5")
+
+        result = rates.calculate_intrinsic_rate_density(channels=True)
+        assert "total" in result.columns
+
+    def test_intrinsic_rate_density_not_computed(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_ird_nc.h5")
+
+        # Property should raise before computing
+        with raises(ValueError, match="First you need to compute"):
+            _ = rates.intrinsic_rate_density
+
+    def test_calculate_observable_population(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_cop.h5")
+
+        # Simple observable func: halve the weights
+        def obs_func(transient_chunk, z_events_chunk, weights_chunk):
+            return weights_chunk * 0.5
+
+        rates.calculate_observable_population(obs_func, "test_obs")
+
+        # Verify stored
+        with pd.HDFStore(rates.filename, "r") as store:
+            key = ("/transients/test_transient/rates/observable/test_obs")
+            assert key in store.keys()
+
+        # Overwrite on second call
+        rates.calculate_observable_population(obs_func, "test_obs")
+
+    def test_observable_population(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_op.h5")
+
+        # Not yet computed -> ValueError
+        with raises(ValueError, match="is not a valid observable population"):
+            rates.observable_population("nonexistent")
+
+        # Compute, then retrieve
+        def obs_func(transient_chunk, z_events_chunk, weights_chunk):
+            return weights_chunk * 0.5
+
+        rates.calculate_observable_population(obs_func, "obs1")
+        result = rates.observable_population("obs1")
+        assert isinstance(result, pd.DataFrame)
+        assert len(result) == 2
+
+    def test_observable_population_names(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_opn.h5")
+
+        # No observables yet
+        assert rates.observable_population_names == []
+
+        # Add one
+        def obs_func(transient_chunk, z_events_chunk, weights_chunk):
+            return weights_chunk * 0.5
+
+        rates.calculate_observable_population(obs_func, "obs_A")
+        names = rates.observable_population_names
+        assert "obs_A" in names
+
+    def test_edges_metallicity_bins(self, tmp_path):
+        # Multiple metallicities
+        transient_rows = [
+            {"time": 100.0, "metallicity": 0.01, "channel": "ch_A"},
+            {"time": 200.0, "metallicity": 0.02, "channel": "ch_B"},
+        ]
+        oneline_rows = [
+            {"binary_index": 0, "S1_mass_i": 10.0, "S2_mass_i": 5.0,
+             "state_i": "initial", "metallicity": 0.01,
+             "interp_class_HMS_HMS": "initial_MT",
+             "mt_history_HMS_HMS": "Stable"},
+            {"binary_index": 1, "S1_mass_i": 8.0, "S2_mass_i": 4.0,
+             "state_i": "initial", "metallicity": 0.02,
+             "interp_class_HMS_HMS": "no_MT",
+             "mt_history_HMS_HMS": None},
+        ]
+        mass_met_rows = {
+            "simulated_mass": [1.0, 1.0],
+            "number_of_systems": [1, 1],
+        }
+        # Build file manually for multi-metallicity
+        pop = make_test_pop(
+            tmp_path, filename="rates_emb.h5",
+            oneline_rows=oneline_rows, metallicity=0.01,
+        )
+        # Overwrite mass_per_metallicity with two entries
+        mass_df = pd.DataFrame(mass_met_rows, index=[0.01, 0.02])
+        with pd.HDFStore(pop.filename, "a") as store:
+            store.put("mass_per_metallicity", mass_df, format="table")
+
+        # Add transient
+        transient_df = pd.DataFrame(transient_rows)
+        with pd.HDFStore(pop.filename, "a") as store:
+            store.append(
+                "transients/test_transient", transient_df,
+                format="table", min_itemsize={"channel": 100},
+            )
+
+        # Add rates structure
+        from posydon.popsyn.rate_calculation import (
+            DEFAULT_SFH_MODEL, get_redshift_bin_centers,
+            get_cosmic_time_from_redshift,
+        )
+        MODEL = dict(DEFAULT_SFH_MODEL)
+        z_birth = get_redshift_bin_centers(MODEL["delta_t"])
+        t_birth = get_cosmic_time_from_redshift(z_birth)
+        nr = len(z_birth)
+        base = "/transients/test_transient/rates/test_SFH/"
+        with pd.HDFStore(pop.filename, "a") as store:
+            store.put(base + "MODEL", pd.DataFrame(MODEL, index=[0]))
+            store.put(base + "birth", pd.DataFrame({"z": z_birth, "t": t_birth}))
+            store.append(base + "weights",
+                         pd.DataFrame(np.ones((2, nr))), format="table")
+            store.append(base + "z_events",
+                         pd.DataFrame(np.full((2, nr), 0.1)), format="table")
+
+        rates = totest.Rates(pop.filename, "test_transient", "test_SFH")
+
+        edges = rates.edges_metallicity_bins
+        assert len(edges) == 3  # 2 metallicities -> 3 edges
+        assert edges[0] < edges[1] < edges[2]
+
+        # Single metallicity with dlogZ = None
+        rates_single = make_test_rates(
+            tmp_path, filename="rates_emb_single.h5",
+        )
+        edges_single = rates_single.edges_metallicity_bins
+        assert len(edges_single) == 2
+        # dlogZ=None -> edges are 10**(-9) and 10**(0)
+        assert np.isclose(edges_single[0], 10**(-9))
+        assert np.isclose(edges_single[1], 10**(0))
+
+        # Single metallicity with dlogZ = float
+        rates_dlogz = make_test_rates(
+            tmp_path, filename="rates_emb_dlogz.h5",
+            MODEL={"dlogZ": 0.5},
+        )
+        edges_dlogz = rates_dlogz.edges_metallicity_bins
+        assert len(edges_dlogz) == 2
+
+        # Single metallicity with dlogZ = list (exercises the list branch)
+        rates_dlogz_list = make_test_rates(
+            tmp_path, filename="rates_emb_dlogz_list.h5",
+            MODEL={"dlogZ": [-2.0, -1.0]},
+        )
+        # Manually overwrite the MODEL table with multi-row format
+        # to exercise the len(tmp_df) > 1 branch in _read_MODEL_data
+        # and the isinstance(dlogZ, list) branch in edges_metallicity_bins
+        base = rates_dlogz_list.base_path
+        with pd.HDFStore(rates_dlogz_list.filename, "a") as store:
+            model_data = {k: [v, v] for k, v in rates_dlogz_list.MODEL.items()}
+            model_data["dlogZ"] = [-2.0, -1.0]
+            store.put(base + "MODEL", pd.DataFrame(model_data))
+
+        # Re-read to trigger the multi-row branch
+        rates_multi_model = totest.Rates(
+            rates_dlogz_list.filename, "test_transient", "test_SFH"
+        )
+        assert isinstance(rates_multi_model.MODEL["dlogZ"], list)
+        edges_list = rates_multi_model.edges_metallicity_bins
+        assert len(edges_list) == 2
+        assert np.isclose(edges_list[0], 10**(-2.0))
+        assert np.isclose(edges_list[1], 10**(-1.0))
+
+    def test_z_birth_property(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_zb.h5")
+        zb = rates.z_birth
+        assert isinstance(zb, pd.DataFrame)
+        assert "z" in zb.columns
+        assert "t" in zb.columns
+
+    def test_z_events_property(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_ze.h5")
+        ze = rates.z_events
+        assert isinstance(ze, pd.DataFrame)
+        assert len(ze) == 2
+
+    def test_edges_redshift_bins(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_erb.h5")
+        edges = rates.edges_redshift_bins
+        assert len(edges) > 0
+        assert edges[0] >= 0
+
+    def test_centers_redshift_bins(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_crb.h5")
+        centers = rates.centers_redshift_bins
+        assert len(centers) > 0
+
+    def test_centers_metallicity_bins(self, tmp_path):
+        rates = make_test_rates(tmp_path, filename="rates_cmb.h5")
+        centers = rates.centers_metallicity_bins
+        assert len(centers) == 1
+        assert np.isclose(centers[0], 0.02 * totest.Zsun)
