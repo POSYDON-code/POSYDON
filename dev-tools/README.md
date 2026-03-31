@@ -155,7 +155,7 @@ A healthy validation run after a non-physics code change should show zero struct
 
 ## Tolerance Design
 
-By default, comparison is exact (`rtol=0, atol=0`): any bitwise difference in a float is reported. The `--loose` flag sets `rtol=1e-12, atol=1e-15`, which is appropriate for filtering out platform-level floating-point noise while still catching meaningful changes. 
+By default, comparison is exact (`rtol=0, atol=0`): any bitwise difference in a float is reported. The `--loose` flag sets `rtol=1e-12, atol=1e-15`, which is appropriate for filtering out platform-level floating-point noise while still catching meaningful changes.
 
 For custom tolerances, `--rtol` and `--atol` follow the semantics of `np.allclose`: a value passes if `abs(baseline - candidate) <= atol + rtol * abs(baseline)`. In practice, `rtol` dominates for most columns (masses, periods, separations are all large numbers), while `atol` only matters near zero (e.g., eccentricity, certain hydrogen fractions).
 
