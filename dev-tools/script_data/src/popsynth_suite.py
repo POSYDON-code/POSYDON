@@ -1,8 +1,9 @@
 import os
+import argparse
 import traceback
 import warnings
 
-from formatting import columns_to_show, line_length
+from formatting import columns_to_show, LINE_LENGTH
 from pandas.testing import assert_frame_equal
 from utils import print_pop_settings, print_warnings
 
@@ -17,6 +18,8 @@ path_to_multiZ_params = os.path.join(script_dir, "inlists/multiZ_test_params.ini
 path_to_popout = os.path.join(script_dir, "output/population_tests/batches")
 
 def test_binpop_evolve(population, popevo_kwargs, verbose=False):
+
+    # this function runs a pop.evolve test given a set of kwargs
 
     # Capture warnings during evolution
     captured_warnings = []
@@ -44,18 +47,20 @@ def test_binpop_evolve(population, popevo_kwargs, verbose=False):
 
         print_warnings(captured_warnings)
         print("✅ BinaryPopulation evolved successfully.")
-        print("=" * line_length)
+        print("=" * LINE_LENGTH)
 
     except Exception as e:
             print_warnings(captured_warnings)
             print(f"🚨 BinaryPopulation evolution failed!\n")
             traceback.print_exc(limit=3)
             print("\n")
-            print("=" * line_length)
+            print("=" * LINE_LENGTH)
 
     return population
 
 def compare_io_to_ram(loaded_pop, pop_in_ram):
+
+    # this function compares binaries saved/loaded to any stored in RAM
 
     # check that binaries match between pop runs w/ fixed entropy
     # and that saved/loaded binaries match those from a memory loaded run
@@ -73,18 +78,20 @@ def compare_io_to_ram(loaded_pop, pop_in_ram):
             print(e)
             print("\nBinary in RAM:\n", ram_df)
             print("\nBinary from I/O:\n", io_df)
-            print("=" * line_length)
+            print("=" * LINE_LENGTH)
             return
         if i == len(loaded_pop.history):
             break
 
     print("✅ Binaries from I/O match those in RAM.")
-    print("=" * line_length)
+    print("=" * LINE_LENGTH)
 
 def print_testinfo(test_title, population, popevo_kwargs):
 
+    # prints some info about the tests
+
     # print test title str
-    numchar = (line_length - len(test_title)) // 2
+    numchar = (LINE_LENGTH - len(test_title)) // 2
     print("=" * numchar + test_title + "=" * numchar)
 
     optimize_ram = popevo_kwargs.get("optimize_ram", False)
@@ -100,7 +107,9 @@ def print_testinfo(test_title, population, popevo_kwargs):
         num_batch_files = population.number_of_binaries // population.kwargs["dump_rate"]
         print(f"🚀 Evolving a population and saving to {num_batch_files} batch files.")
 
-def check_test(pop_in_ram, load_pop=False):
+def check_test(pop_in_ram, out_path, load_pop=False):
+
+    # checks that a test went OK
 
     # if we have population in RAM, check that the number
     # stored in RAM matches the number we expected to run
@@ -114,16 +123,18 @@ def check_test(pop_in_ram, load_pop=False):
         print(f"✅ Successfully ran and stored {num_in_ram} binaries in RAM.")
 
     elif pop_in_ram and load_pop:
-        save_fn = os.path.join(path_to_popout, "evolution.combined.h5")
+        save_fn = os.path.join(out_path, "batches", "evolution.combined.h5")
         loaded_pop = Population(save_fn)
         compare_io_to_ram(loaded_pop, pop_in_ram)
 
-def test_popruns():
+def test_popruns(ini_path, multiz_path, out_path, verbose):
+
+    # primary function
 
     print("Performing population run tests...")
-    print(f"Reading inlist: {path_to_default_params}")
-    pop = BinaryPopulation.from_ini(path_to_default_params, verbose=False)
-    pop.kwargs.update({"temp_directory": path_to_popout})
+    print(f"Reading inlist: {ini_path}")
+    pop = BinaryPopulation.from_ini(ini_path, verbose=verbose)
+    pop.kwargs.update({"temp_directory": os.path.join(out_path, "batches")})
     print_pop_settings(pop)
 
     # DO TESTS:
@@ -131,30 +142,30 @@ def test_popruns():
     # test simple run, stays in RAM
     kwargs = {"optimize_ram":False, "breakdown_to_df":False, "tqdm":True}
     print_testinfo("TEST: 01", pop, kwargs)
-    pop_in_ram = test_binpop_evolve(pop, kwargs, verbose=True)
-    check_test(pop_in_ram, load_pop=False)
+    pop_in_ram = test_binpop_evolve(pop, kwargs, verbose=verbose)
+    check_test(pop_in_ram, out_path, load_pop=False)
 
     # test same but w/ saving/loading binaries
     kwargs = {"optimize_ram":False, "breakdown_to_df":True, "tqdm":True}
     print_testinfo("TEST: 02", pop, kwargs)
-    _ = test_binpop_evolve(pop, kwargs, verbose=False)
-    check_test(pop_in_ram, load_pop=True)
+    _ = test_binpop_evolve(pop, kwargs, verbose=verbose)
+    check_test(pop_in_ram, out_path, load_pop=True)
 
     # test optimize RAM run w/ batch saving
     kwargs = {"optimize_ram":True, "breakdown_to_df":False, "tqdm":True}
     print_testinfo("TEST: 03", pop, kwargs)
-    _ = test_binpop_evolve(pop, kwargs, verbose=True)
-    check_test(pop_in_ram, load_pop=True)
+    _ = test_binpop_evolve(pop, kwargs, verbose=verbose)
+    check_test(pop_in_ram, out_path, load_pop=True)
 
     # TEST POPRUNNER
     # This is RAM heavy and may fail on personal computers
     # ================================================================================
     test_str = " TEST: 04 "
-    numchar = (line_length - len(test_str)) // 2
+    numchar = (LINE_LENGTH - len(test_str)) // 2
     print("=" * numchar + test_str + "=" * numchar)
     print("Test PopulationRunner with multiple metallicities...")
-    print(f"Reading inlist: {path_to_multiZ_params}")
-    poprun = PopulationRunner(path_to_multiZ_params, verbose=True)
+    print(f"Reading inlist: {multiz_path}")
+    poprun = PopulationRunner(multiz_path, verbose=verbose)
     print('\t Number of binary populations:', len(poprun.binary_populations))
     print('\t Metallicities:', poprun.solar_metallicities)
     print('\t Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
@@ -165,4 +176,21 @@ def test_popruns():
 
 if __name__ == "__main__":
 
-    test_popruns()
+    parser = argparse.ArgumentParser(
+        description='Evolve test binary populations for POSYDON branch validation.',
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter
+    )
+    parser.add_argument('--verbose', '-v', action='store_true', default=False,
+                        help='Enable verbose output')
+    parser.add_argument('--output', '-o', type=str, required=True,
+                        help='Path to save population synthesis output')
+    parser.add_argument('--ini', type=str, default=None,
+                        help='Path to params ini file (auto-detected if not given)')
+    parser.add_argument('--multiz', type=str, default=None,
+                        help='Path to params ini file with multiple metallicities (auto-detected if not given)')
+    args = parser.parse_args()
+
+    test_popruns(ini_path=args.ini,
+                 multiz_path=args.multiz,
+                 out_path=args.output,
+                 verbose=args.verbose)
