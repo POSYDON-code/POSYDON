@@ -313,10 +313,10 @@ class TestFunctions:
 
         # absolute imports
         dummy_code = """
-class MyDummyClass:
-    def __init__(self):
-        self.value = 42
-"""
+                     class MyDummyClass:
+                         def __init__(self):
+                             self.value = 42
+                     """
         dummy_path = os.path.join(tmp_path, "dummy.py")
         with open(dummy_path, "w") as f:
             f.write(dummy_code)
