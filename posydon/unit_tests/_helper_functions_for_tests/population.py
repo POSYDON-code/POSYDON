@@ -113,7 +113,7 @@ def make_test_pop(
 
     # ini_parameters – include all keys that _load_ini_params expects
     ini_params = {
-        "metallicities": [metallicity],
+        "metallicity": metallicity,
         "number_of_binaries": len(oneline_df),
         "binary_fraction_scheme": "const",
         "binary_fraction_const": 0.7,
