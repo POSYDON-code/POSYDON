@@ -330,7 +330,7 @@ class TestFunctions:
             f"""
              [flow]
              import = ['builtins', 'int']
-             absolute_import = ['{dummy_path}', 'MyDummyClass']"
+             absolute_import = ['{dummy_path}', 'MyDummyClass']
             """)
         ini_path = os.path.join(tmp_path, "sim_abs_import.ini")
         with open(ini_path, "w") as f:
