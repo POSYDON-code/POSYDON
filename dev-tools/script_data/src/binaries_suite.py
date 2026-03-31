@@ -23,6 +23,7 @@ from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import orbital_separation_from_period
 
+
 def load_inlist(ini_path, metallicity, verbose):
 
     if ini_path is None:
