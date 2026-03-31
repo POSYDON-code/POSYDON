@@ -130,11 +130,11 @@ for Z in $METALLICITIES; do
     echo "  Log:    $LOG_FILE"
     echo "============================================================"
 
-    python "$SUITE_SCRIPT" \
-        --metallicity "$Z" \
-        --output "$OUTPUT_FILE" \
-        --ini "$TEST_INI" \
-        2>&1 | tee "$LOG_FILE"
+    #python "$SUITE_SCRIPT" \
+    #    --metallicity "$Z" \
+    #    --output "$OUTPUT_FILE" \
+    #    --ini "$TEST_INI" \
+    #    2>&1 | tee "$LOG_FILE"
     EXIT_CODE=${PIPESTATUS[0]}
 
     if [ $EXIT_CODE -eq 137 ]; then
@@ -151,13 +151,46 @@ for Z in $METALLICITIES; do
         echo "  Z=${Z} Zsun complete."
     fi
 
-    # Run population synthesis tests and capture output (stdout and stderr)
-    #OUT_DIR=$FULL_PATH/script_data/output/population_tests
-    #echo "🚀 Running popsynth_suite.py"
-    #python script_data/src/popsynth_suite.py > $OUT_DIR/evolve_pop_$BRANCH.out 2>&1
-    #echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_pop_$BRANCH.out"
-
 done
+
+# Run population synthesis tests and capture output (stdout and stderr)
+SUITE_SCRIPT="$SCRIPT_DIR/src/popsynth_suite.py"
+FAILED=0
+LOG_FILE="$LOG_DIR/evolve_populations.log"
+
+TEST_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_params.ini"
+MULTIZ_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_multiZ_params.ini"
+cp $TEST_INI $MULTIZ_INI
+
+echo ""
+echo "============================================================"
+echo "  🚀 Evolving populations"
+echo "  Output: $POP_OUTPUT_DIR"
+echo "  Log:    $LOG_FILE"
+echo "============================================================"
+
+python "$SUITE_SCRIPT" \
+    --output "$POP_OUTPUT_DIR" \
+    --ini "$TEST_INI" \
+    --multiz "$MULTIZ_INI" \
+    2>&1 | tee "$LOG_FILE"
+EXIT_CODE=${PIPESTATUS[0]}
+
+if [ $EXIT_CODE -eq 137 ]; then
+    echo "ERROR: Process killed (likely OOM) for Z=${Z}. Exit code 137 (SIGKILL)." >&2
+    echo "  Consider increasing job memory." >&2
+    FAILED=$((FAILED + 1))
+elif [ $EXIT_CODE -ne 0 ]; then
+    echo "WARNING: Suite failed for Z=${Z} (exit code $EXIT_CODE). Check $LOG_FILE" >&2
+    FAILED=$((FAILED + 1))
+elif [ ! -f "$OUTPUT_FILE" ]; then
+    echo "WARNING: Output file not created for Z=${Z}" >&2
+    FAILED=$((FAILED + 1))
+else
+    echo "  ✅ Script completed."
+fi
+
+#echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_pop_$BRANCH.out"
 
 # ── Deactivate Environment ────────────────────────────────────────────────
 conda deactivate

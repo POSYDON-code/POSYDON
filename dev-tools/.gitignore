@@ -3,3 +3,5 @@ outputs/
 logs/
 baselines/
 test_*.h5
+*.ini
+*.txt
