@@ -1,9 +1,9 @@
-import os
 import argparse
+import os
 import traceback
 import warnings
 
-from formatting import columns_to_show, LINE_LENGTH
+from formatting import LINE_LENGTH, columns_to_show
 from pandas.testing import assert_frame_equal
 from utils import print_pop_settings, print_warnings
 
