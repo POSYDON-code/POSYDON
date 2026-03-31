@@ -6,11 +6,16 @@ Used for validation of POSYDON branches.
 Usage:
     python binaries_suite.py --output results.h5 --metallicity 1
     python binaries_suite.py --output results.h5 --metallicity 0.45 --verbose
+    python binaries_suite.py --output results.h5 --metallicity 1 --branch main --sha abc123f
+
+The --branch and --sha flags are optional and record provenance metadata
+(branch name, commit SHA, generation timestamp) in the HDF5 /metadata table.
 
 Authors: Max Briel, Elizabeth Teng
 """
 
 import argparse
+from datetime import datetime, timezone
 import os
 import sys
 import warnings
@@ -621,7 +626,8 @@ def get_test_binaries(metallicity, sim_prop):
     return binaries
 
 
-def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
+def evolve_binaries(metallicity, verbose, output_path, ini_path=None,
+                    branch=None, sha=None):
     """Evolves the test binary suite at the given metallicity and saves results.
 
     Args:
@@ -629,6 +635,8 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
         verbose: bool
         output_path: str, path to save HDF5 output
         ini_path: str, path to ini file (auto-detected if None)
+        branch: str, branch name for metadata (optional)
+        sha: str, commit SHA for metadata (optional)
     """
     print(f"{'=' * LINE_LENGTH}")
     print(f"  Evolving test binaries at Z = {metallicity} Zsun")
@@ -697,6 +705,9 @@ def evolve_binaries(metallicity, verbose, output_path, ini_path=None):
             'n_missing': len(missing_ids),
             'missing_ids': str(missing_ids) if missing_ids else '',
             'path_to_posydon_data': PATH_TO_POSYDON_DATA,
+            'branch': branch or '',
+            'commit_sha': sha or '',
+            'generated_at': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC'),
         }])
         h5file.put("metadata", meta_df, format="table")
 
@@ -738,6 +749,10 @@ if __name__ == "__main__":
                         help=f'Metallicity in solar units. Available: {AVAILABLE_METALLICITIES}')
     parser.add_argument('--ini', type=str, default=None,
                         help='Path to params ini file (auto-detected if not given)')
+    parser.add_argument('--branch', type=str, default=None,
+                        help='Branch name to record in HDF5 metadata')
+    parser.add_argument('--sha', type=str, default=None,
+                        help='Commit SHA to record in HDF5 metadata')
     args = parser.parse_args()
 
     if args.metallicity not in AVAILABLE_METALLICITIES:
@@ -749,4 +764,6 @@ if __name__ == "__main__":
         verbose=args.verbose,
         output_path=args.output,
         ini_path=args.ini,
+        branch=args.branch,
+        sha=args.sha,
     )
