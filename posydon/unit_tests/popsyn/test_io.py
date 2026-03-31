@@ -312,7 +312,7 @@ class TestFunctions:
         assert 'flow' not in simkwargs_only
 
         # absolute imports
-    dummy_code = "\n".join([
+        dummy_code = "\n".join([
                  "class MyDummyClass:",
                  "    def __init__(self):",
                  "        self.value = 42"
