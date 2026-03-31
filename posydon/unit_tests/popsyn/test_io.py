@@ -18,6 +18,7 @@ import importlib
 import os
 import pprint
 import textwrap
+from textwrap import dedent
 from configparser import ConfigParser, MissingSectionHeaderError
 
 # import other needed code for the tests, which is not already imported in the
@@ -82,26 +83,27 @@ class TestFunctions:
 
     @fixture
     def sim_ini(self,tmp_path):
-        ini_content = """
-        [flow]
-        import = ['posydon.binary_evol.flow_chart', 'flow_chart']
-        absolute_import = None
-
-        [step_HMS_HMS]
-        import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
-        absolute_import = None
-        interpolation_method = 'linear3c_kNN'
-        save_initial_conditions = True
-        verbose = False
-
-        [extra_hooks]
-        import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
-        absolute_import_1 = None
-        kwargs_1 = {}
-        import_2 = ['posydon.binary_evol.simulationproperties', 'StepNamesHooks']
-        absolute_import_2 = None
-        kwargs_2 = {}
-        """
+       ini_content = dedent(
+           """
+           [flow]
+           import = ['posydon.binary_evol.flow_chart', 'flow_chart']
+           absolute_import = None
+    
+           [step_HMS_HMS]
+           import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
+           absolute_import = None
+           interpolation_method = 'linear3c_kNN'
+           save_initial_conditions = True
+           verbose = False
+    
+           [extra_hooks]
+           import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
+           absolute_import_1 = None
+           kwargs_1 = {}
+           import_2 = ['posydon.binary_evol.simulationproperties', 'StepNamesHooks']
+           absolute_import_2 = None
+           kwargs_2 = {}
+           """)
         file_path = os.path.join(tmp_path, "sim.ini")
         with open(file_path, "w") as f:
             f.write(ini_content)
@@ -109,24 +111,25 @@ class TestFunctions:
 
     @fixture
     def binpop_ini(self, tmp_path):
-        ini_content = """
-        [BinaryPopulation_options]
-        use_MPI = False
-        metallicity = [0.02]
-        number_of_binaries = 1
-        temp_directory = 'tmp'
+        ini_content = dedent(
+            """
+            [BinaryPopulation_options]
+            use_MPI = False
+            metallicity = [0.02]
+            number_of_binaries = 1
+            temp_directory = 'tmp'
 
-        [BinaryStar_output]
-        extra_columns = {}
-        only_select_columns = []
-        scalar_names = []
+            [BinaryStar_output]
+            extra_columns = {}
+            only_select_columns = []
+            scalar_names = []
 
-        [SingleStar_1_output]
-        include_S1 = False
+            [SingleStar_1_output]
+            include_S1 = False
 
-        [SingleStar_2_output]
-        include_S2 = False
-        """
+            [SingleStar_2_output]
+            include_S2 = False
+            """)
         file_path = os.path.join(tmp_path, "binpop.ini")
         with open(file_path, "w") as f:
             f.write(ini_content)
@@ -134,24 +137,25 @@ class TestFunctions:
 
     @fixture
     def binpop_ini_mpi(self, tmp_path):
-        ini_content = """
-        [BinaryPopulation_options]
-        use_MPI = True
-        metallicity = [0.02]
-        number_of_binaries = 1
-        temp_directory = 'tmp'
+        ini_content = dedent(
+            """
+            [BinaryPopulation_options]
+            use_MPI = True
+            metallicity = [0.02]
+            number_of_binaries = 1
+            temp_directory = 'tmp'
 
-        [BinaryStar_output]
-        extra_columns = {}
-        only_select_columns = []
-        scalar_names = []
+            [BinaryStar_output]
+            extra_columns = {}
+            only_select_columns = []
+            scalar_names = []
 
-        [SingleStar_1_output]
-        include_S1 = False
+            [SingleStar_1_output]
+            include_S1 = False
 
-        [SingleStar_2_output]
-        include_S2 = False
-        """
+            [SingleStar_2_output]
+            include_S2 = False
+            """)
         file_path = os.path.join(tmp_path, "binpop_mpi.ini")
         with open(file_path, "w") as f:
             f.write(ini_content)
@@ -159,31 +163,32 @@ class TestFunctions:
 
     @fixture
     def binpop_ini_stars(self, tmp_path):
-        ini_content = """
-        [BinaryPopulation_options]
-        use_MPI = False
-        metallicity = [0.02]
-        number_of_binaries = 1
-        temp_directory = 'tmp'
+        ini_content = dedent(
+            """
+            [BinaryPopulation_options]
+            use_MPI = False
+            metallicity = [0.02]
+            number_of_binaries = 1
+            temp_directory = 'tmp'
 
-        [BinaryStar_output]
-        extra_columns = {}
-        only_select_columns = []
-        scalar_names = []
+            [BinaryStar_output]
+            extra_columns = {}
+            only_select_columns = []
+            scalar_names = []
 
-        [SingleStar_1_output]
-        include_S1 = True
-        only_select_columns = [
-            'state',
-            'mass',
-            'log_R']
+            [SingleStar_1_output]
+            include_S1 = True
+            only_select_columns = [
+                'state',
+                'mass',
+                'log_R']
 
-        [SingleStar_2_output]
-        include_S2 = True
-        only_select_columns = [
-            'log_L',
-            'lg_mdot']
-        """
+            [SingleStar_2_output]
+            include_S2 = True
+            only_select_columns = [
+                'log_L',
+                'lg_mdot']
+            """)
         file_path = os.path.join(tmp_path, "binpop_stars.ini")
         with open(file_path, "w") as f:
             f.write(ini_content)
@@ -312,19 +317,21 @@ class TestFunctions:
         assert 'flow' not in simkwargs_only
 
         # absolute imports
-        dummy_code = "\n".join([
-                 "class MyDummyClass:",
-                 "    def __init__(self):",
-                 "        self.value = 42"
-                 ])
+        dummy_code = dedent(
+            """
+            class MyDummyClass:
+                def __init__(self):
+                    self.value = 42
+            """)
         dummy_path = os.path.join(tmp_path, "dummy.py")
         with open(dummy_path, "w") as f:
             f.write(dummy_code)
-        ini_content = "\n".join([
-              "[flow]",
-              "import = ['builtins', 'int']",
-              f"absolute_import = ['{dummy_path}', 'MyDummyClass']",
-              ])
+        ini_content = dedent(
+            f"""
+             [flow]
+             import = ['builtins', 'int']
+             absolute_import = ['{dummy_path}', 'MyDummyClass']"
+            """)
         ini_path = os.path.join(tmp_path, "sim_abs_import.ini")
         with open(ini_path, "w") as f:
             f.write(ini_content)
