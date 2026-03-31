@@ -33,7 +33,7 @@ To re-run comparison with different tolerances without re-evolving:
 
 ### `validate_binaries.sh`
 
-Top-level entry point. Evolves test binaries on a candidate branch, then compares results against an existing baseline.
+Top-level entry point. Evolves test binaries on a candidate branch, then compares results against an existing baseline. This script will look for baseline HDF5 files stored in `dev-tools/baseline/<branch-name>`, where `main` is the default `<branch-name>`.
 
 ```bash
 ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve]
