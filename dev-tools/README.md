@@ -87,7 +87,7 @@ Configuration file for `SimulationProperties`. Defines the POSYDON evolution ste
 
 ## Running Scripts Manually
 
-The shell scripts handle cloning, environment setup, and orchestration. If you already have POSYDON installed in your current environment, you can run the Python scripts directly.
+The shell scripts handle cloning, environment setup, orchestration, and execution. If you already have POSYDON installed in your current environment, you can execute the Python scripts directly.
 
 ### Evolving binaries
 
