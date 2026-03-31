@@ -320,11 +320,6 @@ class TestFunctions:
         dummy_path = os.path.join(tmp_path, "dummy.py")
         with open(dummy_path, "w") as f:
             f.write(dummy_code)
-        ini_content = f"""
-        [flow]
-        import = ['builtins', 'int']
-        absolute_import = ['{dummy_path}', 'MyDummyClass']
-        """
        ini_content = "\n".join([
               "[flow]",
               "import = ['builtins', 'int']",
