@@ -1,4 +1,4 @@
-Validation suite for POSYDON binary evolution. Evolves a fixed set of test binaries on a candidate branch and compares results against a stored baseline to catch regressions.
+Validation suite for POSYDON binary evolution. Evolves a fixed set of test binaries on a candidate branch and compares results against a stored baseline to catch regressions. A baseline can be formed from any branch (`main` by default) and is represented by a set of results from `binary_suite.py`, saved HDF5 files, all stored in `dev-tools/baselines/<branch-name>`.
 
 ## Quick Start
 
