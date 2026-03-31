@@ -10,6 +10,7 @@ import os
 import shutil
 import signal
 import warnings
+from datetime import datetime, timezone
 
 import numpy as np
 import pandas as pd
@@ -21,10 +22,6 @@ from posydon.binary_evol.binarystar import BinaryStar, SingleStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import orbital_separation_from_period
-
-#base_dir =os.path.dirname(PATH_TO_POSYDON)
-#script_dir = os.path.join(PATH_TO_POSYDON, "dev-tools/script_data/")
-#path_to_default_params = os.path.join(script_dir, "inlists/default_test_params.ini")
 
 def load_inlist(ini_path, metallicity, verbose):
 
@@ -143,7 +140,7 @@ def create_binary(s1_kw, s2_kw, bin_kw, sim_prop):
 
         return BinaryStar(star_1, star_2, **bin_kw, properties=sim_prop)
 
-def evolve_binaries(metallicity, output_path, verbose, ini_path=None):
+def evolve_binaries(metallicity, output_path, verbose, ini_path=None, branch=None, sha=None):
     """Evolves the test binary suite at the given metallicity and saves results.
 
     Args:
@@ -211,6 +208,9 @@ def evolve_binaries(metallicity, output_path, verbose, ini_path=None):
             'n_missing': len(missing_ids),
             'missing_ids': str(missing_ids) if missing_ids else '',
             'path_to_posydon_data': PATH_TO_POSYDON_DATA,
+            'branch': branch or '',
+            'commit_sha': sha or '',
+            'generated_at': datetime.now(timezone.utc).strftime('%Y-%m-%d %H:%M:%S UTC'),
         }])
         h5file.put("metadata", meta_df, format="table")
 
@@ -253,6 +253,10 @@ if __name__ == "__main__":
                         help=f'Metallicity in solar units. Available: {AVAILABLE_METALLICITIES}')
     parser.add_argument('--ini', type=str, default=None,
                         help='Path to params ini file (auto-detected if not given)')
+    parser.add_argument('--branch', type=str, default=None,
+                        help='Branch name to record in HDF5 metadata')
+    parser.add_argument('--sha', type=str, default=None,
+                        help='Commit SHA to record in HDF5 metadata')
     args = parser.parse_args()
 
     if args.metallicity not in AVAILABLE_METALLICITIES:
@@ -264,4 +268,6 @@ if __name__ == "__main__":
         verbose=args.verbose,
         output_path=args.output,
         ini_path=args.ini,
+        branch=args.branch,
+        sha=args.sha,
     )
