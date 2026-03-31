@@ -64,8 +64,9 @@ def compare_io_to_ram(loaded_pop, pop_in_ram):
 
     # check that binaries match between pop runs w/ fixed entropy
     # and that saved/loaded binaries match those from a memory loaded run
+    N = pop_in_ram.number_of_binaries
     df_from_ram = pop_in_ram.to_df()
-    ram_dflist = [df_from_ram.loc[i] for i in range(10)]
+    ram_dflist = [df_from_ram.loc[i] for i in range(N)]
     print("🔍 Checking that binaries in RAM match those retrieved from I/O...")
     for i, ram_df in enumerate(ram_dflist):
         io_df = loaded_pop.history[i]
@@ -165,12 +166,12 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
     print("=" * numchar + test_str + "=" * numchar)
     print("Test PopulationRunner with multiple metallicities...")
     print(f"Reading inlist: {multiz_path}")
-    poprun = PopulationRunner(multiz_path, verbose=verbose)
+    poprun = PopulationRunner(multiz_path, verbose=True)
     print('\t Number of binary populations:', len(poprun.binary_populations))
     print('\t Metallicities:', poprun.solar_metallicities)
     print('\t Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
     print("🚀 Evolving PopulationRunner...")
-    #poprun.evolve(overwrite=True)
+    poprun.evolve(overwrite=True)
     print("✅ PopulationRunner evolved successfully.")
 
 

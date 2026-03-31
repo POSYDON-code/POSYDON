@@ -118,6 +118,7 @@ FAILED=0
 DEFAULT_INI="${CLONE_DIR}/posydon/popsyn/population_params_default.ini"
 TEST_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_params.ini"
 cp $DEFAULT_INI $TEST_INI
+sed -i 's/^\([[:space:]]*\)entropy *= *.*/\1entropy = 0/' $TEST_INI
 
 for Z in $METALLICITIES; do
     OUTPUT_FILE="$BINARY_OUTPUT_DIR/candidate_${Z}Zsun.h5"
@@ -158,9 +159,9 @@ SUITE_SCRIPT="$SCRIPT_DIR/src/popsynth_suite.py"
 FAILED=0
 LOG_FILE="$LOG_DIR/evolve_populations.log"
 
-TEST_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_params.ini"
 MULTIZ_INI="${SCRIPT_DIR}/inlists/${SAFE_BRANCH}_test_multiZ_params.ini"
 cp $TEST_INI $MULTIZ_INI
+sed -i 's/^\([[:space:]]*\)metallicities *= *\[.*\]/\1metallicities = [2., 1., 0.45]/' $MULTIZ_INI
 
 echo ""
 echo "============================================================"
@@ -189,8 +190,6 @@ elif [ ! -f "$OUTPUT_FILE" ]; then
 else
     echo "  ✅ Script completed."
 fi
-
-#echo -e "✅ Script completed. Output saved to: \n$OUT_DIR/evolve_pop_$BRANCH.out"
 
 # ── Deactivate Environment ────────────────────────────────────────────────
 conda deactivate
