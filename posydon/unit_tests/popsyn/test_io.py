@@ -18,8 +18,8 @@ import importlib
 import os
 import pprint
 import textwrap
-from textwrap import dedent
 from configparser import ConfigParser, MissingSectionHeaderError
+from textwrap import dedent
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -88,14 +88,14 @@ class TestFunctions:
            [flow]
            import = ['posydon.binary_evol.flow_chart', 'flow_chart']
            absolute_import = None
-    
+
            [step_HMS_HMS]
            import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
            absolute_import = None
            interpolation_method = 'linear3c_kNN'
            save_initial_conditions = True
            verbose = False
-    
+
            [extra_hooks]
            import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
            absolute_import_1 = None
