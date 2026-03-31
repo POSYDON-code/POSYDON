@@ -325,6 +325,7 @@ class TestFunctions:
               "import = ['builtins', 'int']",
               f"absolute_import = ['{dummy_path}', 'MyDummyClass']",
               ])
+        ini_path = os.path.join(tmp_path, "sim_abs_import.ini")
         with open(ini_path, "w") as f:
             f.write(ini_content)
         simkwargs = totest.simprop_kwargs_from_ini(str(ini_path))
