@@ -75,7 +75,7 @@ Compares two HDF5 files produced by `binaries_suite.py` and reports differences 
 - **Qualitative**: changes to categorical columns such as state, event, step name, SN type, interpolation class, and mass transfer history.
 - **Quantitative**: changes to any numeric column. By default, comparison is exact (bitwise identical floats). Use `--loose` for slightly relaxed tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly as per [np.allclose](https://numpy.org/devdocs/reference/generated/numpy.allclose.html).
 
-The script also compares warning and error tables, reporting new, removed, or changed warnings per binary. The report header includes source metadata (branch, commit SHA, generation time, POSYDON data path) read from each file when available.
+The script also compares warning and error tables, reporting new, removed, or changed warnings per binary. The report header includes provenance metadata (branch, commit SHA, generation time, POSYDON data path) read from each file when available.
 
 ```bash
 python compare_runs.py baseline.h5 candidate.h5 [--loose] [--rtol VALUE] [--atol VALUE] [--verbose]
@@ -138,3 +138,67 @@ dev-tools/
 ├── logs/                     # per-metallicity evolution logs (per branch)
 └── workdirs/                 # cloned repos and conda environments (per branch)
 ```
+
+## Interpreting Results
+
+The comparison report groups differences into four categories. Here's how to read them:
+
+**Structural** differences (missing/extra binaries, step count changes, newly failing/passing) almost always indicate a real change. A binary that newly fails or changes its number of evolution steps means the code is following a different evolutionary path. These warrant investigation regardless of tolerance settings.
+
+**Qualitative** differences (state, event, step name, SN type) also represent real behavioral changes. Even a single qualitative diff means the binary is being classified differently, e.g. a different mass transfer history or a changed SN type. These are never tolerance-dependent.
+
+**Quantitative** differences are more nuanced. With exact comparison (the default), any floating-point difference is reported. This is useful for detecting unintended changes, but expected after compiler/platform changes or numpy version bumps. If you see many quantitative diffs but zero structural/qualitative diffs, the evolution paths are the same and the differences are likely numerical noise — re-run with `--loose` or a custom `--rtol` to confirm. If quantitative diffs persist at `--rtol 1e-6` or larger, something meaningful has changed.
+
+**Warning** differences are informational. New warnings may indicate a physics edge case being hit differently, or changes to warnings in the code, but are not failures on their own.
+
+A healthy validation run after a non-physics code change should show zero structural and qualitative differences, and minimal quantitative changes. After an intentional physics change, expect significant diffs. If binaries unrelated to intentional physics changes show structural or qualitative diffs, that may indicate a problem with implementation.
+
+## Tolerance Design
+
+By default, comparison is exact (`rtol=0, atol=0`): any bitwise difference in a float is reported. The `--loose` flag sets `rtol=1e-12, atol=1e-15`, which is appropriate for filtering out platform-level floating-point noise while still catching meaningful changes. 
+
+For custom tolerances, `--rtol` and `--atol` follow the semantics of `np.allclose`: a value passes if `abs(baseline - candidate) <= atol + rtol * abs(baseline)`. In practice, `rtol` dominates for most columns (masses, periods, separations are all large numbers), while `atol` only matters near zero (e.g., eccentricity, certain hydrogen fractions).
+
+Known limitation: when `baseline == 0` and `candidate != 0`, `rtol`-based comparison produces `0 + rtol * 0 = 0`, so any nonzero candidate value fails. This is correct behavior (a zero-to-nonzero change is meaningful), but be aware that the reverse (both values very small but nonzero) may pass even if the relative change is large, since `atol` provides a floor. For most POSYDON quantities this is not an issue, but it matters for quantities that are genuinely expected to be zero (e.g., eccentricity at ZAMS for circular binaries).
+
+A single global tolerance works well for catching regressions but is a blunt instrument for columns spanning many orders of magnitude. Per-column or per-quantity scaling is a possible future improvement but is not currently implemented.
+
+The `--loose` defaults (`rtol=1e-12, atol=1e-15`) were chosen just above float64 machine epsilon and may need to be adjusted if there are parts of the code that are non-deterministic. If parts of the POSYDON pipeline introduce stochasticity (e.g. unseeded RNG), the irreducible noise floor may be higher. To calibrate, run the same branch against itself and check what tolerance is needed for a clean pass:
+
+```bash
+# Evolve the same branch twice under different output names
+python binaries_suite.py --output /tmp/run_a.h5 --metallicity 1
+python binaries_suite.py --output /tmp/run_b.h5 --metallicity 1
+
+# Compare — any diffs here are the stochasticity floor
+python compare_runs.py /tmp/run_a.h5 /tmp/run_b.h5
+
+# Find the tolerance that absorbs the noise
+python compare_runs.py /tmp/run_a.h5 /tmp/run_b.h5 --rtol 1e-10
+```
+
+The `--loose` defaults should sit just above whatever self-comparison noise you observe. If the self-comparison is clean at exact, the current defaults are fine.
+
+
+## Updating the Baseline
+
+The baseline should be regenerated when the "expected correct" output changes. Typical triggers:
+
+- **After a release or version tag.** Generate a baseline from the release tag so future development is compared against the release state: `./generate_baseline.sh v2.3`
+- **After merging an intentional physics change.** If a PR deliberately changes evolution outcomes (e.g., a new SN prescription), validate the PR branch first to confirm only the expected binaries are affected, then regenerate the baseline from the updated main branch.
+- **After updating POSYDON data grids.** Grid changes will alter interpolated values. Regenerate the baseline and record the new `PATH_TO_POSYDON_DATA` in `baseline_info.txt`.
+
+Do not regenerate the baseline to silence unexpected diffs. If a validation run shows differences you don't understand, investigate them before updating the baseline.
+
+The `--promote` flag on `generate_baseline.sh` is a convenience for skipping re-evolution when you've already run the suite and are satisfied with the outputs: `./generate_baseline.sh --promote main "1 0.45"`.
+
+## Adding New Test Binaries
+
+New binaries are added by appending entries to the `get_test_binaries()` function in `binaries_suite.py`. Each entry is a tuple of `(star1_kwargs, star2_kwargs, binary_kwargs, description)`.
+
+When adding a binary:
+
+- Choose initial conditions that reliably trigger the edge case or evolutionary pathway you want to test. Verify it does so at multiple metallicities if possible, since grid coverage varies.
+- Use a descriptive string that references the PR or issue number if the binary guards a specific fix (e.g., `"PR574 - stepCE fix"`).
+- After adding the binary, regenerate the baseline so it includes the new binary's expected output.
+- The binary ID is assigned by list position. Appending to the end avoids changing IDs of existing binaries, which would invalidate old baselines against new code for no reason.
