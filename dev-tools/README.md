@@ -179,7 +179,7 @@ python compare_runs.py /tmp/run_a.h5 /tmp/run_b.h5 --rtol 1e-10
 
 The `--loose` defaults should sit just above whatever self-comparison noise you observe. If the self-comparison is clean at exact, the current defaults are fine.
 
-**RNG reproducibility.** Several POSYDON evolution steps (Bondi-Hoyle accretion in `step_detached` and `MesaGridStep`, SN kicks in `step_SN`) use random number generation internally. Without a fixed seed, these produce nondeterministic results that appear as spurious `S1_lg_mdot` diffs in the validation suite. To ensure reproducibility, set the `entropy` parameter to a fixed integer in `binaries_params.ini`. This seeds the RNG passed to each step (see PR#826). 
+**RNG reproducibility.** Several POSYDON evolution steps (Bondi-Hoyle accretion in `step_detached` and `MesaGridStep`, SN kicks in `step_SN`) use random number generation internally. Without a fixed seed, these produce nondeterministic results that appear as spurious `S1_lg_mdot` diffs in the validation suite. To ensure reproducibility, set the `entropy` parameter to a fixed integer in `binaries_params.ini`. This seeds the RNG passed to each step (see PR#826).
 
 ## Updating the Baseline
 
