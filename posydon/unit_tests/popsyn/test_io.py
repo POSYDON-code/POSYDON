@@ -83,27 +83,27 @@ class TestFunctions:
 
     @fixture
     def sim_ini(self,tmp_path):
-       ini_content = dedent(
-           """
-           [flow]
-           import = ['posydon.binary_evol.flow_chart', 'flow_chart']
-           absolute_import = None
+        ini_content = dedent(
+            """
+            [flow]
+            import = ['posydon.binary_evol.flow_chart', 'flow_chart']
+            absolute_import = None
 
-           [step_HMS_HMS]
-           import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
-           absolute_import = None
-           interpolation_method = 'linear3c_kNN'
-           save_initial_conditions = True
-           verbose = False
+            [step_HMS_HMS]
+            import = ['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']
+            absolute_import = None
+            interpolation_method = 'linear3c_kNN'
+            save_initial_conditions = True
+            verbose = False
 
-           [extra_hooks]
-           import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
-           absolute_import_1 = None
-           kwargs_1 = {}
-           import_2 = ['posydon.binary_evol.simulationproperties', 'StepNamesHooks']
-           absolute_import_2 = None
-           kwargs_2 = {}
-           """)
+            [extra_hooks]
+            import_1 = ['posydon.binary_evol.simulationproperties', 'TimingHooks']
+            absolute_import_1 = None
+            kwargs_1 = {}
+            import_2 = ['posydon.binary_evol.simulationproperties', 'StepNamesHooks']
+            absolute_import_2 = None
+            kwargs_2 = {}
+            """)
         file_path = os.path.join(tmp_path, "sim.ini")
         with open(file_path, "w") as f:
             f.write(ini_content)
