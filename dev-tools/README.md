@@ -43,10 +43,15 @@ By default, comparison is exact (rtol=0, atol=0). Use `--loose` for relaxed floa
 
 ### `generate_baseline.sh`
 
-Generates baseline HDF5 files from a designated branch name and optionally a SHA to specify a commit. Can also promote existing outputs to baseline with `--promote`.
+Generates baseline HDF5 files from a designated branch name and optionally a SHA to specify a commit. 
 
 ```bash
 ./generate_baseline.sh <branch> [sha] [metallicities]
+```
+
+If you already have results from prior runs of `evolve_binaries.sh` saved as HDF5 files in `outputs/<branch>/`, you can copy these directly into the baselines directory with the `--promote` option, skipping re-evolution:
+
+```bash
 ./generate_baseline.sh --promote <branch> [metallicities]
 ```
 
