@@ -43,7 +43,7 @@ By default, comparison is exact (rtol=0, atol=0). Use `--loose` for relaxed floa
 
 ### `generate_baseline.sh`
 
-Generates baseline HDF5 files from a designated branch name and optionally a SHA to specify a commit. 
+Generates baseline HDF5 files from a designated branch name and optionally a SHA to specify a commit.
 
 ```bash
 ./generate_baseline.sh <branch> [sha] [metallicities]
