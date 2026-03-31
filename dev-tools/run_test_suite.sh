@@ -16,6 +16,9 @@
 #   outputs/<branch>/candidate_<Z>Zsun.h5   — evolution results per metallicity
 #   logs/<branch>/evolve_<Z>Zsun.log        — log per metallicity
 #   workdirs/POSYDON_<branch>/              — cloned repo + conda env
+#
+# The resolved commit SHA and branch name are recorded in each HDF5 file's
+# /metadata table for provenance tracking in comparison reports.
 # =============================================================================
 
 set -euo pipefail
@@ -110,6 +113,10 @@ pip install -e "$CLONE_DIR" -q 2>&1 | sed 's/^/    /'
 SUITE_SCRIPT="$SCRIPT_DIR/src/binaries_suite.py"
 FAILED=0
 
+# Resolve the actual commit SHA for metadata
+ACTUAL_SHA=$(cd "$CLONE_DIR" && git rev-parse HEAD 2>/dev/null || echo "unknown")
+echo "  Resolved SHA: $ACTUAL_SHA"
+
 # override environment's PATH_TO_POSYDON variable to point to the
 # current branch's clone for these tests
 #PATH_TO_POSYDON=$CLONE_DIR
@@ -131,11 +138,12 @@ for Z in $METALLICITIES; do
     echo "  Log:    $LOG_FILE"
     echo "============================================================"
 
-    #python "$SUITE_SCRIPT" \
-    #    --metallicity "$Z" \
-    #    --output "$OUTPUT_FILE" \
-    #    --ini "$TEST_INI" \
-    #    2>&1 | tee "$LOG_FILE"
+    python "$SUITE_SCRIPT" \
+        --metallicity "$Z" \
+        --output "$OUTPUT_FILE" \
+        --branch "$BRANCH" \
+        --sha "$ACTUAL_SHA" \
+        2>&1 | tee "$LOG_FILE"
     EXIT_CODE=${PIPESTATUS[0]}
 
     if [ $EXIT_CODE -eq 137 ]; then

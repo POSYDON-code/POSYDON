@@ -7,6 +7,10 @@ Reports three categories of differences:
   2. QUALITATIVE: changes to categorical/string columns (states, events, step names, SN types, etc.)
   3. WARNINGS & ERRORS: changes to warnings raised or binaries that error out
 
+The report header includes provenance metadata (branch, commit SHA, generation
+time, POSYDON data path) read from each HDF5 file's /metadata table when
+available. Older files without these fields are handled gracefully.
+
 By default, uses exact comparison (atol=0, rtol=0). The --loose flag enables
 a small tolerance for cases where minor floating-point differences are expected.
 
@@ -411,10 +415,47 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
     total_diffs = len(quant_diffs) + len(qual_diffs) + len(struct_diffs) + len(warn_diffs)
     tol_label = f"rtol={rtol}, atol={atol}" if rtol > 0 or atol > 0 else "EXACT (rtol=0, atol=0)"
 
+    # Read metadata for the report header
+    def _read_meta(filepath):
+        """Extract metadata fields from an HDF5 file, returning a dict."""
+        meta = {}
+        try:
+            with pd.HDFStore(filepath, mode='r') as store:
+                if '/metadata' in store:
+                    m = store['/metadata']
+                    for field in ('branch', 'commit_sha', 'generated_at',
+                                  'path_to_posydon_data'):
+                        if field in m.columns:
+                            meta[field] = str(m[field].iloc[0])
+        except Exception:
+            pass
+        return meta
+
+    base_meta = _read_meta(args.baseline)
+    cand_meta = _read_meta(args.candidate)
+
     print("=" * 70)
     print("POSYDON Binary Validation — Comparison Report")
     print(f"  Baseline:    {args.baseline}")
+    if base_meta:
+        if base_meta.get('branch'):
+            print(f"    Branch:    {base_meta['branch']}")
+        if base_meta.get('commit_sha'):
+            print(f"    SHA:       {base_meta['commit_sha']}")
+        if base_meta.get('generated_at'):
+            print(f"    Generated: {base_meta['generated_at']}")
+        if base_meta.get('path_to_posydon_data'):
+            print(f"    Data path: {base_meta['path_to_posydon_data']}")
     print(f"  Candidate:   {args.candidate}")
+    if cand_meta:
+        if cand_meta.get('branch'):
+            print(f"    Branch:    {cand_meta['branch']}")
+        if cand_meta.get('commit_sha'):
+            print(f"    SHA:       {cand_meta['commit_sha']}")
+        if cand_meta.get('generated_at'):
+            print(f"    Generated: {cand_meta['generated_at']}")
+        if cand_meta.get('path_to_posydon_data'):
+            print(f"    Data path: {cand_meta['path_to_posydon_data']}")
     print(f"  Tolerances:  {tol_label}")
     print("=" * 70)
 

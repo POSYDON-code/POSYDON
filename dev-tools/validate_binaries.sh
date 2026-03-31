@@ -6,7 +6,7 @@
 #
 # Usage:
 #   ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities]
-#                          [--loose] [--rtol VALUE] [--atol VALUE]
+#                          [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve]
 #
 # Positional arguments:
 #   candidate_branch   Branch or tag to validate (required)
@@ -23,6 +23,10 @@
 #   --rtol and --atol can be combined with --loose (explicit values take
 #   precedence over the --loose defaults) or used on their own without --loose.
 #
+# Other flags:
+#   --skip-evolve      Skip Step 1 (evolution) and compare existing outputs
+#                      against baseline. Candidate files must already exist.
+#
 # Examples:
 #   ./validate_binaries.sh feature/new-SN                      # compare vs main, exact
 #   ./validate_binaries.sh feature/new-SN v2.1.0               # compare vs v2.1.0, exact
@@ -30,6 +34,7 @@
 #   ./validate_binaries.sh feature/new-SN --loose              # relaxed tolerances
 #   ./validate_binaries.sh feature/new-SN main --rtol 1e-8     # custom rtol, default atol
 #   ./validate_binaries.sh feature/new-SN main "1 0.45" --loose --atol 1e-10
+#   ./validate_binaries.sh feature/new-SN --skip-evolve  # compare existing outputs only
 #
 # Prerequisites:
 #   Run generate_baseline.sh first to create baseline files.
@@ -51,6 +56,7 @@ shift $(( $# < 3 ? $# : 3 ))
 LOOSE=false
 RTOL=""
 ATOL=""
+SKIP_EVOLVE=false
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -65,6 +71,10 @@ while [[ $# -gt 0 ]]; do
         --atol)
             ATOL="${2:?--atol requires a value}"
             shift 2
+            ;;
+        --skip-evolve)
+            SKIP_EVOLVE=true
+            shift
             ;;
         *)
             echo "ERROR: Unknown option: $1" >&2
@@ -136,9 +146,19 @@ fi
 echo "  Found $BASELINE_COUNT baseline file(s)."
 
 # ── Step 1: Evolve binaries on candidate branch ──────────────────────────
-echo ""
-echo "Step 1: Evolving binaries on candidate branch '$CANDIDATE_BRANCH'..."
-"$DEV_TOOLS_DIR/run_test_suite.sh" "$CANDIDATE_BRANCH" "" "$METALLICITIES"
+if [ "$SKIP_EVOLVE" = true ]; then
+    echo ""
+    echo "Step 1: SKIPPED (--skip-evolve: using existing outputs in $OUTPUT_DIR)"
+    if [ ! -d "$OUTPUT_DIR" ]; then
+        echo "ERROR: No outputs found at $OUTPUT_DIR" >&2
+        echo "Run evolve_binaries.sh first, or drop --skip-evolve to evolve from scratch." >&2
+        exit 1
+    fi
+else
+    echo ""
+    echo "Step 1: Evolving binaries on candidate branch '$CANDIDATE_BRANCH'..."
+    "$DEV_TOOLS_DIR/run_test_suite.sh" "$CANDIDATE_BRANCH" "" "$METALLICITIES"
+fi
 
 # ── Step 2: Compare each metallicity ─────────────────────────────────────
 echo ""
