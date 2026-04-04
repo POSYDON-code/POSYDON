@@ -211,5 +211,15 @@ else
 fi
 echo "  Outputs in: $BINARY_OUTPUT_DIR/"
 echo "============================================================"
+echo ""
+echo "============================================================"
+if [ $FAILED -eq 0 ]; then
+    echo "✅ All population synthesis tests completed successfully."
+else
+    echo "Completed with $FAILED failure(s)."
+fi
+echo "  Outputs in: $POP_OUTPUT_DIR/"
+echo "============================================================"
+
 
 exit $FAILED
