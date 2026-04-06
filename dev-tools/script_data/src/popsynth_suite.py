@@ -1,5 +1,7 @@
 import argparse
 import os
+import shutil
+import subprocess
 import traceback
 import warnings
 
@@ -11,11 +13,7 @@ from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn.binarypopulation import BinaryPopulation
 from posydon.popsyn.synthetic_population import Population, PopulationRunner
 
-base_dir = os.path.dirname(PATH_TO_POSYDON)
-script_dir = os.path.join(base_dir, "script_data/")
-path_to_default_params = os.path.join(script_dir, "inlists/default_test_params.ini")
-path_to_multiZ_params = os.path.join(script_dir, "inlists/multiZ_test_params.ini")
-path_to_popout = os.path.join(script_dir, "output/population_tests/batches")
+script_dir = os.path.dirname(os.path.abspath(__file__))
 
 def test_binpop_evolve(population, popevo_kwargs, verbose=False):
 
@@ -159,8 +157,9 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
     check_test(pop_in_ram, out_path, load_pop=True)
 
     # TEST POPRUNNER
-    # This is RAM heavy and may fail on personal computers
+    # This is can be RAM heavy (may fail esp. on personal computers)
     # ================================================================================
+    os.chdir(out_path)
     test_str = " TEST: 04 "
     numchar = (LINE_LENGTH - len(test_str)) // 2
     print("=" * numchar + test_str + "=" * numchar)
@@ -173,6 +172,25 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
     print("🚀 Evolving PopulationRunner...")
     poprun.evolve(overwrite=True)
     print("✅ PopulationRunner evolved successfully.")
+
+    # TEST PIPELINE
+    # This is can also be RAM heavy
+    # ================================================================================
+    shutil.copy(os.path.join(script_dir, "setup_poprun.sh"), out_path)
+    subprocess.run(["bash", "setup_poprun.sh", multiz_path], check=True)
+    # mimic SLURM job array env vars, as if jobs submitted with --job_array=1
+    # this is needed to test merge_metallicity.py, which looks for jobs per task ID 
+    # to merge.
+    os.environ["SLURM_ARRAY_JOB_ID"] = "0"
+    os.environ["SLURM_ARRAY_TASK_MIN"] = "0"
+    os.environ["SLURM_ARRAY_TASK_ID"] = "0"
+    os.environ["SLURM_ARRAY_TASK_COUNT"] = "1"
+
+    for metallicity in poprun.solar_metallicities:
+        subprocess.run(["echo", f"🚀 Running pipeline for metallicity {metallicity}..."])
+        subprocess.run(["python", "run_metallicity.py", str(metallicity)], check=True)
+        subprocess.run(["python", "merge_metallicity.py", str(metallicity)], check=True)
+
 
 
 if __name__ == "__main__":
