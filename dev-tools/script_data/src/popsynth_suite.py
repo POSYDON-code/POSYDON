@@ -179,7 +179,7 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
     shutil.copy(os.path.join(script_dir, "setup_poprun.sh"), out_path)
     subprocess.run(["bash", "setup_poprun.sh", multiz_path], check=True)
     # mimic SLURM job array env vars, as if jobs submitted with --job_array=1
-    # this is needed to test merge_metallicity.py, which looks for jobs per task ID 
+    # this is needed to test merge_metallicity.py, which looks for jobs per task ID
     # to merge.
     os.environ["SLURM_ARRAY_JOB_ID"] = "0"
     os.environ["SLURM_ARRAY_TASK_MIN"] = "0"
