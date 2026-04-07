@@ -162,20 +162,25 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
     os.chdir(out_path)
     test_str = " TEST: 04 "
     numchar = (LINE_LENGTH - len(test_str)) // 2
-    print("=" * numchar + test_str + "=" * numchar)
-    print("Test PopulationRunner with multiple metallicities...")
-    print(f"Reading inlist: {multiz_path}")
+    print("=" * numchar + test_str + "=" * numchar, flush=True)
+    print("Test PopulationRunner with multiple metallicities...", flush=True)
+    print(f"Reading inlist: {multiz_path}", flush=True)
     poprun = PopulationRunner(multiz_path, verbose=True)
-    print('\t Number of binary populations:', len(poprun.binary_populations))
-    print('\t Metallicities:', poprun.solar_metallicities)
-    print('\t Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries)
-    print("🚀 Evolving PopulationRunner...")
+    print('\t Number of binary populations:', len(poprun.binary_populations), flush=True)
+    print('\t Metallicities:', poprun.solar_metallicities, flush=True)
+    print('\t Number of binaries (per pop):', poprun.binary_populations[0].number_of_binaries, flush=True)
+    print("🚀 Evolving PopulationRunner...", flush=True)
     poprun.evolve(overwrite=True)
-    print("✅ PopulationRunner evolved successfully.")
+    print("✅ PopulationRunner evolved successfully.", flush=True)
+    print("=" * LINE_LENGTH, flush=True)
 
     # TEST PIPELINE
     # This is can also be RAM heavy
     # ================================================================================
+    test_str = " TEST: 05 "
+    numchar = (LINE_LENGTH - len(test_str)) // 2
+    print("=" * numchar + test_str + "=" * numchar, flush=True)
+    print("Test posydon-popsyn pipeline for multiple metallicities...", flush=True)
     shutil.copy(os.path.join(script_dir, "setup_poprun.sh"), out_path)
     subprocess.run(["bash", "setup_poprun.sh", multiz_path], check=True)
     # mimic SLURM job array env vars, as if jobs submitted with --job_array=1
@@ -190,6 +195,8 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
         subprocess.run(["echo", f"🚀 Running pipeline for metallicity {metallicity}..."])
         subprocess.run(["python", "run_metallicity.py", str(metallicity)], check=True)
         subprocess.run(["python", "merge_metallicity.py", str(metallicity)], check=True)
+
+    print("✅ Successfully evolved multiple populations with posydon-popsyn.", flush=True)
 
 
 
