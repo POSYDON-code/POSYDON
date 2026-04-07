@@ -158,7 +158,7 @@ def test_popruns(ini_path, multiz_path, out_path, verbose):
 
     # TEST POPRUNNER
     # This is can be RAM heavy (may fail esp. on personal computers)
-    # Using flush on print here since we are running subprocceses and want them to 
+    # Using flush on print here since we are running subprocceses and want them to
     # show in order with shell stdout.
     # ================================================================================
     os.chdir(out_path)
