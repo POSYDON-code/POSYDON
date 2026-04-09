@@ -525,7 +525,6 @@ class SimulationProperties:
                     "ReplaceValueWarning")
                 metallicity = 1.0
             step_kwargs['metallicity'] = float(metallicity)
-            print(step_name, step_kwargs['metallicity'])
 
         # These steps need these grids:
         step_grid_map = {"step_HMS_HMS": self.HMS_HMS_path,
