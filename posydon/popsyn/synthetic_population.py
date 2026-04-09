@@ -1882,6 +1882,9 @@ class TransientPopulation(Population):
         This method calculates the model weights of each event in the transient population based on the provided model parameters.
         It performs various calculations and stores the results in an HDF5 file at the location '/transients/{transient_name}/weights/{model_weights_identifier}'.
 
+        The calculated model weights represent the probability of an event per Msun
+        formed. Thus, it's units are Msun^{-1}.
+
         Parameters
         ----------
         model_weights_identifier : str
@@ -1891,6 +1894,10 @@ class TransientPopulation(Population):
         population_parameters : dict, optional
             Dictionary containing the population parameters. If None, the default population parameters will be used.
 
+        Returns
+        -------
+        pd.DataFrame
+            The model weights of the transient population and have units of Msun^-1.
         """
         if population_parameters is None:
             population_parameters = {'number_of_binaries': 1000000,
@@ -1972,7 +1979,7 @@ class TransientPopulation(Population):
         """Retrieve the model weights of the transient population.
 
         This method retrieves the model weights of the transient population based on the provided model weights identifier.
-        The model weights are stored in an HDF5 file
+        The model weights are stored in an HDF5 file and have units of Msun^-1.
 
         Parameters
         ----------
@@ -1982,7 +1989,7 @@ class TransientPopulation(Population):
         Returns
         -------
         pd.DataFrame
-            The model weights of the transient population.
+            The model weights of the transient population in units of Msun^-1.
         """
 
         if model_weights_identifier is None:
