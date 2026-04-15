@@ -245,6 +245,10 @@ class TestFunctions:
                                              os.listdir(MESA_run_dir)[0])
                 os.symlink(MESA_run_file, os.path.join(MESA_dir,\
                                                        f"link{i}.file0"))
+                # symlink inside run directory to cover islink branch within
+                # _grid_index_ directories
+                os.symlink(MESA_run_file, os.path.join(MESA_run_dir,\
+                                                       f"link{i}.in_run"))
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
          n_compress_files = totest.get_size(start_path=MESA_dir)
         assert total_size > 0
