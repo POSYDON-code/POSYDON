@@ -43,10 +43,7 @@ jobs:
                          --cov=posydon.config \
                          --cov=posydon.utils \
                          --cov=posydon.grids \
-                         --cov=posydon.popsyn.IMFs \
-                         --cov=posydon.popsyn.norm_pop \
-                         --cov=posydon.popsyn.distributions \
-                         --cov=posydon.popsyn.star_formation_history \
+                         --cov=posydon.popsyn \
                          --cov=posydon.CLI \
                          --cov-branch \
                          --cov-report term-missing \

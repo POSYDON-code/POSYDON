@@ -82,7 +82,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     selection = history_chunk.loc[indices_selection]
     if S1_S2 == 'S1':
         S_mask = (selection['S1_state'] == 'BH') & (selection['S1_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': # pragma: no branch
         S_mask = (selection['S2_state'] == 'BH') & (selection['S2_state'] != 'BH').shift(1) & (selection['step_names'] == 'step_SN')
 
     GRB_df_synthetic = pd.DataFrame(index=indices_selection)
@@ -94,10 +94,9 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     if S1_S2 == 'S1':
         columns_pre_post.append('S1_mass')
         columns.append('S2_mass')
-    elif S1_S2 == 'S2':
+    elif S1_S2 == 'S2': # pragma: no branch
         columns_pre_post.append('S2_mass')
         columns.append('S1_mass')
-
 
     for col in columns_pre_post:
         GRB_df_synthetic[col+'_preSN'] = pre_SN_hist[col].values
@@ -111,11 +110,11 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
     for col in oneline_chunk.columns:
         GRB_df_synthetic[col] = oneline_chunk.loc[indices_selection][col].values
 
-    if any(formation_channels_chunk != None):
+    if formation_channels_chunk is not None:
         formation_channels_chunk = formation_channels_chunk.loc[indices_selection]
         if S1_S2 == 'S1':
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC1').str[0].apply(lambda x: x+'_CC1')
-        elif S1_S2 == 'S2':
+        elif S1_S2 == 'S2': # pragma: no branch
             GRB_df_synthetic['channel'] = formation_channels_chunk['channel'].str.split('_CC2').str[0].apply(lambda x: x+'_CC2')
 
     # calculate the time!
@@ -294,9 +293,9 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
     These have to be present and a valid value. If not, the function will raise an error!
 
     '''
-    available_sensitiveies = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
-    if sensitivity not in available_sensitiveies:
-        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitiveies}')
+    available_sensitivities = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
+    if sensitivity not in available_sensitivities:
+        raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitivities}')
     else:
         sel_eff = selection_effects.KNNmodel(grid_path=PATH_TO_PDET_GRID,
                                                       sensitivity_key=sensitivity)
