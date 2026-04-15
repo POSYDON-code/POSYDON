@@ -246,6 +246,13 @@ class TestFunctions:
                 os.symlink(MESA_run_file, os.path.join(MESA_dir,\
                                                        f"link{i}.file0"))
 
+            first_run_dir = os.path.join(MESA_dir, MESA_runs[0])
+            first_run_files = os.listdir(first_run_dir)
+            if len(first_run_files) > 0:
+                target = os.path.join(first_run_dir, first_run_files[0])
+                os.symlink(target,
+                           os.path.join(first_run_dir, "symlink_test"))
+
         # add >=2 regular files directly in MESA_dir (a non-MESA directory)
         # so the inner for-loop backward arc (204->198) is covered on Ubuntu,
         # where file symlinks may not reliably appear in os.walk's filenames
