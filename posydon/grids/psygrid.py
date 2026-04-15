@@ -460,6 +460,9 @@ class LazyHDF5:
 
     def __len__(self): # pragma: no cover
         return len(self._dataset)
+    
+    def to_df(self):
+        return pd.DataFrame(self.__array__())
 
 
 class PSyGrid:
