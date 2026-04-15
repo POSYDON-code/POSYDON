@@ -2404,7 +2404,10 @@ class StepSN(object):
             Fallback mass of the compact object in M_sun.
 
         References
-
+        ----------
+        .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger,
+            F.K. Roepke, E. Laplace, 2025, A&A, 700, A20. Explodability
+            criteria for the neutrino-driven supernova mechanism
 
         """
         Muller_k_parameters = {
