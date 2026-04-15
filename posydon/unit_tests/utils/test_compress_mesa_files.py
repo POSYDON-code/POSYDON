@@ -246,6 +246,10 @@ class TestFunctions:
                 os.symlink(MESA_run_file, os.path.join(MESA_dir,\
                                                        f"link{i}.file0"))
 
+                # symlink inside run directory to cover islink branch within
+                # _grid_index_ directories
+                os.symlink(MESA_run_file, os.path.join(MESA_run_dir,\
+                                                       f"link{i}.in_run"))
 
         # add >=2 regular files directly in MESA_dir (a non-MESA directory)
         # so the inner for-loop backward arc (204->198) is covered on Ubuntu,
