@@ -392,7 +392,7 @@ class StepSN(object):
                     return CO_core_params, target
 
                 if self.verbose:
-                    print('Loading the train dataset for engine mu4 and M4...')
+                    print('Loading the train dataset for engine mu4, M4, Xi, and sc ...')
                 CO_core_params_mu4, mu4_target = format_data_Patton20(
                     'Kepler_mu4_table.dat')
                 CO_core_params_M4, M4_target = format_data_Patton20(
