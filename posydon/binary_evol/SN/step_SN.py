@@ -2505,19 +2505,19 @@ class StepSN(object):
         mu4M4_crit1, mu4M4_crit2 = 0.247, 0.421 # product of M4 and mu4
         k1, k2 =  0.421, 0.005
 
-    # check whether criterion for failed SN is fulfilled
+        # check whether criterion for failed SN is fulfilled
         if comp_val > comp_crit2 or sc_val > sc_crit2:
             ff2.append(0)
             ff = 0
             unclassified = False
 
-    # check whether criterion for successful SN is fulfilled
+        # check whether criterion for successful SN is fulfilled
         if comp_val < comp_crit1 or sc_val < sc_crit1:
             ff1.append(1)
             ff = 1
             unclassified = False
 
-    # if there is contradiction or if the progenitor is unclassified based on comp & s_c
+        # if there is contradiction or if the progenitor is unclassified based on comp & s_c
         if (len(ff1) > 0 and len(ff2) > 0) or unclassified:
 
         # final fate classification based on mu4M4
