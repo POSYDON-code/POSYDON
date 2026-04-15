@@ -257,6 +257,10 @@ class TestFunctions:
             with open(os.path.join(MESA_dir, f"extra_{j}.log"),\
                       "w") as extra_file:
                 extra_file.write(f"test\n")
+            with open(os.path.join(MESA_run_dir, f"extra_{j}.log"),\
+                      "w") as extra_file:
+                extra_file.write(f"test\n")
+
 
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
          n_compress_files = totest.get_size(start_path=MESA_dir)
