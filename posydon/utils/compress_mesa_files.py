@@ -198,7 +198,7 @@ def get_size(start_path="."):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             # skip if it is symbolic link
-            if not os.path.islink(filepath): #pragma: no cover
+            if not os.path.islink(filepath):
                 total_size += os.path.getsize(filepath)
             # check for files in mesa run, whether to remove or compress it
             if new_remove_files is not None:
