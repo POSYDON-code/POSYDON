@@ -2290,11 +2290,11 @@ class StepSN(object):
 
     def get_M4_mu4_Patton20(self, CO_core_mass, C_core_abundance):
         """Get the M4 and mu4 using Patton+20."""
+
         M4 = self.M4_interpolator.predict([[C_core_abundance, CO_core_mass]])
         mu4 = self.mu4_interpolator.predict([[C_core_abundance, CO_core_mass]])
         Xi = self.Xi_interpolator.predict([[C_core_abundance, CO_core_mass]])
         sc = self.sc_interpolator.predict([[C_core_abundance, CO_core_mass]])
-
 
         return M4, mu4, Xi, sc
 
@@ -2395,6 +2395,11 @@ class StepSN(object):
         ----------
             star : obj
                 Star object of a collapsing star containing the MESA profile.
+            engine : str
+                Engine to use for the core-collapse prescription
+                Possible options are: 'M16'
+            conserve_hydrogen_envelope : bool
+                Whether to assume that the hydrogen envelope is conserved in direct collapse to a BH.
 
         Returns
         -------
@@ -2402,6 +2407,8 @@ class StepSN(object):
             Remnant mass of the compact object in M_sun.
         f_fb : double
             Fallback mass of the compact object in M_sun.
+        state : str
+            'NS' if the remnant is a neutron star, 'BH' if the remnant is a black hole
 
         References
         ----------
