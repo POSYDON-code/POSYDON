@@ -2464,9 +2464,10 @@ class StepSN(object):
 
                     f_fb = 1.0
                     state = 'BH'
+
                 else:
                     rem = self.NS_vs_fallbackBH(Xi, CO_core_mass, M4, mu4M4)
-                    if rem == 2:  # successful SN with NS
+                    if rem == 'NS':  # successful SN with NS
                         m_rem = M4
                         f_fb = 0.0
                         state = 'NS'
@@ -2486,14 +2487,14 @@ class StepSN(object):
         a, b = 1.75, -0.044  # eq. (8) of [8]_
         # conditions for guaranteed NS formation (eq. 7)
         if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
-            rem = 2
+            rem = 'NS'
         else:
             # stochastic determination of the remnant type (NS versus fallback-BH)
             rand_number = self.RNG.uniform(0,1)
-            if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
-                rem = 3 # fallback BH, although successful SN
+            if rand_number <= 0.15:  # probability for fallback = 0.15 in Section 3.1.2.
+                rem = 'fallback_BH'
             else:
-                rem = 2 # NS formation
+                rem = 'NS'
         return rem
 
     # implemented from Maltsev+25
