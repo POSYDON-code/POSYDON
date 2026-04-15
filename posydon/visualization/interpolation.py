@@ -50,12 +50,12 @@ class EvaluateIFInterpolator:
             (self.test_grid.final_values["interpolation_class"] != "not_converged") &
             (self.test_grid.final_values["interpolation_class"] != "initial_MT")
         )
-
+        print("initial value", iv.shape)
         i = self.interpolator.test_interpolator(iv) # interpolated
         # ifv = fv[ivalid_inds]
-
+        print("interpolated", i.shape)
         self.errs = {}
-
+        print("fv", fv.shape)
         with np.errstate(divide='ignore', invalid='ignore'):
             self.errs["relative"] = np.abs((fv - i) / fv)
         self.errs["absolute"] = np.abs(fv - i)

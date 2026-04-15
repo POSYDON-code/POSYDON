@@ -7,7 +7,6 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>",
 ]
 
-
 import numpy as np
 import os
 import pickle
@@ -18,10 +17,8 @@ from scipy.spatial import Delaunay
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.data_scaling import DataScaler, SCALING_OPTIONS
 from posydon.interpolation.preprocessing import (
-    normalize,
-    unnormalize,
+    Transformer,
     find_normalization_evaluation_matrix, 
-    compute_statistics,
     IN_SCALING_OPTIONS,
     OUT_SCALING_OPTIONS)
 
@@ -41,8 +38,25 @@ eps = 1.0e-16
 
 
 class IFInterpolator:
+    """ Class used to train interpolator and carry out interpolation. Familiarity with the over all system, which can 
+    be gained by referencing section 3 of 2411.02376, is required to understand the documentation
+    """
 
     def __init__(self, grids, in_keys, out_keys, max_k):
+        """ Class constructor
+
+            Parameters
+            ----------
+            grids : list of PSyGrid
+                Contains both the training grid and validation grid in the first and second postions, respectively
+            in_keys: list of strings
+                Contains the names of the parameters that define the input space
+            out_keys: dict
+                Keys correspond to classifiers to be trained, and values are a list of strings specifying which parameters
+                are to be interpolated using the respective classifier
+            max_k: int
+                The maximum number of k that is considered when optimizing k for each classifier
+        """
 
         if type(grids) != list:
             sys.exit("Please provide a list of PSyGrids containing both a training and validation grid to train the interpolator")
@@ -69,7 +83,23 @@ class IFInterpolator:
             self.outside_convex_hull = dict(zip(self.discrete_out_keys, [0] * len(self.discrete_out_keys)))
             self.inside_convex_hull = dict(zip(self.discrete_out_keys, [0] * len(self.discrete_out_keys)))
 
+            # variable to control whether or not we are debugging
+            self.debug_mode = False
+
     def stats(self, _print = False):
+        """ Returns statistics regarding the number of samples that were interpolated with their initial condition outside
+        of the convex hull for its respective predicted class
+
+            Parameters
+            ----------
+            _print: boolean
+                Controls whether statistics are printed as well as returned as a dictionary
+
+            Return Values
+            -------------
+            dict: a dictionary that has the percentage of points outside the convex hull for
+            each classification scheme
+        """
         percentages = []
         
         for key in self.discrete_out_keys:
@@ -82,21 +112,38 @@ class IFInterpolator:
         return dict(zip(self.discrete_out_keys, percentages))
 
     def train(self):
-        self.classifiers = dict(
+        """ method used to find optimal hyperparamters for classification (k) and which normalization
+        schemes work best for interpolation
+        """
+        self.is_training = True
+        self.classifiers = dict(# Finding classification hyperparameters
             zip(
                 self.discrete_out_keys,
                 [self.find_hyperparameters(key) for key in self.discrete_out_keys]
             )
         )
-        self.out_scalers = dict(
+        self.out_scalers = dict(# Fincing interpolation normalization schemes
             zip(
                 self.discrete_out_keys,
                 [self.optimize_normalization(key) for key in self.discrete_out_keys]
             )
         )
+        self.is_training = False
         
 
     def interpolate(self, iv, klass, sn_model):
+        """ a method which performs interpolation for a respective initial value and its 
+        predicted class (convex hull)
+
+            Parameters
+            ----------
+            iv: np.ndarray (3,)
+                an initial value containing the primary and secondary mass as well as the orbital period
+            klass: string
+                a predicted class label
+            sn_model: string
+                the specified super nova model being used
+        """
 
         interpolated = []
         ics = {}
@@ -107,11 +154,11 @@ class IFInterpolator:
         klass = [klass[interpolation_class_ind], klass[sn_class_ind]]
         classification_schemes = ["interpolation_class", sn_model]
 
-        for key, c in zip(classification_schemes, klass):
+        for key, c in zip(classification_schemes, klass): # interpolating based in mass transfer type and supernova outcome separately
 
             triangulation = self.training_grid["triangulations"][key][c]
-
-            simplex = triangulation.find_simplex(iv)            
+            
+            simplex = -1 if triangulation == "1NN" else triangulation.find_simplex(iv)            
 
             if simplex == -1:
                 interpolated.extend(
@@ -128,35 +175,46 @@ class IFInterpolator:
             class_inds = self.training_grid["class_inds"][key][c]
 
             final_values = np.array(self.training_grid["final_values"][key][class_inds][vertices].tolist())
-            print("Before", final_values)
-            if np.isnan(final_values).any():
-                print("Do final values have NaNs?", np.isnan(final_values).any())
-            # if False or self.training:
-            #     if not np.isnan(final_values).any():
-            #         final_values = normalize(final_values, self._stats[0], self._stats[1], True)
-            print("After", final_values)
+
+            # ============= handling cases where nans exist in final values ==========
+            nans = np.isnan(final_values)
+            num_nans = nans.sum(axis = 0)
+            not_nans = np.where((num_nans < 2) & (num_nans > 0))[0] # indices of dimensions that should not be nan despite containing nans in neighbors
+            nans_tie = np.where(num_nans == 2)[0] # if there is a tie in the number of nans, we flip a coin to decide if output will be nan or not
+
+            if self.debug_mode:
+                print(final_values)
+
+            for tie in nans_tie:
+                coin = np.random.rand() # draws from uniform distribution 0-1
+                if coin > 0.5:
+                    np.append(not_nans, tie)
+
+            # =============== performing general interpolation ==================
+            if not self.is_training:
+                label_dict = self.out_scalers[key]["label_dict"]
+
+            # final_values = self._transform.normalize(final_values) if self.is_training else self.out_scalers[key]["transform"][label_dict[c]].normalize(final_values)
+            final_values = final_values
             barycentric_weights = self.compute_barycentric_coordinates(iv, triangulation.points[vertices])[..., np.newaxis]
-            if np.isnan(barycentric_weights).any():
-                print("Do barycentric weights have NaNs?", np.isnan(barycentric_weights).any())
 
             weights[key] = barycentric_weights
-            print(final_values, barycentric_weights)
-            # if self.training:
-            # if not np.isnan(final_values).any():
-            #     final_values = unnormalize(
-            #         np.sum(final_values * barycentric_weights, axis = 0),
-            #         self._stats[0], self._stats[1], True
-            #     )
-            # else:
-            #     final_values = np.sum(final_values * barycentric_weights, axis = 0)
 
-            if np.isnan(final_values).any():
-                print("Output has nans")
-            # denormalized = self.denormalize_output(
-            #     np.sum(final_values * barycentric_weights, axis = 0), 
-            #     klass
-            # )
-            interpolated.extend(final_values)
+            i_values = np.sum(final_values * barycentric_weights, axis = 0)
+
+            # =========== fixing those values that were interpolated to nan because they contained an acceptable amount of nans in neighbors =========
+            for dim in not_nans:
+                where_not_nan = np.where(nans[:, dim] == 0)
+                nan_weights = barycentric_weights[where_not_nan]
+                nan_weights /= nan_weights.sum()
+
+                i_values[dim] = (final_values[:, dim][where_not_nan] * nan_weights[:, 0]).sum()
+
+
+            # i_values = self._transform.unnormalize(i_values[np.newaxis, ...]) if self.is_training else self.out_scalers[key]["transform"][label_dict[c]].unnormalize(i_values[np.newaxis, ...])
+            i_values = [i_values]
+
+            interpolated.extend(i_values[0])
 
 
         meta_data = {
@@ -169,6 +227,27 @@ class IFInterpolator:
         return interpolated, meta_data
 
     def evaluate(self, initial_values, sn_model = "S1_SN_MODEL_v2_01_SN_type"):
+        """ The main method of the class used to classify and interpolate
+
+            Parameters
+            ----------
+            initial_values: np.ndaarray
+                starting stellar masses and orbital period in numpy array
+            sn_model: string
+                specifies supernova model to be used during interpolation
+
+            Return Values
+            -------------
+            interpolated_values: np.ndarray
+                contains all interpolated values, all classification schemes are concatenated into one array
+            classes: np.ndarray
+                a list of lists, each list has two classes. The first is the mass transfer type and the second 
+                is the compact object type which is used for the supernova
+            n: list of dicts
+                each dict containing meta data information about the interpolation such as
+                neighbors used and distances found
+            
+        """
 
         if self.classifiers is None:
             sys.exit("Please find classifier hyperparameters before using interpolator")
@@ -176,7 +255,7 @@ class IFInterpolator:
         interpolation_class_ind = self.discrete_out_keys.index("interpolation_class")
 
         classes = np.array([
-            cl["classifier"].predict(normalize(initial_values, cl["stats"][0], cl["stats"][1], cl["log"])) 
+            cl["classifier"].predict(cl["transform"].normalize(initial_values)) 
             for cl in self.classifiers.values()]).T
 
         interpolated_values = []
@@ -187,19 +266,36 @@ class IFInterpolator:
                 continue
 
             interpolated, meta_data = self.interpolate(iv, klass, sn_model)
-            interpolated = self.apply_continuous_constraints(interpolated, sn_model)
 
+            interpolated = self.apply_continuous_constraints(interpolated, sn_model)
             interpolated_values.append(interpolated)
             n.append(meta_data)
-
+        
         interpolated_values = np.array(interpolated_values)
+
         classes = np.array(classes)
 
         return interpolated_values, classes, n
 
     def find_hyperparameters(self, klass):
+        """ finds optimal k for a specified classifier 
+
+            Parameters
+            ----------
+            klass: string
+                classifier to consider
+
+            Return Values
+            -------------
+                dict: dict
+                    contains classifier information and more
+        """
         
         input_matrix = []
+        """
+        matrix that considers different number of neighbors with different
+        in_scaling options
+        """
 
         for k in range(1, self.max_k):
             row = []
@@ -216,6 +312,9 @@ class IFInterpolator:
         }
 
         def kwargs_fnc(**kwargs):
+            """ helper function handling passing of arguments for functions given
+            to the preprocessing modules
+            """
 
             kwargs = {
                 "self": kwargs["kwargs"]["self"],
@@ -226,14 +325,30 @@ class IFInterpolator:
             return kwargs
 
         def eval_fnc(self, k, scaling):
+            """ the preprocessing module evaluates every point in input_matrix (specified above)
+            which considers different input_scalings and numbers of neighbors. This function gives 
+            a score for each value of k paired with a normalization
+
+                Parameters
+                ----------
+                k: int
+                    number of neighbors used
+                scaling: string
+                    specifies normalization
+
+                Return Values
+                -------------
+                bacc: float
+                    an accuracy score
+                stats: statistics used 
+            """
 
             validation_classifier = KNeighborsClassifier(n_neighbors = k, weights = "distance")
 
             training_initial_values = self.training_grid["initial_values"]
 
-            stats = compute_statistics(training_initial_values, scaling)
-            training_initial_values = normalize(
-                training_initial_values, stats[0], stats[1], "log" in scaling)
+            transform = Transformer(training_initial_values, scaling)
+            training_initial_values = transform.normalize(training_initial_values)
 
             validation_classifier.fit(
                 training_initial_values, 
@@ -241,8 +356,7 @@ class IFInterpolator:
             )
 
             validation_initial_values = self.validation_grid["initial_values"]
-            validation_initial_values = normalize(
-                validation_initial_values, stats[0], stats[1], "log" in scaling)
+            validation_initial_values = transform.normalize(validation_initial_values)
             predicted_classes = validation_classifier.predict(validation_initial_values)
 
             bacc = balanced_accuracy_score(
@@ -250,36 +364,47 @@ class IFInterpolator:
                 predicted_classes                
             )
 
-            return bacc, stats
+            return bacc, transform
 
-        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs)
+        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs) # getting matrix
 
-        k_star = list(np.unravel_index(eval_matrix.argmax(), eval_matrix.shape))
+        k_star = list(np.unravel_index(eval_matrix.argmax(), eval_matrix.shape)) # optimal number of neighbors
 
-        classifier = KNeighborsClassifier(n_neighbors = k_star[0] + 1, weights = "distance")
+        classifier = KNeighborsClassifier(n_neighbors = k_star[0] + 1, weights = "distance") # defining classifier
 
         training_initial_values = self.training_grid["initial_values"]
 
         scaling = IN_SCALING_OPTIONS[k_star[1]]
 
-        stats = compute_statistics(training_initial_values, scaling)
-        training_initial_values = normalize(
-            training_initial_values, stats[0], stats[1], "log" in scaling)
+        transform = Transformer(training_initial_values, scaling)
+        training_initial_values = transform.normalize(training_initial_values) # taking care of normalization
 
         classifier.fit(
             training_initial_values, 
             self.training_grid["final_classes"][klass]
-        )
+        ) # training classifier
 
         return {
             "classifier": classifier,
-            "stats": stat_matrix[*k_star],
+            "transform": stat_matrix[*k_star],
             "log": "log" in IN_SCALING_OPTIONS[k_star[1]],
             "k_star": k_star, 
             "eval_matrix": eval_matrix
         }
 
     def optimize_normalization(self, key):
+        """ method to find optimal normalization per class
+
+            Parameters
+            ----------
+                key: string
+                specifies parameter
+
+            Return Values
+            -------------
+                dict: dict
+                    interpolator information and more
+        """
 
         input_matrix = []
 
@@ -301,6 +426,9 @@ class IFInterpolator:
         }
 
         def kwargs_fnc(**kwargs):
+            """ helper function handling passing of arguments for functions given
+            to the preprocessing modules
+            """
 
             kwargs = {
                 "self": kwargs["kwargs"]["self"],
@@ -312,14 +440,34 @@ class IFInterpolator:
             return kwargs
 
         def eval_fnc(self, key, klass, scaling):
+            """ the preprocessing module evaluates every point in input_matrix (specified above)
+            which considers different classes and output scalings. This function gives 
+            a score for each value of class label paired with a normalization
+
+                Parameters
+                ----------
+                key: string
+                    parameter considered
+                klass: string
+                    class label
+                scaling: string
+                    specifies normalization
+
+                Return Values
+                -------------
+                errors: float
+                    an accuracy score
+                stats: statistics used 
+            """
             self.training = True
             self.scaling = scaling
 
             klass_inds = np.where(self.validation_grid["final_classes"][key] == klass)[0]
 
-            training_final_values = self.training_grid["final_values"][key][klass_inds]
-            self._stats = compute_statistics(training_final_values, scaling)
-            print("Does input have NaNs?", np.isnan(self.validation_grid["initial_values"][klass_inds]).any())
+            training_final_values = self.training_grid["final_values"][key][self.training_grid["class_inds"][key][klass]]
+
+            self._transform = Transformer(training_final_values, scaling)
+
             interpolated, classes, _ = self.evaluate(self.validation_grid["initial_values"][klass_inds])
 
             classes = classes[np.where(classes[:, 0] != "initial_MT")[0]]
@@ -330,29 +478,49 @@ class IFInterpolator:
                 [self.validation_grid["final_values"]["interpolation_class"], self.validation_grid["final_values"]["S1_SN_MODEL_v2_01_SN_type"]], axis = 1
             )
 
+            # some interpolated and ground truth values will be NaN, e.g., for keys describing CE phenomnea are NaN if no CE is present, need to filter these NaNs out
+            nans_mask = ~(np.isnan(interpolated[predicted_klass_inds]) + np.isnan(ground_truth[klass_inds][predicted_klass_inds]))
+
             errors = np.abs(
-                (interpolated[predicted_klass_inds] - ground_truth[klass_inds][predicted_klass_inds]) /
-                (ground_truth[klass_inds][predicted_klass_inds] + eps)
+                (interpolated[predicted_klass_inds][nans_mask] - ground_truth[klass_inds][predicted_klass_inds][nans_mask]) /
+                (ground_truth[klass_inds][predicted_klass_inds][nans_mask] + eps)
             )
 
             self.training = False
 
-            return errors.mean(), self._stats
+            error_mean = errors.mean() if len(errors) > 0 else np.inf
+            return error_mean, Transformer(training_final_values, scaling)
 
-        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs)
-
-        opt = list(np.unravel_index(eval_matrix.argmax(), eval_matrix.shape))
-
+        eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs) # finding normalization
+        
+        # opt = tuple(np.unravel_index(eval_matrix.argmin(axis = 0), eval_matrix.shape))
+        opt = [eval_matrix.argmin(axis = 0), np.arange(eval_matrix.shape[1])]
+        print(eval_matrix)
         return {
-            "stats": stat_matrix[opt],
-            "log": "log" in OUT_SCALING_OPTIONS[opt[1]],
-            "scaling": OUT_SCALING_OPTIONS[opt[1]], 
-            "eval_matrix": eval_matrix
+            "transform": stat_matrix[opt[0], opt[1]],
+            "eval_matrix": eval_matrix,
+            "label_dict": dict(zip(labels, np.arange(len(labels))))
         }
 
     # =================== helper methods below ===========================
 
     def preprocess_grid(self, grid, training_grid = False):
+        """ method that takes PSyGrid object and processes it into nice 
+        numpy arrays and dictionaries
+
+            Parameters
+            ---------
+            grid: PSyGrid
+                grid
+            training_grid: bool
+                specifies whether this is a training grid (regularly sampled)
+
+            Return Values
+            -------------
+            dict
+                PSyGrid processed into dict such that it contains only information
+                important to IF interpolation
+        """
 
         final_values = np.array(grid.final_values[self.continuous_out_keys].tolist())
 
@@ -365,8 +533,6 @@ class IFInterpolator:
         initial_values = np.array(grid.initial_values[self.in_keys][valid_inds].tolist())
         # determining if should interp in q
         if training_grid:
-            m1, m2 = 10**initial_values[:, 0], 10**initial_values[:, 1]
-            self.interp_in_q = (m2[m1 > 0.95 * m1.max()].min() / m2[m1 < 1.05 * m1.min()].min() > 2)
             self.interp_in_q = False
             
         initial_values = np.log10(initial_values + eps)
@@ -395,6 +561,16 @@ class IFInterpolator:
         }
     
     def triangulate(self, grid_dict):
+        """ method that constructs Delaunay triangulations stored in class memory
+        when given a grid
+
+            Parameters
+            ----------
+            grid_dict: dict
+                a dictionary containing grid information created with preprocess grid
+                method
+
+        """
 
         triangulations = {}
 
@@ -404,17 +580,41 @@ class IFInterpolator:
                 classes.remove("initial_MT")
 
             class_triangulations = {}
-
+            
             for klass in classes:
 
                 class_inds = grid_dict["class_inds"][label_name][klass]
-                class_triangulations[klass] = Delaunay(grid_dict["initial_values"][class_inds])
+                
+                if class_inds.shape[0] < 5:
+                    print(f"too few training samples for {klass}")
+                    class_triangulations[klass] = "1NN"
+                else:
+
+                    try:
+                        class_triangulations[klass] = Delaunay(grid_dict["initial_values"][class_inds])
+                    except:
+                        print(f"Geometry wrong for {klass}, using 1NN")
+                        class_triangulations[klass] = "1NN"
 
             triangulations[label_name] = class_triangulations
 
         grid_dict["triangulations"] = triangulations
 
     def compute_barycentric_coordinates(self, point, coords):
+        """ helper method that computes barycentric coordinates which are the weights to use
+        for the nearest neighbors
+
+            Parameters
+            ----------
+            point: np.ndarray
+                initial values inside tetrahedral (we are trying to predict)
+            coords: np.ndarray
+                coordinates of neighbors which are vertices of tetrahedra
+
+            Return Values
+            -------------
+            np.ndarray: weight for each coord
+        """
 
         T = np.array([
             coords[0] - coords[3],
@@ -435,6 +635,19 @@ class IFInterpolator:
         return weights
 
     def get_nearest_neighbor(self, iv, key):
+        """ finds the nearest neighbor in the training grid
+
+            Parameters
+            ----------
+            iv: np.ndarray
+                contains initial stellar masses and orbital period
+            key: string
+                specifies parameter
+
+            Return Values
+            -------------
+                np.ndarray: output parameters of nearest neighbors
+        """
 
         dists = np.sqrt(np.square(self.training_grid["initial_values"] - iv).sum(axis = 1))
         sorted_inds = dists.argsort()
@@ -442,6 +655,20 @@ class IFInterpolator:
         return np.array(self.training_grid["final_values"][key][sorted_inds[0]].tolist())
 
     def apply_continuous_constraints(self, interpolated, sn_model):
+        """ method that applies constraints to our outputs
+
+            Parameters
+            ----------
+            interpolated: np.ndarray
+                interpolated values
+            sn_model: string
+                specifies super nova model used
+
+            Return Values
+            -------------
+            np.ndarray: contains interpolated values with constraints applied
+
+        """
         keys = self.out_key_dict["interpolation_class"] + self.out_key_dict[sn_model]
 
         sanitized = sanitize_interpolated_quantities(
@@ -450,38 +677,5 @@ class IFInterpolator:
         )
         return np.array([sanitized[key] for key in keys])
 
-    def normalize_output(self, input, klass):
-        class_ind = self.classes.index(klass)
-        scalers = self.out_scalers[class_ind]
-
-        ret_value = np.zeros_like(input)
-
-        for dim, scaler in enumerate(scalers):
-            ret_value[:, dim] = scaler.transform(input[:, dim])
-
-        return ret_value
-
-
-    def denormalize_output(self, input, klass):
-        class_ind = self.classes.index(klass)
-        scalers = self.out_scalers[class_ind]
-
-        ret_value = np.zeros_like(input)
-
-        for dim, scaler in enumerate(scalers):
-            ret_value[dim] = scaler.inv_transform(input[dim])
-
-        return ret_value
-
-    def normalize_triangulations(self, out_keys):
-
-        new_final_values = np.zeros_like(self.training_grid["final_values"][out_keys])
-
-        for i, (klass, fv) in enumerate(zip(self.training_grid["classes"], self.training_grid["final_values"][out_keys])):
-            if klass == "initial_MT": # should be taken out in preprocessing
-                continue
-            new_final_values[i] = self.normalize_output(np.array([fv]), klass)
-
-        self.training_grid["final_values"][out_keys] = new_final_values
 
         
