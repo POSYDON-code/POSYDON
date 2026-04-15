@@ -2455,7 +2455,7 @@ class StepSN(object):
                 state = 'BH'
 
             elif (CO_core_mass < 10.0) and (CO_core_mass > 2.5):
-                ff = self.explod_crit(Xi, sc, mu4M4, mu4)
+                ff = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
                 if ff == 0:
                     if conserve_hydrogen_envelope:
                         m_rem = star.mass
@@ -2497,13 +2497,12 @@ class StepSN(object):
         return rem
 
     # implemented from Maltsev+25
-    def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val):
+    def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val, k1, k2):
         ff1, ff2 = [], []
         unclassified = True
         comp_crit1, comp_crit2 = 0.314, 0.544 # compactness
         sc_crit1, sc_crit2 = 0.988, 1.169 # central specific entropy
         mu4M4_crit1, mu4M4_crit2 = 0.247, 0.421 # product of M4 and mu4
-        k1, k2 =  0.005, 0.421 # See Section 3.1.1. of [8]_
 
         # check whether criterion for failed SN is fulfilled
         if comp_val > comp_crit2 or sc_val > sc_crit2:
