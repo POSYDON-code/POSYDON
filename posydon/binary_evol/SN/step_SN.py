@@ -2489,7 +2489,7 @@ class StepSN(object):
             rem = 2
         else:
         # stochastic determination of the remnant type (NS versus fallback-BH)
-            rand_number = random.uniform(0,1)
+            rand_number = self.RNG.uniform(0,1)
             if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
                 rem = 3 # fallback BH, although successful SN
             else:
