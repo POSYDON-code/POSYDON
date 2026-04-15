@@ -2454,7 +2454,7 @@ class StepSN(object):
                 f_fb = 1.0
                 state = 'BH'
 
-            elif (CO_core_mass < 10.0) and (CO_core_mass > 2.5):
+            elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 ff = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
                 if ff == 0:
                     if conserve_hydrogen_envelope:
