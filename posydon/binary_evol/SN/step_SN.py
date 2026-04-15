@@ -2488,7 +2488,7 @@ class StepSN(object):
         if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
             rem = 2
         else:
-        # stochastic determination of the remnant type (NS versus fallback-BH)
+            # stochastic determination of the remnant type (NS versus fallback-BH)
             rand_number = self.RNG.uniform(0,1)
             if rand_number <= 0.15:  # probabily for fallback = 0.15 in Section 3.1.2.
                 rem = 3 # fallback BH, although successful SN
