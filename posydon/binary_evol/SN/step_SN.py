@@ -2424,9 +2424,9 @@ class StepSN(object):
             M4, mu4, Xi, sc = self.get_M4_mu4_Patton20(CO_core_mass, C_core_abundance)
             M4 = M4[0]
             mu4 = mu4[0]
-            Xi=Xi[0]
-            sc=sc[0]
-            mu4M4=mu4*M4
+            Xi = Xi[0]
+            sc = sc[0]
+            mu4M4 = mu4*M4
             star.M4 = M4
             star.mu4 = mu4
             star.Xi = Xi
@@ -2503,7 +2503,7 @@ class StepSN(object):
         comp_crit1, comp_crit2 = 0.314, 0.544 # compactness
         sc_crit1, sc_crit2 = 0.988, 1.169 # central specific entropy
         mu4M4_crit1, mu4M4_crit2 = 0.247, 0.421 # product of M4 and mu4
-        k1, k2 =  0.421, 0.005
+        k1, k2 =  0.005, 0.421 # See Section 3.1.1. of [8]_
 
         # check whether criterion for failed SN is fulfilled
         if comp_val > comp_crit2 or sc_val > sc_crit2:
@@ -2526,7 +2526,7 @@ class StepSN(object):
             elif mu4M4_val < mu4M4_crit1:
                 ff = 1
         # final fate classification based on reversed Ertl criterion
-            elif k2 + k1*mu4M4_val - mu4_val > 0:
+            elif k1 + k2*mu4M4_val - mu4_val > 0:
                 ff = 0
             else:
                 ff = 1
