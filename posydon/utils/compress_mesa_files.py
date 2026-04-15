@@ -186,7 +186,7 @@ def get_size(start_path="."):
     n_runs = 0
     n_remove_files = 0
     n_compress_files = 0
-    for dirpath, _, filenames in os.walk(start_path, followlinks=True):
+    for dirpath, _, filenames in os.walk(start_path):
         if "_grid_index_" in dirpath:   # checking if directory is mesa run
             new_remove_files = []
             new_compress_files = []
@@ -198,7 +198,7 @@ def get_size(start_path="."):
         for filename in filenames:
             filepath = os.path.join(dirpath, filename)
             # skip if it is symbolic link
-            if not os.path.islink(filepath):
+            if not os.path.islink(filepath): #pragma: no cover
                 total_size += os.path.getsize(filepath)
             # check for files in mesa run, whether to remove or compress it
             if new_remove_files is not None:

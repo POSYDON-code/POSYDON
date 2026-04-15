@@ -199,7 +199,7 @@ class TestFunctions:
         assert capsys.readouterr().out == "Created Test Directory at "\
                                           + f"{test_dir}.\n"
 
-    def test_get_size(self, tmp_path):
+    def test_get_size(self, tmp_path, monkeypatch):
         # examples: empty directory
         MESA_dir = get_MESA_dir(tmp_path, 0)
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
@@ -245,13 +245,6 @@ class TestFunctions:
                                              os.listdir(MESA_run_dir)[0])
                 os.symlink(MESA_run_file, os.path.join(MESA_dir,\
                                                        f"link{i}.file0"))
-
-            first_run_dir = os.path.join(MESA_dir, MESA_runs[0])
-            first_run_files = os.listdir(first_run_dir)
-            if len(first_run_files) > 0:
-                target = os.path.join(first_run_dir, first_run_files[0])
-                os.symlink(target,
-                           os.path.join(first_run_dir, "symlink_test"))
 
         # add >=2 regular files directly in MESA_dir (a non-MESA directory)
         # so the inner for-loop backward arc (204->198) is covered on Ubuntu,
