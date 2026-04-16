@@ -38,6 +38,7 @@ import pandas as pd
 import psutil
 from tqdm import tqdm
 
+import posydon
 from posydon.binary_evol.binarystar import BinaryStar
 from posydon.binary_evol.simulationproperties import SimulationProperties
 from posydon.binary_evol.singlestar import SingleStar, properties_massless_remnant
@@ -77,7 +78,8 @@ saved_ini_parameters = ['metallicity',
                    'orbital_separation_scheme',
                    'orbital_separation_min',
                    'orbital_separation_max',
-                   'eccentricity_scheme']
+                   'eccentricity_scheme',
+                   'posydon_version']
 
 
 HISTORY_MIN_ITEMSIZE = {'state': 30, 'event': 25, 'step_names': 21,
@@ -95,8 +97,8 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'interp_class_CO_HMS_RLO' : 15, 'interp_class_CO_HeMS_RLO' : 15,
                         'mt_history_HMS_HMS' : 40, 'mt_history_CO_HeMS' : 40,
                         'mt_history_CO_HMS_RLO' : 40, 'mt_history_CO_HeMS_RLO' : 40,
-                        'culmulative_mt_case_HMS_HMS': 40, 'culmulative_mt_case_CO_HeMS': 40,
-                        'culmulative_mt_case_CO_HMS_RLO': 40, 'culmulative_mt_case_CO_HeMS_RLO': 40,
+                        'cumulative_mt_case_HMS_HMS': 40, 'cumulative_mt_case_CO_HeMS': 40,
+                        'cumulative_mt_case_CO_HMS_RLO': 40, 'cumulative_mt_case_CO_HeMS_RLO': 40,
                         }
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that
@@ -129,10 +131,17 @@ class BinaryPopulation:
         self.population_properties = self.kwargs.get('population_properties',
                                                      SimulationProperties())
         atexit.register(lambda: BinaryPopulation.close(self))
-        self.metallicity = self.kwargs.get('metallicity', 1)
 
         # grab all metallicities in population or use single metallicity
-        self.metallicities = self.kwargs.get('metallicities', [self.metallicity])
+        self.metallicities = self.kwargs.get('metallicities', [1.])
+
+        # The first index of the metallicities list will be chosen unless told otherwise.
+        # If metallicity is provided (as e.g., PopulationRunner does automatically), the
+        # provided metallicity is used instead.
+        self.metallicity_index = self.kwargs.get('metallicity_index', 0)
+        self.kwargs['metallicity'] = self.kwargs.get('metallicity',
+                                          self.metallicities[self.metallicity_index])
+        self.metallicity = self.kwargs['metallicity']
 
         # force the metallicity on to the simulation properties
         for key in STEP_NAMES_LOADING_GRIDS:
@@ -193,13 +202,18 @@ class BinaryPopulation:
         self.find_failed = self.manager.find_failed
 
     @classmethod
-    def from_ini(cls, path, verbose=False):
+    def from_ini(cls, path, metallicity_index=0, verbose=False):
         """Create a BinaryPopulation instance from an inifile.
 
         Parameters
         ----------
         path : str
             Path to an inifile to load in.
+
+        metallicity_index : int
+            Used to select a metallicity from the metallicities array
+            in the .ini file. This is mainly useful if you are creating
+            a BinaryPopulation class from scratch.
 
         verbose : bool
             Print useful info.
@@ -209,15 +223,21 @@ class BinaryPopulation:
         BinaryPopulation
             A new instance of a BinaryPopulation.
         """
+
         pop_kwargs = binarypop_kwargs_from_ini(path, verbose=verbose)
+
         # finally get the population properties
         sim_prop_kwargs = simprop_kwargs_from_ini(path)
+        sim_prop_kwargs['verbose'] = verbose
         pop_kwargs['population_properties'] = SimulationProperties(
             **sim_prop_kwargs)
 
+        pop_kwargs['metallicity_index'] = metallicity_index
+
         return cls(**pop_kwargs)
 
-    def evolve(self, **kwargs):
+    def evolve(self, **kwargs): # pragma: no cover
+        # wrapper for _safe_evolve
         """Evolve a binary population.
 
         Parameters
@@ -271,7 +291,8 @@ class BinaryPopulation:
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
 
-    def _safe_evolve(self, **kwargs):
+    def _safe_evolve(self, **kwargs): # pragma: no cover
+        # needs more complex test than unit test
         """Evolve binaries in a population, catching warnings/exceptions."""
         if not self.population_properties.steps_loaded:
             # Enforce the same metallicity for all grid steps
@@ -285,7 +306,7 @@ class BinaryPopulation:
                     modified_tup = (step_function, step_kwargs)
                     self.population_properties.kwargs[step_name] = modified_tup
 
-            self.population_properties.load_steps()
+            self.population_properties.load_steps(RNG=self.RNG)
 
         indices = kwargs.get('indices', list(range(self.number_of_binaries)))
 
@@ -467,7 +488,8 @@ class BinaryPopulation:
                                  f"evolution.combined.{self.rank}.h5"),
                     mode='w', **kwargs)
 
-    def save(self, save_path, **kwargs):
+    def save(self, save_path, **kwargs): # pragma: no cover
+        # dependent on full evolution
         """Save BinaryPopulation to hdf file."""
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
@@ -495,13 +517,13 @@ class BinaryPopulation:
 
             self.combine_saved_files(absolute_filepath, tmp_files, **kwargs)
 
-    def make_temp_fname(self):
+    def make_temp_fname(self): # pragma: no cover
         """Get a valid filename for the temporary file."""
         temp_directory = self.kwargs['temp_directory']
         return os.path.join(temp_directory, f"evolution.combined.{self.rank}.h5")
         # return os.path.join(dir_name, '.tmp{}_'.format(rank) + file_name)
 
-    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):
+    def combine_saved_files(self, absolute_filepath, file_names, **kwargs):  # pragma: no cover
         """Combine various temporary files in a given folder.
 
         Parameters
@@ -570,7 +592,10 @@ class BinaryPopulation:
             # store population metadata
             tmp_df = pd.DataFrame()
             for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
+                if c == 'posydon_version':
+                    tmp_df[c] = [posydon.__version__]
+                else:
+                    tmp_df[c] = [self.kwargs[c]]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(
@@ -601,19 +626,19 @@ class BinaryPopulation:
             prop.close()
         return d
 
-    def __iter__(self):
+    def __iter__(self): # pragma: no cover
         """Iterate the binaries."""
         return iter(self.manager)
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): # pragma: no cover
         """Get the k-th binary."""
         return self.manager[key]
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """Get the number of binaries in the population."""
         return len(self.manager)
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         """Report key properties of the object."""
         s = "<{}.{} at {}>\n".format(
             self.__class__.__module__, self.__class__.__name__, hex(id(self))
@@ -716,7 +741,7 @@ class PopulationManager:
                                        and selection_function(binary)):
                     holder.append(binary.to_df(**kwargs))
 
-        elif len(self.history_dfs) > 0:
+        elif len(self.history_dfs) > 0: # pragma: no branch
             holder.extend(self.history_dfs)
 
         if len(holder) > 0:
@@ -737,7 +762,7 @@ class PopulationManager:
                                        and selection_function(binary)):
                     holder.append(binary.to_oneline_df(**kwargs))
 
-        elif len(self.oneline_dfs) > 0:
+        elif len(self.oneline_dfs) > 0: # pragma: no branch
             holder.extend(self.oneline_dfs)
 
         if len(holder) > 0:
@@ -764,7 +789,7 @@ class PopulationManager:
         self.append(binary)
         return binary
 
-    def from_hdf(self, indices=None, where=None, restore=False):
+    def from_hdf(self, indices=None, where=None, restore=False): # pragma: no cover
         """Load a BinaryStar instance from an hdf file of a saved population.
 
         Parameters
@@ -834,7 +859,7 @@ class PopulationManager:
 
         return binary_holder
 
-    def save(self, fname, **kwargs):
+    def save(self, fname, **kwargs):  # pragma: no cover
         """Save binaries to an hdf file using pandas HDFStore.
 
         Any object dtype columns not parsed by infer_objects() is converted to
@@ -921,7 +946,10 @@ class PopulationManager:
             # store population metadata
             tmp_df = pd.DataFrame()
             for c in saved_ini_parameters:
-                tmp_df[c] = [self.kwargs[c]]
+                if c == 'posydon_version':
+                    tmp_df[c] = [posydon.__version__]
+                else:
+                    tmp_df[c] = [self.kwargs[c]]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(
@@ -936,19 +964,19 @@ class PopulationManager:
         return
 
 
-    def __getitem__(self, key):
+    def __getitem__(self, key): # pragma: no cover
         """Return the key-th binary."""
         return self.binaries[key]
 
-    def __iter__(self):
+    def __iter__(self): # pragma: no cover
         """Iterate the binaries in the population."""
         return iter(self.binaries)
 
-    def __len__(self):
+    def __len__(self): # pragma: no cover
         """Return the number of binaries in the population."""
         return len(self.binaries)
 
-    def __bool__(self):
+    def __bool__(self): # pragma: no cover
         """Evaluate as True if binaries have been appended."""
         return len(self) > 0
 
@@ -1004,7 +1032,7 @@ class BinaryGenerator:
         if orbital_scheme == 'separation':
             separation, eccentricity, m1, m2 = sampler_output
             orbital_period = orbital_period_from_separation(separation, m1, m2)
-        elif orbital_scheme == 'period':
+        elif orbital_scheme == 'period': # pragma: no branch
             orbital_period, eccentricity, m1, m2 = sampler_output
             separation = orbital_separation_from_period(orbital_period, m1, m2)
         else:
@@ -1151,7 +1179,7 @@ class BinaryGenerator:
                             star_2=SingleStar(**star2_params))
         return binary
 
-    def __repr__(self,):
+    def __repr__(self,): # pragma: no cover
         """Report key properties of the BinaryGenerator instance."""
         s = "<{}.{} at {}>\n".format(
             self.__class__.__module__, self.__class__.__name__, hex(id(self))

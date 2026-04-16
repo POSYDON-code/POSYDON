@@ -158,6 +158,141 @@ class TestSalpeterIMF:
             # Verify the function still returns values (just with warning)
             assert len(result) == 1
 
+    def test_rvs_default(self, default_imf):
+        """Test random sampling from the Salpeter IMF."""
+        # Test single sample
+        rng = np.random.default_rng(42)
+        sample = default_imf.rvs(size=1, rng=rng)
+        assert len(sample) == 1
+        assert default_imf.m_min <= sample[0] <= default_imf.m_max
+
+        # Test multiple samples
+        rng = np.random.default_rng(42)
+        samples = default_imf.rvs(size=1000, rng=rng)
+        assert len(samples) == 1000
+        assert np.all(samples >= default_imf.m_min)
+        assert np.all(samples <= default_imf.m_max)
+
+    def test_rvs_without_rng(self, default_imf):
+        """Test random sampling without providing an RNG."""
+        samples = default_imf.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= default_imf.m_min)
+        assert np.all(samples <= default_imf.m_max)
+
+class TestKroupa1993IMF:
+    @pytest.fixture
+    def default_kroupa1993(self):
+        """Fixture for default Kroupa1993 instance."""
+        return IMFs.Kroupa1993()
+
+    @pytest.fixture
+    def custom_kroupa1993(self):
+        """Fixture for custom Kroupa1993 instance."""
+        return IMFs.Kroupa1993(alpha=2.5, m_min=0.05, m_max=150.0)
+
+    def test_initialization_default(self, default_kroupa1993):
+        """Test default initialization of Kroupa1993 IMF."""
+        assert default_kroupa1993.alpha == 2.7
+        assert default_kroupa1993.m_min == 0.01
+        assert default_kroupa1993.m_max == 200.0
+        integral, _ = quad(default_kroupa1993.imf,
+                           default_kroupa1993.m_min,
+                           default_kroupa1993.m_max)
+        assert np.isclose(integral*default_kroupa1993.norm, 1.0, rtol=1e-5)
+
+    def test_initialization_custom(self, custom_kroupa1993):
+        """Test custom initialization of Kroupa1993 IMF."""
+        assert custom_kroupa1993.alpha == 2.5
+        assert custom_kroupa1993.m_min == 0.05
+        assert custom_kroupa1993.m_max == 150.0
+        integral, _ = quad(custom_kroupa1993.imf,
+                           custom_kroupa1993.m_min,
+                           custom_kroupa1993.m_max)
+        assert np.isclose(integral*custom_kroupa1993.norm, 1.0, rtol=1e-5)
+
+    def test_repr(self, default_kroupa1993):
+        """Test string representation."""
+        rep_str = default_kroupa1993.__repr__()
+        assert "Kroupa1993(" in rep_str
+        assert "alpha=2.7" in rep_str
+        assert "m_min=0.01" in rep_str
+        assert "m_max=200.0" in rep_str
+
+    def test_repr_html(self, default_kroupa1993):
+        """Test HTML representation."""
+        html_str = default_kroupa1993._repr_html_()
+        assert "<h3>Kroupa (1993) IMF</h3>" in html_str
+        assert "alpha = 2.7" in html_str
+        assert "m_min = 0.01" in html_str
+        assert "m_max = 200.0" in html_str
+
+    def test_invalid_mass(self, default_kroupa1993):
+        """Test that the imf method raises ValueError for invalid mass values."""
+        with pytest.raises(ValueError, match="Mass must be positive."):
+            default_kroupa1993.imf(0)
+        with pytest.raises(ValueError, match="Mass must be positive."):
+            default_kroupa1993.imf(-1.0)
+        with pytest.raises(ValueError, match="Mass must be positive."):
+            default_kroupa1993.imf([0.0])
+
+    def test_imf(self, default_kroupa1993):
+        """Test the imf method for correct values."""
+        # Test with an array of mass values
+        m_values = np.array([1.0, 2.0, 5.0, 10.0])
+        expected = m_values ** (-default_kroupa1993.alpha)
+        computed = default_kroupa1993.imf(m_values)
+        assert np.allclose(computed, expected)
+
+        # Test with a single mass value
+        m = 3.0
+        expected = m ** (-default_kroupa1993.alpha)
+        computed = default_kroupa1993.imf(m)
+        assert np.isclose(computed, expected)
+
+    def test_pdf_within_range(self, default_kroupa1993):
+        """Test that PDF returns correct values within the mass range."""
+        m = np.linspace(default_kroupa1993.m_min, default_kroupa1993.m_max, 100)
+        pdf_values = default_kroupa1993.pdf(m)
+        expected_pdf = default_kroupa1993.imf(m) * default_kroupa1993.norm
+        assert np.allclose(pdf_values, expected_pdf)
+
+    def test_pdf_outside_range(self, default_kroupa1993):
+        """Test that PDF returns zero for masses outside the mass range."""
+        m = np.array([default_kroupa1993.m_min - 0.1, default_kroupa1993.m_max + 0.1])
+        pdf_values = default_kroupa1993.pdf(m)
+        assert np.allclose(pdf_values, 0.0)
+
+    def test_normalization(self, default_kroupa1993):
+        """Ensure that the integral of the PDF over the range is approximately 1."""
+        integral, _ = quad(default_kroupa1993.pdf,
+                           default_kroupa1993.m_min,
+                           default_kroupa1993.m_max)
+        assert np.isclose(integral, 1.0, rtol=1e-5)
+
+    def test_rvs_default(self, default_kroupa1993):
+        """Test random sampling from the Kroupa1993 IMF."""
+        # Test single sample
+        rng = np.random.default_rng(42)
+        sample = default_kroupa1993.rvs(size=1, rng=rng)
+        assert len(sample) == 1
+        assert default_kroupa1993.m_min <= sample[0] <= default_kroupa1993.m_max
+
+        # Test multiple samples
+        rng = np.random.default_rng(42)
+        samples = default_kroupa1993.rvs(size=1000, rng=rng)
+        assert len(samples) == 1000
+        assert np.all(samples >= default_kroupa1993.m_min)
+        assert np.all(samples <= default_kroupa1993.m_max)
+
+    def test_rvs_without_rng(self, default_kroupa1993):
+        """Test random sampling without providing an RNG."""
+        samples = default_kroupa1993.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= default_kroupa1993.m_min)
+        assert np.all(samples <= default_kroupa1993.m_max)
+
+
 class TestKroupa2001IMF:
     @pytest.fixture
     def default_kroupa(self):
@@ -276,6 +411,28 @@ class TestKroupa2001IMF:
     def test_repr_html(self, default_kroupa):
         html_str = default_kroupa._repr_html_()
         assert "<h3>Kroupa (2001) IMF</h3>" in html_str
+
+    def test_rvs_default(self, default_kroupa):
+        """Test random sampling from the Kroupa2001 IMF."""
+        # Test single sample
+        rng = np.random.default_rng(42)
+        sample = default_kroupa.rvs(size=1, rng=rng)
+        assert len(sample) == 1
+        assert default_kroupa.m_min <= sample[0] <= default_kroupa.m_max
+
+        # Test multiple samples
+        rng = np.random.default_rng(42)
+        samples = default_kroupa.rvs(size=1000, rng=rng)
+        assert len(samples) == 1000
+        assert np.all(samples >= default_kroupa.m_min)
+        assert np.all(samples <= default_kroupa.m_max)
+
+    def test_rvs_without_rng(self, default_kroupa):
+        """Test random sampling without providing an RNG."""
+        samples = default_kroupa.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= default_kroupa.m_min)
+        assert np.all(samples <= default_kroupa.m_max)
 
 class TestChabrierIMF:
     @pytest.fixture
@@ -401,3 +558,25 @@ class TestChabrierIMF:
     def test_repr_html(self, default_chabrier):
         html_str = default_chabrier._repr_html_()
         assert "<h3>Chabrier IMF</h3>" in html_str
+
+    def test_rvs_default(self, default_chabrier):
+        """Test random sampling from the Chabrier2003 IMF."""
+        # Test single sample
+        rng = np.random.default_rng(42)
+        sample = default_chabrier.rvs(size=1, rng=rng)
+        assert len(sample) == 1
+        assert default_chabrier.m_min <= sample[0] <= default_chabrier.m_max
+
+        # Test multiple samples
+        rng = np.random.default_rng(42)
+        samples = default_chabrier.rvs(size=1000, rng=rng)
+        assert len(samples) == 1000
+        assert np.all(samples >= default_chabrier.m_min)
+        assert np.all(samples <= default_chabrier.m_max)
+
+    def test_rvs_without_rng(self, default_chabrier):
+        """Test random sampling without providing an RNG."""
+        samples = default_chabrier.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= default_chabrier.m_min)
+        assert np.all(samples <= default_chabrier.m_max)

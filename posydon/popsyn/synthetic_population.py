@@ -122,7 +122,7 @@ class PopulationRunner:
             from posydon.utils.common_functions import convert_metallicity_to_string
 
             self.pop_params = binarypop_kwargs_from_ini(path_to_ini)
-            self.solar_metallicities = self.pop_params["metallicity"]
+            self.solar_metallicities = self.pop_params["metallicities"]
             self.verbose = verbose
             if not isinstance(self.solar_metallicities, list):
                 self.solar_metallicities = [self.solar_metallicities]
@@ -159,12 +159,12 @@ class PopulationRunner:
             if os.path.exists(pop.kwargs["temp_directory"]) and not overwrite:
                 raise FileExistsError(f"The {pop.kwargs['temp_directory']} directory already exists! Please remove it or rename it before running the population.")
             elif os.path.exists(pop.kwargs["temp_directory"]) and overwrite:
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     print(f"Removing pre-existing {pop.kwargs['temp_directory']} directory...")
                 shutil.rmtree(pop.kwargs["temp_directory"])
 
             pop.evolve(optimize_ram=True)
-            if pop.comm is None:
+            if pop.comm is None:  # pragma: no cover
                 self.merge_parallel_runs(pop, overwrite)
 
     def merge_parallel_runs(self, pop, overwrite=False):
@@ -185,7 +185,7 @@ class PopulationRunner:
                 f"{Zstr}_Zsun_population.h5 already exists!\n"
                 +"Files were not merged. You can use PopulationRunner.merge_parallel_runs() to merge the files manually."
             )
-        elif os.path.exists(fname) and overwrite:
+        elif os.path.exists(fname) and overwrite:  # pragma: no cover
             if self.verbose:
                 print(f"Removing pre-exisiting {fname}...")
             os.remove(fname)
@@ -197,12 +197,12 @@ class PopulationRunner:
             for f in os.listdir(path_to_batch)
             if os.path.isfile(os.path.join(path_to_batch, f))
         ]
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print(f"Merging {len(tmp_files)} files...")
 
         pop.combine_saved_files(fname, tmp_files)
 
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print("Files merged!")
             print(f"Saved merged files to {fname}...")
             print(f"Removing files in {path_to_batch}...")
@@ -383,7 +383,7 @@ class History(DFInterface):
             if "/history_lengths" in store.keys():
                 self.lengths = store["history_lengths"]
             else:
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     print(
                         "history_lengths not found in population file. Calculating history lengths..."
                     )
@@ -394,7 +394,7 @@ class History(DFInterface):
                 tmp_df.rename(columns={"index": "length"}, inplace=True)
                 self.lengths = tmp_df
                 del tmp_df
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     print("Storing history lengths in population file!")
                 store.put("history_lengths", pd.DataFrame(self.lengths), format="table")
                 del history_events
@@ -731,7 +731,7 @@ class Oneline(DFInterface):
         else:
             raise ValueError("Invalid key type!")
 
-    def __len__(self):
+    def __len__(self):  # pragma: no cover
         """
         Get the number of systems in the oneline table.
 
@@ -742,7 +742,7 @@ class Oneline(DFInterface):
         """
         return self.number_of_systems
 
-    def head(self, n=10):
+    def head(self, n=10):  # pragma: no cover
         """Get the first n rows of the oneline table.
 
         Parameters
@@ -757,7 +757,7 @@ class Oneline(DFInterface):
         """
         return super().head("oneline", n)
 
-    def tail(self, n=10):
+    def tail(self, n=10):  # pragma: no cover
         """
         Get the last n rows of the oneline table.
 
@@ -773,7 +773,7 @@ class Oneline(DFInterface):
         """
         return super().tail("oneline", n)
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         """
         Get a string representation of the oneline table.
 
@@ -784,7 +784,7 @@ class Oneline(DFInterface):
         """
         return super().get_repr("oneline")
 
-    def _repr_html_(self):
+    def _repr_html_(self):  # pragma: no cover
         """
         Get an HTML representation of the oneline table.
 
@@ -795,7 +795,7 @@ class Oneline(DFInterface):
         """
         return super().get_html_repr("oneline")
 
-    def select(self, where=None, start=None, stop=None, columns=None):
+    def select(self, where=None, start=None, stop=None, columns=None):  # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
 
         This method allows you to filter and extract a subset of rows from the oneline table stored in an HDF file.
@@ -888,7 +888,7 @@ class PopulationIO:
         """
         with pd.HDFStore(filename, mode="a") as store:
             store.put("mass_per_metallicity", self.mass_per_metallicity)
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("mass_per_metallicity table written to population file!")
 
     def _load_mass_per_metallicity(self, filename):
@@ -902,7 +902,7 @@ class PopulationIO:
         """
         with pd.HDFStore(filename, mode="r") as store:
             self.mass_per_metallicity = store["mass_per_metallicity"]
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("mass_per_metallicity table read from population file!")
 
     def _save_ini_params(self, filename):
@@ -1067,7 +1067,7 @@ class Population(PopulationIO):
 
         # check if formation channels are present
         if "/formation_channels" not in keys:
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print(f"{filename} does not contain formation channels!")
             self._formation_channels = None
         else:
@@ -1076,7 +1076,7 @@ class Population(PopulationIO):
             )
 
         # if an ini file is given, read the parameters from the ini file
-        if ini_file is not None:
+        if ini_file is not None:  # pragma: no cover
             from posydon.popsyn.io import binarypop_kwargs_from_ini
 
             self.ini_params = binarypop_kwargs_from_ini(ini_file)
@@ -1135,7 +1135,7 @@ class Population(PopulationIO):
             self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
 
-        elif metallicity is not None and ini_file is None:
+        elif metallicity is not None and ini_file is None:  # pragma: no cover
             raise ValueError(
                 f"{filename} does not contain a mass_per_metallicity table and no ini file was given!"
             )
@@ -1145,7 +1145,7 @@ class Population(PopulationIO):
         self.number_of_systems = self.oneline.number_of_systems
         self.indices = self.history.indices
 
-    def __repr__(self):
+    def __repr__(self):  # pragma: no cover
         """Return a string representation of the object.
 
         Returns
@@ -1259,19 +1259,19 @@ class Population(PopulationIO):
 
             if "/oneline" in store.keys():
                 last_index_in_file = np.sort(store["oneline"].index)[-1]
-            elif "/history" in store.keys():
+            elif "/history" in store.keys(): # pragma: no cover
                 last_index_in_file = np.sort(store["history"].index)[-1]
 
-            if "/history" in store.keys() and self.verbose:
+            if "/history" in store.keys() and self.verbose:  # pragma: no cover
                 print("history in file. Appending to file")
 
-            if "/oneline" in store.keys() and self.verbose:
+            if "/oneline" in store.keys() and self.verbose:  # pragma: no cover
                 print("oneline in file. Appending to file")
 
-            if "/formation_channels" in store.keys() and self.verbose:
+            if "/formation_channels" in store.keys() and self.verbose:  # pragma: no cover
                 print("formation_channels in file. Appending to file")
 
-            if "/history_lengths" in store.keys() and self.verbose:
+            if "/history_lengths" in store.keys() and self.verbose:  # pragma: no cover
                 print("history_lengths in file. Appending to file")
 
             # TODO: I need to shift the indices of the binaries or should I reindex them?
@@ -1304,7 +1304,7 @@ class Population(PopulationIO):
                         "The population file contains multiple metallicities. Please add a metallicity column to the oneline dataframe!"
                     )
 
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print("Writing selected systems to population file...")
 
             # write oneline of selected systems
@@ -1328,7 +1328,7 @@ class Population(PopulationIO):
                     index=False,
                 )
 
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print("Oneline: Done")
 
             # write history of selected systems
@@ -1347,7 +1347,7 @@ class Population(PopulationIO):
                     index=False,
                 )
 
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print("History: Done")
 
             # write formation channels of selected systems
@@ -1411,7 +1411,7 @@ class Population(PopulationIO):
                     self.filename, key="formation_channels"
                 )
             else:
-                if self.verbose:
+                if self.verbose:  # pragma: no cover
                     print("No formation channels in the population file!")
                 self._formation_channels = None
 
@@ -1435,7 +1435,7 @@ class Population(PopulationIO):
             If the mt_history_HMS_HMS column is not present in the oneline dataframe.
         """
 
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print("Calculating formation channels...")
 
         # load the HMS-HMS interp class
@@ -1554,7 +1554,7 @@ class Population(PopulationIO):
             self._write_formation_channels(self.filename, df)
             del df
 
-        if self.verbose:
+        if self.verbose:  # pragma: no cover
             print("formation_channels written to population file!")
 
     def _write_formation_channels(self, filename, df):
@@ -1582,7 +1582,7 @@ class Population(PopulationIO):
                 min_itemsize={"channel_debug": str_length, "channel": str_length},
             )
 
-    def __len__(self):
+    def __len__(self):  # pragma: no cover
         """Get the number of systems in the population.
 
         Returns
@@ -1594,7 +1594,7 @@ class Population(PopulationIO):
         return self.number_of_systems
 
     @property
-    def columns(self):
+    def columns(self):  # pragma: no cover
         """
         Returns a dictionary containing the column names of the history and oneline dataframes.
 
@@ -1750,7 +1750,7 @@ class Population(PopulationIO):
         )
         return synth_pop
 
-    def plot_binary_evolution(self, index):
+    def plot_binary_evolution(self, index):  # pragma: no cover
         """Plot the binary evolution of a system
 
         This method is not currently implemented.
@@ -1822,7 +1822,7 @@ class TransientPopulation(Population):
             self.transient_name = transient_name
 
     @property
-    def population(self):
+    def population(self):  # pragma: no cover
         """Returns the entire transient population as a pandas DataFrame.
 
         This method retrieves the transient population data from a file and returns it as a pandas DataFrame.
@@ -1836,7 +1836,7 @@ class TransientPopulation(Population):
         return pd.read_hdf(self.filename, key="transients/" + self.transient_name)
 
     @property
-    def columns(self):
+    def columns(self):  # pragma: no cover
         """Return the columns of the transient population.
 
         Returns:
@@ -1899,6 +1899,9 @@ class TransientPopulation(Population):
         This method calculates the model weights of each event in the transient population based on the provided model parameters.
         It performs various calculations and stores the results in an HDF5 file at the location '/transients/{transient_name}/weights/{model_weights_identifier}'.
 
+        The calculated model weights represent the probability of an event per Msun
+        formed. Thus, it's units are Msun^{-1}.
+
         Parameters
         ----------
         model_weights_identifier : str
@@ -1908,6 +1911,10 @@ class TransientPopulation(Population):
         population_parameters : dict, optional
             Dictionary containing the population parameters. If None, the default population parameters will be used.
 
+        Returns
+        -------
+        pd.DataFrame
+            The model weights of the transient population and have units of Msun^-1.
         """
         if population_parameters is None:
             population_parameters = {'number_of_binaries': 1000000,
@@ -1934,12 +1941,12 @@ class TransientPopulation(Population):
 
             # check for different parameters
             for key in simulation_parameters.keys():
-                if key not in self.ini_params:
+                if key not in self.ini_params: # pragma: no branch
                     Pwarn((f"Parameter {key} not found in the population"
                             " parameters! Make sure this is intended"),
                           "POSYDONWarning")
 
-        if self.verbose:
+        if self.verbose: # pragma: no cover
             print("Simulation parameters:")
             print(simulation_parameters)
             print("Population parameters:")
@@ -1957,7 +1964,7 @@ class TransientPopulation(Population):
             met_indices = tmp_data.index[met_mask]
             met_indices =np.unique(met_indices)
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
-            if len(met_indices) == 0:
+            if len(met_indices) == 0: # pragma: no cover
                 continue
             pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
@@ -1995,7 +2002,7 @@ class TransientPopulation(Population):
         """Retrieve the model weights of the transient population.
 
         This method retrieves the model weights of the transient population based on the provided model weights identifier.
-        The model weights are stored in an HDF5 file
+        The model weights are stored in an HDF5 file and have units of Msun^-1.
 
         Parameters
         ----------
@@ -2005,7 +2012,7 @@ class TransientPopulation(Population):
         Returns
         -------
         pd.DataFrame
-            The model weights of the transient population.
+            The model weights of the transient population in units of Msun^-1.
         """
 
         if model_weights_identifier is None:
@@ -2093,13 +2100,13 @@ class TransientPopulation(Population):
         with pd.HDFStore(self.filename, mode="a") as store:
             if path_in_file + "MODEL" in store.keys():
                 store.remove(path_in_file + "MODEL")
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print("Cosmic weights already computed! Overwriting them!")
-                if path_in_file + "weights" in store.keys():
+                if path_in_file + "weights" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "weights")
-                if path_in_file + "z_events" in store.keys():
+                if path_in_file + "z_events" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "z_events")
-                if path_in_file + "birth" in store.keys():
+                if path_in_file + "birth" in store.keys(): # pragma: no branch
                     store.remove(path_in_file + "birth")
 
         self._write_MODEL_data(self.filename, path_in_file, MODEL)
@@ -2149,7 +2156,7 @@ class TransientPopulation(Population):
                 .index.to_numpy()
                 .flatten()
             )
-            if len(selected_indices) == 0:
+            if len(selected_indices) == 0: # pragma: no cover
                 continue
 
             delay_time = (
@@ -2208,7 +2215,7 @@ class TransientPopulation(Population):
                 )
         return rates
 
-    def plot_efficiency_over_metallicity(self, model_weight_identifier, channels=False, **kwargs):
+    def plot_efficiency_over_metallicity(self, model_weight_identifier, channels=False, **kwargs):  # pragma: no cover
         """
         Plot the efficiency over metallicity.
 
@@ -2232,7 +2239,7 @@ class TransientPopulation(Population):
             efficiency.index.to_numpy() * Zsun, efficiency, channels=channels, **kwargs
         )
 
-    def plot_delay_time_distribution(
+    def plot_delay_time_distribution(  # pragma: no cover
         self, model_weights_identifier, metallicity=None, ax=None, bins=100, color="black"
         ):
         """
@@ -2311,7 +2318,7 @@ class TransientPopulation(Population):
         ax.set_xlabel("Time [yr]")
         ax.set_ylabel("Number of events/Msun/yr")
 
-    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):
+    def plot_popsyn_over_grid_slice(self, grid_type, met_Zsun, **kwargs):  # pragma: no cover
         """
         Plot the transients over the grid slice.
 
@@ -2331,7 +2338,7 @@ class TransientPopulation(Population):
             pop=self, grid_type=grid_type, met_Zsun=met_Zsun, **kwargs
         )
 
-    def _write_MODEL_data(self, filename, path_in_file, MODEL):
+    def _write_MODEL_data(self, filename, path_in_file, MODEL):  # pragma: no cover
         """
         Write the MODEL data to the HDFStore file.
 
@@ -2350,7 +2357,7 @@ class TransientPopulation(Population):
                 store.put(path_in_file + "MODEL", pd.DataFrame(MODEL))
             else:
                 store.put(path_in_file + "MODEL", pd.DataFrame(MODEL, index=[0]))
-            if self.verbose:
+            if self.verbose:  # pragma: no cover
                 print("MODEL written to population file!")
 
     def efficiency(self, model_weights_identifier, channels=False):
@@ -2485,11 +2492,11 @@ class Rates(TransientPopulation):
             else:
                 self.MODEL = tmp_df.iloc[0].to_dict()
 
-            if self.verbose:
+            if self.verbose: # pragma: no cover
                 print("MODEL read from population file!")
 
     @property
-    def weights(self):
+    def weights(self):  # pragma: no cover
         """
         Retrieves the weights from the HDFStore.
 
@@ -2661,7 +2668,7 @@ class Rates(TransientPopulation):
                 + observable_name
                 in store.keys()
             ):
-                if self.verbose:
+                if self.verbose: # pragma: no cover
                     print("Overwriting observable population!")
                 del store[
                     "transients/"
@@ -2773,7 +2780,7 @@ class Rates(TransientPopulation):
 
     def plot_hist_properties(
         self, prop, intrinsic=True, observable=None, bins=50, channel=None, **kwargs
-    ):
+    ):  # pragma: no cover
         """Plot a histogram of a given property available in the transient population.
 
         This method plots a histogram of a given property available in the transient population.
@@ -2854,7 +2861,7 @@ class Rates(TransientPopulation):
             # plot the histogram using plot_pop.plot_hist_properties
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
-    def plot_intrinsic_rate(self, channels=False, **kwargs):
+    def plot_intrinsic_rate(self, channels=False, **kwargs):  # pragma: no cover
         """Plot the intrinsic rate density of the transient population."""
         import posydon.visualization.plot_pop as plot_pop
 
@@ -2879,7 +2886,7 @@ class Rates(TransientPopulation):
             bin_met[-1] = met_val[-1] + (met_val[-1] - met_val[-2]) / 2.0
             bin_met[1:-1] = met_val[:-1] + (met_val[1:] - met_val[:-1]) / 2.0
         # one metallicty bin
-        elif len(met_val) == 1:
+        elif len(met_val) == 1: # pragma: no branch
             if self.MODEL["dlogZ"] is None:
                 bin_met[0] = -9
                 bin_met[-1] = 0
@@ -2888,7 +2895,7 @@ class Rates(TransientPopulation):
                 bin_met[-1] = met_val[0] + self.MODEL["dlogZ"] / 2.0
             elif isinstance(self.MODEL["dlogZ"], list) or isinstance(
                 self.MODEL["dlogZ"], np.array
-            ):
+            ):  # pragma: no branch
                 bin_met[0] = self.MODEL["dlogZ"][0]
                 bin_met[-1] = self.MODEL["dlogZ"][1]
 
