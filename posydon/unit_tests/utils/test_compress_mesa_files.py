@@ -199,7 +199,7 @@ class TestFunctions:
         assert capsys.readouterr().out == "Created Test Directory at "\
                                           + f"{test_dir}.\n"
 
-    def test_get_size(self, tmp_path, monkeypatch):
+    def test_get_size(self, tmp_path):
         # examples: empty directory
         MESA_dir = get_MESA_dir(tmp_path, 0)
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
