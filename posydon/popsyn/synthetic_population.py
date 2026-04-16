@@ -51,19 +51,14 @@ from posydon.popsyn.binarypopulation import (  # BinaryPopulation,  # Lazy: only
 # from posydon.popsyn.io import binarypop_kwargs_from_ini  # Lazy: only in __init__ methods
 # from posydon.popsyn.norm_pop import calculate_model_weights  # Lazy: only in TransientPopulation
 # Rate calculation imports are lazily loaded in TransientPopulation/Rates classes
-# from posydon.popsyn.rate_calculation import (
-#     DEFAULT_SFH_MODEL,
-#     get_comoving_distance_from_redshift,
-#     get_cosmic_time_from_redshift,
-#     get_redshift_bin_centers,
-#     get_redshift_bin_edges,
-#     get_shell_comoving_volume,
-#     redshift_from_cosmic_time_interpolator,
-# )
 # from posydon.popsyn.star_formation_history import SFR_per_met_at_z  # Lazy: only in TransientPopulation
-# from posydon.utils.common_functions import convert_metallicity_to_string  # Lazy: where needed
-# from posydon.utils.constants import Zsun, clight  # Lazy: where needed
-# from posydon.utils.posydonwarning import Pwarn  # Lazy: where needed
+from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.constants import Zsun, clight
+from posydon.utils.posydonwarning import Pwarn
+
+# Unit conversion constant: cm/s to Mpc/yr
+cm_per_sec_to_Mpc_per_yr = 1.0227121650456949e-17
+clight_Mpc_per_yr = clight * cm_per_sec_to_Mpc_per_yr
 
 ###############################################################################
 
@@ -119,7 +114,6 @@ class PopulationRunner:
             from posydon.binary_evol.simulationproperties import SimulationProperties
             from posydon.popsyn.binarypopulation import BinaryPopulation
             from posydon.popsyn.io import binarypop_kwargs_from_ini
-            from posydon.utils.common_functions import convert_metallicity_to_string
 
             self.pop_params = binarypop_kwargs_from_ini(path_to_ini)
             self.solar_metallicities = self.pop_params["metallicities"]
@@ -176,8 +170,6 @@ class PopulationRunner:
             The binary population whose files have to be merged.
 
         """
-        from posydon.utils.common_functions import convert_metallicity_to_string
-
         Zstr = convert_metallicity_to_string(pop.metallicity)
         fname = Zstr + "_Zsun_population.h5"
         if os.path.exists(fname) and not overwrite:
@@ -1092,8 +1084,6 @@ class Population(PopulationIO):
 
         # check if pop contains mass_per_metallicity table
         if "/mass_per_metallicity" in keys and metallicity is None:
-            from posydon.utils.constants import Zsun
-
             self._load_mass_per_metallicity(filename)
             self.solar_metallicities = self.mass_per_metallicity.index.to_numpy()
             self.metallicities = self.solar_metallicities * Zsun
@@ -1104,9 +1094,6 @@ class Population(PopulationIO):
 
         # calculate the metallicity information. This assumes the metallicity is for the whole file!
         if metallicity is not None and ini_file is not None:
-            from posydon.utils.constants import Zsun
-            from posydon.utils.posydonwarning import Pwarn
-
             if "/mass_per_metallicity" in keys:
                 Pwarn(f"{filename} already contains a mass_per_metallicity "
                       "table. Overwriting the table!", "OverwriteWarning")
@@ -1294,8 +1281,6 @@ class Population(PopulationIO):
                 }
 
             if "metallicity" not in self.oneline.columns:
-                from posydon.utils.posydonwarning import Pwarn
-
                 Pwarn("No metallicity column in oneline dataframe! Using the "
                       "metallicity of the population file and adding it to the"
                       " oneline.", "ReplaceValueWarning")
@@ -1740,8 +1725,6 @@ class Population(PopulationIO):
         # it can happen that no systems are selected, in which case nothing has been appended to the file in the loop
         with pd.HDFStore(self.filename, mode="r") as store:
             if '/transients/'+transient_name not in store.keys():
-                from posydon.utils.posydonwarning import Pwarn
-
                 Pwarn("No systems selected for the transient population!", "POSYDONWarning")
                 return None
 
@@ -1937,8 +1920,6 @@ class TransientPopulation(Population):
         if simulation_parameters is None:
             simulation_parameters = self.ini_params
         else:
-            from posydon.utils.posydonwarning import Pwarn
-
             # check for different parameters
             for key in simulation_parameters.keys():
                 if key not in self.ini_params: # pragma: no branch
@@ -1989,8 +1970,6 @@ class TransientPopulation(Population):
                 model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
 
         with pd.HDFStore(self.filename, mode="a") as store:
-            from posydon.utils.posydonwarning import Pwarn
-
             if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
                 del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
@@ -2078,7 +2057,6 @@ class TransientPopulation(Population):
             redshift_from_cosmic_time_interpolator,
         )
         from posydon.popsyn.star_formation_history import SFR_per_met_at_z
-        from posydon.utils.constants import Zsun, clight
 
         # Set model to DEFAULT or provided MODEL parameters
         # Allows for partial model specification
@@ -2140,9 +2118,6 @@ class TransientPopulation(Population):
         #    "underlying_mass"
         #].values
 
-        # speed of light
-        c = clight * 1.0227121650456949e-17 # cm/s to Mpc/yr
-
         # delta cosmic time bin
         deltaT = rates.MODEL["delta_t"] * 10**6  # yr
 
@@ -2195,7 +2170,7 @@ class TransientPopulation(Population):
                 weights[mask, :] = (
                     4.0
                     * np.pi
-                    * c
+                    * clight_Mpc_per_yr
                     * D_c[mask] ** 2
                     * deltaT
                     * SFR_per_met_at_z_birth[:, j]
@@ -2230,7 +2205,6 @@ class TransientPopulation(Population):
             raise ValueError("Model weight identifier not provided!")
 
         import posydon.visualization.plot_pop as plot_pop
-        from posydon.utils.constants import Zsun
 
         efficiency = self.efficiency(model_weight_identifier, channels)
 
