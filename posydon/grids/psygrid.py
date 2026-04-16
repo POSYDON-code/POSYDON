@@ -461,7 +461,7 @@ class LazyHDF5:
     def __len__(self): # pragma: no cover
         return len(self._dataset)
     
-    def to_df(self):
+    def to_df(self): # pragma: no cover
         return pd.DataFrame(self.__array__())
 
 
