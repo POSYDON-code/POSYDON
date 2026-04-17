@@ -397,6 +397,22 @@ class TestGetExpectedBatchCount:
 
         result = totest.get_expected_batch_count(str(tmp_path), str_met)
         assert result is None  # Should return None when array doesn't have dash
+
+    def test_get_expected_batch_count_with_max_concurrent_jobs(self, tmp_path):
+        """Test get_expected_batch_count with % (max concurrent jobs) in array range."""
+        metallicity = 1.0
+        str_met = convert_metallicity_to_string(metallicity)
+        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_content = """#!/bin/bash
+#SBATCH --array=0-9%5
+#SBATCH --job-name=test
+"""
+        slurm_file.write_text(slurm_content)
+
+        result = totest.get_expected_batch_count(str(tmp_path), str_met)
+        # Should strip %5 and return 10 (0-9 inclusive)
+        assert result == 10
+
 class TestFindMissingBatchIndices:
     """Test class for find_missing_batch_indices function."""
 

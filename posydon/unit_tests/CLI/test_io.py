@@ -175,7 +175,9 @@ class TestSlurmScriptCreation:
             totest.create_slurm_array(
                 metallicity, job_array_length, partition, email,
                 walltime, account, mem_per_cpu,
-                path_to_posydon, path_to_posydon_data
+                max_concurrent_jobs=None, exclude=None,
+                path_to_posydon=path_to_posydon,
+                path_to_posydon_data=path_to_posydon_data
             )
 
             # Check that the file was created
@@ -212,6 +214,7 @@ class TestSlurmScriptCreation:
                 partition=None, email=None,
                 walltime="12:00:00", account=None,
                 mem_per_cpu="2G",
+                max_concurrent_jobs=None, exclude=None,
                 path_to_posydon="/posydon",
                 path_to_posydon_data="/data"
             )
@@ -224,6 +227,67 @@ class TestSlurmScriptCreation:
                 assert "#SBATCH --partition" not in content
                 assert "#SBATCH --mail-user" not in content
                 assert "#SBATCH --account" not in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_slurm_array_with_max_concurrent_jobs(self, tmp_path):
+        """Test create_slurm_array with max_concurrent_jobs set."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            job_array_length = 10
+            max_concurrent_jobs = 5
+
+            totest.create_slurm_array(
+                metallicity, job_array_length,
+                partition=None, email=None,
+                walltime="24:00:00", account=None,
+                mem_per_cpu="4G",
+                max_concurrent_jobs=max_concurrent_jobs,
+                exclude=None,
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                # Array should include the %N max concurrent jobs specifier
+                assert f"#SBATCH --array=0-{job_array_length - 1}%{max_concurrent_jobs}" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_slurm_array_with_exclude(self, tmp_path):
+        """Test create_slurm_array with exclude set."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            job_array_length = 10
+            exclude = "node01,node02"
+
+            totest.create_slurm_array(
+                metallicity, job_array_length,
+                partition=None, email=None,
+                walltime="24:00:00", account=None,
+                mem_per_cpu="4G",
+                max_concurrent_jobs=None,
+                exclude=exclude,
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                assert f"#SBATCH --exclude={exclude}" in content
         finally:
             os.chdir(original_dir)
 
@@ -343,6 +407,8 @@ class TestSlurmScriptCreation:
                 walltime="20:00:00",
                 account="test_account",
                 mem_per_cpu="4G",
+                max_concurrent_jobs=None,
+                exclude=None,
                 path_to_posydon="/posydon",
                 path_to_posydon_data="/data"
             )
@@ -379,6 +445,8 @@ class TestSlurmScriptCreation:
                 walltime="20:00:00",
                 account=None,     # No account
                 mem_per_cpu="4G",
+                max_concurrent_jobs=None,
+                exclude=None,
                 path_to_posydon="/posydon",
                 path_to_posydon_data="/data"
             )
@@ -396,6 +464,78 @@ class TestSlurmScriptCreation:
                 # But required directives should be there
                 assert "#SBATCH --array=2,4" in content
                 assert "#SBATCH --job-name=1e+00_popsyn_rescue" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_slurm_rescue_with_max_concurrent_jobs(self, tmp_path):
+        """Test create_slurm_rescue with max_concurrent_jobs set."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            missing_indices = [1, 3]
+            job_array_length = 10
+            max_concurrent_jobs = 4
+
+            totest.create_slurm_rescue(
+                metallicity=metallicity,
+                missing_indices=missing_indices,
+                job_array_length=job_array_length,
+                partition=None,
+                email=None,
+                walltime="20:00:00",
+                account=None,
+                mem_per_cpu="4G",
+                max_concurrent_jobs=max_concurrent_jobs,
+                exclude=None,
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_rescue.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                assert f"#SBATCH --array=1,3%{max_concurrent_jobs}" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_slurm_rescue_with_exclude(self, tmp_path):
+        """Test create_slurm_rescue with exclude set."""
+        original_dir = os.getcwd()
+        os.chdir(tmp_path)
+
+        try:
+            metallicity = 1.0
+            missing_indices = [2, 4]
+            job_array_length = 10
+            exclude = "node01,node02"
+
+            totest.create_slurm_rescue(
+                metallicity=metallicity,
+                missing_indices=missing_indices,
+                job_array_length=job_array_length,
+                partition=None,
+                email=None,
+                walltime="20:00:00",
+                account=None,
+                mem_per_cpu="4G",
+                max_concurrent_jobs=None,
+                exclude=exclude,
+                path_to_posydon="/posydon",
+                path_to_posydon_data="/data"
+            )
+
+            str_met = convert_metallicity_to_string(metallicity)
+            filename = f"{str_met}_Zsun_rescue.slurm"
+            assert os.path.exists(filename)
+
+            with open(filename, "r") as f:
+                content = f.read()
+                assert f"#SBATCH --exclude={exclude}" in content
         finally:
             os.chdir(original_dir)
 
@@ -471,6 +611,8 @@ class TestRescueScriptFunctions:
         args.partition = "normal"
         args.account = "test_account"
         args.email = "test@example.com"
+        args.max_concurrent_jobs = None
+        args.exclude = None
         return args
 
     @pytest.fixture
@@ -595,6 +737,8 @@ class TestRescueScriptFunctions:
         args.partition = None      # Don't override
         args.account = None        # Don't override
         args.email = None          # Don't override
+        args.max_concurrent_jobs = None  # Don't override
+        args.exclude = None              # Don't override
 
         # Create a mock SLURM array script
         slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
@@ -647,6 +791,8 @@ class TestRescueScriptFunctions:
         args.partition = None      # Don't override
         args.account = None        # Don't override
         args.email = None          # Don't override
+        args.max_concurrent_jobs = None  # Don't override
+        args.exclude = None              # Don't override
 
         # Create a mock SLURM array script
         slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
@@ -696,6 +842,8 @@ class TestRescueScriptFunctions:
         args.partition = None
         args.account = None
         args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = None
 
         # Create a mock SLURM array script with array format that doesn't have a dash
         # (e.g., just a single number or comma-separated list)
@@ -721,5 +869,174 @@ class TestRescueScriptFunctions:
             # Verify script was still created
             rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
             assert rescue_script.exists()
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_with_exclude_in_slurm(self, tmp_path, mock_batch_status):
+        """Test create_batch_rescue_script parses --exclude from existing SLURM script."""
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None
+        args.mem_per_cpu = None
+        args.partition = None
+        args.account = None
+        args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = None
+
+        # SLURM script with --exclude= directive
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            #SBATCH --exclude=node01,node02
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+            # Verify exclude was parsed from SLURM and passed to rescue script
+            assert "#SBATCH --exclude=node01,node02" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_with_max_concurrent_in_slurm(
+        self, tmp_path, mock_batch_status
+    ):
+        """Test create_batch_rescue_script parses % (max concurrent) from SLURM array."""
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None
+        args.mem_per_cpu = None
+        args.partition = None
+        args.account = None
+        args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = None
+
+        # SLURM script with %N in array (max concurrent jobs)
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9%5
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+            # Verify max_concurrent_jobs was parsed from SLURM and included in rescue script
+            assert "%5" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_with_max_concurrent_arg(
+        self, tmp_path, mock_batch_status
+    ):
+        """Test create_batch_rescue_script with max_concurrent_jobs override from args."""
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None
+        args.mem_per_cpu = None
+        args.partition = None
+        args.account = None
+        args.email = None
+        args.max_concurrent_jobs = 3
+        args.exclude = None
+
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+            # Verify max_concurrent_jobs from args is used in rescue script
+            assert "%3" in content
+        finally:
+            os.chdir(original_dir)
+
+    def test_create_batch_rescue_script_with_exclude_arg(
+        self, tmp_path, mock_batch_status
+    ):
+        """Test create_batch_rescue_script with exclude override from args."""
+        run_folder = tmp_path / "run"
+        run_folder.mkdir()
+
+        args = MagicMock()
+        args.run_folder = str(run_folder)
+        args.walltime = None
+        args.mem_per_cpu = None
+        args.partition = None
+        args.account = None
+        args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = "badnode01"
+
+        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_content = textwrap.dedent("""\
+            #!/bin/bash
+            #SBATCH --array=0-9
+            #SBATCH --time=24:00:00
+            #SBATCH --mem-per-cpu=4G
+            export PATH_TO_POSYDON=/path/to/posydon
+            export PATH_TO_POSYDON_DATA=/path/to/data
+            srun python ./run_metallicity.py 1.0
+        """)
+        slurm_script.write_text(slurm_content)
+
+        original_dir = os.getcwd()
+        os.chdir(run_folder)
+
+        try:
+            result = totest.create_batch_rescue_script(args, mock_batch_status)
+
+            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            content = rescue_script.read_text()
+            # Verify exclude from args is used in rescue script
+            assert "#SBATCH --exclude=badnode01" in content
         finally:
             os.chdir(original_dir)
