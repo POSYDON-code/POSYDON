@@ -254,7 +254,6 @@ class double_CO_evolution(detached_evolution):
         """Differential equation describing the orbital evolution of a double
         compact object binary.
 
-
         Parameters
         ----------
         s : float

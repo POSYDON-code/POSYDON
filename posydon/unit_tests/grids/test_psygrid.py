@@ -68,7 +68,7 @@ class TestElements:
                     'PROPERTIES_ALLOWED', 'PROPERTIES_TO_BE_CONSISTENT',\
                     'PROPERTIES_TO_BE_NONE', 'PROPERTIES_TO_BE_SET',\
                     'PSyGrid', 'PSyGridIterator', 'PSyRunView', 'Pwarn',\
-                    'TERMINATION_FLAG_COLUMNS',\
+                    'LazyHDF5', 'TERMINATION_FLAG_COLUMNS',\
                     'TERMINATION_FLAG_COLUMNS_SINGLE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C', 'TrackDownsampler',\

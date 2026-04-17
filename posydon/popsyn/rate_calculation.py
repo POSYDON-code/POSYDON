@@ -1,4 +1,4 @@
-__author__ = [
+__authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
 ]
@@ -204,7 +204,7 @@ def get_redshift_bin_centers(delta_t):
     # compute the redshift
     z_birth = []
     for i in range(n_redshift_bin_centers + 1):
-        # z_at_value is from astopy.cosmology
+        # z_at_value is from astropy.cosmology
         z_birth.append(z_at_value(cosmology.age, t_birth[i] * u.Gyr))
     z_birth = np.array(z_birth)
 

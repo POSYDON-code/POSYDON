@@ -114,6 +114,8 @@ class Moe_17_PsandQs():
         self.numq = n_q
         self.nume = n_e
 
+        self.RNG = kwargs.get('RNG', np.random.default_rng())
+
         # ranges where M+D17 has statistics corrected for selection effects:
         # 0.8 < M1/Msun < 40 with self.numM1 steps in log space
         self.M1v = 10**(np.linspace(np.log10(0.8), np.log10(40.0), self.numM1))
@@ -365,15 +367,15 @@ class Moe_17_PsandQs():
             # save to grid
             self.cumPbindist[:,i] = mycumPbindist
 
-    def __repr__(self):
+    def __repr__(self): # pragma: no cover
         return ("Moe and Di Stefano 2017 distributions on a grid of "
-                f"n_M1={self.n_M1}, n_logP={self.n_logP}, n_q={self.n_q}, and "
-                f"n_e={self.n_e}")
+                f"n_M1={self.numM1}, n_logP={self.numlogP}, n_q={self.numq}, and "
+                f"n_e={self.nume}")
 
-    def _repr_html_(self):
+    def _repr_html_(self): # pragma: no cover
         return ("<h3>Moe and Di Stefano 2017 distributions on a grid of</h3>"
-                f"<p>n_M1={self.n_M1}</p><p>n_logP={self.n_logP}</p>"
-                f"<p>n_q={self.n_q}</p><p>n_e={self.n_e}</p>")
+                f"<p>n_M1={self.numM1}</p><p>n_logP={self.numlogP}</p>"
+                f"<p>n_q={self.numq}</p><p>n_e={self.nume}</p>")
 
     def __call__(self, M1, M_min=0.08, M_max=150.0, all_binaries=True):
         """Initializing the class.
@@ -429,7 +431,7 @@ class Moe_17_PsandQs():
             else:
                 mybinfrac = np.max(mycumPbindist())
             # Generate random number myrand between 0 and 1
-            myrand = np.random.rand()
+            myrand = self.RNG.random()
             # If random number < binary star fraction, generate a binary
             if(myrand < mybinfrac):
                 # Given myrand, select P and corresponding index in logPv
@@ -438,7 +440,7 @@ class Moe_17_PsandQs():
                                          == min(abs(mylogP-self.logPv)))
                 indlogP = indlogP[0]
                 # Given M1 & P, select e from eccentricity distribution
-                mye = np.interp(np.random.rand(),
+                mye = np.interp(self.RNG.random(),
                                 self.cumedist[:,indlogP,indM1].flatten(), self.ev)
                 # Given M1 & P, determine mass ratio distribution.
                 # If M1 < 0.8 Msun, truncate q distribution and consider only mass
@@ -454,7 +456,7 @@ class Moe_17_PsandQs():
                     # Set probability = 0 where q < q_min
                     mycumqdist[self.qv <= q_min] = 0.0
                 # Given M1 & P, select q from cumulative mass ratio distribution
-                myq = np.interp(np.random.rand(), mycumqdist, self.qv)
+                myq = np.interp(self.RNG.random(), mycumqdist, self.qv)
             else:
                 # If instead random number > binary star fraction, generate single
                 # star
@@ -463,7 +465,7 @@ class Moe_17_PsandQs():
                 mye = np.nan
             # Get metallicity
             Zsun = 0.02
-            logZ = -2.3 + (0.176-(-2.3)) * np.random.rand()
+            logZ = -2.3 + (0.176-(-2.3)) * self.RNG.random()
             Z = Zsun*10**logZ
             M2s.append(M1*myq)
             logPs.append(mylogP)
