@@ -884,6 +884,31 @@ def read_histogram_from_file(path):
     return arrays
 
 
+def beta_gw(star1_mass, star2_mass):
+    """Evaluate Peters' beta coefficient (equation 5.9 from Peters 1964).
+
+    Parameters
+    ----------
+    star1_mass : float
+        Mass of the first star in solar masses.
+    star2_mass : float
+        Mass of the second star in solar masses.
+
+    Returns
+    -------
+    float
+        Peters' beta coefficient with masses given in solar units.
+        To obtain the full CGS beta (cm^4 s^-1), multiply the result
+        by ``const.Msun**3``.
+
+    References
+    ----------
+    .. [1] Peters 1964 Phys. Rev. 136, B1224
+
+    """
+    return (64.0 / 5.0) * const.standard_cgrav**3 / const.clight**5 * star1_mass * star2_mass * (star1_mass + star2_mass)
+
+
 def inspiral_timescale_from_separation(star1_mass, star2_mass,
                                        separation, eccentricity):
     """Compute the timescale of GW inspiral using the orbital separation.
