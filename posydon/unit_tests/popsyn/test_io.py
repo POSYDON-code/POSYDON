@@ -110,6 +110,18 @@ class TestFunctions:
         return file_path
 
     @fixture
+    def grid_paths_ini(self, tmp_path):
+        ini_content = dedent(
+            """
+            [grid_paths]
+            HMS_HMS = '/path/to/grid'
+            """)
+        file_path = os.path.join(tmp_path, "grid_paths.ini")
+        with open(file_path, "w") as f:
+            f.write(ini_content)
+        return file_path
+
+    @fixture
     def binpop_ini(self, tmp_path):
         ini_content = dedent(
             """
@@ -276,7 +288,7 @@ class TestFunctions:
         assert parser.has_option("section", "key2")
 
 
-    def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini,tmp_path):
+    def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini,grid_paths_ini,tmp_path):
         # example
         dummy_cls = type('DummyClass', (), {})()
 
@@ -340,6 +352,11 @@ class TestFunctions:
         assert dummy_class.__name__ == "MyDummyClass"
         instance = dummy_class()
         assert instance.value == 42
+
+        # test grid_paths section
+        simkwargs = totest.simprop_kwargs_from_ini(grid_paths_ini)
+        assert 'HMS_HMS' in simkwargs
+        assert simkwargs['HMS_HMS'] == '/path/to/grid'
 
 
     def test_binarypop_kwargs_from_ini(self,monkeypatch,binpop_ini,
