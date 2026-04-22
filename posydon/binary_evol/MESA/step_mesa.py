@@ -22,7 +22,7 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.utils import common_functions as cf
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.interpolation.new_interpolator import IFInterpolator
 from posydon.utils.common_functions import (flip_stars,
                                             convert_metallicity_to_string,
                                             CO_radius, infer_star_state,
@@ -212,6 +212,7 @@ class MesaGridStep:
             else:
                 interpolation_filename = os.path.join(interpolation_path,
                                                       interpolation_filename)
+            print(interpolation_filename)
 
             self.load_Interp(interpolation_filename)
 
@@ -257,7 +258,7 @@ class MesaGridStep:
             data_download() #TODO: specify dataset
 
         # Load interpolator
-        self._Interp = IFInterpolator()
+        self._Interp = IFInterpolator(load = True)
         self._Interp.load(filename=filename)
 
     def close(self):

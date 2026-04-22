@@ -42,7 +42,7 @@ class IFInterpolator:
     be gained by referencing section 3 of 2411.02376, is required to understand the documentation
     """
 
-    def __init__(self, grids, in_keys, out_keys, max_k):
+    def __init__(self, grids = None, in_keys = None, out_keys = None, max_k = None, load = False):
         """ Class constructor
 
             Parameters
@@ -58,8 +58,10 @@ class IFInterpolator:
                 The maximum number of k that is considered when optimizing k for each classifier
         """
 
-        if type(grids) != list:
+        if type(grids) != list and not load:
             sys.exit("Please provide a list of PSyGrids containing both a training and validation grid to train the interpolator")
+        elif load:
+            print("Constructed in Loading Mode")
         else:
 
             self.in_keys = in_keys
@@ -495,7 +497,7 @@ class IFInterpolator:
         
         # opt = tuple(np.unravel_index(eval_matrix.argmin(axis = 0), eval_matrix.shape))
         opt = [eval_matrix.argmin(axis = 0), np.arange(eval_matrix.shape[1])]
-        print(eval_matrix)
+
         return {
             "transform": stat_matrix[opt[0], opt[1]],
             "eval_matrix": eval_matrix,
@@ -676,6 +678,29 @@ class IFInterpolator:
             self.constraints, verbose=False
         )
         return np.array([sanitized[key] for key in keys])
+
+    def save(self, filename):
+            """
+            Saves the IFInterpolator instance to a pickle file.
+            
+            Parameters
+            ----------
+            filename : str
+                Path or filename where the object should be saved (e.g., 'interpolator.pkl').
+            """
+            try:
+                with open(filename, 'wb') as f:
+                    pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
+                print(f"Successfully saved interpolator to {filename}")
+            except Exception as e:
+                print(f"Error saving interpolator: {e}")
+
+    def load(self, filename):
+        """
+        Loads an IFInterpolator instance from a pickle file.
+        """
+        with open(filename, 'rb') as f:
+            return pickle.load(f)
 
 
         
