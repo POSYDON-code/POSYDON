@@ -7,38 +7,40 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>",
 ]
 
-import numpy as np
 import os
 import pickle
+import sys
+import time
 from datetime import date
 
+import numpy as np
 from scipy.spatial import Delaunay
-# POSYDON
-from posydon.grids.psygrid import PSyGrid
-from posydon.interpolation.data_scaling import DataScaler, SCALING_OPTIONS
-from posydon.interpolation.preprocessing import (
-    Transformer,
-    find_normalization_evaluation_matrix, 
-    IN_SCALING_OPTIONS,
-    OUT_SCALING_OPTIONS)
-
-from posydon.utils.posydonwarning import Pwarn
-from posydon.interpolation.constraints import (
-    find_constraints_to_apply, sanitize_interpolated_quantities)
+from sklearn.metrics import balanced_accuracy_score
+from sklearn.model_selection import train_test_split
 
 # ML Imports
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import balanced_accuracy_score
 
-import sys
-import time
+# POSYDON
+from posydon.grids.psygrid import PSyGrid
+from posydon.interpolation.constraints import (
+    find_constraints_to_apply,
+    sanitize_interpolated_quantities,
+)
+from posydon.interpolation.data_scaling import SCALING_OPTIONS, DataScaler
+from posydon.interpolation.preprocessing import (
+    IN_SCALING_OPTIONS,
+    OUT_SCALING_OPTIONS,
+    Transformer,
+    find_normalization_evaluation_matrix,
+)
+from posydon.utils.posydonwarning import Pwarn
 
 eps = 1.0e-16
 
 
 class IFInterpolator:
-    """ Class used to train interpolator and carry out interpolation. Familiarity with the over all system, which can 
+    """ Class used to train interpolator and carry out interpolation. Familiarity with the over all system, which can
     be gained by referencing section 3 of 2411.02376, is required to understand the documentation
     """
 
@@ -103,7 +105,7 @@ class IFInterpolator:
             each classification scheme
         """
         percentages = []
-        
+
         for key in self.discrete_out_keys:
             percentages.append(
                 self.outside_convex_hull[key] / (self.outside_convex_hull[key] + self.inside_convex_hull[key])
@@ -131,10 +133,10 @@ class IFInterpolator:
             )
         )
         self.is_training = False
-        
+
 
     def interpolate(self, iv, klass, sn_model):
-        """ a method which performs interpolation for a respective initial value and its 
+        """ a method which performs interpolation for a respective initial value and its
         predicted class (convex hull)
 
             Parameters
@@ -159,8 +161,8 @@ class IFInterpolator:
         for key, c in zip(classification_schemes, klass): # interpolating based in mass transfer type and supernova outcome separately
 
             triangulation = self.training_grid["triangulations"][key][c]
-            
-            simplex = -1 if triangulation == "1NN" else triangulation.find_simplex(iv)            
+
+            simplex = -1 if triangulation == "1NN" else triangulation.find_simplex(iv)
 
             if simplex == -1:
                 interpolated.extend(
@@ -220,7 +222,7 @@ class IFInterpolator:
 
 
         meta_data = {
-            "weights": weights, 
+            "weights": weights,
             "ics": ics,
             "ic": iv,
             "interpolated": interpolated
@@ -243,26 +245,26 @@ class IFInterpolator:
             interpolated_values: np.ndarray
                 contains all interpolated values, all classification schemes are concatenated into one array
             classes: np.ndarray
-                a list of lists, each list has two classes. The first is the mass transfer type and the second 
+                a list of lists, each list has two classes. The first is the mass transfer type and the second
                 is the compact object type which is used for the supernova
             n: list of dicts
                 each dict containing meta data information about the interpolation such as
                 neighbors used and distances found
-            
+
         """
 
         if self.classifiers is None:
             sys.exit("Please find classifier hyperparameters before using interpolator")
-        
+
         interpolation_class_ind = self.discrete_out_keys.index("interpolation_class")
 
         classes = np.array([
-            cl["classifier"].predict(cl["transform"].normalize(initial_values)) 
+            cl["classifier"].predict(cl["transform"].normalize(initial_values))
             for cl in self.classifiers.values()]).T
 
         interpolated_values = []
         n = []
-        
+
         for iv, klass in zip(initial_values, classes):
             if klass[interpolation_class_ind] == "initial_MT":
                 continue
@@ -272,7 +274,7 @@ class IFInterpolator:
             interpolated = self.apply_continuous_constraints(interpolated, sn_model)
             interpolated_values.append(interpolated)
             n.append(meta_data)
-        
+
         interpolated_values = np.array(interpolated_values)
 
         classes = np.array(classes)
@@ -280,7 +282,7 @@ class IFInterpolator:
         return interpolated_values, classes, n
 
     def find_hyperparameters(self, klass):
-        """ finds optimal k for a specified classifier 
+        """ finds optimal k for a specified classifier
 
             Parameters
             ----------
@@ -292,7 +294,7 @@ class IFInterpolator:
                 dict: dict
                     contains classifier information and more
         """
-        
+
         input_matrix = []
         """
         matrix that considers different number of neighbors with different
@@ -328,7 +330,7 @@ class IFInterpolator:
 
         def eval_fnc(self, k, scaling):
             """ the preprocessing module evaluates every point in input_matrix (specified above)
-            which considers different input_scalings and numbers of neighbors. This function gives 
+            which considers different input_scalings and numbers of neighbors. This function gives
             a score for each value of k paired with a normalization
 
                 Parameters
@@ -342,7 +344,7 @@ class IFInterpolator:
                 -------------
                 bacc: float
                     an accuracy score
-                stats: statistics used 
+                stats: statistics used
             """
 
             validation_classifier = KNeighborsClassifier(n_neighbors = k, weights = "distance")
@@ -353,7 +355,7 @@ class IFInterpolator:
             training_initial_values = transform.normalize(training_initial_values)
 
             validation_classifier.fit(
-                training_initial_values, 
+                training_initial_values,
                 self.training_grid["final_classes"][klass]
             )
 
@@ -363,7 +365,7 @@ class IFInterpolator:
 
             bacc = balanced_accuracy_score(
                 self.validation_grid["final_classes"][klass],
-                predicted_classes                
+                predicted_classes
             )
 
             return bacc, transform
@@ -382,7 +384,7 @@ class IFInterpolator:
         training_initial_values = transform.normalize(training_initial_values) # taking care of normalization
 
         classifier.fit(
-            training_initial_values, 
+            training_initial_values,
             self.training_grid["final_classes"][klass]
         ) # training classifier
 
@@ -390,7 +392,7 @@ class IFInterpolator:
             "classifier": classifier,
             "transform": stat_matrix[*k_star],
             "log": "log" in IN_SCALING_OPTIONS[k_star[1]],
-            "k_star": k_star, 
+            "k_star": k_star,
             "eval_matrix": eval_matrix
         }
 
@@ -420,7 +422,7 @@ class IFInterpolator:
                     [label, opt]
                 )
             input_matrix.append(row)
-    
+
         kwargs = {
             "input_matrix": input_matrix,
             "self": self,
@@ -443,7 +445,7 @@ class IFInterpolator:
 
         def eval_fnc(self, key, klass, scaling):
             """ the preprocessing module evaluates every point in input_matrix (specified above)
-            which considers different classes and output scalings. This function gives 
+            which considers different classes and output scalings. This function gives
             a score for each value of class label paired with a normalization
 
                 Parameters
@@ -459,7 +461,7 @@ class IFInterpolator:
                 -------------
                 errors: float
                     an accuracy score
-                stats: statistics used 
+                stats: statistics used
             """
             self.training = True
             self.scaling = scaling
@@ -494,7 +496,7 @@ class IFInterpolator:
             return error_mean, Transformer(training_final_values, scaling)
 
         eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs) # finding normalization
-        
+
         # opt = tuple(np.unravel_index(eval_matrix.argmin(axis = 0), eval_matrix.shape))
         opt = [eval_matrix.argmin(axis = 0), np.arange(eval_matrix.shape[1])]
 
@@ -507,7 +509,7 @@ class IFInterpolator:
     # =================== helper methods below ===========================
 
     def preprocess_grid(self, grid, training_grid = False):
-        """ method that takes PSyGrid object and processes it into nice 
+        """ method that takes PSyGrid object and processes it into nice
         numpy arrays and dictionaries
 
             Parameters
@@ -536,7 +538,7 @@ class IFInterpolator:
         # determining if should interp in q
         if training_grid:
             self.interp_in_q = False
-            
+
         initial_values = np.log10(initial_values + eps)
 
         if self.interp_in_q:
@@ -551,7 +553,7 @@ class IFInterpolator:
         for key in self.discrete_out_keys:
             class_labels = np.unique(grid.final_values[valid_inds][key])
             class_inds[key] = dict(zip(
-                class_labels, 
+                class_labels,
                 [np.where(grid.final_values[valid_inds][key] == label)[0] for label in class_labels]
             ))
 
@@ -561,7 +563,7 @@ class IFInterpolator:
             "final_classes": dict(zip(self.discrete_out_keys, np.array(grid.final_values[self.discrete_out_keys][valid_inds].tolist()).T)),
             "class_inds": class_inds,
         }
-    
+
     def triangulate(self, grid_dict):
         """ method that constructs Delaunay triangulations stored in class memory
         when given a grid
@@ -582,11 +584,11 @@ class IFInterpolator:
                 classes.remove("initial_MT")
 
             class_triangulations = {}
-            
+
             for klass in classes:
 
                 class_inds = grid_dict["class_inds"][label_name][klass]
-                
+
                 if class_inds.shape[0] < 5:
                     print(f"too few training samples for {klass}")
                     class_triangulations[klass] = "1NN"
@@ -682,7 +684,7 @@ class IFInterpolator:
     def save(self, filename):
             """
             Saves the IFInterpolator instance to a pickle file.
-            
+
             Parameters
             ----------
             filename : str
@@ -703,4 +705,4 @@ class IFInterpolator:
             return pickle.load(f)
 
 
-        
+

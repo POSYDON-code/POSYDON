@@ -193,7 +193,9 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 # POSYDON
 from posydon.grids.psygrid import PSyGrid
 from posydon.interpolation.constraints import (
-    find_constraints_to_apply, sanitize_interpolated_quantities)
+    find_constraints_to_apply,
+    sanitize_interpolated_quantities,
+)
 
 
 # INITIAL-FINAL INTERPOLATOR

@@ -6,9 +6,10 @@ __authors__ = [
 ]
 
 
-import numpy as np
-import warnings
 import sys
+import warnings
+
+import numpy as np
 
 # Convert UserWarning to an error
 warnings.simplefilter("error", RuntimeWarning)
@@ -252,6 +253,6 @@ class DataScaler:
             # sys.exit()
 
         return logged
-    
+
     def unlog(self, x):
         return (10 ** x) - eps

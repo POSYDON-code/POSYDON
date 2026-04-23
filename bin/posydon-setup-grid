@@ -15,8 +15,7 @@ from posydon.grids.psygrid import PSyGrid
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
-from posydon.grids.psygrid import PSyGrid
-from posydon.active_learning.psy_cris.utils import parse_inifile
+
 
 ###############################################################################
 # DEFINE COMMANDLINE ARGUMENTS

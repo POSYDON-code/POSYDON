@@ -586,4 +586,4 @@ def sanitize_classes(classes, ):
         else:
 
             apply_class_constraint(key, classes)
-    
+

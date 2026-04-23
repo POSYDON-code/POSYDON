@@ -30,7 +30,7 @@ class Transformer:
 
     def __init__(self, data, scaling):
         """
-            If a dimension contains negative values we assume that it is in log space and unlog it. 
+            If a dimension contains negative values we assume that it is in log space and unlog it.
             This is an assumption that we know doesn't hold since things like rates can be negative, but it
             simplifies the preprocessing code for now.
         """
@@ -99,7 +99,7 @@ def find_normalization_evaluation_matrix(eval_fnc, kwarg_fnc, kwargs):
 
     normalization_eval_matrix = []
     normalization_stat_matrix = []
-    
+
     for row in kwargs["input_matrix"]:
         eval_row = []
         stat_row = []
@@ -111,7 +111,7 @@ def find_normalization_evaluation_matrix(eval_fnc, kwarg_fnc, kwargs):
                 acc
             )
             stat_row.append(stat)
-        
+
         normalization_eval_matrix.append(eval_row)
         normalization_stat_matrix.append(stat_row)
 
