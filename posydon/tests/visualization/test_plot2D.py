@@ -1,7 +1,8 @@
+import os
 import unittest
 from unittest.mock import patch
+
 from posydon.config import PATH_TO_POSYDON
-import os
 from posydon.grids.psygrid import PSyGrid
 
 PATH_TO_GRID = os.path.join(

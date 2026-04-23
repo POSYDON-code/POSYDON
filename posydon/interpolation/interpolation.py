@@ -7,12 +7,16 @@ __authors__ = [
 
 
 import pickle
+
 import numpy as np
 import pandas as pd
 from sklearn.neighbors import NearestNeighbors
-from .data_scaling import DataScaler
+
 from posydon.grids.psygrid import PSyGrid
-from posydon.grids.MODELS import MODELS
+from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.utils.interpolators import interp1d
+
+from .data_scaling import DataScaler
 
 
 class psyTrackInterp:
@@ -327,8 +331,14 @@ class GRIDInterpolator():
 
         grid_mass = []
         for i in range(len(grid)):
-            grid_mass.append(grid[i].history1['star_mass'][0])
+            minit = grid[i].history1['star_mass'][0]
+            grid_mass.append(minit)
         self.grid_mass = np.array(grid_mass)
+
+        grid_age = []
+        for i in range(len(grid)):
+            grid_age.append(max(grid[i].history1['star_age']))
+        self.grid_age = np.array(grid_age)
 
         self.grid_data = dict()
         self.grid_final_values = dict()
@@ -390,7 +400,9 @@ class GRIDInterpolator():
                      'lambda_CE_30cent',
                      'co_core_mass',
                      'co_core_radius',
-                     'lambda_CE_pure_He_star_10cent')
+                     'lambda_CE_pure_He_star_10cent',
+                     'total_mass_h1',
+                     'total_mass_he4')
 
         self.translate = {
             'age': 'star_age',
@@ -450,6 +462,8 @@ class GRIDInterpolator():
             'thickness_conv_reg_fortides': 'thickness_conv_reg_fortides',
             'radius_conv_reg_fortides': 'radius_conv_reg_fortides',
             'surface_he3': 'surface_he3',
+            'total_mass_h1': 'total_mass_h1',
+            'total_mass_he4': 'total_mass_he4',
             }
 
         # processed keys
@@ -468,11 +482,11 @@ class GRIDInterpolator():
 
         # core collapse keys
         keys = []
-        for MODEL_NAME in MODELS.keys():
+        for SN_MODEL_NAME in SN_MODELS.keys():
             for key in ['CO_type', 'SN_type', 'f_fb', 'mass', 'spin',
                         'm_disk_accreted', 'm_disk_radiated','M4', 'mu4',
                         'h1_mass_ej', 'he4_mass_ej']:
-                keys.append('S1_' + MODEL_NAME + '_' + key )
+                keys.append('S1_' + SN_MODEL_NAME + '_' + key )
         self.final_keys += tuple(keys)
 
         self.profile_keys = (
@@ -488,6 +502,12 @@ class GRIDInterpolator():
             'neutral_fraction_He',
             'avg_charge_He'
         )
+
+        # pre-load the grid data for all masses
+        # to reduce I/O
+        for i in range(len(grid)):
+            minit = grid[i].history1['star_mass'][0]
+            self.load_grid(minit)
 
     def load_grid(self, *args):
         """Load the requested data to `grid_data`.
@@ -602,7 +622,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
-            while (kvalue_low is None or np.isnan(kvalue_low)):
+            while pd.isna(kvalue_low):
                 # escape if no lower mass is available
                 if np.sum(mass_low > self.grid_mass) == 0:
                     break
@@ -619,7 +639,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
-            while (kvalue_high is None or np.isnan(kvalue_high)):
+            while pd.isna(kvalue_high):
                 # escape if no higher mass is available
                 if np.sum(mass_high < self.grid_mass) == 0:
                     break

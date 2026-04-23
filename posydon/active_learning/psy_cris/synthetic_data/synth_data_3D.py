@@ -3,9 +3,10 @@ __authors__ = [
 ]
 
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+
 
 def func_1(x,y,z):
     # Spheroid centered at [x,y]=[-1,1]

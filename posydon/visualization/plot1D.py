@@ -12,15 +12,18 @@ __authors__ = [
 ]
 
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from labellines import labelLine
 from matplotlib.collections import LineCollection
 from matplotlib.lines import Line2D
+
 import posydon.utils.constants as const
-from labellines import labelLine
-from posydon.visualization.plot_defaults import PLOT_PROPERTIES
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
-from posydon.visualization.plot_defaults import DEFAULT_MARKERS_COLORS_LEGENDS
+from posydon.visualization.plot_defaults import (
+    DEFAULT_LABELS,
+    DEFAULT_MARKERS_COLORS_LEGENDS,
+    PLOT_PROPERTIES,
+)
 
 
 class plot1D(object):
@@ -563,13 +566,13 @@ class plot1D(object):
                 # the code does not work plus the majority of stars do not have
                 # the points in the EEPs
                 # end = np.logical_or(self.star_states[j] ==
-                #                     'H-rich_Central_C_depletion',
+                #                     'H-rich_Core_C_depleted',
                 #                     self.star_states[j]
-                #                     == 'stripped_He_Central_C_depletion')
+                #                     == 'stripped_He_Core_C_depleted')
                 # end_x = self.history[j]["log_Teff"][end]
                 # end_y = self.history[j]["log_L"][end]
                 # ax.plot(end_x, end_y, marker='o', markersize=10,
-                #         color=convention['H-rich_Central_C_depletion'][2])
+                #         color=convention['H-rich_Core_C_depleted'][2])
                 if j == 0:
                     custom_lines = []
                     custom_legend = []
@@ -577,7 +580,8 @@ class plot1D(object):
                                 'BH', 'NS',
                                 'ignored_no_binary_history', 'ignored_no_RLO',
                                 'H-rich_non_burning',
-                                'stripped_He_non_burning']
+                                'stripped_He_non_burning',
+                                'accreted_He_Core_H_burning']
                     for key in convention.keys():
                         if key in key_skip:
                             continue

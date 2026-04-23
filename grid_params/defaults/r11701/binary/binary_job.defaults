@@ -45,7 +45,7 @@
           ! Inlist files for both stars. If modeling a star as a point mass, the corresponding
           ! file is ignored.
 
-       inlist_names(1) = 'inlist1' 
+       inlist_names(1) = 'inlist1'
        inlist_names(2) = 'inlist2'
 
          !### read_extra_binary_job_inlist{1..5}
@@ -118,7 +118,7 @@
        no_history_during_relax_primary_to_th_eq = .true.
        reset_age_for_relax_primary_to_th_eq = .true.
        tsync_for_relax_primary_to_th_eq = 1
-       
+
 !----------------------------------------------------------------------------------------------
 
    !# modifications to model
@@ -204,8 +204,7 @@
        change_initial_separation_eccentricity = .false.
        change_period_eccentricity = .false.
        change_initial_period_eccentricity = .false.
-       
+
        new_separation = 0d0
        new_period = 0d0
        new_eccentricity = 0d0
-

@@ -46,9 +46,8 @@ __authors__ = [
 
 
 import math
+
 import numpy as np
-from posydon.utils.common_functions import (stefan_boltzmann_law,
-                                            orbital_separation_from_period)
 
 CLASSIFICATION_KEYS = [
     "S<*>_state",
@@ -333,6 +332,15 @@ CONSTRAINTS = [
         "type": 2,
         "name": "2.11",
         "fields": [["lg_mtransfer_rate", "lg_system_mdot_{}"]],
+        "log": False
+    },
+    {
+        "type": 2,
+        "name": "Mass in Hydrogen/Helium (2.12)",
+        "fields": [
+            ["star_{}_mass", "S{}_total_mass_h1"],
+            ["star_{}_mass", "S{}_total_mass_he4"]
+        ],
         "log": False
     },
     {

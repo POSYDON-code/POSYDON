@@ -5,18 +5,19 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
-import posydon.utils.constants as totest
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import approx
+
+# import the module which will be tested
+import posydon.utils.constants as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['H_weight', 'He_weight', 'Lsun', 'Lsun33', 'Msun',\
+        elements = {'H_weight', 'He_weight', 'Lsun', 'Lsun33', 'Msun',\
                     'Msun33', 'Qconv', 'Rsun', 'Rsun11', 'SNcheck_ERR',\
                     'Teffsol', 'Zsun', '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
@@ -30,10 +31,21 @@ class TestElements:
                     'mn', 'mp', 'msol', 'pc', 'pi', 'planck_h', 'qe',\
                     'r_earth', 'r_jupiter', 'rad2a', 'rbohr', 'rhonuc',\
                     'rsol', 'secyer', 'semimajor_axis_jupiter', 'ssol',\
-                    'standard_cgrav', 'weinfre', 'weinlam']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'standard_cgrav', 'weinfre', 'weinlam', 'zams_table'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_pi(self):
         assert isinstance(totest.pi, (float,int)),\

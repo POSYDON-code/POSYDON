@@ -1,10 +1,14 @@
 """Setup the posydon package."""
 
 from __future__ import print_function
+
 import glob
-import sys
-import versioneer
 import os.path
+import sys
+
+sys.path.insert(0, os.path.dirname(__file__))
+
+import versioneer
 
 cmdclass = {}
 
@@ -23,13 +27,13 @@ if WRAP_C_CPP_OR_FORTRAN:
     from distutils.command.sdist import sdist
 
     try:
-        from numpy.distutils.core import setup, Extension
+        from numpy.distutils.core import Extension, setup
     except ImportError:
         raise ImportError("Building fortran extensions requires numpy.")
 
     cmdclass["sdist"] = sdist
 else:
-    from setuptools import setup, find_packages
+    from setuptools import find_packages, setup
 
 
 # DOCUMENTATION
@@ -92,7 +96,7 @@ extras_require = {
     # to build documentation
     "doc": [
         "ipython",
-        "sphinx >= 6.1.3",
+        "sphinx >= 8.2.2",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
@@ -102,10 +106,15 @@ extras_require = {
     ],
     # for experimental visualization features, e.g. VDH diagrams
     "vis": ["PyQt5 >= 5.15.9, <= 5.15.11"],
-    # for profile macjhine learning features, e.g. profile interpolation
+    # for profile machine learning features, e.g. profile interpolation
     "ml": ["tensorflow >= 2.13.0"],
     # for running population synthesis on HPC facilities
     "hpc": ["mpi4py >= 3.0.3"],
+    # development tooling
+    'dev': [
+        'pre-commit >= 3.7.0',
+        'isort >= 5.13.2',
+    ],
 }
 
 # RUN SETUP
@@ -145,12 +154,10 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">3.10, <3.12",
+    python_requires=">=3.11, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
-        "Programming Language :: Python",
-        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
         "Topic :: Scientific/Engineering",

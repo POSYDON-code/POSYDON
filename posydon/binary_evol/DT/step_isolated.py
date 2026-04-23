@@ -9,9 +9,9 @@ __authors__ = [
 
 import numpy as np
 
-from posydon.utils.data_download import PATH_TO_POSYDON_DATA
-from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.binary_evol.DT.step_detached import detached_step
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.utils.posydonerror import FlowError
 
 
@@ -24,29 +24,9 @@ class IsolatedStep(detached_step):
 
     """
 
-    def __init__(self,
-        grid_name_Hrich=None,
-        grid_name_strippedHe=None,
-        path=PATH_TO_POSYDON_DATA,
-        #dt=None,
-        #n_o_steps_history=None,
-        do_wind_loss=False,
-        do_tides=False,
-        do_gravitational_radiation=False,
-        do_magnetic_braking=False,
-        *args, **kwargs):
-        super().__init__(
-        grid_name_Hrich=grid_name_Hrich,
-        grid_name_strippedHe=grid_name_strippedHe,
-        path=path,
-        #dt=dt,
-        #n_o_steps_history=n_o_steps_history,
-        do_wind_loss=do_wind_loss,
-        do_tides=do_tides,
-        do_gravitational_radiation=do_gravitational_radiation,
-        do_magnetic_braking=do_magnetic_braking,
-        *args,
-        **kwargs)
+    def __init__(self, *args, **kwargs):
+
+        super().__init__(*args, **kwargs)
 
 
 

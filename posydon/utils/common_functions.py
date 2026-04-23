@@ -17,31 +17,37 @@ __authors__ = [
 ]
 
 
+import copy
 import os
+
 import numpy as np
 import pandas as pd
-from scipy.optimize import newton
 from scipy.integrate import quad
+from scipy.optimize import newton
+
+from posydon.binary_evol.flow_chart import STAR_STATES_H_RICH, STAR_STATES_HE_RICH
 from posydon.utils import constants as const
-from posydon.utils.posydonwarning import Pwarn
-import copy
-from scipy.interpolate import PchipInterpolator
-from posydon.utils.limits_thresholds import (THRESHOLD_CENTRAL_ABUNDANCE,
-    THRESHOLD_HE_NAKED_ABUNDANCE, REL_LOG10_BURNING_THRESHOLD,
-    LOG10_BURNING_THRESHOLD, STATE_NS_STARMASS_UPPER_LIMIT,
-    RL_RELATIVE_OVERFLOW_THRESHOLD, LG_MTRANSFER_RATE_THRESHOLD
+from posydon.utils.interpolators import interp1d
+from posydon.utils.limits_thresholds import (
+    LG_MTRANSFER_RATE_THRESHOLD,
+    LOG10_BURNING_THRESHOLD,
+    REL_LOG10_BURNING_THRESHOLD,
+    RL_RELATIVE_OVERFLOW_THRESHOLD,
+    STATE_NS_STARMASS_LOWER_LIMIT,
+    STATE_NS_STARMASS_UPPER_LIMIT,
+    STATE_WD_STARMASS_UPPER_LIMIT,
+    THRESHOLD_CENTRAL_ABUNDANCE,
+    THRESHOLD_HE_NAKED_ABUNDANCE,
 )
-
-PATH_TO_POSYDON = os.environ.get("PATH_TO_POSYDON")
-
+from posydon.utils.posydonwarning import Pwarn
 
 # Constants related to inferring star states
 STATE_UNDETERMINED = "undetermined_evolutionary_state"
 
 # ALL POSSIBLE STAR STATES
 BURNING_STATES = ["Core_H_burning", "Core_He_burning",
-                  "Shell_H_burning", "Central_He_depleted",
-                  "Central_C_depletion"]
+                  "Shell_H_burning", "Core_He_depleted",
+                  "Core_C_depleted"]
 RICHNESS_STATES = ["H-rich", "stripped_He", "accreted_He"]
 COMPACT_OBJECTS = ["WD", "NS", "BH","massless_remnant"]
 
@@ -94,6 +100,31 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+def zero_negative_values(arr, key): # pragma no cover
+    """
+        Set negative values in the array to zero.
+
+        Parameters
+        ----------
+        arr : np.ndarray
+            The input array to process.
+        key : string
+            The name of the array column
+
+        Returns
+        -------
+        np.ndarray
+            The processed array with negative values set to zero.
+    """
+    arr = np.atleast_1d(arr)
+
+    if np.any(arr < 0):
+        Pwarn("A " + key + " value is negative. Setting to zero.",
+              "ReplaceValueWarning")
+
+    arr[arr < 0] = 0.0
+    return arr
 
 
 def stefan_boltzmann_law(L, R):
@@ -212,51 +243,97 @@ def roche_lobe_radius(m1, m2, a_orb=1):
     .. [1] Eggleton, P. P. 1983, ApJ, 268, 368
 
     """
-    ## catching if a_orb is an empty array or is an array with invalid separation values
+    ## catching if a_orb is an empty array or is an array with invalid
+    ## separation values
     if isinstance(a_orb, np.ndarray):
         ## if array is empty, fill with NaN values
         if a_orb.size == 0:
-            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
-            a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan, dtype=np.float64)
-        ## if array contains invalid values, replace with NaN 
+            Pwarn("Trying to compute RL radius for binary with invalid"
+                  " separation", "EvolutionWarning")
+            a_orb = np.full([1 if s==0 else s for s in a_orb.shape], np.nan,
+                            dtype=np.float64)
+        ## if array contains invalid values, replace with NaN
         elif np.any(a_orb < 0):
-            Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for binary with invalid"
+                  " separation", "EvolutionWarning")
             a_orb[a_orb < 0] = np.nan
     ## catching if a_orb is a float with invalid separation value
-    elif a_orb < 0: 
-        Pwarn("Trying to compute RL radius for binary with invalid separation", "EvolutionWarning")
+    elif a_orb < 0:
+        Pwarn("Trying to compute RL radius for binary with invalid separation",
+              "EvolutionWarning")
         a_orb = np.nan
 
-
     if isinstance(m1, np.ndarray):
-        if m1.size == 0:                  
-            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
-            m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan, dtype=np.float64)
+        if m1.size == 0:
+            Pwarn("Trying to compute RL radius for nonexistent object",
+                  "EvolutionWarning")
+            m1 = np.full([1 if s==0 else s for s in m1.shape], np.nan,
+                         dtype=np.float64)
         elif np.any(m1 <= 0):
-            Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for nonexistent object",
+                  "EvolutionWarning")
             m1[m1 <= 0] = np.nan
-    elif m1 <=0:
-        Pwarn("Trying to compute RL radius for nonexistent object", "EvolutionWarning")
+    elif m1 <= 0:
+        Pwarn("Trying to compute RL radius for nonexistent object",
+              "EvolutionWarning")
         m1 = np.nan
-    
 
     if isinstance(m2, np.ndarray):
-        if m2.size == 0:                  
-            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
-            m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan, dtype=np.float64)
+        if m2.size == 0:
+            Pwarn("Trying to compute RL radius for nonexistent companion",
+                  "EvolutionWarning")
+            m2 = np.full([1 if s==0 else s for s in m2.shape], np.nan,
+                         dtype=np.float64)
         elif np.any(m2 <= 0):
-            Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+            Pwarn("Trying to compute RL radius for nonexistent companion",
+                  "EvolutionWarning")
             m2[m2 <= 0] = np.nan
-    elif m2 <=0:
-        Pwarn("Trying to compute RL radius for nonexistent companion", "EvolutionWarning")
+    elif m2 <= 0:
+        Pwarn("Trying to compute RL radius for nonexistent companion",
+              "EvolutionWarning")
         m2 = np.nan
-   
+
     q = m1/m2
     RL = a_orb * (0.49 * q**(2. / 3.)) / (
         0.6 * q**(2. / 3.) + np.log(1 + q**(1. / 3))
     )
     return RL
 
+def check_for_RLO(m1, r1, m2, r2, separation, tolerance=1e-8):
+    """Check if either star in a binary is overfilling its Roche lobe.
+
+    It uses roche_lobe_radius and the binary separation to determine if either
+    star is overfilling their Roche lobe.
+
+    Parameters
+    ----------
+    m1 : float
+        Mass of star 1 (in Msun)
+    r1 : float
+        Radius of star 1 (in Rsun)
+    m2 : float
+        Mass of star 2 (in Msun)
+    r2 : float
+        Radius of star 2 (in Rsun)
+    separation : float
+        Orbital separation (in Rsun)
+    tolerance : float
+        The tolerance to count Roche-lobe filling as Roche-lobe overflow (in Rsun).
+
+    Returns
+    -------
+    RLO: bool
+        Whether either star in the binary is overfilling its Roche Lobe.
+    """
+    # First, calculate the Roche radii for each star
+    RL1 = roche_lobe_radius(m1, m2, separation)
+    RL2 = roche_lobe_radius(m2, m1, separation)
+
+    # Now check for Roche-lobe overflow
+    if ((r1 - RL1) < tolerance and (r2 - RL2) < tolerance):
+        return False
+    else:
+        return True
 
 def orbital_separation_from_period(period_days, m1_solar, m2_solar):
     """Apply the Third Kepler law.
@@ -276,6 +353,7 @@ def orbital_separation_from_period(period_days, m1_solar, m2_solar):
         The separation of the binary in solar radii.
 
     """
+    #TODO: check for invalid or negative inputs
     # cast to float64 to avoid overflow
     m1_solar = np.asarray(m1_solar, dtype="float64")
     m2_solar = np.asarray(m2_solar, dtype="float64")
@@ -429,7 +507,7 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2002'):
+                RNG=np.random.default_rng(), scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -551,7 +629,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
             pass
 
     n = np.sqrt((G * (m_acc + m) * Msun) / ((radius * Rsun)**3))
-    t0 = np.random.rand(len(sep)) * 2 * np.pi / n
+    t0 = RNG.random(len(sep)) * 2 * np.pi / n
     E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
                np.ones_like(sep) * np.pi / 2,
                maxiter=100)
@@ -591,7 +669,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     return np.squeeze(mdot_acc)
 
 
-def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
+def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None, rng=None):
     """Generate a sample from a 1d PDF using the acceptance-rejection method.
 
     Parameters
@@ -606,6 +684,8 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         The boundary where the pdf function is defined if passed as pdf.
     pdf : func
         The pdf function
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -613,6 +693,8 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
         An array with `size` random numbers generated from the PDF.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     if pdf is None:
         if ((x is None) or (y is None)):
             raise ValueError("x and y PDF values must be specified if no PDF"
@@ -624,32 +706,32 @@ def rejection_sampler(x=None, y=None, size=1, x_lim=None, pdf=None):
             idxs = np.argsort(x)
             pdf = interp1d(x.take(idxs), y.take(idxs))
 
-        x_rand = np.random.uniform(x.min(), x.max(), size)
-        y_rand = np.random.uniform(0, y.max(), size)
+        x_rand = rng.uniform(x.min(), x.max(), size)
+        y_rand = rng.uniform(0, y.max(), size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x.min(), x.max(), n)
-            y_rand = np.random.uniform(0, y.max(), n)
+            x_rand = rng.uniform(x.min(), x.max(), n)
+            y_rand = rng.uniform(0, y.max(), n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
     else:
         if x_lim is None:
             raise ValueError("x_lim must be specified for passed PDF function"
                              " in rejection sampling")
-        x_rand = np.random.uniform(x_lim[0], x_lim[1], size)
-        pdf_max = max(pdf(np.random.uniform(x_lim[0], x_lim[1], 50000)))
-        y_rand = np.random.uniform(0, pdf_max, size)
+        x_rand = rng.uniform(x_lim[0], x_lim[1], size)
+        pdf_max = max(pdf(rng.uniform(x_lim[0], x_lim[1], 50000)))
+        y_rand = rng.uniform(0, pdf_max, size)
         values = x_rand[y_rand <= pdf(x_rand)]
         while values.shape[0] < size:
             n = size - values.shape[0]
-            x_rand = np.random.uniform(x_lim[0], x_lim[1], n)
-            y_rand = np.random.uniform(0, pdf_max, n)
+            x_rand = rng.uniform(x_lim[0], x_lim[1], n)
+            y_rand = rng.uniform(0, pdf_max, n)
             values = np.hstack([values, x_rand[y_rand <= pdf(x_rand)]])
 
     return values
 
 
-def inverse_sampler(x, y, size=1):
+def inverse_sampler(x, y, size=1, rng=None):
     """Sample from a PDF using the inverse-sampling method.
 
     Parameters
@@ -660,6 +742,8 @@ def inverse_sampler(x, y, size=1):
         The probablity density at `x` (or a scaled version of it).
     size : int
         Number of samples to generate.
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -667,6 +751,8 @@ def inverse_sampler(x, y, size=1):
         The sample drawn from the PDF.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     # x should be sorted
     assert np.all(np.diff(x) > 0)
     # y should be above 0
@@ -679,7 +765,7 @@ def inverse_sampler(x, y, size=1):
     total_area = cumsum_areas[-1]
 
     # start the inverse sampling
-    u = np.random.uniform(size=size)
+    u = rng.uniform(size=size)
     # index of "bin" where each sampled value corresponds too
     u_indices = np.searchsorted(cumsum_areas, u * total_area)
     # the area that should be covered from the end of the previous bin
@@ -701,14 +787,14 @@ def inverse_sampler(x, y, size=1):
     if n_where_nan:
         assert np.all(dy_bins[where_nan] == 0)
         sample[where_nan] = x[u_indices][where_nan] + (
-            dx_bins[where_nan] * np.random.uniform(size=n_where_nan))
+            dx_bins[where_nan] * rng.uniform(size=n_where_nan))
 
     # make sure that everything worked as expected
     assert np.all(np.isfinite(sample))
     return sample
 
 
-def histogram_sampler(x_edges, y, size=1):
+def histogram_sampler(x_edges, y, size=1, rng=None):
     """Sample from an empirical PDF represented by a histogram.
 
     Parameters
@@ -719,6 +805,8 @@ def histogram_sampler(x_edges, y, size=1):
         The counts (or a scaled version of them) of the histogram.
     size : int
         Number of random values to produce.
+    rng : numpy.random.Generator, optional
+        Random number generator. If None, uses np.random.default_rng().
 
     Returns
     -------
@@ -726,13 +814,15 @@ def histogram_sampler(x_edges, y, size=1):
         The random sample.
 
     """
+    if rng is None:
+        rng = np.random.default_rng()
     assert np.all(y >= 0.0)
 
     # make sure that the lengths of the input arrays are correct
     n_bins = len(y)
     assert n_bins > 0 and len(x_edges) == n_bins + 1
     # first decide which will be the bin of each element in the sample
-    bin_sample = np.random.choice(n_bins, replace=True, p=y/sum(y), size=size)
+    bin_sample = rng.choice(n_bins, replace=True, p=y/sum(y), size=size)
 
     sample = np.ones(size) * np.nan
 
@@ -740,7 +830,7 @@ def histogram_sampler(x_edges, y, size=1):
     bins_found = set(bin_sample)
     for bin_index in bins_found:
         in_this_bin = np.argwhere(bin_sample == bin_index)[:, 0]
-        sample[in_this_bin] = np.random.uniform(
+        sample[in_this_bin] = rng.uniform(
             x_edges[bin_index], x_edges[bin_index+1], size=len(in_this_bin))
 
     assert(np.all(np.isfinite(sample)))
@@ -781,9 +871,42 @@ def read_histogram_from_file(path):
                 continue
             arrays.append(np.fromstring(line.strip(), dtype=float, sep=","))
             if len(arrays) > 2:
-                raise RuntimeError("More than two lines found in the histogram document.")
+                raise IndexError("More than two lines found in the histogram"
+                                 " document.")
+    if len(arrays) < 2:
+        raise IndexError("Less than two lines found in the histogram"
+                         " document.")
+    if len(arrays[0]) - 1 != len(arrays[1]):
+        raise IndexError("The number of elements in the second data line is"
+                         " not one less than the number in the first data"
+                         " line.")
 
     return arrays
+
+
+def beta_gw(star1_mass, star2_mass):
+    """Evaluate Peters' beta coefficient (equation 5.9 from Peters 1964).
+
+    Parameters
+    ----------
+    star1_mass : float
+        Mass of the first star in solar masses.
+    star2_mass : float
+        Mass of the second star in solar masses.
+
+    Returns
+    -------
+    float
+        Peters' beta coefficient with masses given in solar units.
+        To obtain the full CGS beta (cm^4 s^-1), multiply the result
+        by ``const.Msun**3``.
+
+    References
+    ----------
+    .. [1] Peters 1964 Phys. Rev. 136, B1224
+
+    """
+    return (64.0 / 5.0) * const.standard_cgrav**3 / const.clight**5 * star1_mass * star2_mass * (star1_mass + star2_mass)
 
 
 def inspiral_timescale_from_separation(star1_mass, star2_mass,
@@ -1126,12 +1249,12 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     else:                                           # undetermined in any star
         result = ["undefined", None, 'None']
 
-    if ("Central_C_depletion" in state1
-            or "Central_He_depleted" in state1
+    if ("Core_C_depleted" in state1
+            or "Core_He_depleted" in state1
             or (gamma1 is not None and gamma1 >= 10.0)):    # WD formation
         result[1] = "CC1"
-    elif ("Central_C_depletion" in state2
-          or "Central_He_depleted" in state2
+    elif ("Core_C_depleted" in state2
+          or "Core_He_depleted" in state2
           or (gamma2 is not None and gamma2 >= 10.0)):      # WD formation
         result[1] = "CC2"
 
@@ -1348,6 +1471,7 @@ def set_binary_to_failed(binary):
     '''
     binary.state = "ERR"
     binary.event = "FAILED"
+    binary.append_state()
 
 
 def infer_star_state(star_mass=None, surface_h1=None,
@@ -1355,12 +1479,12 @@ def infer_star_state(star_mass=None, surface_h1=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
     """Infer the star state (corresponding to termination flags 2 and 3)."""
     if star_CO:
-        if ((star_mass is None) or (star_mass<=0)):
+        if ((pd.isna(star_mass)) or (star_mass<=0)):
             return "massless_remnant"
-        elif ((((surface_h1 is not None) and (surface_h1>0)) or
-               ((center_h1 is not None) and (center_h1>0)) or
-               ((center_he4 is not None) and (center_he4>0)) or
-               ((center_c12 is not None) and (center_c12>0)) or
+        elif ((((not pd.isna(surface_h1)) and (surface_h1>0)) or
+               ((not pd.isna(center_h1)) and (center_h1>0)) or
+               ((not pd.isna(center_he4)) and (center_he4>0)) or
+               ((not pd.isna(center_c12)) and (center_c12>0)) or
                (star_mass < STATE_NS_STARMASS_LOWER_LIMIT)) and
               (star_mass <= STATE_WD_STARMASS_UPPER_LIMIT)):
             return "WD"
@@ -1369,11 +1493,12 @@ def infer_star_state(star_mass=None, surface_h1=None,
         else:
             return "BH"
 
-    if surface_h1 is None:
+    if pd.isna(surface_h1):
         return STATE_UNDETERMINED
 
     rich_in = ("H-rich" if surface_h1 > THRESHOLD_HE_NAKED_ABUNDANCE
-               else ("accreted_He" if round(surface_h1, 10)<round(center_h1,10) else "stripped_He"))
+               else ("accreted_He" if round(surface_h1, 10) < round(center_h1,10)
+               else "stripped_He"))
     burning_H = (log_LH > LOG10_BURNING_THRESHOLD
                  and log_LH - log_Lnuc > REL_LOG10_BURNING_THRESHOLD)
     burning_He = (log_LHe > LOG10_BURNING_THRESHOLD
@@ -1385,9 +1510,9 @@ def infer_star_state(star_mass=None, surface_h1=None,
 
     if not (H_in_core or He_in_core):   # H and He are depleted
         if not C_in_core:
-            burning = "Central_C_depletion"
+            burning = "Core_C_depleted"
         else:
-            burning = "Central_He_depleted"
+            burning = "Core_He_depleted"
         # from now on, either H or He in core
     elif H_in_core:                     # no matter what the He abundance is
         if burning_H:
@@ -1401,7 +1526,7 @@ def infer_star_state(star_mass=None, surface_h1=None,
             burning = "Shell_H_burning"
         else:
             burning = "non_burning"
-        
+
     return "{}_{}".format(rich_in, burning)
 
 
@@ -1435,8 +1560,8 @@ def infer_mass_transfer_case(rl_relative_overflow,
         return MT_CASE_NO_RLO
 
     if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and
-        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) and
-         (rl_relative_overflow < 0.0))):
+        ((lg_mtransfer_rate <= LG_MTRANSFER_RATE_THRESHOLD) or
+         (not dominating_star))):
         if verbose:
             print("checking rl_relative_overflow / lg_mtransfer_rate,",
                   rl_relative_overflow, lg_mtransfer_rate)
@@ -1450,14 +1575,14 @@ def infer_mass_transfer_case(rl_relative_overflow,
         if ("Core_He_burning" in donor_state
                 or "Shell_H_burning" in donor_state):
             return MT_CASE_B
-        if ("Central_He_depleted" in donor_state
-                or "Central_C_depletion" in donor_state):
+        if ("Core_He_depleted" in donor_state
+                or "Core_C_depleted" in donor_state):
             return MT_CASE_C
     elif "stripped_He" in donor_state:
         if "Core_He_burning" in donor_state:
             return MT_CASE_BA
-        if ("Central_He_depleted" in donor_state
-                or "Central_C_depletion" in donor_state):
+        if ("Core_He_depleted" in donor_state
+                or "Core_C_depleted" in donor_state):
             return MT_CASE_BB
     return MT_CASE_UNDETERMINED
 
@@ -1567,12 +1692,15 @@ def cumulative_mass_transfer_string(cumulative_integers):
                 result += MT_CASE_TO_STR[integer] + '1' # from star 1
             else:
                 result += MT_CASE_TO_STR[integer-10] + '2' # from star 2
+        else:
+            Pwarn("Unknown MT case: {}".format(integer),\
+                  "InappropriateValueWarning")
     return result
 
 
 def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     """Get the cumulative MT string from a list of integer MT casses.
-    
+
     Arguments
     ----------
     MT_cases: list of integers
@@ -1584,7 +1712,7 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     -------
     str
         A string summarizing the mass transfer cases.
-    
+
     """
     if shift_cases:
         case_1_min = MT_CASE_NO_RLO
@@ -1611,7 +1739,8 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
                     case_2_min = MT
             else:
                 # unknown donor
-                Pwarn("MT case with unknown donor: {}".format(MT), "EvolutionWarning")
+                Pwarn("MT case with unknown donor: {}".format(MT),\
+                      "EvolutionWarning")
                 corrected_MT_cases.append(MT)
     else:
         corrected_MT_cases = MT_cases.copy()
@@ -1622,12 +1751,12 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
 
 def get_i_He_depl(history):
     """Get the index of He depletion in the history
-    
+
     Arguments
     ---------
     history: numpy-array
         Stellar history from MESA
-    
+
     Return
     ------
     int
@@ -1650,8 +1779,8 @@ def get_i_He_depl(history):
                                      log_LHe=history['log_LHe'][i],
                                      log_Lnuc=history['log_Lnuc'][i],
                                      star_CO=False)
-            if "Central_He_depleted" in state:
-                return i 
+            if "Core_He_depleted" in state:
+                return i
     return -1
 
 
@@ -1680,15 +1809,15 @@ def calculate_Patton20_values_at_He_depl(star):
     co_core_mass_at_He_depletion = None
     avg_c_in_c_core_at_He_depletion = None
     if star.state_history is not None:
-        if ("H-rich_Central_He_depleted" in star.state_history):
+        if ("H-rich_Core_He_depleted" in star.state_history):
             i_He_depl = np.argmax(
-                np.array(star.state_history) == "H-rich_Central_He_depleted")
+                np.array(star.state_history) == "H-rich_Core_He_depleted")
             co_core_mass_at_He_depletion = star.co_core_mass_history[i_He_depl]
             avg_c_in_c_core_at_He_depletion = star.avg_c_in_c_core_history[
                 i_He_depl]
-        elif ("stripped_He_Central_He_depleted" in star.state_history):
+        elif ("stripped_He_Core_He_depleted" in star.state_history):
             i_He_depl = np.argmax(np.array(star.state_history)
-                                  == "stripped_He_Central_He_depleted")
+                                  == "stripped_He_Core_He_depleted")
             co_core_mass_at_He_depletion = star.co_core_mass_history[i_He_depl]
             avg_c_in_c_core_at_He_depletion = star.avg_c_in_c_core_history[
                 i_He_depl]
@@ -1935,26 +2064,6 @@ def calculate_core_boundary(donor_mass,
     """
     # the threshold of the elements that need to be high in the core
     core_element_high_fraction_definition = 0.1
-    # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
-    STAR_STATES_H_RICH = [
-        "H-rich_Core_H_burning",
-        "H-rich_Shell_H_burning",
-        "H-rich_Core_He_burning",
-        "H-rich_Central_He_depleted",
-        "H-rich_Core_C_burning",
-        "H-rich_Central_C_depletion",
-        "H-rich_non_burning",
-        "accreted_He_Core_H_burning",
-        "accreted_He_non_burning"
-    ]
-    # ENHANCEMENT: this list needs to be imported from e.g. flow_chart.py
-    STAR_STATE_He = [
-        'accreted_He_Core_He_burning',
-        'stripped_He_Core_He_burning',
-        'stripped_He_Central_He_depleted',
-        'stripped_He_Central_C_depletion',
-        'stripped_He_non_burning'
-    ]
 
     if core_element_fraction_definition is not None:
         if ((donor_star_state in STAR_STATES_H_RICH)
@@ -1969,7 +2078,7 @@ def calculate_core_boundary(donor_mass,
                 element = np.add(profile['x_mass_fraction_H'],
                                  profile['y_mass_fraction_He'])
                 element_core = profile['z_mass_fraction_metals']
-        elif (donor_star_state in STAR_STATE_He
+        elif (donor_star_state in STAR_STATES_HE_RICH
               and 'x_mass_fraction_H' in profile.dtype.names
               and 'y_mass_fraction_He' in profile.dtype.names
               and 'z_mass_fraction_metals' in profile.dtype.names):
@@ -1982,8 +2091,9 @@ def calculate_core_boundary(donor_mass,
         # ind_core=np.argmax(element[::-1]>=core_element_fraction_definition)
         else:
             ind_core = -1
-            Pwarn("Stellar profile columns were not enough to calculate the core-envelope "
-                          "boundaries for CE, entire star is now considered an envelope", "ApproximationWarning")
+            Pwarn("Stellar profile columns were not enough to calculate the"+\
+                  " core-envelope boundaries for CE, entire star is now"+\
+                  " considered an envelope", "ApproximationWarning")
             return ind_core
 
         # starting from the surface, both conditions become True when element
@@ -2009,7 +2119,7 @@ def calculate_core_boundary(donor_mass,
         ind_core = np.argmin(donor_mass >= mc1_i)
     else:
         raise ValueError("Not possible to calculate the core boundary of the donor in CE")
-    
+
     return ind_core
 
 
@@ -2152,11 +2262,14 @@ def linear_interpolation_between_two_cells(array_y, array_x, x_target,
 
     if top == bot:
         y_target = array_y[top]
-        Pwarn("linear interpolation occured between the same point", "InterpolationWarning")
-        if verbose:
-            print("linear interpolation, but at the edge")
-            print("x_target,top, bot, len(array_x), y_target",
-                  x_target, top, bot, len(array_x), y_target)
+        Pwarn("linear interpolation occured between the same point: x_target,"
+              " top, bot, len(array_x), y_target = {}, {}, {}, {}, {}".format(\
+              x_target, top, bot, len(array_x), y_target),
+              "InterpolationWarning")
+    elif bot > top:
+        y_target = array_y[top]
+        Pwarn("bot={} is too large: use y at top={}".format(bot, top),
+              "InterpolationWarning")
     else:
         x_top = array_x[top]
         x_bot = array_x[bot]
@@ -2321,7 +2434,7 @@ def calculate_lambda_from_profile(
               m1_i, radius1, len(donor_mass), " vs ", ind_core, mc1_i, rc1_i)
         print("Ebind_i from profile ", Ebind_i)
         print("lambda_CE ", lambda_CE)
-    if not (lambda_CE > -tolerance) and not np.isnan(lambda_CE):
+    if not (lambda_CE > -tolerance) and pd.notna(lambda_CE):
         raise ValueError("lambda_CE has a negative value")
     return lambda_CE, mc1_i, rc1_i
 
@@ -2371,12 +2484,11 @@ def get_mass_radius_dm_from_profile(profile, m1_i=0.0,
         if np.abs(donor_mass[0] - m1_i) > tolerance:
             Pwarn("Donor mass from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("mass profile/object:", (donor_mass[0]), (m1_i))
+
         # checking if radius of profile agrees with the radius of the binary
         if np.abs(donor_radius[0] - radius1) > tolerance:
             Pwarn("Donor radius from the binary class object "
                           "and the profile do not agree", "ClassificationWarning")
-            #print("radius profile/object:", (donor_radius[0]), (radius1))
 
         # MANOS: if dm exists as a column, else calculate it from mass column
         if "dm" in profile.dtype.names:
@@ -2656,7 +2768,7 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     # (thermal+radiation) for
     # "lambda_from_profile_gravitational_plus_internal_minus_recombination"
     U_i = 0.0
-    
+
     # sum from surface to the core. Your core boundary is in element [ind_core]
     # in a normal MESA (and POSYDON) profile
     for i in range(ind_core):
@@ -2668,12 +2780,10 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         U_i = U_i + specific_internal_energy[i]*donor_dm[i]*const.Msun
 
     if Grav_energy > 0.0:
-        #print("Grav_energy, donor_mass, donor_dm, donor_radius",
-        #      Grav_energy, donor_mass, donor_dm, donor_radius)
         if not (Grav_energy < tolerance):
             raise ValueError("CEE problem calculating gravitational energy, "
                             "giving positive values.")
-        
+
     # binding energy of the enevelope equals its gravitational energy +
     # an a_th fraction of its internal energy
     Ebind_i = Grav_energy + factor_internal_energy * U_i
@@ -2740,29 +2850,14 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     ind_threshold = i-1
 
     if donor_mass[ind_threshold]< mc1_i or  donor_radius[ind_threshold]<rc1_i:
-        Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")   
-        #print("M_ejected, M_envelope = ", donor_mass[0] - donor_mass[ind_threshold], donor_mass[0] - mc1_i)
-        donor_mass[ind_threshold] = mc1_i
+        Pwarn("partial mass ejected is greater than the envelope mass", "EvolutionWarning")
+        mass_threshold = mc1_i
+    else:
+        mass_threshold = donor_mass[ind_threshold]
 
-    M_ejected = donor_mass[0] - donor_mass[ind_threshold]
+    M_ejected = donor_mass[0] - mass_threshold
 
     return M_ejected
-
-
-class PchipInterpolator2:
-    """Interpolation class."""
-
-    def __init__(self, *args, positive=False, **kwargs):
-        """Initialize the interpolator."""
-        self.interpolator = PchipInterpolator(*args, **kwargs)
-        self.positive = positive
-
-    def __call__(self, *args, **kwargs):
-        """Use the interpolator."""
-        result = self.interpolator(*args, **kwargs)
-        if self.positive:
-            result = np.maximum(result, 0.0)
-        return result
 
 def convert_metallicity_to_string(Z):
     """Check if metallicity is supported by POSYDON v2."""
@@ -2773,35 +2868,37 @@ def convert_metallicity_to_string(Z):
     return f'{Z:1.1e}'.replace('.0','')
 
 def rotate(axis, angle):
+    """Generate rotation matrix to rotate a vector about an arbitrary axis by
+        a given angle
 
-        """Generate rotation matrix to rotate a vector about an arbitrary axis 
-            by a given angle
+    Parameters
+    ----------
+    axis : array of length 3
+        Axis to rotate about
+    angle : float
+        Angle, in radians, through which to rotate about axis
 
-        Parameters
-        ----------
-        axis : array of length 3
-            Axis to rotate about
-        angle : float
-            Angle, in radians, through which to rotate about axis
+    Returns
+    -------
+    rotation_matrix : 3x3 array
+        Array such that rotation_matrix.dot(vector) rotates vector
+        about the given axis by the given angle
+    """
 
-        Returns
-        -------
-        rotation_matrix : 3x3 array
-            Array such that rotation_matrix.dot(vector) rotates vector
-            about the given axis by the given angle
+    if len(axis)!=3:
+        raise ValueError("axis should be of dimension 3")
+    # normalize the axis vector
+    norm = np.linalg.norm(axis)
+    if norm==0:
+        raise ValueError("axis is a point")
+    axis = axis / norm
 
-        """
+    # calculate the cosine and sine of the angle
+    cos_theta = np.cos(angle)
+    sin_theta = np.sin(angle)
 
-        # normalize the axis vector
-        axis = axis / np.linalg.norm(axis)
-        
-
-        # calculate the cosine and sine of the angle
-        cos_theta = np.cos(angle)
-        sin_theta = np.sin(angle)
-        
-        # construct the rotation matrix
-        rotation_matrix = np.array([
+    # construct the rotation matrix
+    rotation_matrix = np.array([
             [cos_theta + axis[0]**2 * (1 - cos_theta),
             axis[0] * axis[1] * (1 - cos_theta) - axis[2] * sin_theta,
             axis[0] * axis[2] * (1 - cos_theta) + axis[1] * sin_theta],
@@ -2812,6 +2909,5 @@ def rotate(axis, angle):
             axis[2] * axis[1] * (1 - cos_theta) + axis[0] * sin_theta,
             cos_theta + axis[2]**2 * (1 - cos_theta)]
         ])
-        
-        
-        return rotation_matrix
+
+    return rotation_matrix

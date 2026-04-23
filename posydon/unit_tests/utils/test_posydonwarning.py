@@ -8,27 +8,32 @@ __authors__ = [
 # ensure that python forgets about previous imports of posydonwarning, e.g. in
 # other tests, before importing it here
 from sys import modules as sys_modules
-sys_modules.pop('posydon.utils.posydonwarning')
 
-# import the module which will be tested
-import posydon.utils.posydonwarning as totest
+sys_modules.pop('posydon.utils.posydonwarning', None)
+
+from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import fixture, raises, warns
-from inspect import isclass, isroutine
+
+# import the module which will be tested
+import posydon.utils.posydonwarning as totest
+
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['AllPOSYDONWarnings', 'ApproximationWarning',\
+        elements = {'AllPOSYDONWarnings', 'ApproximationWarning',\
                     'BinaryParsingWarning', 'Catch_POSYDON_Warnings',\
                     'ClassificationWarning', 'EvolutionWarning',\
                     'InappropriateValueWarning', 'IncompletenessWarning',\
                     'InterpolationWarning', 'MissingFilesWarning',\
-                    'NoPOSYDONWarnings', 'OverwriteWarning', 'POSYDONWarning',\
-                    'Pwarn', 'ReplaceValueWarning', 'SetPOSYDONWarnings',\
+                    'NoPOSYDONWarnings', 'OverwriteWarning', 'SFHModelWarning',\
+                    'POSYDONWarning','Pwarn', 'ReplaceValueWarning',\
+                    'SetPOSYDONWarnings', 'ValueWarning', 'DeprecationWarning', \
+                    'InitializationWarning','StepWarning',\
                     'UnsupportedModelWarning', '_CAUGHT_POSYDON_WARNINGS',\
                     '_Caught_POSYDON_Warnings', '_POSYDONWarning_subclasses',\
                     '_POSYDON_WARNINGS_REGISTRY', '__authors__',\
@@ -36,10 +41,21 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_apply_POSYDON_filter', '_get_POSYDONWarning_class',\
                     '_issue_warn', 'copy', 'get_stats', 'print_stats', 'sys',\
-                    'warnings']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'warnings', 'nosrc_code_format'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_POSYDONWarning(self):
         assert isclass(totest.POSYDONWarning)
@@ -90,6 +106,14 @@ class TestElements:
         assert isclass(totest.UnsupportedModelWarning)
         assert issubclass(totest.UnsupportedModelWarning,\
                           totest.POSYDONWarning)
+
+    def test_instance_SFHModelWarning(self):
+        assert isclass(totest.SFHModelWarning)
+        assert issubclass(totest.SFHModelWarning, totest.POSYDONWarning)
+
+    def test_instance_DeprecationWarning(self):
+        assert isclass(totest.DeprecationWarning)
+        assert issubclass(totest.DeprecationWarning, totest.POSYDONWarning)
 
     def test_instance_POSYDONWarning_subclasses(self):
         assert isinstance(totest._POSYDONWarning_subclasses, (dict))
@@ -458,6 +482,20 @@ class TestMissingFilesWarning:
         assert isinstance(MissingFilesWarning, totest.MissingFilesWarning)
         assert MissingFilesWarning.message == ''
 
+class TestValueWarning:
+    @fixture
+    def ValueWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.ValueWarning()
+
+    # test the ValueWarning class
+    def test_init(self, ValueWarning):
+        assert isroutine(ValueWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(ValueWarning, totest.ValueWarning)
+        assert ValueWarning.message == ''
+
 
 class TestOverwriteWarning:
     @fixture
@@ -503,6 +541,65 @@ class TestUnsupportedModelWarning:
         assert isinstance(UnsupportedModelWarning,\
                           totest.UnsupportedModelWarning)
         assert UnsupportedModelWarning.message == ''
+
+class TestInitializationWarning:
+    @fixture
+    def InitializationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.InitializationWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, InitializationWarning):
+        assert isroutine(InitializationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(InitializationWarning,\
+                          totest.InitializationWarning)
+        assert InitializationWarning.message == ''
+
+class TestStepWarning:
+    @fixture
+    def StepWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.StepWarning()
+
+    # test the UnsupportedModelWarning class
+    def test_init(self, StepWarning):
+        assert isroutine(StepWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(StepWarning,\
+                          totest.StepWarning)
+        assert StepWarning.message == ''
+
+class TestSFHModelWarning:
+    @fixture
+    def SFHModelWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.SFHModelWarning()
+
+    # test the SFHModelWarning class
+    def test_init(self, SFHModelWarning):
+        assert isroutine(SFHModelWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(SFHModelWarning, totest.SFHModelWarning)
+        assert SFHModelWarning.message == ''
+
+
+class TestDeprecationWarning:
+    @fixture
+    def DeprecationWarning(self):
+        # initialize an instance of the class with defaults
+        return totest.DeprecationWarning()
+
+    # test the DeprecationWarning class
+    def test_init(self, DeprecationWarning):
+        assert isroutine(DeprecationWarning.__init__)
+        # check that the instance is of correct type and all code in the
+        # __init__ got executed: the elements are created and initialized
+        assert isinstance(DeprecationWarning, totest.DeprecationWarning)
+        assert DeprecationWarning.message == ''
 
 
 class Test_Caught_POSYDON_Warnings:

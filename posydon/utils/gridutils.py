@@ -1,17 +1,14 @@
 """Various utility functions used for the manipulating grid data."""
 
-import os
 import gzip
+import os
 
 import numpy as np
 import pandas as pd
 
-from posydon.utils.constants import clight, Msun, Rsun
-from posydon.utils.constants import standard_cgrav as cgrav
-from posydon.utils.constants import secyer as secyear
+from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
-
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
@@ -85,6 +82,8 @@ def read_MESA_data_file(path, columns):
 
 def read_EEP_data_file(path, columns):
     """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
+    if path is None:
+        return None
     try:
         return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
                                            usecols=columns, invalid_raise=False))
@@ -242,89 +241,6 @@ def get_final_proposed_points(proposed_x, grid_x, proposed_y, grid_y):
     return mapped_x, mapped_y
 
 
-def T_merger_P(P, m1, m2):
-    """Merger time given initial orbital period and masses of binary.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr)
-
-    """
-    return T_merger_a(kepler3_a(P, m1, m2), m1, m2)
-
-
-def beta_gw(m1, m2):
-    """Evaluate the "beta" (equation 5.9) from Peters (1964).
-
-    Parameters
-    ----------
-    m1 : float
-        Mass of the first star.
-    m2 : type
-        Mass of the second star.
-
-    Returns
-    -------
-    float
-        Peters' beta in cgs units.
-
-    """
-    return 64. / 5. * cgrav**3 / clight**5 * m1 * m2 * (m1 + m2)
-
-
-def kepler3_a(P, m1, m2):
-    """Calculate the semimajor axis of a binary from its period and masses.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star.
-    m2 : type
-        Mass of second star.
-
-    Returns
-    -------
-    float
-        Semi-major axis (Rsun) using Kepler's third law.
-
-    """
-    return ((P * 24.0 * 3600.0)**2.0
-            * cgrav * (m1 + m2) * Msun / (4.0 * np.pi**2))**(1.0 / 3.0) / Rsun
-
-
-def T_merger_a(a, m1, m2):
-    """Merger time given initial orbital separation and masses of binary.
-
-    Parameters
-    ----------
-    a : float
-        Orbital separation (Rsun).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr) following Peters (1964), eq. (5.10).
-
-    """
-    return (a * Rsun)**4 / (4. * beta_gw(m1, m2) * Msun**3) / (secyear * 1.0e9)
-
-
 def convert_output_to_table(
     output_file, binary_history_file=None,
     star1_history_file=None, star2_history_file=None, column_names=[
@@ -442,10 +358,11 @@ def convert_output_to_table(
                 values["C_core_2(Msun)"] = hist["c_core_mass"].iloc[-1]
 
             if binary_history_file is not None:
-                tmerge = T_merger_P(
-                    binary_history["period_days"].iloc[-1],
+                tmerge = inspiral_timescale_from_orbital_period(
                     binary_history["star_1_mass"].iloc[-1],
-                    binary_history["star_2_mass"].iloc[-1])
+                    binary_history["star_2_mass"].iloc[-1],
+                    binary_history["period_days"].iloc[-1],
+                    0.0) / 1000.0
                 max_lg_mtransfer_rate = binary_history[
                     "lg_mtransfer_rate"].max()
 
@@ -557,5 +474,3 @@ def get_new_grid_name(path, compression, create_missing_directories=False):
         if not os.path.isdir(output_path):
             os.makedirs(output_path)
     return grid_output
-
-

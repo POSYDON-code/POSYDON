@@ -7,13 +7,15 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.config as totest
+
 # aliases
 os = totest.os
+
+from inspect import isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 from pytest import raises
-from inspect import isroutine
 
 
 # define test classes collecting several test functions

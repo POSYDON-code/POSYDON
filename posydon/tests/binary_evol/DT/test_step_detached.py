@@ -1,17 +1,13 @@
 import os
 import unittest
 
-from posydon.config import PATH_TO_POSYDON
-
-from posydon.binary_evol.DT.step_detached import detached_step
-from posydon.binary_evol.DT.step_detached import diffeq
-
-from posydon.utils import constants as const
-from posydon.utils import common_functions as cf
-
 from posydon.binary_evol.binarystar import BinaryStar
-from posydon.binary_evol.singlestar import SingleStar
+from posydon.binary_evol.DT.step_detached import detached_step, diffeq
 from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.config import PATH_TO_POSYDON
+from posydon.utils import common_functions as cf
+from posydon.utils import constants as const
 
 PATH_TO_DATA = os.path.join(
     PATH_TO_POSYDON, "posydon/tests/data/POSYDON-UNIT-TESTS/binary_evol/detached/")

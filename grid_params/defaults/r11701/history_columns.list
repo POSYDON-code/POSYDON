@@ -529,9 +529,9 @@
       !gravity darkening in rotating stars. Based on the model of Espinosa Lara & Rieutord (2011)
       !'polar' refers to the line of sight being directed along the rotation axis of the star
       !'equatorial' refers to the line of sight coincident with the stellar equator
-      !grav_dark_L_polar !Lsun 
+      !grav_dark_L_polar !Lsun
       !grav_dark_Teff_polar !K
-      !grav_dark_L_equatorial !Lsun 
+      !grav_dark_L_equatorial !Lsun
       !grav_dark_Teff_equatorial !K
 
       !surf_escape_v ! cm/s

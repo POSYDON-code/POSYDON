@@ -8,33 +8,48 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.data_download as totest
+
 # aliases
 os = totest.os
 
-# import other needed code for the tests, which is not already imported in the
-# module you like to test
-from pytest import fixture, raises, warns, approx
+from contextlib import chdir
 from inspect import isclass, isroutine
 from shutil import rmtree
-from contextlib import chdir
 from unittest.mock import patch
+
+# import other needed code for the tests, which is not already imported in the
+# module you like to test
+from pytest import approx, fixture, raises, warns
+
 from posydon.utils.posydonwarning import ReplaceValueWarning
+
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
+        elements = {'COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
                     'Pwarn', 'ZENODO_COLLECTION', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
                     'data_download', 'download_one_dataset', 'hashlib',\
                     'list_datasets', 'os', 'progressbar', 'tarfile',\
-                    'textwrap', 'tqdm', 'urllib']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'textwrap', 'tqdm', 'urllib'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_parse_commandline(self):
         assert isroutine(totest._parse_commandline)
@@ -98,7 +113,7 @@ class TestFunctions:
                         match="unknown dataset, use -l to show defined sets"):
                 totest._parse_commandline()
             # example
-            self.commandline_args = totest.argparse.Namespace(dataset='v1',\
+            self.commandline_args = totest.argparse.Namespace(dataset='DR1',\
              listedsets=None, nomd5check=False, verbose=False)
             assert totest._parse_commandline() == self.commandline_args
 
@@ -146,8 +161,12 @@ class TestFunctions:
                  as test_file:
                 test_file.write("Unit Test\n")
             with chdir(os.path.join(test_path,"..")):
-                os.system("tar -czf POSYDON_data"+test_ID\
-                          +".tar.gz POSYDON_data")
+                try:
+                    os.system("tar -czf POSYDON_data"+test_ID\
+                              +".tar.gz POSYDON_data")
+                except:
+                    raise RuntimeError("Please check that you have `tar` "\
+                                       +"installed and up to date.")
             rmtree(test_path)
             return None
 
@@ -172,7 +191,7 @@ class TestFunctions:
             with raises(NotADirectoryError, match="PATH_TO_POSYDON_DATA does "\
                                                   +"not refer to a valid "\
                                                   +"directory."):
-                totest.download_one_dataset(dataset='v1_for_v2.0.0-pre1')
+                totest.download_one_dataset(dataset='DR1_for_v2.0.0-pre1')
         # bad input
         with monkeypatch.context() as mp:
             mock_ZENODO_COLLECTION = {'Test': {'data' : "./", 'md5': "Unit"}}
@@ -311,7 +330,7 @@ class TestFunctions:
                 for v in [True, False]:
                     self.list_printed = None
                     self.commandline_args = totest.argparse.Namespace(\
-                     dataset='v1', listedsets=l, nomd5check=False, verbose=v)
+                     dataset='DR1', listedsets=l, nomd5check=False, verbose=v)
                     totest._get_posydon_data()
                     assert self.list_printed['individual_sets']\
                            == (l == 'individual')
@@ -319,7 +338,7 @@ class TestFunctions:
             # examples
             for n in [True, False]:
                 for v in [True, False]:
-                    for d in ['v1', 'v2']:
+                    for d in ['DR1', 'DR2']:
                         self.downloaded = None
                         self.commandline_args = totest.argparse.Namespace(\
                          dataset=d, listedsets=None, nomd5check=n, verbose=v)

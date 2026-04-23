@@ -16,9 +16,10 @@ import pandas as pd
 import numpy as np
 from pprint import pformat
 from posydon.popsyn.io import parse_inifile
-from posydon.utils.common_functions import PATH_TO_POSYDON
+from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.SN_MODELS import SN_MODELS
 
 # this data processing pipeline was designed assuming POSYDON v2 data structure
 '''
@@ -56,7 +57,7 @@ ACTION_TO_STEP_NUM = {
     'CALCULATE_EXTRA_VALUES'     : 'step_3',
     'TRAIN_INTERPOLATORS'        : 'step_4',
     'TRAIN_PROFILE_INTERPOLATORS': 'step_5',
-    'EXPORT_DATASET'             : 'step_9',
+    'EXPORT_DATASET'             : 'step_F',
     'RERUN'                      : 'rerun'
 }
 # pipeline substeps
@@ -71,36 +72,7 @@ PLOTTING_SETS = {
                              'termination_flag_2', 'termination_flag_3',\
                              'termination_flag_4', 'rl_relative_overflow_1',\
                              'rl_relative_overflow_2', 'lg_mtransfer_rate'],
-    'PLOT_AFTER_EXTRA'    : ['S1_MODEL01_CO_type', 'S1_MODEL01_SN_type',\
-                             'S1_MODEL01_mass', 'S1_MODEL01_spin',\
-                             'S1_MODEL01_m_disk_radiated',
-                             'S1_MODEL02_CO_type', 'S1_MODEL02_SN_type',\
-                             'S1_MODEL02_mass', 'S1_MODEL02_spin',\
-                             'S1_MODEL02_m_disk_radiated',
-                             'S1_MODEL03_CO_type', 'S1_MODEL03_SN_type',\
-                             'S1_MODEL03_mass', 'S1_MODEL03_spin',\
-                             'S1_MODEL03_m_disk_radiated',
-                             'S1_MODEL04_CO_type', 'S1_MODEL04_SN_type',\
-                             'S1_MODEL04_mass', 'S1_MODEL04_spin',\
-                             'S1_MODEL04_m_disk_radiated',
-                             'S1_MODEL05_CO_type', 'S1_MODEL05_SN_type',\
-                             'S1_MODEL05_mass', 'S1_MODEL05_spin',\
-                             'S1_MODEL05_m_disk_radiated',
-                             'S1_MODEL06_CO_type', 'S1_MODEL06_SN_type',\
-                             'S1_MODEL06_mass', 'S1_MODEL06_spin',\
-                             'S1_MODEL06_m_disk_radiated',
-                             'S1_MODEL07_CO_type', 'S1_MODEL07_SN_type',\
-                             'S1_MODEL07_mass', 'S1_MODEL07_spin',\
-                             'S1_MODEL07_m_disk_radiated',
-                             'S1_MODEL08_CO_type', 'S1_MODEL08_SN_type',\
-                             'S1_MODEL08_mass', 'S1_MODEL08_spin',\
-                             'S1_MODEL08_m_disk_radiated',
-                             'S1_MODEL09_CO_type', 'S1_MODEL09_SN_type',\
-                             'S1_MODEL09_mass', 'S1_MODEL09_spin',\
-                             'S1_MODEL09_m_disk_radiated',
-                             'S1_MODEL10_CO_type', 'S1_MODEL10_SN_type',\
-                             'S1_MODEL10_mass', 'S1_MODEL10_spin',\
-                             'S1_MODEL10_m_disk_radiated'],
+    'PLOT_AFTER_EXTRA'    : [],
     'PLOT_AFTER_TRAINING' : ['INTERP_ERROR_age', 'INTERP_ERROR_star_1_mass',\
                              'INTERP_ERROR_star_2_mass',\
                              'INTERP_ERROR_period_days',\
@@ -129,21 +101,17 @@ PLOTTING_SETS = {
                              'INTERP_ERROR_S2_log_Teff',\
                              'INTERP_ERROR_S2_log_L', 'INTERP_ERROR_S2_log_R',\
                              'INTERP_ERROR_S2_spin_parameter',\
-                             'INTERP_ERROR_S2_lambda_CE_10cent',\
-                             'INTERP_ERROR_S1_MODEL01_mass',\
-                             'INTERP_ERROR_S1_MODEL01_spin',\
-                             'INTERP_ERROR_S1_MODEL01_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL05_mass',\
-                             'INTERP_ERROR_S1_MODEL05_spin',\
-                             'INTERP_ERROR_S1_MODEL05_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL06_mass',\
-                             'INTERP_ERROR_S1_MODEL06_spin',\
-                             'INTERP_ERROR_S1_MODEL06_m_disk_radiated',\
-                             'INTERP_ERROR_S1_MODEL10_mass',\
-                             'INTERP_ERROR_S1_MODEL10_spin',\
-                             'INTERP_ERROR_S1_MODEL10_m_disk_radiated'],
+                             'INTERP_ERROR_S2_lambda_CE_10cent'],
     'PLOT_AFTER_PROFILE_TRAINING' : []
 }
+for SN_MODEL_NAME in SN_MODELS.keys():
+    for quantity in ['CO_type', 'SN_type', 'mass', 'spin', 'm_disk_radiated']:
+        PLOTTING_SETS['PLOT_AFTER_EXTRA'].append(
+         f'S1_{SN_MODEL_NAME}_{quantity}')
+        if quantity not in ['CO_type', 'SN_type']:
+            PLOTTING_SETS['PLOT_AFTER_TRAINING'].append(
+             f'INTERP_ERROR_S1_{SN_MODEL_NAME}_{quantity}')
+
 # predefined checking sets
 CHECKING_SETS = {
     'CHECK_AFTER_CREATE'           : [],
@@ -219,7 +187,7 @@ class PostProcessingPipeline:
 
     def create_csv_and_slurm_job_files(self):
         """Creates all files the pipeline needs."""
-        
+
         def expand_runfile(runfile, step_number='step_X', last_step=''):
             """Add next entry to the script in runfile.
 
@@ -256,7 +224,7 @@ class PostProcessingPipeline:
             runfile.write(f"echo '{step_number}.slurm submitted as '$"
                           "{"f"ID{step_number}""}"f"\n")
             return step_number
-        
+
         def get_step_kwargs(self, step_number='step_X', last_step=''):
             """Provides the attributes of a step. Additionally, it replaces
             defined sets and it checks for missing attributes and may copies
@@ -328,7 +296,7 @@ class PostProcessingPipeline:
                         self.pipeline_kwargs[step_number]['DO_CHECKS'] = []
             # return attributes
             return self.pipeline_kwargs[step_number]
-        
+
         def has_substep(self, step_number='step_X', substep='ALL'):
             """Checks whether a step has substeps.
 
@@ -359,7 +327,7 @@ class PostProcessingPipeline:
                         return True
             # no entry for the substep(s)
             return False
-        
+
         # check for sections 'account' and 'pipeline setup' and store their
         # attributes
         if 'account' not in self.pipeline_kwargs.keys():
@@ -368,7 +336,7 @@ class PostProcessingPipeline:
             raise KeyError('pipeline setup not in pipeline_kwargs!')
         account_kwargs = self.pipeline_kwargs['account']
         setup_kwargs = self.pipeline_kwargs['pipeline setup']
-        
+
         # take verbose value from setup arguments
         if 'VERBOSE' in setup_kwargs.keys():
             VERBOSE = setup_kwargs['VERBOSE']
@@ -381,11 +349,11 @@ class PostProcessingPipeline:
                     'ACCOUNT', pformat(account_kwargs, indent=2),
                     'SETUP', pformat(setup_kwargs, indent=2) )
                  )
-        
+
         previously_created_files = []
         plot_dirs = []
         pipeline_steps = []
-        
+
         if os.path.exists('run_pipeline.sh'):
             Pwarn('Replace run_pipeline.sh', "OverwriteWarning")
         # create a runfile script
@@ -446,7 +414,7 @@ class PostProcessingPipeline:
                     if step_number == "step_5":
                         from posydon.interpolation.profile_interpolation\
                             import CompileData, ProfileInterpolator
-                
+
                 for sub_step, step_extension in SUB_STEPS_TO_EXTENSION.items():
                     if sub_step not in\
                         self.pipeline_kwargs[step_number].keys():
@@ -499,7 +467,7 @@ class PostProcessingPipeline:
                                        list(set(plot_dirs))
                 df.to_csv(os.path.join(PATH, 'pipeline_files.csv'),
                           header=False, index=False)
-                
+
                 # add cleanup to run script
                 submission_line = "IDpipeline_cleanup=$(sbatch --parsable "
                 for i, step in enumerate(pipeline_steps):
@@ -601,7 +569,7 @@ def slurm_job(job_name,
     path_to_csv_file = os.path.join(PATH, f'{job_name}.csv')
     if not os.path.isfile(path_to_csv_file):
         raise FileNotFoundError(f"Missing csv file: {path_to_csv_file}")
-    
+
     if os.path.exists(f'{job_name}.slurm'):
         Pwarn(f'Replace {job_name}.slurm', "OverwriteWarning")
     # create slurm file
@@ -633,7 +601,7 @@ def slurm_job(job_name,
             f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
             f.write(f"#SBATCH --mail-user={EMAIL}\n")
         # extract array size
-        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_9',\
+        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_F',\
             'rerun']) or ('plot' in job_name) or ('check' in job_name)):
             df = pd.read_csv(path_to_csv_file)
             N = df.shape[0]-1
@@ -941,7 +909,7 @@ def create_csv(GRID_TYPES=[],
                         # the grid type, the names of the files of the IF
                         # interpolators, the quantities to get profiles
                         # interpolated for, and the names of the files where
-                        # the interpolator data gets written to. 
+                        # the interpolator data gets written to.
                         if (isinstance(PROFILE_NAMES, list) and\
                             (len(PROFILE_NAMES)>0)):
                             for method in INTERPOLATION_METHODS:
@@ -968,13 +936,13 @@ def create_csv(GRID_TYPES=[],
                                 if not os.path.isdir(interpolator_dir):
                                     newly_created_files.append(
                                         interpolator_dir)
-                    elif step_name == 'step_9': # EXPORT_DATASET
+                    elif step_name == 'step_F': # EXPORT_DATASET
                         if "RLO" in grid_type:
                             export_dir = grid_type
                         else:
                             export_dir = grid_type+RLO
                         # This step needs the grids/interpolators to export and
-                        # the path where to export them to. 
+                        # the path where to export them to.
                         grids.append(os.path.join(PATH_TO_GRIDS,
                                       grid_type, VERSION, metallicity,
                                       compression, grid_slice+'.h5'))
@@ -1011,7 +979,7 @@ def create_csv(GRID_TYPES=[],
                         rerun_metallicities.append(metallicity)
                         rerun_type.append(RERUN_TYPE)
                         clusters.append(CLUSTER)
-                    
+
                     if (('plot' in step_name) or ('check' in step_name)):
                         # get output grid names for sub steps
                         if 'step_2' in step_name:
@@ -1023,17 +991,17 @@ def create_csv(GRID_TYPES=[],
                             grid_s = CONTROL_GRIDS[l][i]
                         else:
                             grid_s = grid_slice
-                        
+
                         if grid_s == '': # skip that slice for sub steps
                             continue
-                        
-                        if (('step_4' not in step_name) and 
+
+                        if (('step_4' not in step_name) and
                             ('step_5' not in step_name)):
                             # all steps without interpolation method get an
                             # empty method
                             if len(INTERPOLATION_METHODS)==0:
                                 INTERPOLATION_METHODS = ['']
-                        
+
                         if 'plot' in step_name: # PLOTS
                             # only plot first compression type, but allow for
                             # with and without RLO flag
@@ -1111,7 +1079,7 @@ def create_csv(GRID_TYPES=[],
                                                 VERSION, metallicity,
                                                 'interpolation_objects',
                                                 'profile_'+method+RLO+'.pkl'))
-    
+
     # saving dataset to csv file (step 2 is special here, because the data
     # frame was already created.)
     if step_name != 'step_2':
@@ -1136,7 +1104,7 @@ def create_csv(GRID_TYPES=[],
             df['profile_names'] = profile_quantities
             df['path_to_IF_interpolator'] = interpolators
             df['path_to_profile_interpolator'] = profile_interpolators
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             df['export_path'] = export_path
         elif step_name == 'rerun':
             df['rerun_path'] = rerun_path
@@ -1212,7 +1180,7 @@ def create_csv(GRID_TYPES=[],
         elif step_name == 'step_5':
             newly_created_files.extend(
                 df['path_to_profile_interpolator'].to_list())
-        elif step_name == 'step_9':
+        elif step_name == 'step_F':
             newly_created_files.extend(df['export_path'].to_list())
         elif step_name == 'rerun':
             newly_created_files.extend(df['rerun_path'].to_list())
@@ -1312,7 +1280,7 @@ def create_cleanup_slurm_job(job_name,
     kwargs : dict
         Other parameters (all being ignored).
     """
-    if ((job_name == 'step_2') or (job_name == 'step_9') or
+    if ((job_name == 'step_2') or (job_name == 'step_F') or
         (job_name == 'rerun') or ('plot' in job_name) or
         ('check' in job_name) or
         ((job_name == 'pipeline') and (GROUP is not None))):
@@ -1347,7 +1315,7 @@ def create_cleanup_slurm_job(job_name,
                 path_to_log_files = os.path.join(PATH, 'logs', step_name)
             else:
                 path_to_log_files = os.path.join(PATH, 'logs', job_name)
-            if ((job_name == 'step_2') or (job_name == 'step_9') or
+            if ((job_name == 'step_2') or (job_name == 'step_F') or
                 (job_name == 'rerun') or ('plot' in job_name) or
                 ('check' in job_name)):
                 # combine logs
@@ -1407,7 +1375,7 @@ def get_log_file_name(job_name, step_name):
         return "train_interpolator_%4a.out"
     if job_name == 'step_5': # TRAIN_PROFILE_INTERPOLATORS
         return "train_profile_interpolator_%4a.out"
-    if job_name == 'step_9': # EXPORT_DATASET
+    if job_name == 'step_F': # EXPORT_DATASET
         return "export_dataset_%4a.out"
     if job_name == 'rerun': # RERUN
         return "rerun_%4a.out"
@@ -1421,7 +1389,7 @@ def get_log_file_name(job_name, step_name):
 
 
 if __name__ == '__main__':
-    
+
     if len(sys.argv) >= 2:
         if str(sys.argv[1])=='--help':
             print('Programm to setup the posydon pipeline')
@@ -1433,9 +1401,7 @@ if __name__ == '__main__':
             ini_file_path = './' + ini_file_path
     else:
         raise ValueError('No ini file specified.')
-    
+
     pipeline = PostProcessingPipeline(ini_file_path)
     pipeline.create_csv_and_slurm_job_files()
     pipeline.create_log_dirs()
-
-

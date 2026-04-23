@@ -1,4 +1,5 @@
-from posydon.binary_evol.flow_chart import (flow_chart, STAR_STATES_NORMALSTAR)
+from posydon.binary_evol.flow_chart import STAR_STATES_NORMALSTAR, flow_chart
+
 
 def end_flow_chart(FLOW_CHART=None):
     FLOW_CHART = {}
@@ -38,7 +39,7 @@ class my_CE_step(object):
             raise ValueError("The donor star must be an evolved star with a He core mass")
         if donor_star.state != 'H-rich':
             raise ValueError("The donor star must be an H-rich star")
-        
+
         donor_star.mass = donor_star.he_core_mass # lose envelope
         donor_star.state = donor_star.state.replace('H-rich', 'stripped_He')
         binary.state = 'detached'

@@ -6,19 +6,19 @@ __authors__ = [
 ]
 
 
-from .SimulationModel import SimulationModel
-from .GraphVisualizer import CaseInfos, PointInfos, StateInfos, columnTYPE
-
-from .MainWindow import MainWindow
-from .PresenterMode import PresenterMode
-
-from posydon.utils.common_functions import orbital_separation_from_period
-from posydon.config import PATH_TO_POSYDON
-
-from datetime import datetime
 import os
+from datetime import datetime
+
 import numpy as np
 import pandas as pd
+
+from posydon.config import PATH_TO_POSYDON
+from posydon.utils.common_functions import orbital_separation_from_period
+
+from .GraphVisualizer import CaseInfos, PointInfos, StateInfos, columnTYPE
+from .MainWindow import MainWindow
+from .PresenterMode import PresenterMode
+from .SimulationModel import SimulationModel
 
 
 def to_megayears(nb):
@@ -350,7 +350,6 @@ class Presenter:
             self._set_visualisation_diagram)
         self._visualizer.distance_representation_required().connect(
             self._set_distance_representation)
-        breakpoint()
         self._visualizer.save_required().connect(self.screen)
 
         self._present_mode = PresenterMode.DETAILED

@@ -1,25 +1,25 @@
-__author__ = [
+__authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
 ]
 
-from posydon.utils.constants import Zsun
-
-from astropy.cosmology import Planck15 as cosmology
-from astropy import constants as const
 import numpy as np
 import scipy as sp
+from astropy import constants as const
+from astropy import units as u
+from astropy.cosmology import Planck15 as cosmology
 from astropy.cosmology import z_at_value
 from scipy.interpolate import CubicSpline
-from astropy import units as u
 
+from posydon.utils.constants import Zsun
 
-DEFAULT_MODEL = {
+DEFAULT_SFH_MODEL = {
     "delta_t": 100,  # Myr
     "SFR": "IllustrisTNG",
     "sigma_SFR": None,
-    "Z_max": 1.0,
-    "select_one_met": False,
+    "Z_max": None, # Zsun
+    "Z_min": None, # Zsun
+    "normalise": True, # normalise the SFR to 1
     "dlogZ": None,  # e.g, [np.log10(0.0142/2),np.log10(0.0142*2)]
     "Zsun": Zsun,
 }
@@ -150,7 +150,6 @@ def get_redshift_from_cosmic_time(t_cosm):
     return trained_tz_interp(t_cosm)
 
 
-
 def get_redshift_bin_edges(delta_t):
     """Compute the redshift bin edges.
 
@@ -205,7 +204,7 @@ def get_redshift_bin_centers(delta_t):
     # compute the redshift
     z_birth = []
     for i in range(n_redshift_bin_centers + 1):
-        # z_at_value is from astopy.cosmology
+        # z_at_value is from astropy.cosmology
         z_birth.append(z_at_value(cosmology.age, t_birth[i] * u.Gyr))
     z_birth = np.array(z_birth)
 

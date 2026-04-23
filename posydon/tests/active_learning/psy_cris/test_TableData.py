@@ -1,17 +1,17 @@
 """Unit test for posydon.active_learning.psy_cris classes
 """
 import unittest
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
 from posydon.active_learning.psy_cris.data import TableData
-
-from posydon.active_learning.psy_cris.utils import (
-    get_regular_grid_df,
-    get_random_grid_df,
-)
 from posydon.active_learning.psy_cris.synthetic_data.synth_data_3D import get_output_3D
+from posydon.active_learning.psy_cris.utils import (
+    get_random_grid_df,
+    get_regular_grid_df,
+)
 
 SKIP_TEST_PLOTS = False
 SHOW_PLOTS = False

@@ -10,14 +10,14 @@ __credits__ = [
 ]
 
 
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtCore import QTimer
-from .VH_diagram.Presenter import Presenter, PresenterMode
+from enum import Enum, auto
 
 import matplotlib.pyplot as plt
 from IPython.display import Image, display
+from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QApplication
 
-from enum import Enum, auto
+from .VH_diagram.Presenter import Presenter, PresenterMode
 
 
 class DisplayMode(Enum):

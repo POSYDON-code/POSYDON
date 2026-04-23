@@ -7,34 +7,55 @@ __authors__ = [
 
 # import the module which will be tested
 import posydon.utils.gridutils as totest
+
 # aliases
 np = totest.np
 os = totest.os
 pd = totest.pd
 
+from inspect import isclass, isroutine
+
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns, approx
-from inspect import isclass, isroutine
+from pytest import approx, fixture, raises, warns
+
 from posydon.utils.posydonwarning import MissingFilesWarning
+
 
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['LG_MTRANSFER_RATE_THRESHOLD', 'Msun', 'Pwarn', 'Rsun',\
-                    'T_merger_P', 'T_merger_a', '__authors__', '__builtins__',\
+        # ensure that python forgets about previous unclean warnings
+        ## for some unknown reason test_psygrid.TestPSyGrid.test_create_psygrid
+        ## does not clear the warning registy correctly.
+        if hasattr(totest, '__warningregistry__'):
+            del totest.__warningregistry__
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Pwarn',\
+                    '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'add_field',\
-                    'beta_gw', 'cgrav', 'clean_inlist_file', 'clight',\
+                    'clean_inlist_file',\
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
-                    'join_lists', 'kepler3_a', 'np', 'os', 'pd',\
-                    'read_EEP_data_file', 'read_MESA_data_file', 'secyear']
-        assert dir(totest) == elements, "There might be added or removed "\
-                                        + "objects without an update on the "\
-                                        + "unit test."
+                    'inspiral_timescale_from_orbital_period',\
+                    'join_lists', 'np', 'os', 'pd',\
+                    'read_EEP_data_file', 'read_MESA_data_file'}
+        totest_elements = set(dir(totest))
+        missing_in_test = elements - totest_elements
+        assert len(missing_in_test) == 0, "There are missing objects in "\
+                                          +f"{totest.__name__}: "\
+                                          +f"{missing_in_test}. Please "\
+                                          +"check, whether they have been "\
+                                          +"removed on purpose and update "\
+                                          +"this unit test."
+        new_in_test = totest_elements - elements
+        assert len(new_in_test) == 0, "There are new objects in "\
+                                      +f"{totest.__name__}: {new_in_test}. "\
+                                      +"Please check, whether they have been "\
+                                      +"added on purpose and update this "\
+                                      +"unit test."
 
     def test_instance_join_lists(self):
         assert isroutine(totest.join_lists)
@@ -62,18 +83,6 @@ class TestElements:
 
     def test_instance_get_final_proposed_points(self):
         assert isroutine(totest.get_final_proposed_points)
-
-    def test_instance_T_merger_P(self):
-        assert isroutine(totest.T_merger_P)
-
-    def test_instance_beta_gw(self):
-        assert isroutine(totest.beta_gw)
-
-    def test_instance_kepler3_a(self):
-        assert isroutine(totest.kepler3_a)
-
-    def test_instance_T_merger_a(self):
-        assert isroutine(totest.T_merger_a)
 
     def test_instance_convert_output_to_table(self):
         assert isroutine(totest.convert_output_to_table)
@@ -272,7 +281,11 @@ class TestFunctions:
             for i in range(5):
                 test_file.write("Test HEADER{}\n".format(i+1))
             test_file.write("model is overflowing at ZAMS\n")
-        os.system(f"gzip -1 {path}")
+        try:
+            os.system(f"gzip -1 {path}")
+        except:
+            raise RuntimeError("Please check that you have `gzip` installed "\
+                               +"and up to date.")
         return path
 
     @fixture
@@ -313,7 +326,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path_C_depletion(self, tmp_path):
+    def out_path_C_depleted(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of carbon depletion
         path = os.path.join(tmp_path, "out5.txt")
@@ -324,7 +337,7 @@ class TestFunctions:
         return path
 
     @fixture
-    def out_path_CE_C_depletion(self, tmp_path):
+    def out_path_CE_C_depleted(self, tmp_path):
         # a temporary path of out file for testing
         # it contains 5 header lines and the statement of entering CE and
         # carbon depletion
@@ -531,57 +544,6 @@ class TestFunctions:
         assert np.allclose(mx, np.array([0.1, 0.3, 0.3, 0.5]))
         assert np.allclose(my, np.array([0.3, 0.3, 0.5, 0.5]))
 
-    def test_T_merger_P(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.T_merger_P()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(0.37210532488, abs=6e-12)),\
-                 (2.0, 15.0, 30.0, approx(2.36272153666, abs=6e-12)),\
-                 (1.0, 30.0, 30.0, approx(0.20477745195, abs=6e-12)),\
-                 (1.0, 15.0, 60.0, approx(0.22058982311, abs=6e-12))]
-        for (P, m1, m2, r) in tests:
-            assert totest.T_merger_P(P, m1, m2) == r
-
-    def test_beta_gw(self):
-        # missing argument
-        with raises(TypeError, match="missing 2 required positional "\
-                                     +"arguments: 'm1' and 'm2'"):
-            totest.beta_gw()
-        # examples
-        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
-                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
-                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
-        for (m1, m2, r) in tests:
-            assert totest.beta_gw(m1, m2) == r
-
-    def test_kepler3_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.kepler3_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
-                 (2.0, 15.0, 30.0, approx(23.7544118733, abs=6e-11)),\
-                 (1.0, 30.0, 30.0, approx(16.4703892879, abs=6e-11)),\
-                 (1.0, 15.0, 60.0, approx(17.7421890201, abs=6e-11))]
-        for (P, m1, m2, r) in tests:
-            assert totest.kepler3_a(P, m1, m2) == r
-
-    def test_T_merger_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'a', 'm1', and 'm2'"):
-            totest.T_merger_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(7.42053829341e-06, abs=6e-18)),\
-                 (2.0, 15.0, 30.0, approx(1.18728612695e-04, abs=6e-16)),\
-                 (1.0, 30.0, 30.0, approx(2.78270186003e-06, abs=6e-18)),\
-                 (1.0, 15.0, 60.0, approx(2.22616148802e-06, abs=6e-18))]
-        for (a, m1, m2, r) in tests:
-            assert totest.T_merger_a(a, m1, m2) == r
-
     def test_convert_output_to_table(self, no_path, out_path,\
                                      MESA_BH_data_tight_orbit,\
                                      MESA_BH_data_wide_orbit,\
@@ -590,8 +552,8 @@ class TestFunctions:
                                      out_gz_path, out_path_CE,\
                                      out_path_strong_RLO,\
                                      out_path_CE_strong_RLO,\
-                                     out_path_C_depletion,\
-                                     out_path_CE_C_depletion):
+                                     out_path_C_depleted,\
+                                     out_path_CE_C_depleted):
         # missing argument
         with raises(TypeError, match="missing 1 required positional "\
                                      +"argument: 'output_file'"):
@@ -599,7 +561,11 @@ class TestFunctions:
         # bad input
         with raises(ValueError, match="File "+no_path+" does not exist"):
             totest.convert_output_to_table(no_path)
-        os.system("touch "+out_path+"0")
+        try:
+            os.system("touch "+out_path+"0")
+        except:
+            raise RuntimeError("Please check that you have `touch` installed "\
+                               +"and up to date.")
         with raises(ValueError, match="The output file does not have any "\
                                       +"data."):
             totest.convert_output_to_table(out_path+"0")
@@ -660,7 +626,7 @@ class TestFunctions:
                pd.DataFrame({'CE_flag': [1], 'result': ["CE_merger"],\
                              'Test': ["-"]}))
         # check carbon depletion: stable_MT_to_merger
-        out_table = totest.convert_output_to_table(out_path_C_depletion,\
+        out_table = totest.convert_output_to_table(out_path_C_depleted,\
                                                    binary_history_file=\
                                                    BH_path_tight_orbit,\
                                                    star1_history_file=H1_path,\
@@ -685,7 +651,7 @@ class TestFunctions:
                MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: no_interaction
-        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
                                                    column_names=["Test"])
         assert out_table.at[0, 'CE_flag'] == 1
         assert out_table.at[0, 'result'] == "no_interaction"
@@ -700,7 +666,7 @@ class TestFunctions:
         assert 'Porb_f(d)' not in out_table.columns
         assert 'tmerge(Gyr)' not in out_table.columns
         # check carbon depletion: CE_ejection_m
-        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
                                                    binary_history_file=\
                                                    BH_path_tight_orbit,\
                                                    column_names=["Test"])
@@ -715,7 +681,7 @@ class TestFunctions:
                MESA_BH_data_tight_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: stable_MT_to_wide_binary
-        out_table = totest.convert_output_to_table(out_path_C_depletion,\
+        out_table = totest.convert_output_to_table(out_path_C_depleted,\
                                                    binary_history_file=\
                                                    BH_path_wide_orbit,\
                                                    column_names=["Test"])
@@ -730,7 +696,7 @@ class TestFunctions:
                MESA_BH_data_wide_orbit['period_days'][-1]
         assert 'tmerge(Gyr)' in out_table.columns
         # check carbon depletion: CE_ejection
-        out_table = totest.convert_output_to_table(out_path_CE_C_depletion,\
+        out_table = totest.convert_output_to_table(out_path_CE_C_depleted,\
                                                    binary_history_file=\
                                                    BH_path_wide_orbit,\
                                                    column_names=["Test"])
@@ -778,4 +744,3 @@ class TestFunctions:
         assert totest.get_new_grid_name(grid_dir, "TEST_COMPRESSION",\
                                         create_missing_directories=True) ==\
                os.path.join(compression_dir, "test_grid.h5")
-

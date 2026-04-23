@@ -5,8 +5,8 @@ Machine Learning Components
 
 
 
-Intial Final Classification & Interpolation
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Initial-Final Classification & Interpolation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 ..  toctree::
@@ -14,16 +14,19 @@ Intial Final Classification & Interpolation
 
     machine_learning/initial_final_interp
 
-    
+
 
 Profile Interpolation
 ~~~~~~~~~~~~~~~~~~~~~
 
 .. warning::
 
-    This feature is experimental and may not be suited for scientific use. If you want to us this feature, please install the relevant dependencies with `pip install -e .[ml]`.
+    This feature is experimental and may not be suitable for scientific use. If
+    you want to use this feature, please install the relevant dependencies
+    with `pip install -e .[ml]`.
 
-POSYDON support an experimental feature that allows the user to interpolate the final MESA profile of a supported binary MESA grid.
+POSYDON supports an experimental feature that allows the user to interpolate
+the final MESA profile of a supported binary MESA grid.
 
 
 .. toctree::

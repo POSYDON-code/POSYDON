@@ -1,9 +1,11 @@
-import unittest
 import os
+import unittest
+
 import numpy as np
-from posydon.config import PATH_TO_POSYDON
-from posydon.binary_evol.singlestar import SingleStar
+
 from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
+from posydon.config import PATH_TO_POSYDON
 from posydon.grids.psygrid import PSyGrid
 
 PATH_TO_GRID = os.path.join(
@@ -25,7 +27,7 @@ class TestSingleStar(unittest.TestCase):
         i = 42
 
         kwargs1 = {
-            'state': 'stripped_He_Central_C_depletion',
+            'state': 'stripped_He_Core_C_depleted',
             'metallicity': grid[i].initial_values['Z'],
             'mass': grid[i].history1['star_mass'][-1],
             'log_R': np.nan,
@@ -63,7 +65,7 @@ class TestSingleStar(unittest.TestCase):
         star_1 = SingleStar(**kwargs1)
 
         kwargs2 = {
-            'state': 'stripped_He_Central_C_depletion',
+            'state': 'stripped_He_Core_C_depleted',
             'metallicity': grid[i].initial_values['Z'],
             'mass': grid[i].initial_values['star_2_mass'],
             'log_R': np.nan,

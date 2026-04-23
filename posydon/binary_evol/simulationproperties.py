@@ -10,33 +10,164 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Nam Tran <tranhn03@gmail.com>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
 
 
+import os
 import time
+
+import numpy as np
+
+from posydon.binary_evol.track_match import TrackMatcher
+from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.interpolation.interpolation import GRIDInterpolator
+from posydon.popsyn.io import simprop_kwargs_from_ini
+from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import age_of_universe
+from posydon.utils.posydonerror import GridError
+from posydon.utils.posydonwarning import Pwarn
+
+
+class NullStep:
+    """An evolution step that does nothing but is used to initialize."""
+    pass
 
 class SimulationProperties:
     """Class describing the properties of a population synthesis simulation."""
 
-    def __init__(self, properties=None, **kwargs):
+    # each value in this dict represents the expected path for the respective grid.
+    # A user may specify their own full path to a custom grid in the [grid_paths]
+    # section of their .ini file. I.e., HMS-HMS_path = 'path/to/my_own_grid/' to
+    # override these defaults.
+    default_grid_paths = {"single_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HMS"),
+                          "single_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HeMS"),
+                          "HMS_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "HMS-HMS"),
+                          "CO_HMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HMS_RLO"),
+                          "CO_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS"),
+                          "CO_HeMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS_RLO")}
+
+    def __init__(self, flow=({}, {}),
+                       step_HMS_HMS = (NullStep(), {}),
+                       step_CO_HeMS = (NullStep(), {}),
+                       step_CO_HMS_RLO = (NullStep(), {}),
+                       step_CO_HeMS_RLO = (NullStep(), {}),
+                       step_detached = (NullStep(), {}),
+                       step_disrupted = (NullStep(), {}),
+                       step_merged = (NullStep(), {}),
+                       step_initially_single = (NullStep(), {}),
+                       step_dco = (NullStep(), {}),
+                       step_SN = (NullStep(), {}),
+                       step_CE = (NullStep(), {}),
+                       step_end = (NullStep(), {}),
+                       extra_hooks = [],
+                       **kwargs):
+
         """Construct the simulation properties object.
 
         Parameters
         ----------
-        properties : object
-            Simulation Properties class containing, e.g. flow, steps.
+        flow_chart : dict
+            A POSYDON flow_chart dictionary.
+
+        step_HMS_HMS : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            HMS-HMS evolution, like MS_MS_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HeMS : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HeMS evolution, like CO_HeMS_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HMS_RLO : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HMS-RLO evolution, like CO_HMS_RLO_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_CO_HeMS_RLO : tuple
+            A tuple whose first element is a MesaGridStep class handling
+            CO-HeMS-RLO evolution, like CO_HeMS_RLO_step. The second element is a
+            dictionary of kwargs for that step.
+
+        step_detached : tuple
+            A tuple whose first element is a detached_step class handling detached
+            evolution. The second element is a dictionary of kwargs for that step.
+
+        step_disrupted : tuple
+            A tuple whose first element is a DisruptedStep class handling
+            disrupted evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_merged : tuple
+            A tuple whose first element is a MergedStep class handling
+            merged evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_initially_single : tuple
+            A tuple whose first element is a InitiallySingleStep class handling
+            initially single evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_dco : tuple
+            A tuple whose first element is a DoubleCO class handling
+            double CO evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_SN : tuple
+            A tuple whose first element is a StepSN class handling
+            supernova evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_CE : tuple
+            A tuple whose first element is a StepCEE class handling
+            common envelope evolution. The second element is a dictionary of kwargs for
+            that step.
+
+        step_end : tuple
+            A tuple whose first element is a step_end class handling
+            the end of evolution. The second element is a dictionary of kwargs for
+            that step.
+
         extra_hooks : list of tuples
             Each tuple contains a hooks class and kwargs or the extra step name
-            ('extra_pre_evolve', 'extra_pre_step', 'extra_post_step',
+            (e.g., 'extra_pre_evolve', 'extra_pre_step', 'extra_post_step',
             'extra_post_evolve') and the corresponding function.
         """
-        self.kwargs = kwargs.copy()
-        # Check if binary_properties is passed
+
+        self.kwargs = kwargs
+        verbose = self.kwargs.get('verbose', False)
+
+        # gather kwargs
+        self.kwargs["flow"] = flow
+
+        step_kwargs = {"step_HMS_HMS": step_HMS_HMS,
+                       "step_CO_HeMS": step_CO_HeMS,
+                       "step_CO_HMS_RLO": step_CO_HMS_RLO,
+                       "step_CO_HeMS_RLO": step_CO_HeMS_RLO,
+                       "step_detached": step_detached,
+                       "step_disrupted": step_disrupted,
+                       "step_merged": step_merged,
+                       "step_initially_single": step_initially_single,
+                       "step_dco": step_dco,
+                       "step_SN": step_SN,
+                       "step_CE": step_CE,
+                       "step_end": step_end}
+
+        for key, step_tuple in step_kwargs.items():
+
+            step_class, _ = step_tuple
+            if verbose and isinstance(step_class, NullStep):
+                Pwarn(f"Step {key} not provided, skipping it.",
+                                "StepWarning")
+
+            self.kwargs[key] = step_tuple
+
+        self.kwargs["extra_hooks"] = extra_hooks
 
         self.default_hooks = EvolveHooks()
         self.all_hooks_classes = [self.default_hooks]
-        for item in kwargs.get('extra_hooks', []):
+        for item in self.kwargs.get('extra_hooks', []):
             if isinstance(item, tuple):
                 if isinstance(item[0], type) and isinstance(item[1], dict):
                     cls, params = item
@@ -50,12 +181,6 @@ class SimulationProperties:
                     "(i) a class deriving from EvolveHooks and a kwargs dict, "
                     "or (ii) the name of the extra function and the callable.")
 
-        # Binary parameters and parameterizations
-        self.initial_rotation = 0.0
-        self.mass_transfer_efficiency = 1.0
-
-        self.common_envelope_efficiency = 1.0
-
         # Limits on simulation
         if not hasattr(self, 'max_simulation_time'):
             self.max_simulation_time = age_of_universe
@@ -67,50 +192,426 @@ class SimulationProperties:
         # for debugging purposes
         if not hasattr(self, 'max_n_steps_per_binary'):
             self.max_n_steps_per_binary = 100
-        
+
         # Set functions for evolution
         self.all_step_names = []  ## list of strings of all evolutionary steps
-        for key, val in kwargs.items():
+        for key, val in self.kwargs.items():
             if "step" not in key:   # skip loading steps
                 setattr(self, key, val)
             elif "step" in key:
                 self.all_step_names.append(key)
         self.steps_loaded = False
 
-    def load_steps(self, verbose=False):
-        """Instantiate step classes and set as instance attributes.
+        self.preload_imports()
+
+        # To hold TrackMatcher objects per step, if needed.
+        # maybe get rid of this
+        self.track_matchers = {}
+
+        for grid_name in self.default_grid_paths:
+            try:
+                self.set_path(grid_name, self.kwargs[grid_name])
+            except KeyError as e:
+                Pwarn(f"{grid_name} is not set in the kwargs passed to SimulationProperties. "
+                      f"Falling back to the default: {self.default_grid_paths[grid_name]}",
+                      "ReplaceValueWarning")
+
+                self.set_path(grid_name, self.default_grid_paths[grid_name])
+
+        # These hold GRIDInterpolator objects
+        # and associated grid names for ea. metallicity
+        # (intended keys are metallicities):
+        self.grids_Hrich = {}
+        self.grids_strippedHe = {}
+
+    def set_path(self, path_name, path_str):
+        """
+        Set and normalize a grid path attribute that points to one of the
+        MESA grids needed for binary evolution. By default, these are the
+        grids inside of the directory name held in $PATH_TO_POSYDON_DATA.
+
+        For example, for the step_HMS_HMS, the grid would be
+
+            $PATH_TO_POSYDON_DATA/HMS-HMS/<metallicity>_Zsun.h5
+
+        by default. The grid HDF5 file names themselves are expected to
+        follow formats like so: 1e+00_Zsun.h5, 1e-04_Zsun.h5, etc.
+
+        If ``path_str`` is ``None``, a default path is assigned based on
+        ``path_name`` using ``self.default_grid_paths``. If ``path_name`` is not
+        recognized, a ``GridError`` is raised listing the valid options.
+
+        The resulting path is converted to an absolute path before being stored
+        as an attribute of the instance.
 
         Parameters
         ----------
-        verbose: bool
+        path_name : str
+            Name of the grid path attribute to set. Must be a key in
+            ``self.default_grid_paths`` if ``path_str`` is ``None``.
+
+        path_str : str or None
+            Path to assign. If ``None``, a default path corresponding to
+            ``path_name`` is used.
+
+        Raises
+        ------
+        GridError
+            If ``path_name`` is not recognized and no default path can be assigned.
+
+        Notes
+        -----
+        The path is not validated for existence here; only normalization to an
+        absolute path is performed.
+        """
+
+        # construct path to *_Zsun.h5 files if not specified
+        if path_str is None:
+            if path_name in self.default_grid_paths:
+                path_str = self.default_grid_paths[path_name]
+            else:
+                valid_names = "\n".join(f"{k} = <your-path-or-None>" for k in self.default_grid_paths)
+                raise GridError(f'Trying to assign a grid path for "{path_name}".\n'
+                                "This is an unrecognized path name. Please check "
+                                "the [grid_paths] section of your .ini file.\n\n"
+                                "Valid path variable names are:\n"
+                                f"{valid_names}\n")
+
+        path_str = os.path.abspath(path_str)
+
+        setattr(self, path_name, path_str)
+
+    def preload_imports(self):
+        """
+            Preload the imports of detached_step and MesaGridStep to avoid
+        importing them when they are needed when `close()` is called. In
+        particular, detached_step imports sklearn, which in turn utilizes
+        loky, which invokes its own register.at_exit call. If this happens
+        during the `close()` call, which is invoked at shutdown, a
+        failure occurs, hence the need for something like this.
+        """
+
+        from posydon.binary_evol.CE.step_CEE import StepCEE
+        from posydon.binary_evol.DT.step_detached import detached_step
+        from posydon.binary_evol.MESA.step_mesa import MesaGridStep
+
+        self._detached_step = detached_step
+        self._step_CE = StepCEE
+        self._MesaGridStep = MesaGridStep
+
+    @classmethod
+    def from_ini(cls, path, metallicity = None, load_steps=False, RNG=np.random.default_rng(),
+                 verbose=False, **override_sim_kwargs):
+        """Create a SimulationProperties instance from an inifile.
+
+        Parameters
+        ----------
+        path : str
+            Path to an inifile to load in.
+
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0,
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
+            metallicities available in your POSYDON_DATA grids.
+
+        load_steps : bool
+            Whether or not evolution steps should be automatically loaded.
+
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the simulation. Defaults to a new NumPy Generator instance
+            created via ``np.random.default_rng()``.
+
+        verbose : bool
+            Print useful info.
+
+        **override_sim_kwargs
+            Additional keyword arguments that override values specified
+            in the .ini file when constructing the SimulationProperties
+            instance.
+
+        Returns
+        -------
+        SimulationProperties
+            A new instance of SimulationProperties.
+        """
+
+        sim_kwargs = simprop_kwargs_from_ini(path)
+
+        sim_kwargs = {**sim_kwargs, **override_sim_kwargs}
+
+        new_instance = cls(**sim_kwargs)
+
+        if load_steps:
+            # Load the steps and required data
+            new_instance.load_steps(metallicity=metallicity,
+                                    RNG=RNG,
+                                    verbose=verbose)
+
+        return new_instance
+
+    def load_steps(self, metallicity=None, RNG=np.random.default_rng(), verbose=False):
+        """Instantiate all step classes and set as instance attributes.
+
+        Parameters
+        ----------
+        metallicity : float
+            A metallicity (Z) may be provided to automatically assign
+            to steps as they are loaded. Should be one of e.g., 2.0, 1.0,
+            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
+            metallicities available in your POSYDON_DATA grids.
+
+        verbose : bool
             Print extra information.
 
         Returns
         -------
         None
         """
-        if verbose:
-            print('STEP NAME'.ljust(20) + 'STEP FUNCTION'.ljust(25) + 'KWARGS')
+
+        # for every other step, give it a metallicity and load each step
         for name, tup in self.kwargs.items():
             if isinstance(tup, tuple):
-                if verbose:
-                    print(name, tup, end='\n')
-                step_func, kwargs = tup
-                setattr(self, name, step_func(**kwargs))
-        self.steps_loaded = True
+                step_kwargs = tup[1]
+                metallicity = step_kwargs.get('metallicity', metallicity)
+                self.load_a_step(name, tup, metallicity=metallicity, RNG=RNG, verbose=verbose)
+
+        if verbose:
+            if self.steps_loaded:
+                print("All steps loaded successfully.")
+            else:
+                print("Not all steps were loaded successfully. Check warnings for details.")
+
+    def load_a_step(self, step_name, step_tup=(NullStep, {}), metallicity=None,
+                    RNG=np.random.default_rng(), from_ini='', verbose=False):
+        """
+        Instantiate and attach a simulation step to this object.
+
+        This method creates an instance of a step class and assigns it as an
+        attribute of SimulationProperties using ``step_name`` as the attribute
+        name. Step keyword arguments may be provided directly via ``step_tup``
+        or loaded from an `.ini` configuration file. Before instantiation,
+        step arguments are validated and augmented (e.g., assigning metallicity
+        and creating a TrackMatcher if required).
+
+        Parameters
+        ----------
+        step_name : str
+            Name of the evolution step. The created step instance will be
+            attached to the object as ``self.<step_name>``. See
+            ``SimulationProperties.__init__`` for the standard set of steps.
+
+        step_tup : tuple, optional
+            Tuple of the form ``(step_class, kwargs_dict)`` where:
+
+            - ``step_class`` is the class representing the step.
+            - ``kwargs_dict`` is a dictionary of keyword arguments used to
+            initialize the step.
+
+            Default is ``(NullStep, {})``.
+
+        metallicity : float, optional
+            Metallicity (Z) to assign to the step if required and not already
+            specified in the step keyword arguments. Default supported values
+            are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.
+
+        from_ini : str, optional
+            Path to an `.ini` file containing step configuration. If provided
+            and the file exists, the step class and keyword arguments for
+            ``step_name`` are loaded from this file and override ``step_tup``.
+
+        verbose : bool, optional
+            If True, print detailed information about step loading and the
+            keyword arguments used to instantiate the step.
+
+        Returns
+        -------
+        None
+
+        Notes
+        -----
+        - Step keyword arguments are processed by ``self.check_step`` before
+        instantiation. This may assign a metallicity and/or attach a
+        ``TrackMatcher`` if required for the step.
+        - The instantiated step is stored as an attribute of SimulationProperties.
+        - After loading, ``self.steps_loaded`` is updated to indicate whether
+        all configured steps have been successfully attached.
+        """
+
+        if verbose:
+            print(f"Loading {step_name}...")
+
+        # grab kwargs from ini file for given step
+        if os.path.isfile(from_ini):
+            step_tup = simprop_kwargs_from_ini(from_ini, only=step_name)[step_name]
+
+        if step_name != "flow":
+            # check to make sure the step has a...
+            # 1) metallicity assigned (if needed)
+            # 2) TrackMatcher assigned (if needed)
+            step_tup = self.check_step(metallicity, RNG, step_name,
+                                       step_tup, verbose)
+
+        step_func, step_kwargs = step_tup
+
+        # Try to load the step
+        try:
+            setattr(self, step_name, step_func(**step_kwargs))
+            if verbose:
+                print(f"Class: {step_func}")
+                if step_kwargs:
+                    print("step_kwargs: ")
+                    kw_list = [f"\t{key}: {val}" for key, val in step_kwargs.items()]
+                    print("\n".join(kw_list))
+                print(f"{step_name} loaded successfully.\n")
+
+        except TypeError as e:
+            Pwarn(f"Error loading {step_name}: {e}", "StepWarning")
+            print(f"Loading {step_name} without arguments.")
+            setattr(self, step_name, step_func())
+
+        # check if all steps have been loaded
+        self.steps_loaded = all(hasattr(self, name)
+                                for name, tup in self.kwargs.items()
+                                if isinstance(tup, tuple))
+
+    def check_step(self, metallicity, RNG, step_name, step_tup, verbose=False):
+        """
+        Validate and update configuration for an evolution step.
+
+        This method ensures that a valid metallicity is assigned to the step
+        (unless the step is excluded from metallicity handling) and that a
+        corresponding TrackMatcher exists if the step requires track matching.
+        If a TrackMatcher for the `(metallicity, step_name)` combination does
+        not yet exist, it is created and stored.
+
+        Parameters
+        ----------
+        metallicity : float or None
+            Default metallicity value to use for the step if not explicitly
+            provided in ``step_kwargs``.
+        step_name : str
+            Name of the pipeline step being checked.
+        step_kwargs : dict
+            Keyword arguments for the step. This dictionary may be modified
+            in-place to include validated metallicity and/or a TrackMatcher
+            instance.
+        verbose : bool, optional
+            If True, print the keyword arguments used to construct the
+            TrackMatcher.
+
+        Returns
+        -------
+        dict
+            The updated ``step_kwargs`` dictionary, containing a validated
+            ``metallicity`` entry and potentially a ``track_matcher`` object.
+
+        Notes
+        -----
+        - If metallicity is not provided for a step that requires it, a warning
+        is issued and a default value of ``Z = 1.0`` (solar metallicity) is used.
+        - TrackMatcher objects are stored in ``self.track_matchers`` and reused
+        for repeated `(metallicity, step_name)` combinations.
+        """
+        step_func, step_kwargs = step_tup
+
+        # check/assign metallicity for the step
+        if "metallicity" in step_func.DEFAULT_KWARGS:
+            metallicity = step_kwargs.get('metallicity', metallicity)
+            if metallicity is None:
+                Pwarn(f"{step_name} not assigned a metallicity. "
+                    "Defaulting to Z = Zsun (solar).",
+                    "ReplaceValueWarning")
+                metallicity = 1.0
+            step_kwargs['metallicity'] = float(metallicity)
+
+        # These steps need these grids:
+        step_grid_map = {"step_HMS_HMS": self.HMS_HMS_path,
+                         "step_CO_HMS_RLO": self.CO_HMS_RLO_path,
+                         "step_CO_HeMS": self.CO_HeMS_path,
+                         "step_CO_HeMS_RLO": self.CO_HeMS_RLO_path}
+        if step_name in step_grid_map:
+            step_kwargs['grid_path'] = step_grid_map[step_name]
+
+        # each metallicity/step combo could require
+        # a unique TrackMatcher, so check for that
+        matcher_key = (metallicity, step_name)
+        if "track_matcher" in step_func.DEFAULT_KWARGS:
+            matcher_needed = matcher_key not in self.track_matchers
+            if matcher_needed:
+                # create TrackMatcher if needed
+                step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
+                self.create_track_matcher(metallicity, step_name, matcher_kwargs)
+
+            if verbose:
+                kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
+                print(f"matcher_kwargs: \n" + "\n".join(kw_list))
+            step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
+
+        if "RNG" in step_func.DEFAULT_KWARGS:
+            step_kwargs['RNG'] = RNG
+
+        return step_tup
+
+    def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
+        """
+        Create and store a TrackMatcher for a given metallicity and step.
+
+        This method ensures that the required stellar evolution grids
+        (H-rich and stripped-He) are loaded for the specified metallicity.
+        If the corresponding GRIDInterpolator objects do not yet exist,
+        they are created and cached. The interpolators are then passed to
+        a TrackMatcher instance, which is stored internally.
+
+        Parameters
+        ----------
+        metallicity : float
+            Stellar metallicity used to select the appropriate grid files.
+        step_name : str
+            Identifier for the evolutionary step associated with this
+            TrackMatcher.
+        matcher_kwargs : dict
+            Keyword arguments used to initialize the TrackMatcher. This
+            dictionary will be updated in-place with the following keys:
+            'grid_Hrich' and 'grid_strippedHe'.
+
+        Notes
+        -----
+        - GRIDInterpolator objects are created only once per metallicity
+        and reused for subsequent TrackMatcher creations.
+        - The created TrackMatcher is stored in ``self.track_matchers``
+        using the key ``(metallicity, step_name)``.
+        """
+
+        z_str = convert_metallicity_to_string(metallicity)
+        # set up GRIDInterpolator objects (for HMS and HeMS)
+        # (only if one hasn't been created already for a given metallicity)
+        if metallicity not in self.grids_Hrich:
+            grid_path_Hrich = os.path.join(self.single_HMS_path, f"{z_str}_Zsun.h5")
+            self.grids_Hrich[metallicity] = GRIDInterpolator(grid_path_Hrich)
+        if metallicity not in self.grids_strippedHe:
+            grid_path_strippedHe = os.path.join(self.single_HeMS_path, f"{z_str}_Zsun.h5")
+            self.grids_strippedHe[metallicity] = GRIDInterpolator(grid_path_strippedHe)
+
+        # Create TrackMatcher object as needed, passing GRIDInterpolator references
+        matcher_kwargs['grid_Hrich'] = self.grids_Hrich[metallicity]
+        matcher_kwargs['grid_strippedHe'] = self.grids_strippedHe[metallicity]
+        self.track_matchers[(metallicity, step_name)] = TrackMatcher(**matcher_kwargs)
 
     def close(self):
         """Close hdf5 files before exiting."""
-        from posydon.binary_evol.MESA.step_mesa import MesaGridStep
-        from posydon.binary_evol.DT.step_detached import detached_step
+
         all_step_funcs = [getattr(self, key) for key, val in
                           self.__dict__.items() if 'step_' in key]
         for step_func in all_step_funcs:
-            if isinstance(step_func, MesaGridStep):
+            if isinstance(step_func, self._MesaGridStep):
                 step_func.close()
-            elif isinstance(step_func, detached_step):
-                for grid_interpolator in [step_func.grid_Hrich, step_func.grid_strippedHe]:
-                    grid_interpolator.close()
+
+        for metallicity in self.grids_Hrich:
+            self.grids_Hrich[metallicity].close()
+        for metallicity in  self.grids_strippedHe:
+            self.grids_strippedHe[metallicity].close()
 
     def pre_evolve(self, binary):
         """Functions called before a binary evolves.
@@ -149,7 +650,7 @@ class SimulationProperties:
         -------
         binary : instance of <class, BinaryStar>
 
-        """   
+        """
         for hooks in self.all_hooks_classes:
             hooks.pre_step(binary, step_name)
         if hasattr(self, 'extra_pre_step'):
@@ -178,7 +679,7 @@ class SimulationProperties:
         if not binary.history_verbose and binary.event is not None:
             if "redirect" in binary.event:
                 return binary
-            
+
         for hooks in self.all_hooks_classes:
             hooks.post_step(binary, step_name)
         if hasattr(self, 'extra_post_step'):
@@ -210,14 +711,14 @@ class SimulationProperties:
 
 class EvolveHooks:
     """Base class for hooking into binary evolution."""
-    
+
     def __init__(self):
         """
         Add any new output columns to the hooks constructor.
-        Example for extra binary columns: 
+        Example for extra binary columns:
             self.extra_binary_col_names = ["column_name_1", "column_name_2"]
-        Example for extra star columns: 
-            self.extra_star_col_names = ["column_name_1", "column_name_2"]           
+        Example for extra star columns:
+            self.extra_star_col_names = ["column_name_1", "column_name_2"]
         """
         pass
 
@@ -261,7 +762,7 @@ class TimingHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
-            
+
         binary.step_times.append(time.time() - self.step_start_time)
 
         if len(binary.event_history) > len(binary.step_times):
@@ -303,7 +804,7 @@ class StepNamesHooks(EvolveHooks):
 
     def post_step(self, binary, step_name):
         """Record the step name."""
-            
+
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
         len_step_names = len(binary.step_names)

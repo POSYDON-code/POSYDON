@@ -7,13 +7,13 @@ __authors__ = [
 ]
 
 
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-import time
 import sys
+import time
 from collections import OrderedDict
 
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
 import scipy.stats
 from scipy.spatial.distance import pdist
 

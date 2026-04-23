@@ -7,16 +7,17 @@
 # All configuration values have a default; values that are commented out
 # serve to show the default.
 
-import sys
+import datetime
 import os
 import re
-import datetime
+import sys
 
 from PSphinxTheme import utils
+
 from posydon import __version__ as posydon_version
 
 # Rewrite posydon_version for docs developement
-posydon_version = 'v2.0.0-dev'
+#posydon_version = 'v2.0.0-dev'
 
 
 # -- Project information -----------------------------------------------------
@@ -25,10 +26,124 @@ project = u'POSYDON'
 copyright =f'{datetime.datetime.now().year}, Tassos Fragos'
 author = u'POSYDON Collaboration'
 
+# -- Multi-version configuration -------------------------------------------
+# INJECTION GRAB START
+import subprocess
+
+
+# Get versions from github tags
+def get_github_tags():
+    '''Get the tags from the github repository
+
+    Returns
+    -------
+    list of str
+        A list of tags sorted by version, without the 'v' prefix
+
+    '''
+    try:
+        # Get the tags from the github repository
+        # this looks
+        tags = subprocess.check_output(['git', 'tag'], universal_newlines=True).strip().split('\n')
+
+        version_tags = []
+        for tag in tags:
+            # Skip tags that don't look like versions
+            if tag.startswith('v'):
+                tag_clean = tag[1:]
+                version_tags.append(tag_clean)
+            else:
+                continue
+        version_tags.sort()
+        return version_tags
+
+    except Exception as e:
+        print(f"Error getting tags from github: {e}")
+        return []
+
+def group_per_major_minor(tags):
+    '''Group the tags by major and minor version
+    Parameters
+    ----------
+    tags : list of str
+        A list of tags to group
+
+    Returns
+    -------
+    dict
+        A dictionary with the major and minor version as keys and a list of tags as values
+    '''
+
+    grouped_tags = {}
+    for tag in tags:
+        # Split the tag into major and minor version
+        parts = tag.split('.')
+        if len(parts) < 2:
+            continue
+        major_minor = f"{parts[0]}.{parts[1]}"
+
+        if major_minor not in grouped_tags:
+            grouped_tags[major_minor] = []
+        grouped_tags[major_minor].append(tag)
+
+    return grouped_tags
+
+github_tags = get_github_tags()
+
+# 2.0.0-dev needs to be removed from the list and replaced with development
+if '2.0.0-dev' in github_tags:
+    github_tags.remove('2.0.0-dev')
+
+# get a clean current version
+# some old versions require the dirty tag to be removed, because files need
+# to be added to compile correctly
+# only allow old tag to be dirty
+old_tags = ['1.0.0', '1.0.4', '1.0.5', '2.0.0-pre1', '2.0.0-pre2']
+if posydon_version.startswith('2.0.0-dev'):
+    current_version = 'dev'
+    posydon_version = 'development'
+elif 'dirty' in posydon_version and posydon_version.split('+')[0] in old_tags:
+    current_version = posydon_version.split('+')[0]
+    posydon_version = posydon_version.split('+')[0]
+else:
+    current_version = posydon_version
+
+# latest per minor version
+group_tags = group_per_major_minor(github_tags)
+# remove pre-release tags
+for k, v in group_tags.items():
+    group_tags[k] = list(set([i.split('-')[0] for i in v]))
+# get the latest tag per minor version
+latest_tags = {k: sorted(v)[-1] for k, v in group_tags.items()}
+
+# absolute path to the documentation
+base_url = 'https://posydon.org/POSYDON'
+
+# Versions to be shown in the version dropdown
+html_context = {
+  'current_version' : current_version,
+}
+
+# get the list of versions
+publish_tags = {tag: f'{base_url}/v{version}' for tag, version in latest_tags.items()}
+main_versions = sorted(set([tag.split('.')[0] for tag in publish_tags.keys()]))
+
+main_version_dicts = {}
+for main_version in reversed(main_versions):
+    main_version_dicts[f'v{main_version}'] = [[tag, url] for tag, url in publish_tags.items() if tag.startswith(main_version)]
+
+html_context = {
+    'current_version': current_version,
+    'main_versions_dicts': main_version_dicts,
+}
+print(html_context)
+
 # The short X.Y version.
 version = posydon_version
 # The full version, including alpha/beta/rc tags.
 release = posydon_version
+# INJECTION GRAB END
+# -- VERSION END ---------------------------------------------------------
 
 
 # -- Path setup ----------------------------------------------------------
@@ -103,9 +218,6 @@ else:
     parts.extend(('fig.show()', 'plot.show()'))
     docscrape_sphinx.IMPORT_MATPLOTLIB_RE = r'\b({})\b'.format('|'.join(parts))
 
-# Add any paths that contain templates here, relative to this directory.
-templates_path = ['_templates']
-
 # The suffix(es) of source filenames.
 # You can specify multiple suffix as a list of string:
 # source_suffix = ['.rst', '.md']
@@ -122,17 +234,15 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'posydon'
-copyright = u'2024, Tassos Fragos'
+
+# Get the current year
+current_year = datetime.datetime.now().year
+copyright = u'{}, Tassos Fragos'.format(current_year)
 author = u'POSYDON Collaboration'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
 # built documents.
-#
-# The short X.Y version.
-version = posydon_version
-# The full version, including alpha/beta/rc tags.
-release = posydon_version
 
 # The language for content autogenerated by Sphinx. Refer to documentation
 # for a list of supported languages.
@@ -209,7 +319,7 @@ html_theme = 'sphinx_rtd_theme'
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 
-html_static_path = ['_static'] 
+html_static_path = ['_static']
 # html_static_path is added before the below files.
 html_css_files = ['custom.css']
 
@@ -282,7 +392,6 @@ htmlhelp_basename = 'posydondoc'
 html_logo = 'posydon_logo.png'
 html_theme_options = {
     'logo_only': True,
-    'display_version': True,
 }
 
 # -- Options for LaTeX output ---------------------------------------------

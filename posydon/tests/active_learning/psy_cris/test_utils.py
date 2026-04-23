@@ -1,18 +1,19 @@
 """Unit test for posydon.active_learning.psy_cris classes
 """
+import os
 import unittest
+
 import numpy as np
 import pandas as pd
-import os
-from posydon.config import PATH_TO_POSYDON
 
 from posydon.active_learning.psy_cris.utils import (
-    parse_inifile,
-    get_new_query_points,
     check_dist,
-    get_regular_grid_df,
+    get_new_query_points,
     get_random_grid_df,
+    get_regular_grid_df,
+    parse_inifile,
 )
+from posydon.config import PATH_TO_POSYDON
 
 
 class TestUtils(unittest.TestCase):

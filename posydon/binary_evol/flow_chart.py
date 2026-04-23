@@ -13,8 +13,8 @@ __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
-
 
 STAR_STATES_ALL = [
     'WD',
@@ -24,17 +24,18 @@ STAR_STATES_ALL = [
     'H-rich_Core_H_burning',
     'H-rich_Core_He_burning',
     'H-rich_Shell_H_burning',
-    'H-rich_Central_He_depleted',
+    'H-rich_Core_He_depleted',
     'H-rich_Shell_He_burning',
     'H-rich_Core_C_burning',
-    'H-rich_Central_C_depletion',
+    'H-rich_Core_C_depleted',
     'H-rich_non_burning',
     'accreted_He_Core_H_burning',
+    'accreted_He_Shell_H_burning',
     'accreted_He_non_burning',
     'accreted_He_Core_He_burning',
     'stripped_He_Core_He_burning',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
     'stripped_He_non_burning'
 ]
 
@@ -50,8 +51,8 @@ STAR_STATES_NORMALSTAR = STAR_STATES_ALL.copy()
 
 STAR_STATES_H_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_H_RICH.remove(x) for x in ['stripped_He_Core_He_burning',
-                                        'stripped_He_Central_He_depleted',
-                                        'stripped_He_Central_C_depletion',
+                                        'stripped_He_Core_He_depleted',
+                                        'stripped_He_Core_C_depleted',
                                         'stripped_He_non_burning',
                                         'accreted_He_Core_He_burning']]
 
@@ -59,26 +60,79 @@ STAR_STATES_HE_RICH = STAR_STATES_NORMALSTAR.copy()
 [STAR_STATES_HE_RICH.remove(x) for x in ['H-rich_Core_H_burning',
                                          'H-rich_Core_He_burning',
                                          'H-rich_Shell_H_burning',
-                                         'H-rich_Central_He_depleted',
+                                         'H-rich_Core_He_depleted',
                                          'H-rich_Shell_He_burning',
                                          'H-rich_Core_C_burning',
-                                         'H-rich_Central_C_depletion',
-                                         'accreted_He_Core_H_burning']]
+                                         'H-rich_Core_C_depleted',
+                                         'accreted_He_Core_H_burning',
+                                         'accreted_He_Shell_H_burning']]
 
-STAR_STATES_C_DEPLETION = [st for st in STAR_STATES_ALL if "C_depletion" in st]
+STAR_STATES_C_DEPLETED = [st for st in STAR_STATES_ALL if "C_depleted" in st]
+
+STAR_STATES_POST_MS = [
+    "H-rich_Core_H_burning",
+    "H-rich_Shell_H_burning",
+    "H-rich_Core_He_burning",
+    "H-rich_Core_He_depleted",
+    "H-rich_Core_C_depleted",
+    "H-rich_non_burning",
+    "accreted_He_non_burning"
+]
+
+
+STAR_STATES_POST_HeMS = [
+    'accreted_He_Core_He_burning',
+    'stripped_He_Core_He_burning',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
+    'stripped_He_non_burning'
+]
 
 # these states can be evolved through MESA grids
 STAR_STATES_H_RICH_EVOLVABLE = list(set(STAR_STATES_H_RICH)
-                                    - set(STAR_STATES_C_DEPLETION))
+                                    - set(STAR_STATES_C_DEPLETED))
 
 STAR_STATES_HE_RICH_EVOLVABLE = list(set(STAR_STATES_HE_RICH)
-                                     - set(STAR_STATES_C_DEPLETION))
+                                     - set(STAR_STATES_C_DEPLETED))
 
 # CE ejection happens instantanously, so the star does not readjust before
 # we infer the state. If core_definition_H_fraction=0.1, then surface_h1=0.1,
 # and the state is H-rich_non_burning which we stil want to evolve thorugh
 # the step_CO_HeMS
 STAR_STATES_HE_RICH_EVOLVABLE.extend(['H-rich_non_burning'])
+
+# core collapse
+STAR_STATES_CC = [
+    'H-rich_Core_C_depleted',
+    'H-rich_Core_He_depleted',
+    'stripped_He_Core_He_depleted',
+    'stripped_He_Core_C_depleted',
+    # catch runs with gamma center limit which map to WD
+    'stripped_He_non_burning',
+    'H-rich_non_burning',
+    'H-rich_Shell_H_burning',
+    'accreted_He_Shell_H_burning',
+    'accreted_He_non_burning'
+    ]
+
+# states to ID an HMS star (Xcore > 0.01)
+# TODO: build these from the other lists to (hopefully)
+#       ensure consistency
+STAR_STATES_FOR_HMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                ("Core_H_burning" in st)]
+
+# states to ID a postMS star (Xcore < 0.01, Xsurf > 0.01)
+STAR_STATES_FOR_postMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   (("Core_H_burning" not in st) & ("stripped_He" not in st))]
+
+# states to ID an He star (Xcore < 0.01, Xsurf < 0.01)
+STAR_STATES_FOR_Hestar_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   ("stripped_He" in st)]
+STAR_STATES_FOR_Hestar_MATCHING.extend(['accreted_He_Core_He_burning'])
+STAR_STATES_FOR_postHeMS_MATCHING = [st for st in STAR_STATES_NORMALSTAR if \
+                                   (("Core_He_burning" not in st) & ("stripped_He" in st))]
+STAR_STATES_FOR_Hestar_MATCHING = list(set(STAR_STATES_FOR_Hestar_MATCHING)
+                                      - set(STAR_STATES_FOR_postHeMS_MATCHING))
 
 BINARY_STATES_ALL = [
     'initially_single_star',
@@ -112,9 +166,21 @@ BINARY_EVENTS_ALL = [
     'MaxTime_exceeded',
     'maxtime',
     'oMerging1',
-    'oMerging2'
+    'oMerging2',
+    'Match1',
+    'Match2',
+    'Match12'
 ]
 
+BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
+[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
+
+## a list of known total binary states that can occur,
+## but are not in the flow chart and will not be added to POSYDON
+UNDEFINED_STATES = []
+for s1 in STAR_STATES_CO:
+    for b in ['disrupted', 'detached']:
+        UNDEFINED_STATES.append((s1, 'H-rich_Core_H_burning', b, 'CC2'))
 
 # dynamically construct the flow chart
 POSYDON_FLOW_CHART = {}
@@ -136,7 +202,7 @@ for b in BINARY_STATES_ZAMS:
             POSYDON_FLOW_CHART[(s1, s2, b, 'redirect_from_ZAMS')] = 'step_detached'
 
 
-# stripped_He star on a detached binary another H- or stripped_He star
+# stripped_He star in a detached binary another H- or stripped_He star
 # This will be the outcome of a CE.
 for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_NORMALSTAR:
@@ -144,7 +210,7 @@ for s1 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_detached'
 
 
-# H-rich star on a detached binary with a compact object
+# H-rich star in a detached binary with a compact object
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_detached'
@@ -157,20 +223,20 @@ for s1 in STAR_STATES_H_RICH_EVOLVABLE:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_CO_HMS_RLO'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', 'oRLO2')] = 'step_CO_HMS_RLO'
 
-# H-rich star on a detached binary with a compact object
+# H-rich star in a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HMS_RLO
 for s1 in STAR_STATES_H_RICH:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HMS_RLO")] = 'step_detached'
 
-# stripped_He star on a detached binary with a compact object
+# stripped_He star in a detached binary with a compact object
 for s1 in STAR_STATES_HE_RICH_EVOLVABLE:
     for s2 in STAR_STATES_CO:
         POSYDON_FLOW_CHART[(s1, s2, 'detached', None)] = 'step_CO_HeMS'
         POSYDON_FLOW_CHART[(s2, s1, 'detached', None)] = 'step_CO_HeMS'
 
-# stripped_He star on a detached binary with a compact object
+# stripped_He star in a detached binary with a compact object
 # that fall outside the grid and has been returned by step_CO_HeMS
 for s1 in STAR_STATES_HE_RICH:
     for s2 in STAR_STATES_CO:
@@ -191,14 +257,13 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s2, s1, 'detached', "redirect_from_CO_HeMS_RLO")] = 'step_detached'
 
 ## He-rich star roche-lobe overflow onto another He-rich star
-## assume these systems always merge 
+## assume these systems always merge
 for s1 in STAR_STATES_HE_RICH:
     for s2 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', "oRLO1")] = 'step_merged'
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', "oRLO2")] = 'step_merged'
 
 # Binaries that go to common envelope
-
 for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'
@@ -211,29 +276,13 @@ for s1 in STAR_STATES_NORMALSTAR:
         POSYDON_FLOW_CHART[(s2, s1, 'contact', 'oDoubleCE2')] = 'step_CE'
 
 
-# core collapse
-STAR_STATES_CC = [
-    'H-rich_Central_C_depletion',
-    'H-rich_Central_He_depleted',
-    'stripped_He_Central_He_depleted',
-    'stripped_He_Central_C_depletion',
-    # catch runs with gamma center limit which map to WD
-    'stripped_He_non_burning',
-    'H-rich_non_burning',
-    'H-rich_Shell_H_burning',
-    'accreted_He_non_burning'
-    ]
-
-
-BINARY_STATES_CC = BINARY_STATES_ALL.copy()
-
 for b in BINARY_STATES_CC:
     for s1 in STAR_STATES_CC:
         for s2 in STAR_STATES_ALL:
             POSYDON_FLOW_CHART[(s1, s2, b, 'CC1')] = 'step_SN'
             POSYDON_FLOW_CHART[(s2, s1, b, 'CC2')] = 'step_SN'
 
-# Double compact objects. These can either be send to the orbital evolution
+# Double compact objects. These can either be sent to the orbital evolution
 # due to GR step, or end the evolution by setting the 'step_dco' to end
 for s1 in STAR_STATES_CO:
     for s2 in STAR_STATES_CO:
@@ -242,7 +291,7 @@ for s1 in STAR_STATES_CO:
 
 
 # catch states to be ended
-for b in ['initial_RLOF']:    
+for b in ['initial_RLOF']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_ALL:
@@ -258,16 +307,14 @@ for b in ['initially_single_star']:
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_initially_single'
 
 
-BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED = BINARY_EVENTS_ALL.copy()
-[BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED.remove(x) for x in ['CC1','CC2','MaxTime_exceeded','maxtime']]
-
 for b in ['disrupted']:
     for s1 in STAR_STATES_ALL:
         for s2 in STAR_STATES_ALL:
             for e in BINARY_EVENTS_OF_SN_OR_AFTER_DETACHED:
                 POSYDON_FLOW_CHART[(s1, s2, b, e)] = 'step_disrupted'
                 POSYDON_FLOW_CHART[(s2, s1, b, e)] = 'step_disrupted'
-# if we have two compcat objects in a disrupted binary, we stop the evolution.
+
+# if we have two compact objects in a disrupted binary, we stop the evolution.
 for b in ['disrupted']:
     for s1 in STAR_STATES_CO:
         for s2 in STAR_STATES_CO:
@@ -311,8 +358,6 @@ for b in BINARY_STATES_ALL:
         for e in BINARY_EVENTS_ALL:
             POSYDON_FLOW_CHART[(s, s, b, e)] = 'step_end'
 
-
-
 def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """Generate the flow chart.
 
@@ -345,7 +390,7 @@ def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     """
     if FLOW_CHART is None:
         FLOW_CHART = POSYDON_FLOW_CHART.copy()
-    
+
     if CHANGE_FLOW_CHART is not None:
         for key in CHANGE_FLOW_CHART.keys():
             if key in FLOW_CHART.keys():
@@ -383,7 +428,7 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         else:
             MY_FLOW_CHART = flow_chart(FLOW_CHART=FLOW_CHART,
                                        CHANGE_FLOW_CHART=CHANGE_FLOW_CHART)
-    
+
     # modify the default flow chart
     for key in MY_FLOW_CHART.keys():
         s1_state, s2_state, state, event = key
@@ -397,5 +442,5 @@ def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
         for s2 in STAR_STATES_H_RICH_EVOLVABLE + STAR_STATES_HE_RICH_EVOLVABLE:
             MY_FLOW_CHART[(s1, s2, 'RLO1', 'oRLO1')] = 'step_HMS_HMS_RLO'
             MY_FLOW_CHART[(s1, s2, 'RLO2', 'oRLO2')] = 'step_HMS_HMS_RLO'
-    
+
     return MY_FLOW_CHART

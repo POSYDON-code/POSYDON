@@ -60,6 +60,15 @@ rhonuc = 2.342e14                   # density of nucleus (g cm^3)
 # Solar age, L, and R values from Bahcall et al, ApJ 618 (2005) 1049-1056.
 
 Zsun = 0.0142                   # Asplund+09
+# Y abundances @ ZAMS given Aplund+09 scaling, w/ keys as Z/Zsun
+zams_table = {2.: 2.915e-01,
+              1.: 2.703e-01,
+              0.45: 2.586e-01,
+              0.2: 2.533e-01,
+              0.1: 2.511e-01,
+              0.01: 2.492e-01,
+              0.001: 2.49e-01,
+              0.0001: 2.49e-01}
 msol = 1.9892e33                # solar mass, gravitational not baryonic (g)
 rsol = 6.9598e10                # solar radius (cm)
 lsol = 3.8418e33                # solar luminosity (erg s^-1)

@@ -1,5 +1,7 @@
 """Module for analyzing binary population simulation results."""
 
+# This code is currently not being actively used, and is not covered by unit tests.
+# To test this file, remove it from the 'omit' blocks in POSYDON/setup.cfg.
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
@@ -7,7 +9,6 @@ __authors__ = [
 
 
 import pandas as pd
-
 
 CHUNKSIZE = 100000
 CHUNKSIZE_SMALL = 1000

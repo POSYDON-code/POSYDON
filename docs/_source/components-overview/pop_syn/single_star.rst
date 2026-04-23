@@ -76,11 +76,11 @@ The star properties are defined as follows
   * - ``surface_o16``
     - Oxygen surface mass fraction abundance.
   * - ``log_LH``
-    - log10 total thermal power from PP and CNO, excluding neutrinos devided by L_sun.
+    - log10 total thermal power from PP and CNO, excluding neutrinos divided by L_sun.
   * - ``log_LHe``
-    - log10 total thermal power from triple-alpha, excluding neutrinos devided by L_sun.
+    - log10 total thermal power from triple-alpha, excluding neutrinos divided by L_sun.
   * - ``log_LZ``
-    - log10 total burning power excluding LH and LHe and photodisintegrations devided by L_sun.
+    - log10 total burning power excluding LH and LHe and photodisintegrations divided by L_sun.
   * - ``log_Lnuc``
     - log10 total nuclear reaction luminosity (LH + LHe LZ) in L_sun.
   * - ``c12_c12``
@@ -95,24 +95,37 @@ The star properties are defined as follows
     - Angular momentum of the star in g*cm^2*s^-1 or dimensionless BH spin.
   * - ``profile``
     - Stellar profile from MESA. [not currently supported for the initial-final interpolator]
+  * - ``total_mass_h1``
+    - Total Hydrogen mass in M_sun.
+  * - ``total_mass_he4``
+    - Total Helium mass in M_sun.
 
 Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.
 
 .. list-table:: Additional output
-   :header-rows: 1
-   :widths: 50 150
+  :header-rows: 1
+  :widths: 50 150
 
   * - Properties
     - Descriptions
   * - ``natal_kick_array``
-    - | The natal kick array for the star if it has undergone a SN. 
-      | contains:
-      
-      * velocity
-      * theta
-      * phi
-      * mean anomaly
+    - | The natal kick array for the star if it has undergone a SN.
+      | This has been replaced with the individual properties below.
+      | ``natal_kick_array`` contains:
 
+      * velocity (km/s)
+      * azimuthal angle phi (radians)
+      * polar angle theta (radians)
+      * mean anomaly (radians)
+
+  * - ``natal_kick_velocity``
+    - The magnitude of the natal kick velocity in km/s.
+  * - ``natal_kick_phi``
+    - The natal kick azimuthal angle phi in radians.
+  * - ``natal_kick_theta``
+    - The natal kick polar angle theta in radians.
+  * - ``natal_kick_mean_anomaly``
+    - The natal kick mean anomaly in radians.
   * - ``SN_type``
     - The supernova type of the star.
   * - ``f_fb``
@@ -123,7 +136,7 @@ Additional scalar properties are added during the evolution depending on which s
     - The spin-orbit tilt after the second SN, if a second SN has occurred.
   * - ``m_disk_radiated``
     - The mass of the disk radiated in the collapse of the star.
-  * = ``m_disk_accreted``
+  * - ``m_disk_accreted``
     - The mass of the disk accreted in the collapse of the star.
 
 
@@ -146,7 +159,7 @@ We also have additional extra states for objects that are not stars.
     - The star has a stripped helium surface.
   * - ``accreted_He``
     - The star has accreted a helium rich layer on its surface.
-  
+
 .. list-table:: Burning state
   :header-rows: 1
   :widths: 10 30
@@ -161,13 +174,13 @@ We also have additional extra states for objects that are not stars.
     - The star is burning hydrogen in a shell.
   * - ``Core_He_burning``
     - The star is burning helium in its core.
-  * - ``Central_He_depleted``
+  * - ``Core_He_depleted``
     - The star has a helium depleted core.
   * - ``Shell_He_burning``
     - The star is burning helium in a shell.
   * - ``Core_C_burning``
     - The star is burning carbon in its core.
-  * - ``Central_C_depletion``
+  * - ``Core_C_depleted``
     - The star has a carbon depleted core.
 
 .. list-table:: Additional States
@@ -192,10 +205,9 @@ The simplest method is to provide `kwargs` of the initial stellar parameters.
 
 .. code-block:: python
 
-  kwargs = {'state' : 'MS',
+  kwargs = {'state' : 'H-rich-Core_H_burning',
             'mass' : 10.0,
             'metallicity' : 0.014}
   SingleStar(**kwargs)
 
 Now, the SingleStar object is ready to be used.
-

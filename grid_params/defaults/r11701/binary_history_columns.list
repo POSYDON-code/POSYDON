@@ -21,7 +21,7 @@
 
 ! the first few lines of the log file contain parameter values as of the start of the run
 ! for completeness, those items are described here:
-   
+
    ! version_number -- MESA version number that created this file
    ! initial_star_1_mass -- initial mass of first star (in Msun)
    ! initial_star_2_mass -- initial mass of second star (in Msun)
@@ -33,7 +33,7 @@
 
 
 ! the following lines of the log file contain info about 1 model per row
-   
+
       model_number ! model number of donor star
       age ! age of donor star
 
@@ -57,9 +57,9 @@
       !rl_overflow_2 ! roche lobe overflow of second star in rsun
       rl_relative_overflow_1 ! roche lobe overflow of first star in units of rl_donor
       rl_relative_overflow_2 ! roche lobe overflow of second star in units of rl_donor
-   
+
       ! Information related to eccentricity change
-      
+
       !edot ! total eccentricity change
       !edot_tidal ! eccentricity change due to tidal interactions
       !edot_enhance ! eccentricity change due to eccentricity pumping
@@ -90,7 +90,7 @@
       !lg_mdot_edd ! log10 Eddington accretion rate for point mass accretor in units of Msun/secyer
       !mdot_edd_eta ! Efficiency of radiation from accretion to point source
       !lg_accretion_luminosity ! log10 Luminosity from accretion to point source (in units of Lsun)
-      !bh_spin ! Spin parameter of BH accretor 
+      !bh_spin ! Spin parameter of BH accretor
       !lg_mdot_system h1 ! you can use lg_mdot_system <isotope> to get the mass loss
                          ! rate from the system corresponding to a particular isotope.
 
@@ -130,7 +130,7 @@
       !model_twins_flag ! flag that indicates whether or not star 2 is modeled as twin of 1
 
       !CE_flag ! flag that indicates if a CE event is being modeled
-      !CE_lambda1 ! lambda value for star 1 after CE ejection. Value is set to zero unless a CE 
+      !CE_lambda1 ! lambda value for star 1 after CE ejection. Value is set to zero unless a CE
       !        ! happens, and is updated when each CE phase finishes
       !CE_lambda2 ! same for star 2
       !CE_Ebind1 ! similar to CE_lambda1, but specifies the binding energy down to the mass
@@ -141,4 +141,3 @@
       !          ! alpha_th and other options.
       !CE_num1 ! number of times star 1 has initiated a CE phase
       !CE_num2 ! number of times star 2 has initiated a CE phase
-

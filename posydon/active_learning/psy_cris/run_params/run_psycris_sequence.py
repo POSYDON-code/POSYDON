@@ -2,15 +2,20 @@
 # run a psy-cris sequence on synthetic data
 # --------------------------------------------
 import argparse
-import numpy as np
-import pickle
 import copy
-import time
-import sys
 import os
-from posydon.active_learning.psy_cris.utils import parse_inifile
-from posydon.active_learning.psy_cris.utils import do_dynamic_sampling
-from posydon.active_learning.psy_cris.utils import calc_performance
+import pickle
+import sys
+import time
+
+import numpy as np
+
+from posydon.active_learning.psy_cris.utils import (
+    calc_performance,
+    do_dynamic_sampling,
+    parse_inifile,
+)
+
 
 def main():
     """Run a psy-cris sequence on synthetic data from the command line.
@@ -18,7 +23,7 @@ def main():
     Parameters
     ----------
         N/A
-    
+
     Notes
     -----
         This code is used in the work of:
@@ -136,6 +141,9 @@ def main():
         except Exception as exc:
             print("\tPerformance calculation Failed!\n\tErr:{}\n\n".format(exc))
     print("END {0}\nTotal Time : {1:.3f} min".format(run_ID,(time.time()-start_iters_time)/60) )
+
+if __name__ == "__main__":
+    main()
 
 if __name__ == "__main__":
     main()

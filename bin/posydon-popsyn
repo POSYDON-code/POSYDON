@@ -1,0 +1,155 @@
+#!/usr/bin/env python
+# script to setup a population run with one or multiple metallicities
+#
+# 1. Reads the args input file
+# 2. Determine the number of metallicities
+# 3. Create a submit file for each metallicity
+# 4. Create script to merge job array runs into a single population file
+# 5. Create a file to submit all the metallicities
+# 6. Including the dependencies
+# Author: Max Briel
+
+import argparse
+from posydon.CLI.popsyn.setup import setup_popsyn_function
+from posydon.CLI.popsyn.check import check_popsyn_function
+from posydon.utils.posydonwarning import Pwarn
+
+def rescue_popsyn_function(args):
+    """Deprecated wrapper for check_popsyn_function.
+
+    This function is deprecated and will be removed in a future version.
+    Use 'posydon-popsyn check' instead.
+    """
+    Pwarn(
+        "The 'rescue' command is deprecated and will be removed in a future version. "
+        "Please use 'posydon-popsyn check' instead, which now includes rescue functionality.",
+        "DeprecationWarning"
+    )
+    check_popsyn_function(args)
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        prog='posydon-popsyn',
+        description='POSYDON population synthesis command line tool')
+    subparsers = parser.add_subparsers(title='subcommands', dest='command')
+    subparsers.required = True
+
+    # setup a run subcommand
+    setup_parser = subparsers.add_parser('setup', help='setup a population run')
+    setup_parser.add_argument(
+        'ini_file',
+        help='a population ini file for which you want to setup a population run',
+        type=str)
+    setup_parser.add_argument(
+        '-j', '--job_array',
+        help='the number of job in the job array you want to run',
+        type=int,
+        default=10)
+    setup_parser.add_argument(
+        '--email',
+        help='an email for the slurm scripts',
+        default=None)
+    setup_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None)
+    setup_parser.add_argument(
+        '--walltime',
+        help='the walltime for the population synthesis in SLURM format',
+        default='23:00:00')
+    setup_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime for the merge script in SLURM format',
+        default='12:00:00')
+    setup_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu per job array in SLURM format',
+        default='9G')
+    setup_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None)
+    setup_parser.set_defaults(func=setup_popsyn_function)
+
+    # Check the run subcommand
+    check_parser = subparsers.add_parser(
+        'check',
+        help='check the status of a population run and generate rescue scripts if needed')
+    check_parser.add_argument(
+        'run_folder',
+        help='the folder where the population run is located',
+        type=str)
+    check_parser.add_argument(
+        '-j', '--job_array',
+        help='the number of job in the job array (used for rescue script generation)',
+        type=int,
+        default=None)
+    check_parser.add_argument(
+        '--email',
+        help='an email for the slurm scripts',
+        default=None)
+    check_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None)
+    check_parser.add_argument(
+        '--walltime',
+        help='the walltime you would like to use in SLURM format',
+        default=None)
+    check_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime you would like to use for the merge script in SLURM format',
+        default=None)
+    check_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu you would like to use in SLURM format',
+        default=None)
+    check_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None)
+    check_parser.set_defaults(func=check_popsyn_function)
+
+    # Rescue the run subcommand (DEPRECATED)
+    rescue_parser = subparsers.add_parser(
+        'rescue',
+        help='(DEPRECATED: use "check" instead) rescue a failed population run')
+    rescue_parser.add_argument(
+        'run_folder',
+        help='the folder where the population run is located',
+        type=str)
+    rescue_parser.add_argument(
+        '-j', '--job_array',
+        help='the number of job in the job array you want to run',
+        type=int,
+        default=None)
+    rescue_parser.add_argument(
+        '--email',
+        help='an email for the slurm scripts',
+        default=None)
+    rescue_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None)
+    rescue_parser.add_argument(
+        '--walltime',
+        help='the walltime you would like to use in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime you would like to use for the merge script in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu you would like to use in SLURM format',
+        default=None)
+    rescue_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None)
+    rescue_parser.set_defaults(func=rescue_popsyn_function)
+
+    args = parser.parse_args()
+    args.func(args)

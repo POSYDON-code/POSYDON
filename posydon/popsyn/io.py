@@ -1,19 +1,5 @@
-"""Handle I/O operations for the population synthesis code."""
+"""Handle I/O operations for the population synthesis code.
 
-from configparser import ConfigParser
-import ast
-import importlib
-import os
-import errno
-import pprint
-
-import numpy as np
-import pandas as pd
-
-from posydon.binary_evol.simulationproperties import SimulationProperties
-
-
-"""
 POSYDON Data Types are enforced when converting BinaryStar
 and SingleStar instances to Pandas DataFrames. This is done to
 ensure memory efficient data storage and to solve problems
@@ -22,7 +8,18 @@ combining temp batch files.
 Check Pandas docs for allowed data types in DataFrames.
 """
 
+import ast
+import errno
+import importlib
+import os
+import pprint
+from configparser import ConfigParser
+
+import numpy as np
+import pandas as pd
+
 BINARYPROPERTIES_DTYPES = {
+    'binary_index' : 'int64',
     # The state and event of the system. For more information, see
     # `posydon.utils.common_functions.get_binary_state_and_event_and_mt_case()
     'state' : 'string',                    #
@@ -31,7 +28,7 @@ BINARYPROPERTIES_DTYPES = {
     'separation': 'float64',               # binary orbital separation (solar radii)
     'orbital_period': 'float64',           # binary orbital period (days)
     'eccentricity': 'float64',             # binary eccentricity
-    'V_sys': 'object',                    # list of the 3 systemic velocity coordinates
+    'V_sys': 'object',                    # array of the 3 systemic velocity coordinates
     # (R_{star} - R_{Roche_lobe}) / R_{Roche_lobe}...
     'rl_relative_overflow_1': 'float64',   # ...for star 1
     'rl_relative_overflow_2': 'float64',   # ...for star 2
@@ -46,14 +43,19 @@ BINARYPROPERTIES_DTYPES = {
     't_sync_rad_2': 'float64',
     't_sync_conv_2': 'float64',
     'nearest_neighbour_distance': 'object',   # the distance of system from its nearest
-                                            # neighbour of MESA binary system  in case
-                                            # of interpolation during the the end of
-                                            # the previous step including MESA psygrid.
-                                            # The distance is normalized in the
-                                            # parameter space and limits at which it
-                                            # was calculated. See `mesa_step` for more.
+                                              # neighbour of MESA binary system  in case
+                                              # of interpolation during the the end of
+                                              # the previous step including MESA psygrid.
+                                              # The distance is normalized in the
+                                              # parameter space and limits at which it
+                                              # was calculated. See `mesa_step` for more.
 }
 
+# specifies the dtypes of elements within an object (e.g., of elements in an array)
+OBJECT_FIXED_SUB_DTYPES = {
+    'V_sys': 'float64',
+    'nearest_neighbour_distance': 'float64'
+}
 
 STARPROPERTIES_DTYPES = {
     'state': 'string',            # the evolutionary state of the star. For more info see
@@ -82,8 +84,8 @@ STARPROPERTIES_DTYPES = {
     'center_c12': 'float64',
     'center_n14': 'float64',
     'center_o16': 'float64',
-    'surface_h1': 'float64',
     # Mass fractions at the surface
+    'surface_h1': 'float64',
     'surface_he4': 'float64',
     'surface_c12': 'float64',
     'surface_n14': 'float64',
@@ -124,6 +126,8 @@ STARPROPERTIES_DTYPES = {
     'profile': 'object',    # the profile of the star, including extended information of
                             # its internal structure, for a specific timestep, usually for
                             # the end of the previous step including MESA psygrid.
+    'total_mass_h1': 'float64',   # total mass of Hydrogen throughout the star
+    'total_mass_he4': 'float64',  # total mass of Helium throughout the star
 }
 
 EXTRA_BINARY_COLUMNS_DTYPES = {
@@ -138,6 +142,12 @@ EXTRA_STAR_COLUMNS_DTYPES = {
 }
 
 SCALAR_NAMES_DTYPES = {
+    # Individual natal kick properties (new)
+    'natal_kick_velocity': 'float64',
+    'natal_kick_azimuthal_angle': 'float64',
+    'natal_kick_polar_angle': 'float64',
+    'natal_kick_mean_anomaly': 'float64',
+    # Legacy natal kick array components (for backward compatibility)
     'natal_kick_array_0': 'float64',
     'natal_kick_array_1': 'float64',
     'natal_kick_array_2': 'float64',
@@ -182,11 +192,11 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
     assert isinstance( binary_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:
+    if extra_binary_dtypes_user is None:  # pragma: no cover
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:
+    if extra_S1_dtypes_user is None:  # pragma: no cover
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:
+    if extra_S2_dtypes_user is None:  # pragma: no cover
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -221,7 +231,7 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = SP_comb_S1_dict.get( key.replace('S1_', '') )
         elif key in S2_keys:
             common_dtype_dict[key] = SP_comb_S2_dict.get( key.replace('S2_', '') )
-        else:
+        else:  # pragma: no cover
             raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
     # set dtypes
     binary_df = binary_df.astype( common_dtype_dict )
@@ -265,11 +275,11 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     assert isinstance( oneline_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:
+    if extra_binary_dtypes_user is None:  # pragma: no cover
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:
+    if extra_S1_dtypes_user is None:  # pragma: no cover
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:
+    if extra_S2_dtypes_user is None:  # pragma: no cover
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -320,7 +330,7 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = SP_comb_S1_dict.get( strip_prefix_and_suffix(key) )
         elif key in S2_keys:
             common_dtype_dict[key] = SP_comb_S2_dict.get( strip_prefix_and_suffix(key) )
-        else:
+        else:  # pragma: no cover
             raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
     # set dtypes
     oneline_df = oneline_df.astype( common_dtype_dict )
@@ -359,7 +369,7 @@ def parse_inifile(path, verbose=False):
 
     if isinstance(path, str):
         path = os.path.abspath(path)
-        if verbose:
+        if verbose:  # pragma: no cover
             print('Reading inifile: \n\t{}'.format(path))
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -367,7 +377,7 @@ def parse_inifile(path, verbose=False):
     elif isinstance(path, (list, np.ndarray)):
         path = [os.path.abspath(f) for f in path]
 
-        if verbose:
+        if verbose:  # pragma: no cover
             print('Reading inifiles: \n{}'.format(pprint.pformat(path)))
         bad_files = []
         for f in path:
@@ -383,13 +393,13 @@ def parse_inifile(path, verbose=False):
 
     files_read = parser.read(path)
     # Catch silent errors from configparser.read
-    if len(files_read) == 0:
+    if len(files_read) == 0:  # pragma: no cover
         raise ValueError("No files were read successfully. Given {}.".
                          format(path))
     return parser
 
 
-def simprop_kwargs_from_ini(path, verbose=False):
+def simprop_kwargs_from_ini(path, only=None, verbose=False):
     """Convert an inifile into kwargs for the SimulationProperties class.
 
     Parameters
@@ -398,6 +408,10 @@ def simprop_kwargs_from_ini(path, verbose=False):
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first
         to last.
+
+    only : str
+        Name of a section to limit getting kwargs from, e.g.,
+        step_SN, step_CE, step_detached, etc.
 
     verbose : bool
         Print helpful info.
@@ -411,8 +425,11 @@ def simprop_kwargs_from_ini(path, verbose=False):
     parser_dict = {}
     for section in parser:
         # skip default section
-        if section == 'DEFAULT':
+        if section == 'DEFAULT':  # pragma: no cover
             continue
+        if only is not None:
+            if section != only:
+                continue
 
         # evaluate str values as literal python and put
         # into dict because parser only handles strings
@@ -477,6 +494,10 @@ def simprop_kwargs_from_ini(path, verbose=False):
 
             parser_dict[section] = hooks_list
 
+        if section == "grid_paths":
+
+            parser_dict.update(sect_dict)
+
     return parser_dict
 
 
@@ -517,7 +538,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
                 raise ValueError('MPI must be turned off for job arrays.')
                 exit()
-            elif pop_kwargs['use_MPI'] == True:
+            elif pop_kwargs['use_MPI'] == True:  # pragma: no cover
                 from mpi4py import MPI
                 pop_kwargs['comm'] = MPI.COMM_WORLD
             # MPI needs to be turned off for job arrays
@@ -525,7 +546,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['comm'] = None
 
                 # Check if we are running as a job array
-                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
+                if JOB_ID is not None and pop_kwargs['use_MPI'] is True: # pragma: no cover
                     raise ValueError('MPI must be turned off for job arrays.')
                 elif JOB_ID is not None:
                     pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
@@ -553,7 +574,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['include_S1']:
                 pop_kwargs['S1_kwargs'] = S1_kwargs
 
-        elif section == 'SingleStar_2_output':
+        elif section == 'SingleStar_2_output': # pragma: no branch
             S2_kwargs = dict()
             for key, val in parser[section].items():
                 S2_kwargs[key] = ast.literal_eval(val)
@@ -561,61 +582,4 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['include_S2']:
                 pop_kwargs['S2_kwargs'] = S2_kwargs
 
-    # finally get the population properties
-    sim_prop_kwargs = simprop_kwargs_from_ini(path)
-    pop_kwargs['population_properties'] = SimulationProperties(
-        **sim_prop_kwargs)
-
     return pop_kwargs
-
-
-def create_run_script_text(ini_file):
-
-
-    text=["from posydon.popsyn.binarypopulation import BinaryPopulation",
-         "from posydon.popsyn.io import binarypop_kwargs_from_ini",
-         "from posydon.utils.common_functions import convert_metallicity_to_string",
-         "import argparse",
-
-         'if __name__ == "__main__":',
-         "    parser = argparse.ArgumentParser()",
-         "    parser.add_argument('metallicity', type=float)",
-         "    args = parser.parse_args()",
-        f"    ini_kw = binarypop_kwargs_from_ini('{ini_file}')",
-         "    ini_kw['metallicity'] = args.metallicity",
-         "    str_met = convert_metallicity_to_string(args.metallicity)",
-         "    ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']",
-         "    synpop = BinaryPopulation(**ini_kw)",
-         "    synpop.evolve()"]
-
-    text = '\n'.join(text)
-    return text
-
-
-def create_merge_script_text(ini_file):
-
-
-    text = ['from posydon.popsyn.binarypopulation import BinaryPopulation',
-            'from posydon.popsyn.io import binarypop_kwargs_from_ini',
-            'from posydon.utils.common_functions import convert_metallicity_to_string',
-            'import argparse',
-            'import os',
-            'if __name__ == "__main__":',
-            '    parser = argparse.ArgumentParser()',
-            '    parser.add_argument("metallicity", type=float)',
-            '    args = parser.parse_args()',
-           f'    ini_kw = binarypop_kwargs_from_ini("{ini_file}")',
-            '    ini_kw["metallicity"] = args.metallicity',
-            '    str_met = convert_metallicity_to_string(args.metallicity)',
-            '    ini_kw["temp_directory"] = str_met+"_Zsun_" + ini_kw["temp_directory"]',
-            '    synpop = BinaryPopulation(**ini_kw)',
-            '    path_to_batch = ini_kw["temp_directory"]',
-            '    tmp_files = [os.path.join(path_to_batch, f) for f in os.listdir(path_to_batch) if os.path.isfile(os.path.join(path_to_batch, f))]',
-            '    tmp_files = sorted(tmp_files, key=lambda x: int(x.split(".")[-1]))',
-            '    synpop.combine_saved_files(str_met+ "_Zsun_population.h5", tmp_files)',
-            '    print("done")',
-            '    if len(os.listdir(path_to_batch)) == 0:',
-            '        os.rmdir(path_to_batch)']
-
-    text = '\n'.join(text)
-    return text

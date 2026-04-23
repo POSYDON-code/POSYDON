@@ -1,11 +1,12 @@
+import os
 import unittest
 from unittest.mock import patch
-from posydon.config import PATH_TO_POSYDON
-import os
 
-from posydon.visualization.VH_diagram.Presenter import Presenter, PresenterMode
-from PyQt5.QtWidgets import QApplication
 from PyQt5.QtCore import QTimer
+from PyQt5.QtWidgets import QApplication
+
+from posydon.config import PATH_TO_POSYDON
+from posydon.visualization.VH_diagram.Presenter import Presenter, PresenterMode
 
 PATH_TO_DATASET = os.path.join(
     PATH_TO_POSYDON,
