@@ -22,11 +22,6 @@ import scipy
 from scipy.optimize import minimize, root
 
 import posydon.utils.constants as const
-from posydon.binary_evol.DT.key_library import (
-    DEFAULT_PROFILE_KEYS,
-    DEFAULT_TRANSLATED_KEYS,
-    KEYS_POSITIVE,
-)
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_FOR_HMS_MATCHING,
@@ -38,17 +33,21 @@ from posydon.binary_evol.flow_chart import (
 )
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.interpolation.data_scaling import DataScaler
-from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.utils.common_functions import (
     convert_metallicity_to_string,
     set_binary_to_failed,
 )
 from posydon.utils.interpolators import SingleStarInterpolator
+from posydon.utils.key_library import (
+    DEFAULT_FINAL_KEYS,
+    DEFAULT_PROFILE_KEYS,
+    DEFAULT_TRANSLATED_KEYS,
+    KEYS_POSITIVE,
+)
 from posydon.utils.posydonerror import MatchingError, NumericalError, POSYDONError
 from posydon.utils.posydonwarning import Pwarn
 
 MATCHING_WITH_RELATIVE_DIFFERENCE = ["center_he4"]
-
 
 val_names = [" ", "mass", "log_R", "center_h1", "surface_h1",
                 "he_core_mass", "center_he4", "surface_he4",
@@ -253,58 +252,52 @@ class TrackMatcher:
 
     """
 
-    def __init__(
-            self,
-            grid_name_Hrich,
-            grid_name_strippedHe,
-            path=PATH_TO_POSYDON_DATA,
-            metallicity=None,
-            matching_method="minimize",
-            matching_tolerance=1e-2,
-            matching_tolerance_hard=1e-1,
-            list_for_matching_HMS=None,
-            list_for_matching_postMS=None,
-            list_for_matching_HeStar=None,
-            list_for_matching_postHeMS=None,
-            record_matching=False,
-            verbose=False
-    ):
+    DEFAULT_KWARGS = {"grid_Hrich":None,
+                      "grid_strippedHe":None,
+                      "path":PATH_TO_POSYDON_DATA,
+                      "metallicity":None,
+                      "matching_method":"minimize",
+                      "matching_tolerance":1e-2,
+                      "matching_tolerance_hard":1e-1,
+                      "list_for_matching_HMS":None,
+                      "list_for_matching_HeStar":None,
+                      "list_for_matching_postMS":None,
+                      "list_for_matching_postHeMS":None,
+                      "record_matching":False,
+                      "verbose":False}
+
+    def __init__(self, **kwargs):
 
         # MESA history column names used as matching metrics
         # TODO: should this be singlestar.STARPROPERTIES? An
         #       error is thrown when (possibly user defined)
         #       matching metrics don't exist in this array.
         #       That's not very flexible...
-        self.root_keys = np.array(
-            [
-                "age",
-                "mass",
-                "he_core_mass",
-                "center_h1",
-                "center_he4",
-                "surface_he4",
-                "surface_h1",
-                "log_R",
-                "center_c12",
-                "co_core_mass"
-            ]
-        )
+        self.root_keys = np.array(["age", "mass", "he_core_mass",
+                                   "co_core_mass",
+                                   "center_h1", "center_he4",
+                                   "surface_he4", "surface_h1",
+                                   "center_c12", "log_R"])
 
         # =====================================================================
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise POSYDONError(f"Unexpected keyword argument {key} "
+                                        "passed to TrackMatcher. Expected "
+                                        f"kwargs: {self.DEFAULT_KWARGS.keys()}")
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, kwargs.get(varname, default_value))
+        else:
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, default_value)
 
-        self.metallicity = convert_metallicity_to_string(metallicity)
-        self.matching_method = matching_method
-        self.matching_tolerance = matching_tolerance # DEFAULT: 1e-2
-        self.matching_tolerance_hard = matching_tolerance_hard # DEFAULT: 1e-1
+        self.metallicity = convert_metallicity_to_string(self.metallicity)
 
         self.initial_mass = None
         self.rootm = None
-        self.verbose = verbose
-
-        self.list_for_matching_HMS = list_for_matching_HMS
-        self.list_for_matching_postMS = list_for_matching_postMS
-        self.list_for_matching_HeStar = list_for_matching_HeStar
-        self.list_for_matching_postHeMS = list_for_matching_postHeMS
 
         # mapping a combination of (key, htrack, method) to a pre-trained
         # DataScaler instance, created the first time it is requested
@@ -312,43 +305,15 @@ class TrackMatcher:
 
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
-        self.KEYS = DEFAULT_TRANSLATED_KEYS #KEYS #DEFAULT_TRANSLATED_KEYS
+        self.KEYS = DEFAULT_TRANSLATED_KEYS
         self.KEYS_POSITIVE = KEYS_POSITIVE
-
         # keys for the final value interpolation
-        self.final_keys = (
-            'avg_c_in_c_core_at_He_depletion',
-            'co_core_mass_at_He_depletion',
-            'm_core_CE_1cent',
-            'm_core_CE_10cent',
-            'm_core_CE_30cent',
-            'm_core_CE_pure_He_star_10cent',
-            'r_core_CE_1cent',
-            'r_core_CE_10cent',
-            'r_core_CE_30cent',
-            'r_core_CE_pure_He_star_10cent'
-        )
-
+        self.final_keys = DEFAULT_FINAL_KEYS
         # keys for the star profile interpolation
         self.profile_keys = DEFAULT_PROFILE_KEYS
-
-        # should grids just get passed to this?
-        if grid_name_Hrich is None:
-            grid_name_Hrich = os.path.join('single_HMS',
-                                           self.metallicity+'_Zsun.h5')
-        grid_path_Hrich = os.path.join(path, grid_name_Hrich)
-        self.grid_Hrich = GRIDInterpolator(grid_path_Hrich)
-
-        if grid_name_strippedHe is None:
-            grid_name_strippedHe = os.path.join('single_HeMS',
-                                                self.metallicity+'_Zsun.h5')
-        grid_path_strippedHe = os.path.join(path, grid_name_strippedHe)
-        self.grid_strippedHe = GRIDInterpolator(grid_path_strippedHe)
-
         # =====================================================================
 
         # Initialize the matching lists:
-
         # min/max ranges of initial masses for each grid
         m_min_H = np.min(self.grid_Hrich.grid_mass)
         m_max_H = np.max(self.grid_Hrich.grid_mass)
@@ -423,7 +388,125 @@ class TrackMatcher:
             [m_min_He, m_max_He], [t_min_He, t_max_He]
         ]
 
-        self.record_matching = record_matching
+        # create and train scalers
+        self.create_root0_h()
+        self.create_root0_he()
+        self.train_scalers()
+
+    @classmethod
+    def separate_kwargs(cls, step_kwargs):
+
+        matcher_kwargs = cls.DEFAULT_KWARGS.copy()
+        for key, val in step_kwargs.items():
+            if key in matcher_kwargs:
+                matcher_kwargs.update({key: val})
+        # peel off TrackMatcher kwargs from step_kwargs
+        except_keys = ["metallicity", "verbose"]
+        for key in matcher_kwargs:
+            if key in except_keys:
+                continue
+            _ = step_kwargs.pop(key, None)
+
+        return step_kwargs, matcher_kwargs
+
+    def train_scalers(self):
+
+       # ...if not, fit a new scaler, and store it for later use
+
+        lists_for_matching = [self.list_for_matching_HMS,
+                              self.list_for_matching_HeStar,
+                              self.list_for_matching_HMS_alternative,
+                              self.list_for_matching_HeStar_alternative,
+                              self.list_for_matching_postHeMS,
+                              self.list_for_matching_postHeMS_alternative,
+                              self.list_for_matching_postMS,
+                              self.list_for_matching_postMS_alternative]
+
+        for list_for_matching in lists_for_matching:
+
+            match_attr_names = list_for_matching[0]
+            rescale_facs = list_for_matching[1]
+            scaler_methods = list_for_matching[2]
+            bnds = list_for_matching[3:]
+
+            if self.verbose:
+                print("Matching parameters and their normalizations:\n",
+                        match_attr_names, rescale_facs)
+            for htrack in [True, False]:
+                grid = self.grid_Hrich if htrack else self.grid_strippedHe
+                self.initial_mass = grid.grid_mass
+
+                # get (or train and get) scalers for attributes
+                # attributes are scaled to range (0, 1)
+                for attr_name, method in zip(match_attr_names, scaler_methods):
+                    all_attributes = []
+                    # check that attributes are allowed as matching attributes
+                    if attr_name not in self.root_keys:
+                        raise AttributeError("Expected matching attribute "
+                                                f"{attr_name} not "
+                                                "added in root_keys list: "
+                                                f"{self.root_keys}")
+
+                    scaler_options = (attr_name, htrack, method)
+
+                    for mass in self.initial_mass:
+                        for i in grid.get(attr_name, mass):
+                            all_attributes.append(i)
+
+                    all_attributes = np.array(all_attributes)
+                    scaler = DataScaler()
+                    scaler.fit(all_attributes, method=method, lower=0.0, upper=1.0)
+                    self.stored_scalers[scaler_options] = scaler
+
+    def create_root0_h(self):
+
+        # set which grid to search based on htrack condition
+        grid = self.grid_Hrich
+
+        # initial masses within grid (defined but never used? used in scale())
+        self.initial_mass = grid.grid_mass
+
+        # search across all initial masses and get max track length
+        max_track_length = 0
+        for mass in grid.grid_mass:
+            track_length = len(grid.get("age", mass))
+            max_track_length = max(max_track_length, track_length)
+
+        # intialize root matrix
+        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
+        self.rootm_h = np.inf * np.ones((len(grid.grid_mass),
+                                    max_track_length, len(self.root_keys)))
+
+        # for each mass, get matching metrics and store in matrix
+        for i, mass in enumerate(grid.grid_mass):
+            for j, key in enumerate(self.root_keys):
+                track = grid.get(key, mass)
+                self.rootm_h[i, : len(track), j] = track
+
+    def create_root0_he(self):
+
+        # set which grid to search based on htrack condition
+        grid = self.grid_strippedHe
+
+        # initial masses within grid (defined but never used? used in scale())
+        self.initial_mass = grid.grid_mass
+
+        # search across all initial masses and get max track length
+        max_track_length = 0
+        for mass in grid.grid_mass:
+            track_length = len(grid.get("age", mass))
+            max_track_length = max(max_track_length, track_length)
+
+        # intialize root matrix
+        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
+        self.rootm_he = np.inf * np.ones((len(grid.grid_mass),
+                                    max_track_length, len(self.root_keys)))
+
+        # for each mass, get matching metrics and store in matrix
+        for i, mass in enumerate(grid.grid_mass):
+            for j, key in enumerate(self.root_keys):
+                track = grid.get(key, mass)
+                self.rootm_he[i, : len(track), j] = track
 
     def get_root0(self, attr_names, attr_vals, htrack, rescale_facs=None):
         """
@@ -463,28 +546,9 @@ class TrackMatcher:
 
         """
 
+        rootm = self.rootm_h if htrack else self.rootm_he
         # set which grid to search based on htrack condition
         grid = self.grid_Hrich if htrack else self.grid_strippedHe
-
-        # initial masses within grid (defined but never used? used in scale())
-        self.initial_mass = grid.grid_mass
-
-        # search across all initial masses and get max track length
-        max_track_length = 0
-        for mass in grid.grid_mass:
-            track_length = len(grid.get("age", mass))
-            max_track_length = max(max_track_length, track_length)
-
-        # intialize root matrix
-        # (DIM = [N(Mi), N(max_track_length), N(root_keys)])
-        self.rootm = np.inf * np.ones((len(grid.grid_mass),
-                                    max_track_length, len(self.root_keys)))
-
-        # for each mass, get matching metrics and store in matrix
-        for i, mass in enumerate(grid.grid_mass):
-            for j, key in enumerate(self.root_keys):
-                track = grid.get(key, mass)
-                self.rootm[i, : len(track), j] = track
 
         # rescaling factors
         if rescale_facs is None:
@@ -501,7 +565,7 @@ class TrackMatcher:
         # Slice out just the matching metric data for all stellar tracks
         # grid_attr_vals now has shape
         # (N(Mi), N(max_track_len), N(matching_metrics))
-        grid_attr_vals = self.rootm[:, :, idx]
+        grid_attr_vals = rootm[:, :, idx]
 
         # For all stellar tracks in grid:
         # Take difference btwn. grid track and given star values...
@@ -522,7 +586,7 @@ class TrackMatcher:
 
         # time and initial mass corresp. to track w/ minimum difference
         m0 = grid.grid_mass[mass_i]
-        t0 = self.rootm[mass_i][age_i][np.argmax("age" == self.root_keys)]
+        t0 = rootm[mass_i][age_i][np.argmax("age" == self.root_keys)]
 
         return m0, t0
 
@@ -608,22 +672,6 @@ class TrackMatcher:
 
         # find if the scaler has already been fitted and return it if so...
         scaler = self.stored_scalers.get(scaler_options, None)
-        if scaler is not None:
-            return scaler
-
-        # ...if not, fit a new scaler, and store it for later use
-        grid = self.grid_Hrich if htrack else self.grid_strippedHe
-        self.initial_mass = grid.grid_mass
-        all_attributes = []
-
-        for mass in self.initial_mass:
-            for i in grid.get(attr_name, mass):
-                all_attributes.append(i)
-
-        all_attributes = np.array(all_attributes)
-        scaler = DataScaler()
-        scaler.fit(all_attributes, method=scaler_method, lower=0.0, upper=1.0)
-        self.stored_scalers[scaler_options] = scaler
 
         return scaler
 
