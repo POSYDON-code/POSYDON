@@ -40,10 +40,11 @@ else
     METALLICITIES=${3:-"2 1 0.45 0.2 0.1 0.01 0.001 0.0001"}
 fi
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DEV_TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="${DEV_TOOLS_DIR}/script_data"
 SAFE_BRANCH="${BRANCH//\//_}"
 BASELINE_DIR="$SCRIPT_DIR/baselines/${SAFE_BRANCH}"
-CANDIDATE_DIR="$SCRIPT_DIR/outputs/${SAFE_BRANCH}"
+BINARY_CANDIDATE_DIR="$SCRIPT_DIR/output/binary_star_tests/${SAFE_BRANCH}"
 
 echo "============================================================"
 echo "  POSYDON Binary Validation — Generating Baseline"
@@ -60,17 +61,17 @@ echo "============================================================"
 # ── Step 1: Evolve binaries (skip if --promote) ──────────────────────────
 if [ "$PROMOTE" = true ]; then
     echo ""
-    echo "Step 1: SKIPPED (--promote: using existing outputs in $CANDIDATE_DIR)"
+    echo "Step 1: SKIPPED (--promote: using existing outputs in $BINARY_CANDIDATE_DIR)"
 
-    if [ ! -d "$CANDIDATE_DIR" ]; then
-        echo "ERROR: No outputs found at $CANDIDATE_DIR" >&2
+    if [ ! -d "$BINARY_CANDIDATE_DIR" ]; then
+        echo "ERROR: No outputs found at $BINARY_CANDIDATE_DIR" >&2
         echo "Run evolve_binaries.sh first, or drop --promote to evolve from scratch." >&2
         exit 1
     fi
 else
     echo ""
     echo "Step 1: Evolving binaries on branch '$BRANCH'..."
-    "$SCRIPT_DIR/evolve_binaries.sh" "$BRANCH" "$SHA" "$METALLICITIES"
+    "${DEV_TOOLS_DIR}/run_test_suite.sh" "$BRANCH" "$SHA" "$METALLICITIES"
 fi
 
 # ── Step 2: Copy results into the baselines directory ────────────────────
@@ -82,7 +83,7 @@ mkdir -p "$BASELINE_DIR"
 COPIED=0
 
 for Z in $METALLICITIES; do
-    SRC="$CANDIDATE_DIR/candidate_${Z}Zsun.h5"
+    SRC="$BINARY_CANDIDATE_DIR/candidate_${Z}Zsun.h5"
     DST="$BASELINE_DIR/baseline_${Z}Zsun.h5"
 
     if [ -f "$SRC" ]; then
