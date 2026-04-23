@@ -50,7 +50,7 @@ def get_ini_file(args):
     '''
 
     # Find and select the INI file
-    ini_files = glob.glob(os.path.join(args.run_folder, '*.ini'))
+    ini_files = sorted(glob.glob(os.path.join(args.run_folder, '*.ini')))
     if not ini_files:
         raise FileNotFoundError("No INI file found in the run folder.")
 

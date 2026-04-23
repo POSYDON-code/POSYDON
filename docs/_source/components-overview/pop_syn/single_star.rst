@@ -103,20 +103,29 @@ The star properties are defined as follows
 Additional scalar properties are added during the evolution depending on which steps the star has undergone. These properties are not stored in the history.
 
 .. list-table:: Additional output
-   :header-rows: 1
-   :widths: 50 150
+  :header-rows: 1
+  :widths: 50 150
 
   * - Properties
     - Descriptions
   * - ``natal_kick_array``
     - | The natal kick array for the star if it has undergone a SN.
-      | contains:
+      | This has been replaced with the individual properties below.
+      | ``natal_kick_array`` contains:
 
-      * velocity
-      * theta
-      * phi
-      * mean anomaly
+      * velocity (km/s)
+      * azimuthal angle phi (radians)
+      * polar angle theta (radians)
+      * mean anomaly (radians)
 
+  * - ``natal_kick_velocity``
+    - The magnitude of the natal kick velocity in km/s.
+  * - ``natal_kick_phi``
+    - The natal kick azimuthal angle phi in radians.
+  * - ``natal_kick_theta``
+    - The natal kick polar angle theta in radians.
+  * - ``natal_kick_mean_anomaly``
+    - The natal kick mean anomaly in radians.
   * - ``SN_type``
     - The supernova type of the star.
   * - ``f_fb``

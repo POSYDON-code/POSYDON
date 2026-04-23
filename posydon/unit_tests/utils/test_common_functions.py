@@ -89,7 +89,7 @@ class TestElements:
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'beaming', 'bondi_hoyle',\
+                    'beaming', 'beta_gw', 'bondi_hoyle',\
                     'calculate_H2recombination_energy',\
                     'calculate_Mejected_for_integrated_binding_energy',\
                     'calculate_Patton20_values_at_He_depl',\
@@ -232,6 +232,9 @@ class TestElements:
 
     def test_instance_read_histogram_from_file(self):
         assert isroutine(totest.read_histogram_from_file)
+
+    def test_instance_beta_gw(self):
+        assert isroutine(totest.beta_gw)
 
     def test_instance_inspiral_timescale_from_separation(self):
         assert isroutine(totest.inspiral_timescale_from_separation)
@@ -696,10 +699,12 @@ class TestFunctions:
             assert totest.beaming(binary) == r
 
     def test_bondi_hoyle(self, binary, monkeypatch):
-        def mock_rand(shape):
-            return np.zeros(shape)
-        def mock_rand2(shape):
-            return np.full(shape, 0.1)
+        class MockRNG:
+            def random(self, shape):
+                return np.zeros(shape)
+        class MockRNG2:
+            def random(self, shape):
+                return np.full(shape, 0.1)
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'binary', 'accretor', and "\
@@ -725,37 +730,39 @@ class TestFunctions:
                                              +"associated with a value"):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
-        monkeypatch.setattr(np.random, "rand", mock_rand)
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        rng = MockRNG()
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                approx(3.92668160462e-17, abs=6e-29)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') ==\
+                                  RNG=rng, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') ==\
+                                  RNG=rng, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  scheme='Kudritzki+2000') == 1e-99
+                                  RNG=rng, scheme='Kudritzki+2000') == 1e-99
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False) ==\
+                                  RNG=rng, wind_disk_criteria=False) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
-        monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
+        rng = MockRNG2() # other angle
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False) ==\
+                                  wind_disk_criteria=False, RNG=rng) ==\
                approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+        mock_rng = MockRNG()
         def mock_interp1d(x, y):
             if x[0] > x[-1]:
                 raise ValueError
@@ -786,7 +793,6 @@ class TestFunctions:
                                       +" function in rejection sampling"):
             totest.rejection_sampler(pdf=mock_pdf)
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
         monkeypatch.setattr(totest, "interp1d", mock_interp1d)
         tests = [(np.array([0.0, 1.0]), np.array([0.4, 0.6]), 5,\
                   np.array([0.0, 0.25, 0.5, 0.75, 1.0])),\
@@ -795,22 +801,24 @@ class TestFunctions:
                  (np.array([1.0, 0.0]), np.array([0.2, 0.8]), 6,\
                   np.array([0.0, 0.2, 0.4, 0.0, 0.5, 0.0]))]
         for (x, y, s, r) in tests:
-            assert np.allclose(totest.rejection_sampler(x=x, y=y, size=s),\
+            assert np.allclose(totest.rejection_sampler(x=x, y=y, size=s, rng=mock_rng),\
                                r)
         assert np.allclose(totest.rejection_sampler(x_lim=np.array([0.0,\
                                                                      1.0]),\
-                                                     pdf=mock_pdf, size=5),\
+                                                     pdf=mock_pdf, size=5, rng=mock_rng),\
                            np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
         assert np.allclose(totest.rejection_sampler(x=np.array([1.0, 0.0]),\
                                                        y=np.array([0.2, 0.8]),\
                                                        x_lim=np.array([0.0,\
                                                                        1.0]),\
-                                                       pdf=mock_pdf, size=5),\
+                                                       pdf=mock_pdf, size=5, rng=mock_rng),\
                               np.array([0.0, 0.25, 0.0, 0.0, 0.0]))
 
     def test_inverse_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+        mock_rng = MockRNG()
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
                                      +"arguments: 'x' and 'y'"):
@@ -826,26 +834,37 @@ class TestFunctions:
             totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                    y=np.array([-0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
         assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                   y=np.array([0.4, 0.6]),\
-                                                  size=5),\
+                                                  size=5, rng=mock_rng),\
                            np.array([0.0, 0.29128785, 0.54950976, 0.78388218,\
                                      1.0]))
         assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                   y=np.array([0.6, 0.4]),\
-                                                  size=4),\
+                                                  size=4, rng=mock_rng),\
                            np.array([0.0, 0.2919872, 0.61952386, 1.0]))
         with warns(RuntimeWarning, match="invalid value encountered in "\
                                          +"divide"):
             assert np.allclose(totest.inverse_sampler(x=np.array([0.0, 1.0]),\
                                                       y=np.array([0.5, 0.5]),\
-                                                      size=5),\
+                                                      size=5, rng=mock_rng),\
                                np.array([0.0, 0.25, 0.5, 0.75, 1.0]))
 
     def test_histogram_sampler(self, monkeypatch):
-        def mock_uniform(low=0.0, high=1.0, size=1):
-            return np.linspace(low, high, num=size)
+        class MockRNG:
+            def uniform(self, low=0.0, high=1.0, size=1):
+                return np.linspace(low, high, num=size)
+            def choice(self, a, size=None, replace=True, p=None):
+                if isinstance(a, int):
+                    a = np.arange(a)
+                sample = []
+                for (v, q) in zip(a, p):
+                    sample += round(size*q) * [v]
+                if len(sample) < size:
+                    sample += (size-len(sample)) * [a[-1]]
+                return np.array(sample[:size])
+
+        mock_rng = MockRNG()
         def mock_choice(a, size=None, replace=True, p=None):
             if isinstance(a, int):
                 a=np.arange(a)
@@ -870,20 +889,18 @@ class TestFunctions:
             totest.histogram_sampler(x_edges=np.array([0.0, 1.0]),\
                                      y=np.array([0.4, 0.6]))
         # examples:
-        monkeypatch.setattr(np.random, "uniform", mock_uniform)
-        monkeypatch.setattr(np.random, "choice", mock_choice)
         assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                       0.5,\
                                                                       1.0]),\
                                                     y=np.array([0.2, 0.8]),\
-                                                    size=5),\
+                                                    size=5, rng=mock_rng),\
                            np.array([0.0, 0.5, 0.66666667, 0.83333333, 1.0]))
         assert np.allclose(totest.histogram_sampler(x_edges=np.array([0.0,\
                                                                          0.5,\
                                                                          1.0]\
                                                        ), y=np.array([0.2,\
                                                                       0.8]),\
-                                                       size=4),\
+                                                       size=4, rng=mock_rng),\
                               np.array([0.0, 0.5, 0.75, 1.0]))
 
     def test_read_histogram_from_file(self, csv_path_failing_3_data_lines,\
@@ -921,6 +938,19 @@ class TestFunctions:
         arrays = totest.read_histogram_from_file(path=csv_path_ex2)
         assert np.allclose(arrays[0], np.array([0.2, 1.2, 2.2]))
         assert np.allclose(arrays[1], np.array([2.0, 2.0]))
+
+    def test_beta_gw(self):
+        # missing argument
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'star1_mass' and "\
+                                     +"'star2_mass'"):
+            totest.beta_gw()
+        # examples
+        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
+                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
+                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
+        for (m1, m2, r) in tests:
+            assert totest.beta_gw(m1, m2) == r
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument

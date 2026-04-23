@@ -86,24 +86,6 @@ path_to_Patton_datasets = os.path.join(PATH_TO_POSYDON_DATA,
 path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 
-SN_MODEL = {
-    # kick physics
-    "kick": True,
-    "kick_normalisation": 'one_over_mass',
-    "kick_prescription": 'maxwellian',
-    "sigma_kick_CCSN_NS": 265.0,
-    "mean_kick_CCSN_NS": None,
-    "sigma_kick_CCSN_BH": 265.0,
-    "mean_kick_CCSN_BH": None,
-    "sigma_kick_ECSN": 20.0,
-    "mean_kick_ECSN": None,
-    # other
-    "verbose": False,
-}
-# add core collapse physics
-SN_MODEL.update(DEFAULT_SN_MODEL)
-
-
 class StepSN(object):
     """The supernova step in POSYDON.
 
@@ -255,21 +237,37 @@ class StepSN(object):
         Evolution on the Dynamics of Core Collapse and Neutron Star Kicks
 
     """
+    DEFAULT_KWARGS = {
+        # kick physics
+        "kick": True,
+        "kick_normalisation": 'one_over_mass',
+        "kick_prescription": 'maxwellian',
+        "sigma_kick_CCSN_NS": 265.0,
+        "mean_kick_CCSN_NS": None,
+        "sigma_kick_CCSN_BH": 265.0,
+        "mean_kick_CCSN_BH": None,
+        "sigma_kick_ECSN": 20.0,
+        "mean_kick_ECSN": None,
+        # other
+        "RNG": np.random.default_rng(),
+        "verbose": False
+    }
+    # add core collapse physics
+    DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+
 
     def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in SN_MODEL:
+                if key not in self.DEFAULT_KWARGS:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, kwargs.get(varname, default_value))
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, kwargs.get(varname, self.DEFAULT_KWARGS[varname]))
         else:
-            for varname in SN_MODEL:
-                default_value = SN_MODEL[varname]
-                setattr(self, varname, default_value)
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, self.DEFAULT_KWARGS[varname])
 
         # backward compatibility for kick
         if (self.kick_normalisation == 'asym_ej'
@@ -407,7 +405,7 @@ class StepSN(object):
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
         return "StepSN:\n" + \
-            "\n".join([f"{key} = {getattr(self, key)}" for key in SN_MODEL])
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
 
     def _reset_other_star_properties(self, star):
@@ -1541,13 +1539,13 @@ class StepSN(object):
             if not binary.star_1.natal_kick_azimuthal_angle is None:
                 phi = binary.star_1.natal_kick_azimuthal_angle
             else:
-                phi = np.random.uniform(0, 2 * np.pi)
+                phi = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_azimuthal_angle = phi
 
             if not binary.star_1.natal_kick_polar_angle is None:
                 cos_theta = np.cos(binary.star_1.natal_kick_polar_angle)
             else:
-                cos_theta = np.random.uniform(-1, 1)
+                cos_theta = self.RNG.uniform(-1, 1)
                 binary.star_1.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
@@ -1558,7 +1556,7 @@ class StepSN(object):
                     raise ValueError("mean_anomaly must be a single float value."
                                      f"\n mean_anomaly = {mean_anomaly}")
             else:
-                mean_anomaly = np.random.uniform(0, 2 * np.pi)
+                mean_anomaly = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_mean_anomaly = mean_anomaly
 
         elif binary.event == "CC2":
@@ -1642,13 +1640,13 @@ class StepSN(object):
             if not binary.star_2.natal_kick_azimuthal_angle is None:
                 phi = binary.star_2.natal_kick_azimuthal_angle
             else:
-                phi = np.random.uniform(0, 2 * np.pi)
+                phi = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_azimuthal_angle = phi
 
             if not binary.star_2.natal_kick_polar_angle is None:
                 cos_theta = np.cos(binary.star_2.natal_kick_polar_angle)
             else:
-                cos_theta = np.random.uniform(-1, 1)
+                cos_theta = self.RNG.uniform(-1, 1)
                 binary.star_2.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
@@ -1658,7 +1656,7 @@ class StepSN(object):
                 if not isinstance(mean_anomaly, float):
                     raise ValueError("mean_anomaly must be a single float value.")
             else:
-                mean_anomaly = np.random.uniform(0, 2 * np.pi)
+                mean_anomaly = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_mean_anomaly = mean_anomaly
 
         # update the orbit
@@ -2084,7 +2082,7 @@ class StepSN(object):
             # this is a fallback
             if sigma is None:
                 sigma = 265.0
-            Vkick_ej = sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1)[0]
+            Vkick_ej = sp.stats.maxwell.rvs(loc=0., scale=sigma, size=1, random_state=self.RNG)[0]
 
         elif self.kick_prescription == "log_normal":
             # sigma==None should never be reached, since in that case Vkick=0
@@ -2094,7 +2092,7 @@ class StepSN(object):
                 sigma = 0.68
             if mean is None:
                 mean = np.exp(5.60)
-            Vkick_ej = sp.stats.lognorm.rvs(s=sigma, scale=mean, size=1)[0]
+            Vkick_ej = sp.stats.lognorm.rvs(s=sigma, scale=mean, size=1, random_state=self.RNG)[0]
 
         elif self.kick_prescription == "asym_ej":
             f_kin = 0.1         # Fraction of SN explosion energy that is kinetic energy of the gas
