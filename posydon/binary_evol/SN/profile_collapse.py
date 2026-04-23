@@ -393,7 +393,6 @@ def do_core_collapse_BH(star,
             The mass of the disk radiated away in M_sun.
         'BZ_jet_power_total' : float
             The total Blandford-Znajek jet power in erg/s.
-
         # Additional keys that are not used in the current implementation:
         # 'BZ_jet_power_array' : np.array(BZ_jet_power_array),
         #       Blandford-Znajek jet power at each shell collapse in erg/s
@@ -634,6 +633,26 @@ def do_core_collapse_BH(star,
             raise ValueError(
                 "We got a={:.5g} from shell {} containing {:.5g} M_sun".format(
                     a_BH, i, dm_shell / Mo))
+
+        # calculate the potential BZ jet power at this moment of the collapse
+        # We assume full efficiency for the magnetic flux and a BH spin
+        # dependence of a^2 for the BH spin efficiency.
+        # just an energy total per collapse step.
+        BZ_power = BZ_jet_power(M_dot=dm_disk,
+                     eta_phi=1,
+                     eta_a=a_BH**2)
+        BZ_jet_power_array.append(BZ_power)
+        BZ_jet_power_total += BZ_power
+
+        # calculate the potential BZ jet power at this moment of the collapse
+        # We assume full efficiency for the magnetic flux and a BH spin
+        # dependence of a^2 for the BH spin efficiency.
+        # just an energy total per collapse step.
+        BZ_power = BZ_jet_power(M_dot=dm_disk,
+                     eta_phi=1,
+                     eta_a=a_BH**2)
+        BZ_jet_power_array.append(BZ_power)
+        BZ_jet_power_total += BZ_power
 
         # calculate the potential BZ jet power at this moment of the collapse
         # We assume full efficiency for the magnetic flux and a BH spin

@@ -196,9 +196,6 @@ from posydon.interpolation.constraints import (
     find_constraints_to_apply,
     sanitize_interpolated_quantities,
 )
-from posydon.interpolation.data_scaling import DataScaler
-from posydon.utils.posydonwarning import Pwarn
-from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
 
 # INITIAL-FINAL INTERPOLATOR
@@ -273,12 +270,15 @@ class IFInterpolator:
         """
         ynums = {}
         ycats = {}
-
+        # s = time.time()
         for interpolator in self.interpolators:
             ynum, ycat = interpolator.evaluate(binary, sanitization_verbose)
 
             ynums = {**ynums, **ynum}
             ycats = {**ycats, **ycat}
+
+        # e = time.time()
+        # print(f"Iterated over {len(self.interpolators)} interpolators in {e - s}")
 
         return ynums, ycats
 

@@ -280,10 +280,10 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
-            data_download()
+            data_download() #TODO: specify dataset
 
         # Load interpolator
-        self._Interp = IFInterpolator()
+        self._Interp = IFInterpolator(load = True)
         self._Interp.load(filename=filename)
 
     def close(self):
