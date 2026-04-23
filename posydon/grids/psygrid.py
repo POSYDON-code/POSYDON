@@ -461,6 +461,9 @@ class LazyHDF5:
     def __len__(self): # pragma: no cover
         return len(self._dataset)
 
+    def to_df(self): # pragma: no cover
+        return pd.DataFrame(self.__array__())
+
 
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
