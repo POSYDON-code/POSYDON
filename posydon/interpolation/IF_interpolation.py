@@ -670,11 +670,7 @@ class BaseIFInterpolator:
 
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
-            # s = time.time()
             Ypredn = self.interpolator.predict(Xtn, classes, self.X_scaler)
-            # e = time.time()
-            
-            # print(f"Predicted one interpolator value in {e - s} seconds")
         else:
             Xtn = self.X_scaler.normalize(Xt)
             Ypredn = self.interpolator.predict(Xtn)
@@ -991,7 +987,7 @@ class BaseIFInterpolator:
 
             out_scaling = []
             for i in range(self.n_out):
-                if where_min[i] < r or pd.isna(where_min[i]):
+                if where_min[i] < r or np.isnan(where_min[i]):
                     out_scaling.append(out_scalings[0][i])
                 else:
                     out_scaling.append(out_scalings[1][i])

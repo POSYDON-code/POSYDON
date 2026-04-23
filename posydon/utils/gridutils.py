@@ -85,8 +85,6 @@ def read_MESA_data_file(path, columns):
 
 def read_EEP_data_file(path, columns):
     """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
-    if path is None:
-        return None
     try:
         return np.atleast_1d(np.genfromtxt(path, skip_header=11, names=True,
                                            usecols=columns, invalid_raise=False))

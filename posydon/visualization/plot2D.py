@@ -1244,9 +1244,9 @@ class plot2D(object):
                             for i in range(len(self.x_var[selection])):
                                 if not isinstance(self.x_var_oRLO[selection]
                                                   [i], float):
-                                    if (not any(pd.isna(
+                                    if (not any(np.isnan(
                                          self.x_var_oRLO[selection][i]))
-                                        and not any(pd.isna(
+                                        and not any(np.isnan(
                                          self.y_var_oRLO[selection][i]))):
                                         ax.plot(
                                             self.x_var[selection][i],
@@ -1302,9 +1302,9 @@ class plot2D(object):
                                 for i in range(len(self.x_var[selection])):
                                     if not isinstance(self.x_var_oRLO
                                                       [selection][i], float):
-                                        if not any(pd.isna(
+                                        if not any(np.isnan(
                                              self.x_var_oRLO[selection][i]))\
-                                            and not any(pd.isna(
+                                            and not any(np.isnan(
                                              self.y_var_oRLO[selection][i])):
                                             ax.plot(
                                                 self.x_var[selection][i],

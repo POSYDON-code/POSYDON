@@ -1123,7 +1123,7 @@ class PSyGrid:
                 for colname, value in grid_point.items():
                     if colname in self.initial_values.dtype.names:
                         self.initial_values[i][colname] = value
-                if pd.isna(self.initial_values[i]["Z"]):
+                if np.isnan(self.initial_values[i]["Z"]):
                     # try to get metallicity from directory name
                     params_from_path = initial_values_from_dirname(run.path)
                     if (len(params_from_path)==4) or\

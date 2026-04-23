@@ -92,7 +92,7 @@ extras_require = {
     # to build documentation
     "doc": [
         "ipython",
-        "sphinx >= 8.2.2",
+        "sphinx >= 6.1.3",
         "numpydoc",
         "sphinx_rtd_theme",
         "sphinxcontrib_programoutput",
@@ -145,10 +145,12 @@ setup(
     install_requires=install_requires,
     tests_require=tests_require,
     extras_require=extras_require,
-    python_requires=">=3.11, <3.12",
+    python_requires=">3.10, <3.12",
     use_2to3=False,
     classifiers=[
         "Development Status :: 4 - Beta",
+        "Programming Language :: Python",
+        "Programming Language :: Python :: 3.11",
         "Intended Audience :: Science/Research",
         "Intended Audience :: End Users/Desktop",
         "Topic :: Scientific/Engineering",

@@ -7,7 +7,6 @@ __authors__ = [
 
 import matplotlib.pyplot as plt
 import numpy as np
-import pandas as pd
 
 class EvaluateIFInterpolator:
     """ Class that is helpful for evaluating interpolation performance
@@ -50,12 +49,12 @@ class EvaluateIFInterpolator:
             (self.test_grid.final_values["interpolation_class"] != "not_converged") &
             (self.test_grid.final_values["interpolation_class"] != "initial_MT")
         )
-        print("initial value", iv.shape)
+
         i = self.interpolator.test_interpolator(iv) # interpolated
         # ifv = fv[ivalid_inds]
-        print("interpolated", i.shape)
+
         self.errs = {}
-        print("fv", fv.shape)
+
         with np.errstate(divide='ignore', invalid='ignore'):
             self.errs["relative"] = np.abs((fv - i) / fv)
         self.errs["absolute"] = np.abs(fv - i)
@@ -147,7 +146,7 @@ class EvaluateIFInterpolator:
 
     def __clean_errs(self, errs):
 
-        errs = errs[pd.notna(errs).any(axis = 1)] # dropping nans
+        errs = errs[~np.isnan(errs).any(axis = 1)] # dropping nans
         errs = errs[~np.isinf(errs).any(axis = 1)] # dropping infs
 
         return errs

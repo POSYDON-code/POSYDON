@@ -13,7 +13,6 @@ from sklearn.neighbors import NearestNeighbors
 from .data_scaling import DataScaler
 from posydon.grids.psygrid import PSyGrid
 from posydon.grids.MODELS import MODELS
-from posydon.utils.interpolators import interp1d
 
 
 class psyTrackInterp:
@@ -603,7 +602,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_low)
                 kvalue_low = self.grid_final_values[mass_low][key]
 
-            while pd.isna(kvalue_low):
+            while (kvalue_low is None or np.isnan(kvalue_low)):
                 # escape if no lower mass is available
                 if np.sum(mass_low > self.grid_mass) == 0:
                     break
@@ -620,7 +619,7 @@ class GRIDInterpolator():
                 self.load_grid(mass_high)
                 kvalue_high = self.grid_final_values[mass_high][key]
 
-            while pd.isna(kvalue_high):
+            while (kvalue_high is None or np.isnan(kvalue_high)):
                 # escape if no higher mass is available
                 if np.sum(mass_high < self.grid_mass) == 0:
                     break

@@ -8,11 +8,13 @@ __authors__ = [
 ]
 
 
-from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.data_download import PATH_TO_POSYDON_DATA
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH, STAR_STATES_HE_RICH)
+from posydon.utils.posydonerror import FlowError
+from posydon.utils.posydonerror import POSYDONError
 
 LIST_ACCEPTABLE_STATES_FOR_HMS = ["H-rich_Core_H_burning"]
 LIST_ACCEPTABLE_STATES_FOR_HeMS = ["stripped_He_Core_He_burning"]

@@ -12,6 +12,7 @@ import glob
 from posydon.utils import configfile
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
+from posydon.utils.posydonwarning import Pwarn
 from posydon.grids.psygrid import PSyGrid
 from posydon.active_learning.psy_cris.utils import parse_inifile
 
@@ -81,6 +82,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         else:
             Pwarn("git repository is already there, using that",
                   "OverwriteWarning")
+            Pwarn("git repository is already there, using that",
+                  "OverwriteWarning")
 
         inlists_dir = '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -110,6 +113,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         else:
             Pwarn("git repository is already there, using that",
                   "OverwriteWarning")
+            Pwarn("git repository is already there, using that",
+                  "OverwriteWarning")
 
         inlists_dir = '{0}/.user_mesa_inlists'.format(os.environ['HOME'])
         branch = gitcommit.split('-')[0]
@@ -135,6 +140,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stderr = subprocess.PIPE
                              )
     
+    
 
     print("checking out commit/tag: {0}".format(githash))
 
@@ -143,6 +149,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                                  stdout = subprocess.PIPE,
                                  stderr = subprocess.PIPE
                              )
+    proc.wait()
     proc.wait()
 
     # if this is looking at posydon defaults, all posydon defaults build from default common inlists
@@ -1102,6 +1109,10 @@ if __name__ == '__main__':
     elif args.submission_type == 'slurm':
         # if slurm will we submit as job array or MPI
         if slurm['job_array']:
+            if '.csv' in run_parameters['grid']:
+                grid = pandas.read_csv(run_parameters['grid'])
+            else:
+                raise ValueError('Grid format not recognized, please feed in an acceptable format: csv')
             grid_script = 'job_array_grid_submit.slurm'
             if os.path.exists(grid_script):
                 Pwarn('Replace '+grid_script, "OverwriteWarning")

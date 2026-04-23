@@ -16,46 +16,14 @@ import tarfile
 import textwrap
 import urllib.request
 from tqdm import tqdm
-from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
-from posydon.utils.posydonwarning import Pwarn
 
-def _parse_commandline():
-    """Parse the arguments given on the command-line
+# get path to data, if not provided use the working directory
+PATH_TO_POSYDON_DATA = os.environ.get("PATH_TO_POSYDON_DATA",'./')
+file = os.path.join(PATH_TO_POSYDON_DATA, "POSYDON_data.tar.gz")
+PATH_TO_POSYDON_DATA = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/')
 
-        Returns
-        -------
-        Namespace
-            All the passed arguments from the commoand line or their defaults.
-
-    """
-    defined_sets = list(COMPLETE_SETS.keys()) + list(ZENODO_COLLECTION.keys())
-    parser = argparse.ArgumentParser(description="Downloading POSYDON data "
-                                                 "from Zenodo")
-    parser.add_argument('dataset',
-                        help="Name of the dataset to download (default: v1)",
-                        nargs='?',
-                        default='v1')
-    parser.add_argument('-l', '--listedsets',
-                        help="list the datasets: 'complete' shows the full "
-                             "dataset able to run POSYDON, 'individual' lists "
-                             "the datasets on zenodo, which might need others "
-                             "to run population synthesis (default: complete)",
-                        nargs='?',
-                        const='complete',
-                        choices=['complete', 'individual'])
-    parser.add_argument('-n', '--nomd5check',
-                        help="do not confirm md5 checksum (default: False)",
-                        default=False,
-                        action='store_true')
-    parser.add_argument('-v', '--verbose',
-                        help="run in Verbose Mode (default: False)",
-                        default=False,
-                        action='store_true')
-    args = parser.parse_args()
-    if args.dataset not in defined_sets:
-        raise parser.error("unknown dataset, use -l to show defined sets")
-    return args
+data_url = "https://zenodo.org/record/14205146/files/POSYDON_data.tar.gz"
+original_md5 = "cf645a45b9b92c2ad01e759eb1950beb"
 
 class ProgressBar():
     def __init__(self):

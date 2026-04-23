@@ -48,15 +48,17 @@ from posydon.popsyn.independent_sample import (generate_independent_samples,
                                                binary_fraction_value)
 from posydon.popsyn.sample_from_file import (get_samples_from_file,
                                              get_kick_samples_from_file)
+from posydon.utils.common_functions import (orbital_period_from_separation,
+                                            orbital_separation_from_period)
 from posydon.popsyn.normalized_pop_mass import initial_total_underlying_mass
+
 from posydon.popsyn.defaults import default_kwargs
 
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.utils.constants import Zsun
-from posydon.utils.posydonerror import POSYDONError
+from posydon.utils.posydonerror import POSYDONError,initial_condition_message
 from posydon.utils.posydonwarning import (Pwarn, Catch_POSYDON_Warnings)
-from posydon.utils.common_functions import (orbital_period_from_separation, orbital_separation_from_period, 
-                                            set_binary_to_failed)
+from posydon.utils.common_functions import set_binary_to_failed
 
 saved_ini_parameters = ['metallicity',
                         "number_of_binaries",
@@ -99,8 +101,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # BinaryPopulation will enforce a constant metallicity accross all steps that
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
-    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
-    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
+    'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged'
 ]
 
 
@@ -134,7 +135,7 @@ class BinaryPopulation:
         for key in STEP_NAMES_LOADING_GRIDS:
             if key in self.population_properties.kwargs:
                 self.population_properties.kwargs[key][1].update({'metallicity': self.metallicity})
-                          
+                        
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
@@ -332,14 +333,14 @@ class BinaryPopulation:
                     binary.traceback = traceback.format_exc()
 
                     if self.kwargs.get("error_checking_verbose", False):
-                        posydon_error.add_note(binary.initial_condition_message())
+                        posydon_error.add_note(initial_condition_message(binary))
                         traceback.print_exception(posydon_error)
 
                 except Exception as e:
                     set_binary_to_failed(binary)
                     binary.traceback = traceback.format_exc()
 
-                    e.add_note(binary.initial_condition_message())
+                    e.add_note(initial_condition_message(binary))
                     traceback.print_exception(e)
 
                 # record if there were warnings caught during the binary
