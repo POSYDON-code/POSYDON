@@ -383,12 +383,12 @@ This means that this step uses the single stars loaded by the detached step.
       | ``['import.path', 'name_of_step']``
     - ``None``
   * - ``rel_mass_lost_HMS_HMS``
-    - | A ``float`` in the range ``[0-1)`` or the string ``"Glebbeek+2013"``. In 
-      | the latter case, mass loss becomes q-depdendent based on Eq. 4 from 
+    - | A ``float`` in the range ``[0-1)`` or the string ``"Glebbeek+2013"``. In
+      | the latter case, mass loss becomes q-depdendent based on Eq. 4 from
       | `Glebbeek+ 2013, MNRAS, 434, 3497 <https://ui.adsabs.harvard.edu/abs/2013MNRAS.434.3497G/abstract>`_.
     - ``"Glebbeek+2013"``
   * - ``HMS_HMS_merging_rejuvenation``
-    - | if true, merger abundances will be based on ``total_mass_h1`` or ``total_mass_he4`` 
+    - | if true, merger abundances will be based on ``total_mass_h1`` or ``total_mass_he4``
       | according to `Schneider+ 2016, MNRAS,457, 2355 <https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract>`_.
     - ``True``
 
@@ -424,7 +424,7 @@ This means that this step uses the single stars loaded by the detached step.
 
   * - ``list_for_matching_HMS``
     - | Merger products are matched to single star models and this list
-      | specifies properties of that process for HMS stars. This list 
+      | specifies properties of that process for HMS stars. This list
       | has the following structure:
 
       ::
@@ -452,7 +452,7 @@ This means that this step uses the single stars loaded by the detached step.
         [["mass", "center_he4", "he_core_mass"],
          [20.0, 1.0, 10.0],
          ["log_min_max", "min_max", "min_max"],
-         [None, None], 
+         [None, None],
          [0, None]]
 
   * - ``list_for_matching_HeStar``
@@ -464,7 +464,7 @@ This means that this step uses the single stars loaded by the detached step.
         [["he_core_mass", "center_he4"],
          [10.0, 1.0],
          ["min_max" , "min_max"],
-         [None, None], 
+         [None, None],
          [0, None]]
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
