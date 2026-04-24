@@ -378,6 +378,101 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_merged', 'MergedStep']``
+  * - ``absolute_import``
+    - | An absolute import of a custom step. It follows the same structure as ``import``.
+      | ``['import.path', 'name_of_step']``
+    - ``None``
+  * - ``rel_mass_lost_HMS_HMS``
+    - | A ``float`` in the range ``[0-1)`` or the string ``"Glebbeek+2013"``. In 
+      | the latter case, mass loss becomes q-depdendent based on Eq. 4 from 
+      | `Glebbeek+ 2013, MNRAS, 434, 3497 <https://ui.adsabs.harvard.edu/abs/2013MNRAS.434.3497G/abstract>`_.
+    - ``"Glebbeek+2013"``
+  * - ``HMS_HMS_merging_rejuvenation``
+    - | if true, merger abundances will be based on ``total_mass_h1`` or ``total_mass_he4`` 
+      | according to `Schneider+ 2016, MNRAS,457, 2355 <https://ui.adsabs.harvard.edu/abs/2016MNRAS.457.2355S/abstract>`_.
+    - ``True``
+
+  * - ``do_wind_loss``
+    - | Enable orbital separation and eccentricity changes from stellar wind loss.
+    - ``True``
+
+  * - ``do_tides``
+    - | Enable tides following Hut, P. 1981, A&A, 99, 126.
+    - ``True``
+
+  * - ``do_gravitational_radiation``
+    - | Enable gravitational radiation following Junker, W., & Schafer, G. 1992, MNRAS, 254, 146.
+    - ``True``
+
+  * - ``do_magnetic_braking``
+    - | Enable stellar angular momentum loss from magnetic braking.
+    - ``True``
+
+  * - ``magnetic_braking_mode``
+    - | A string corresponding to the desired magnetic braking prescription.
+
+      * ``'RVJ83'``: Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
+      * ``'M15'``: Matt et al. 2015, ApJ, 799, L23
+      * ``'G18'``: Garraffo et al. 2018, ApJ, 862, 90
+      * ``'CARB'``: Van & Ivanova 2019, ApJ, 886, L31
+
+    - ``'RVJ83'``
+
+  * - ``do_stellar_evolution_and_spin_from_winds``
+    - | Enable stellar angular momentum loss from winds.
+    - ``True``
+
+  * - ``list_for_matching_HMS``
+    - | Merger products are matched to single star models and this list
+      | specifies properties of that process for HMS stars. This list 
+      | has the following structure:
+
+      ::
+
+        list_for_matching = [["matching attr. names"],
+                             [rescale_factors],
+                             ["scaling methods"],
+                             [mass_bnds],
+                             [age_bnds]]
+
+    - ::
+
+        [["mass", "center_h1", "he_core_mass"],
+         [20.0, 1.0, 10.0],
+         ["log_min_max", "min_max", "min_max"],
+         [None, None],
+         [0, None]]
+
+  * - ``list_for_matching_postMS``
+    - | Merger products are matched to single star models and this list
+      | specifies properties of that process for post-MS stars.
+
+    - ::
+
+        [["mass", "center_he4", "he_core_mass"],
+         [20.0, 1.0, 10.0],
+         ["log_min_max", "min_max", "min_max"],
+         [None, None], 
+         [0, None]]
+
+  * - ``list_for_matching_HeStar``
+    - | Merger products are matched to single star models and this list
+      | specifies properties of that process for HeMS stars.
+
+    - ::
+
+        [["he_core_mass", "center_he4"],
+         [10.0, 1.0],
+         ["min_max" , "min_max"],
+         [None, None], 
+         [0, None]]
+  * - ``record_matching``
+    - | If true, append quantities achieved from track matching to the binary history.
+    - ``True``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
 
 Step Initially Single
 ~~~~~~~~~~~~~~~~~~~~~
