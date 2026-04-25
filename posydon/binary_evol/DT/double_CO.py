@@ -228,13 +228,6 @@ class double_CO_evolution(detached_evolution):
 
         super().__init__(**kwargs)
 
-        # For DCO system, only gravitational radiation is considered
-        self.do_magnetic_braking = False
-        self.do_tides = False
-        self.do_wind_loss = False
-        self.do_stellar_evolution_and_spin_from_winds = False
-        self.do_gravitational_radiation = True
-
 
     def set_stars(self, primary, secondary, t0=0.0):
 
