@@ -633,63 +633,6 @@ class plot2D(object):
                                   'likely all values are NaN.',
                                   "InappropriateValueWarning")
                     sc_last = sc
-                else:
-                    # Plot with default color when z_var is None and color is None
-                    if self.slice_at_RLO:
-                        for i in range(len(self.x_var[selection])):
-                            if not isinstance(self.x_var_oRLO[selection][i],
-                                              float):
-                                if not any(
-                                    pd.isna(self.x_var_oRLO[selection][i])
-                                ) and not any(pd.isna(
-                                        self.y_var_oRLO[selection][i])):
-                                    plt.plot(
-                                        self.x_var[selection][i],
-                                        self.y_var[selection][i],
-                                        marker=".",
-                                        color="black",
-                                    )
-                                    plt.plot(
-                                        self.x_var_oRLO[selection][i],
-                                        self.y_var_oRLO[selection][i],
-                                        color="black",
-                                    )
-                                sc = ax.scatter(
-                                    self.x_var_oRLO[selection][i][-1],
-                                    self.y_var_oRLO[selection][i][-1],
-                                    marker=self.MARKERS_COLORS_LEGENDS[
-                                        flag][0],
-                                    linewidths=self.MARKERS_COLORS_LEGENDS[
-                                        flag][1],
-                                    c='gray',
-                                    s=self.marker_size,
-                                )
-                            else:
-                                plt.plot(
-                                    self.x_var[selection][i],
-                                    self.y_var[selection][i],
-                                    marker=".",
-                                    color="black",
-                                )
-                                sc = ax.scatter(
-                                    self.x_var[selection][i],
-                                    self.y_var[selection][i],
-                                    marker=self.MARKERS_COLORS_LEGENDS[
-                                        flag][0],
-                                    linewidths=self.MARKERS_COLORS_LEGENDS[
-                                        flag][1],
-                                    c='gray',
-                                    s=self.marker_size,
-                                )
-                    else:
-                        sc = ax.scatter(
-                            self.x_var[selection],
-                            self.y_var[selection],
-                            marker=self.MARKERS_COLORS_LEGENDS[flag][0],
-                            linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
-                            c='gray',
-                            s=self.marker_size,
-                        )
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:
                 scatters.append(sc)

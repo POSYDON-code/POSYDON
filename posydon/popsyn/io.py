@@ -192,11 +192,11 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
     assert isinstance( binary_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:  # pragma: no cover
+    if extra_binary_dtypes_user is None:
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:  # pragma: no cover
+    if extra_S1_dtypes_user is None:
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:  # pragma: no cover
+    if extra_S2_dtypes_user is None:
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -231,7 +231,7 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = SP_comb_S1_dict.get( key.replace('S1_', '') )
         elif key in S2_keys:
             common_dtype_dict[key] = SP_comb_S2_dict.get( key.replace('S2_', '') )
-        else:  # pragma: no cover
+        else:
             raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
     # set dtypes
     binary_df = binary_df.astype( common_dtype_dict )
@@ -275,11 +275,11 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     assert isinstance( oneline_df, pd.DataFrame )
 
     # User specified extra binary and star columns
-    if extra_binary_dtypes_user is None:  # pragma: no cover
+    if extra_binary_dtypes_user is None:
         extra_binary_dtypes_user = {}
-    if extra_S1_dtypes_user is None:  # pragma: no cover
+    if extra_S1_dtypes_user is None:
         extra_S1_dtypes_user = {}
-    if extra_S2_dtypes_user is None:  # pragma: no cover
+    if extra_S2_dtypes_user is None:
         extra_S2_dtypes_user = {}
 
     # try to coerce data types automatically first
@@ -330,7 +330,7 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
             common_dtype_dict[key] = SP_comb_S1_dict.get( strip_prefix_and_suffix(key) )
         elif key in S2_keys:
             common_dtype_dict[key] = SP_comb_S2_dict.get( strip_prefix_and_suffix(key) )
-        else:  # pragma: no cover
+        else:
             raise ValueError(f'No data type found for {key}. Dtypes must be explicity declared.')
     # set dtypes
     oneline_df = oneline_df.astype( common_dtype_dict )
@@ -369,7 +369,7 @@ def parse_inifile(path, verbose=False):
 
     if isinstance(path, str):
         path = os.path.abspath(path)
-        if verbose:  # pragma: no cover
+        if verbose:
             print('Reading inifile: \n\t{}'.format(path))
         if not os.path.exists(path):
             raise FileNotFoundError(
@@ -377,7 +377,7 @@ def parse_inifile(path, verbose=False):
     elif isinstance(path, (list, np.ndarray)):
         path = [os.path.abspath(f) for f in path]
 
-        if verbose:  # pragma: no cover
+        if verbose:
             print('Reading inifiles: \n{}'.format(pprint.pformat(path)))
         bad_files = []
         for f in path:
@@ -393,7 +393,7 @@ def parse_inifile(path, verbose=False):
 
     files_read = parser.read(path)
     # Catch silent errors from configparser.read
-    if len(files_read) == 0:  # pragma: no cover
+    if len(files_read) == 0:
         raise ValueError("No files were read successfully. Given {}.".
                          format(path))
     return parser
@@ -425,7 +425,7 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
     parser_dict = {}
     for section in parser:
         # skip default section
-        if section == 'DEFAULT':  # pragma: no cover
+        if section == 'DEFAULT':
             continue
         if only is not None:
             if section != only:
@@ -494,10 +494,6 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
 
             parser_dict[section] = hooks_list
 
-        if section == "grid_paths":
-
-            parser_dict.update(sect_dict)
-
     return parser_dict
 
 
@@ -538,7 +534,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
                 raise ValueError('MPI must be turned off for job arrays.')
                 exit()
-            elif pop_kwargs['use_MPI'] == True:  # pragma: no cover
+            elif pop_kwargs['use_MPI'] == True:
                 from mpi4py import MPI
                 pop_kwargs['comm'] = MPI.COMM_WORLD
             # MPI needs to be turned off for job arrays
@@ -546,7 +542,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs['comm'] = None
 
                 # Check if we are running as a job array
-                if JOB_ID is not None and pop_kwargs['use_MPI'] is True: # pragma: no cover
+                if JOB_ID is not None and pop_kwargs['use_MPI'] is True:
                     raise ValueError('MPI must be turned off for job arrays.')
                 elif JOB_ID is not None:
                     pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
@@ -574,7 +570,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
             if pop_kwargs['include_S1']:
                 pop_kwargs['S1_kwargs'] = S1_kwargs
 
-        elif section == 'SingleStar_2_output': # pragma: no branch
+        elif section == 'SingleStar_2_output':
             S2_kwargs = dict()
             for key, val in parser[section].items():
                 S2_kwargs[key] = ast.literal_eval(val)

@@ -26,9 +26,17 @@ class InitiallySingleStep(IsolatedStep):
     Prepare a runaway star to do an an isolated_step)
     """
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self,
+        grid_name_Hrich=None,
+        grid_name_strippedHe=None,
+        path=PATH_TO_POSYDON_DATA,
+        *args, **kwargs):
 
-        super().__init__(*args, **kwargs)
+        super().__init__(
+        grid_name_Hrich=grid_name_Hrich,
+        grid_name_strippedHe=grid_name_strippedHe,
+        *args,
+        **kwargs)
 
 
     def __call__(self,binary):

@@ -382,88 +382,6 @@ GRIDPROPERTIES = {
     "accept_missing_profile": False,
 }
 
-class LazyHDF5:
-    """
-    Lazy wrapper around an HDF5 dataset with optional dtype conversion.
-
-    This class provides a lightweight interface for accessing data from an
-    HDF5 dataset without immediately loading the entire dataset into memory.
-    Data are retrieved lazily when indexed. Optionally, a set of dtype
-    conversions can be applied when data are accessed.
-
-    If dtype mappings are provided, retrieved data are cast to the specified
-    dtypes either per-field (for structured arrays) or for the selected field
-    when accessed by name.
-
-    Assignments (via __setitem__) trigger full materialization of the dataset
-    in memory, after which the internal storage is replaced by the in-memory
-    array.
-
-    Parameters
-    ----------
-    dataset : h5py.Dataset or array-like
-        The underlying dataset providing the data. Typically an HDF5 dataset
-        object supporting NumPy-style indexing.
-    dtype_set : dict, optional
-        Mapping of field names to NumPy dtypes used to cast the returned data.
-        This is typically used for structured arrays where individual fields
-        require specific dtype conversions.
-
-    Notes
-    -----
-    - Data are only read from the dataset when accessed via ``__getitem__`` or
-      when converted to a NumPy array.
-    - Writing via ``__setitem__`` loads the entire dataset into memory before
-      modifying it.
-    - The ``dtype`` property reflects the converted dtype if ``dtype_set`` is
-      provided.
-    """
-    def __init__(self, dataset, dtype_set=None):
-        self._dataset = dataset
-        self._dtype_set = dtype_set
-        if self._dtype_set is not None:
-            self._dtype_list = list(self._dtype_set.items())
-
-    def __getitem__(self, idx):
-        data = self._dataset[idx]
-        if self._dtype_set is not None:
-            if isinstance(idx, str):
-                data = data.astype(self._dtype_set[idx])
-            else:
-                data = data.astype(self._dtype_list)
-        return data
-
-    def __setitem__(self, idx, value):
-        # materialize full array in memory
-        arr = self.__array__()
-        # write new value
-        arr[idx] = value
-
-        self._dataset = arr
-
-
-    def __array__(self):
-        data = self._dataset[()]
-        if self._dtype_set is not None:
-            data = data.astype(self._dtype_list)
-        return data
-
-    @property
-    def dtype(self):
-        if self._dtype_set is not None:
-            return np.dtype(self._dtype_list)
-        return self._dataset.dtype
-
-    @property
-    def shape(self): # pragma: no cover
-        return self._dataset.shape
-
-    def __len__(self): # pragma: no cover
-        return len(self._dataset)
-
-    def to_df(self): # pragma: no cover
-        return pd.DataFrame(self.__array__())
-
 
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
@@ -1529,7 +1447,7 @@ class PSyGrid:
         mode = "a" if writeable else "r"
         self.hdf5 = h5py.File(self.filepath, mode, **driver_args)
 
-    def load(self, filepath=None, lazy=True):
+    def load(self, filepath=None):
         """Load up a previously created PSyGrid object from an HDF5 file.
 
         Parameters
@@ -1537,11 +1455,6 @@ class PSyGrid:
         filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
-
-        lazy : bool (default: True)
-            If True, load hdf5 files lazily. This means that MESA data
-            will not be loaded into RAM (which can be in the GB range).
-            This comes at a small cost to I/O.
 
         """
         self._say("Loading HDF5 grid...")
@@ -1559,29 +1472,18 @@ class PSyGrid:
         hdf5 = self.hdf5
         # load initial/final_values
         self._say("\tLoading initial/final values...")
-        initial_values = hdf5['/grid/initial_values']
-        final_values = hdf5['/grid/final_values']
+        self.initial_values = hdf5['/grid/initial_values'][()]
+        self.final_values = hdf5['/grid/final_values'][()]
 
         # change ASCII to UNICODE in termination flags in `final_values`
-        new_dtype = {}
-        for dtype in final_values.dtype.descr:
+        new_dtype = []
+        for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
-            new_dtype[dtype[0]] = dtype[1]
-
-        if lazy:
-            initial_values = LazyHDF5(initial_values)
-            final_values = LazyHDF5(final_values, new_dtype)
-        else: # pragma: no cover
-            initial_values = initial_values[()]
-            final_values = final_values[()]
-            new_dtype = list(new_dtype.items())
-            final_values = final_values.astype(new_dtype)
-
-        self.initial_values = initial_values
-        self.final_values = final_values
+            new_dtype.append(dtype)
+        self.final_values = self.final_values.astype(new_dtype)
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
@@ -2104,30 +2006,12 @@ class PSyGrid:
             raise TypeError('Invalid idx = {}!'.format(idx))
 
         if states:
+            from posydon.binary_evol.singlestar import SingleStar
             star_states = []
-            # Check if this is a binary grid
-            if self.config["binary"]:
-                from posydon.binary_evol.binarystar import BinaryStar
-                for run in runs:
-                    binary = BinaryStar.from_run(run, history=True, profiles=False)
-                    # Extract the appropriate star based on history parameter
-                    if history == 'history1':
-                        star = binary.star_1
-                    elif history == 'history2':
-                        star = binary.star_2
-                    else:
-                        raise ValueError(
-                            f"For binary grids with states=True, history must be "
-                            f"'history1' or 'history2', not '{history}'"
-                        )
-                    star_states.append(check_state_of_star_history_array(
-                        star, N=len(star.mass_history)))
-            else:
-                from posydon.binary_evol.singlestar import SingleStar
-                for run in runs:
-                    star = SingleStar.from_run(run, history=True, profile=False)
-                    star_states.append(check_state_of_star_history_array(
-                        star, N=len(star.mass_history)))
+            for run in runs:
+                star = SingleStar.from_run(run, history=True, profile=False)
+                star_states.append(check_state_of_star_history_array(
+                    star, N=len(star.mass_history)))
         else:
             star_states = None
 

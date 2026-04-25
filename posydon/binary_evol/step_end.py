@@ -9,8 +9,6 @@ __authors__ = [
 class step_end:
     """Default end step."""
 
-    DEFAULT_KWARGS = {}
-
     def __call__(self, binary):
         """Change the event of the binary to 'end'."""
         if binary.state == "disrupted":

@@ -89,7 +89,7 @@ class TestElements:
                     'THRESHOLD_HE_NAKED_ABUNDANCE', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'beaming', 'beta_gw', 'bondi_hoyle',\
+                    'beaming', 'bondi_hoyle',\
                     'calculate_H2recombination_energy',\
                     'calculate_Mejected_for_integrated_binding_energy',\
                     'calculate_Patton20_values_at_He_depl',\
@@ -232,9 +232,6 @@ class TestElements:
 
     def test_instance_read_histogram_from_file(self):
         assert isroutine(totest.read_histogram_from_file)
-
-    def test_instance_beta_gw(self):
-        assert isroutine(totest.beta_gw)
 
     def test_instance_inspiral_timescale_from_separation(self):
         assert isroutine(totest.inspiral_timescale_from_separation)
@@ -699,12 +696,10 @@ class TestFunctions:
             assert totest.beaming(binary) == r
 
     def test_bondi_hoyle(self, binary, monkeypatch):
-        class MockRNG:
-            def random(self, shape):
-                return np.zeros(shape)
-        class MockRNG2:
-            def random(self, shape):
-                return np.full(shape, 0.1)
+        def mock_rand(shape):
+            return np.zeros(shape)
+        def mock_rand2(shape):
+            return np.full(shape, 0.1)
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'binary', 'accretor', and "\
@@ -730,32 +725,32 @@ class TestFunctions:
                                              +"associated with a value"):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
-        rng = MockRNG()
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        monkeypatch.setattr(np.random, "rand", mock_rand)
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
                approx(3.92668160462e-17, abs=6e-29)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') ==\
+                                  scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') ==\
+                                  scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') == 1e-99
+                                  scheme='Kudritzki+2000') == 1e-99
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
                1e-99
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2) ==\
                1e-99
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, wind_disk_criteria=False) ==\
+                                  wind_disk_criteria=False) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
-        rng = MockRNG2() # other angle
+        monkeypatch.setattr(np.random, "rand", mock_rand2) # other angle
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False, RNG=rng) ==\
+                                  wind_disk_criteria=False) ==\
                approx(5.13970075150e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
@@ -938,19 +933,6 @@ class TestFunctions:
         arrays = totest.read_histogram_from_file(path=csv_path_ex2)
         assert np.allclose(arrays[0], np.array([0.2, 1.2, 2.2]))
         assert np.allclose(arrays[1], np.array([2.0, 2.0]))
-
-    def test_beta_gw(self):
-        # missing argument
-        with raises(TypeError, match="missing 2 required positional "\
-                                     +"arguments: 'star1_mass' and "\
-                                     +"'star2_mass'"):
-            totest.beta_gw()
-        # examples
-        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
-                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
-                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
-        for (m1, m2, r) in tests:
-            assert totest.beta_gw(m1, m2) == r
 
     def test_inspiral_timescale_from_separation(self):
         # missing argument

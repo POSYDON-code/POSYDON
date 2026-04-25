@@ -33,10 +33,12 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
 ]
 
+
 import numpy as np
 import pandas as pd
 
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_CO,
     STAR_STATES_H_RICH,
@@ -56,64 +58,67 @@ from posydon.utils.common_functions import (
 from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 
+MODEL = {"prescription": 'alpha-lambda',
+         "common_envelope_efficiency": 1.0,
+         "common_envelope_lambda_default": 0.5,
+         "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
+         "common_envelope_option_for_HG_star": "optimistic",
+         "common_envelope_alpha_thermal": 1.0,
+         "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
+         "core_definition_He_fraction": 0.1,
+         "CEE_tolerance_err": 0.001,
+         "verbose": False,
+         "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
+         "mass_loss_during_CEE_merged": False, # If False, then no mass loss from this step for a merged star
+                                              # If True, then we remove mass according to the alpha-lambda prescription
+                                              # assuming a final separation where the inner core RLOF starts.
+         # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
+         "metallicity": None,
+         "record_matching": False
+         }
+
+
+# common_envelope_option_for_lambda:
+# 1) 'default_lambda': using for lambda the constant value of
+# common_envelope_lambda_default parameter
+# 2) 'lambda_from_grid_final_values': using lambda parameter from MESA history
+# which was calulated ni the same way as method (5) below
+# 3) 'lambda_from_profile_gravitational': calculating the lambda parameter
+# from the donor's profile by using the gravitational binding energy from the
+# surface to the core (needing "mass", and "radius" as columns in the profile)
+# 4) 'lambda_from_profile_gravitational_plus_internal': as above but taking
+# into account a factor of common_envelope_alpha_thermal * internal energy too
+# in the binding energy (needing also "energy" as column in the profile)
+# 5) 'lambda_from_profile_gravitational_plus_internal_minus_recombination':
+# as above but not taking into account the recombination energy in the internal
+# energy (needing also "y_mass_fraction_He", "x_mass_fraction_H",
+# "neutral_fraction_H", "neutral_fraction_He", and "avg_charge_He" as column
+# in the profile)
+# the mass fraction of an element which is used as threshold to define a core,
 
 class StepCEE(object):
-    """Handle common envelope evolution (CEE) for binary systems.
+    """Compute supernova final remnant mass, fallback fraction & stellar state.
 
-    This class computes the outcome of a common envelope phase for binary
-    systems containing a giant star. It calculates how much the orbit must
-    shrink in order to expel the envelope using the alpha-prescription.
-    If at the required post-CEE separation one of the stars fills its Roche lobe,
-    the system is considered a merger. Otherwise, the envelope is lost,
-    leaving a binary system with the core of the donor star (which initiates
-    the unstable CEE) and the core of the companion.
-
-    If stellar profiles are available, the lambda parameter for the donor
-    can be calculated directly from the profile. Otherwise, default values
-    are used. The evolution is computed using a specified prescription
-    (e.g., alpha-lambda) which determines the final state of the binary
-    based on energy budget considerations.
+    This consider the nearest neighboor of the He core mass of the star,
+    previous to the collapse. Considering a set of data for which the He core
+    mass of the compact object projenitos previous the collapse, the final
+    remnant mass and final stellar state of the compact object is known.
 
     Parameters
     ----------
     verbose : bool
-        If True, the messages will be printed in the console.
+        If True, the messages will be prited in the console.
 
     Keyword Arguments
     -----------------
     prescription : str
-        Prescription to use for computing the prediction of common envelope
+        Prescription to use for computing the prediction of common enevelope
         evolution. Available options are:
 
-        * 'alpha-lambda' : Considers the alpha-lambda prescription
+        * 'alpha-lambda' : Considers the the alpha-lambda prescription
           described in [1]_ and [2]_ to predict the outcome of the common
           envelope evolution. If the profile of the donor star is available
           then it is used to compute the value of lambda.
-
-    common_envelope_option_for_lambda : str
-        Method for calculating the lambda parameter. Available options are:
-
-        1. 'default_lambda' : Use a constant value from the
-          `common_envelope_lambda_default` parameter.
-
-        2. 'lambda_from_grid_final_values' : Use the lambda parameter from
-          MESA history, calculated using the same method as option 5 below.
-
-        3. 'lambda_from_profile_gravitational' : Calculate lambda from the
-          donor's profile using the gravitational binding energy from the
-          surface to the core (requires "mass" and "radius" columns in the
-          profile).
-
-        4. 'lambda_from_profile_gravitational_plus_internal' : As above,
-          but also accounting for a factor of `common_envelope_alpha_thermal`
-          times the internal energy in the binding energy (requires also
-          "energy" column in the profile).
-
-        5. 'lambda_from_profile_gravitational_plus_internal_minus_recombination' :
-          As above, but excluding the recombination energy from the internal
-          energy calculation (requires also "y_mass_fraction_He",
-          "x_mass_fraction_H", "neutral_fraction_H", "neutral_fraction_He",
-          and "avg_charge_He" columns in the profile).
 
     References
     ----------
@@ -124,42 +129,79 @@ class StepCEE(object):
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
         planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
-    DEFAULT_KWARGS = {"prescription": 'alpha-lambda',
-                      "common_envelope_efficiency": 1.0,
-                      "common_envelope_lambda_default": 0.5,
-                      "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
-                      "common_envelope_option_for_HG_star": "optimistic",
-                      "common_envelope_alpha_thermal": 1.0,
-                      "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
-                      "core_definition_He_fraction": 0.1,
-                      "CEE_tolerance_err": 0.001,
-                      "verbose": False,
-                      "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-                      "mass_loss_during_CEE_merged": False,
-                      # If False, then no mass loss from this step for a merged star
-                      # If True, then we remove mass according to the alpha-lambda prescription
-                      # assuming a final separation where the inner core RLOF starts.
-                      # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-                      "metallicity": None,
-                      "track_matcher": None
-                      }
 
-
-    def __init__(self, **kwargs):
+    def __init__(
+            self, prescription=MODEL['prescription'],
+            common_envelope_efficiency=MODEL['common_envelope_efficiency'],
+            common_envelope_lambda_default=MODEL[
+                'common_envelope_lambda_default'],
+            common_envelope_option_for_lambda=MODEL[
+                'common_envelope_option_for_lambda'],
+            common_envelope_option_for_HG_star=MODEL[
+                'common_envelope_option_for_HG_star'],
+            common_envelope_option_after_succ_CEE=MODEL[
+                'common_envelope_option_after_succ_CEE'],
+            common_envelope_alpha_thermal=MODEL[
+                'common_envelope_alpha_thermal'],
+            core_definition_H_fraction=MODEL[
+                'core_definition_H_fraction'],
+            core_definition_He_fraction=MODEL[
+                'core_definition_He_fraction'],
+            CEE_tolerance_err=MODEL['CEE_tolerance_err'],
+            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged'],
+            verbose=MODEL['verbose'],
+            metallicity = MODEL['metallicity'],
+            record_matching = MODEL['record_matching'],
+            **kwargs):
         """Initialize a StepCEE instance."""
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
-                if key not in self.DEFAULT_KWARGS:
+                if key not in MODEL:
                     raise ValueError(key + " is not a valid parameter name!")
-            for varname in self.DEFAULT_KWARGS:
-                default_value = self.DEFAULT_KWARGS[varname]
+            for varname in MODEL:
+                default_value = MODEL[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
         else:
-            for varname in self.DEFAULT_KWARGS:
-                default_value = self.DEFAULT_KWARGS[varname]
-                setattr(self, varname, default_value)
+            self.prescription = prescription
+            self.common_envelope_efficiency = common_envelope_efficiency
+            self.common_envelope_lambda_default = \
+                common_envelope_lambda_default
+            self.common_envelope_option_for_lambda = \
+                common_envelope_option_for_lambda
+            self.common_envelope_option_for_HG_star = \
+                common_envelope_option_for_HG_star
+            self.common_envelope_alpha_thermal = common_envelope_alpha_thermal
+            self.core_definition_H_fraction = core_definition_H_fraction
+            self.core_definition_He_fraction = core_definition_He_fraction
+            self.CEE_tolerance_err = CEE_tolerance_err
+            self.common_envelope_option_after_succ_CEE = \
+                common_envelope_option_after_succ_CEE
+            self.mass_loss_during_CEE_merged = mass_loss_during_CEE_merged
+        self.metallicity = metallicity
+        self.record_matching = record_matching
+        self.verbose = verbose
+        self.path_to_posydon = PATH_TO_POSYDON
 
+
+        list_for_matching_HMS = [
+                        ["mass", "center_h1", "he_core_mass"],
+                        [20.0, 1.0, 10.0],
+                        ["log_min_max", "min_max", "min_max"],
+                        [0.1, 300], [0.0, None]
+                    ]
+        self.track_matcher = TrackMatcher(grid_name_Hrich = None,
+                                    grid_name_strippedHe = None,
+                                    path=PATH_TO_POSYDON_DATA,
+                                    metallicity = self.metallicity,
+                                    matching_method = "minimize",
+                                    matching_tolerance=1e-2,
+                                    matching_tolerance_hard=1e-1,
+                                    list_for_matching_HMS = list_for_matching_HMS,
+                                    list_for_matching_HeStar = None,
+                                    list_for_matching_postMS = None,
+                                    record_matching = self.record_matching,
+                                    verbose = self.verbose)
     def __call__(self, binary):
         """Perform the CEE step for a BinaryStar object."""
         # Determine which star is the donor and which is the companion
@@ -783,12 +825,11 @@ class StepCEE(object):
     def CEE_simple_alpha_prescription(
             self, binary, donor, comp_star, lambda1_CE, mc1_i, rc1_i,
             donor_type, lambda2_CE, mc2_i, rc2_i, comp_type, double_CE=False,
-            verbose=False,
-            common_envelope_option_after_succ_CEE=\
-            DEFAULT_KWARGS['common_envelope_option_after_succ_CEE'],
-            core_definition_H_fraction=DEFAULT_KWARGS['core_definition_H_fraction'],
-            core_definition_He_fraction=DEFAULT_KWARGS['core_definition_He_fraction'],
-            mass_loss_during_CEE_merged=DEFAULT_KWARGS['mass_loss_during_CEE_merged']):
+            verbose=False, common_envelope_option_after_succ_CEE=MODEL[
+                'common_envelope_option_after_succ_CEE'],
+            core_definition_H_fraction=MODEL['core_definition_H_fraction'],
+            core_definition_He_fraction=MODEL['core_definition_He_fraction'],
+            mass_loss_during_CEE_merged=MODEL['mass_loss_during_CEE_merged']):
         """Apply the alpha-lambda common-envelope prescription.
 
         It uses energetics to calculate the shrinakge of the orbit

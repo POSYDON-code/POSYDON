@@ -100,25 +100,23 @@ def get_mass_ratio_pdf(kwargs):
                 [kwargs['secondary_mass_max'] / m1, np.ones(len(m1))],
                 axis=0)
 
-            # Use FlatMassRatio distribution class
-            q_dist = lambda q: np.where((q > minimum) & (q <= maximum),
+            q_dist = lambda q: np.where((q >= minimum) & (q <= maximum),
                                         1/(maximum - minimum),
                                         0)
             return q_dist
         q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
     elif kwargs['secondary_mass_scheme'] == 'flat_mass_ratio':
         # flat mass ratio, where bounds are given
-        from posydon.popsyn.distributions import FlatMassRatio
-        q_dist = FlatMassRatio(q_min=kwargs['q_min'], q_max=kwargs['q_max'])
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
+        q_pdf = lambda q, m1=None: np.where(
+                                (q > kwargs['q_min']) & (q <= kwargs['q_max']),
+                                1/(kwargs['q_max'] - kwargs['q_min']),
+                                0)
 
     else:
         # default to a flat distribution
         Pwarn("The secondary_mass_scheme is not defined use a flat mass ratio "
               "distribution in (0,1].", "UnsupportedModelWarning")
-        from posydon.popsyn.distributions import FlatMassRatio
-        q_dist = FlatMassRatio(q_min=0.0, q_max=1.0)
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
+        q_pdf = lambda q, m1=None: np.where((q > 0.0) & (q<=1.0), 1, 0)
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
@@ -307,68 +305,7 @@ def calculate_model_weights(pop_data,
                             M_sim,
                             simulation_parameters,
                             population_parameters):
-    """Reweight each model in the simulation to the requested population
-
-    Uses the PDF of the simulation and the PDF of the requested population to calculate
-    the weights for each model in the simulation to match the requested population.
-
-    Parameters
-    ----------
-    pop_data : dict
-        Dictionary containing the population data.
-        This needs to contain the following keys:
-        - `S1_mass_i`: initial mass of the primary
-        - `S2_mass_i`: initial mass of the secondary
-        - `orbital_period_i`: initial orbital period
-        - `state_i`: initial state of the system (e.g. 'initially_single_star' for single stars)
-        These are used to calculate the PDF for each model in the simulation.
-
-    M_sim : float
-        Mass of the simulation
-    simulation_parameters : dict
-        Dictionary containing the simulation parameters.
-        This is used to calculate the PDF of the simulation.
-        The parameters in this dictionary are the initial conditions of the population.
-        The following parameters are required to be present in the dictionary:
-        - `primary_mass_scheme`
-        - `primary_mass_min`
-        - `primary_mass_max`
-        - `secondary_mass_scheme`
-        - `secondary_mass_min`
-        - `secondary_mass_max`
-        - `binary_fraction_scheme`
-        - `binary_fraction_const`
-        - `orbital_scheme`
-        - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
-        - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
-        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
-
-    population_parameters : dict
-        Dictionary containing the population parameters, which is the requested population to which we want to reweight the simulation. This is used to calculate the PDF of the requested population.
-        The parameters in this dictionary are the initial conditions of the population you want to reweight to.
-        The following parameters are required to be present in the dictionary:
-        - `primary_mass_scheme`
-        - `primary_mass_min`
-        - `primary_mass_max`
-        - `secondary_mass_scheme`
-        - `secondary_mass_min`
-        - `secondary_mass_max`
-        - `binary_fraction_scheme`
-        - `binary_fraction_const`
-        - `orbital_scheme`
-        - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
-        - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
-        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
-
-    Returns
-    -------
-    output : ndarray of floats
-        Weights for each model in the simulation to match the requested population
-        This has the units of likelihood of the systems per unit mass (Msun^-1).
-
-    """
+    '''reweight each model in the simulation to the requested population'''
 
     f_b_sim = simulation_parameters['binary_fraction_const']
     f_b_pop = population_parameters['binary_fraction_const']

@@ -21,6 +21,7 @@ from posydon.binary_evol.singlestar import (
     STARPROPERTIES,
     convert_star_to_massless_remnant,
 )
+from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import check_state_of_star
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
@@ -40,16 +41,50 @@ class MergedStep(IsolatedStep):
     Prepare a merging star to do an an IsolatedStep
     """
 
-    def __init__(self,
-                 merger_critical_rot = 0.4,
-                 rel_mass_lost_HMS_HMS = 0.1,
-                 *args,
-                 **kwargs):
+    def __init__(
+        self,
+        grid_name_Hrich=None,
+        grid_name_strippedHe=None,
+        path=PATH_TO_POSYDON_DATA,
+        merger_critical_rot = 0.4,
+        rel_mass_lost_HMS_HMS = 0.1,
+        list_for_matching_HMS = [
+                ["mass", "center_h1", "he_core_mass"],
+                [20.0, 1.0, 10.0],
+                ["log_min_max", "min_max", "min_max"],
+                #[m_min_H, m_max_H], [0, None]
+                [None, None], [0, None]
+            ],
+        list_for_matching_postMS = [
+                ["mass", "center_he4", "he_core_mass"],
+                [20.0, 1.0, 10.0],
+                ["log_min_max", "min_max", "min_max"],
+                #[m_min_H, m_max_H], [0, None]
+                [None, None], [0, None]
+            ],
+        list_for_matching_HeStar = [
+                ["he_core_mass", "center_he4"],
+                [10.0, 1.0],
+                ["min_max" , "min_max"],
+                #[[m_min_He, m_max_He], [0, None]],
+                [None, None], [0, None]
+            ],
+        *args,
+        **kwargs
+    ):
 
         self.merger_critical_rot = merger_critical_rot
         self.rel_mass_lost_HMS_HMS = rel_mass_lost_HMS_HMS
 
-        super().__init__(*args, **kwargs)
+        super().__init__(
+        grid_name_Hrich=grid_name_Hrich,
+        grid_name_strippedHe=grid_name_strippedHe,
+        list_for_matching_HMS = list_for_matching_HMS,
+        list_for_matching_postMS = list_for_matching_postMS,
+        list_for_matching_HeStar = list_for_matching_HeStar,
+        *args,
+        **kwargs)
+
 
     def __call__(self,binary):
 
