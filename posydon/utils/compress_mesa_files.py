@@ -277,10 +277,10 @@ def compress_dir(args):
         print(f"Original size {textsize(og_size)} | "\
               f"Compressed size {textsize(new_size)}")
     if len(to_remove)>0: #pragma: no cover
-    	Pwarn("Still files to remove: {}".format(to_remove),
+        Pwarn("Still files to remove: {}".format(to_remove),
     	      "IncompletenessWarning")
     if len(to_compress)>0: #pragma: no cover
-    	Pwarn("Still files to compress: {}".format(to_compress),
+        Pwarn("Still files to compress: {}".format(to_compress),
     	      "IncompletenessWarning")
 
 

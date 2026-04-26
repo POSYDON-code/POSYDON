@@ -241,10 +241,10 @@ class TestFunctions:
             for i in [0, -1]:
                 MESA_run_dir = os.path.join(MESA_dir, MESA_runs[i])
                 os.symlink(MESA_run_dir, os.path.join(MESA_dir, f"link{i}"))
-                MESA_run_file = os.path.join(MESA_run_dir,\
-                                             os.listdir(MESA_run_dir)[0])
-                os.symlink(MESA_run_file, os.path.join(MESA_dir,\
-                                                       f"link{i}.file0"))
+
+                # explicitly grab a real file to avoid OS-dependent issues
+                real_file = os.path.join(MESA_run_dir, "out.txt")
+                os.symlink(real_file, os.path.join(MESA_dir, f"link{i}.file0"))
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
          n_compress_files = totest.get_size(start_path=MESA_dir)
         assert total_size > 0
