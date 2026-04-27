@@ -358,8 +358,7 @@ def generate_secondary_masses(primary_masses,
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
         # Calculate mass ratio bounds for each primary mass
-        #q_min = secondary_mass_min / primary_masses
-        q_min = np.maximum(secondary_mass_min / primary_masses, 0.05)
+        q_min = secondary_mass_min / primary_masses
         q_max = np.minimum(secondary_mass_max / primary_masses, 1.0)
 
         # Sample mass ratios using the distribution class
