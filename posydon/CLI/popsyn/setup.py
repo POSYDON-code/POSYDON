@@ -14,6 +14,7 @@ from posydon.CLI.io import (
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
 from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.posydonwarning import Pwarn
 
 
 def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
@@ -86,6 +87,22 @@ def setup_popsyn_function(args):
     validate_ini_file(args.ini_file)
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
+    # warn if mass ratio q = M2/M1 could fall below 0.05
+    if synpop_params['secondary_mass_scheme'] == 'flat_mass_ratio':
+        q_min_possible = (synpop_params['secondary_mass_min']
+                          / synpop_params['primary_mass_max'])
+        if q_min_possible < 0.05:
+            Pwarn(
+                f"With secondary_mass_min="
+                f"{synpop_params['secondary_mass_min']} and "
+                f"primary_mass_max="
+                f"{synpop_params['primary_mass_max']}, the mass "
+                f"ratio q=M2/M1 can be as low as {q_min_possible:.4f}. "
+                f"Some binaries with q<0.05 might fall outside the POSYDON "
+                f"default grids.",
+                "InappropriateValueWarning"
+            )
+
     metallicities = synpop_params['metallicities']
     if synpop_params['number_of_binaries'] / args.job_array < 1:
         raise ValueError("The number of binaries is less than the job array"

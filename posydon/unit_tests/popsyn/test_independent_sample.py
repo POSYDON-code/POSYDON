@@ -62,7 +62,7 @@ class TestFunctions:
         assert orb[0] == approx(24650.481799781122,abs=6e-12)
         assert ecc[0] == approx(0.8350856417514098,abs=6e-12)
         assert m1[0] == approx(19.97764511120556,abs=6e-12)
-        assert m2[0] == approx(9.328252086070083,abs=6e-12)
+        assert m2[0] == approx(8.964150262412895,abs=6e-12)
         assert isinstance(orb, np.ndarray)
         assert len(orb) == 1
         assert all(np.isfinite(m1))
@@ -74,7 +74,7 @@ class TestFunctions:
         assert orb_p[0] == approx(872.213878458193,abs=6e-12)
         assert ecc_p[0] == approx(0.7259611833901314,abs=6e-12)
         assert m1_p[0] == approx(19.97764511120556,abs=6e-12)
-        assert m2_p[0] == approx(9.328252086070083,abs=6e-12)
+        assert m2_p[0] == approx(8.964150262412895,abs=6e-12)
         assert isinstance(orb_p, np.ndarray)
         assert len(orb_p) == 1
         assert all(np.isfinite(m1_p))

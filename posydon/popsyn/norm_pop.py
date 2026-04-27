@@ -93,7 +93,7 @@ def get_mass_ratio_pdf(kwargs):
         def get_pdf_for_m1(m1):
             m1 = np.atleast_1d(m1)
             minimum = np.max(
-                [kwargs['secondary_mass_min'] / m1, np.ones(len(m1))*0.05],
+                [kwargs['secondary_mass_min'] / m1, np.ones(len(m1))*0.0],
                 axis=0)
 
             maximum = np.min(
