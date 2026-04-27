@@ -35,7 +35,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/pycqa/isort
-    rev: 8.0.1
+    rev: 9.0.0a3
     hooks:
       - id: isort
         args:
