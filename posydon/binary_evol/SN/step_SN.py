@@ -257,7 +257,7 @@ class StepSN(object):
         "sigma_kick_ECSN": 20.0,
         "mean_kick_ECSN": None,
         # other
-        "RNG": np.random.default_rng(),
+        "RNG": None,
         "verbose": False
     }
     # add core collapse physics
@@ -273,6 +273,10 @@ class StepSN(object):
                     raise ValueError(key + " is not a valid parameter name!")
             for varname in self.DEFAULT_KWARGS:
                 setattr(self, varname, kwargs.get(varname, self.DEFAULT_KWARGS[varname]))
+            self.RNG = kwargs.get("RNG")
+            if self.RNG is None:
+                self.RNG = np.random.default_rng()
+
         else:
             for varname in self.DEFAULT_KWARGS:
                 setattr(self, varname, self.DEFAULT_KWARGS[varname])
