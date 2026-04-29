@@ -270,7 +270,7 @@ class PowerLawMassRatio:
         pdf_values[valid] = self.power_law_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
-    def rvs(self, size=1, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None):
         """Draw random samples from the power law mass ratio distribution.
 
         Parameters
@@ -289,8 +289,6 @@ class PowerLawMassRatio:
             rng = np.random.default_rng()
 
         from posydon.utils.common_functions import inverse_sampler
-
-        n_points = 1000
         q_grid = np.linspace(self.q_min, self.q_max, n_points)
         pdf_values = self.power_law_mass_ratio(q_grid)
         return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
