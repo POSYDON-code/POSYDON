@@ -354,6 +354,10 @@ class SingleStar:
             self.M4 = None
         if not hasattr(self, 'mu4'):
             self.mu4 = None
+        if not hasattr(self, 'Xi'):
+            self.Xi = None
+        if not hasattr(self, 'sc'):
+            self.sc = None
         if not hasattr(self, 'interp1d'):
             self.interp1d = None
 
