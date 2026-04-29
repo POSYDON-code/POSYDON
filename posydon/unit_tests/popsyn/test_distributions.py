@@ -12,6 +12,7 @@ from posydon.popsyn.distributions import (
     FlatMassRatio,
     LogNormalSeparation,
     LogUniform,
+    PowerLawMassRatio,
     PowerLawPeriod,
     Sana12Period,
     ThermalEccentricity,
@@ -1181,3 +1182,150 @@ class TestLogNormalSeparation:
 
         with pytest.raises(ValueError, match="max must be greater than min"):
             LogUniform(min=100.0, max=100.0)
+
+
+class TestPowerLawMassRatio:
+    """Test class for PowerLawMassRatio distribution."""
+
+    @pytest.fixture
+    def default_power_law_mass_ratio(self):
+        """Fixture for default PowerLawMassRatio instance."""
+        return PowerLawMassRatio()
+
+    @pytest.fixture
+    def custom_power_law_mass_ratio(self):
+        """Fixture for custom PowerLawMassRatio instance."""
+        return PowerLawMassRatio(alpha=-1.0, q_min=0.1, q_max=0.9)
+
+    def test_initialization_default(self, default_power_law_mass_ratio):
+        """Test default initialization of PowerLawMassRatio."""
+        assert default_power_law_mass_ratio.alpha == 0.0
+        assert default_power_law_mass_ratio.q_min == 0.05
+        assert default_power_law_mass_ratio.q_max == 1.0
+        assert hasattr(default_power_law_mass_ratio, 'norm')
+        assert default_power_law_mass_ratio.norm > 0
+
+    def test_initialization_custom(self, custom_power_law_mass_ratio):
+        """Test custom initialization of PowerLawMassRatio."""
+        assert custom_power_law_mass_ratio.alpha == -1.0
+        assert custom_power_law_mass_ratio.q_min == 0.1
+        assert custom_power_law_mass_ratio.q_max == 0.9
+        assert hasattr(custom_power_law_mass_ratio, 'norm')
+        assert custom_power_law_mass_ratio.norm > 0
+
+    def test_initialization_invalid_parameters(self):
+        """Test that initialization raises ValueError for invalid parameters."""
+        with pytest.raises(ValueError, match="q_min must be in \\[0, 1\\)"):
+            PowerLawMassRatio(q_min=-0.1)
+
+        with pytest.raises(ValueError, match="q_min must be in \\[0, 1\\)"):
+            PowerLawMassRatio(q_min=1.0)
+
+        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\]"):
+            PowerLawMassRatio(q_max=0.0)
+
+        with pytest.raises(ValueError, match="q_max must be in \\(0, 1\\]"):
+            PowerLawMassRatio(q_max=1.5)
+
+        with pytest.raises(ValueError, match="q_min must be less than q_max"):
+            PowerLawMassRatio(q_min=0.8, q_max=0.5)
+
+        with pytest.raises(ValueError, match="q_min must be > 0 for alpha <= -1"):
+            PowerLawMassRatio(alpha=-1.0, q_min=0.0)
+
+    def test_repr(self, custom_power_law_mass_ratio):
+        """Test string representation of the distribution."""
+        repr_str = custom_power_law_mass_ratio.__repr__()
+        assert "PowerLawMassRatio(" in repr_str
+        assert "alpha=-1.0" in repr_str
+        assert "q_min=0.1" in repr_str
+        assert "q_max=0.9" in repr_str
+
+    def test_repr_html(self, default_power_law_mass_ratio):
+        """Test HTML representation for Jupyter notebooks."""
+        html_str = default_power_law_mass_ratio._repr_html_()
+        assert "<h3>Power Law Mass Ratio Distribution</h3>" in html_str
+        assert "alpha = 0.0" in html_str
+        assert "q_min = 0.05" in html_str
+        assert "q_max = 1.0" in html_str
+
+    def test_calculate_normalization(self, custom_power_law_mass_ratio):
+        """Test that normalization constant is the reciprocal of the integral."""
+        integral, _ = quad(
+            custom_power_law_mass_ratio.power_law_mass_ratio,
+            custom_power_law_mass_ratio.q_min,
+            custom_power_law_mass_ratio.q_max,
+        )
+        expected_norm = 1.0 / integral
+        np.testing.assert_allclose(custom_power_law_mass_ratio.norm, expected_norm)
+
+    def test_power_law_mass_ratio_method(self, custom_power_law_mass_ratio):
+        """Test the power_law_mass_ratio method returns q^alpha."""
+        q = np.array([0.2, 0.5, 0.8])
+        result = custom_power_law_mass_ratio.power_law_mass_ratio(q)
+        expected = q ** custom_power_law_mass_ratio.alpha
+        np.testing.assert_allclose(result, expected)
+
+    def test_pdf_within_range(self, custom_power_law_mass_ratio):
+        """Test PDF returns correct values within the mass ratio range."""
+        q_values = np.linspace(
+            custom_power_law_mass_ratio.q_min + 1e-6,
+            custom_power_law_mass_ratio.q_max,
+            10,
+        )
+        pdf_values = custom_power_law_mass_ratio.pdf(q_values)
+        expected = (
+            custom_power_law_mass_ratio.power_law_mass_ratio(q_values)
+            * custom_power_law_mass_ratio.norm
+        )
+        np.testing.assert_allclose(pdf_values, expected)
+
+    def test_pdf_outside_range(self, custom_power_law_mass_ratio):
+        """Test PDF returns zero outside the mass ratio range."""
+        q_below = np.array([0.05, 0.09])
+        np.testing.assert_array_equal(
+            custom_power_law_mass_ratio.pdf(q_below), np.zeros_like(q_below)
+        )
+
+        q_above = np.array([0.95, 1.0])
+        np.testing.assert_array_equal(
+            custom_power_law_mass_ratio.pdf(q_above), np.zeros_like(q_above)
+        )
+
+    def test_pdf_at_q_min_excluded(self, custom_power_law_mass_ratio):
+        """Test that q_min itself is excluded (open lower bound)."""
+        pdf_at_qmin = custom_power_law_mass_ratio.pdf(
+            np.array([custom_power_law_mass_ratio.q_min])
+        )
+        assert pdf_at_qmin[0] == 0.0
+
+    def test_normalization_integral(self, custom_power_law_mass_ratio):
+        """Test that the PDF integrates to 1 over the valid range."""
+        integral, _ = quad(
+            custom_power_law_mass_ratio.pdf,
+            custom_power_law_mass_ratio.q_min,
+            custom_power_law_mass_ratio.q_max,
+        )
+        np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+    def test_rvs(self, custom_power_law_mass_ratio):
+        """Test random sampling stays within bounds."""
+        rng = np.random.default_rng(42)
+        samples = custom_power_law_mass_ratio.rvs(size=1000, rng=rng)
+        assert len(samples) == 1000
+        assert np.all(samples >= custom_power_law_mass_ratio.q_min)
+        assert np.all(samples <= custom_power_law_mass_ratio.q_max)
+
+    def test_rvs_without_rng(self, custom_power_law_mass_ratio):
+        """Test random sampling without providing an RNG."""
+        samples = custom_power_law_mass_ratio.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= custom_power_law_mass_ratio.q_min)
+        assert np.all(samples <= custom_power_law_mass_ratio.q_max)
+
+    @pytest.mark.parametrize("alpha", [2.0, 0.0, -0.5])
+    def test_different_alpha_values(self, alpha):
+        """Test PowerLawMassRatio with different valid alpha exponents."""
+        dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=1.0)
+        integral, _ = quad(dist.pdf, dist.q_min, dist.q_max)
+        np.testing.assert_allclose(integral, 1.0, rtol=1e-6)

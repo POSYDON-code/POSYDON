@@ -12,6 +12,7 @@ from posydon.popsyn import independent_sample
 from posydon.popsyn.distributions import (
     FlatMassRatio,
     LogUniform,
+    PowerLawMassRatio,
     PowerLawPeriod,
     Sana12Period,
 )
@@ -75,6 +76,11 @@ def get_mass_ratio_pdf(kwargs):
         Requires the following parameters:
         - `secondary_mass_min`
         - `secondary_mass_max`
+    - `power_law_mass_ratio` for `secondary_mass_scheme`
+        Requires the following parameters:
+        - `mass_ratio_slope`: exponent alpha in q^alpha
+        - `q_min` (optional, default 0.05)
+        - `q_max` (optional, default 1.0)
 
     Parameters
     ----------
@@ -110,6 +116,15 @@ def get_mass_ratio_pdf(kwargs):
         # flat mass ratio, where bounds are given
         from posydon.popsyn.distributions import FlatMassRatio
         q_dist = FlatMassRatio(q_min=kwargs['q_min'], q_max=kwargs['q_max'])
+        q_pdf = lambda q, m1=None: q_dist.pdf(q)
+
+    elif kwargs['secondary_mass_scheme'] == 'power_law_mass_ratio':
+        from posydon.popsyn.distributions import PowerLawMassRatio
+        q_dist = PowerLawMassRatio(
+            alpha=kwargs['mass_ratio_slope'],
+            q_min=kwargs.get('q_min', 0.05),
+            q_max=kwargs.get('q_max', 1.0),
+        )
         q_pdf = lambda q, m1=None: q_dist.pdf(q)
 
     else:
