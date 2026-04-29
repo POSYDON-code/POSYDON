@@ -669,7 +669,7 @@ class PowerLawPeriod():
 
         return pdf_values
 
-    def rvs(self, size=1, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None):
         """Draw random samples from the power law period distribution.
 
         Parameters
@@ -691,7 +691,6 @@ class PowerLawPeriod():
         from posydon.utils.common_functions import inverse_sampler
 
         # Create discretized PDF for inverse sampling
-        n_points = 1000
         logp_grid = np.linspace(np.log10(self.p_min), np.log10(self.p_max), n_points)
         pdf_values = self.power_law_period(logp_grid)
 
