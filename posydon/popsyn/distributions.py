@@ -151,6 +151,149 @@ class FlatMassRatio:
         return rng.uniform(self.q_min, self.q_max, size=size)
 
 
+class PowerLawMassRatio:
+    """Power law mass ratio distribution for binary star systems.
+
+    A distribution where the PDF follows q^alpha within specified bounds
+    (q_min, q_max], exclusive bottom, inclusive top.
+
+    Parameters
+    ----------
+    alpha : float, optional
+        Power law exponent (default: 0.0, i.e. flat). Can be any real number.
+    q_min : float, optional
+        Minimum mass ratio (default: 0.05). Must be in [0, 1).
+    q_max : float, optional
+        Maximum mass ratio (default: 1.0). Must be in (0, 1].
+
+    Raises
+    ------
+    ValueError
+        If q_min or q_max are not in valid range, or if q_min >= q_max.
+
+    Examples
+    --------
+    >>> dist = PowerLawMassRatio(alpha=-1.0, q_min=0.1, q_max=1.0)
+    >>> pdf_value = dist.pdf(0.5)
+    """
+
+    def __init__(self, alpha=0.0, q_min=0.05, q_max=1.0):
+        """Initialize the power law mass ratio distribution.
+
+        Parameters
+        ----------
+        alpha : float, optional
+            Power law exponent (default: 0.0).
+        q_min : float, optional
+            Minimum mass ratio (default: 0.05). Must be in [0, 1).
+        q_max : float, optional
+            Maximum mass ratio (default: 1.0). Must be in (0, 1].
+
+        Raises
+        ------
+        ValueError
+            If q_min or q_max are not in valid range, or if q_min >= q_max.
+        """
+        if not (0 <= q_min < 1):
+            raise ValueError("q_min must be in [0, 1)")
+        if not (0 < q_max <= 1):
+            raise ValueError("q_max must be in (0, 1]")
+        if q_min >= q_max:
+            raise ValueError("q_min must be less than q_max")
+        if alpha <= -1 and q_min == 0:
+            raise ValueError("q_min must be > 0 for alpha <= -1 "
+                             "to avoid divergent integral")
+
+        self.alpha = alpha
+        self.q_min = q_min
+        self.q_max = q_max
+        self.norm = self._calculate_normalization()
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return (f"PowerLawMassRatio(alpha={self.alpha}, "
+                f"q_min={self.q_min}, q_max={self.q_max})")
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return (f"<h3>Power Law Mass Ratio Distribution</h3>"
+                f"<p>alpha = {self.alpha}</p>"
+                f"<p>q_min = {self.q_min}</p>"
+                f"<p>q_max = {self.q_max}</p>")
+
+    def _calculate_normalization(self):
+        """Calculate the normalization constant for the power law mass ratio
+        distribution.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1.
+        """
+        integral, _ = quad(self.power_law_mass_ratio, self.q_min, self.q_max)
+        if integral == 0:  # pragma: no cover
+            raise ValueError("Normalization integral is zero. "
+                             "Check mass ratio parameters.")
+        return 1.0 / integral
+
+    def power_law_mass_ratio(self, q):
+        """Compute the power law mass ratio distribution value.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio.
+
+        Returns
+        -------
+        float or ndarray
+            Distribution value q^alpha.
+        """
+        return np.asarray(q, dtype=float)**self.alpha
+
+    def pdf(self, q):
+        """Probability density function of the power law mass ratio distribution.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density at mass ratio q.
+        """
+        q = np.asarray(q)
+        valid = (q > self.q_min) & (q <= self.q_max)
+        pdf_values = np.zeros_like(q, dtype=float)
+        pdf_values[valid] = self.power_law_mass_ratio(q[valid]) * self.norm
+        return pdf_values
+
+    def rvs(self, size=1, n_points=1000, rng=None):
+        """Draw random samples from the power law mass ratio distribution.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random samples from the distribution.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        from posydon.utils.common_functions import inverse_sampler
+        q_grid = np.linspace(self.q_min, self.q_max, n_points)
+        pdf_values = self.power_law_mass_ratio(q_grid)
+        return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
+
+
 class Sana12Period():
     """Period distribution from Sana et al. (2012).
 
@@ -526,7 +669,7 @@ class PowerLawPeriod():
 
         return pdf_values
 
-    def rvs(self, size=1, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None):
         """Draw random samples from the power law period distribution.
 
         Parameters
@@ -548,7 +691,6 @@ class PowerLawPeriod():
         from posydon.utils.common_functions import inverse_sampler
 
         # Create discretized PDF for inverse sampling
-        n_points = 1000
         logp_grid = np.linspace(np.log10(self.p_min), np.log10(self.p_max), n_points)
         pdf_values = self.power_law_period(logp_grid)
 

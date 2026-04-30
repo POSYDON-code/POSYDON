@@ -146,6 +146,32 @@ class TestGetMassRatioPdf:
         results = q_pdf(0.4)
         assert np.all(results == 1)
 
+    def test_power_law_mass_ratio_pdf(self):
+        """Test that power_law_mass_ratio scheme returns correct PDF values."""
+        kwargs = {
+            'secondary_mass_scheme': 'power_law_mass_ratio',
+            'mass_ratio_slope': 0.0,
+            'q_min': 0.1,
+            'q_max': 0.9,
+        }
+        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        # alpha=0 gives a flat distribution over (0.1, 0.9]
+        result_in = q_pdf(0.5, None)
+        assert result_in > 0
+        result_out = q_pdf(0.05, None)
+        assert result_out == 0
+
+    def test_power_law_mass_ratio_pdf_default_bounds(self):
+        """Test power_law_mass_ratio uses default q_min/q_max when absent."""
+        kwargs = {
+            'secondary_mass_scheme': 'power_law_mass_ratio',
+            'mass_ratio_slope': 1.0,
+        }
+        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        # Default q_min=0.05, q_max=1.0; value inside range should be positive
+        result = q_pdf(0.5, None)
+        assert result > 0
+
 class TestGetBinaryFractionPdf:
 
     def test_const_binary_fraction_pdf(self):
