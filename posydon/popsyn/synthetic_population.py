@@ -2143,8 +2143,8 @@ class TransientPopulation(Population):
 
             t_events = t_birth + delay_time
             # Lazy import for astropy cosmology
-            from astropy.cosmology.Planck15 import age as astropy_age
-            hubble_time_mask = t_events <= astropy_age(1e-08).value * 0.9999999
+            from astropy.cosmology import Planck15
+            hubble_time_mask = t_events <= Planck15.age(1e-08).value * 0.9999999
 
             # get the redshift of the events
             z_events = np.full(t_events.shape, np.nan)
