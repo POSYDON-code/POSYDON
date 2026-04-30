@@ -42,9 +42,6 @@ from posydon.unit_tests._helper_functions_for_tests.population import (
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        # Elements that should be present at module level
-        # Note: Heavy imports (plot_pop, BinaryPopulation, calculate_model_weights, etc.)
-        # are now lazily imported and not present in dir() until accessed
         elements = ['DFInterface','History','Oneline',
                     'Population','PopulationIO','PopulationRunner',
                     'Rates','TransientPopulation',
