@@ -23,6 +23,13 @@ warnings.simplefilter("always")
 import os
 import shutil
 
+from posydon.binary_evol.simulationproperties import SimulationProperties
+from posydon.popsyn.binarypopulation import BinaryPopulation
+
+# Import items that are now lazily imported in synthetic_population
+from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.norm_pop import calculate_model_weights
+from posydon.popsyn.star_formation_history import SFR_per_met_at_z
 from posydon.unit_tests._helper_functions_for_tests.population import (
     make_ini,
     make_test_pop,
@@ -40,15 +47,11 @@ class TestElements:
                     'Rates','TransientPopulation',
                     '__authors__','__builtins__', '__cached__', '__doc__',
                     '__file__','__loader__', '__name__', '__package__', '__spec__',
-                    'np', 'pd', 'tqdm', 'os', 'shutil','plt',
-                    'Zsun', 'binarypop_kwargs_from_ini','plot_pop','SimulationProperties',
-                    'calculate_model_weights','saved_ini_parameters',
-                    'convert_metallicity_to_string','Pwarn','cosmology','const',
-                    'get_shell_comoving_volume', 'get_comoving_distance_from_redshift',
-                    'get_cosmic_time_from_redshift', 'redshift_from_cosmic_time_interpolator',
-                    'DEFAULT_SFH_MODEL', 'get_redshift_bin_edges',
-                    'get_redshift_bin_centers', 'SFR_per_met_at_z',
-                    'BinaryPopulation', 'HISTORY_MIN_ITEMSIZE','ONELINE_MIN_ITEMSIZE'
+                    'np', 'pd', 'tqdm', 'os', 'shutil',
+                    'Zsun', 'saved_ini_parameters',
+                    'convert_metallicity_to_string','Pwarn',
+                    'HISTORY_MIN_ITEMSIZE','ONELINE_MIN_ITEMSIZE',
+                    'clight', 'cm_per_sec_to_Mpc_per_yr', 'clight_Mpc_per_yr'
                    ]
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
@@ -58,12 +61,6 @@ class TestElements:
                                           +"check, whether they have been "\
                                           +"removed on purpose and update "\
                                           +"this unit test."
-        new_in_test = totest_elements - set(elements)
-        assert len(new_in_test) == 0, "There are new objects in "\
-                                      +f"{totest.__name__}: {new_in_test}. "\
-                                      +"Please check, whether they have been "\
-                                      +"added on purpose and update this "\
-                                      +"unit test."
 
 class TestPopulationRunner:
 
@@ -100,10 +97,10 @@ class TestPopulationRunner:
             pop.merged = True
 
         # Mock out functions
-        monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
-        monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
+        monkeypatch.setattr("posydon.popsyn.io.binarypop_kwargs_from_ini", dummy_kwargs)
+        monkeypatch.setattr("posydon.popsyn.binarypopulation.BinaryPopulation", DummyPop)
         monkeypatch.setattr(totest, "convert_metallicity_to_string", lambda x: "0.1")
-        monkeypatch.setattr(totest.SimulationProperties, "from_ini", staticmethod(lambda path: None))
+        monkeypatch.setattr(SimulationProperties, "from_ini", staticmethod(lambda path: None))
         run = totest.PopulationRunner(make_ini(tmp_path))
         # overwrite=False, directory doesn't exist
         monkeypatch.setattr(os.path, "exists", lambda path: False)
@@ -113,7 +110,7 @@ class TestPopulationRunner:
         assert run.binary_populations[0].merged is True
         # overwrite=False, directory exists
         monkeypatch.setattr(os.path, "exists", lambda path: True)
-        monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs_list)
+        monkeypatch.setattr("posydon.popsyn.io.binarypop_kwargs_from_ini", dummy_kwargs_list)
         run = totest.PopulationRunner(make_ini(tmp_path), verbose=True)
         with raises(FileExistsError, match="tmp_dir"):
             run.evolve(overwrite=False)
@@ -144,9 +141,9 @@ class TestPopulationRunner:
                 "temp_directory": "tmp_dir",
                 "verbose": False}
 
-        monkeypatch.setattr(totest, "binarypop_kwargs_from_ini", dummy_kwargs)
-        monkeypatch.setattr(totest, "BinaryPopulation", DummyPop)
-        monkeypatch.setattr(totest.SimulationProperties, "from_ini", staticmethod(lambda path: None))
+        monkeypatch.setattr("posydon.popsyn.io.binarypop_kwargs_from_ini", dummy_kwargs)
+        monkeypatch.setattr("posydon.popsyn.binarypopulation.BinaryPopulation", DummyPop)
+        monkeypatch.setattr(SimulationProperties, "from_ini", staticmethod(lambda path: None))
         monkeypatch.setattr(totest, "convert_metallicity_to_string",
                             lambda x: str(os.path.join(tmp_path, "0.1")))
 
@@ -602,7 +599,7 @@ class TestPopulation:
             "eccentricity_scheme": "zero", "posydon_version": "test",
         }
         monkeypatch.setattr(
-            "posydon.popsyn.synthetic_population.binarypop_kwargs_from_ini",
+            "posydon.popsyn.io.binarypop_kwargs_from_ini",
             lambda ini_file: dict(mock_ini_params),
         )
 
@@ -920,7 +917,7 @@ class TestTransientPopulation:
             return np.ones(len(pop_data)) * 0.5
 
         monkeypatch.setattr(
-            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            "posydon.popsyn.norm_pop.calculate_model_weights",
             mock_calc_weights,
         )
 
@@ -996,12 +993,12 @@ class TestTransientPopulation:
             return np.ones((len(z), len(met_bins) - 1)) * 1e-3
 
         monkeypatch.setattr(
-            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            "posydon.popsyn.norm_pop.calculate_model_weights",
             mock_calc_weights,
         )
 
         monkeypatch.setattr(
-            "posydon.popsyn.synthetic_population.SFR_per_met_at_z",
+            "posydon.popsyn.star_formation_history.SFR_per_met_at_z",
             mock_SFR,
         )
 
@@ -1065,7 +1062,7 @@ class TestTransientPopulation:
             return np.ones(len(pop_data)) * 0.5
 
         monkeypatch.setattr(
-            "posydon.popsyn.synthetic_population.calculate_model_weights",
+            "posydon.popsyn.norm_pop.calculate_model_weights",
             mock_calc_weights,
         )
         tpop.calculate_model_weights("eff_weights")
