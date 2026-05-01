@@ -24,7 +24,7 @@ default_grid_kwargs = {
 
     # Setting the wavelengths range:
     'lam_min': 110.,
-    'lam_max': 27570,
+    'lam_max': 100000,
 
     # Number of points in the wavelength range:
     'lam_res': 300000,

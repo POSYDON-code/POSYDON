@@ -43,7 +43,7 @@ spectral_types = [
     'main_grid', 
     'bstar_grid', 
     'failed_grid',
-    np.nan,
+    'no_grid',
     'secondary_grid',
     'stripped_grid',
     'WR_grid',
@@ -141,11 +141,17 @@ class population_spectra():
             for key in spectral_types:
                 pop_spectrum[key] = np.zeros(num_waves)
         #Iterate through the whole population and calculate the spectrum of S1,S2.
-        for i,binary in pop.iterrows():
+        pop_dict = pop.to_dict("records")
+        for i,binary in enumerate(pop_dict):
             spectrum_1,state_1,label1 = generate_spectrum(self.grids,binary,'S1',**self.kwargs)
             spectrum_2,state_2,label2 = generate_spectrum(self.grids,binary,'S2',**self.kwargs)
 
             #Store labels
+            if label1 is None:
+                label1 = 'failed_grid'
+            if label2 is None:
+                label2 = 'failed_grid'
+
             labels.append([label1,label2])
 
             if spectrum_1 is not None and state_1 is not None:
@@ -189,6 +195,9 @@ class population_spectra():
                 pop_data['S1_grid_status'] = labels[:,0]
                 pop_data['S2_grid_status'] = labels[:,1]
             combined_spectrum = Counter(pop_spectrum[0])
+            #combined_spectrum = {}
+            #for key in pop_spectrum[0]:
+            #    combined_spectrum[key] = sum(d.get(key, 0.0) for d in pop_spectrum)
             if len(pop_spectrum) > 0:
                 for i in range(1,len(pop_spectrum)):
                     pop_dict = Counter(pop_spectrum[i])
@@ -244,17 +253,26 @@ class  sub_population_spectra(population_spectra):
             # determine the starting and ending indices of each sub-task
             starts = [sum(counts[:p]) for p in range(nprocs)]
             ends = [sum(counts[:p+1]) for p in range(nprocs)]
-            # converts data into a list of arrays 
+            # converts data into a list of arrays
+            indices = np.array_split(np.arange(len(pop)), nprocs)
             pop = [pop[starts[p]:ends[p]] for p in range(nprocs)]
         else:
             pop = None
-        pop = comm.scatter(pop, root=0)
-        pop_spectrum, labels_S1 , labels_S2 =  self.create_population_spectrum(pop)
+            indices = None
+        pop = comm.bcast(pop, root=0)
+        sub_idx = comm.scatter(indices, root=0)
+        sub_pop = pop.iloc[sub_idx]
+        pop_spectrum, labels_S1 , labels_S2 =  self.create_population_spectrum(sub_pop)
         total_pop_spectrum = comm.gather(pop_spectrum, root=0)
         labels_S1 = comm.gather(labels_S1, root=0)
         labels_S2 = comm.gather(labels_S2, root=0)
         if self.save_data and rank ==0 :
-            super().save_pop_data(self.population,np.array(labels_S1,dtype = object),np.array(labels_S2,dtype = object),total_pop_spectrum)
+            super().save_pop_data(
+                self.population,
+                np.array(labels_S1,dtype = object),
+                np.array(labels_S2,dtype = object),
+                total_pop_spectrum)
+ 
 
     def create_population_spectrum(self,pop,spectral_type = True):
         """Creates the integrated spectrum of the population.
@@ -299,7 +317,6 @@ class  sub_population_spectra(population_spectra):
                     pop_spectrum[label2] += spectrum_2
                 else:
                     pop_spectrum[state_2] += spectrum_2
-               
 
         if spectral_type:
             for key in spectral_types:

@@ -10,10 +10,10 @@ __authors__ = [
 
 from copy import copy
 import numpy as np
-import astropy.constants as con
-import astropy.units as unt
 import pandas as pd
 from scipy import integrate
+import posydon.utils.constants as constants
+
 
 #Constants
 Zo = 0.0142
@@ -43,8 +43,8 @@ keys_to_save= ['state',
                'S2_surface_h1',
                'S1_surface_he4',
                'S2_surface_he4',
-               'S1_lg_mdot',
-               'S2_lg_mdot'
+               'S1_lg_wind_mdot',
+               'S2_lg_wind_mdot'
                #'S1_metallicity'
                #'Z/Zo'
                #'Z/Zo',
@@ -65,8 +65,8 @@ keys_to_load = ['state',
                'S2_surface_h1',
                'S1_surface_he4',
                'S2_surface_he4',
-               'S1_lg_mdot',
-               'S2_lg_mdot']
+               'S1_lg_wind_mdot',
+               'S2_lg_wind_mdot']
 
 
 def find_max_time(history):
@@ -112,26 +112,25 @@ def load_posydon_population(population_file,metallicity):
     pop['Z/Zo'] = np.ones(len(pop))*metallicity#zams_stars['S1_metallicity'].iloc[0]/Zo
     #Add two extra columns in the pop data
     for star in ['S1','S2']:
-        M = np.asarray(pop[f'{star}_mass'])*con.M_sun
-        R = np.asarray(10**pop[f'{star}_log_R'])*con.R_sun
-        L = np.asarray(10**pop[f'{star}_log_L'])*con.L_sun
-        #pop[f'{star}_M_init'] = M_init
-        pop[f'{star}_log_g'] = np.log10(con.G*M/R**2/(unt.cm/unt.s**2))
-        pop[f'{star}_Teff'] = (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
+        M = np.asarray(pop[f'{star}_mass'])*constants.Msun
+        R = np.asarray(10**pop[f'{star}_log_R'])*constants.Rsun
+        L = np.asarray(10**pop[f'{star}_log_L'])*constants.Lsun
+        pop[f'{star}_log_g'] = np.log10(constants.standard_cgrav*M/R**2)
+        pop[f'{star}_Teff'] = (L/(4*np.pi*R**2*constants.boltz_sigma))**0.25
     return pop
 
 
 def calculate_logg(row,x):
     """Calculate log_g of S1 and S2 from the population data"""
-    mass = row[f'{x}_mass']*con.M_sun
-    R = 10**row[f'{x}_log_R']*con.R_sun
-    return np.log10(con.G*mass/R**2/(unt.cm/unt.s**2))
-
+    mass = row[f'{x}_mass']*constants.Msun
+    R = 10**row[f'{x}_log_R']*constants.Rsun
+    return np.log10(constants.standard_cgrav*mass/R**2)
+ 
 def calculate_Teff(row,x):
     """Calculate Teff of S1 and S2 from the population data"""
-    L = 10**row[f'{x}_log_L']*con.L_sun
-    R = 10**row[f'{x}_log_R']*con.R_sun
-    return (L/(4*np.pi*R**2*con.sigma_sb))**0.25/unt.K
+    L = 10**row[f'{x}_log_L']*constants.Lsun
+    R = 10**row[f'{x}_log_R']*constants.Rsun
+    return (L/(4*np.pi*R**2*constants.boltz_sigma))**0.25
 
 def grid_global_limits(spectral_grids):
     """Calculates the global limits of 
