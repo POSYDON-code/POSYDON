@@ -118,7 +118,7 @@ class PopulationRunner:
             raise ValueError("You did not provide a valid path_to_ini!")
         else:
             self.pop_params = binarypop_kwargs_from_ini(path_to_ini)
-            self.solar_metallicities = self.pop_params["metallicity"]
+            self.solar_metallicities = self.pop_params["metallicities"]
             self.verbose = verbose
             if not isinstance(self.solar_metallicities, list):
                 self.solar_metallicities = [self.solar_metallicities]

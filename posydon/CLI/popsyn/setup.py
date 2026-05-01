@@ -86,7 +86,7 @@ def setup_popsyn_function(args):
     validate_ini_file(args.ini_file)
 
     synpop_params = binarypop_kwargs_from_ini(args.ini_file)
-    metallicities = synpop_params['metallicity']
+    metallicities = synpop_params['metallicities']
     if synpop_params['number_of_binaries'] / args.job_array < 1:
         raise ValueError("The number of binaries is less than the job array"
                          " length. Please increase the number of binaries or"

@@ -50,7 +50,7 @@ def get_ini_file(args):
     '''
 
     # Find and select the INI file
-    ini_files = glob.glob(os.path.join(args.run_folder, '*.ini'))
+    ini_files = sorted(glob.glob(os.path.join(args.run_folder, '*.ini')))
     if not ini_files:
         raise FileNotFoundError("No INI file found in the run folder.")
 
@@ -128,7 +128,7 @@ def get_binary_params(ini_file):
     '''
     # Read the population synthesis parameters
     synpop_params = binarypop_kwargs_from_ini(ini_file)
-    metallicities = synpop_params.get('metallicity', [])
+    metallicities = synpop_params.get('metallicities', [])
     num_metallicities = len(metallicities)
     number_of_binaries = synpop_params.get('number_of_binaries', 0)
     return num_metallicities, number_of_binaries, metallicities, synpop_params

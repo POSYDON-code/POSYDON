@@ -1102,7 +1102,7 @@ def get_formation_times(N_binaries, star_formation="constant", **kwargs): # prag
     if scenario in ["custom_linear", "custom_log10"]:
         custom_ages_file = kwargs.get("custom_ages_file")
         x, y = np.loadtxt(custom_ages_file, unpack=True)
-        current_binary_ages = rejection_sampler(x, y, N_binaries)
+        current_binary_ages = rejection_sampler(x, y, N_binaries, rng=RNG)
         if "log10" in scenario:
             current_binary_ages = 10.0**current_binary_ages
         return max_time - current_binary_ages
@@ -1110,7 +1110,7 @@ def get_formation_times(N_binaries, star_formation="constant", **kwargs): # prag
     if scenario in ["custom_linear_histogram", "custom_log10_histogram"]:
         custom_ages_file = kwargs.get("custom_ages_file")
         x, y = read_histogram_from_file(custom_ages_file)
-        current_binary_ages = histogram_sampler(x, y)
+        current_binary_ages = histogram_sampler(x, y, rng=RNG)
         if "log10" in scenario:
             current_binary_ages = 10.0**current_binary_ages
         return max_time - current_binary_ages

@@ -134,7 +134,7 @@ class TestGetBinaryParams:
     def test_get_binary_params(self, mock_binarypop):
         """Test that binary parameters are extracted correctly."""
         mock_binarypop.return_value = {
-            'metallicity': [0.01, 1.0, 2.0],
+            'metallicities': [0.01, 1.0, 2.0],
             'number_of_binaries': 1000,
             'other_param': 'value'
         }

@@ -63,6 +63,13 @@ How is this Documentation Structured?
 .. toctree::
    :maxdepth: 1
    :titlesonly:
+   :caption: POSYDON school material
+
+   POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-2025-School-Labs>
+
+.. toctree::
+   :maxdepth: 1
+   :titlesonly:
    :caption: In-Depth Components Overview
 
    components-overview/mesa-grids

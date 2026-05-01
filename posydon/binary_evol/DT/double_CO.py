@@ -52,10 +52,6 @@ class DoubleCO(detached_step):
 
         super().__call__(binary)
 
-        binary.separation = self.res.y[0][-1] * 100_000 / constants.Rsun
-        binary.orbital_period = orbital_period_from_separation(
-            binary.separation, binary.star_1.mass, binary.star_2.mass
-        )
         binary.V_sys = binary.V_sys_history[-1]
 
         #if self.res.status == -1:
@@ -65,7 +61,10 @@ class DoubleCO(detached_step):
         #                         f"{self.res.message}")
         # contact event triggered
         if self.res.status == 1:
-            binary.time = self.res.t[-1]
+            binary.time = self.res.real_time[-1]
+            if len(self.res.real_time) > 1:
+                for k, real_time in enumerate(self.res.real_time[::-1]):
+                    binary.time_history[-(k+1)] = real_time
             binary.eccentricity = 0.0
             binary.state = "contact"
             binary.event = "CO_contact"
@@ -86,33 +85,141 @@ class DoubleCO(detached_step):
         a = binary.separation * constants.Rsun / 100_000
         e = binary.eccentricity
         status = -1
-
         while status == -1 and n < 6:
             try:
                 res = solve_ivp(self.evo,
                                 events=self.evo.ev_contact,
                                 method="BDF",
-                            t_span=(0, self.max_time - t0),
-                            y0=[a, e,
-                                secondary.omega0, primary.omega0],
-                            rtol=1e-10,
-                            atol=1e-10,
-                            dense_output=True)
-
+                                t_span=(0, self.max_time-t0),
+                                y0=[a, e,
+                                    secondary.omega0, primary.omega0],
+                                rtol=1e-10,
+                                atol=1e-10,
+                                dense_output=True)
             except Exception as e:
                 set_binary_to_failed(binary)
                 raise NumericalError(f"SciPy encountered termination edge case while solving GR equations: {e}")
 
+            time_sol.append(t0)
             t0 += res.t[-1]
             status = res.status
             n += 1
             a = res.y[0][-1]
             e = res.y[1][-1]
-            time_sol.append(res.t)
             sol.append(res)
 
-        return res
 
+        class CombinedSolution:
+            pass
+        # combine results from multiple solve_ivp calls if needed
+
+        output_solution = CombinedSolution()
+        output_solution.t = np.concatenate([s.t for s in sol])
+        output_solution.y = np.hstack([s.y for s in sol])
+        output_solution.status = sol[-1].status
+        output_solution.message = sol[-1].message
+        output_solution.t_events = sol[-1].t_events
+        output_solution.y_events = sol[-1].y_events
+        output_solution.success = sol[-1].success
+        output_solution.time_sols = time_sol
+        output_solution.time_arrs = [s.t for s in sol]
+
+        # dynamically create a combined sol method that can interpolate across the combined solution
+        def combined_sol(t):
+
+            t = np.array(t)
+            solutions = []
+            for time in t:
+                appended = False
+                for s in sol[::-1]:
+                    if 0 <= time <= s.t[-1]:
+                        solutions.append(s.sol(time))
+                        appended = True
+                        break
+                if not appended:
+                    raise ValueError(f"Time {t} is out of bounds for the combined solution.")
+
+            solutions = np.array(solutions).T
+
+            # convert separation back from [km] to [Rsun]
+            solutions[0] *= 100_000 / constants.Rsun
+
+            return solutions
+
+        output_solution.sol = combined_sol
+
+        return output_solution
+
+    def get_time_after_evo(self, binary):
+        """
+            After detached evolution, this uses the ODESolver result
+        to determine what the current time is.
+
+        Parameters
+        ----------
+        res : ODESolver object
+            This is the ODESolver object produced by SciPy's
+            solve_ivp function that contains calculated values
+            of the stars evolution through the detached step.
+
+        binary: BinaryStar object
+            A binary star object, containing the binary system's properties.
+
+        Returns
+        -------
+        t : float or array[float]
+            This is the time elapsed as a result of detached
+            evolution in years. This is a float unless the
+            user specifies a timestep (see `n_o_steps_history`
+            or `dt`) to use via the simulation properties ini
+            file, in which case it is an array. For DCO objects,
+            this needs to be on the time scale of the inerpolants
+            from solve_ivp, so does not represent the real binary
+            time. This is corrected later in the __call__ method.
+
+        """
+
+        t = np.array([])
+        real_time = np.array([])
+        if self.dt is not None and self.dt > 0:
+
+            for k, time_arr in enumerate(self.res.time_arrs):
+                t_chunk = np.arange(time_arr[0], time_arr[-1] + self.dt/2.0, self.dt)[1:]
+
+                if len(t_chunk) == 0:
+                    continue
+
+                # ensure last element matches (rounding can mess things up for small numbers)
+                if t_chunk[-1] != time_arr[-1]:
+                    t_chunk[-1] = time_arr[-1]
+
+                t = np.hstack([t, t_chunk])
+                real_time = np.hstack([real_time, t_chunk + self.res.time_sols[k]])
+
+            if t[-1] != self.res.t[-1]:
+                t[-1] = self.res.t[-1]
+                real_time[-1] = self.res.t[-1] + self.res.time_sols[-1]
+
+        elif (self.n_o_steps_history is not None and self.n_o_steps_history > 0):
+
+            for k, time_arr in enumerate(self.res.time_arrs):
+                t_step = (time_arr[-1] - time_arr[0]) / self.n_o_steps_history
+                t_chunk = np.arange(time_arr[0], time_arr[-1] + t_step/2.0, t_step)[1:]
+
+                if t_chunk[-1] != time_arr[-1]:
+                    t_chunk[-1] = time_arr[-1]
+
+                t = np.hstack([t, t_chunk])
+                real_time = np.hstack([real_time, t_chunk + self.res.time_sols[k]])
+
+        else:  # self.dt is None and self.n_o_steps_history is None
+            t = np.array([self.res.t[-1]])
+            real_time = t + self.res.time_sols[-1]
+
+        # store this for later to convert time back to real time
+        self.res.real_time = real_time
+
+        return t
 
 
 class double_CO_evolution(detached_evolution):
@@ -172,6 +279,12 @@ class double_CO_evolution(detached_evolution):
                 / (1 - e ** 2) ** (5 / 2) / a ** 4 / c ** 5
                 * (1 + (121 / 304) * e ** 2)
                 * constants.secyer)
+
+        # Sanitize output to prevent propagation of inf/NaN
+        if not np.isfinite(da_gr):
+            da_gr = 0.0
+        if not np.isfinite(de_gr):
+            de_gr = 0.0
 
         self.da += da_gr
         self.de += de_gr
