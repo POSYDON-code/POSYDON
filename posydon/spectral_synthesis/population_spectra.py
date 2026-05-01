@@ -43,6 +43,7 @@ spectral_types = [
     'main_grid', 
     'bstar_grid', 
     'failed_grid',
+    'no_grid',
     'secondary_grid',
     'stripped_grid',
     'WR_grid',

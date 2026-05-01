@@ -43,8 +43,8 @@ keys_to_save= ['state',
                'S2_surface_h1',
                'S1_surface_he4',
                'S2_surface_he4',
-               'S1_lg_mdot',
-               'S2_lg_mdot'
+               'S1_lg_wind_mdot',
+               'S2_lg_wind_mdot'
                #'S1_metallicity'
                #'Z/Zo'
                #'Z/Zo',
@@ -65,8 +65,8 @@ keys_to_load = ['state',
                'S2_surface_h1',
                'S1_surface_he4',
                'S2_surface_he4',
-               'S1_lg_mdot',
-               'S2_lg_mdot']
+               'S1_lg_wind_mdot',
+               'S2_lg_wind_mdot']
 
 
 def find_max_time(history):

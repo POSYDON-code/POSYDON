@@ -14,6 +14,7 @@ import pymsg
 from posydon.spectral_synthesis.default_options import default_grid_kwargs
 from posydon.spectral_synthesis.spectral_tools import grid_global_limits
 from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
+import posydon.utils.constants as constants
 
 kpc = 3.08e21 # cm
 MSG_DIR = os.environ['MSG_DIR']
@@ -29,7 +30,7 @@ GRID_KEYS = [
     'WR_grid',
     'WNL_grid',
     'WNE_grid' ,
-    'WC_grid'
+    'WC_grid',
 ]
 
 
@@ -106,11 +107,13 @@ class spectral_grids():
         lam_min_grids = reduce(lambda x,y: x if x > y else y, map(lambda x: grids[x].lam_min,grids))
         #The max wavelength is the the min max of all of the libraries
         lam_max_grids = reduce(lambda x,y: x if x < y else y, map(lambda x: grids[x].lam_max,grids))
+        lam_maxes = [grids[x].lam_max for x in GRID_KEYS]
         min_key = min(grids, key=lambda k: grids[k].lam_max)
         print(f"Grid with min lam_max: key = {min_key}, lam_max = {grids[min_key].lam_max}")
         lam_min = kwargs.get('lam_min', 3000)
         lam_max = kwargs.get('lam_max', 7000)
         lam_res = kwargs.get('lam_res', 2000)
+        print(lam_maxes, grids)
         if lam_min < lam_min_grids or lam_max > lam_max_grids:
             raise ValueError('The wavelength range chosen is out of the',
                             ' range being offer by the libraries',
@@ -132,7 +135,7 @@ class spectral_grids():
         Flux = np.asarray(specgrid.flux(x, self.lam))
         distance_factor = 1
         if name == "stripped_grid":
-            distance_factor = (kpc)**2
+            distance_factor = (kpc)**2/(0.5 *constants.Rsun)**2
             return Flux*distance_factor
         if name in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
             distance_factor = (kpc/100)**2
@@ -193,6 +196,6 @@ class spectral_grids():
             distance_factor = (kpc/100)**2
         for filter in self.filters:
             F[filter] = photgrid[filter].flux(x)*distance_factor
-
+        
         return F
     

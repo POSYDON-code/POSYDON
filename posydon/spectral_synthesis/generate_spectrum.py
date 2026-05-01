@@ -48,11 +48,6 @@ def check_boundaries(grids,grid_name,**kwargs):
     for axis_label in axis_labels:
         if axis_label == 'log(g)':
             tol = 0.2
-            # Post-AGB stars
-            if x['log(g)'] > 6.5 :
-                return 'failed_grid',x
-            elif (x['log(g)'] > 6) & (x['log_L'] < 4):
-                return 'failed_grid',x
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
@@ -132,25 +127,29 @@ def point_the_grid(grids,x,label,**kwargs):
         if (label is None):
             new_label,x = check_boundaries(grids,'stripped_grid',**x)
             if new_label == 'failed_grid':
-                if x['Teff'] > ostar_temp_cut_off:
-                    return check_boundaries(grids,'ostar_grid',**x)
-                elif x['Teff'] > bstar_temp_cut_off:
-                    return check_boundaries(grids,'bstar_grid',**x)
+                failed_label = labels_out_of_grid(grids, 'stripped_grid',**x)
+                if 'Teff' in failed_label:
+                    pass
+                elif ('log(g)' in failed_label):
+                    x['log(g)'] = enforce_boundaries(grids, 'stripped_grid','log(g)',**x)
+                    new_label,x = check_boundaries(grids,'stripped_grid',**x)
+                    return new_label,x
             else:
                 return new_label,x
-        if label ==  'failed_attempt_1':
-            return check_boundaries(grids,'stripped_grid',**x)
 
     if state in ["WNE_star","WNL_star","WC_star"]:
         if label is None or label == 'failed_attempt_1':
             new_label,x = check_boundaries(grids,state_to_grid[state],**x)
             failed_label = labels_out_of_grid(grids, state_to_grid[state],**x)
             if new_label == 'failed_grid':
-                if x['Teff'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['Teff']:
-                    if state == 'WNL_star':
-                        state = 'WNE_star'
-                    elif state == 'WNE_star':
-                        state = 'WC_star'
+                if 'Teff' in failed_label:
+                    if x['Teff'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['Teff']:
+                        if state == 'WNL_star':
+                            state = 'WNE_star'
+                        elif state == 'WNE_star':
+                            state = 'WC_star'
+                    else: 
+                        pass
                 if x['R_t'] < grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']:
                     x['R_t'] = grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']
                 elif x['R_t'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['R_t']:
@@ -163,22 +162,16 @@ def point_the_grid(grids,x,label,**kwargs):
                     if 'log(g)' in failed_label:
                         x['log(g)'] = enforce_boundaries(grids, 'ostar_grid','log(g)',**x)
                     new_label,x =  check_boundaries(grids,'ostar_grid',**x)
-
                 else: 
                     new_label,x =  check_boundaries(grids,'stripped_grid',**x)
-
                 if new_label == 'failed_grid':
                     if x['Teff'] > ostar_temp_cut_off:
                         return check_boundaries(grids,'ostar_grid',**x)
                     elif x['Teff'] > bstar_temp_cut_off:
                         return check_boundaries(grids,'bstar_grid',**x)
-                    else:
-                        return new_label,x
-                else:
-                    return new_label,x
+            
             else:
                 return new_label,x
-
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
         if label is not None:
@@ -187,15 +180,18 @@ def point_the_grid(grids,x,label,**kwargs):
             return 'failed_grid',x
         return check_boundaries(grids,'ostar_grid',**x)
     if x['Teff'] > bstar_temp_cut_off:
-        if label is not None or (label == 'failed_attempt_1') :
+        if label is not None or (label == 'failed_attempt_2') :
             return 'failed_grid',x
         return check_boundaries(grids,'bstar_grid',**x)
     #Now we are checking at the normal grid and the number of failed trails.
     if label is None or label == 'failed_grid':
-        return check_boundaries(grids,'main_grid',**x)
-    elif label == 'failed_attempt_1':
+        new_label,x =  check_boundaries(grids,'main_grid',**x)
+        if new_label == 'failed_grid':
+            new_label,x =  check_boundaries(grids,'secondary_grid',**x)
+        return new_label,x
+    elif label == 'failed_attempt_1' or label == 'failed_attempt_2' :
         return check_boundaries(grids,'secondary_grid',**x)
-    elif label == 'failed_attempt_2':
+    elif label == 'failed_attempt_3':
         return 'failed_grid',x
     else:
         raise ValueError(f'The label {label} is not recognized!. The state of the star is {x}')
@@ -220,7 +216,17 @@ def generate_spectrum(grids,star,i,**kwargs):
     """
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
-        return None,star[f'{i}_state'],None
+        return None,star[f'{i}_state'],'no_grid'
+    # Post-AGB stars
+    if star[f'{i}_log_g'] > 6.5 :
+        return None,star[f'{i}_state'],'no_grid'
+    elif ((star[f'{i}_log_g'] > 6) & (star[f'{i}_log_L'] < 4)) or ((star[f'{i}_log_g'] > 6) and 'He_depleted' in star[f'{i}_state']):
+        return None,star[f'{i}_state'],'no_grid'
+    
+    #Safety check: 
+    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
+        return None,star[f'{i}_state'],'no_grid'
+    
     if star[f'{i}_surface_h1'] <= 0.6:
         #Check if the stars is false labeled as H_rich 
         rename_star_state(star,i)    
@@ -247,10 +253,11 @@ def generate_spectrum(grids,star,i,**kwargs):
         x['R_t'] = star[f'{i}_Rt']
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
-    count = 1
+    count = 0
     if label == 'failed_grid':
         return None,state,label
-    while count <3:
+    while count < 4:
+        count += 1
         if 'failed_attempt' not in label:
             try:
                 F_l = grids.grid_flux(label,**x)
@@ -259,7 +266,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                     #F_l = smooth_flux_negatives(grids.lam_c, F_l)
                     F_l = grids.NN_grid_flux(label,**x)
                 if label == "stripped_grid":
-                    Flux = F_l*SCALE_CONSTANT
+                    Flux = F_l*SCALE_CONSTANT*R**2
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
                     Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
                     #Replace the negative values for WR
@@ -267,16 +274,16 @@ def generate_spectrum(grids,star,i,**kwargs):
                 else:
                     Flux = F_l*R**2*SCALE_CONSTANT
                 return Flux,star['state'],label
-
+            #Exception in case the star falls in a hole in the grid.
             except LookupError:
                 try:
                     x = rescale_log_g(grids,label,**x)
+                    continue
                 except Exception as e:
                     pass
-                    #print(x)
-                    #print('Under the exception',e)
                 label = f'failed_attempt_{count}'
-            count += 1
+        else:
+            label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
         if label == 'failed_grid':
             return None,state,label
@@ -308,7 +315,7 @@ def regenerate_spectrum(grids,star,i,**kwargs):
     #If the star is WR we need to add R_t quantity in x 
 
     if label == "stripped_grid":
-        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT
+        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT*R**2
     elif label == 'WR_grid':
         if (x['Teff'] > 100000) and (((x['Teff'] -100000)/100000) < 0.1):
             x['Teff'] = 100000
@@ -324,42 +331,47 @@ def rename_star_state(star,i):
     xH_surf = copy(star[f'{i}_surface_h1'])
     xHe_surf = copy(star[f'{i}_surface_he4'])
     tau = calculate_WR_wind_tau(star,i)
-    if 'H_burning' in star[f'{i}_state']:
-        H_burning = True 
+    if 'H-rich_Core_H_burning' in star[f'{i}_state']:
+        H_burning = True
     else: 
         H_burning = False
-    if xH_surf > 0.1: 
-        if H_burning: 
+    if xH_surf > 0.01:
+        if H_burning:
             if tau > 0.1:
                 star[f'{i}_state'] = 'WNL_star'
                 if star[f'{i}_surface_h1'] < 0.2:
                     star[f'{i}_surface_h1'] = 0.2
                 elif star[f'{i}_surface_h1'] > 0.4: 
                     star[f'{i}_surface_h1'] = 0.4
-            else: 
-                if xH_surf < 0.4 * (1 - 0.1): 
-                    star[f'{i}_state'] = 'stripped_He_star'
-        else:
-            star[f'{i}_state'] = 'WNL_star' 
-            if star[f'{i}_surface_h1'] < 0.2:
-                star[f'{i}_surface_h1'] = 0.2
-            elif star[f'{i}_surface_h1'] > 0.4: 
-                star[f'{i}_surface_h1'] = 0.4
-            if tau <= 0.5:
-                star[f'{i}_state'] = 'stripped_He_star'
             else:
-                star[f'{i}_state'] = 'WNL_star' 
-                if star[f'{i}_surface_h1'] < 0.2:
-                    star[f'{i}_surface_h1'] = 0.2
-                elif star[f'{i}_surface_h1'] > 0.4: 
-                    star[f'{i}_surface_h1'] = 0.4
+                if (xH_surf < 0.4 * (1 - 0.1)) | (xH_surf > 0.4 * (1 + 0.1)): 
+                    star[f'{i}_state'] = 'stripped_He_star'
+        else:  
+            if (xH_surf < 0.3): 
+                if tau <= 0.5: 
+                    star[f'{i}_state'] = 'stripped_He_star'
+                else:
+                    star[f'{i}_state'] = 'WNL_star' 
+                    if star[f'{i}_surface_h1'] < 0.2:
+                        star[f'{i}_surface_h1'] = 0.2
+                    elif star[f'{i}_surface_h1'] > 0.4: 
+                        star[f'{i}_surface_h1'] = 0.4 
+            else:
+                if tau <= 0.3 * (1 - 0.1):
+                    star[f'{i}_state'] = 'stripped_He_star'
+                else:
+                    star[f'{i}_state'] = 'WNL_star' 
+                    if star[f'{i}_surface_h1'] < 0.2:
+                        star[f'{i}_surface_h1'] = 0.2
+                    elif star[f'{i}_surface_h1'] > 0.4: 
+                        star[f'{i}_surface_h1'] = 0.4
 
-    elif (xH_surf <= 0.1) and (xHe_surf > 0.7):
+    elif (xH_surf <= 0.01) and (xHe_surf > 0.7):
         if tau <= 1.0:
             star[f'{i}_state'] = 'stripped_He_star'
         else: 
             star[f'{i}_state'] = 'WNE_star'
-    elif (xH_surf <= 0.1) and (xHe_surf < 0.7):
+    elif (xH_surf <= 0.01) and (xHe_surf < 0.7):
         if tau <= 1.0:
             star[f'{i}_state'] = 'stripped_He_star'
         else: 
@@ -385,7 +397,7 @@ def rename_star_state(star,i):
     """    
 def calculated_Rt(star,i):
     #R_t is in R_sun units
-    M_dot = 10**copy(star[f'{i}_lg_mdot']) #M_sun/yr
+    M_dot = 10**copy(star[f'{i}_lg_wind_mdot']) #M_sun/yr
     v_terminal = 1000 #km/s
     D_max = 4 
     R  = 10**copy(star[f'{i}_log_R'])*constants.Rsun
@@ -398,25 +410,27 @@ def calculated_Rt(star,i):
     
     v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
     if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
-        v_terminal = 1.3 * v_esc
+        v_terminal = 2.6 * v_esc
     else: 
         v_terminal = 1.3 * v_esc
     Rt = (R/constants.Rsun)*((v_terminal/(2500*1e5))/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
  
 def calculate_WR_wind_tau(star,i):
-
     xH_surf = copy(star[f'{i}_surface_h1'])
     v_0 = 20 *constants.km2cm # cm *s^-1 
     T = copy(star[f'{i}_Teff'])#K
-    lg_M_dot = -10**copy(star[f'{i}_lg_mdot'])*constants.Msun/constants.secyer  #kg/s
+    lg_M_dot = -10**copy(star[f'{i}_lg_wind_mdot'])*constants.Msun/constants.secyer  #kg/s
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
     M = copy(star[f'{i}_mass'])*constants.Msun #kg
     k_e = 0.2*(1 + xH_surf) #cm^2/g 
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
     v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
-    v_terminal = 1.3 * v_esc
+    if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
+        v_terminal = 2.6 * v_esc
+    else: 
+        v_terminal = 1.3 * v_esc
     tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
     return tau
 
@@ -490,21 +504,33 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
         state: string
         label: string 
     """
+
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
-        return None,star[f'{i}_state'],None
-    if star[f'{i}_Teff'] >= 40000:
-        #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)
+        return None,star[f'{i}_state'],'no_grid'
+    # Post-AGB stars
+    if star[f'{i}_log_g'] > 6.5 :
+        return None,star[f'{i}_state'],'no_grid'
+    elif ((star[f'{i}_log_g'] > 6) & (star[f'{i}_log_L'] < 4)) or ((star[f'{i}_log_g'] > 6) and 'He_depleted' in star[f'{i}_state']):
+        return None,star[f'{i}_state'],'no_grid'
     
-    Fe_H = np.log(star['Z/Zo'])
+    #Safety check: 
+    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
+        return None,star[f'{i}_state'],'no_grid'
+    
+    if star[f'{i}_surface_h1'] <= 0.6:
+        #Check if the stars is false labeled as H_rich 
+        rename_star_state(star,i)    
+    
+    Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
     logg = copy(star[f'{i}_log_g'])
     state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun
-    L = 10**copy(star[f'{i}_log_L'])
+    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
+    log_L = copy(star[f'{i}_log_L'])
+    L = 10**log_L #L_sun
     surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
     x = {'Teff':Teff ,
          'log(g)': logg,
@@ -512,27 +538,46 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
          'Z/Zo':Z_Zo,
          'state':state,
          'surface_h1' : surface_h1,
+         'log_L' : log_L,
          '[alpha/Fe]':0.0}
-    if state == 'WR_star':
+    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
         x['R_t'] = star[f'{i}_Rt']
     label = None
-    label = point_the_grid(grids,x,label,**kwargs)
-    count = 1
+    label,x = point_the_grid(grids,x,label,**kwargs)
+    count = 0
     if label == 'failed_grid':
         return None,state,label
-    while count <= 4:
-        try:
-            if label == "stripped_grid":
-                Flux = grids.photogrid_flux(label,**x)
-            elif label == 'WR_grid':
-                Flux = grids.grid_flux(label,**x)(L/10**5.3)
-            else:
-                Flux = grids.grid_flux(label,**x)
-            return Flux.value,star['state'],label
-        except LookupError:
-            label = f'failed_attempt_{count}'
-        label = point_the_grid(grids,x,label,**kwargs)
+    while count < 4:
         count += 1
+        if 'failed_attempt' not in label:
+            try:
+                F_l = grids.photogrid_flux(label,**x)
+                #Check if the flux has negative values if so then find the N
+                """
+                if np.min(F_l) < 0: 
+                    #F_l = smooth_flux_negatives(grids.lam_c, F_l)
+                    F_l = grids.NN_grid_flux(label,**x)
+                """
+                if label == "stripped_grid":
+                    Flux = F_l*SCALE_CONSTANT*R**2
+                elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
+                    Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
+                    #Replace the negative values for WR
+                    #Flux.value[Flux.value < 0] = 1e-99
+                else:
+                    Flux = F_l*R**2*SCALE_CONSTANT
+                return Flux,star['state'],label
+            #Exception in case the star falls in a hole in the grid.
+            except LookupError:
+                try:
+                    x = rescale_log_g(grids,label,**x)
+                    continue
+                except Exception as e:
+                    pass
+                label = f'failed_attempt_{count}'
+        else:
+            label = f'failed_attempt_{count}'
+        label,x = point_the_grid(grids,x,label,**kwargs)
         if label == 'failed_grid':
             return None,state,label
-    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks')
+    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
