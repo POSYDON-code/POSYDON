@@ -531,7 +531,10 @@ class GRIDInterpolator():
             for key in self.keys:
                 self.grid_data[m][key] = data[self.translate[key]]
             for key in self.final_keys:
-                self.grid_final_values[m][key] = final_value[key]
+                try:
+                    self.grid_final_values[m][key] = final_value[key]
+                except KeyError:
+                    pass
             for key in self.profile_keys:
                 self.grid_profile[m][key] = profile[key]
 
