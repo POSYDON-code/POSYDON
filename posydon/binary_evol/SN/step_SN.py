@@ -115,7 +115,7 @@ class StepSN(object):
         to describe the collapse of the star.
 
     engine : str
-        Engine used for supernova remnanrt outcome propierties for the
+        Engine used for supernova remnant outcome propierties for the
         Sukhbold+16-engineand and Patton&Sukhbold20-engine mechanisms.
         Available options:
 
