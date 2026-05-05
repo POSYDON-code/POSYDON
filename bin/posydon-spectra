@@ -1,0 +1,140 @@
+#!/usr/bin/env python
+# Script to setup a spectral synthesis run
+#
+# 1. Reads the population file and splits into batches
+# 2. Creates a submit file for the batch job array
+# 3. Creates a merge script to combine batch outputs
+# 4. Creates a file to submit everything including dependencies
+#
+
+
+"""
+POSYDON Spectral Synthesis command line tool.
+"""
+
+__authors__ = [
+    "Eirini Kasdagli <kasdaglie@ufl.edu>",
+]
+
+import argparse
+from posydon.spectral_synthesis.CLI.setup import setup_spectra_function
+from posydon.spectral_synthesis.CLI.check import check_spectra_function
+
+
+if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser(
+        prog='posydon-spectra',
+        description='POSYDON spectral synthesis command line tool'
+    )
+
+    subparsers = parser.add_subparsers(title='subcommands', dest='command')
+    subparsers.required = True
+
+    # ── setup subcommand ──────────────────────────────────────────────────
+    setup_parser = subparsers.add_parser(
+        'setup',
+        help='setup a spectral synthesis run'
+    )
+    setup_parser.add_argument(
+        'population_file',
+        help='path to the POSYDON population h5 file',
+        type=str
+    )
+    setup_parser.add_argument(
+        '-j', '--job_array',
+        help='number of batches to split the population into',
+        type=int,
+        default=10
+    )
+    setup_parser.add_argument(
+        '--email',
+        help='an email for the SLURM scripts',
+        default=None
+    )
+    setup_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None
+    )
+    setup_parser.add_argument(
+        '--walltime',
+        help='the walltime for each batch job in SLURM format',
+        default='02:00:00'
+    )
+    setup_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime for the merge script in SLURM format',
+        default='01:00:00'
+    )
+    setup_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu per job array in SLURM format',
+        default='8G'
+    )
+    setup_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None
+    )
+    setup_parser.add_argument(
+        '--temp_directory',
+        help='directory to store batch files — mirrors temp_directory in BinaryPopulation [2]',
+        type=str,
+        default='./spectra_batches'
+    )
+    setup_parser.set_defaults(func=setup_spectra_function)
+
+    # ── check subcommand ──────────────────────────────────────────────────
+    # mirrors: check_parser in posydon-popsyn [1]
+    check_parser = subparsers.add_parser(
+        'check',
+        help='check the status of a spectral synthesis run '
+             'and generate rescue scripts if needed'
+    )
+    check_parser.add_argument(
+        'run_folder',
+        help='the folder where the spectral synthesis run is located',
+        type=str
+    )
+    check_parser.add_argument(
+        '-j', '--job_array',
+        help='number of jobs in the job array '
+             '(used for rescue script generation)',
+        type=int,
+        default=None
+    )
+    check_parser.add_argument(
+        '--email',
+        help='an email for the SLURM scripts',
+        default=None
+    )
+    check_parser.add_argument(
+        '--partition',
+        help='what cluster partition you want to run the script on',
+        default=None
+    )
+    check_parser.add_argument(
+        '--walltime',
+        help='the walltime you would like to use in SLURM format',
+        default=None
+    )
+    check_parser.add_argument(
+        '--merge_walltime',
+        help='the walltime for the merge script in SLURM format',
+        default=None
+    )
+    check_parser.add_argument(
+        '--mem_per_cpu',
+        help='the memory per cpu you would like to use in SLURM format',
+        default=None
+    )
+    check_parser.add_argument(
+        '--account',
+        help='the account you would like to use',
+        default=None
+    )
+    check_parser.set_defaults(func=check_spectra_function)
+
+    args = parser.parse_args()
+    args.func(args)

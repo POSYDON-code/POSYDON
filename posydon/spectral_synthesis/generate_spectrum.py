@@ -265,14 +265,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                 if np.min(F_l) < 0: 
                     #F_l = smooth_flux_negatives(grids.lam_c, F_l)
                     F_l = grids.NN_grid_flux(label,**x)
-                if label == "stripped_grid":
-                    Flux = F_l*SCALE_CONSTANT*R**2
-                elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
-                    Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
-                    #Replace the negative values for WR
-                    #Flux.value[Flux.value < 0] = 1e-99
-                else:
-                    Flux = F_l*R**2*SCALE_CONSTANT
+                Flux = flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT)
                 return Flux,star['state'],label
             #Exception in case the star falls in a hole in the grid.
             except LookupError:
@@ -289,13 +282,25 @@ def generate_spectrum(grids,star,i,**kwargs):
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
 
+def flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT):
+    WR_GRIDS = {'WR_grid', 'WNE_grid', 'WNL_grid', 'WC_grid'}
+    if label == "stripped_grid":
+        Flux = F_l*SCALE_CONSTANT*R**2
+    elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
+        Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
+        #Replace the negative values for WR
+        #Flux.value[Flux.value < 0] = 1e-99
+    else:
+        Flux = F_l*R**2*SCALE_CONSTANT
+    return Flux
+
 def regenerate_spectrum(grids,star,i,**kwargs):
     label = star[f'{i}_grid_status']
     if  pd.isna(label):
         return None,star[f'{i}_state'],label
     if label == "failed_grid":
         return None,star[f'{i}_state'],label
-    Fe_H = np.log(star['Z/Zo'])
+    Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
     Teff = copy(star[f'{i}_Teff'])
@@ -380,21 +385,7 @@ def rename_star_state(star,i):
         raise ValueError("This else shouldn't have been reached")
     if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
         star[f'{i}_Rt'] = calculated_Rt(star,i)
-    
-    """
-    if lg_M_dot < -6:
-        star[f'{i}_state'] = 'stripped_He_star'
-    else:
-        star[f'{i}_Rt'] = calculated_Rt(star,i)
-        if xH_surf < 0.1:
-            if xHe_surf < 0.7 :
-                star[f'{i}_state'] = 'WC_star'
-            else:
-                star[f'{i}_state'] = 'WNE_star'
-        else:
-            star[f'{i}_surface_h1'] = max(xH_surf,0.2)
-            star[f'{i}_state'] = 'WNL_star' 
-    """    
+
 def calculated_Rt(star,i):
     #R_t is in R_sun units
     M_dot = 10**copy(star[f'{i}_lg_wind_mdot']) #M_sun/yr

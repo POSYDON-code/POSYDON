@@ -217,7 +217,7 @@ class population_spectra():
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
 
     
-        h5file =self.output_path + self.output_file
+        h5file = os.path.join(self.output_path,self.output_file)
         pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
 
