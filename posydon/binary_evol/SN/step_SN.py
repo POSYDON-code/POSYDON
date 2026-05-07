@@ -2535,12 +2535,12 @@ class StepSN(object):
         # if there is contradiction or if the progenitor is unclassified based on comp & s_c
         if (len(ff1) > 0 and len(ff2) > 0) or unclassified:
 
-        # final fate classification based on mu4M4
+            # final fate classification based on mu4M4
             if mu4M4_val > mu4M4_crit2:
                 ff = False
             elif mu4M4_val < mu4M4_crit1:
                 ff = True
-        # final fate classification based on reversed Ertl criterion
+            # final fate classification based on reversed Ertl criterion
             elif k1 + k2*mu4M4_val - mu4_val > 0:
                 ff = False
             else:
