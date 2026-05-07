@@ -1758,32 +1758,34 @@ class StepSN(object):
             # extended to Eq 13, in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
             # get the orbital separation post SN
             # Eq from conservation of energy
-            Apost = ((2.0 / rpre)
-                    - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
-                    ) ** -1
+            # Note: Suppress overflow warnings for extreme kick scenarios that lead to
+            # disrupted binaries.
+            with np.errstate(over='ignore', divide='ignore', invalid='ignore'):
+                Apost = ((2.0 / rpre)
+                        - (((Vkick ** 2) + (Vr ** 2) + (2 * (Vkick * cos_theta) * Vr)) / (G * Mtot_post))
+                        ) ** -1
 
 
-                    # get kicks componets in the coordinate system
-            Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
-            Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
-            Vkz = Vkick * sin_theta * np.cos(phi)
+                # get kicks componets in the coordinate system
+                Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
+                Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
+                Vkz = Vkick * sin_theta * np.cos(phi)
 
 
-            # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
-            # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
-            # get the eccentricity post SN
-            # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
+                # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
+                # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
+                # get the eccentricity post SN
+                # Eq from setting specific angular momentum r X Vr = sqrt(G*M*A*(1-e**2))
 
+                x = ((Vkz ** 2 + (Vky + Vr * sin_psi)** 2)
+                    * rpre ** 2
+                    / (G * Mtot_post * Apost))
 
-            x = ((Vkz ** 2 + (Vky + Vr * sin_psi)** 2)
-                * rpre ** 2
-                / (G * Mtot_post * Apost))
-
-            # catch negative values, i.e. disrupted binaries
-            if 1.-x < 0.:
-                epost = np.nan
-            else:
-                epost = np.sqrt(1 - x)
+                # catch negative values, i.e. disrupted binaries
+                if 1.-x < 0.:
+                    epost = np.nan
+                else:
+                    epost = np.sqrt(1 - x)
 
             # Compute COM velocity, VS, post SN
             # VS_pre in COM frame is 0. So VS_post in COM frame is
@@ -1811,7 +1813,9 @@ class StepSN(object):
             # cos(tilt) = Lpre dot Lpost / ||Lpre||||Lpost||
             # For epre=0 (sin_psi=1), reduces to Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
 
-            tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
+            # Suppress overflow warnings for extreme values
+            with np.errstate(over='ignore', invalid='ignore'):
+                tilt = np.arccos((Vky + Vr * sin_psi) / np.sqrt( Vkz ** 2 + (Vky + Vr * sin_psi) ** 2 ))
 
             # Track direction of tilt
             if Vkz < 0: tilt *= -1
@@ -1885,11 +1889,14 @@ class StepSN(object):
                 # (see, e.g., Kalogera, V. & Lorimer, D.R. 2000, ApJ, 530, 890)
                 # The derivation in the papers above assume a circular pre SN
                 # orbit. Hence, need a correction for eccentric pre SN orbits:
-                eccentric_orbit_correction = Vr**2 * rpre / (G * Mtot_pre)
-                tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2\
-                           * eccentric_orbit_correction
-                tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2\
-                           * eccentric_orbit_correction
+                # Suppress divide by zero warnings for edge cases
+                with np.errstate(divide='ignore', over='ignore', invalid='ignore'):
+                    eccentric_orbit_correction = Vr**2 * rpre / (G * Mtot_pre)
+                    tmp1 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr - 1) ** 2\
+                               * eccentric_orbit_correction
+                    tmp2 = 2 - Mtot_pre / Mtot_post * (Vkick / Vr + 1) ** 2\
+                               * eccentric_orbit_correction
+
                 SNflag2 = ((rpre / Apost - tmp1 < err)
                            and (err > tmp2 - rpre / Apost))
 
