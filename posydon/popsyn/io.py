@@ -60,7 +60,7 @@ OBJECT_FIXED_SUB_DTYPES = {
 STARPROPERTIES_DTYPES = {
     'state': 'string',            # the evolutionary state of the star. For more info see
                                 # `posydon.utils.common_functions.check_state_of_star`
-    'metallicity': 'float64',      # initial mass fraction of metals
+    'metallicity': 'float64',      # Z/Z_sun, ratio to solar metallicity (1.0 for solar)
     'mass': 'float64',             # mass (solar units)
     'log_R': 'float64',            # log10 of radius (solar units)
     'log_L': 'float64',            # log10 luminosity (solar units)
