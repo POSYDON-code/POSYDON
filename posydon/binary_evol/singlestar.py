@@ -40,7 +40,7 @@ from posydon.utils.posydonwarning import Pwarn
 STARPROPERTIES = [
     'state',            # the evolutionary state of the star. For more info see
                         # `posydon.utils.common_functions.check_state_of_star`
-    'metallicity',      # initial mass fraction of metals
+    'metallicity',      # Z/Z_sun, ratio to solar metallicity (1.0 for solar)
     'mass',             # mass (solar units)
     'log_R',            # log10 of radius (solar units)
     'log_L',            # log10 luminosity (solar units)
