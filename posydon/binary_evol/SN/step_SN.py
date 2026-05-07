@@ -2522,13 +2522,13 @@ class StepSN(object):
         # check whether criterion for failed SN is fulfilled
         if comp_val > comp_crit2 or sc_val > sc_crit2:
             ff2.append(0)
-            ff = 0
+            ff = False
             unclassified = False
 
         # check whether criterion for successful SN is fulfilled
         if comp_val < comp_crit1 or sc_val < sc_crit1:
             ff1.append(1)
-            ff = 1
+            ff = True
             unclassified = False
 
         # if there is contradiction or if the progenitor is unclassified based on comp & s_c
@@ -2536,14 +2536,14 @@ class StepSN(object):
 
         # final fate classification based on mu4M4
             if mu4M4_val > mu4M4_crit2:
-                ff = 0
+                ff = False
             elif mu4M4_val < mu4M4_crit1:
-                ff = 1
+                ff = True
         # final fate classification based on reversed Ertl criterion
             elif k1 + k2*mu4M4_val - mu4_val > 0:
-                ff = 0
+                ff = False
             else:
-                ff = 1
+                ff = True
         return ff
 
 
