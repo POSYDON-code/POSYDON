@@ -2469,17 +2469,9 @@ class StepSN(object):
                 state = 'BH'
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
-                ff = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
-                if ff == 0:
-                    if conserve_hydrogen_envelope:
-                        m_rem = star.mass
-                    else:
-                        m_rem = star.he_core_mass
+                successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
 
-                    f_fb = 1.0
-                    state = 'BH'
-
-                else:
+                if successful_SN:
                     rem = self.NS_vs_fallbackBH(Xi, CO_core_mass, M4, mu4M4)
                     if rem == 'NS':  # successful SN with NS
                         m_rem = M4
@@ -2494,6 +2486,15 @@ class StepSN(object):
 
                         f_fb = 0.99
                         state = 'BH'
+                        
+                else:
+                    if conserve_hydrogen_envelope:
+                        m_rem = star.mass
+                    else:
+                        m_rem = star.he_core_mass
+
+                    f_fb = 1.0
+                    state = 'BH'
 
         return m_rem, f_fb, state
 
