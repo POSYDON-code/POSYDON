@@ -2486,7 +2486,7 @@ class StepSN(object):
 
                         f_fb = 0.99
                         state = 'BH'
-                        
+
                 else:
                     if conserve_hydrogen_envelope:
                         m_rem = star.mass
