@@ -6,6 +6,7 @@ __authors__ = [
 ]
 
 # import the module which will be tested
+from posydon.grids.lazy_hdf import LazyHDF5
 import posydon.utils.gridutils as totest
 
 # aliases
@@ -109,9 +110,9 @@ class TestFunctions:
     def MESA_data(self):
         # mock data: 3 columns and 2 rows; it contains different
         # types(int, float) and different signs(positive, negative)
-        return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
+        return LazyHDF5(np.array([(1, 2, 3.3), (1, -2, -3.3)],\
                         dtype=[('COL1', '<f8'), ('COL2', '<f8'),\
-                               ('COL3', '<f8')])
+                               ('COL3', '<f8')]))
 
     @fixture
     def MESA_data_path(self, data_path, MESA_data):
