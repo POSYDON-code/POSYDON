@@ -6,10 +6,10 @@ import os
 import numpy as np
 import pandas as pd
 
+from posydon.grids.psygrid import LazyHDF5
 from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
-from posydon.grids.psygrid import LazyHDF5
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
