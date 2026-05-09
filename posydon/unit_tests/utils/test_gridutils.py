@@ -5,9 +5,10 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
+import posydon.utils.gridutils as totest
+
 # import the module which will be tested
 from posydon.grids.lazy_hdf import LazyHDF5
-import posydon.utils.gridutils as totest
 
 # aliases
 np = totest.np
