@@ -5,6 +5,7 @@ __authors__ = [
 import numpy as np
 import pandas as pd
 
+
 class LazyHDF5:
     """
     Lazy wrapper around an HDF5 dataset with optional dtype conversion.
