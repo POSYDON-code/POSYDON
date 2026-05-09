@@ -197,6 +197,7 @@ from posydon.grids.io import (
     initial_values_from_dirname,
     read_initial_values,
 )
+from posydon.grids.lazy_hdf import LazyHDF5
 from posydon.grids.scrubbing import (
     keep_after_RLO,
     keep_till_central_abundance_He_C,
@@ -226,7 +227,6 @@ from posydon.utils.gridutils import (
     read_EEP_data_file,
     read_MESA_data_file,
 )
-from posydon.grids.lazy_hdf import LazyHDF5
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.limits_thresholds import (
     THRESHOLD_CENTRAL_ABUNDANCE,
