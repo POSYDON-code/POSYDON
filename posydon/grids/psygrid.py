@@ -224,8 +224,8 @@ from posydon.utils.gridutils import (
     join_lists,
     read_EEP_data_file,
     read_MESA_data_file,
-    LazyHDF5
 )
+from posydon.grids.lazy_hdf import LazyHDF5
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.limits_thresholds import (
     THRESHOLD_CENTRAL_ABUNDANCE,
