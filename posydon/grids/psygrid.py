@@ -1475,8 +1475,9 @@ class PSyGrid:
             raise ValueError("`array` has {} elements but the grid has {} runs"
                              .format(len(arr), len(self)))
 
-        if not isinstance(self.final_values, np.ndarray):
-            raise TypeError("The final values have to be a ndarray.")
+        if not isinstance(self.final_values, (np.ndarray, LazyHDF5)):
+            raise TypeError("The final values have to be a ndarray or LazyHDF5 object." 
+                            "Instead, it is {}.".format(type(self.final_values)))
 
         if colname in self.final_values.dtype.names:
             if overwrite:

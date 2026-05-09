@@ -9,6 +9,7 @@ import pandas as pd
 from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
+from posydon.grids.psygrid import LazyHDF5
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
@@ -141,10 +142,14 @@ def add_field(a, descr):
 
     """
     if a.dtype.fields is None:
-        raise ValueError("'a' must be a structured numpy array")
+        raise ValueError("'a.dtype.fields' must not be None.")
     b = np.empty(a.shape, dtype=a.dtype.descr + descr)
     for name in a.dtype.names:
         b[name] = a[name]
+
+    if isinstance(a, LazyHDF5):
+        b = LazyHDF5(b)
+
     return b
 
 
