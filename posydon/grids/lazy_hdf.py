@@ -70,6 +70,9 @@ class LazyHDF5:
         if self._dtype_set is not None:
             data = data.astype(self._dtype_list)
         return data
+    
+    def astype(self, dtype):
+        return LazyHDF5(np.asarray(self).astype(dtype))
 
     @property
     def dtype(self):
