@@ -142,8 +142,8 @@ def add_field(a, descr):
     True
 
     """
-    if a.dtype.fields is None:
-        raise ValueError("'a.dtype.fields' must not be None.")
+    if a.dtype.fields is None or len(a.dtype.fields) == 0:
+        raise ValueError("'a.dtype.fields' must not be empty or None.")
     b = np.empty(a.shape, dtype=a.dtype.descr + descr)
     for name in a.dtype.names:
         b[name] = a[name]

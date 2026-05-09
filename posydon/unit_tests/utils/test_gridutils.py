@@ -487,7 +487,7 @@ class TestFunctions:
                                      +"arguments: 'a' and 'descr'"):
             totest.add_field()
         # add to empty ndarray
-        with raises(ValueError, match="'a' must be a structured numpy array"):
+        with raises(ValueError, match="'a.dtype.fields' must not be empty or None."):
             totest.add_field(np.array([]), [('new', '<f8')])
         # add to test data
         extended_ndarray = totest.add_field(MESA_data, [('new', '<f8')])
