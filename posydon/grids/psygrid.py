@@ -219,12 +219,12 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.gridutils import (
+    LazyHDF5,
     add_field,
     fix_He_core,
     join_lists,
     read_EEP_data_file,
     read_MESA_data_file,
-    LazyHDF5
 )
 from posydon.utils.ignorereason import IgnoreReason
 from posydon.utils.limits_thresholds import (
