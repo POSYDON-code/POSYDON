@@ -1416,7 +1416,8 @@ class PSyGrid:
     def update_final_values(self):
         """Update the final values in the HDF5 file."""
         if not isinstance(self.final_values, (np.ndarray, LazyHDF5)):
-            raise TypeError("The final values have to be a ndarray.")
+            raise TypeError("The final values have to be a ndarray or LazyHDF5 object."
+                            "Instead, it is {}.".format(type(self.final_values)))
 
         self._reload_hdf5_file(writeable=True)
         new_dtype = []
