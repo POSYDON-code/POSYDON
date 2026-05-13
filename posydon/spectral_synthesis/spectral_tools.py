@@ -235,8 +235,8 @@ def isochrome_weight(m1,IMF_type='Salpeter'):
         a = 2.35
     else:
         raise ValueError("IMF type not compatible")
-    m_min = 0.2
-    m_max = 120
+    m_min = 0.1
+    m_max = 150
     norm = ( (-a + 2 ))/(m_max**(-a + 2) - m_min**(-a + 2))
     if m1 > m_max or m1 < m_min: 
         weight = 0
