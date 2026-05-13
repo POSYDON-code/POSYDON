@@ -119,14 +119,14 @@ class population_spectra():
             pop_spectrum: dictonary of type of binaries and their corresponding spectrum.
             wavelength: numpy array
         """
-        isochromes = self.kwargs.get('isochromes',False)
+        isochrones = self.kwargs.get('isochrones',False)
         spectral_type = self.kwargs.get('spectral_type',False)
         #
         if pop is None:
             pop = self.population
         
         weights = None
-        if isochromes:
+        if isochrones:
             mini_file = self.kwargs.get('mini_file',False)
             weights = IMF_WEIGHT(mini_file)
         
@@ -153,9 +153,9 @@ class population_spectra():
                 label2 = 'failed_grid'
 
             labels.append([label1,label2])
-
             if spectrum_1 is not None and state_1 is not None:
-                if isochromes:
+                if isochrones:
+                    print(i,weights[i],binary)
                     spectrum_1 = spectrum_1*weights[i]
                 pop_spectrum[state_1] += spectrum_1
                 if spectral_type:
