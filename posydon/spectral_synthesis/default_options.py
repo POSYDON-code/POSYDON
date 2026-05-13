@@ -11,9 +11,9 @@ default_grid_kwargs = {
     # Default grid options:
 
     # The main grid option:
-    'main_grid':'sg-C3K-v1-solar.h5',#'sg-C3K-coarse.h5',"sg-CAP18-coarse.h5",
+    'main_grid':'sg-C3K-demo.h5',#'sg-C3K-coarse.h5',"sg-CAP18-coarse.h5",
     # Secondary grid option to capture the failures of the main grid.
-    'secondary_grid': "sg-BSTAR2006-ufl-vtb2.h5",
+    'secondary_grid': 'sg-BOSZ-MARCS-v1.h5',
     'stripped_grid': "sg-Gotberg23.h5",
     'bstar_grid' :'sg-BSTAR2006-ufl-vtb2.h5',# "sg-BSTAR2006-ufl-vtb2.h5",#,'sg-C3K-coarse.h5'
     'ostar_grid': "sg-OSTAR2002-ufl.h5",
@@ -35,7 +35,7 @@ default_grid_kwargs = {
 default_kwargs = {
     'max_number_of_binaries': None,
     #int
-    'save_data': False,
+    'save_data': True,
     #False,True
 
     #The desired path for the output file.

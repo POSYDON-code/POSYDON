@@ -249,53 +249,41 @@ def isochrome_weight(m1,IMF_type='Salpeter'):
 
 
 def IMF_WEIGHT(mini):
-    """
-    Make the weights a dictionary that for every m1 there is the weight according to fsps
-    !weight each star by the initial mass function (IMF)
-    !such that the total initial population consists of 
-    !one solar mass of stars.
-
-    !This weighting scheme assumes that the luminosity, mass, etc.
-    !does not vary within the mass bin.  The point is that we
-    !want each element to represent the whole bin, from 
-    !mass+/-0.5dm, rather than just the values at point i.
-    !Then every intergral over mass is just a sum.
-
-    USE sps_vars
-    USE sps_utils, ONLY : imf, funcint
-    IMPLICIT NONE
-
-    REAL(SP), INTENT(inout), DIMENSION(nm) :: wght
-    REAL(SP), INTENT(in), DIMENSION(nm)    :: mini
-    INTEGER, INTENT(in) :: nmass
-    INTEGER  :: i
-    REAL(SP) :: m1,m2
-
-    !--------------------------------------------------------!
-    !--------------------------------------------------------!
-    """
-    wght = {}
-    imf_lower_limit = 0.2
-    imf_upper_limit = 120
-    imf_type = 0 
+    imf_lower_limit = 0.099  
+    imf_upper_limit = 150
     a = 2.35
+
+    wght = [0.0] * len(mini)
+
+    # mirrors: funcint(imf, imf_lower_limit, imf_upper_limit) in Fortran
+    # NOTE: no extra x factor — pure number-weighted IMF normalization
+    norm = integrate.quad(
+        lambda x: x*x**(-a), imf_lower_limit, imf_upper_limit
+    )[0]
+
     for i in range(len(mini)):
         if mini[i] < imf_lower_limit or mini[i] > imf_upper_limit:
             continue
-        if i ==0:
+
+        if i == 0:
             m1 = imf_lower_limit
         else:
-            m1 = mini[i] - 0.5*(mini[i]-mini[i-1])
-        if i == len(mini):
-            m2 = mini[i]
-        else: 
-            m2 = mini[i] + 0.5*(mini[i+1]-mini[i])
+            m1 = mini[i] - 0.5 * (mini[i] - mini[i-1])
+
+        if i == len(mini)-1:
+            m2 = imf_upper_limit
+        else:
+            m2 = mini[i] + 0.5 * (mini[i+1] - mini[i])
+
         if m2 < m1:
-            print('IMF_WEIGHT WARNING: non-monotonic mass!',m1,m2,m2-m1)
+            print('IMF_WEIGHT WARNING: non-monotonic mass!', m1, m2, m2-m1)
             continue
+
         if m2 == m1:
             continue
-        wght[i] = integrate.quad(lambda x: x**(-a),m1,m2)[0]/integrate.quad(lambda x: x*x**(-a),imf_lower_limit,imf_upper_limit)[0]
-    #normalize the weights as an integral from lower to upper limits
-    
+        dm=0.1
+        m_low = max(mini[i] - dm/2, imf_lower_limit)
+        m_high = min(mini[i] + dm/2, imf_upper_limit)
+        wght[i] = integrate.quad(lambda x: x**(-a), m_low, m_high)[0] / norm
+
     return wght
