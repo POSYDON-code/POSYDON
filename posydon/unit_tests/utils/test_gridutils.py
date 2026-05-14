@@ -5,8 +5,10 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
 import posydon.utils.gridutils as totest
+
+# import the module which will be tested
+from posydon.grids.lazy_hdf import LazyHDF5
 
 # aliases
 np = totest.np
@@ -35,7 +37,7 @@ class TestElements:
                     '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'add_field',\
-                    'clean_inlist_file',\
+                    'clean_inlist_file', 'LazyHDF5',\
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
@@ -109,9 +111,9 @@ class TestFunctions:
     def MESA_data(self):
         # mock data: 3 columns and 2 rows; it contains different
         # types(int, float) and different signs(positive, negative)
-        return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
+        return LazyHDF5(np.array([(1, 2, 3.3), (1, -2, -3.3)],\
                         dtype=[('COL1', '<f8'), ('COL2', '<f8'),\
-                               ('COL3', '<f8')])
+                               ('COL3', '<f8')]))
 
     @fixture
     def MESA_data_path(self, data_path, MESA_data):
@@ -487,7 +489,7 @@ class TestFunctions:
                                      +"arguments: 'a' and 'descr'"):
             totest.add_field()
         # add to empty ndarray
-        with raises(ValueError, match="'a' must be a structured numpy array"):
+        with raises(ValueError, match="'a.dtype.fields' must not be empty or None."):
             totest.add_field(np.array([]), [('new', '<f8')])
         # add to test data
         extended_ndarray = totest.add_field(MESA_data, [('new', '<f8')])
