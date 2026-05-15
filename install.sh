@@ -539,10 +539,6 @@ show_final_instructions() {
     else
         echo -e "2. ${BOLD}Start using POSYDON:${NC}"
     fi
-    echo -e "   ${CYAN}python${NC}"
-    echo -e "   ${CYAN}>>> import posydon${NC}"
-    echo -e "   ${CYAN}>>> print(posydon.__version__)${NC}"
-    echo ""
 
     echo -e "${BOLD}Environment Variables:${NC}"
     echo "  The following environment variables are set in your conda environment:"
@@ -552,24 +548,8 @@ show_final_instructions() {
     echo "  These are automatically loaded when you activate the environment."
     echo ""
 
-    echo -e "${BOLD}Optional: Auto-activate environment${NC}"
-    echo "  To automatically activate the environment when you open a new terminal,"
-    echo "  add this line to your shell profile (~/.bashrc, ~/.bash_profile, or ~/.zshrc):"
-    echo ""
-    echo -e "  ${CYAN}conda activate ${ENV_NAME}${NC}"
-    echo ""
-
     echo -e "${BOLD}Documentation:${NC}"
     echo -e "  • POSYDON Documentation: ${CYAN}https://posydon.org/POSYDON/latest/${NC}"
-    echo -e "  • Getting Started Guide:  ${CYAN}https://posydon.org/POSYDON/latest/getting-started/index.html${NC}"
-    echo ""
-
-    echo -e "${BOLD}Useful Commands:${NC}"
-    echo -e "  • Activate environment:    ${CYAN}conda activate ${ENV_NAME}${NC}"
-    echo -e "  • Deactivate environment:  ${CYAN}conda deactivate${NC}"
-    echo -e "  • List datasets:           ${CYAN}get-posydon-data -l complete${NC}"
-    echo -e "  • Download more data:      ${CYAN}get-posydon-data <dataset_name>${NC}"
-    echo -e "  • Check environment vars:  ${CYAN}echo \$PATH_TO_POSYDON${NC}"
     echo ""
 
     print_success "Installation complete! Happy POSYDON-ing! 🌟"
