@@ -73,7 +73,7 @@ class LazyHDF5:
         return data
 
     def astype(self, dtype): # pragma: no cover
-        return LazyHDF5(np.asarray(self).astype(dtype))
+        return np.asarray(self).astype(dtype)
 
     @property
     def dtype(self):
