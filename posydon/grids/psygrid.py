@@ -220,7 +220,6 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.gridutils import (
-    LazyHDF5,
     add_field,
     fix_He_core,
     join_lists,
