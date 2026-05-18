@@ -405,6 +405,8 @@ class PSyGrid:
         if self.filepath is not None:
             self.load(self.filepath)
 
+        # the com
+
     def _reset(self):
         """(Re)set attributes to defaults, except `filename` and `verbose`."""
         self.close()
@@ -1493,14 +1495,10 @@ class PSyGrid:
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype[dtype[0]] = dtype[1]
 
-        if lazy:
-            initial_values = LazyHDF5(initial_values)
-            final_values = LazyHDF5(final_values, new_dtype)
-        else: # pragma: no cover
-            initial_values = initial_values[()]
-            final_values = final_values[()]
-            new_dtype = list(new_dtype.items())
-            final_values = final_values.astype(new_dtype)
+        initial_values = initial_values[()]
+        final_values = final_values[()]
+        new_dtype = list(new_dtype.items())
+        final_values = final_values.astype(new_dtype)
 
         self.initial_values = initial_values
         self.final_values = final_values
@@ -1541,6 +1539,9 @@ class PSyGrid:
             self.n_runs = n_expected
         else:
             raise KeyError("Some runs are missing from the HDF5 grid.")
+
+        # load the compression args for later use
+        self._make_compression_args()
 
         self._say("\tDone.")
 
