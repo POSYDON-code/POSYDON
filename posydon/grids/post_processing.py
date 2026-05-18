@@ -168,7 +168,6 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
 
     """
     print('Post processing grid...')
-    print(grid.compression_args)
     EXTRA_COLUMNS = {}
     if single_star: # only star 1 columns in case of single star grid
         stars = [1]
@@ -576,6 +575,9 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     if 'final_values' in hdf5_file['grid']:
         del hdf5_file['grid/final_values']
 
+    # TODO: we should optimize the compression for reads, since we ar mostly
+    # reading the data. This should also be for the SN_MODELS and initial_values.
+    # This also includes optimizing the chunk size for the new datasets.
     hdf5_file.create_dataset('grid/final_values', data=out, **grid.compression_args)
 
     if 'SN_MODELS' in hdf5_file['grid']:
