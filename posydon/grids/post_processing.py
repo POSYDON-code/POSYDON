@@ -522,6 +522,9 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     SN_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if 'SN_MODEL' in col]
     OTHER_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if col not in SN_COLUMNS]
 
+    # get the final_values dataset
+    final_values = np.array(grid.final_values)
+
     # Open the grid to write to
     grid._reload_hdf5_file(writeable=True)
     hdf5_file = grid.hdf5
@@ -536,9 +539,6 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
             EXTRA_COLUMNS[column] = EXTRA_COLUMNS[column].astype(dtype)
         else:
             EXTRA_COLUMNS[column] = np.array(EXTRA_COLUMNS[column], dtype=np.float64)
-
-    # get the final_values dataset
-    final_values = grid.final_values
 
     new_dtype = []
     for name in final_values.dtype.names:
@@ -561,13 +561,12 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     # The new values are written to file
     if overlap:
         final_values = recfunctions.drop_fields(final_values, list(overlap))
-        print('final_values dtype after dropping overlapping fields:', final_values.dtype)
 
     # Add the final_values to the dataset
     out = recfunctions.append_fields(base=final_values,
-                                     names=OTHER_COLUMNS,
-                                     data=[np.asarray(EXTRA_COLUMNS[column], dtype=EXTRA_COLUMNS[column].dtype) for column in OTHER_COLUMNS],
-                                     dtypes=[EXTRA_COLUMNS[column].dtype for column in OTHER_COLUMNS],
+                                     names=EXTRA_COLUMNS,
+                                     data=[np.asarray(EXTRA_COLUMNS[column], dtype=EXTRA_COLUMNS[column].dtype) for column in EXTRA_COLUMNS],
+                                     dtypes=[EXTRA_COLUMNS[column].dtype for column in EXTRA_COLUMNS],
                                     )
 
     # write the new final_values to the dataset
@@ -580,26 +579,26 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     # This also includes optimizing the chunk size for the new datasets.
     hdf5_file.create_dataset('grid/final_values', data=out, **grid.compression_args)
 
-    if 'SN_MODELS' in hdf5_file['grid']:
-        del hdf5_file['grid/SN_MODELS']
+    # if 'SN_MODELS' in hdf5_file['grid']:
+    #     del hdf5_file['grid/SN_MODELS']
 
-    SN_MODELS_group = hdf5_file['grid'].create_group('SN_MODELS')
+    # SN_MODELS_group = hdf5_file['grid'].create_group('SN_MODELS')
 
-    # Store each SN_MODEL in a separate dataset.
-    # Generally only a single dataset is needed per population synthesis run.
-    for SN_MODEL_NAME in SN_MODELS.keys():
-        # filter the columns for the specific SN_MODEL
-        SN_MODEL_columns = [col for col in SN_COLUMNS if f'{SN_MODEL_NAME}_' in col]
-        SN_MODEL_data = np.rec.fromarrays([EXTRA_COLUMNS[col] for col in SN_MODEL_columns],
-                                         names=[col.replace(f'{SN_MODEL_NAME}_', '') for col in SN_MODEL_columns])
+    # # Store each SN_MODEL in a separate dataset.
+    # # Generally only a single dataset is needed per population synthesis run.
+    # for SN_MODEL_NAME in SN_MODELS.keys():
+    #     # filter the columns for the specific SN_MODEL
+    #     SN_MODEL_columns = [col for col in SN_COLUMNS if f'{SN_MODEL_NAME}_' in col]
+    #     SN_MODEL_data = np.rec.fromarrays([EXTRA_COLUMNS[col] for col in SN_MODEL_columns],
+    #                                      names=[col.replace(f'{SN_MODEL_NAME}_', '') for col in SN_MODEL_columns])
 
-        # write the SN_MODEL data to the SN_MODELS group in the HDF5 file
-        SN_MODELS_group.create_dataset(SN_MODEL_NAME, data=SN_MODEL_data, **grid.compression_args)
+    #     # write the SN_MODEL data to the SN_MODELS group in the HDF5 file
+    #     SN_MODELS_group.create_dataset(SN_MODEL_NAME, data=SN_MODEL_data, **grid.compression_args)
 
-        # write metadata about the SN_MODEL as attributes to the dataset
-        SN_MODEL = get_SN_MODEL(SN_MODEL_NAME)
-        for key, value in SN_MODEL.items():
-            SN_MODELS_group[SN_MODEL_NAME].attrs[key] = value
+    #     # write metadata about the SN_MODEL as attributes to the dataset
+    #     SN_MODEL = get_SN_MODEL(SN_MODEL_NAME)
+    #     for key, value in SN_MODEL.items():
+    #         SN_MODELS_group[SN_MODEL_NAME].attrs[key] = value
 
 
     # close the file
