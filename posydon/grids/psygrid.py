@@ -1545,7 +1545,7 @@ class PSyGrid:
 
         # set the compression arguments
         self._make_compression_args()
-        
+
         self._say("\tDone.")
 
     def close(self):
