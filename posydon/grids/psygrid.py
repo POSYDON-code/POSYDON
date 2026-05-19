@@ -189,6 +189,7 @@ import h5py
 import numpy as np
 import pandas as pd
 import tqdm
+from numpy.lib import recfunctions as rfn
 
 from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.io import (
@@ -405,7 +406,6 @@ class PSyGrid:
         if self.filepath is not None:
             self.load(self.filepath)
 
-        # the com
 
     def _reset(self):
         """(Re)set attributes to defaults, except `filename` and `verbose`."""
@@ -414,10 +414,45 @@ class PSyGrid:
         self.MESA_dirs = []
         self.initial_values = None
         self.final_values = None
+        self._SN_values = None
         self.config = ConfigFile()
         self._make_compression_args()
         self.n_runs = 0
         self.eeps = None
+
+    @property
+    def SN_values_old(self):
+        """Returns all SN_MODELS values as a structured array in the old format.
+
+        old format: S1/2_{SN_MODEL_NAME}_{VARIABLE_NAME}
+
+        Returns
+        -------
+        np.ndarray
+            Structured array with the SN_MODELS values. The columns are the
+            same as the datasets in the SN_MODELS group of the HDF5 file.
+            The name is
+        """
+
+        group = self.hdf5['grid/SN_MODELS']
+        SN_models = list(group.keys())
+        out = []
+        for SN_model in SN_models:
+            out.append(rfn.rename_fields(group[SN_model][:],
+                                    {name: f'{name[:3]}{SN_model}_{name[3:]}' for name in group[SN_model].dtype.names}))
+
+        self._SN_values = rfn.merge_arrays(out, flatten=True, usemask=False)
+
+    @property
+    def SN_values(self):
+        """Returns the hdf5 group of the SN_MODELS, which can be accessed as a dictionary of datasets.
+
+        Returns
+        -------
+        h5py.Group
+            The SN_MODELS group of the HDF5 file, which contains datasets for each SN model.
+        """
+        return self.hdf5['/grid/SN_MODELS']
 
     def _make_compression_args(self):
         """Convert compression information from the config."""
@@ -1495,10 +1530,14 @@ class PSyGrid:
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
             new_dtype[dtype[0]] = dtype[1]
 
-        initial_values = initial_values[()]
-        final_values = final_values[()]
-        new_dtype = list(new_dtype.items())
-        final_values = final_values.astype(new_dtype)
+        if lazy:
+                initial_values = LazyHDF5(initial_values)
+                final_values = LazyHDF5(final_values, dtype_set=new_dtype)
+        else:
+            initial_values = initial_values[()]
+            final_values = final_values[()]
+            new_dtype = list(new_dtype.items())
+            final_values = final_values.astype(new_dtype)
 
         self.initial_values = initial_values
         self.final_values = final_values
