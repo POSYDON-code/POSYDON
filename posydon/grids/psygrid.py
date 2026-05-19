@@ -1543,6 +1543,9 @@ class PSyGrid:
         else:
             raise KeyError("Some runs are missing from the HDF5 grid.")
 
+        # set the compression arguments
+        self._make_compression_args()
+        
         self._say("\tDone.")
 
     def close(self):
