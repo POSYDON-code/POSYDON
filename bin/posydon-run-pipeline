@@ -282,7 +282,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
         star_2_CO = False
 
     # load grid with ORIGINAL compression and get extra colums
-    grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path)
+    grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path, lazy=False)
     MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
                                               index=None, star_2_CO=star_2_CO,
                                               verbose=verbose)
@@ -296,7 +296,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, processed_grid_path)
 
     # load processed grid and append values
-    grid = PSyGrid(processed_grid_path)
+    grid = PSyGrid(processed_grid_path, lazy=False)
     add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS)
     if verbose:
         print(f'Added processed quantities to grid: {processed_grid_path}')
@@ -357,7 +357,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     interp_method = [method, method]
     interp_classes = ["stable_MT", "unstable_MT"]
@@ -999,7 +999,7 @@ def rerun(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     # export point to rerun
     if verbose:
@@ -1127,7 +1127,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     for quantity_to_plot in quantities_to_plot:
         if verbose:
@@ -1387,7 +1387,7 @@ def do_check(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     # do the checks
     for check_to_do in checks_to_do:
