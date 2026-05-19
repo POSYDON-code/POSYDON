@@ -967,7 +967,7 @@ class plot2D(object):
             elif self.binary_history:
                 final_values = []
                 for run in self.psygrid:
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if run.binary_history is None:
                         final_values.append(np.nan)
@@ -1005,7 +1005,7 @@ class plot2D(object):
                     else:
                         raise ValueError(
                             "wrong selected_star_history_for_z_var")
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if history is None:
                         values.append(np.nan)
@@ -1033,7 +1033,7 @@ class plot2D(object):
             elif self.binary_history:
                 values = []
                 for run in self.psygrid:
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if run.binary_history is None:
                         values.append(np.nan)
