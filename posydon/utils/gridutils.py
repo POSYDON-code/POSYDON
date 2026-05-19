@@ -107,6 +107,8 @@ def fix_He_core(history):
     return history
 
 
+# TODO: replace with numpy.lib.recfunctions?
+# allows adding multiple fields to a structured array as well. (more efficient probably?)
 def add_field(a, descr):
     """Return a new array that is like `a`, but has additional fields.
 
