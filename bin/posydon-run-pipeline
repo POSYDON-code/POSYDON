@@ -409,24 +409,31 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # to catch reverse mass transfer cases where the secondary undergoes
     # core collapse first
     for SN_MODEL_NAME in SN_MODELS.keys():
+        if SN_MODEL_NAME not in grid.SN_MODELS:
+            continue
+        sn_ds = grid.SN_MODELS[SN_MODEL_NAME]
         for i in range(1,2): #TODO: range(1,3):
-            out_keys = [key for key in grid.final_values.dtype.names if (
-                                   key != "model_number" and
-                                   (type(grid.final_values[key][0]) != np.str_)
-                                   and any(~np.isnan(grid.final_values[key]))
-                                   and f"S{i}_{SN_MODEL_NAME}" in key)]
-
-            out_nan_keys = [key for key in grid.final_values.dtype.names if (
-                                key != "model_number"
-                                and (type(grid.final_values[key][0]) != np.str_)
-                                and all(np.isnan(grid.final_values[key]))
-                                and f"S{i}_{SN_MODEL_NAME}" in key)]
+            prefix = f'S{i}_'
+            out_keys = []
+            out_nan_keys = []
+            for short_key in sn_ds.dtype.names:
+                if not short_key.startswith(prefix):
+                    continue
+                col_data = sn_ds[short_key]
+                if col_data.dtype.kind in ('S', 'U', 'O'):
+                    continue
+                full_key = f'S{i}_{SN_MODEL_NAME}_{short_key[3:]}'
+                if any(~np.isnan(col_data)):
+                    out_keys.append(full_key)
+                else:
+                    out_nan_keys.append(full_key)
 
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
+            co_interp_col = sn_ds[f'S{i}_CO_interpolation_class']
             for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
-                if CO_interpolation_class in grid.final_values[f'S{i}_{SN_MODEL_NAME}_CO_interpolation_class']:
+                if CO_interpolation_class in co_interp_col:
                     interp_method.append(method)
                     interp_classes.append(CO_interpolation_class)
 

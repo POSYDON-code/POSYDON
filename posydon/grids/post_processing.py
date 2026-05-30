@@ -519,6 +519,9 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
         raise ValueError(
             'EXTRA_COLUMNS do not follow the correct order of grid!')
 
+    if not EXTRA_COLUMNS:
+        return
+
     SN_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if 'SN_MODEL' in col]
     OTHER_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if col not in SN_COLUMNS]
 
@@ -529,16 +532,17 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     grid._reload_hdf5_file(writeable=True)
     hdf5_file = grid.hdf5
 
-    # Convert the dictionary of lists to dictionary of numpy arrays and set the correct dtype for each column.
+    str_dtype = np.dtype(H5_REC_STR_DTYPE.replace('U', 'S'))
+
+    # Convert the dictionary of lists to numpy arrays with correct dtypes.
     for column in EXTRA_COLUMNS.keys():
         if (("state" in column) or ("type" in column) or ("class" in column)
             or (column == 'mt_history')):
-            EXTRA_COLUMNS[column] = np.array(EXTRA_COLUMNS[column], dtype=str)
-            # replace U with S in the dtype to ensure compatibility with HDF5 string dtype
-            dtype = np.dtype(H5_REC_STR_DTYPE.replace('U', 'S'))
-            EXTRA_COLUMNS[column] = EXTRA_COLUMNS[column].astype(dtype)
+            EXTRA_COLUMNS[column] = np.array(EXTRA_COLUMNS[column],
+                                             dtype=str).astype(str_dtype)
         else:
-            EXTRA_COLUMNS[column] = np.array(EXTRA_COLUMNS[column], dtype=np.float64)
+            EXTRA_COLUMNS[column] = np.array(EXTRA_COLUMNS[column],
+                                             dtype=np.float64)
 
     new_dtype = []
     for name in final_values.dtype.names:
@@ -551,55 +555,49 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     if any(dt[1] != final_values.dtype[dt[0]] for dt in new_dtype):
         final_values = final_values.astype(new_dtype)
 
-    # replace dtype of U to S in final_values to ensure compatibility with HDF5 string dtype
-    # check for overlap between final_values and OTHER_COLUMNS
-    # check that the new columns are not already in the dataset
-    # append_fields cannot handle already existing fields in structured arrays.
-    # Remove the existing values, because they will be overwritten by the new values.
+    # Only append non-SN columns to final_values.
+    # SN columns are written to a separate /grid/SN_MODELS group below.
     overlap = set(final_values.dtype.names).intersection(set(OTHER_COLUMNS))
-    # remove overlapping fields from final_values
-    # The new values are written to file
     if overlap:
         final_values = recfunctions.drop_fields(final_values, list(overlap))
 
-    # Add the final_values to the dataset
-    out = recfunctions.append_fields(base=final_values,
-                                     names=EXTRA_COLUMNS,
-                                     data=[np.asarray(EXTRA_COLUMNS[column], dtype=EXTRA_COLUMNS[column].dtype) for column in EXTRA_COLUMNS],
-                                     dtypes=[EXTRA_COLUMNS[column].dtype for column in EXTRA_COLUMNS],
-                                    )
+    if OTHER_COLUMNS:
+        out = recfunctions.append_fields(
+            base=final_values,
+            names=list(OTHER_COLUMNS),
+            data=[np.asarray(EXTRA_COLUMNS[col], dtype=EXTRA_COLUMNS[col].dtype)
+                  for col in OTHER_COLUMNS],
+            dtypes=[EXTRA_COLUMNS[col].dtype for col in OTHER_COLUMNS],
+        )
+    else:
+        out = final_values
 
-    # write the new final_values to the dataset
-    # This will overwrite the existing final_values dataset with the new one containing the extra columns.
     if 'final_values' in hdf5_file['grid']:
         del hdf5_file['grid/final_values']
 
-    # TODO: we should optimize the compression for reads, since we ar mostly
-    # reading the data. This should also be for the SN_MODELS and initial_values.
-    # This also includes optimizing the chunk size for the new datasets.
-    hdf5_file.create_dataset('grid/final_values', data=out, **grid.compression_args)
+    hdf5_file.create_dataset('grid/final_values', data=out,
+                             **grid.compression_args)
 
-    # if 'SN_MODELS' in hdf5_file['grid']:
-    #     del hdf5_file['grid/SN_MODELS']
+    # Write each SN model into /grid/SN_MODELS/{SN_MODEL_NAME}.
+    # Rerunning post-processing recreates the group cleanly.
+    if 'SN_MODELS' in hdf5_file['grid']:
+        del hdf5_file['grid/SN_MODELS']
 
-    # SN_MODELS_group = hdf5_file['grid'].create_group('SN_MODELS')
+    SN_MODELS_group = hdf5_file['grid'].create_group('SN_MODELS')
 
-    # # Store each SN_MODEL in a separate dataset.
-    # # Generally only a single dataset is needed per population synthesis run.
-    # for SN_MODEL_NAME in SN_MODELS.keys():
-    #     # filter the columns for the specific SN_MODEL
-    #     SN_MODEL_columns = [col for col in SN_COLUMNS if f'{SN_MODEL_NAME}_' in col]
-    #     SN_MODEL_data = np.rec.fromarrays([EXTRA_COLUMNS[col] for col in SN_MODEL_columns],
-    #                                      names=[col.replace(f'{SN_MODEL_NAME}_', '') for col in SN_MODEL_columns])
-
-    #     # write the SN_MODEL data to the SN_MODELS group in the HDF5 file
-    #     SN_MODELS_group.create_dataset(SN_MODEL_NAME, data=SN_MODEL_data, **grid.compression_args)
-
-    #     # write metadata about the SN_MODEL as attributes to the dataset
-    #     SN_MODEL = get_SN_MODEL(SN_MODEL_NAME)
-    #     for key, value in SN_MODEL.items():
-    #         SN_MODELS_group[SN_MODEL_NAME].attrs[key] = value
-
+    for SN_MODEL_NAME in SN_MODELS.keys():
+        sn_cols = [col for col in SN_COLUMNS if f'{SN_MODEL_NAME}_' in col]
+        if not sn_cols:
+            continue
+        short_names = [col.replace(f'{SN_MODEL_NAME}_', '') for col in sn_cols]
+        sn_data = np.rec.fromarrays(
+            [EXTRA_COLUMNS[col] for col in sn_cols],
+            names=short_names,
+        )
+        SN_MODELS_group.create_dataset(SN_MODEL_NAME, data=sn_data,
+                                       **grid.compression_args)
+        for key, value in get_SN_MODEL(SN_MODEL_NAME).items():
+            SN_MODELS_group[SN_MODEL_NAME].attrs[key] = value
 
     # close the file
     grid._reload_hdf5_file(writeable=False)

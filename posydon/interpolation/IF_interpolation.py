@@ -201,6 +201,34 @@ from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
 
+def _get_grid_column(grid, key):
+    """Return a column array sourced from final_values or SN_MODELS datasets.
+
+    SN model columns (e.g. 'S1_SN_MODEL_v2_01_CO_type') are stored with
+    stripped short names ('S1_CO_type') inside per-model SN datasets.
+    This helper transparently routes to the correct source.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+    key : str
+        Full column name (e.g. 'S1_SN_MODEL_v2_01_CO_type').
+
+    Returns
+    -------
+    np.ndarray
+    """
+    if key in grid.final_values.dtype.names:
+        return np.array(grid.final_values[key])
+    for model_name, ds in grid.SN_MODELS.items():
+        infix = f'{model_name}_'
+        prefix_len = 3  # len('S1_') == len('S2_')
+        if key[prefix_len:prefix_len + len(infix)] == infix:
+            short = key[:prefix_len] + key[prefix_len + len(infix):]
+            return np.array(ds[short])
+    raise KeyError(f"Column {key!r} not found in final_values or SN_MODELS")
+
+
 # INITIAL-FINAL INTERPOLATOR
 class IFInterpolator:
     """Class handling initial-final interpolation.
@@ -465,18 +493,46 @@ class BaseIFInterpolator:
                     and (type(grid.final_values[key][0]) != np.str_)
                     and any(pd.notna(grid.final_values[key]))
                 ]
+                # Add SN numeric columns from SN datasets.
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if ('_type' not in fname and '_state' not in fname
+                                and '_class' not in fname):
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            full = f'{prefix}{model_name}_{rest}'
+                            col = np.array(ds[fname])
+                            if any(pd.notna(col)):
+                                self.out_keys.append(full)
             if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
                     if type(grid.final_values[key][0]) != np.str_
                     and all(pd.isna(grid.final_values[key]))
                 ]
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if ('_type' not in fname and '_state' not in fname
+                                and '_class' not in fname):
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            full = f'{prefix}{model_name}_{rest}'
+                            col = np.array(ds[fname])
+                            if all(pd.isna(col)):
+                                self.out_nan_keys.append(full)
 
             self.constraints = find_constraints_to_apply(self.out_keys)
 
             if c_keys is None:
                 c_keys = [key for key in grid.final_values.dtype.names
                           if type(grid.final_values[key][0]) == np.str_]
+                # Add SN string columns from SN datasets.
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if '_type' in fname or '_state' in fname or '_class' in fname:
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            c_keys.append(f'{prefix}{model_name}_{rest}')
 
             self.classifiers = {key: None for key in c_keys}
             self.n_in, self.n_out = len(self.in_keys), len(self.out_keys)
@@ -571,7 +627,7 @@ class BaseIFInterpolator:
         for i in range(self.n_in):
             X[:, i] = grid.initial_values[self.in_keys[i]]
         for i in range(self.n_out):
-            Y[:, i] = grid.final_values[self.out_keys[i]]
+            Y[:, i] = _get_grid_column(grid, self.out_keys[i])
 
         if self.interp_in_q:
             i_m1 = self.in_keys.index('star_1_mass')
@@ -724,7 +780,7 @@ class BaseIFInterpolator:
 
         """
         v = self.valid >= 0
-        wnn = grid.final_values[key] != 'None'
+        wnn = _get_grid_column(grid, key) != 'None'
         if any(wnn[v]):
             if (method == 'kNN') or (method == '1NN'):
                 self.classifiers[key] = KNNClassifier()
@@ -732,9 +788,9 @@ class BaseIFInterpolator:
                 raise ValueError("Wrong method name.")
             # If we want to exclude Nones as a class:
             # XTn = self.X_scaler.normalize(self.XT[v & wnn, :])
-            # y = grid.final_values[key][v & wnn]
+            # y = _get_grid_column(grid, key)[v & wnn]
             XTn = self.X_scaler.normalize(self.XT[v, :])
-            y = grid.final_values[key][v]
+            y = _get_grid_column(grid, key)[v]
             uy = np.unique(y)
             print(f"\nTraining {method} classifier for {key} "
                   f"[nclasses = {len(uy)}]...")
@@ -1825,7 +1881,7 @@ def analize_nones(classifiers, valid, grid):
     print("\nNones in categorical variables:")
     for key in classifiers:
         n = []
-        y = grid.final_values[key]
+        y = _get_grid_column(grid, key)
         for v in range(4):
             n.append(np.sum(y[valid == v] == 'None'))
         if np.sum(np.array(n)) > 0:

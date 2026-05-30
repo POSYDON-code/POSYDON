@@ -87,7 +87,7 @@ class TestElements:
                     'keep_till_central_abundance_He_C', 'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
-                    'read_initial_values', 'scrub', 'tqdm'}
+                    'read_initial_values', 'scrub', 'rfn', 'tqdm'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -1040,7 +1040,7 @@ class TestPSyGrid:
 
     # test the PSyGrid class
     def test_init(self, PSyGrid, monkeypatch):
-        def mock_load(self, filepath=None):
+        def mock_load(self, filepath=None, lazy=True):
             return filepath
         assert isroutine(PSyGrid.__init__)
         # check that the instance is of correct type and all code in the
@@ -2724,3 +2724,56 @@ class TestPSyRunView:
             assert f"View of the run {i} in the file "\
                    +f"'{PSyRunView.psygrid.filepath}' at key "\
                    +f"'{PSyRunView._hdf5_key()}'" == PSyRunView.__str__()
+
+    def test_get_SN_data(self, PSyGrid, tmp_path, binary_history,
+                         star_history, profile):
+        """PSyRunView.get_SN_data returns per-model SN dict or None."""
+        import h5py as _h5py
+
+        from posydon.grids.psygrid import H5_REC_STR_DTYPE
+
+        MODEL = 'SN_MODEL_v2_01'
+        path = get_simple_PSyGrid(tmp_path, 99, binary_history, star_history,
+                                  profile)
+
+        # Inject a minimal SN_MODELS group into the HDF5 file.
+        n_rows = 3  # get_simple_PSyGrid creates 2 runs + run0 = 3 entries
+        str_dtype = np.dtype(H5_REC_STR_DTYPE.replace('U', 'S'))
+        sn_data = np.rec.fromarrays(
+            [np.array(['BH', 'None', 'NS'], dtype=str).astype(str_dtype),
+             np.array(['CCSN', 'None', 'CCSN'], dtype=str).astype(str_dtype),
+             np.array([0.1, np.nan, 0.2]),
+             np.array([10.0, np.nan, 8.0])],
+            names=['S1_CO_type', 'S1_SN_type', 'S1_f_fb', 'S1_mass'],
+        )
+        with _h5py.File(path, 'a') as f:
+            grp = f['grid'].require_group('SN_MODELS')
+            if MODEL in grp:
+                del grp[MODEL]
+            grp.create_dataset(MODEL, data=sn_data)
+
+        # Load grid and verify SN_MODELS dict is populated.
+        test_grid = totest.PSyGrid()
+        test_grid.load(path)
+        assert isinstance(test_grid.SN_MODELS, dict)
+        assert MODEL in test_grid.SN_MODELS
+
+        # Check that get_SN_run_data returns the correct dict.
+        row = test_grid.get_SN_run_data(0, MODEL)
+        assert isinstance(row, dict)
+        assert 'S1_CO_type' in row
+        # The value should be a Python str after dtype conversion.
+        assert isinstance(row['S1_CO_type'], str)
+
+        # Check unknown model returns None.
+        assert test_grid.get_SN_run_data(0, 'not_a_model') is None
+
+        # Check via PSyRunView.get_SN_data.
+        view = test_grid[0]
+        row_via_view = view.get_SN_data(MODEL)
+        assert row_via_view is not None
+        assert row_via_view['S1_CO_type'] == row['S1_CO_type']
+
+        # Unknown model via view also returns None.
+        assert view.get_SN_data('not_a_model') is None
+        test_grid.close()

@@ -414,7 +414,7 @@ class PSyGrid:
         self.MESA_dirs = []
         self.initial_values = None
         self.final_values = None
-        self._SN_values = None
+        self._SN_values = {}
         self.config = ConfigFile()
         self._make_compression_args()
         self.n_runs = 0
@@ -1509,6 +1509,25 @@ class PSyGrid:
         self.initial_values = initial_values
         self.final_values = final_values
 
+        # load SN_MODELS datasets if present
+        self._SN_values = {}
+        if 'SN_MODELS' in hdf5['/grid']:
+            self._say("\tLoading SN_MODELS datasets...")
+            for model_name, ds in hdf5['/grid/SN_MODELS'].items():
+                sn_dtype = {}
+                for dname, dtp in ds.dtype.descr:
+                    if '_type' in dname or '_state' in dname or '_class' in dname:
+                        sn_dtype[dname] = H5_REC_STR_DTYPE.replace('S', 'U')
+                    else:
+                        sn_dtype[dname] = dtp
+                if lazy:
+                    self._SN_values[model_name] = LazyHDF5(ds, dtype_set=sn_dtype)
+                else:
+                    arr = ds[()]
+                    if sn_dtype:
+                        arr = arr.astype(list(sn_dtype.items()))
+                    self._SN_values[model_name] = arr
+
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
         self.MESA_dirs = list(hdf5["/relative_file_paths"])
@@ -1680,6 +1699,30 @@ class PSyGrid:
         if index not in self:
             raise IndexError("Index {} out of bounds.".format(index))
         return PSyRunView(self, index)
+
+    @property
+    def SN_MODELS(self):
+        """Dict mapping SN_MODEL_NAME to its LazyHDF5 or ndarray dataset."""
+        return self._SN_values
+
+    def get_SN_run_data(self, run_index, model_name):
+        """Return a dict of SN quantities (short names) for one run.
+
+        Parameters
+        ----------
+        run_index : int
+        model_name : str
+            Key from SN_MODELS (e.g. 'SN_MODEL_v2_01').
+
+        Returns
+        -------
+        dict or None
+            Keys like 'S1_CO_type', 'S1_mass', etc.; None if model absent.
+        """
+        if model_name not in self._SN_values:
+            return None
+        row = self._SN_values[model_name][run_index]
+        return {name: row[name] for name in row.dtype.names}
 
     def get_pandas_initial_final(self):
         """Convert the initial/final values into a single Pandas dataframe.
@@ -2281,6 +2324,20 @@ class PSyRunView:
 
         """
         return self[key]
+
+    def get_SN_data(self, model_name):
+        """Return SN dataset row dict for this run and the given model.
+
+        Parameters
+        ----------
+        model_name : str
+            Key from SN_MODELS (e.g. 'SN_MODEL_v2_01').
+
+        Returns
+        -------
+        dict or None
+        """
+        return self.psygrid.get_SN_run_data(self.index, model_name)
 
     def __str__(self):
         """Return a summary of the PSyRunView in a string.
