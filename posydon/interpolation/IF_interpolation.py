@@ -1760,11 +1760,11 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
             for c in uic:
                 f = grid_T.final_values['interpolation_class'] == c
                 print(
-                    f"\t{c}: [{np.sum(grid_T.final_values[key][f] == 'None')}"
+                    f"\t{c}: [{np.sum(_get_grid_column(grid_T, key)[f] == 'None')}"
                     f"/{np.sum(f)}] NaNs")
 
             # Ground Truth
-            zt_gt = grid_t.final_values[key][validt >= 0]
+            zt_gt = _get_grid_column(grid_t, key)[validt >= 0]
             # Confusion Matrices
             for i, m in enumerate(models):
                 print(f"\n\t  {m.classifiers[key].method}")
@@ -1781,8 +1781,8 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
                     key, m.classifiers[key].labels, savename=savename)
                 plt.close(fig)
 
-                ZT = grid_T.final_values[key][m.valid >= 0]
-                zt_gt = grid_t.final_values[key][validt >= 0]
+                ZT = _get_grid_column(grid_T, key)[m.valid >= 0]
+                zt_gt = _get_grid_column(grid_t, key)[validt >= 0]
                 fig, ax = plot_mc_classifier(
                     m, key, m.XT[m.valid >= 0, :], ZT, ux2, Xt=Xt[validt >= 0],
                     zt=zt_gt, zt_pred=Ztpred[i][key], path=path2prmaps)
