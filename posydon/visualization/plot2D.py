@@ -19,6 +19,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from posydon.interpolation.IF_interpolation import _get_grid_column
 from posydon.utils.constants import Zsun
 from posydon.utils.gridutils import add_field
 from posydon.utils.posydonwarning import Pwarn
@@ -741,7 +742,7 @@ class plot2D(object):
         elif 'relative_change' in self.z_var_str:
             key = self.z_var_str.split('relative_change_')[1]
             relative_change_key = (
-                (old_final_values[key] - old_initial_values[key])
+                (_get_grid_column(self.psygrid, key) - old_initial_values[key])
                 / old_initial_values[key])
             new_final_values = add_field(old_final_values,
                                          [(self.z_var_str, "<f8")])
@@ -986,9 +987,11 @@ class plot2D(object):
             # read final values from final_values
             else:
                 if self.log10_z:
-                    self.z_var = np.log10(self.final_values[self.z_var_str])
+                    self.z_var = np.log10(
+                        _get_grid_column(self.psygrid, self.z_var_str))
                 else:
-                    self.z_var = self.final_values[self.z_var_str]
+                    self.z_var = _get_grid_column(
+                        self.psygrid, self.z_var_str)
 
         # take the z_var at oRLO
         else:

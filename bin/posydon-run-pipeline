@@ -1409,15 +1409,19 @@ def do_check(i, path_to_csv_file, verbose=False):
                 failure_rate_in_percent = 0.
             print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
         elif check_to_do=='CO_type':
-            for quantity in grid.final_values.dtype.names:
-                if (('S1_SN_MODEL' in quantity) and ('CO_type' in quantity)):
-                    count = Counter(grid.final_values[quantity])
-                    print(f'{quantity}: {count} in {grid_path}')
+            for model_name, sn_ds in grid.SN_MODELS.items():
+                for short_key in sn_ds.dtype.names:
+                    if 'CO_type' in short_key:
+                        full_key = short_key[:3] + model_name + '_' + short_key[3:]
+                        count = Counter(sn_ds[short_key])
+                        print(f'{full_key}: {count} in {grid_path}')
         elif check_to_do=='SN_type':
-            for quantity in grid.final_values.dtype.names:
-                if (('S1_SN_MODEL' in quantity) and ('SN_type' in quantity)):
-                    count = Counter(grid.final_values[quantity])
-                    print(f'{quantity}: {count} in {grid_path}')
+            for model_name, sn_ds in grid.SN_MODELS.items():
+                for short_key in sn_ds.dtype.names:
+                    if 'SN_type' in short_key:
+                        full_key = short_key[:3] + model_name + '_' + short_key[3:]
+                        count = Counter(sn_ds[short_key])
+                        print(f'{full_key}: {count} in {grid_path}')
             #TODO: add more checks
         else:
             Pwarn(f'Do not know how to do {check_to_do} for'+\
