@@ -548,23 +548,23 @@ class BaseIFInterpolator:
             if (self.interp_method == 'linear'
                     or isinstance(self.interp_method, list)):
                 print("\nFilling missing values (nans) with 1NN")
-                self._fillNans(grid.final_values[self.c_key])
+                self._fillNans(_get_grid_column(grid, self.c_key))
             elif self.interp_method == '1NN':
                 self.YT[pd.isna(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
-                    self.in_scaling, self.out_scaling = (self._bestInScaling(grid.final_values[self.c_key]),
+                    self.in_scaling, self.out_scaling = (self._bestInScaling(_get_grid_column(grid, self.c_key)),
                                                          ['none']*self.n_out)
                 else:
-                    self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
+                    self.in_scaling, self.out_scaling = self._bestScaling(_get_grid_column(grid, self.c_key))
 
             self.X_scaler = Scaler(self.in_scaling,
                                    self.XT[self.valid >= 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
+                                   _get_grid_column(grid, self.c_key)[self.valid > 0])
             self.Y_scaler = Scaler(self.out_scaling,
                                    self.YT[self.valid > 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
+                                   _get_grid_column(grid, self.c_key)[self.valid > 0])
 
             if self.class_method == "kNN":
                 options = {'nfolds': 3, 'p_test': 0.05, 'nmax': 10}
@@ -573,7 +573,7 @@ class BaseIFInterpolator:
             self.train_classifiers(grid, method=self.class_method, **options)
 
             self.train_interpolator(
-                ic=grid.final_values[self.c_key])
+                ic=_get_grid_column(grid, self.c_key))
 
     def save(self, filename):
         """Save complete interpolation model.
