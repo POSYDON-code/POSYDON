@@ -23,6 +23,33 @@ __authors__ = [
 ]
 
 
+def _get_grid_column(grid, key):
+    """Return a column array sourced from final_values or SN_MODELS datasets.
+
+    SN model columns (e.g. 'S1_SN_MODEL_v2_01_CO_type') are stored with
+    stripped short names ('S1_CO_type') inside per-model SN datasets.
+    This helper transparently routes to the correct source.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+    key : str
+        Full column name (e.g. 'S1_SN_MODEL_v2_01_CO_type').
+
+    Returns
+    -------
+    np.ndarray
+    """
+    if key in grid.final_values.dtype.names:
+        return np.array(grid.final_values[key])
+    for model_name, ds in grid.SN_MODELS.items():
+        infix = f'{model_name}_'
+        prefix_len = 3  # len('S1_') == len('S2_')
+        if key[prefix_len:prefix_len + len(infix)] == infix:
+            short = key[:prefix_len] + key[prefix_len + len(infix):]
+            return np.array(ds[short])
+    raise KeyError(f"Column {key!r} not found in final_values or SN_MODELS")
+
 def join_lists(A, B):
     """Make a joint list of A and B without elements already in A and keeping
     the order.

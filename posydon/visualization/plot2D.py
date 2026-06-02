@@ -19,9 +19,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from posydon.interpolation.IF_interpolation import _get_grid_column
 from posydon.utils.constants import Zsun
-from posydon.utils.gridutils import add_field
+from posydon.utils.gridutils import _get_grid_column, add_field
 from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.combine_TF import combine_TF12
 from posydon.visualization.plot_defaults import (
