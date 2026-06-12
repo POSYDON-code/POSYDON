@@ -29,7 +29,7 @@ default_grid_kwargs = {
     # Number of points in the wavelength range:
     'lam_res': 300000,
     # Performance variables:
-    'cache_limit': 256,
+    'cache_limit': 512,
     'filters': ['U', 'B', 'V']
 }
 default_kwargs = {

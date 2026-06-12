@@ -282,8 +282,8 @@ def IMF_WEIGHT(mini):
         if m2 == m1:
             continue
         dm=0.1
-        m_low = max(mini[i] - dm/2, imf_lower_limit)
-        m_high = min(mini[i] + dm/2, imf_upper_limit)
-        wght[i] = integrate.quad(lambda x: x**(-a), m_low, m_high)[0] / norm
+        #m_low = max(mini[i] - dm/2, imf_lower_limit)
+        #m_high = min(mini[i] + dm/2, imf_upper_limit)
+        wght[i] = integrate.quad(lambda x: x**(-a), m1, m2)[0] / norm
 
     return wght

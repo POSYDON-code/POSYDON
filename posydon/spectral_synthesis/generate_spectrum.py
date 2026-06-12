@@ -47,7 +47,7 @@ def check_boundaries(grids,grid_name,**kwargs):
 
     for axis_label in axis_labels:
         if axis_label == 'log(g)':
-            tol = 0.2
+            x[axis_label] = enforce_boundaries(grids,grid_name,'log(g)',**x)
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
@@ -58,7 +58,6 @@ def check_boundaries(grids,grid_name,**kwargs):
                 x[axis_label] = grid.axis_x_max[axis_label]
             else: 
                 return 'failed_grid',x
-
     #The star is within the grid limits.
     return grid_name,x 
 
@@ -273,8 +272,8 @@ def generate_spectrum(grids,star,i,**kwargs):
                     x = rescale_log_g(grids,label,**x)
                     continue
                 except Exception as e:
+                    label = f'failed_attempt_{count}'
                     pass
-                label = f'failed_attempt_{count}'
         else:
             label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
@@ -446,9 +445,7 @@ def rescale_log_g(grids,label,**x):
         if key not in grid.axis_labels:
             old_x.pop(key)
     
-    #Removing the post-AGB systems
-    if old_x['log(g)'] > 6.5: 
-        return x 
+
 
 
     for axis_label in grid.axis_labels:
@@ -461,7 +458,7 @@ def rescale_log_g(grids,label,**x):
             dx['R_t'] = - grid.axis_x_max['R_t']
             new_x = grid.adjust_x(old_x, dx)
         x['R_t'] = new_x['R_t']
-    else:
+    else:   
         dx['log(g)'] = grid.axis_x_max['log(g)']
         try:
             new_x = grid.adjust_x(old_x, dx)
