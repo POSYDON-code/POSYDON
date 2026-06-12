@@ -7,11 +7,18 @@ __authors__ = [
 import os
 import textwrap
 
+from posydon.utils.posydonwarning import Pwarn
+
 # mirrors: COLOR codes in posydon/CLI/io.py [3]
 COLOR_RED   = '\033[31m'
 COLOR_GREEN = '\033[32m'
 COLOR_RESET = '\033[0m'
 
+
+# ──────────────────────────────────────────────
+# Output Utility Functions
+# mirrors: print_error, print_success in posydon/CLI/io.py [3]
+# ──────────────────────────────────────────────
 
 def print_error(message):
     """Print an error message in red.
@@ -35,12 +42,13 @@ def print_separator_line():
 
 
 # ──────────────────────────────────────────────
-# Script Creation
+# Script Text Creation
 # mirrors: create_run_script_text and create_merge_script_text in io.py [3]
 # ──────────────────────────────────────────────
 
-def create_run_script_text(population_file, temp_directory, num_batches):
+def create_run_script_text(ini_file, temp_directory, num_batches):
     """Create the text for the run script.
+    Reads all kwargs directly from the ini file at runtime.
     Mirrors create_run_script_text in posydon/CLI/io.py [3].
     """
     text = textwrap.dedent(f'''\
@@ -48,28 +56,33 @@ def create_run_script_text(population_file, temp_directory, num_batches):
         from posydon.spectral_synthesis.run_spectral_synthesis import (
             SpectralSynthesisRunner
         )
+        from posydon.spectral_synthesis.io import spectral_kwargs_from_ini
 
         if __name__ == "__main__":
+            # mirrors: ini_kw = binarypop_kwargs_from_ini in run_metallicity.py [3]
+            spectral_kwargs = spectral_kwargs_from_ini("{ini_file}")
+
             # mirrors: JOB_ID and RANK from SLURM in BinaryPopulation [2]
             JOB_ID = int(os.environ["SLURM_ARRAY_TASK_ID"])
             RANK   = int(os.environ.get("SLURM_PROCID", 0))
             size   = int(os.environ.get("SLURM_NTASKS", 1))
 
             runner = SpectralSynthesisRunner(
-                population_file="{population_file}",
+                population_file=spectral_kwargs.pop("population_file"),
                 temp_directory="{temp_directory}",
                 num_batches={num_batches},
                 verbose=True,
                 JOB_ID=JOB_ID,
                 RANK=RANK,
                 size=size,
+                **spectral_kwargs
             )
             runner.make_spectra()
         ''')
     return text
 
 
-def create_merge_script_text(population_file, temp_directory, num_batches):
+def create_merge_script_text(ini_file, temp_directory, num_batches):
     """Create the text for the merge script.
     Mirrors create_merge_script_text in posydon/CLI/io.py [3].
     """
@@ -77,10 +90,14 @@ def create_merge_script_text(population_file, temp_directory, num_batches):
         from posydon.spectral_synthesis.run_spectral_synthesis import (
             SpectralSynthesisRunner
         )
+        from posydon.spectral_synthesis.io import spectral_kwargs_from_ini
 
         if __name__ == "__main__":
+            # mirrors: ini_kw = binarypop_kwargs_from_ini in merge_metallicity.py [3]
+            spectral_kwargs = spectral_kwargs_from_ini("{ini_file}")
+
             runner = SpectralSynthesisRunner(
-                population_file="{population_file}",
+                population_file=spectral_kwargs.pop("population_file"),
                 temp_directory="{temp_directory}",
                 num_batches={num_batches},
                 verbose=True,
@@ -90,36 +107,56 @@ def create_merge_script_text(population_file, temp_directory, num_batches):
     return text
 
 
-def create_run_script(population_file, temp_directory, num_batches):
-    """Create the run script for the spectral synthesis run.
+# ──────────────────────────────────────────────
+# Script File Creation
+# mirrors: create_run_script, create_merge_script in posydon/CLI/io.py [3]
+# ──────────────────────────────────────────────
+
+def create_run_script(ini_file, temp_directory, num_batches):
+    """Create the run script file for the spectral synthesis run.
     Mirrors create_run_script in posydon/CLI/io.py [3].
     """
     filename = 'run_spectral_batch.py'
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
-        f.write(create_run_script_text(population_file, temp_directory, num_batches))
+        f.write(create_run_script_text(ini_file, temp_directory, num_batches))
     print(f'Created run script -> {filename}')
 
 
-def create_merge_script(population_file, temp_directory, num_batches):
-    """Create the merge script for the spectral synthesis run.
+def create_merge_script(ini_file, temp_directory, num_batches):
+    """Create the merge script file for the spectral synthesis run.
     Mirrors create_merge_script in posydon/CLI/io.py [3].
     """
     filename = 'merge_spectral_batches.py'
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
-        f.write(create_merge_script_text(population_file, temp_directory, num_batches))
+        f.write(create_merge_script_text(ini_file, temp_directory, num_batches))
     print(f'Created merge script -> {filename}')
 
+
+def create_python_scripts(ini_file, temp_directory, num_batches):
+    """Create run and merge scripts for the spectral synthesis run.
+    Mirrors create_python_scripts in posydon/CLI/io.py [3].
+    """
+    create_run_script(ini_file, temp_directory, num_batches)
+    create_merge_script(ini_file, temp_directory, num_batches)
+    print('Created run script and merge script')
+
+
+# ──────────────────────────────────────────────
+# SLURM Script Creation
+# mirrors: create_slurm_array, create_slurm_merge in posydon/CLI/io.py [3]
+# ──────────────────────────────────────────────
 
 def create_slurm_array(num_batches, partition, email,
                        walltime, account, mem_per_cpu):
     """Create the SLURM array script for the spectral synthesis run.
     Mirrors create_slurm_array in posydon/CLI/io.py [3].
     """
-    job_array_length = num_batches - 1  # 0 already included [3]
+    # mirrors: job_array_length = job_array_length - 1 in io.py [3]
+    job_array_length = num_batches - 1
 
     # mirrors: optional_directives pattern in posydon/CLI/io.py [3]
     optional_directives = []
@@ -154,7 +191,7 @@ def create_slurm_array(num_batches, partition, email,
 
     filename = 'spectra_slurm_array.slurm'
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
         f.write(text)
     print(f'Created SLURM array script -> {filename}')
@@ -196,7 +233,7 @@ def create_slurm_merge(partition, email, merge_walltime, account, mem_per_cpu):
 
     filename = 'spectra_merge.slurm'
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
         f.write(text)
     print(f'Created SLURM merge script -> {filename}')
@@ -245,18 +282,23 @@ def create_slurm_rescue(missing_indices, num_batches, partition,
 
     filename = 'spectra_rescue.slurm'
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
         f.write(text)
     print(f'Created rescue script -> {filename}')
 
+
+# ──────────────────────────────────────────────
+# Bash Submission Scripts
+# mirrors: create_bash_submit_script in posydon/CLI/io.py [3]
+# ──────────────────────────────────────────────
 
 def create_bash_submit_script(filename):
     """Create the bash submission script.
     Mirrors create_bash_submit_script in posydon/CLI/io.py [3].
     """
     if os.path.exists(filename):
-        print(f'Replacing {filename}')
+        Pwarn(f'Replace {filename}', "OverwriteWarning")
     with open(filename, mode='w') as f:
         f.write('#!/bin/bash\n')
         f.write('array=$(sbatch --parsable spectra_slurm_array.slurm)\n')

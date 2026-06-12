@@ -46,7 +46,7 @@ def check_boundaries(grids,grid_name,**kwargs):
 
     for axis_label in axis_labels:
         if axis_label == 'log(g)':
-            tol = 0.2
+            x[axis_label] = enforce_boundaries(grids,grid_name,'log(g)',**x)
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
@@ -57,7 +57,6 @@ def check_boundaries(grids,grid_name,**kwargs):
                 x[axis_label] = grid.axis_x_max[axis_label]
             else: 
                 return 'failed_grid',x
-
     #The star is within the grid limits.
     return grid_name,x 
 
@@ -234,7 +233,7 @@ def generate_spectrum(grids,star,i,**kwargs):
         return None,star[f'{i}_state'],'no_grid'
     if star[f'{i}_surface_h1'] <= 0.6:
         #Check if the stars is false labeled as H_rich 
-        ren ame_star_state(star,i)    
+        rename_star_state(star,i)    
     Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
@@ -277,8 +276,8 @@ def generate_spectrum(grids,star,i,**kwargs):
                     x = rescale_log_g(grids,label,**x)
                     continue
                 except Exception as e:
-                    print(e)
-                label = f'failed_attempt_{count}'
+                    label = f'failed_attempt_{count}'
+                    pass
         else:
             label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
@@ -441,11 +440,6 @@ def rescale_log_g(grids,label,**x):
         if key not in grid.axis_labels:
             old_x.pop(key)
     
-    #Removing the post-AGB systems
-    if old_x['log(g)'] > 6.5: 
-        return x 
-
-
     for axis_label in grid.axis_labels:
         dx[axis_label] = 0.0
     if label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
@@ -456,7 +450,7 @@ def rescale_log_g(grids,label,**x):
             dx['R_t'] = - grid.axis_x_max['R_t']
             new_x = grid.adjust_x(old_x, dx)
         x['R_t'] = new_x['R_t']
-    else:
+    else:   
         dx['log(g)'] = grid.axis_x_max['log(g)']
         try:
             new_x = grid.adjust_x(old_x, dx)
@@ -561,4 +555,4 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
         label,x = point_the_grid(grids,x,label,**kwargs)
         if label == 'failed_grid':
             return None,state,label
-    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
+   raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
