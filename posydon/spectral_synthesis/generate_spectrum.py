@@ -14,7 +14,6 @@ __authors__ = [
 from copy import copy
 import numpy as np
 import pandas as pd
-from posydon.spectral_synthesis.spectral_tools import smooth_flux_negatives
 from posydon.spectral_synthesis.spectral_grids import GRID_KEYS
 import posydon.utils.constants as constants
 
@@ -82,7 +81,15 @@ def labels_out_of_grid(grids, grid_name,**kwargs):
     return failed_labels
 
 def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
-    """This function enforces a value of a star to fall within the grid
+    """Set the stellar parameters 
+
+    Args:
+        grids : grid object
+        grid_name : string
+        grid_label : string
+
+    Returns:
+        _type_: _description_
     """
     x = copy(kwargs)
     grid = grids.spectral_grids[grid_name]
@@ -221,16 +228,13 @@ def generate_spectrum(grids,star,i,**kwargs):
     if star[f'{i}_log_g'] > 6.5 :
         return None,star[f'{i}_state'],'no_grid'
     elif ((star[f'{i}_log_g'] > 6) & (star[f'{i}_log_L'] < 4)) or ((star[f'{i}_log_g'] > 6) and 'He_depleted' in star[f'{i}_state']):
-        return None,star[f'{i}_state'],'no_grid'
-    
+        return None,star[f'{i}_state'],'no_grid'   
     #Safety check: 
     if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
         return None,star[f'{i}_state'],'no_grid'
-    
     if star[f'{i}_surface_h1'] <= 0.6:
         #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)    
-    
+        ren ame_star_state(star,i)    
     Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
@@ -273,7 +277,7 @@ def generate_spectrum(grids,star,i,**kwargs):
                     x = rescale_log_g(grids,label,**x)
                     continue
                 except Exception as e:
-                    pass
+                    print(e)
                 label = f'failed_attempt_{count}'
         else:
             label = f'failed_attempt_{count}'
@@ -286,7 +290,7 @@ def flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT):
     WR_GRIDS = {'WR_grid', 'WNE_grid', 'WNL_grid', 'WC_grid'}
     if label == "stripped_grid":
         Flux = F_l*SCALE_CONSTANT*R**2
-    elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
+    elif label in WR_GRIDS:
         Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
         #Replace the negative values for WR
         #Flux.value[Flux.value < 0] = 1e-99
@@ -425,17 +429,8 @@ def calculate_WR_wind_tau(star,i):
     tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
     return tau
 
-def find_nearest_neighbor_stripped(**x):
-    #We want a function that will find the nearest neighbor in case of a star falling
-    #in the grey arays of the grids. We only do nn only in when the star has a temperature that is within the 
-    #range of the grid.
-    possible_loggs = np.array([4.0,4.3,4.5,4.8,5.0,5.2,5.5,5.7,6.0])  
-    logg = copy(x['log(g)'])
-    new_logg = possible_loggs[possible_loggs > logg][0]
-    x['log(g)'] = new_logg
-    return x
-
 def rescale_log_g(grids,label,**x):
+    
     dx = {}
     old_x = copy(x)
     if label not in GRID_KEYS:
@@ -544,11 +539,6 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
             try:
                 F_l = grids.photogrid_flux(label,**x)
                 #Check if the flux has negative values if so then find the N
-                """
-                if np.min(F_l) < 0: 
-                    #F_l = smooth_flux_negatives(grids.lam_c, F_l)
-                    F_l = grids.NN_grid_flux(label,**x)
-                """
                 if label == "stripped_grid":
                     Flux = F_l*SCALE_CONSTANT*R**2
                 elif label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
