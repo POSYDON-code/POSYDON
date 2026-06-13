@@ -915,7 +915,8 @@ class PopulationIO:
                 try:
                     tmp_df[c] = [self.ini_params[c]]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
             store.put("ini_parameters", tmp_df)
 
     def _load_ini_params(self, filename):
