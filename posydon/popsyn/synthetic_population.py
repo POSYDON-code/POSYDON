@@ -938,7 +938,8 @@ class PopulationIO:
                 try:
                     self.ini_params[c] = tmp_df[c][0]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
 
 
 
