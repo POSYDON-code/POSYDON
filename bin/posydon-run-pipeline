@@ -717,7 +717,7 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == 'no_age_limit+dedt_energy_eqn':
         replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
     elif rerun_type == 'wd_accretion':
-        replace_text = "sg_v2.x_development_noAgelimit-21453d5a7f4a5c1a235e65c8d5608fafc57c54a7"
+        replace_text = "sg_v2.x_development_noAgelimit-dd87ef99dc7d460b52e5e492e0e736f7783a64ad"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
