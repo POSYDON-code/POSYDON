@@ -9,6 +9,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
+from posydon.interpolation.IF_interpolation import _get_grid_column
+
 
 class EvaluateIFInterpolator:
     """ Class that is helpful for evaluating interpolation performance
@@ -43,8 +45,10 @@ class EvaluateIFInterpolator:
 
         iv = np.array(self.test_grid.initial_values[self.in_keys].tolist(),
                       dtype=float) # initial values
-        fv = np.array(self.test_grid.final_values[self.out_keys].tolist(),
-                      dtype=float) # final values
+        fv = np.column_stack([
+            np.asarray(_get_grid_column(self.test_grid, key), dtype=float)
+            for key in self.out_keys
+        ]) # final values
         ic = self.test_grid.final_values["interpolation_class"] # final values
 
         ivalid_inds = np.where(
@@ -76,7 +80,10 @@ class EvaluateIFInterpolator:
 
         for key, value in c.items():
 
-            labels = self.cfv[key]
+            if key in self.cfv.dtype.names:
+                labels = self.cfv[key]
+            else:
+                labels = _get_grid_column(self.test_grid, key)[cvalid_inds]
 
             classes = self.__find_labels(key)
 

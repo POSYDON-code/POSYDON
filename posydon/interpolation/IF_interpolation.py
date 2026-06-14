@@ -197,6 +197,7 @@ from posydon.interpolation.constraints import (
     sanitize_interpolated_quantities,
 )
 from posydon.interpolation.data_scaling import DataScaler
+from posydon.utils.gridutils import _get_grid_column
 from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
@@ -465,18 +466,46 @@ class BaseIFInterpolator:
                     and (type(grid.final_values[key][0]) != np.str_)
                     and any(pd.notna(grid.final_values[key]))
                 ]
+                # Add SN numeric columns from SN datasets.
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if ('_type' not in fname and '_state' not in fname
+                                and '_class' not in fname):
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            full = f'{prefix}{model_name}_{rest}'
+                            col = np.array(ds[fname])
+                            if any(pd.notna(col)):
+                                self.out_keys.append(full)
             if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
                     if type(grid.final_values[key][0]) != np.str_
                     and all(pd.isna(grid.final_values[key]))
                 ]
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if ('_type' not in fname and '_state' not in fname
+                                and '_class' not in fname):
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            full = f'{prefix}{model_name}_{rest}'
+                            col = np.array(ds[fname])
+                            if all(pd.isna(col)):
+                                self.out_nan_keys.append(full)
 
             self.constraints = find_constraints_to_apply(self.out_keys)
 
             if c_keys is None:
                 c_keys = [key for key in grid.final_values.dtype.names
                           if type(grid.final_values[key][0]) == np.str_]
+                # Add SN string columns from SN datasets.
+                for model_name, ds in grid.SN_MODELS.items():
+                    for fname in ds.dtype.names:
+                        if '_type' in fname or '_state' in fname or '_class' in fname:
+                            prefix = fname[:3]
+                            rest = fname[3:]
+                            c_keys.append(f'{prefix}{model_name}_{rest}')
 
             self.classifiers = {key: None for key in c_keys}
             self.n_in, self.n_out = len(self.in_keys), len(self.out_keys)
@@ -492,23 +521,23 @@ class BaseIFInterpolator:
             if (self.interp_method == 'linear'
                     or isinstance(self.interp_method, list)):
                 print("\nFilling missing values (nans) with 1NN")
-                self._fillNans(grid.final_values[self.c_key])
+                self._fillNans(_get_grid_column(grid, self.c_key))
             elif self.interp_method == '1NN':
                 self.YT[pd.isna(self.YT)] = -100
 
             if (self.in_scaling is None) or (self.out_scaling is None):
                 if self.interp_method == '1NN':
-                    self.in_scaling, self.out_scaling = (self._bestInScaling(grid.final_values[self.c_key]),
+                    self.in_scaling, self.out_scaling = (self._bestInScaling(_get_grid_column(grid, self.c_key)),
                                                          ['none']*self.n_out)
                 else:
-                    self.in_scaling, self.out_scaling = self._bestScaling(grid.final_values[self.c_key])
+                    self.in_scaling, self.out_scaling = self._bestScaling(_get_grid_column(grid, self.c_key))
 
             self.X_scaler = Scaler(self.in_scaling,
                                    self.XT[self.valid >= 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
+                                   _get_grid_column(grid, self.c_key)[self.valid > 0])
             self.Y_scaler = Scaler(self.out_scaling,
                                    self.YT[self.valid > 0, :],
-                                   grid.final_values[self.c_key][self.valid > 0])
+                                   _get_grid_column(grid, self.c_key)[self.valid > 0])
 
             if self.class_method == "kNN":
                 options = {'nfolds': 3, 'p_test': 0.05, 'nmax': 10}
@@ -517,7 +546,7 @@ class BaseIFInterpolator:
             self.train_classifiers(grid, method=self.class_method, **options)
 
             self.train_interpolator(
-                ic=grid.final_values[self.c_key])
+                ic=_get_grid_column(grid, self.c_key))
 
     def save(self, filename):
         """Save complete interpolation model.
@@ -571,7 +600,7 @@ class BaseIFInterpolator:
         for i in range(self.n_in):
             X[:, i] = grid.initial_values[self.in_keys[i]]
         for i in range(self.n_out):
-            Y[:, i] = grid.final_values[self.out_keys[i]]
+            Y[:, i] = _get_grid_column(grid, self.out_keys[i])
 
         if self.interp_in_q:
             i_m1 = self.in_keys.index('star_1_mass')
@@ -724,7 +753,7 @@ class BaseIFInterpolator:
 
         """
         v = self.valid >= 0
-        wnn = grid.final_values[key] != 'None'
+        wnn = _get_grid_column(grid, key) != 'None'
         if any(wnn[v]):
             if (method == 'kNN') or (method == '1NN'):
                 self.classifiers[key] = KNNClassifier()
@@ -732,9 +761,9 @@ class BaseIFInterpolator:
                 raise ValueError("Wrong method name.")
             # If we want to exclude Nones as a class:
             # XTn = self.X_scaler.normalize(self.XT[v & wnn, :])
-            # y = grid.final_values[key][v & wnn]
+            # y = _get_grid_column(grid, key)[v & wnn]
             XTn = self.X_scaler.normalize(self.XT[v, :])
-            y = grid.final_values[key][v]
+            y = _get_grid_column(grid, key)[v]
             uy = np.unique(y)
             print(f"\nTraining {method} classifier for {key} "
                   f"[nclasses = {len(uy)}]...")
@@ -1704,11 +1733,11 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
             for c in uic:
                 f = grid_T.final_values['interpolation_class'] == c
                 print(
-                    f"\t{c}: [{np.sum(grid_T.final_values[key][f] == 'None')}"
+                    f"\t{c}: [{np.sum(_get_grid_column(grid_T, key)[f] == 'None')}"
                     f"/{np.sum(f)}] NaNs")
 
             # Ground Truth
-            zt_gt = grid_t.final_values[key][validt >= 0]
+            zt_gt = _get_grid_column(grid_t, key)[validt >= 0]
             # Confusion Matrices
             for i, m in enumerate(models):
                 print(f"\n\t  {m.classifiers[key].method}")
@@ -1725,8 +1754,8 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
                     key, m.classifiers[key].labels, savename=savename)
                 plt.close(fig)
 
-                ZT = grid_T.final_values[key][m.valid >= 0]
-                zt_gt = grid_t.final_values[key][validt >= 0]
+                ZT = _get_grid_column(grid_T, key)[m.valid >= 0]
+                zt_gt = _get_grid_column(grid_t, key)[validt >= 0]
                 fig, ax = plot_mc_classifier(
                     m, key, m.XT[m.valid >= 0, :], ZT, ux2, Xt=Xt[validt >= 0],
                     zt=zt_gt, zt_pred=Ztpred[i][key], path=path2prmaps)
@@ -1825,7 +1854,7 @@ def analize_nones(classifiers, valid, grid):
     print("\nNones in categorical variables:")
     for key in classifiers:
         n = []
-        y = grid.final_values[key]
+        y = _get_grid_column(grid, key)
         for v in range(4):
             n.append(np.sum(y[valid == v] == 'None'))
         if np.sum(np.array(n)) > 0:
