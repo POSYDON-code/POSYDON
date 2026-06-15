@@ -57,8 +57,10 @@ def check_boundaries(grids,grid_name,**kwargs):
                 x[axis_label] = grid.axis_x_max[axis_label]
             else: 
                 return 'failed_grid',x
+        if axis_label in ['[Fe/H]','Z/Zo']:
+            x[axis_label] = enforce_boundaries(grids,grid_name,axis_label,**x)
     #The star is within the grid limits.
-    return grid_name,x 
+    return grid_name,x
 
 def labels_out_of_grid(grids, grid_name,**kwargs):
     """ Checks what labels are out of the grid and returns them. 
@@ -99,8 +101,6 @@ def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
     elif x[grid_label] > max_val:
         x[grid_label] = max_val
     return x[grid_label]
-
-
 
 
 def point_the_grid(grids,x,label,**kwargs):
@@ -154,12 +154,9 @@ def point_the_grid(grids,x,label,**kwargs):
                             state = 'WNE_star'
                         elif state == 'WNE_star':
                             state = 'WC_star'
-                    else: 
+                    else:
                         pass
-                if x['R_t'] < grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']:
-                    x['R_t'] = grids.spectral_grids[state_to_grid[state]].axis_x_min['R_t']
-                elif x['R_t'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['R_t']:
-                    x['R_t'] = grids.spectral_grids[state_to_grid[state]].axis_x_max['R_t']
+                x['R_t'] = enforce_boundaries(grids, state_to_grid[state],['R_t'],**x)
                 new_label,x = check_boundaries(grids,state_to_grid[state],**x)
                 if new_label != 'failed_grid':
                     return new_label,x
@@ -168,14 +165,13 @@ def point_the_grid(grids,x,label,**kwargs):
                     if 'log(g)' in failed_label:
                         x['log(g)'] = enforce_boundaries(grids, 'ostar_grid','log(g)',**x)
                     new_label,x =  check_boundaries(grids,'ostar_grid',**x)
-                else: 
+                else:
                     new_label,x =  check_boundaries(grids,'stripped_grid',**x)
                 if new_label == 'failed_grid':
                     if x['Teff'] > ostar_temp_cut_off:
                         return check_boundaries(grids,'ostar_grid',**x)
                     elif x['Teff'] > bstar_temp_cut_off:
-                        return check_boundaries(grids,'bstar_grid',**x)
-            
+                        return check_boundaries(grids,'bstar_grid',**x)         
             else:
                 return new_label,x
     #Second check for ostar stars.
@@ -286,56 +282,38 @@ def generate_spectrum(grids,star,i,**kwargs):
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
 
 def flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT):
+    """Convert Flux to luminosity with units L_sun/AA
+
+    Args:
+        label: string
+        F_l: numpy array
+        R: float
+        L: float
+        SCALE_CONSTANT: float
+
+    Returns:
+        Flux: float
+    """
     WR_GRIDS = {'WR_grid', 'WNE_grid', 'WNL_grid', 'WC_grid'}
     if label == "stripped_grid":
         Flux = F_l*SCALE_CONSTANT*R**2
     elif label in WR_GRIDS:
         Flux = F_l*SCALE_CONSTANT *(L/10**5.3)
-        #Replace the negative values for WR
-        #Flux.value[Flux.value < 0] = 1e-99
     else:
         Flux = F_l*R**2*SCALE_CONSTANT
     return Flux
 
-def regenerate_spectrum(grids,star,i,**kwargs):
-    label = star[f'{i}_grid_status']
-    if  pd.isna(label):
-        return None,star[f'{i}_state'],label
-    if label == "failed_grid":
-        return None,star[f'{i}_state'],label
-    Fe_H = np.log10(star['Z/Zo'])
-    Z_Zo = star['Z/Zo']
-    #Z= star['Z/Zo']*Zo
-    Teff = copy(star[f'{i}_Teff'])
-    logg = copy(star[f'{i}_log_g'])
-    state = copy(star[f'{i}_state'])
-    R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm 
-    L = 10**copy(star[f'{i}_log_L'])
-    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
-  
-    x = {'Teff':Teff ,
-         'log(g)': logg,
-         '[Fe/H]': Fe_H,
-         'Z/Zo':Z_Zo,
-         'state':state,
-         'surface_h1' : surface_h1,
-         '[alpha/Fe]':0.0}
-    #If the star is WR we need to add R_t quantity in x 
-
-    if label == "stripped_grid":
-        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT*R**2
-    elif label == 'WR_grid':
-        if (x['Teff'] > 100000) and (((x['Teff'] -100000)/100000) < 0.1):
-            x['Teff'] = 100000
-        elif (x['Teff'] > 100000)  and (((x['Teff'] -100000)/100000) > 0.1): 
-            return None,star[f'{i}_state'],label
-        x['R_t'] = calculated_Rt(star,i)
-        Flux = grids.grid_flux(label,**x)*SCALE_CONSTANT *(L/10**5.3)
-    else:
-        Flux = grids.grid_flux(label,**x)*R**2*SCALE_CONSTANT
-    return Flux.value,star['state'],label
 
 def rename_star_state(star,i):
+    """Reassign a different star state, either a stripped star of a WR type.
+
+    Args:
+        star: tuple
+        i: string
+
+    Raises:
+        ValueError
+    """
     xH_surf = copy(star[f'{i}_surface_h1'])
     xHe_surf = copy(star[f'{i}_surface_he4'])
     tau = calculate_WR_wind_tau(star,i)
@@ -390,7 +368,15 @@ def rename_star_state(star,i):
         star[f'{i}_Rt'] = calculated_Rt(star,i)
 
 def calculated_Rt(star,i):
-    #R_t is in R_sun units
+    """Calculating the transformed radius
+
+    Args:
+        star: tuple
+        i: string
+
+    Returns:
+        R_t: float
+    """
     M_dot = 10**copy(star[f'{i}_lg_wind_mdot']) #M_sun/yr
     v_terminal = 1000 #km/s
     D_max = 4 
@@ -411,6 +397,15 @@ def calculated_Rt(star,i):
     return Rt
  
 def calculate_WR_wind_tau(star,i):
+    """Calculates the optical wind depth tau
+
+    Args:
+        star: tuple
+        i: string
+
+    Returns:
+        tau: float
+    """
     xH_surf = copy(star[f'{i}_surface_h1'])
     v_0 = 20 *constants.km2cm # cm *s^-1 
     T = copy(star[f'{i}_Teff'])#K
@@ -429,7 +424,19 @@ def calculate_WR_wind_tau(star,i):
     return tau
 
 def rescale_log_g(grids,label,**x):
-    
+    """Rescaling the log g in case the star parameters fall into a grid point. 
+
+    Args:
+        grids: grid object
+            Instance of the grids created in generate_spectrum
+        label: string
+
+    Raises:
+        ValueError
+
+    Returns:
+        x: dict
+    """
     dx = {}
     old_x = copy(x)
     if label not in GRID_KEYS:
@@ -459,12 +466,6 @@ def rescale_log_g(grids,label,**x):
             new_x = grid.adjust_x(old_x, dx)
         x['log(g)'] = new_x['log(g)']
     return x 
-
-def close_to_boundaries(label,values,**x):
-    for value in values:   
-        if abs(x[label] - value)/(value) < 0.1:
-            x[label] = value
-    return x[label]
 
 def generate_photgrid_flux(grids,star,i,**kwargs):
     """Generates the spectrum of star. 
@@ -555,4 +556,4 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
         label,x = point_the_grid(grids,x,label,**kwargs)
         if label == 'failed_grid':
             return None,state,label
-   raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
+    raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
