@@ -1500,8 +1500,8 @@ class PSyGrid:
             new_dtype[dtype[0]] = dtype[1]
 
         if lazy:
-                initial_values = LazyHDF5(initial_values)
-                final_values = LazyHDF5(final_values, dtype_set=new_dtype)
+            initial_values = LazyHDF5(initial_values)
+            final_values = LazyHDF5(final_values, dtype_set=new_dtype)
         else:
             initial_values = initial_values[()]
             final_values = final_values[()]
