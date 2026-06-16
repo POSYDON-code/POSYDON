@@ -35,12 +35,21 @@ default_grid_kwargs = {
 default_kwargs = {
     'max_number_of_binaries': None,
     #int
+    #
+    'save_population_data': True,
     'save_data': True,
     #False,True
 
     #The desired path for the output file.
     'output_file_path':None,
     #The default option is ./
+
+    # Accepts a list of states from state_list, or None to include all.
+    # e.g. ['detached', 'merged']
+    'include_states': None,       # None = include all binary states
+    ## Accepts a list of spectral types from libraries, or None to include all.
+    # e.g. ['stripped_grid', 'ostar_grid']
+    'include_spectral_types': None,  # None = include all spectral types
 
     # Ostar Temp cutoff:
     'ostar_temp_cut_off': 28000,

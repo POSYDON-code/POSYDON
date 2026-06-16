@@ -39,7 +39,7 @@ state_list = [
     'RLO1',
     'RLO2'
     ]
-spectral_types = [
+spectral_types_list = [
     'main_grid', 
     'bstar_grid', 
     'failed_grid',
@@ -134,12 +134,37 @@ class population_spectra():
         pop_spectrum = {}
         labels = []
         # Create empty spectral arrays
-        for state in state_list:
+
+
+        #Setting the specific fluxes to be saved.
+        include_states = self.kwargs.get('include_states', None)
+        include_spectral_types = self.kwargs.get('include_spectral_types', None)
+
+        # Validate user-provided filters against known lists
+        if include_states is not None:
+            invalid = set(include_states) - set(state_list)
+            if invalid:
+                raise ValueError(f"Unknown states in 'include_states': {invalid}. "
+                                f"Valid options are: {state_list}")
+
+        if include_spectral_types is not None:
+            invalid = set(include_spectral_types) - set(spectral_types_list)
+            if invalid:
+                raise ValueError(f"Unknown spectral types in 'include_spectral_types': {invalid}. "
+                                f"Valid options are: {spectral_types_list}")
+
+
+        states = include_states if include_states is not None else state_list
+        spectral_types = include_spectral_types if include_spectral_types is not None else spectral_types_list
+
+        #Initialize the flux arrays
+        for key in spectral_types:
+            pop_spectrum[key] = np.zeros(num_waves)
+        for state in states:
             pop_spectrum[state] = np.zeros(num_waves)
-        #Creates arrays for the spectral types as well if indicated.
-        if spectral_type:
-            for key in spectral_types:
-                pop_spectrum[key] = np.zeros(num_waves)
+
+        pop_spectrum['Total'] = np.zeros(num_waves)
+
         #Iterate through the whole population and calculate the spectrum of S1,S2.
         pop_dict = pop.to_dict("records")
         for i,binary in enumerate(pop_dict):
@@ -157,21 +182,17 @@ class population_spectra():
                 if isochrones:
                     print(i,weights[i],binary)
                     spectrum_1 = spectrum_1*weights[i]
-                pop_spectrum[state_1] += spectrum_1
-                if spectral_type:
+                pop_spectrum['Total'] += spectrum_1
+                if state_1 in states:
+                    pop_spectrum[state_1] += spectrum_1
+                if label1 in spectral_types:
                     pop_spectrum[label1] += spectrum_1
             if spectrum_2 is not None and state_2 is not None:
-                pop_spectrum[state_2] += spectrum_2
-                if spectral_type:
+                pop_spectrum['Total'] += spectrum_2
+                if state_2 in states:
+                    pop_spectrum[state_2] += spectrum_2
+                if label2 in spectral_types:
                     pop_spectrum[label2] += spectrum_2
-        
-        pop_spectrum['Total'] = np.zeros(num_waves)
-        if spectral_type:
-            for key in spectral_types:
-                pop_spectrum['Total'] += pop_spectrum[key]
-        else:
-            for key in state_list:
-                pop_spectrum['Total'] += pop_spectrum[key]
 
         if self.save_data:
             return pop_spectrum,labels
@@ -185,6 +206,8 @@ class population_spectra():
             labels_S2: string
             file_path: string. Defaults to None.
         """
+        save_population_data = self.kwargs.get('save_population_data', True)
+
         if type(pop_spectrum)== list:
             # Check if the population is empty (All of the stars are CO)
             if labels.size == 0:
@@ -215,8 +238,8 @@ class population_spectra():
             spectrum_data = pd.DataFrame.from_dict(pop_spectrum)
 
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
-
-    
         h5file = os.path.join(self.output_path,self.output_file)
-        pop_data.to_hdf(h5file,key = 'data',format = 'table')
+        
+        if save_population_data:
+            pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')

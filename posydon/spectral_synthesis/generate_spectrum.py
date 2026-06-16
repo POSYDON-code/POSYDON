@@ -211,34 +211,15 @@ def generate_spectrum(grids,star,i,**kwargs):
     if star[f'{i}_log_g'] > 6.5 :
         return None,star[f'{i}_state'],'no_grid'
     elif ((star[f'{i}_log_g'] > 6) & (star[f'{i}_log_L'] < 4)) or ((star[f'{i}_log_g'] > 6) and 'He_depleted' in star[f'{i}_state']):
-        return None,star[f'{i}_state'],'no_grid'   
-    #Safety check: 
-    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
         return None,star[f'{i}_state'],'no_grid'
-    #Changing star's state if H-poor
-    if star[f'{i}_surface_h1'] <= 0.6:
-        #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)    
-    Fe_H = np.log10(star['Z/Zo'])
-    Z_Zo = star['Z/Zo']
-    #Z= star['Z/Zo']*Zo
-    Teff = copy(star[f'{i}_Teff'])
-    logg = copy(star[f'{i}_log_g'])
-    state = copy(star[f'{i}_state'])
+    #Safety check:
+    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):
+        return None,star[f'{i}_state'],'no_grid'
+
+    x = assign_star_properties(grids, star, i, **kwargs)
+    state = x['state']
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
-    log_L = copy(star[f'{i}_log_L'])
-    L = 10**log_L #L_sun
-    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
-    x = {'Teff':Teff ,
-         'log(g)': logg,
-         '[Fe/H]': Fe_H,
-         'Z/Zo':Z_Zo,
-         'state':state,
-         'surface_h1' : surface_h1,
-         'log_L' : log_L,
-         '[alpha/Fe]':0.0}
-    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
-        x['R_t'] = star[f'{i}_Rt']
+    L = 10**x['log_L']
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
     count = 0
@@ -269,6 +250,32 @@ def generate_spectrum(grids,star,i,**kwargs):
         if label == 'failed_grid':
             return None,state,label
     raise ValueError(f'The label:{label} is not "failed_grid" after all the possible checks. The star is {x}')
+
+def assign_star_properties(grids, star, i, **kwargs):
+    #Changing star's state if H-poor
+    if star[f'{i}_surface_h1'] <= 0.6:
+        #Check if the stars is false labeled as H_rich 
+        rename_star_state(star,i)    
+    Fe_H = np.log10(star['Z/Zo'])
+    Z_Zo = star['Z/Zo']
+    #Z= star['Z/Zo']*Zo
+    Teff = copy(star[f'{i}_Teff'])
+    logg = copy(star[f'{i}_log_g'])
+    state = copy(star[f'{i}_state'])
+    log_L = copy(star[f'{i}_log_L'])
+    L = 10**log_L #L_sun
+    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
+    x = {'Teff':Teff ,
+         'log(g)': logg,
+         '[Fe/H]': Fe_H,
+         'Z/Zo':Z_Zo,
+         'state':state,
+         'surface_h1' : surface_h1,
+         'log_L' : log_L,
+         '[alpha/Fe]':0.0}
+    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
+        x['R_t'] = star[f'{i}_Rt']
+    return x
 
 def flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT):
     """Convert Flux to luminosity with units L_sun/AA
@@ -383,7 +390,7 @@ def calculated_Rt(star,i):
         v_terminal = 1.3 * v_esc
     Rt = (R/constants.Rsun)*((v_terminal/(2500*1e5))/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
-    
+
 def calculate_WR_wind_tau(star,i):
     """Calculates the optical wind depth tau
 
@@ -487,30 +494,11 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
     if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
         return None,star[f'{i}_state'],'no_grid'
     
-    if star[f'{i}_surface_h1'] <= 0.6:
-        #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)    
-    
-    Fe_H = np.log10(star['Z/Zo'])
-    Z_Zo = star['Z/Zo']
-    #Z= star['Z/Zo']*Zo
-    Teff = copy(star[f'{i}_Teff'])
-    logg = copy(star[f'{i}_log_g'])
-    state = copy(star[f'{i}_state'])
+    x = assign_star_properties(grids, star, i, **kwargs)
+    state = x['state']
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
-    log_L = copy(star[f'{i}_log_L'])
-    L = 10**log_L #L_sun
-    surface_h1 = max(copy(star[f'{i}_surface_h1']),0.01)
-    x = {'Teff':Teff ,
-         'log(g)': logg,
-         '[Fe/H]': Fe_H,
-         'Z/Zo':Z_Zo,
-         'state':state,
-         'surface_h1' : surface_h1,
-         'log_L' : log_L,
-         '[alpha/Fe]':0.0}
-    if state in ['WR_star','WNE_star','WNL_star','WC_star']:
-        x['R_t'] = star[f'{i}_Rt']
+    L = 10**x['log_L']
+    
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
     count = 0
