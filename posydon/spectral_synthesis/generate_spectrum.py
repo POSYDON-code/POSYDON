@@ -32,6 +32,8 @@ def check_boundaries(grids,grid_name,**kwargs):
     if parameters are outside the boundaries. 
     """
     x = copy(kwargs)
+
+
     #First we check the global limits
     if grid_name == "global":
         if x['Teff'] < grids.T_min or x['Teff'] > grids.T_max:
@@ -45,13 +47,13 @@ def check_boundaries(grids,grid_name,**kwargs):
     tol = 0.1
 
     for axis_label in axis_labels:
-        if axis_label == 'log(g)':
-            x[axis_label] = enforce_boundaries(grids,grid_name,'log(g)',**x)
+        if axis_label in ['log(g)','R_t']:
+            x[axis_label] = enforce_boundaries(grids,grid_name,axis_label,**x)
         if x[axis_label] < grid.axis_x_min[axis_label]:
             if abs(x[axis_label] - grid.axis_x_min[axis_label])/(grid.axis_x_min[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_min[axis_label]
             else:
-                return 'failed_grid',x 
+                return 'failed_grid',x
         elif x[axis_label] > grid.axis_x_max[axis_label]:
             if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_max[axis_label]
@@ -127,12 +129,12 @@ def point_the_grid(grids,x,label,**kwargs):
     ostar_temp_cut_off = kwargs.get('ostar_temp_cut_off',28000)
     bstar_temp_cut_off = kwargs.get('bstar_temp_cut_off',15000)
     state = copy(x['state'])
-    #First check for stripped stars because their temp can be a lot
-    # higher than the Teff of the Ostar grid limit
+    #Stripped stars
     if "stripped" in state:
         if (label is None):
             new_label,x = check_boundaries(grids,'stripped_grid',**x)
             if new_label == 'failed_grid':
+                #Find the labels outside of the grid
                 failed_label = labels_out_of_grid(grids, 'stripped_grid',**x)
                 if 'Teff' in failed_label:
                     pass
@@ -142,38 +144,24 @@ def point_the_grid(grids,x,label,**kwargs):
                     return new_label,x
             else:
                 return new_label,x
-
     if state in ["WNE_star","WNL_star","WC_star"]:
         if label is None or label == 'failed_attempt_1':
             new_label,x = check_boundaries(grids,state_to_grid[state],**x)
             failed_label = labels_out_of_grid(grids, state_to_grid[state],**x)
-            if new_label == 'failed_grid':
-                if 'Teff' in failed_label:
-                    if x['Teff'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['Teff']:
-                        if state == 'WNL_star':
-                            state = 'WNE_star'
-                        elif state == 'WNE_star':
-                            state = 'WC_star'
-                    else:
-                        pass
-                x['R_t'] = enforce_boundaries(grids, state_to_grid[state],['R_t'],**x)
-                new_label,x = check_boundaries(grids,state_to_grid[state],**x)
-                if new_label != 'failed_grid':
-                    return new_label,x
-                if (x['surface_h1'] > 0.4) and (x['Teff'] <  grids.spectral_grids['ostar_grid'].axis_x_max['Teff']):
-                    failed_label = labels_out_of_grid(grids, 'ostar_grid',**x)
-                    if 'log(g)' in failed_label:
-                        x['log(g)'] = enforce_boundaries(grids, 'ostar_grid','log(g)',**x)
-                    new_label,x =  check_boundaries(grids,'ostar_grid',**x)
-                else:
-                    new_label,x =  check_boundaries(grids,'stripped_grid',**x)
-                if new_label == 'failed_grid':
-                    if x['Teff'] > ostar_temp_cut_off:
-                        return check_boundaries(grids,'ostar_grid',**x)
-                    elif x['Teff'] > bstar_temp_cut_off:
-                        return check_boundaries(grids,'bstar_grid',**x)         
-            else:
+            if new_label != 'failed_grid':
                 return new_label,x
+
+            if 'Teff' in failed_label:
+                if x['Teff'] > grids.spectral_grids[state_to_grid[state]].axis_x_max['Teff']:
+                    if state == 'WNL_star':
+                        state = 'WNE_star'
+                    elif state == 'WNE_star':
+                        state = 'WC_star'
+                    'Enforce the Teff and R_t limits'
+                    x['Teff'] = enforce_boundaries(grids, state_to_grid[state],['Teff'],**x)
+                    new_label,x = check_boundaries(grids,state_to_grid[state],**x)
+                    if new_label != 'failed_grid':
+                        return new_label,x
     #Second check for ostar stars.
     if x['Teff'] > ostar_temp_cut_off:
         if label is not None:
@@ -227,6 +215,7 @@ def generate_spectrum(grids,star,i,**kwargs):
     #Safety check: 
     if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
         return None,star[f'{i}_state'],'no_grid'
+    #Changing star's state if H-poor
     if star[f'{i}_surface_h1'] <= 0.6:
         #Check if the stars is false labeled as H_rich 
         rename_star_state(star,i)    
@@ -327,21 +316,21 @@ def rename_star_state(star,i):
                 star[f'{i}_state'] = 'WNL_star'
                 if star[f'{i}_surface_h1'] < 0.2:
                     star[f'{i}_surface_h1'] = 0.2
-                elif star[f'{i}_surface_h1'] > 0.4: 
+                elif star[f'{i}_surface_h1'] > 0.4:
                     star[f'{i}_surface_h1'] = 0.4
             else:
-                if (xH_surf < 0.4 * (1 - 0.1)) | (xH_surf > 0.4 * (1 + 0.1)): 
+                if (xH_surf < 0.4 * (1 - 0.1)) | (xH_surf > 0.4 * (1 + 0.1)):
                     star[f'{i}_state'] = 'stripped_He_star'
         else:  
             if (xH_surf < 0.3): 
                 if tau <= 0.5: 
                     star[f'{i}_state'] = 'stripped_He_star'
                 else:
-                    star[f'{i}_state'] = 'WNL_star' 
+                    star[f'{i}_state'] = 'WNL_star'
                     if star[f'{i}_surface_h1'] < 0.2:
                         star[f'{i}_surface_h1'] = 0.2
-                    elif star[f'{i}_surface_h1'] > 0.4: 
-                        star[f'{i}_surface_h1'] = 0.4 
+                    elif star[f'{i}_surface_h1'] > 0.4:
+                        star[f'{i}_surface_h1'] = 0.4
             else:
                 if tau <= 0.3 * (1 - 0.1):
                     star[f'{i}_state'] = 'stripped_He_star'
@@ -387,7 +376,6 @@ def calculated_Rt(star,i):
     k_e = 0.2*(1 + xH_surf) #cm^2/g 
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
-    
     v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
     if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
         v_terminal = 2.6 * v_esc
@@ -395,7 +383,7 @@ def calculated_Rt(star,i):
         v_terminal = 1.3 * v_esc
     Rt = (R/constants.Rsun)*((v_terminal/(2500*1e5))/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
- 
+    
 def calculate_WR_wind_tau(star,i):
     """Calculates the optical wind depth tau
 
