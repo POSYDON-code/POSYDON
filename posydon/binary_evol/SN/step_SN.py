@@ -262,6 +262,32 @@ class StepSN(object):
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
 
+    # Maltsev+25 Table 4 – upper CO core mass boundary above which all
+    # stars collapse directly to a BH regardless of explodability.
+    # Keys: Z/Zsun in {1.0, 0.1}; sub-keys: MT case in {'single','A','B','C'}.
+    # Case B entries use the min of the Bl (late-B) and Be (early-B) values.
+    # Ref: Maltsev et al. 2025, A&A 700, A20, Table 4.
+    _MALTSEV_MC3O = {
+        1.0: {'single': 13.0, 'C': 13.2, 'B': 15.2, 'A': 15.4},
+        0.1: {'single': 12.9, 'C': 12.3, 'B': 13.5, 'A': 13.7},
+    }
+
+    # Maltsev+25 Table 5 – lower boundary of the NS-formation window
+    # (MNS,1): guaranteed NS formation for CO in [MNS,1, MNS,2].
+    # Outside [MNS,1, MNS,2] but below MC3O, outcome is stochastic
+    # (15 % fallback BH, 85 % NS).
+    # Ref: Maltsev et al. 2025, A&A 700, A20, Table 5.
+    _MALTSEV_MNS1 = {
+        1.0: {'single':  9.0, 'C':  9.6, 'B':  9.9, 'A': 11.1},
+        0.1: {'single':  7.4, 'C':  8.9, 'B':  9.3, 'A': 10.4},
+    }
+
+    # Maltsev+25 Table 5 – upper boundary of the NS-formation window (MNS,2).
+    _MALTSEV_MNS2 = {
+        1.0: {'single': 10.2, 'C': 10.7, 'B': 10.3, 'A': 12.1},
+        0.1: {'single': 11.0, 'C':  9.5, 'B': 10.3, 'A': 11.1},
+    }
+
 
     def __init__(self, **kwargs):
         """Initialize a StepSN instance."""
@@ -460,12 +486,16 @@ class StepSN(object):
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
             # collapse star
+            if self.mechanism == self.Maltsev25_engines:
+                binary.star_1.mt_case_for_SN = self._get_primary_mt_case(binary)
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
             binary.update_star_states()
 
         elif binary.event == "CC2":
             # collapse star
+            if self.mechanism == self.Maltsev25_engines:
+                binary.star_2.mt_case_for_SN = self._get_primary_mt_case(binary)
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
             binary.update_star_states()
@@ -2461,18 +2491,61 @@ class StepSN(object):
                 f_fb = 0.0
                 state = 'NS'
 
-            # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
-            # However, since this outcome depends on the mass-transfer (MT) history, we handle it
-            # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
-            # with fallback = 1 at this stage.
+            # For CO core masses >= 10 Msun the outcome depends on the
+            # MT history of the progenitor (Maltsev+25, Tables 4 & 5).
+            # Three zones are defined per MT case and metallicity:
+            #   1. CO >= MC3O               → direct-collapse BH (always)
+            #   2. MNS,1 <= CO <= MNS,2     → guaranteed NS
+            #   3. 10 <= CO < MNS,1  or
+            #      MNS,2 < CO < MC3O        → stochastic: 15 % fallback BH,
+            #                                  85 % NS  (cf. Section 3.1.2)
             elif CO_core_mass >= 10.0:
-                # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
+                mt_case = getattr(star, 'mt_case_for_SN', 'single')
+                # Guard against unexpected values
+                if mt_case not in ('single', 'A', 'B', 'C'):
+                    mt_case = 'single'
+                Z = star.metallicity if star.metallicity is not None else 1.0
+
+                MC3O  = self._interp_maltsev_boundary(
+                    Z, self._MALTSEV_MC3O[1.0][mt_case],
+                       self._MALTSEV_MC3O[0.1][mt_case])
+                MNS1  = self._interp_maltsev_boundary(
+                    Z, self._MALTSEV_MNS1[1.0][mt_case],
+                       self._MALTSEV_MNS1[0.1][mt_case])
+                MNS2  = self._interp_maltsev_boundary(
+                    Z, self._MALTSEV_MNS2[1.0][mt_case],
+                       self._MALTSEV_MNS2[0.1][mt_case])
+
+                if CO_core_mass >= MC3O:
+                    # Zone 1: above upper boundary → always direct-collapse BH
+                    if conserve_hydrogen_envelope:
+                        m_rem = star.mass
+                    else:
+                        m_rem = star.he_core_mass
+                    f_fb = 1.0
+                    state = 'BH'
+
+                elif MNS1 <= CO_core_mass <= MNS2:
+                    # Zone 2: within NS window → guaranteed NS
+                    m_rem = M4
+                    f_fb = 0.0
+                    state = 'NS'
+
                 else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
+                    # Zone 3: stochastic — 15 % fallback BH, 85 % NS
+                    # (outside NS window but below MC3O)
+                    rand_number = self.RNG.uniform(0, 1)
+                    if rand_number <= 0.15:
+                        if conserve_hydrogen_envelope:
+                            m_rem = star.mass
+                        else:
+                            m_rem = star.he_core_mass
+                        f_fb = 0.99
+                        state = 'BH'
+                    else:
+                        m_rem = M4
+                        f_fb = 0.0
+                        state = 'NS'
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
@@ -2503,6 +2576,66 @@ class StepSN(object):
                     state = 'BH'
 
         return m_rem, f_fb, state
+
+    @staticmethod
+    def _get_primary_mt_case(binary):
+        """Return the primary MT case ('A', 'B', 'C', or 'single') for a binary.
+
+        Iterates through ``binary.mass_transfer_case_history`` and returns the
+        first non-no_RLO case, mapped to the Maltsev+25 category letters used
+        in Tables 4 & 5.  All B-type variants (B, BA, BB, BC) are mapped to
+        'B'.  If no RLO episode is found, 'single' is returned.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object whose MT history is inspected.
+
+        Returns
+        -------
+        str
+            One of 'A', 'B', 'C', or 'single'.
+        """
+        _B_CASES = {'B', 'BA', 'BB', 'BC'}
+        for case in binary.mass_transfer_case_history:
+            if case is None or case in ('None', 'no_RLO', 'undetermined_MT'):
+                continue
+            if case == 'A':
+                return 'A'
+            if case in _B_CASES:
+                return 'B'
+            if case == 'C':
+                return 'C'
+        return 'single'
+
+    @staticmethod
+    def _interp_maltsev_boundary(Z, val_Zsun, val_Zsun10):
+        """Linearly interpolate a Maltsev+25 boundary in log10(Z/Zsun).
+
+        Interpolates between the values at Z = Z☉ (1.0) and Z = Z☉/10 (0.1)
+        using a linear scheme in log-space.  The result is clamped to the
+        table range (no extrapolation beyond Z < 0.1 or Z > 1.0).
+
+        Parameters
+        ----------
+        Z : float
+            Metallicity as a fraction of solar (e.g. 1.0 for Z☉).
+        val_Zsun : float
+            Boundary value at Z = Z☉.
+        val_Zsun10 : float
+            Boundary value at Z = Z☉/10.
+
+        Returns
+        -------
+        float
+            Interpolated boundary value.
+        """
+        import math
+
+        # t=0 → Zsun, t=1 → Zsun/10
+        t = math.log10(max(Z, 1e-10)) / math.log10(0.1)
+        t = max(0.0, min(1.0, t))
+        return val_Zsun + t * (val_Zsun10 - val_Zsun)
 
     def NS_vs_fallbackBH(self, comp_val, mco_val, M4_val, mu4M4_val):
         a, b = 1.75, -0.044  # eq. (8) of [8]_
