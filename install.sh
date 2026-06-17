@@ -196,6 +196,21 @@ collect_data_path() {
     echo "The path will be set as PATH_TO_POSYDON_DATA environment variable."
     echo ""
 
+    # Check if PATH_TO_POSYDON_DATA is already set in the environment
+    if [[ -n "${PATH_TO_POSYDON_DATA:-}" ]]; then
+        print_info "PATH_TO_POSYDON_DATA is already set to: ${PATH_TO_POSYDON_DATA}"
+        echo -n "Use this path? (y/n): "
+        read -r -n 1 USE_EXISTING
+        echo ""
+        if [[ $USE_EXISTING =~ ^[Yy]$ ]]; then
+            DATA_PATH="$PATH_TO_POSYDON_DATA"
+            print_success "Using existing path: ${DATA_PATH}"
+            echo ""
+            return 0
+        fi
+        echo ""
+    fi
+
     while true; do
         echo -n "Data directory path: "
         read -r DATA_PATH
