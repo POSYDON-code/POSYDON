@@ -66,7 +66,7 @@ print_error() {
 }
 
 print_info() {
-    echo -e "${CYAN}ℹ $1${NC}"
+    echo -e "${CYAN}i $1${NC}"
 }
 
 # Function to check if command exists
