@@ -468,15 +468,14 @@ class BaseIFInterpolator:
                 ]
                 # Add SN numeric columns from SN datasets.
                 for model_name, ds in grid.SN_MODELS.items():
-                    for fname in ds.dtype.names:
-                        if ('_type' not in fname and '_state' not in fname
-                                and '_class' not in fname):
-                            prefix = fname[:3]
-                            rest = fname[3:]
-                            full = f'{prefix}{model_name}_{rest}'
-                            col = np.array(ds[fname])
+                    for short_key in ds.dtype.names:
+                        if ('_type' not in short_key and '_state' not in short_key
+                                and '_class' not in short_key):
+                            prefix, field_name = short_key.split('_', 1)
+                            full_key = f"{prefix}_{model_name}_{field_name}"
+                            col = np.array(ds[short_key])
                             if any(pd.notna(col)):
-                                self.out_keys.append(full)
+                                self.out_keys.append(full_key)
             if self.out_nan_keys is None:
                 self.out_nan_keys = [
                     key for key in grid.final_values.dtype.names
@@ -484,15 +483,14 @@ class BaseIFInterpolator:
                     and all(pd.isna(grid.final_values[key]))
                 ]
                 for model_name, ds in grid.SN_MODELS.items():
-                    for fname in ds.dtype.names:
-                        if ('_type' not in fname and '_state' not in fname
-                                and '_class' not in fname):
-                            prefix = fname[:3]
-                            rest = fname[3:]
-                            full = f'{prefix}{model_name}_{rest}'
-                            col = np.array(ds[fname])
+                    for short_key in ds.dtype.names:
+                        if ('_type' not in short_key and '_state' not in short_key
+                                and '_class' not in short_key):
+                            prefix, field_name = short_key.split('_', 1)
+                            full_key = f"{prefix}_{model_name}_{field_name}"
+                            col = np.array(ds[short_key])
                             if all(pd.isna(col)):
-                                self.out_nan_keys.append(full)
+                                self.out_nan_keys.append(full_key)
 
             self.constraints = find_constraints_to_apply(self.out_keys)
 
@@ -501,11 +499,11 @@ class BaseIFInterpolator:
                           if type(grid.final_values[key][0]) == np.str_]
                 # Add SN string columns from SN datasets.
                 for model_name, ds in grid.SN_MODELS.items():
-                    for fname in ds.dtype.names:
-                        if '_type' in fname or '_state' in fname or '_class' in fname:
-                            prefix = fname[:3]
-                            rest = fname[3:]
-                            c_keys.append(f'{prefix}{model_name}_{rest}')
+                    for short_key in ds.dtype.names:
+                        if '_type' in short_key or '_state' in short_key or '_class' in short_key:
+                            prefix, field_name = short_key.split('_', 1)
+                            full_key = f"{prefix}_{model_name}_{field_name}"
+                            c_keys.append(full_key)
 
             self.classifiers = {key: None for key in c_keys}
             self.n_in, self.n_out = len(self.in_keys), len(self.out_keys)

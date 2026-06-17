@@ -542,11 +542,10 @@ class GRIDInterpolator():
             for key in self.final_keys:
                 if 'SN_MODEL' in key:
                     model_name = _extract_model_name(key)
-                    prefix = key[:3]
-                    short = prefix + key[3 + len(model_name) + 1:]
+                    short_key = '_'.join(key.split(f'_{model_name}_'))
                     sn_row = grid[idx].get_SN_data(model_name)
                     self.grid_final_values[m][key] = (
-                        sn_row[short] if sn_row is not None else np.nan)
+                        sn_row[short_key] if sn_row is not None else np.nan)
                 else:
                     self.grid_final_values[m][key] = final_value[key]
             for key in self.profile_keys:

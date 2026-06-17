@@ -1747,11 +1747,9 @@ class PSyGrid:
         # Include SN model columns (moved out of final_values after migration)
         for model_name, sn_ds in self.SN_MODELS.items():
             for short_key in sn_ds.dtype.names:
-                prefix = short_key[:3]           # 'S1_' or 'S2_'
-                rest = short_key[3:]             # e.g. 'CO_type'
-                full_key = f'{prefix}{model_name}_{rest}'
-                new_col_name = "final_" + full_key
-                df[new_col_name] = np.array(sn_ds[short_key])
+                prefix, field_name = short_key.split('_', 1)
+                full_key = f"final_{prefix}_{model_name}_{field_name}"
+                df[full_key] = np.array(sn_ds[short_key])
         return df
 
     def __len__(self):
