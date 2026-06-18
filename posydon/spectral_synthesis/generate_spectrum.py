@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 from posydon.spectral_synthesis.spectral_grids import GRID_KEYS
 import posydon.utils.constants as constants
+import traceback
 
 state_to_grid = {
     "WNE_star": "WNE_grid",
@@ -231,7 +232,7 @@ def generate_spectrum(grids,star,i,**kwargs):
             try:
                 F_l = grids.grid_flux(label,**x)
                 #Check if the flux has negative values if so then find the NN
-                if np.min(F_l) < 0: 
+                if np.min(F_l) < 0:
                     #F_l = smooth_flux_negatives(grids.lam_c, F_l)
                     F_l = grids.NN_grid_flux(label,**x)
                 Flux = flux_to_luminosity(label,F_l,R,L,SCALE_CONSTANT)
@@ -241,9 +242,9 @@ def generate_spectrum(grids,star,i,**kwargs):
                 try:
                     x = rescale_log_g(grids,label,**x)
                     continue
-                except Exception as e:
+                except Exception:
+                    print(traceback.format_exc())
                     label = f'failed_attempt_{count}'
-                    pass
         else:
             label = f'failed_attempt_{count}'
         label,x = point_the_grid(grids,x,label,**kwargs)
@@ -374,7 +375,7 @@ def calculated_Rt(star,i):
         R_t: float
     """
     M_dot = 10**copy(star[f'{i}_lg_wind_mdot']) #M_sun/yr
-    v_terminal = 1000 #km/s
+    #v_terminal = 1000 #km/s
     D_max = 4 
     R  = 10**copy(star[f'{i}_log_R'])*constants.Rsun
     M = copy(star[f'{i}_mass'])*constants.Msun #g
@@ -452,7 +453,7 @@ def rescale_log_g(grids,label,**x):
             dx['R_t'] = - grid.axis_x_max['R_t']
             new_x = grid.adjust_x(old_x, dx)
         x['R_t'] = new_x['R_t']
-    else:   
+    else:
         dx['log(g)'] = grid.axis_x_max['log(g)']
         try:
             new_x = grid.adjust_x(old_x, dx)
@@ -460,7 +461,7 @@ def rescale_log_g(grids,label,**x):
             dx['log(g)'] = - grid.axis_x_max['log(g)']
             new_x = grid.adjust_x(old_x, dx)
         x['log(g)'] = new_x['log(g)']
-    return x 
+    return x
 
 def generate_photgrid_flux(grids,star,i,**kwargs):
     """Generates the spectrum of star. 
@@ -498,7 +499,7 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
     state = x['state']
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
     L = 10**x['log_L']
-    
+
     label = None
     label,x = point_the_grid(grids,x,label,**kwargs)
     count = 0

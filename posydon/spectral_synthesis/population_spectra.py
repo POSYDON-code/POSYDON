@@ -18,7 +18,7 @@ from collections import Counter
 from posydon.spectral_synthesis.spectral_tools import load_posydon_population,IMF_WEIGHT
 from posydon.spectral_synthesis.spectral_grids import spectral_grids
 from posydon.spectral_synthesis.default_options import default_kwargs
-from posydon.spectral_synthesis.generate_spectrum import generate_spectrum,regenerate_spectrum
+from posydon.spectral_synthesis.generate_spectrum import generate_spectrum
 grid_keys = [
     'main_grid',
     'secondary_grid',
@@ -60,6 +60,9 @@ class population_spectra():
         self.kwargs = default_kwargs.copy()
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
+
+        self.verbose = self.kwargs.get('verbose', False)
+
         file =  self.kwargs['population_file']
         if os.path.isfile(file):
             self.file = file
@@ -70,6 +73,15 @@ class population_spectra():
         if self.save_data:
             self.output_file = self.kwargs.get('output_file',self.file+'_spectra.h5')
             self.output_path = self.kwargs.get('output_path','./')
+        
+        if self.verbose:
+            print("Initializing population spectra with the following options:")
+            print(f"  population_file : {self.file}")
+            if self.save_data:
+                print(f"  output_file     : {self.output_file}")
+                print(f"  output_path     : {self.output_path}")
+            print(f"  save_data       : {self.save_data}")
+
         # Initialize the spectral_grids object and parameters used.
         self.grids = spectral_grids(**self.kwargs)
         self.population = None
@@ -89,7 +101,9 @@ class population_spectra():
             load_start = datetime.datetime.now()
             self.load_population()
             load_end = datetime.datetime.now()
-            print('Loading the population took',load_end - load_start,'s')
+            if self.verbose:
+                print(f"  Population loaded: {len(self.population)} binaries")
+                print(f"  Loading took     : {load_end - load_start}")
             pop = copy(self.population)
             # determine the size of each sub-task
             ave, res = divmod(len(pop), nprocs)
@@ -180,7 +194,6 @@ class population_spectra():
             labels.append([label1,label2])
             if spectrum_1 is not None and state_1 is not None:
                 if isochrones:
-                    print(i,weights[i],binary)
                     spectrum_1 = spectrum_1*weights[i]
                 pop_spectrum['Total'] += spectrum_1
                 if state_1 in states:
@@ -243,3 +256,6 @@ class population_spectra():
         if save_population_data:
             pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')
+
+        if self.verbose:
+            print(f"  Data saved successfully.")

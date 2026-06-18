@@ -9,7 +9,9 @@ __authors__ = [
 
 default_grid_kwargs = {
     # Default grid options:
-
+    'grid_dir': None,
+    'pass_dir': None,
+    'verbose': False,
     # The main grid option:
     'main_grid':'sg-C3K-demo.h5',#'sg-C3K-coarse.h5',"sg-CAP18-coarse.h5",
     # Secondary grid option to capture the failures of the main grid.
@@ -33,11 +35,11 @@ default_grid_kwargs = {
     'filters': ['U', 'B', 'V']
 }
 default_kwargs = {
-    'max_number_of_binaries': None,
-    #int
-    #
     'save_population_data': True,
+    #False,True
     'save_data': True,
+    #False,True
+    'verbose': False,
     #False,True
 
     #The desired path for the output file.

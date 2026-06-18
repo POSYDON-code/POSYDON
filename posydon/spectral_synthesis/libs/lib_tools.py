@@ -42,7 +42,6 @@ def get_grid(name):
                     if (min_data == min_ax ) & (max_data == max_ax):
                         grid_val[label] = data
                         axis_to_ignore.append(key)
-    
     return grid_val
 
 
@@ -57,20 +56,19 @@ def get_grid_points(name):
     lam_c = 0.5*(lam[1:] + lam[:-1])
     for x in combination_dicts:
         try:
-            F_test = np.asarray(grid.flux(x, lam))
+            F_test = np.asarray(grid.flux(x, 0,lam))
             grid_points.append(x)
         except Exception as e:
             pass
-            
     return grid_points
 
 
 def get_nearest_neighbor(name,x):
     if name not in grid_cache:
         grid_cache[name] = get_grid_points(name)  # Cache grid points
-        
     grid_points = grid_cache[name]
     labels = list(grid_points[0].keys())
+    
     points = np.array([[point[l] for l in labels] for point in grid_points])
     #The values we need to find the NN 
     nn_point = np.array([x[l] for l in labels])

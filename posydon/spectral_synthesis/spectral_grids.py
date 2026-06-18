@@ -17,9 +17,8 @@ from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
 import posydon.utils.constants as constants
 
 kpc = 3.08e21 # cm
-MSG_DIR = os.environ['MSG_DIR']
-GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
-PASS_DIR = os.path.join(MSG_DIR, 'data', 'passbands')
+GRID_DIR = os.environ.get('GRID_DIR')
+PASS_DIR = os.environ.get('PASS_DIR')
 
 GRID_KEYS = [
     'main_grid',
@@ -52,6 +51,29 @@ class spectral_grids():
         for key, arg in kwargs.items():
             self.kwargs[key] = arg
 
+        self.grid_dir = self.kwargs.get('grid_dir') or GRID_DIR
+        if self.grid_dir is None:
+            raise ValueError("GRID_DIR must be passed as a kwarg or set as the GRID_DIR environment variable.")
+
+        self.pass_dir = self.kwargs.get('pass_dir') or PASS_DIR
+        if self.pass_dir is None:
+            raise ValueError("PASS_DIR must be passed as a kwarg or set as the PASS_DIR environment variable.")
+
+        self.verbose = self.kwargs.get('verbose', False)
+        if self.verbose:
+            print("Initializing spectral grids with the following options:")
+            print(f"  grid_dir       : {self.grid_dir}")
+            print(f"  pass_dir       : {self.pass_dir}")
+            print(f"  lam_min        : {self.kwargs.get('lam_min')}")
+            print(f"  lam_max        : {self.kwargs.get('lam_max')}")
+            print(f"  lam_res        : {self.kwargs.get('lam_res')}")
+            print(f"  cache_limit    : {self.kwargs.get('cache_limit')}")
+            print(f"  filters        : {self.kwargs.get('filters')}")
+            for key in GRID_KEYS:
+                val = self.kwargs.get(key)
+                if val is not None:
+                    print(f"  {key:<20}: {val}")
+
         # Specify which filters we should calculate
         self.filters = ['U', 'B', 'V']
 
@@ -83,12 +105,9 @@ class spectral_grids():
         """
         grids = {}
         for key, arg in kwargs.items():
-            print(key,arg)
             if key in GRID_KEYS:
 
                 grids[key] = spec_grid(str(arg))
-                #TODO
-                #grids[key].points = find_grid_points(**kwargs)
         return grids
 
     def wavelength_range(self,**kwargs):
@@ -109,16 +128,14 @@ class spectral_grids():
         lam_max_grids = reduce(lambda x,y: x if x < y else y, map(lambda x: grids[x].lam_max,grids))
         lam_maxes = [grids[x].lam_max for x in GRID_KEYS]
         min_key = min(grids, key=lambda k: grids[k].lam_max)
-        print(f"Grid with min lam_max: key = {min_key}, lam_max = {grids[min_key].lam_max}")
         lam_min = kwargs.get('lam_min', 3000)
         lam_max = kwargs.get('lam_max', 7000)
         lam_res = kwargs.get('lam_res', 2000)
-        print(lam_maxes, grids)
         if lam_min < lam_min_grids or lam_max > lam_max_grids:
-            raise ValueError('The wavelength range chosen is out of the',
-                            ' range being offer by the libraries',
-                             'The available wavelength range of this collection of libraries is [',
-                             {lam_min_grids},r'$\AA$',{lam_max_grids},r']$\AA$')
+            raise ValueError(
+                f"Wavelength range [{lam_min}, {lam_max}] Å is outside the available "
+                f"range [{lam_min_grids:.1f}, {lam_max_grids:.1f}] Å."
+            )
         lam = np.linspace(lam_min, lam_max, lam_res)
         return lam,0.5*(lam[1:] + lam[:-1])
 
@@ -132,7 +149,7 @@ class spectral_grids():
         for key in kwargs:
             if key not in specgrid.axis_labels:
                 x.pop(key)
-        Flux = np.asarray(specgrid.flux(x, self.lam))
+        Flux = np.asarray(specgrid.flux(x, 0, self.lam))
         distance_factor = 1
         if name == "stripped_grid":
             distance_factor = (kpc)**2/(0.5 *constants.Rsun)**2
@@ -140,9 +157,6 @@ class spectral_grids():
         if name in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
             distance_factor = (kpc/100)**2
             return (Flux)*distance_factor
-        #if 'log' in self.kwargs.get(name):
-        #    print(name,'log')
-            
         return Flux*distance_factor
 
     def NN_grid_flux(self, name, **kwargs):
@@ -154,7 +168,7 @@ class spectral_grids():
         new_x = get_nearest_neighbor(file_name,x)
         Flux = self.grid_flux(name,**new_x)
         #Normalizing the new flux to correspond to the correct star temperature
-        temp_norm_factor = (x['Teff']/new_x['Teff'])**4 
+        temp_norm_factor = (x['Teff']/new_x['Teff'])**4
         return temp_norm_factor*Flux
 
     def photgrid_constructor(self, **kwargs):
