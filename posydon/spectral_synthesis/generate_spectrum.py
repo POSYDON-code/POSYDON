@@ -1,6 +1,6 @@
-"""Generates the spectrum of a single star 
+"""Generates the spectrum of a single star
 
-These functions are determining, based on the star's properties which is the appropiate 
+These functions are determining, based on the star's properties which is the appropiate
 grid to be used for calculated the flux.
 If not such a grid is found or the interpolation fails, it returns a failed_grid message.
 """
@@ -11,17 +11,19 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
 
+import traceback
 from copy import copy
+
 import numpy as np
 import pandas as pd
-from posydon.spectral_synthesis.spectral_grids import GRID_KEYS
+
 import posydon.utils.constants as constants
-import traceback
+from posydon.spectral_synthesis.spectral_grids import GRID_KEYS
 
 state_to_grid = {
     "WNE_star": "WNE_grid",
     "WNL_star": "WNL_grid",
-    "WC_star":  "WC_grid", 
+    "WC_star":  "WC_grid",
     "stripped_star" : "stripped_grid"
 }
 SCALE_CONSTANT = 4*np.pi/constants.Lsun
@@ -29,8 +31,8 @@ SCALE_CONSTANT = 4*np.pi/constants.Lsun
 def check_boundaries(grids,grid_name,**kwargs):
     """Checks if the stellar parameters in inside the boundaries of the spectral grids.
 
-    It takes an input based on the grid check need to be made and returns a failed_grid message 
-    if parameters are outside the boundaries. 
+    It takes an input based on the grid check need to be made and returns a failed_grid message
+    if parameters are outside the boundaries.
     """
     x = copy(kwargs)
 
@@ -58,7 +60,7 @@ def check_boundaries(grids,grid_name,**kwargs):
         elif x[axis_label] > grid.axis_x_max[axis_label]:
             if abs(x[axis_label] - grid.axis_x_max[axis_label])/(grid.axis_x_max[axis_label]) < tol:
                 x[axis_label] = grid.axis_x_max[axis_label]
-            else: 
+            else:
                 return 'failed_grid',x
         if axis_label in ['[Fe/H]','Z/Zo']:
             x[axis_label] = enforce_boundaries(grids,grid_name,axis_label,**x)
@@ -66,7 +68,7 @@ def check_boundaries(grids,grid_name,**kwargs):
     return grid_name,x
 
 def labels_out_of_grid(grids, grid_name,**kwargs):
-    """ Checks what labels are out of the grid and returns them. 
+    """ Checks what labels are out of the grid and returns them.
 
     Args:
         grids: grid object
@@ -85,7 +87,7 @@ def labels_out_of_grid(grids, grid_name,**kwargs):
     return failed_labels
 
 def enforce_boundaries(grids, grid_name,grid_label,**kwargs):
-    """Set the stellar parameters 
+    """Set the stellar parameters
 
     Args:
         grids : grid object
@@ -117,14 +119,14 @@ def point_the_grid(grids,x,label,**kwargs):
         ostar_temp_cut_off: float
             Temperature at which we change to the OSTAR grid
         label: string
-            Points to the correct grid needed to be used for the star 
-            or None if the star hasn't been assessed before. 
+            Points to the correct grid needed to be used for the star
+            or None if the star hasn't been assessed before.
 
     Raises:
         ValueError: If a label is not recognized and it's not one of the allowed options.
 
     Returns:
-        string: Returns the name of the grid needed to be used. 
+        string: Returns the name of the grid needed to be used.
         Failed grid if it can't be matched to a grid.
     """
     ostar_temp_cut_off = kwargs.get('ostar_temp_cut_off',28000)
@@ -188,22 +190,22 @@ def point_the_grid(grids,x,label,**kwargs):
         raise ValueError(f'The label {label} is not recognized!. The state of the star is {x}')
 
 def generate_spectrum(grids,star,i,**kwargs):
-    """Generates the spectrum of star. 
+    """Generates the spectrum of star.
 
     Args:
         grids: grid object
             Instance of the grids created in generate_spectrum
         star: tuple
         i: string
-            S1 or S2 
+            S1 or S2
 
     Raises:
         ValueError: If the final label is not "failed_grid" or not recognised
 
     Returns:
-        Flax: float 
+        Flax: float
         state: string
-        label: string 
+        label: string
     """
     #First we check if the star is a CO. (for future we can add WD spectra)\
     if star[f'{i}_state'] in ['massless_remnant','BH','WD','NS']:
@@ -255,8 +257,8 @@ def generate_spectrum(grids,star,i,**kwargs):
 def assign_star_properties(grids, star, i, **kwargs):
     #Changing star's state if H-poor
     if star[f'{i}_surface_h1'] <= 0.6:
-        #Check if the stars is false labeled as H_rich 
-        rename_star_state(star,i)    
+        #Check if the stars is false labeled as H_rich
+        rename_star_state(star,i)
     Fe_H = np.log10(star['Z/Zo'])
     Z_Zo = star['Z/Zo']
     #Z= star['Z/Zo']*Zo
@@ -316,7 +318,7 @@ def rename_star_state(star,i):
     tau = calculate_WR_wind_tau(star,i)
     if 'H-rich_Core_H_burning' in star[f'{i}_state']:
         H_burning = True
-    else: 
+    else:
         H_burning = False
     if xH_surf > 0.01:
         if H_burning:
@@ -329,9 +331,9 @@ def rename_star_state(star,i):
             else:
                 if (xH_surf < 0.4 * (1 - 0.1)) | (xH_surf > 0.4 * (1 + 0.1)):
                     star[f'{i}_state'] = 'stripped_He_star'
-        else:  
-            if (xH_surf < 0.3): 
-                if tau <= 0.5: 
+        else:
+            if (xH_surf < 0.3):
+                if tau <= 0.5:
                     star[f'{i}_state'] = 'stripped_He_star'
                 else:
                     star[f'{i}_state'] = 'WNL_star'
@@ -343,23 +345,23 @@ def rename_star_state(star,i):
                 if tau <= 0.3 * (1 - 0.1):
                     star[f'{i}_state'] = 'stripped_He_star'
                 else:
-                    star[f'{i}_state'] = 'WNL_star' 
+                    star[f'{i}_state'] = 'WNL_star'
                     if star[f'{i}_surface_h1'] < 0.2:
                         star[f'{i}_surface_h1'] = 0.2
-                    elif star[f'{i}_surface_h1'] > 0.4: 
+                    elif star[f'{i}_surface_h1'] > 0.4:
                         star[f'{i}_surface_h1'] = 0.4
 
     elif (xH_surf <= 0.01) and (xHe_surf > 0.7):
         if tau <= 1.0:
             star[f'{i}_state'] = 'stripped_He_star'
-        else: 
+        else:
             star[f'{i}_state'] = 'WNE_star'
     elif (xH_surf <= 0.01) and (xHe_surf < 0.7):
         if tau <= 1.0:
             star[f'{i}_state'] = 'stripped_He_star'
-        else: 
+        else:
             star[f'{i}_state'] = 'WC_star'
-    else: 
+    else:
         raise ValueError("This else shouldn't have been reached")
     if star[f'{i}_state'] in ['WNL_star', 'WNE_star', 'WC_star']:
         star[f'{i}_Rt'] = calculated_Rt(star,i)
@@ -376,18 +378,18 @@ def calculated_Rt(star,i):
     """
     M_dot = 10**copy(star[f'{i}_lg_wind_mdot']) #M_sun/yr
     #v_terminal = 1000 #km/s
-    D_max = 4 
+    D_max = 4
     R  = 10**copy(star[f'{i}_log_R'])*constants.Rsun
     M = copy(star[f'{i}_mass'])*constants.Msun #g
     T = copy(star[f'{i}_Teff'])#K
     xH_surf = copy(star[f'{i}_surface_h1'])
-    k_e = 0.2*(1 + xH_surf) #cm^2/g 
+    k_e = 0.2*(1 + xH_surf) #cm^2/g
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
     v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
     if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
         v_terminal = 2.6 * v_esc
-    else: 
+    else:
         v_terminal = 1.3 * v_esc
     Rt = (R/constants.Rsun)*((v_terminal/(2500*1e5))/(np.sqrt(D_max)*M_dot/1e-4))**(2/3)
     return Rt
@@ -403,24 +405,24 @@ def calculate_WR_wind_tau(star,i):
         tau: float
     """
     xH_surf = copy(star[f'{i}_surface_h1'])
-    v_0 = 20 *constants.km2cm # cm *s^-1 
+    v_0 = 20 *constants.km2cm # cm *s^-1
     T = copy(star[f'{i}_Teff'])#K
     lg_M_dot = -10**copy(star[f'{i}_lg_wind_mdot'])*constants.Msun/constants.secyer  #kg/s
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm
     M = copy(star[f'{i}_mass'])*constants.Msun #kg
-    k_e = 0.2*(1 + xH_surf) #cm^2/g 
+    k_e = 0.2*(1 + xH_surf) #cm^2/g
     logg = copy(star[f'{i}_log_g'])
     Gamma = k_e * constants.boltz_sigma*T**4/(constants.clight * 10**logg)
     v_esc = np.sqrt(2 * constants.standard_cgrav * M *R**(-1)* (1 - Gamma))
     if (np.log10(T) > 4.4 ) & (np.log10(T) < 4.7):
         v_terminal = 2.6 * v_esc
-    else: 
+    else:
         v_terminal = 1.3 * v_esc
     tau = - k_e * lg_M_dot/(4 * np.pi * R * (v_terminal - v_0) )* np.log(v_terminal/v_0)
     return tau
 
 def rescale_log_g(grids,label,**x):
-    """Rescaling the log g in case the star parameters fall into a grid point. 
+    """Rescaling the log g in case the star parameters fall into a grid point.
 
     Args:
         grids: grid object
@@ -442,7 +444,7 @@ def rescale_log_g(grids,label,**x):
     for key in x:
         if key not in grid.axis_labels:
             old_x.pop(key)
-    
+
     for axis_label in grid.axis_labels:
         dx[axis_label] = 0.0
     if label in ['WR_grid','WNE_grid','WNL_grid','WC_grid']:
@@ -464,22 +466,22 @@ def rescale_log_g(grids,label,**x):
     return x
 
 def generate_photgrid_flux(grids,star,i,**kwargs):
-    """Generates the spectrum of star. 
+    """Generates the spectrum of star.
 
     Args:
         grids: grid object
             Instance of the grids created in generate_spectrum
         star: tuple
         i: string
-            S1 or S2 
+            S1 or S2
 
     Raises:
         ValueError: If the final label is not "failed_grid" or not recognised
 
     Returns:
-        Flax: float 
+        Flax: float
         state: string
-        label: string 
+        label: string
     """
 
     #First we check if the star is a CO. (for future we can add WD spectra)\
@@ -490,11 +492,11 @@ def generate_photgrid_flux(grids,star,i,**kwargs):
         return None,star[f'{i}_state'],'no_grid'
     elif ((star[f'{i}_log_g'] > 6) & (star[f'{i}_log_L'] < 4)) or ((star[f'{i}_log_g'] > 6) and 'He_depleted' in star[f'{i}_state']):
         return None,star[f'{i}_state'],'no_grid'
-    
-    #Safety check: 
-    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):   
+
+    #Safety check:
+    if pd.isna(star[f'{i}_log_g']) or pd.isna(star[f'{i}_Teff']):
         return None,star[f'{i}_state'],'no_grid'
-    
+
     x = assign_star_properties(grids, star, i, **kwargs)
     state = x['state']
     R = 10**copy(star[f'{i}_log_R'])*constants.Rsun #cm

@@ -9,7 +9,6 @@ __authors__ = [
 import configparser
 import os
 
-
 # mirrors: saved_ini_parameters in binarypopulation.py [2]
 SAVED_SPECTRAL_PARAMETERS = [
     'metallicity',

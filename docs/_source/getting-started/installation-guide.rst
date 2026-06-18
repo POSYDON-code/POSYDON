@@ -70,7 +70,7 @@ Anaconda (Recommended)
         conda env config vars set PATH_TO_POSYDON=/path/to/your/posydon/installation
         conda env config vars set PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
 
-    The path for the data location is up to you, but keeping the data separate 
+    The path for the data location is up to you, but keeping the data separate
     from the code is recommended for better organization.
 
     .. note::
@@ -84,7 +84,7 @@ Anaconda (Recommended)
 5. **Download the Dataset**
 
     .. warning::
-        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release. 
+        The POSYDON v2.0.0 dataset is not yet available on Zenodo. The instructions currently point to the POSYDON v1.0.0 dataset release.
         Please refer to the development version of the dataset available on Northwestern and UNIGE HPC facilities for now. To have access to latest pre-release dataset (241028) you must be a POSYDON core developer, please refer to the #developers Slack channel.
 
     You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
@@ -210,7 +210,7 @@ Our tutorials are provided as Jupyter notebooks. If you want to run these notebo
     You can do this by running inside your conda environment:
 
 
-Installing additional dependencies (Optional) 
+Installing additional dependencies (Optional)
 =============================================
 
 For some specific functionalities, you may need to install additional dependencies.
@@ -297,7 +297,7 @@ If you're interested in building the POSYDON documentation locally:
 Machine Learning Dependencies
 ---------------------------------------
 
-For users who wish to utilize POSYDON's latest machine learning features. 
+For users who wish to utilize POSYDON's latest machine learning features.
 This is specifically used in the active learning module and profile interpolation.
 You do not require these dependencies if you are using the provided Initial-Final interpolators.
 
@@ -318,7 +318,7 @@ To install these experimental visualization libraries
 1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
 
     .. code-block:: bash
-   
+
         pip install ".[vis]"
 
     After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.

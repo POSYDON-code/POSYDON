@@ -2,13 +2,16 @@ __authors__ = [
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
 ]
 
-import os
-import glob
 import argparse
 import datetime
+import glob
+import os
+
 import numpy as np
 import pandas as pd
+
 from posydon.spectral_synthesis.population_spectra import population_spectra
+
 
 class SpectralSynthesisRunner():
 
@@ -59,7 +62,7 @@ class SpectralSynthesisRunner():
         indices = pop.index.unique()
         indices_split = np.array_split(indices, self.num_batches)
         self.batch_files = []
-        
+
         for i in range(self.num_batches):
             batch_file = os.path.join(temp_directory, f'batch_{i}.h5')
             batch = pop.loc[indices_split[i]]
@@ -78,7 +81,7 @@ class SpectralSynthesisRunner():
             batch_id       : int — index of the batch to process
             temp_directory : str — directory containing batch files
         """
-        
+
         if batch_id is None:
             if self.JOB_ID is None:
                 raise ValueError(
@@ -92,7 +95,7 @@ class SpectralSynthesisRunner():
 
         # mirrors: f"evolution.combined.{rank}.h5" naming in BinaryPopulation [2]
         output_file = f'batch_{batch_id}_spectra.h5'
-        
+
 
         if self.JOB_ID is None:
             output_file = f'batch_{batch_id}_spectra.h5'
@@ -122,7 +125,7 @@ class SpectralSynthesisRunner():
     def combine_batches(self, keep_batches=False,
                         complib='zlib', complevel=9):
         """Combines all the batches into one and cleans up the batch files
-        
+
                 Parameters
             ----------
             keep_batches : bool
@@ -154,22 +157,22 @@ class SpectralSynthesisRunner():
             raise FileNotFoundError(
                 f'No batch spectra files found in {self.temp_directory}'
             )
-        
+
         output_dir = os.path.dirname(self.population_file)
         output_name = os.path.basename(
             self.population_file
         ).replace('.h5', '_spectra.h5')
         h5file = os.path.join(output_dir, output_name)
-        
+
         if os.path.exists(h5file):
             if self.verbose:
                 print(f'Removing pre-existing {h5file}...')
             os.remove(h5file)
 
-        
+
         combined_flux = None
         all_pop_data = []
-        
+
         for i, f in enumerate(spectra_batch_files):
             if self.verbose:
                 print(
@@ -220,8 +223,8 @@ class SpectralSynthesisRunner():
                 os.remove(f)
             except Exception as e:
                 print(f'  Warning: could not remove {f} — {e}')
-                              
-        # only remove i batches directory is empty 
+
+        # only remove i batches directory is empty
         if len(os.listdir(self.temp_directory)) == 0:
             os.rmdir(self.temp_directory)
             if self.verbose:

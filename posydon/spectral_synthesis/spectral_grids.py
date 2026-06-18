@@ -6,15 +6,17 @@ __authors__ = [
 ]
 
 
-import os
 import copy
+import os
 from functools import reduce
+
 import numpy as np
 import pymsg
-from posydon.spectral_synthesis.default_options import default_grid_kwargs
-from posydon.spectral_synthesis.spectral_tools import grid_global_limits
-from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
+
 import posydon.utils.constants as constants
+from posydon.spectral_synthesis.default_options import default_grid_kwargs
+from posydon.spectral_synthesis.libs.lib_tools import get_nearest_neighbor
+from posydon.spectral_synthesis.spectral_tools import grid_global_limits
 
 kpc = 3.08e21 # cm
 GRID_DIR = os.environ.get('GRID_DIR')
@@ -96,7 +98,7 @@ class spectral_grids():
             grid_global_limits(self.spectral_grids)
         #Getting the wavelength range
         self.lam,self.lam_c = self.wavelength_range(**self.kwargs)
-        
+
     def grid_constructor(self, **kwargs):
         """Create the dictionary of MSG SpecGrid objects.
 
@@ -111,7 +113,7 @@ class spectral_grids():
         return grids
 
     def wavelength_range(self,**kwargs):
-        """Generates the waveelength related variables 
+        """Generates the waveelength related variables
         and checks if the input wavelength range is available.
 
 
@@ -210,6 +212,6 @@ class spectral_grids():
             distance_factor = (kpc/100)**2
         for filter in self.filters:
             F[filter] = photgrid[filter].flux(x)*distance_factor
-        
+
         return F
-    
+

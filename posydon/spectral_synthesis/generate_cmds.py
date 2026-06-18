@@ -2,17 +2,26 @@ __authors__ = [
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
-import os
-from copy import copy
 import datetime
-import numpy as np
-from mpi4py import MPI
-import pandas as pd
+import os
 from collections import Counter
-from posydon.spectral_synthesis.spectral_tools import load_posydon_population,IMF_WEIGHT
-from posydon.spectral_synthesis.spectral_grids import spectral_grids
+from copy import copy
+
+import numpy as np
+import pandas as pd
+from mpi4py import MPI
+
 from posydon.spectral_synthesis.default_options import default_kwargs
-from posydon.spectral_synthesis.generate_spectrum import generate_spectrum,regenerate_spectrum
+from posydon.spectral_synthesis.generate_spectrum import (
+    generate_spectrum,
+    regenerate_spectrum,
+)
+from posydon.spectral_synthesis.spectral_grids import spectral_grids
+from posydon.spectral_synthesis.spectral_tools import (
+    IMF_WEIGHT,
+    load_posydon_population,
+)
+
 grid_keys = [
     'main_grid',
     'secondary_grid',
@@ -21,11 +30,11 @@ grid_keys = [
     'WR_grid',
     'WNL_grid',
     'WNE_grid',
-    'WC_grid' 
+    'WC_grid'
 ]
 state_list = [
     'disrupted',
-    'merged', 
+    'merged',
     'detached',
     'initially_single_star',
     'low_mass_binary',
@@ -34,8 +43,8 @@ state_list = [
     'RLO2'
     ]
 spectral_types = [
-    'main_grid', 
-    'bstar_grid', 
+    'main_grid',
+    'bstar_grid',
     'failed_grid',
     'no_grid',
     'secondary_grid',
@@ -59,7 +68,7 @@ class population_cmd():
             self.file = file
         else:
             raise FileNotFoundError
-        
+
         self.save_data = self.kwargs['save_data']
         if self.save_data:
             self.output_file = self.kwargs.get('output_file',self.file+'_cmd.h5')
@@ -81,7 +90,7 @@ class population_cmd():
 
     def calc_colours(self):
         """ It splits up the population and combines the data to be saved.
-        """      
+        """
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         nprocs = comm.Get_size()
@@ -114,7 +123,7 @@ class population_cmd():
 
     def create_population_colours(self,pop):
         """Creates the integrated spectrum of the population.
-        It also creates a file with the outputs if the save_data is True. 
+        It also creates a file with the outputs if the save_data is True.
 
         Returns:
             pop_spectrum: dictonary of type of binaries and their corresponding spectrum.
@@ -125,12 +134,12 @@ class population_cmd():
         #
         if pop is None:
             pop = self.population
-        
+
         weights = None
         if isochromes:
             mini_file = self.kwargs.get('mini_file',False)
             weights = IMF_WEIGHT(mini_file)
-        
+
         num_waves = len(self.grids.lam_c)
         labels = []
         colours = []
@@ -146,7 +155,7 @@ class population_cmd():
         for i,binary in enumerate(pop_dict):
             F_obs_1,state_1,label1 = generate_colour(self.grids,binary,'S1',**self.kwargs)
             F_obs_1,state_2,label2 = generate_colour(self.grids,binary,'S2',**self.kwargs)
-            
+
             #Store labels
             if label1 is None:
                 label1 = 'failed_grid'
@@ -154,17 +163,17 @@ class population_cmd():
                 label2 = 'failed_grid'
 
 
-            if F_obs_1 is not None: 
+            if F_obs_1 is not None:
                 colour_1 = colour_mag(self,F_obs_1)
-                
-            if F_obs_2 is not None: 
+
+            if F_obs_2 is not None:
                 colour_2 = colour_mag(self,F_obs_2)
 
-            
+
             labels.append([label1,label2])
 
             colours.append([colour_1,colour_2])
-            
+
 
         if self.save_data:
             return pop_spectrum,labels
@@ -173,7 +182,7 @@ class population_cmd():
 
 
     def save_pop_data(self,pop_data,labels,pop_spectrum):
-        """Saves the population data and the spectrum outputs to the file 
+        """Saves the population data and the spectrum outputs to the file
         Args:
             pop_data: pd array
             labels_S1: string
@@ -207,14 +216,14 @@ class population_cmd():
                 pop_data['S2_filter'] = colours[:,1]
 
 
-    
+
         h5file =self.output_path + self.output_file
         pop_data.to_hdf(h5file,key = 'data',format = 'table')
 
 
 
     def colour_mag(self, F_obs):
-        
+
         mags = {}
         if F_obs is None:
             return None
@@ -245,4 +254,4 @@ class population_cmd():
                     L.append(newstar.L/con.L_sun)
         return B_V, V, L
 
-    
+
