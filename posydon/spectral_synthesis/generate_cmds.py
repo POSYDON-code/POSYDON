@@ -253,5 +253,3 @@ class population_cmd():
                     B_V.append(magnitude['B'].value-magnitude['V'].value)
                     L.append(newstar.L/con.L_sun)
         return B_V, V, L
-
-
