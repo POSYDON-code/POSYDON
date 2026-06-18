@@ -522,8 +522,12 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     if not EXTRA_COLUMNS:
         return
 
-    SN_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if 'SN_MODEL' in col]
-    OTHER_COLUMNS = [col for col in EXTRA_COLUMNS.keys() if col not in SN_COLUMNS]
+    SN_COLUMNS, OTHER_COLUMNS = [], []
+    for col in EXTRA_COLUMNS.keys():
+        if 'SN_MODEL' in col:
+            SN_COLUMNS.append(col)
+        else:
+            OTHER_COLUMNS.append(col)
 
     # get the final_values dataset
     final_values = np.array(grid.final_values)
