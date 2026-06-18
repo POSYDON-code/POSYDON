@@ -136,13 +136,13 @@ STAR_STATES_FOR_Hestar_MATCHING = list(set(STAR_STATES_FOR_Hestar_MATCHING)
 
 BINARY_STATES_ALL = [
     'initially_single_star',
-    'detached',s
+    'detached',
     'RLO1',
     'RLO2',
     'contact',
     'disrupted',
     'merged',
-    'initial_RLOF',
+    'initial_RLOF'
 ]
 
 BINARY_STATES_CC = BINARY_STATES_ALL.copy()
