@@ -134,7 +134,6 @@ class population_spectra():
             wavelength: numpy array
         """
         isochrones = self.kwargs.get('isochrones',False)
-        spectral_type = self.kwargs.get('spectral_type',False)
         #
         if pop is None:
             pop = self.population

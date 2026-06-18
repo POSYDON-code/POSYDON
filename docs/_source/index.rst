@@ -27,6 +27,7 @@ How is this Documentation Structured?
 - **Getting Started:** A quick guide to get POSYDON up and running on your machine.
 - **User Guides:** Detailed guides on using various features.
 - **Tutorials and Examples:** Step-by-step walk-throughs of typical use-cases.
+- **POSYDON School Materials:** Access resources from the POSYDON school.
 - **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
 - **API Reference:** A comprehensive reference for developers.
 - **Troubleshooting and FAQs:** Answers to common questions and problems.
@@ -50,6 +51,8 @@ How is this Documentation Structured?
 
    getting-started/prerequisites
    getting-started/installation-guide
+   getting-started/first-grids
+   getting-started/first-population
 
 .. toctree::
    :maxdepth: 1
