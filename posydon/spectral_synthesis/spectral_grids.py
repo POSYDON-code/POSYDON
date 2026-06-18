@@ -33,7 +33,7 @@ GRID_KEYS = [
 ]
 
 
-def spec_grid(name):
+def spec_grid(name,GRID_DIR):
     """Place docstring here."""
     specgrid_filepath = os.path.join(GRID_DIR, name)
     return pymsg.SpecGrid(specgrid_filepath)
@@ -88,7 +88,7 @@ class spectral_grids():
 
         # Load up stripped star grid
         self.stripped_grid_file = self.kwargs.get('stripped_grid')
-        self.specgrid_stripped = spec_grid(self.stripped_grid_file)
+        self.specgrid_stripped = spec_grid(self.stripped_grid_file,self.grid_dir)
         self.specgrid_stripped.cache_limit = cache
 
         # Getting the global limits for the grids
@@ -107,7 +107,7 @@ class spectral_grids():
         for key, arg in kwargs.items():
             if key in GRID_KEYS:
 
-                grids[key] = spec_grid(str(arg))
+                grids[key] = spec_grid(str(arg),self.grid_dir)
         return grids
 
     def wavelength_range(self,**kwargs):
@@ -180,11 +180,11 @@ class spectral_grids():
                 for filter in self.filters:
                     # Generate filename and check if file exists
                     filename = f'pb-Generic-Johnson.{filter}-Vega.h5'
-                    passband_file_name = os.path.join(PASS_DIR, filename)
+                    passband_file_name = os.path.join(self.pass_dir, filename)
                     if not os.path.isfile(passband_file_name):
                         raise ValueError('We do not support the ' +
                                          str(filter) + ' filter.')
-                    spectral_file = os.path.join(GRID_DIR, kwargs.get(key))
+                    spectral_file = os.path.join(self.grid_dir, kwargs.get(key))
                     photgrid[filter] = pymsg.PhotGrid(spectral_file,
                                                       passband_file_name)
                 photgrids[key] = photgrid
