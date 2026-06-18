@@ -103,7 +103,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
-    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_low_mass_binary','step_CE','step_dco'
+    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_CE','step_dco'
 ]
 
 
@@ -1144,9 +1144,6 @@ class BinaryGenerator:
                 natal_kick_polar_angle=kick2_polar,
                 natal_kick_mean_anomaly=kick2_anomaly,
             )
-            #Detached low mass binaries 
-            if m1 < 4.0: 
-                binary_params['state'] = 'low_mass_binary'
         #If binary_fraction not default a initially single star binary is created.
         else:
             separation = np.nan
