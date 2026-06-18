@@ -264,6 +264,7 @@ for s1 in STAR_STATES_HE_RICH:
         POSYDON_FLOW_CHART[(s2, s1, 'RLO2', "oRLO2")] = 'step_merged'
 
 # Binaries that go to common envelope
+
 for s1 in STAR_STATES_NORMALSTAR:
     for s2 in STAR_STATES_ALL:
         POSYDON_FLOW_CHART[(s1, s2, 'RLO1', 'oCE1')] = 'step_CE'

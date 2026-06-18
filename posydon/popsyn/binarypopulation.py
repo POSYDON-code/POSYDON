@@ -103,8 +103,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
 # load stellar or binary models by checked this list of steps.
 STEP_NAMES_LOADING_GRIDS = [
     'step_HMS_HMS', 'step_CO_HeMS', 'step_CO_HMS_RLO', 'step_CO_HeMS_RLO', 'step_HMS_HMS_RLO',
-    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_CE',
-    'step_dco'
+    'step_detached','step_isolated','step_disrupted','step_initially_single', 'step_merged','step_CE','step_dco'
 ]
 
 
@@ -1030,6 +1029,7 @@ class BinaryGenerator:
         # formation times
         N_binaries = len(orbital_period)
         formation_times = get_formation_times(N_binaries, **kwargs)
+
 
         # indices
         indices = np.arange(self._num_gen, self._num_gen+N_binaries, 1)
