@@ -8,11 +8,11 @@ __authors__ = [
 ]
 import itertools
 import os
+
 import h5py
 import numpy as np
 import pymsg
 from scipy.spatial import KDTree
-
 
 MSG_DIR = os.environ['MSG_DIR']
 GRID_DIR = os.path.join(MSG_DIR, 'data', 'grids')
@@ -68,9 +68,9 @@ def get_nearest_neighbor(name,x):
         grid_cache[name] = get_grid_points(name)  # Cache grid points
     grid_points = grid_cache[name]
     labels = list(grid_points[0].keys())
-    
+
     points = np.array([[point[l] for l in labels] for point in grid_points])
-    #The values we need to find the NN 
+    #The values we need to find the NN
     nn_point = np.array([x[l] for l in labels])
     tree = KDTree(points)
     _, index = tree.query(nn_point)

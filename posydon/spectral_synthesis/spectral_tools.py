@@ -9,11 +9,12 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@ufl.edu>"]
 
 from copy import copy
+
 import numpy as np
 import pandas as pd
 from scipy import integrate
-import posydon.utils.constants as constants
 
+import posydon.utils.constants as constants
 
 #Constants
 Zo = 0.0142
@@ -75,20 +76,20 @@ def find_max_time(history):
     return np.max(times)
 
 def load_posydon_population(population_file,metallicity):
-    """Loads the data of a POSYDON population h5 file saves 
+    """Loads the data of a POSYDON population h5 file saves
         and add all the data used for spectral synthesis.
 
     Args:
-        population_file: h5 file 
+        population_file: h5 file
             POSYDON output population file
         max_number_of_binaries: int. Defaults to None.
-            The number of binaries as subset of the total population 
-            if value is not the default one (Total population). 
+            The number of binaries as subset of the total population
+            if value is not the default one (Total population).
 
     Returns:
         pop: pd array
-            The data of the population that are useful for spectral synthesis. 
-            Includes the columns keys_to_save as well as metallicity, Teff and log(g) 
+            The data of the population that are useful for spectral synthesis.
+            Includes the columns keys_to_save as well as metallicity, Teff and log(g)
             for each star.
     """
 
@@ -125,7 +126,7 @@ def calculate_logg(row,x):
     mass = row[f'{x}_mass']*constants.Msun
     R = 10**row[f'{x}_log_R']*constants.Rsun
     return np.log10(constants.standard_cgrav*mass/R**2)
- 
+
 def calculate_Teff(row,x):
     """Calculate Teff of S1 and S2 from the population data"""
     L = 10**row[f'{x}_log_L']*constants.Lsun
@@ -133,7 +134,7 @@ def calculate_Teff(row,x):
     return (L/(4*np.pi*R**2*constants.boltz_sigma))**0.25
 
 def grid_global_limits(spectral_grids):
-    """Calculates the global limits of 
+    """Calculates the global limits of
     total collection of the spectral libraries
 
     Args:
@@ -166,7 +167,7 @@ def final_mass(file,CO = True):
         S1_CO = end[(end.time != final_time) & (np.isin(end.S1_state,CO_state))]
         S2_CO = end[(end.time != final_time) & (np.isin(end.S2_state,CO_state))]
         total_mass = sum(final.S1_mass) + sum(final.S2_mass) + sum(S1_CO.S1_mass) + sum(S2_CO.S2_mass)
-    else: 
+    else:
         S1_nCO = final[np.isin(final.S1_state,CO_state) == False]
         S2_nCO = final[np.isin(final.S2_state,CO_state) == False]
         total_mass = sum(S1_nCO.S1_mass) + sum(S2_nCO.S2_mass)
@@ -209,10 +210,10 @@ def smooth_flux_negatives(lam_f, flux):
                 i += 1
             if i == len(flux_c) -1:
                 break
-        
+
         if i == len(flux_c) -1:
                 break
-        
+
         i_start = i_low + 1
         i_end = i_high - 1
 
@@ -221,7 +222,7 @@ def smooth_flux_negatives(lam_f, flux):
         intercept = np.log10(flux_c[i_low]) - slope * lam_f[i_low]
         # Replace bad fluxes
         j = copy(i_start)
-        
+
         while j <= i_end:
             flux_c[j] = 10**(slope * lam_f[j] + intercept)
             #print(j, 10**(slope * lam_f[j] + intercept) ,lam_f[j],i_start ,i_low , i_high , slope, intercept)
@@ -238,7 +239,7 @@ def isochrome_weight(m1,IMF_type='Salpeter'):
     m_min = 0.1
     m_max = 150
     norm = ( (-a + 2 ))/(m_max**(-a + 2) - m_min**(-a + 2))
-    if m1 > m_max or m1 < m_min: 
+    if m1 > m_max or m1 < m_min:
         weight = 0
     elif pd.isna(m1):
         weight = 0
@@ -249,7 +250,7 @@ def isochrome_weight(m1,IMF_type='Salpeter'):
 
 
 def IMF_WEIGHT(mini):
-    imf_lower_limit = 0.099  
+    imf_lower_limit = 0.099
     imf_upper_limit = 150
     a = 2.35
 

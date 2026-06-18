@@ -98,7 +98,7 @@ class interp1d:
             Interpolated y-values.
 
         """
-        
+
         x_n = np.array(x_new)
         if self.kind == 'linear':
             y_interp = np.array(np.interp(x=x_n, xp=self.x, fp=self.y,

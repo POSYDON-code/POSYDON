@@ -8,17 +8,23 @@ __authors__ = [
     "Eirini Kasdagli <kasdaglie@ufl.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
 ]
-import os
-from copy import copy
 import datetime
-import numpy as np
-from mpi4py import MPI
-import pandas as pd
+import os
 from collections import Counter
-from posydon.spectral_synthesis.spectral_tools import load_posydon_population,IMF_WEIGHT
-from posydon.spectral_synthesis.spectral_grids import spectral_grids
+from copy import copy
+
+import numpy as np
+import pandas as pd
+from mpi4py import MPI
+
 from posydon.spectral_synthesis.default_options import default_kwargs
 from posydon.spectral_synthesis.generate_spectrum import generate_spectrum
+from posydon.spectral_synthesis.spectral_grids import spectral_grids
+from posydon.spectral_synthesis.spectral_tools import (
+    IMF_WEIGHT,
+    load_posydon_population,
+)
+
 grid_keys = [
     'main_grid',
     'secondary_grid',
@@ -27,11 +33,11 @@ grid_keys = [
     'WR_grid',
     'WNL_grid',
     'WNE_grid',
-    'WC_grid' 
+    'WC_grid'
 ]
 state_list = [
     'disrupted',
-    'merged', 
+    'merged',
     'detached',
     'initially_single_star',
     'low_mass_binary',
@@ -40,8 +46,8 @@ state_list = [
     'RLO2'
     ]
 spectral_types_list = [
-    'main_grid', 
-    'bstar_grid', 
+    'main_grid',
+    'bstar_grid',
     'failed_grid',
     'no_grid',
     'secondary_grid',
@@ -68,12 +74,12 @@ class population_spectra():
             self.file = file
         else:
             raise FileNotFoundError
-        
+
         self.save_data = self.kwargs['save_data']
         if self.save_data:
             self.output_file = self.kwargs.get('output_file',self.file+'_spectra.h5')
             self.output_path = self.kwargs.get('output_path','./')
-        
+
         if self.verbose:
             print("Initializing population spectra with the following options:")
             print(f"  population_file : {self.file}")
@@ -85,7 +91,7 @@ class population_spectra():
         # Initialize the spectral_grids object and parameters used.
         self.grids = spectral_grids(**self.kwargs)
         self.population = None
-        
+
     def load_population(self):
         """Function to load up a POSYDON population."""
         metallicity = self.kwargs.get('metallicity')
@@ -93,7 +99,7 @@ class population_spectra():
 
     def create_spectrum(self):
         """ It splits up the population and combines the data to be saved.
-        """      
+        """
         comm = MPI.COMM_WORLD
         rank = comm.Get_rank()
         nprocs = comm.Get_size()
@@ -124,10 +130,10 @@ class population_spectra():
                 self.save_pop_data(self.population,np.array(labels,dtype = object),total_pop_spectrum)
         else:
             self.create_population_spectrum(pop)
-    
+
     def create_population_spectrum(self,pop):
         """Creates the integrated spectrum of the population.
-        It also creates a file with the outputs if the save_data is True. 
+        It also creates a file with the outputs if the save_data is True.
 
         Returns:
             pop_spectrum: dictonary of type of binaries and their corresponding spectrum.
@@ -137,12 +143,12 @@ class population_spectra():
         #
         if pop is None:
             pop = self.population
-        
+
         weights = None
         if isochrones:
             mini_file = self.kwargs.get('mini_file',False)
             weights = IMF_WEIGHT(mini_file)
-        
+
         num_waves = len(self.grids.lam_c)
         pop_spectrum = {}
         labels = []
@@ -211,7 +217,7 @@ class population_spectra():
         return pop_spectrum
 
     def save_pop_data(self,pop_data,labels,pop_spectrum):
-        """Saves the population data and the spectrum outputs to the file 
+        """Saves the population data and the spectrum outputs to the file
         Args:
             pop_data: pd array
             labels_S1: string
@@ -251,7 +257,7 @@ class population_spectra():
 
         spectrum_data.insert(loc = 0, column='wavelength',value =self.grids.lam_c )
         h5file = os.path.join(self.output_path,self.output_file)
-        
+
         if save_population_data:
             pop_data.to_hdf(h5file,key = 'data',format = 'table')
         spectrum_data.to_hdf(h5file,key = 'flux',format = 'table')

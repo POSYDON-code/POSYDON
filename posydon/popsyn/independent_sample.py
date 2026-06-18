@@ -14,9 +14,9 @@ __authors__ = [
 
 
 import numpy as np
-from scipy.stats import truncnorm
 from scipy.integrate import quad
 from scipy.interpolate import interp1d
+from scipy.stats import truncnorm
 
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
@@ -69,7 +69,7 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
             # set value of eccentricity_scheme
             kwargs['eccentricity_scheme'] = ecc_scheme
             eccentricity_set = generate_eccentricities(**kwargs)
-        
+
     else:
 
         # Generate secondary masses
@@ -177,7 +177,7 @@ def generate_orbital_periods(primary_masses,
         orbital_periods = np.where(primary_masses <= 4.00,
                                    1e8,
                                    orbital_periods)
-        
+
     else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
@@ -364,7 +364,7 @@ def generate_primary_masses(number_of_binaries=1,
         random_variable = RNG.uniform(size=number_of_binaries)
         primary_masses = (random_variable*(1.0-alpha)/normalization_constant
                           + primary_mass_min**(1.0-alpha))**(1.0/(1.0-alpha))
-    
+
     #General power-law IMF (GPL_IMF)
     elif primary_mass_scheme == 'GPL_IMF':
         #Power of the low part
@@ -377,9 +377,9 @@ def generate_primary_masses(number_of_binaries=1,
         if primary_mass_min >= m_1:
             normalization_constant = (1.0+alpha2) / (primary_mass_max**(1.0+alpha2)
                                     - primary_mass_min**(1.0+alpha2))
-            
+
             primary_masses = (random_variable*(1.0+alpha2)/normalization_constant
-                          + primary_mass_min**(1.0+alpha2))**(1.0/(1.0+alpha2))           
+                          + primary_mass_min**(1.0+alpha2))**(1.0/(1.0+alpha2))
         elif primary_mass_max <= m_1 :
             normalization_constant = (1.0+alpha1) / (primary_mass_max**(1.0+alpha1)
                                                 - primary_mass_min**(1.0+alpha1))
@@ -387,21 +387,21 @@ def generate_primary_masses(number_of_binaries=1,
                           + primary_mass_min**(1.0+alpha1))**(1.0/(1.0+alpha1))
 
         elif (primary_mass_max > m_1) & (primary_mass_min < m_1) :
-            normalization_constant = (1.0/(alpha1 + 1.0) *(m_1**(alpha1 + 1.0 ) - primary_mass_min**(alpha1 + 1.0 ) ) 
+            normalization_constant = (1.0/(alpha1 + 1.0) *(m_1**(alpha1 + 1.0 ) - primary_mass_min**(alpha1 + 1.0 ) )
                                 + ((m_1**(alpha1-alpha2))/(alpha2 +1.0 )) * (primary_mass_max**(alpha2+1.0 ) - m_1**(alpha2 + 1.0 )))**(-1.0)
 
-            #The lower part of the imf 
+            #The lower part of the imf
             def f1(x):
                 return ((alpha1 + 1.0)/normalization_constant * x + primary_mass_min**(alpha1 + 1.0 ) )**(1.0/(1.0+alpha1))
             #The upper part of the imf
             def f2(x):
-                return (((alpha2 + 1)/( m_1**(alpha1-alpha2)))*((x/normalization_constant) - (m_1**(alpha1 +1 ) 
+                return (((alpha2 + 1)/( m_1**(alpha1-alpha2)))*((x/normalization_constant) - (m_1**(alpha1 +1 )
                                     - primary_mass_min**(alpha1 +1 ))/(alpha1+ 1)) + m_1**(alpha2+1))**(1/(alpha2 +1.0 ))
 
             x1 = (normalization_constant/(alpha1 +1)* ( m_1**(alpha1 +1 ) - primary_mass_min**(alpha1 +1 )))
-            
+
             primary_masses = np.where(random_variable < x1, f1(random_variable), f2(random_variable))
-    
+
     #Chabrier IMF
     elif primary_mass_scheme == 'Chabrier':
 
@@ -409,7 +409,7 @@ def generate_primary_masses(number_of_binaries=1,
         high_Chabrier = lambda x: x**(-1.35)
         A = 1/(low_Chabrier(1)*quad(high_Chabrier,1,primary_mass_max)[0] + quad(low_Chabrier,primary_mass_min,1))[0]
         Chabrier = lambda x: np.where(x < 1, A*low_Chabrier(x),A*low_Chabrier(1)* high_Chabrier(x))
-        
+
         m_masses = np.logspace(np.log10(primary_mass_min), np.log10(primary_mass_max), 10000)
         pdf_Chabrier = Chabrier(m_masses)
         cdf_Chabrier = np.cumsum(pdf_Chabrier) - pdf_Chabrier[0]
@@ -527,6 +527,6 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
         binary_fraction[(m1 <= 2)] = 0.4
     elif binary_fraction_scheme == 'Gotberg':
         binary_fraction = 0.09 + 0.63*np.log10(m1)
-    else: 
+    else:
         pass
     return binary_fraction
