@@ -250,7 +250,10 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
             PLOT_PROPERTIES['title'] += f'\n {channel}'
 
         # change the file name for the plot
-        PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
+        if save_fig:
+            PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
+        else:
+            PLOT_PROPERTIES['fname'] = None
 
         # change size of the figure for properties
         if prop is not None:
