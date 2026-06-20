@@ -378,172 +378,107 @@ class detached_step:
         # for detached evolution
         self.evo.set_stars(primary, secondary, t0 = binary.time)
 
-        if (self.evo.ev_rlo1(binary.time, [binary.separation, binary.eccentricity]) >= 0
-            or self.evo.ev_rlo2(binary.time, [binary.separation, binary.eccentricity]) >= 0) \
-            and not only_CO:
-            binary.state = "initial_RLOF"
+        # --- MODIFICATION: Removed initial RLO check to stay in detached step ---
+        if not (self.max_time - binary.time > 0.0):
+            raise ValueError("max_time is lower than the current time. "
+                             "Evolution of the detached binary will go to "
+                             "lower times.")
+
+        with np.errstate(all="ignore"):
+
+            # solve ODEs for detached evolution
+            t_before_ODEsolution = time.time()
+            self.res = self.solve_ODEs(binary, primary, secondary)
+            t_after_ODEsolution = time.time()
+
+        # clear dictionaries that held current properties during ODE solution
+        if hasattr(primary, "latest"):
+            del primary.latest
+        if hasattr(secondary, "latest"):
+            del secondary.latest
+
+        if self.verbose:
+            ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
+            print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
+            print("solution of ODE", self.res)
+
+        if self.res.status == -1:
+            print(f"Integration failed for {binary.state} "
+                  f"({binary.star_1.state}, {binary.star_2.state}): "
+                  f"{self.res.message}")
             return
+
+        # update binary/star properties after detached evolution
+        t = self.get_time_after_evo(binary)
+        self.update_after_evo(t, binary, primary, secondary)
+        self.update_co_stars(t, primary, secondary)
+
+        # check primary/secondary star states
+        if not secondary.co:
+            secondary.state = check_state_of_star(secondary, star_CO=False)
+            for timestep in range(-len(t[:-1]), 0):
+                secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
+
+        if (primary.state == "massless_remnant") or (primary.co and secondary.co):
+            pass
+        elif primary.co:
+            mdot_acc = np.atleast_1d(bondi_hoyle(
+                binary, primary, secondary, slice(-len(t), None),
+                wind_disk_criteria=True, scheme='Kudritzki+2000'))
+            primary.lg_mdot = np.log10(mdot_acc.item(-1))
+            primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t) + 1:] = np.log10(mdot_acc[:-1])
         else:
-            if not (self.max_time - binary.time > 0.0):
-                raise ValueError("max_time is lower than the current time. "
-                                "Evolution of the detached binary will go to "
-                                "lower times.")
+            primary.state = check_state_of_star(primary, star_CO=False)
+            for timestep in range(-len(t[:-1]), 0):
+                primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
 
-            with np.errstate(all="ignore"):
+        if not (primary.co and secondary.co):
+            ## CHECK IF THE BINARY IS IN RLO
+            # --- MODIFICATION: Bypassed RLO event handling to stay in detached step ---
 
-                # solve ODEs for detached evolution
-                t_before_ODEsolution = time.time()
-                self.res = self.solve_ODEs(binary, primary, secondary)
-                t_after_ODEsolution = time.time()
+            ## CHECK IF STARS WILL UNDERGO CC
+            # Note: Index is 0 now because RLO events were removed from solve_ivp
+            if self.res.t_events[0]:
+                # reached t_max of track. End of life (possible collapse) of secondary
+                if secondary == binary.star_1:
+                    binary.event = "CC1"
+                else:
+                    binary.event = "CC2"
 
-            # clear dictionaries that held current properties during ODE solution
-            if hasattr(primary, "latest"):
-                del primary.latest
-            if hasattr(secondary, "latest"):
-                del secondary.latest
+                self.track_matcher.get_star_final_values(secondary)
+                self.track_matcher.get_star_profile(secondary)
 
-            if self.verbose:
-                ivp_tspan = t_after_ODEsolution - t_before_ODEsolution
-                print(f"\nODE solver duration: {ivp_tspan:.6g} sec")
-                print("solution of ODE", self.res)
+                if not primary.co and primary.state in STAR_STATES_CC:
+                    # simultaneous core-collapse of the other star as well
+                    primary_time = primary.t_max + primary.t_offset - t[-1]
+                    secondary_time = secondary.t_max + secondary.t_offset - t[-1]
 
-            if self.res.status == -1:
-                print(f"Integration failed for {binary.state} "
-                      f"({binary.star_1.state}, {binary.star_2.state}): "
-                      f"{self.res.message}")
-                return
+                    if primary_time == secondary_time:
+                        # we manually check if s.t_events[1] should also be happening simultaneously
+                        self.track_matcher.get_star_final_values(primary)
+                        self.track_matcher.get_star_profile(primary)
 
-            # update binary/star properties after detached evolution
-            t = self.get_time_after_evo(binary)
-            self.update_after_evo(t, binary, primary, secondary)
-            self.update_co_stars(t, primary, secondary)
+                    if primary.mass != secondary.mass:
+                        raise POSYDONError(
+                            "Both stars are found to be ready for collapse "
+                            "(i.e. end of their life) during the detached "
+                            "step, but do not have the same mass")
 
-            # check primary/secondary star states
-            if not secondary.co:
-                secondary.state = check_state_of_star(secondary, star_CO=False)
-                for timestep in range(-len(t[:-1]), 0):
-                    secondary.state_history[timestep] = check_state_of_star(secondary, i=timestep, star_CO=False)
+            elif self.res.t_events[1]:
+                # reached t_max of track. End of life (possible collapse) of primary
+                if secondary == binary.star_1:
+                    binary.event = "CC2"
+                else:
+                    binary.event = "CC1"
 
-            if (primary.state == "massless_remnant") or (primary.co and secondary.co):
-                pass
-            elif primary.co:
-                mdot_acc = np.atleast_1d(bondi_hoyle(
-                    binary, primary, secondary, slice(-len(t), None),
-                    wind_disk_criteria=True, scheme='Kudritzki+2000'))
-                primary.lg_mdot = np.log10(mdot_acc.item(-1))
-                primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t) + 1:] = np.log10(mdot_acc[:-1])
-            else:
-                primary.state = check_state_of_star(primary, star_CO=False)
-                for timestep in range(-len(t[:-1]), 0):
-                    primary.state_history[timestep] = check_state_of_star(primary, i=timestep, star_CO=False)
+                self.track_matcher.get_star_final_values(primary)
+                self.track_matcher.get_star_profile(primary)
 
-            if not (primary.co and secondary.co):
-                ## CHECK IF THE BINARY IS IN RLO
-                if self.res.t_events[0] or self.res.t_events[1]:
-
-                    if self.RLO_orbit_at_orbit_with_same_am:
-                        # final circular orbit conserves angular momentum
-                        # compared to the eccentric orbit
-                        binary.separation *= (1 - self.res.y[1][-1]**2)
-                        binary.orbital_period *= (1 - self.res.y[1][-1]**2) ** 1.5
-                    else:
-                        # final circular orbit is at periastron of the ecc. orbit
-                        binary.separation *= (1 - self.res.y[1][-1])
-                        binary.orbital_period *= (1 - self.res.y[1][-1]) ** 1.5
-
-                    abs_diff_porb = np.abs(binary.orbital_period - orbital_period_from_separation(
-                                    binary.separation, secondary.mass, primary.mass)) / binary.orbital_period
-
-
-                    abs_diff_porb_str = f"\nabs_diff_porb = {abs_diff_porb:.4f}" + \
-                        f"\nbinary.orbital_period = {binary.orbital_period:.4f}" +\
-                        "\norbital_period_from_separation(binary.separation, secondary.mass, primary.mass) = " + \
-                        f"{orbital_period_from_separation(binary.separation, secondary.mass, primary.mass):.4f}"
-
-                    if self.verbose:
-                        print(abs_diff_porb_str)
-
-                    assert abs_diff_porb < 1e-2, \
-                            "detached_step: abs_diff_porb >= 1e-2\n" + \
-                            abs_diff_porb_str
-
-                    # instantly circularize at RLO
-                    binary.eccentricity = 0
-
-                    if self.res.t_events[0]:
-                        if secondary == binary.star_1:
-                            binary.state = "RLO1"
-                            binary.event = "oRLO1"
-                        else:
-                            binary.state = "RLO2"
-                            binary.event = "oRLO2"
-
-                    elif self.res.t_events[1]:
-                        if secondary == binary.star_1:
-                            binary.state = "RLO2"
-                            binary.event = "oRLO2"
-                        else:
-                            binary.state = "RLO1"
-                            binary.event = "oRLO1"
-
-                    if ('step_HMS_HMS_RLO' not in all_step_names):
-                        if ((binary.star_1.state in STAR_STATES_HE_RICH_EVOLVABLE
-                            and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE)
-                        or (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                            and binary.star_2.state in STAR_STATES_HE_RICH_EVOLVABLE)):
-                            set_binary_to_failed(binary)
-                            raise FlowError("Evolution of H-rich/He-rich stars in RLO onto H-rich/He-rich stars after "
-                                        "HMS-HMS not yet supported.")
-
-                        elif (binary.star_1.state in STAR_STATES_H_RICH_EVOLVABLE
-                            and binary.star_2.state in STAR_STATES_H_RICH_EVOLVABLE):
-                            set_binary_to_failed(binary)
-                            raise ClassificationError("Binary is in the detached step but has stable RLO with two HMS stars - "
-                                                "should it have undergone CE (was its HMS-HMS interpolation class unstable MT?)")
-
-
-                ## CHECK IF STARS WILL UNDERGO CC
-                elif self.res.t_events[2]:
-                    # reached t_max of track. End of life (possible collapse) of secondary
-                    if secondary == binary.star_1:
-                        binary.event = "CC1"
-                    else:
-                        binary.event = "CC2"
-
-                    self.track_matcher.get_star_final_values(secondary)
-                    self.track_matcher.get_star_profile(secondary)
-
-                    if not primary.co and primary.state in STAR_STATES_CC:
-                        # simultaneous core-collapse of the other star as well
-                        primary_time = primary.t_max + primary.t_offset - t[-1]
-                        secondary_time = secondary.t_max + secondary.t_offset - t[-1]
-
-                        if primary_time == secondary_time:
-                            # we manually check if s.t_events[3] should also be happening simultaneously
-                            self.track_matcher.get_star_final_values(primary)
-                            self.track_matcher.get_star_profile(primary)
-
-                        if primary.mass != secondary.mass:
-                            raise POSYDONError(
-                                "Both stars are found to be ready for collapse "
-                                "(i.e. end of their life) during the detached "
-                                "step, but do not have the same mass")
-
-                elif self.res.t_events[3]:
-                    # reached t_max of track. End of life (possible collapse) of primary
-                    if secondary == binary.star_1:
-                        binary.event = "CC2"
-                    else:
-                        binary.event = "CC1"
-
-                    self.track_matcher.get_star_final_values(primary)
-                    self.track_matcher.get_star_profile(primary)
-
-                else:  # Reached max_time asked.
-                    if binary.properties.max_simulation_time - binary.time < 0.0:
-                        binary.event = "MaxTime_exceeded"
-                    else:
-                        binary.event = "maxtime"
+            else:  # Reached max_time asked.
+                if binary.properties.max_simulation_time - binary.time < 0.0:
+                    binary.event = "MaxTime_exceeded"
+                else:
+                    binary.event = "maxtime"
 
     def solve_ODEs(self, binary, primary, secondary):
         """
@@ -574,9 +509,9 @@ class detached_step:
 
         """
         try:
+            # --- MODIFICATION: Removed ev_rlo1 and ev_rlo2 from events list ---
             res = solve_ivp(self.evo,
-                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
-                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
+                            events=[self.evo.ev_max_time1, self.evo.ev_max_time2],
                             method="Radau",
                             t_span=(binary.time, self.max_time),
                             y0=[binary.separation, binary.eccentricity,
@@ -586,8 +521,7 @@ class detached_step:
             if self.verbose:
                 print(f"RK45 failed with error {e}, trying with 'RK45' method.")
             res = solve_ivp(self.evo,
-                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
-                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
+                            events=[self.evo.ev_max_time1, self.evo.ev_max_time2],
                             method="RK45",
                             t_span=(binary.time, self.max_time),
                             y0=[binary.separation, binary.eccentricity,
@@ -1260,6 +1194,9 @@ class detached_evolution:
             if self.verbose:
                 print(f"After spin winds: dO_sec={self.dOmega_sec:.6e}, dO_pri={self.dOmega_pri:.6e}")
 
+        # --- MODIFICATION: Add custom RLO mass loss as stellar winds ---
+        self.rlo_as_winds()
+
         result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri]
 
         if self.verbose:
@@ -1269,6 +1206,37 @@ class detached_evolution:
                 print(f"ERROR: Non-finite derivative detected!")
 
         return result
+
+    def rlo_as_winds(self):
+        """Remove mass extending beyond the Roche lobe as an enhanced wind."""
+        
+        M_pri = self.primary.latest["mass"]
+        M_sec = self.secondary.latest["mass"]
+        R_pri = self.primary.latest["R"]
+        R_sec = self.secondary.latest["R"]
+        
+        # Calculate current Roche Lobe radii
+        RL_pri = roche_lobe_radius(M_pri, M_sec, self.a * (1.0 - self.e))
+        RL_sec = roche_lobe_radius(M_sec, M_pri, self.a * (1.0 - self.e))
+        
+        mdot_pri_rlo = 0.0
+        mdot_sec_rlo = 0.0
+        
+        # Simple stiff penalty: if R > RL, eject excess mass rapidly.
+        # tau_ml represents the timescale of mass loss (e.g., 1000 years).
+        tau_ml = 1000.0 
+        
+        if R_pri > RL_pri:
+            mdot_pri_rlo = - (M_pri / tau_ml) * ((R_pri - RL_pri) / RL_pri)**3
+            
+        if R_sec > RL_sec:
+            mdot_sec_rlo = - (M_sec / tau_ml) * ((R_sec - RL_sec) / RL_sec)**3
+            
+        # Jeans mode angular momentum loss from isotropic winds
+        # da/dt = -a * (mdot_pri + mdot_sec) / (M_pri + M_sec)
+        da_rlo = - self.a * (mdot_pri_rlo + mdot_sec_rlo) / (M_pri + M_sec)
+        
+        self.da += da_rlo
 
     def spin_from_winds(self):
 
