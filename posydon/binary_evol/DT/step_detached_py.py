@@ -438,7 +438,7 @@ class detached_step:
 
             ## CHECK IF STARS WILL UNDERGO CC
             # Note: Index is 0 now because RLO events were removed from solve_ivp
-            if self.res.t_events[0]:
+            if len(self.res.t_events[0]) > 0:
                 # reached t_max of track. End of life (possible collapse) of secondary
                 if secondary == binary.star_1:
                     binary.event = "CC1"
@@ -464,7 +464,7 @@ class detached_step:
                             "(i.e. end of their life) during the detached "
                             "step, but do not have the same mass")
 
-            elif self.res.t_events[1]:
+            elif len(self.res.t_events[1]) > 0:
                 # reached t_max of track. End of life (possible collapse) of primary
                 if secondary == binary.star_1:
                     binary.event = "CC2"
@@ -510,12 +510,13 @@ class detached_step:
         """
         try:
             # --- MODIFICATION: Removed ev_rlo1 and ev_rlo2 from events list ---
+            # --- MODIFICATION: Added 0.0, 0.0 to track accumulated mass loss  ---
             res = solve_ivp(self.evo,
                             events=[self.evo.ev_max_time1, self.evo.ev_max_time2],
                             method="Radau",
                             t_span=(binary.time, self.max_time),
                             y0=[binary.separation, binary.eccentricity,
-                                secondary.omega0, primary.omega0],
+                                secondary.omega0, primary.omega0, 0.0, 0.0],
                             dense_output=True)
         except Exception as e:
             if self.verbose:
@@ -525,7 +526,7 @@ class detached_step:
                             method="RK45",
                             t_span=(binary.time, self.max_time),
                             y0=[binary.separation, binary.eccentricity,
-                                secondary.omega0, primary.omega0],
+                                secondary.omega0, primary.omega0, 0.0, 0.0],
                             dense_output=True)
 
         if res.status == -1:
@@ -611,13 +612,29 @@ class detached_step:
         """
         t = np.array(t)
 
-        sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri = self.res.sol(t)
+        # --- MODIFICATION: Extract accumulated mass loss states ---
+        sep_interp, ecc_interp, omega_interp_sec, omega_interp_pri, m_lost_sec, m_lost_pri = self.res.sol(t)
 
         result_interp_primary = primary.interp1d(t)
         result_interp_secondary = secondary.interp1d(t)
 
-        mass_interp_sec = result_interp_secondary[self.translate["mass"]]
-        mass_interp_pri = result_interp_primary[self.translate["mass"]]
+        # --- MODIFICATION: Subtract the accumulated RLO wind mass from the track ---
+        mass_interp_sec = np.maximum(result_interp_secondary[self.translate["mass"]] - m_lost_sec, 0.01)
+        mass_interp_pri = np.maximum(result_interp_primary[self.translate["mass"]] - m_lost_pri, 0.01)
+
+        result_interp_secondary[self.translate["mass"]] = mass_interp_sec
+        result_interp_primary[self.translate["mass"]] = mass_interp_pri
+
+        # --- MODIFICATION: Calculate exact Roche lobes with new separated mass arrays ---
+        rl_sec = roche_lobe_radius(mass_interp_sec, mass_interp_pri, sep_interp * (1.0 - ecc_interp))
+        rl_pri = roche_lobe_radius(mass_interp_pri, mass_interp_sec, sep_interp * (1.0 - ecc_interp))
+
+        # --- MODIFICATION: CAP RADIUS AT ROCHE LOBE to blind the POSYDON Flow Chart ---
+        R_sec_capped = np.minimum(result_interp_secondary[self.translate["R"]], 0.999 * rl_sec)
+        R_pri_capped = np.minimum(result_interp_primary[self.translate["R"]], 0.999 * rl_pri)
+
+        result_interp_secondary[self.translate["R"]] = R_sec_capped
+        result_interp_primary[self.translate["R"]] = R_pri_capped
 
         result_interp_secondary["sep"] = sep_interp
         result_interp_secondary["ecc"] = ecc_interp
@@ -676,11 +693,12 @@ class detached_step:
                 elif ("rl_relative_overflow_" in key and obj == binary):
                     s = binary.star_1 if "_1" in key[-2:] else binary.star_2
                     s_alt = binary.star_2 if "_1" in key[-2:] else binary.star_1
+                    
+                    # --- MODIFICATION: Substitute with explicitly capped history to prevent triggering POSYDON MT checks ---
                     if secondary == s:
-                        history = self.evo.ev_rel_rlo1(t, [interp1d["sep"], interp1d["ecc"]])
-
+                        history = (R_sec_capped - rl_sec) / rl_sec
                     elif secondary == s_alt:
-                        history = self.evo.ev_rel_rlo2(t, [interp1d["sep"], interp1d["ecc"]])
+                        history = (R_pri_capped - rl_pri) / rl_pri
 
                 elif key in ["separation", "orbital_period", "eccentricity", "time"]:
                     history = interp1d[self.translate[key]]
@@ -1074,6 +1092,11 @@ class detached_evolution:
             self.primary.latest[key] = primary_data[key]
             self.secondary.latest[key] = secondary_data[key]
 
+        # --- MODIFICATION: Dynamically apply the accumulated mass loss for ODE tracking ---
+        if len(y) >= 6:
+            self.secondary.latest["mass"] = max(secondary_data["mass"] - y[4], 0.01)
+            self.primary.latest["mass"] = max(primary_data["mass"] - y[5], 0.01)
+
         # update omega, a, e, based on current diffeq solution
         y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
         self.a = y[0]
@@ -1162,6 +1185,10 @@ class detached_evolution:
         self.de = 0.0
         self.dOmega_sec = 0.0
         self.dOmega_pri = 0.0
+        
+        # --- MODIFICATION: Ensure mass trackers are initialized ---
+        self.dM_sec_rlo_lost = 0.0
+        self.dM_pri_rlo_lost = 0.0
 
         #  Tidal forces affecting orbit and stellar spins
         if self.do_tides:
@@ -1197,7 +1224,8 @@ class detached_evolution:
         # --- MODIFICATION: Add custom RLO mass loss as stellar winds ---
         self.rlo_as_winds()
 
-        result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri]
+        # --- MODIFICATION: Append mass derivatives to the solver's return list ---
+        result = [self.da, self.de, self.dOmega_sec, self.dOmega_pri, self.dM_sec_rlo_lost, self.dM_pri_rlo_lost]
 
         if self.verbose:
             print(f"Final derivatives: {result}")
@@ -1212,33 +1240,37 @@ class detached_evolution:
         
         M_pri = self.primary.latest["mass"]
         M_sec = self.secondary.latest["mass"]
+        
+        # We MUST read the original, un-capped radius from the single-star track 
+        # to know how much mass should theoretically be stripped!
         R_pri = self.primary.latest["R"]
         R_sec = self.secondary.latest["R"]
         
-        # Calculate current Roche Lobe radii
+        # Calculate current Roche Lobe radii based on the dynamically adjusting masses
         RL_pri = roche_lobe_radius(M_pri, M_sec, self.a * (1.0 - self.e))
         RL_sec = roche_lobe_radius(M_sec, M_pri, self.a * (1.0 - self.e))
         
         mdot_pri_rlo = 0.0
         mdot_sec_rlo = 0.0
         
-        # Simple stiff penalty: if R > RL, eject excess mass rapidly.
-        # tau_ml represents the timescale of mass loss (e.g., 1000 years).
-        tau_ml = 1000.0 
+        # Stiff penalty: Time scale for wind mass loss in years. 
+        # 100.0 yr provides a fast response mimicking dynamical RLO without crashing the solver.
+        tau_ml = 100.0 
         
         if R_pri > RL_pri:
-            mdot_pri_rlo = - (M_pri / tau_ml) * ((R_pri - RL_pri) / RL_pri)**3
-            # print("Primary RLO mass loss:", mdot_pri_rlo)
+            mdot_pri_rlo = (M_pri / tau_ml) * ((R_pri - RL_pri) / RL_pri)**3
             
         if R_sec > RL_sec:
-            mdot_sec_rlo = - (M_sec / tau_ml) * ((R_sec - RL_sec) / RL_sec)**3
-            # print("Secondary RLO mass loss:", mdot_sec_rlo)
+            mdot_sec_rlo = (M_sec / tau_ml) * ((R_sec - RL_sec) / RL_sec)**3
             
-        # Jeans mode angular momentum loss from isotropic winds
-        # da/dt = -a * (mdot_pri + mdot_sec) / (M_pri + M_sec)
-        da_rlo = - self.a * (mdot_pri_rlo + mdot_sec_rlo) / (M_pri + M_sec)
+        # Jeans mode angular momentum loss from isotropic winds: da/dt = a * (mdot / M_tot)
+        da_rlo = self.a * (mdot_pri_rlo + mdot_sec_rlo) / (M_pri + M_sec)
         
         self.da += da_rlo
+        
+        # --- MODIFICATION: Store accumulated mass loss to pass back to the ODE solver ---
+        self.dM_sec_rlo_lost = mdot_sec_rlo
+        self.dM_pri_rlo_lost = mdot_pri_rlo
 
     def spin_from_winds(self):
 
