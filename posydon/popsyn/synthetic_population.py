@@ -1974,16 +1974,19 @@ class TransientPopulation(Population):
             if '/' + base_path in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
                 del store[base_path]
-                if '/' + base_path + '_simulation_parameters' in store.keys():
-                    del store[base_path + '_simulation_parameters']
+                if '/' + base_path + '_population_parameters' in store.keys():
+                    del store[base_path + '_population_parameters']
 
             store.put(base_path, model_weights)
-            store.put(base_path + '_simulation_parameters', pd.DataFrame([simulation_parameters]))
+            tmp_df = pd.DataFrame()
+            for k, v in population_parameters.items():
+                tmp_df[k] = [v]
+            store.put(base_path + '_population_parameters', tmp_df)
 
         return model_weights
 
-    def simulation_parameters(self, model_weights_identifier):
-        """Retrieve the simulation parameters used to calculate model weights.
+    def model_weight_parameters(self, model_weights_identifier):
+        """Retrieve the population parameters used to calculate model weights.
 
         Parameters
         ----------
@@ -1995,9 +1998,10 @@ class TransientPopulation(Population):
         dict
             The simulation parameters used when calculating the model weights.
         """
-        key = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier + '_simulation_parameters'
+        key = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier + '_population_parameters'
         with pd.HDFStore(self.filename, mode="r") as store:
-            return store[key].iloc[0].to_dict()
+            tmp_df = store[key]
+            return {c: tmp_df[c].iloc[0] for c in tmp_df.columns}
 
     def model_weights(self, model_weights_identifier=None):
         """Retrieve the model weights of the transient population.
@@ -2020,7 +2024,7 @@ class TransientPopulation(Population):
             with pd.HDFStore(self.filename, mode="r") as store:
                 keys = [k.split('/')[-1] for k in store.keys()
                         if k.startswith('/transients/' + self.transient_name + '/weights/')
-                        and not k.endswith('_simulation_parameters')]
+                        and not k.endswith('_population_parameters')]
                 model_weights = pd.concat([store['transients/' + self.transient_name + '/weights/' + key] for key in keys], axis=1)
         else:
             with pd.HDFStore(self.filename, mode="r") as store:
