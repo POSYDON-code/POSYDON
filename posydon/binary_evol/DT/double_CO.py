@@ -173,7 +173,7 @@ class DoubleCO(detached_step):
         l0 = (np.log(e0) if e0 > 0
               else np.log(np.finfo(float).tiny))
         try:
-            res = solve_ivp(self.evo.rhs,
+            res = solve_ivp(self.evo,
                             events=ev_maxtime,
                             method="RK45",
                             t_span=(0.0, s_contact),
@@ -266,7 +266,9 @@ class double_CO_evolution(detached_evolution):
         if self.do_gravitational_radiation:
             return self.rhs(s, y)
 
+        return [0.0, 0.0, 0.0, 0.0]
 
+    @staticmethod
     def _g(e2):
         """Peters (1964) f(e): denominator function for the da/dt equation.
 
@@ -275,7 +277,7 @@ class double_CO_evolution(detached_evolution):
         """
         return 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
 
-
+    @staticmethod
     def _f(e2):
         """Peters (1964) g(e): numerator function for the de/dt equation.
 
