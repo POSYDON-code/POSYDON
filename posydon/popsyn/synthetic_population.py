@@ -1902,6 +1902,7 @@ class TransientPopulation(Population):
             The model weights of the transient population and have units of Msun^-1.
         """
         if population_parameters is None:
+            # TODO: have a centralised location for the default population parameters?
             population_parameters = {'number_of_binaries': 1000000,
                                     'binary_fraction_scheme':'const',
                                     'binary_fraction_const':0.7,
@@ -1996,7 +1997,7 @@ class TransientPopulation(Population):
         Returns
         -------
         dict
-            The simulation parameters used when calculating the model weights.
+            The population parameters used when calculating the model weights.
         """
         key = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier + '_population_parameters'
         with pd.HDFStore(self.filename, mode="r") as store:
