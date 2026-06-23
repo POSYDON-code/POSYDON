@@ -1969,13 +1969,35 @@ class TransientPopulation(Population):
             model_weights[model_weights_identifier] = (
                 model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
 
+        base_path = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier
         with pd.HDFStore(self.filename, mode="a") as store:
-            if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
+            if '/' + base_path in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
-                del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
+                del store[base_path]
+                if '/' + base_path + '_simulation_parameters' in store.keys():
+                    del store[base_path + '_simulation_parameters']
 
-            store.put('transients/' + self.transient_name + '/weights/' + model_weights_identifier, model_weights)
+            store.put(base_path, model_weights)
+            store.put(base_path + '_simulation_parameters', pd.DataFrame([simulation_parameters]))
+
         return model_weights
+
+    def simulation_parameters(self, model_weights_identifier):
+        """Retrieve the simulation parameters used to calculate model weights.
+
+        Parameters
+        ----------
+        model_weights_identifier : str
+            Identifier for the model weights.
+
+        Returns
+        -------
+        dict
+            The simulation parameters used when calculating the model weights.
+        """
+        key = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier + '_simulation_parameters'
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return store[key].iloc[0].to_dict()
 
     def model_weights(self, model_weights_identifier=None):
         """Retrieve the model weights of the transient population.
@@ -1996,7 +2018,9 @@ class TransientPopulation(Population):
 
         if model_weights_identifier is None:
             with pd.HDFStore(self.filename, mode="r") as store:
-                keys = [k.split('/')[-1] for k in store.keys() if k.startswith('/transients/' + self.transient_name + '/weights/')]
+                keys = [k.split('/')[-1] for k in store.keys()
+                        if k.startswith('/transients/' + self.transient_name + '/weights/')
+                        and not k.endswith('_simulation_parameters')]
                 model_weights = pd.concat([store['transients/' + self.transient_name + '/weights/' + key] for key in keys], axis=1)
         else:
             with pd.HDFStore(self.filename, mode="r") as store:
