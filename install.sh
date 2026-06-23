@@ -427,13 +427,26 @@ install_posydon() {
 
     # Verify installation and discover PATH_TO_POSYDON
     print_step "Verifying POSYDON installation..."
-    PATH_TO_POSYDON=$(python -c "import posydon, os; print(os.path.dirname(os.path.dirname(posydon.__file__)))" 2>/dev/null)
+
+    # Get the conda environment prefix
+    ENV_PREFIX=$(conda run -n "$ENV_NAME" python -c "import sys; print(sys.prefix)" 2>/dev/null)
+    POSYDON_INIT=$(find "$ENV_PREFIX" -path "*/site-packages/posydon/__init__.py" | head -1)
+    PATH_TO_POSYDON=$(dirname "$(dirname "$POSYDON_INIT")")
 
     if [[ -n "$PATH_TO_POSYDON" ]] && [[ -d "$PATH_TO_POSYDON" ]]; then
         print_success "POSYDON installed at: ${PATH_TO_POSYDON}"
     else
         print_error "Failed to verify POSYDON installation"
         exit 1
+    fi
+
+    # Check if a different install is overrulling the version in the conda environment
+    IMPORTED=$(conda run -n "$ENV_NAME" python -c "import posydon; print(posydon.__file__)" 2>/dev/null)
+    if [[ "$IMPORTED" != "$ENV_PREFIX"* ]]; then
+        print_warning "A different POSYDON installation is shadowing the conda package:"
+        echo "  Imported from: $IMPORTED"
+        print_warning "Consider removing the conflicting installation to avoid unexpected behaviour."
+        echo ""
     fi
     echo ""
 
