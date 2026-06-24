@@ -313,7 +313,7 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
                     "CO_interpolation_class", "M4", "mu4",
                     "h1_mass_ej", "he4_mass_ej"
                 ):
-                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array([np.nan] * n, 
+                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array([np.nan] * n,
                                                                         dtype="<f8")
 
                 # Writer expects CO_type rather than state
@@ -321,7 +321,7 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
                     EXTRA_COLUMNS.pop(f"S{star_i}_{MODEL}_state")
 
                 for qty in ("CO_type", "SN_type", "CO_interpolation_class"):
-                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array(["None"] * n, 
+                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array(["None"] * n,
                                                                         dtype="S70")
 
             sn_data = np.rec.fromarrays(
