@@ -2253,7 +2253,7 @@ class TransientPopulation(Population):
         model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
-            time = self.select(columns=["time"]).values
+            time = self.select(columns=["time"]).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Create histogram with model weights
@@ -2265,7 +2265,7 @@ class TransientPopulation(Population):
                 raise ValueError("The metallicity is not present in the population!")
 
             time_df = self.select(columns=['metallicity', 'time'])
-            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).values
+            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Get weights for the specific metallicity
