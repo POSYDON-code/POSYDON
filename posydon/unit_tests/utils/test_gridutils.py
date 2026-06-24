@@ -9,6 +9,8 @@ import posydon.utils.gridutils as totest
 
 # import the module which will be tested
 from posydon.grids.lazy_hdf import LazyHDF5
+from posydon.grids.psygrid import PSyGrid
+from posydon.unit_tests._helper_functions_for_tests.psygrid import get_PSyGrid
 
 # aliases
 np = totest.np
@@ -23,6 +25,23 @@ from pytest import approx, fixture, raises, warns
 
 from posydon.utils.posydonwarning import MissingFilesWarning
 
+@fixture
+def star_history():
+    # a temporary star history for testing
+    return np.array([(1.0, 0.2), (1.0e+2, 0.9), (1.0e+3, 0.2)],\
+                    dtype=[('star_age', '<f8'), ('center_he4', '<f8')])
+
+@fixture
+def binary_history():
+    # a temporary binary history for testing
+    return np.array([(1.0, 1.0), (1.1, 1.0e+2), (1.2, 1.0e+3)],\
+                    dtype=[('period_days', '<f8'), ('age', '<f8')])
+
+@fixture
+def profile():
+    # a temporary profile for testing
+    return np.array([(2.0, 1.0e+3), (1.1, 1.0e+2), (0.1, 1.0)],\
+                    dtype=[('mass', '<f8'), ('radius', '<f8')])
 
 # define test classes collecting several test functions
 class TestElements:
@@ -374,8 +393,37 @@ class TestFunctions:
             test_file.write("TEST INI SECTION 2&\n")
             test_file.write("test_empty = ''\n")
         return path
+    
+    @fixture
+    def psygrid(self, tmp_path, binary_history, star_history, profile):
+        # A PSyGrid object for testing
+        grid_path = get_PSyGrid(tmp_path, 1, binary_history, 
+                           star_history, profile, add_SN_MODELS=True)
+        return PSyGrid(grid_path)
 
     # test functions
+    def test_get_grid_column(self, psygrid):
+        # missing argument
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'grid' and 'key'"):
+            totest._get_grid_column()
+        # bad input
+        with raises(AttributeError, match = "'NoneType' object has no attribute 'final_values'"):
+            totest._get_grid_column(None, 'age')
+        with raises(TypeError, match = "'int' object is not subscriptable"):
+            totest._get_grid_column(psygrid, 0)
+        with raises(KeyError, match = "Column '' not found in final_values or SN_MODELS"):
+            totest._get_grid_column(psygrid, "")
+
+        # test getting a normal column
+        column_data = totest._get_grid_column(psygrid, 'age')
+        assert np.array_equal(column_data, psygrid.final_values['age'],
+                              equal_nan=True)
+        
+        # test getting a SN column
+        column_data = totest._get_grid_column(psygrid, 'S1_SN_MODEL_v2_01_CO_type')
+        assert np.array_equal(column_data, psygrid.SN_MODELS['SN_MODEL_v2_01']['S1_CO_type'])
+
     def test_join_lists(self):
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
