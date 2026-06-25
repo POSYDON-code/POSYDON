@@ -459,16 +459,27 @@ class StepSN(object):
         # this should occour only on the first or second core-collapse
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
+
+            binary.star_1.mass_transfer_history = copy.deepcopy(binary.mass_transfer_case_history)
+
             # collapse star
             self.collapse_star(star=binary.star_1)
             self._reset_other_star_properties(star=binary.star_2)
             binary.update_star_states()
 
+            del binary.star_1.mass_transfer_history
+
         elif binary.event == "CC2":
+
+            binary.star_2.mass_transfer_history = copy.deepcopy(binary.mass_transfer_case_history)
+
             # collapse star
             self.collapse_star(star=binary.star_2)
             self._reset_other_star_properties(star=binary.star_1)
             binary.update_star_states()
+
+            del binary.star_2.mass_transfer_history
+
         else:
             raise ValueError("Something went wrong: "
                              "invalid call of supernova step!")
@@ -2467,14 +2478,18 @@ class StepSN(object):
             # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
             # with fallback = 1 at this stage.
             elif CO_core_mass >= 10.0:
-                print("Above!")
+
+                # Follow the "rapid" prescription from Maltsev+25
+                m_rem, f_fb, state = self.get_remnant_above_10Msun(star, conserve_hydrogen_envelope)
+
+                #print("Above!")
                 # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
-                else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
+                #if conserve_hydrogen_envelope:
+                #    m_rem = star.mass
+                #else:
+                #    m_rem = star.he_core_mass
+                #f_fb = 1.0
+                #state = 'BH'
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
@@ -2529,21 +2544,21 @@ class StepSN(object):
         """
         boundaries = {
             'single': {        #Zsun #Zsun/10
-                'N_CO_NS_1' : [9.0, 7.4],
+                'M_CO_NS_1' : [9.0, 7.4],
                 'M_CO_NS_2' : [10.2, 11.0],
                 'M_CO_3' : [13.0, 12.9],
                 },
-            'Case_A' : {
+            'case_A' : {
                 'M_CO_NS_1' : [11.1, 10.4],
                 'M_CO_NS_2' : [12.1, 11.1],
                 'M_CO_3' : [15.4, 13.7],
                 },
-            'Case_B' : {
+            'case_B' : {
                 'M_CO_NS_1' : [9.9, 9.3],
                 'M_CO_NS_2' : [10.3, 10.3],
                 'M_CO_3' : [15.3, 13.75], # Average of Case B1 and Be
                 },
-            'Case_C' : {
+            'case_C' : {
                 'M_CO_NS_1' : [9.6, 8.9],
                 'M_CO_NS_2' : [10.7, 9.5],
                 'M_CO_3' : [13.2, 12.3],
@@ -2552,15 +2567,16 @@ class StepSN(object):
         # Get required parameters
         M_CO = star.co_core_mass_at_He_depletion
 
-        MT_type = star.mass_transfer_type # Not available in star object.
-
+        # Get MT_type from the star
+        MT_type = self.mt_type_maltsev(star) # Not available in star object.
+        print(f"MT_type: {MT_type}")
         # Additional checks for other types of systems that have to be added to
         # one of the MT_type categories.
 
         M_NS_1_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_NS_1'], star.metallicity)
         M_NS_2_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_NS_2'], star.metallicity)
         M_CO_3_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_3'], star.metallicity)
-
+        print(M_NS_1_boundary, M_NS_2_boundary, M_CO_3_boundary)
 
         # Everythin here is above 10Msun.
 
@@ -2601,7 +2617,24 @@ class StepSN(object):
         else:
             raise ValueError("M_CO is not in any of the expected ranges for M_CO > 10Msun")
 
+        print(m_rem, f_fb, state)
+
         return m_rem, f_fb, state
+
+    def mt_type_maltsev(self, star):
+
+        types = ['single', 'Case_A', 'Case_B', 'Case_C']
+        print(star.mass_transfer_history)
+        # find first MT interaction in the mass transfer history
+        # starting from the last event and going backwards
+        last = 'single'
+        for event in reversed(star.mass_transfer_history):
+            if event == 'None':
+                return last
+            else:
+                last = event[:-1]  # remove the last character which is the mass transfer case number
+
+        return 'single'  # If no mass transfer events, classify as single
 
 
     def interpolate_Maltsev25_boundaries(self, boundary, Z):
