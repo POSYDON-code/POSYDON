@@ -1037,6 +1037,14 @@ class TestPSyGrid:
                 if "run" in key:
                     del hdf5_file[f"/grid/{key}/"]
         return path
+    
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 6, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+        
+        return path
 
     # test the PSyGrid class
     def test_init(self, PSyGrid, monkeypatch):
@@ -2002,7 +2010,7 @@ class TestPSyGrid:
             assert test_run.psygrid == PSyGrid
             assert test_run.index == i
 
-    def test_get_pandas_initial_final(self, PSyGrid, grid_path):
+    def test_get_pandas_initial_final(self, PSyGrid, grid_path, grid_path_sne_data):
         assert isroutine(PSyGrid.get_pandas_initial_final)
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'dtype'"):
@@ -2030,6 +2038,11 @@ class TestPSyGrid:
             assert np.array_equal(PSyGrid.final_values[key],\
                                   np.array(test_df["final_"+key]),\
                                   equal_nan=allow_nan)
+            
+            # test case where grid has SNe model data
+            sne_grid = totest.PSyGrid()
+            sne_grid.load(grid_path_sne_data)
+            test_df = sne_grid.get_pandas_initial_final()
 
     def test_len(self, PSyGrid):
         assert isroutine(PSyGrid.__len__)
@@ -2653,6 +2666,14 @@ class TestPSyRunView:
     def PSyRunView(self, PSyGrid):
         # initialize an instance of the class with defaults
         return totest.PSyRunView(PSyGrid, 0)
+    
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+        
+        return path
 
     # test the PSyRunView class
     def test_init(self, PSyRunView, PSyGrid):
@@ -2725,36 +2746,17 @@ class TestPSyRunView:
                    +f"'{PSyRunView.psygrid.filepath}' at key "\
                    +f"'{PSyRunView._hdf5_key()}'" == PSyRunView.__str__()
 
-    def test_get_SN_data(self, PSyGrid, tmp_path, binary_history,
-                         star_history, profile):
+    def test_get_SN_data(self, grid_path_sne_data):
         """PSyRunView.get_SN_data returns per-model SN dict or None."""
         import h5py as _h5py
 
         from posydon.grids.psygrid import H5_REC_STR_DTYPE
 
         MODEL = 'SN_MODEL_v2_01'
-        path = get_simple_PSyGrid(tmp_path, 99, binary_history, star_history,
-                                  profile)
-
-        # Inject a minimal SN_MODELS group into the HDF5 file.
-        n_rows = 3  # get_simple_PSyGrid creates 2 runs + run0 = 3 entries
-        str_dtype = np.dtype(H5_REC_STR_DTYPE.replace('U', 'S'))
-        sn_data = np.rec.fromarrays(
-            [np.array(['BH', 'None', 'NS'], dtype=str).astype(str_dtype),
-             np.array(['CCSN', 'None', 'CCSN'], dtype=str).astype(str_dtype),
-             np.array([0.1, np.nan, 0.2]),
-             np.array([10.0, np.nan, 8.0])],
-            names=['S1_CO_type', 'S1_SN_type', 'S1_f_fb', 'S1_mass'],
-        )
-        with _h5py.File(path, 'a') as f:
-            grp = f['grid'].require_group('SN_MODELS')
-            if MODEL in grp:
-                del grp[MODEL]
-            grp.create_dataset(MODEL, data=sn_data)
 
         # Load grid and verify SN_MODELS dict is populated.
         test_grid = totest.PSyGrid()
-        test_grid.load(path)
+        test_grid.load(grid_path_sne_data)
         assert isinstance(test_grid.SN_MODELS, dict)
         assert MODEL in test_grid.SN_MODELS
 
