@@ -551,12 +551,15 @@ def add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS,
     new_dtype = []
     for name in final_values.dtype.names:
         old_dtype = final_values.dtype[name]
+        # if unicode, convert to bytes for HDF5 compatibility
         if old_dtype.kind == 'U':
             new_dtype.append((name, H5_REC_STR_DTYPE.replace('U', 'S')))
         else:
             new_dtype.append((name, old_dtype))
 
+    # Loop over new_dtypes (HDF5 compatible) and check if any differ from final_values dtypes
     if any(dt[1] != final_values.dtype[dt[0]] for dt in new_dtype):
+        # update w/ matching dtypes
         final_values = final_values.astype(new_dtype)
 
     # Only append non-SN columns to final_values.
