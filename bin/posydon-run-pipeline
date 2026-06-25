@@ -282,7 +282,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
         star_2_CO = False
 
     # load grid with ORIGINAL compression and get extra colums
-    grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path)
+    grid_ORIGINAL = PSyGrid(grid_ORIGINAL_path, lazy=False)
     MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS = post_process_grid(grid_ORIGINAL,
                                               index=None, star_2_CO=star_2_CO,
                                               verbose=verbose)
@@ -296,7 +296,7 @@ def calculate_extra_values(i, path_to_csv_file, verbose=False):
     shutil.copyfile(grid_path, processed_grid_path)
 
     # load processed grid and append values
-    grid = PSyGrid(processed_grid_path)
+    grid = PSyGrid(processed_grid_path, lazy=False)
     add_post_processed_quantities(grid, MESA_dirs_EXTRA_COLUMNS, EXTRA_COLUMNS)
     if verbose:
         print(f'Added processed quantities to grid: {processed_grid_path}')
@@ -357,7 +357,7 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     interp_method = [method, method]
     interp_classes = ["stable_MT", "unstable_MT"]
@@ -409,24 +409,31 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
     # to catch reverse mass transfer cases where the secondary undergoes
     # core collapse first
     for SN_MODEL_NAME in SN_MODELS.keys():
+        if SN_MODEL_NAME not in grid.SN_MODELS:
+            continue
+        sn_ds = grid.SN_MODELS[SN_MODEL_NAME]
         for i in range(1,2): #TODO: range(1,3):
-            out_keys = [key for key in grid.final_values.dtype.names if (
-                                   key != "model_number" and
-                                   (type(grid.final_values[key][0]) != np.str_)
-                                   and any(~np.isnan(grid.final_values[key]))
-                                   and f"S{i}_{SN_MODEL_NAME}" in key)]
-
-            out_nan_keys = [key for key in grid.final_values.dtype.names if (
-                                key != "model_number"
-                                and (type(grid.final_values[key][0]) != np.str_)
-                                and all(np.isnan(grid.final_values[key]))
-                                and f"S{i}_{SN_MODEL_NAME}" in key)]
+            prefix = f'S{i}_'
+            out_keys = []
+            out_nan_keys = []
+            for short_key in sn_ds.dtype.names:
+                if not short_key.startswith(prefix):
+                    continue
+                col_data = sn_ds[short_key]
+                if col_data.dtype.kind in ('S', 'U', 'O'):
+                    continue
+                full_key = f'S{i}_{SN_MODEL_NAME}_{short_key[3:]}'
+                if any(~np.isnan(col_data)):
+                    out_keys.append(full_key)
+                else:
+                    out_nan_keys.append(full_key)
 
             # get interpolations classes dynamically
             interp_method = []
             interp_classes = []
+            co_interp_col = sn_ds[f'S{i}_CO_interpolation_class']
             for CO_interpolation_class in ["BH", "NS", "WD", "BH_reverse_MT"]:
-                if CO_interpolation_class in grid.final_values[f'S{i}_{SN_MODEL_NAME}_CO_interpolation_class']:
+                if CO_interpolation_class in co_interp_col:
                     interp_method.append(method)
                     interp_classes.append(CO_interpolation_class)
 
@@ -999,7 +1006,7 @@ def rerun(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     # export point to rerun
     if verbose:
@@ -1127,7 +1134,7 @@ def plot_grid(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     for quantity_to_plot in quantities_to_plot:
         if verbose:
@@ -1387,7 +1394,7 @@ def do_check(i, path_to_csv_file, verbose=False):
 
     # load grid
     grid = PSyGrid(verbose=verbose)
-    grid.load(grid_path)
+    grid.load(grid_path, lazy=False)
 
     # do the checks
     for check_to_do in checks_to_do:
@@ -1402,15 +1409,19 @@ def do_check(i, path_to_csv_file, verbose=False):
                 failure_rate_in_percent = 0.
             print(f'Failure rate: {failure_rate_in_percent}% in {grid_path}')
         elif check_to_do=='CO_type':
-            for quantity in grid.final_values.dtype.names:
-                if (('S1_SN_MODEL' in quantity) and ('CO_type' in quantity)):
-                    count = Counter(grid.final_values[quantity])
-                    print(f'{quantity}: {count} in {grid_path}')
+            for model_name, sn_ds in grid.SN_MODELS.items():
+                for short_key in sn_ds.dtype.names:
+                    if 'CO_type' in short_key:
+                        full_key = short_key[:3] + model_name + '_' + short_key[3:]
+                        count = Counter(sn_ds[short_key])
+                        print(f'{full_key}: {count} in {grid_path}')
         elif check_to_do=='SN_type':
-            for quantity in grid.final_values.dtype.names:
-                if (('S1_SN_MODEL' in quantity) and ('SN_type' in quantity)):
-                    count = Counter(grid.final_values[quantity])
-                    print(f'{quantity}: {count} in {grid_path}')
+            for model_name, sn_ds in grid.SN_MODELS.items():
+                for short_key in sn_ds.dtype.names:
+                    if 'SN_type' in short_key:
+                        full_key = short_key[:3] + model_name + '_' + short_key[3:]
+                        count = Counter(sn_ds[short_key])
+                        print(f'{full_key}: {count} in {grid_path}')
             #TODO: add more checks
         else:
             Pwarn(f'Do not know how to do {check_to_do} for'+\

@@ -87,7 +87,7 @@ class TestElements:
                     'keep_till_central_abundance_He_C', 'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
-                    'read_initial_values', 'scrub', 'tqdm'}
+                    'read_initial_values', 'scrub', 'rfn', 'tqdm'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -1038,9 +1038,17 @@ class TestPSyGrid:
                     del hdf5_file[f"/grid/{key}/"]
         return path
 
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 6, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+
+        return path
+
     # test the PSyGrid class
     def test_init(self, PSyGrid, monkeypatch):
-        def mock_load(self, filepath=None):
+        def mock_load(self, filepath=None, lazy=True):
             return filepath
         assert isroutine(PSyGrid.__init__)
         # check that the instance is of correct type and all code in the
@@ -2002,7 +2010,7 @@ class TestPSyGrid:
             assert test_run.psygrid == PSyGrid
             assert test_run.index == i
 
-    def test_get_pandas_initial_final(self, PSyGrid, grid_path):
+    def test_get_pandas_initial_final(self, PSyGrid, grid_path, grid_path_sne_data):
         assert isroutine(PSyGrid.get_pandas_initial_final)
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'dtype'"):
@@ -2030,6 +2038,11 @@ class TestPSyGrid:
             assert np.array_equal(PSyGrid.final_values[key],\
                                   np.array(test_df["final_"+key]),\
                                   equal_nan=allow_nan)
+
+            # test case where grid has SNe model data
+            sne_grid = totest.PSyGrid()
+            sne_grid.load(grid_path_sne_data)
+            test_df = sne_grid.get_pandas_initial_final()
 
     def test_len(self, PSyGrid):
         assert isroutine(PSyGrid.__len__)
@@ -2654,6 +2667,14 @@ class TestPSyRunView:
         # initialize an instance of the class with defaults
         return totest.PSyRunView(PSyGrid, 0)
 
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+
+        return path
+
     # test the PSyRunView class
     def test_init(self, PSyRunView, PSyGrid):
         assert isroutine(PSyRunView.__init__)
@@ -2724,3 +2745,37 @@ class TestPSyRunView:
             assert f"View of the run {i} in the file "\
                    +f"'{PSyRunView.psygrid.filepath}' at key "\
                    +f"'{PSyRunView._hdf5_key()}'" == PSyRunView.__str__()
+
+    def test_get_SN_data(self, grid_path_sne_data):
+        """PSyRunView.get_SN_data returns per-model SN dict or None."""
+        import h5py as _h5py
+
+        from posydon.grids.psygrid import H5_REC_STR_DTYPE
+
+        MODEL = 'SN_MODEL_v2_01'
+
+        # Load grid and verify SN_MODELS dict is populated.
+        test_grid = totest.PSyGrid()
+        test_grid.load(grid_path_sne_data)
+        assert isinstance(test_grid.SN_MODELS, dict)
+        assert MODEL in test_grid.SN_MODELS
+
+        # Check that get_SN_run_data returns the correct dict.
+        row = test_grid.get_SN_run_data(0, MODEL)
+        assert isinstance(row, dict)
+        assert 'S1_CO_type' in row
+        # The value should be a Python str after dtype conversion.
+        assert isinstance(row['S1_CO_type'], str)
+
+        # Check unknown model returns None.
+        assert test_grid.get_SN_run_data(0, 'not_a_model') is None
+
+        # Check via PSyRunView.get_SN_data.
+        view = test_grid[0]
+        row_via_view = view.get_SN_data(MODEL)
+        assert row_via_view is not None
+        assert row_via_view['S1_CO_type'] == row['S1_CO_type']
+
+        # Unknown model via view also returns None.
+        assert view.get_SN_data('not_a_model') is None
+        test_grid.close()
