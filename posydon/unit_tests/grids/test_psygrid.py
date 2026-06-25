@@ -1037,13 +1037,13 @@ class TestPSyGrid:
                 if "run" in key:
                     del hdf5_file[f"/grid/{key}/"]
         return path
-    
+
     @fixture
     def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
                            profile):
         path = get_simple_PSyGrid(tmp_path, 6, binary_history, star_history,\
                                   profile, add_SN_MODELS=True)
-        
+
         return path
 
     # test the PSyGrid class
@@ -2038,7 +2038,7 @@ class TestPSyGrid:
             assert np.array_equal(PSyGrid.final_values[key],\
                                   np.array(test_df["final_"+key]),\
                                   equal_nan=allow_nan)
-            
+
             # test case where grid has SNe model data
             sne_grid = totest.PSyGrid()
             sne_grid.load(grid_path_sne_data)
@@ -2666,13 +2666,13 @@ class TestPSyRunView:
     def PSyRunView(self, PSyGrid):
         # initialize an instance of the class with defaults
         return totest.PSyRunView(PSyGrid, 0)
-    
+
     @fixture
     def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
                            profile):
         path = get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
                                   profile, add_SN_MODELS=True)
-        
+
         return path
 
     # test the PSyRunView class

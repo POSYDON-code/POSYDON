@@ -1525,7 +1525,7 @@ class PSyGrid:
                     self._SN_values[model_name] = LazyHDF5(ds, dtype_set=sn_dtype)
                 else:
                     arr = ds[()]
-                    if sn_dtype: 
+                    if sn_dtype:
                         arr = arr.astype(list(sn_dtype.items()))
                     # this is typically unreachable, maybe occurs w/ corrupted data
                     else: # pragma: no cover

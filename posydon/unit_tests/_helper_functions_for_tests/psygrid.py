@@ -342,7 +342,7 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
     return path
 
 
-def get_simple_PSyGrid(dir_path, idx, binary_history, star_history, profile, 
+def get_simple_PSyGrid(dir_path, idx, binary_history, star_history, profile,
                        add_SN_MODELS=False):
     """Create a PSyGrid file with two runs (+ the empty run0) and reduced
     columns in the initial and final values.
