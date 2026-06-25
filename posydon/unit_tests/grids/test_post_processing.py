@@ -637,7 +637,7 @@ class TestFunctions:
         with h5py.File(grid_path, 'r') as f:
             assert list(f['grid/SN_MODELS'].keys()).count(MODEL) == 1, (
                 "SN_MODEL dataset duplicated after second write")
-            
+
 
         # do some last tests, edge cases and things
         grid3 = PSyGrid()
@@ -666,5 +666,3 @@ class TestFunctions:
 
         totest.add_post_processed_quantities(grid3, list(grid3.MESA_dirs),
                                              EXTRA_COLUMNS)
-
-
