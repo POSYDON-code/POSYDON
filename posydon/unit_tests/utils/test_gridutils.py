@@ -25,6 +25,7 @@ from pytest import approx, fixture, raises, warns
 
 from posydon.utils.posydonwarning import MissingFilesWarning
 
+
 @fixture
 def star_history():
     # a temporary star history for testing
@@ -393,11 +394,11 @@ class TestFunctions:
             test_file.write("TEST INI SECTION 2&\n")
             test_file.write("test_empty = ''\n")
         return path
-    
+
     @fixture
     def psygrid(self, tmp_path, binary_history, star_history, profile):
         # A PSyGrid object for testing
-        grid_path = get_PSyGrid(tmp_path, 1, binary_history, 
+        grid_path = get_PSyGrid(tmp_path, 1, binary_history,
                            star_history, profile, add_SN_MODELS=True)
         return PSyGrid(grid_path)
 
@@ -419,7 +420,7 @@ class TestFunctions:
         column_data = totest._get_grid_column(psygrid, 'age')
         assert np.array_equal(column_data, psygrid.final_values['age'],
                               equal_nan=True)
-        
+
         # test getting a SN column
         column_data = totest._get_grid_column(psygrid, 'S1_SN_MODEL_v2_01_CO_type')
         assert np.array_equal(column_data, psygrid.SN_MODELS['SN_MODEL_v2_01']['S1_CO_type'])
