@@ -3,7 +3,7 @@
 figure.figsize		: 3.38, 2.535 # 4x3 with width=apjcolwidth
 lines.markersize	: 4
 lines.linewidth		: 1.5
-text.usetex		: True
+text.usetex		: False
 font.size		: 10
 font.family		: serif
 font.serif		: Computer Modern Roman # Times Roman?
