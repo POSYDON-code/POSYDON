@@ -213,6 +213,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
             ['s', 2, None, TF1_label_stable],
         'max_age':
             ['s', 2, None, TF1_label_stable],
+        'Mass transfer onto a cooling white dwarf':
+            ['s', 2, None, TF1_label_stable], 
         'Initial RLOF':
             ['.', 1, 'black', TF1_label_initial],
         'Not converged':
@@ -679,6 +681,8 @@ DEFAULT_MARKERS_COLORS_LEGENDS = {
         'gamma_center_limit':
             ['s', 2, None, TF1_label_stable],
         'max_age':
+            ['s', 2, None, TF1_label_stable],
+        'Mass transfer onto a cooling white dwarf':
             ['s', 2, None, TF1_label_stable],
         'Initial RLOF':
             ['.', 1.5, 'black', TF1_label_initial],

@@ -27,7 +27,8 @@ TF1_POOL_STABLE = [
     'envelope_mass_limit',
     'gamma_center_limit',
     # 'Reached TPAGB',
-    'max_age'
+    'max_age',
+    'Mass transfer onto a cooling white dwarf'
     ]
 
 TF1_POOL_UNSTABLE = [
