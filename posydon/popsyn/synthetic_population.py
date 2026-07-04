@@ -2244,7 +2244,7 @@ class TransientPopulation(Population):
         model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
-            time = self.select(columns=["time"]).values
+            time = self.select(columns=["time"]).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Create histogram with model weights
