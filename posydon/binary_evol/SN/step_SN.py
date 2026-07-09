@@ -474,7 +474,7 @@ class StepSN(object):
             if model_err is not None:
                 set_binary_to_failed(binary)
                 raise ModelError(model_err)
-            
+
             self._reset_other_star_properties(star=binary.star_1)
             binary.update_star_states()
         else:
