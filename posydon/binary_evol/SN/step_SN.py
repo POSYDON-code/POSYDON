@@ -460,13 +460,21 @@ class StepSN(object):
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
             # collapse star
-            self.collapse_star(star=binary.star_1)
+            model_err = self.collapse_star(star=binary.star_1)
+            if model_err is not None:
+                set_binary_to_failed(binary)
+                raise ModelError(model_err)
+
             self._reset_other_star_properties(star=binary.star_2)
             binary.update_star_states()
 
         elif binary.event == "CC2":
             # collapse star
-            self.collapse_star(star=binary.star_2)
+            model_err = self.collapse_star(star=binary.star_2)
+            if model_err is not None:
+                set_binary_to_failed(binary)
+                raise ModelError(model_err)
+            
             self._reset_other_star_properties(star=binary.star_1)
             binary.update_star_states()
         else:
@@ -547,12 +555,8 @@ class StepSN(object):
 
         Returns
         -------
-        m_rem : double
-            Remnant mass of the compact object in M_sun. This quantity accounts
-            for the mass loss thorugh neutrino.
-
-        state : string
-            New state of the star object.
+        error_message : string
+            Error message if the collapse fails, else None.
 
         """
         state = star.state
@@ -808,10 +812,10 @@ class StepSN(object):
                         np.nan, np.nan
 
                 else:
+                    # This leads to a failed binary
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    set_binary_to_failed(self.binary)
-                    raise ModelError("FAILED core collapse!")
+                    return "FAILED core collapse!"
 
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
@@ -894,10 +898,11 @@ class StepSN(object):
                         star.m_disk_radiated = 0.0
                         star.spin = 0.0
                     else:
+                        # This leads to a failed binary
                         for key in STARPROPERTIES:
                             setattr(star, key, None)
-                        set_binary_to_failed(self.binary)
-                        raise ModelError("Invalid core state: " + str(state))
+                        return f"FAILED core collapse! (Invalid core state: {state})"
+
                     star.h1_mass_ej, star.he4_mass_ej = \
                         get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
 
@@ -948,14 +953,14 @@ class StepSN(object):
                         np.nan, np.nan
 
                 else:
+                    # This leads to a failed binary
                     for key in STARPROPERTIES:
                         setattr(star, key, None)
-                    set_binary_to_failed(self.binary)
-                    raise ModelError("FAILED core collapse!")
+                    return "FAILED core collapse!"
 
         else:
-            set_binary_to_failed(self.binary)
-            raise ModelError(f"The star cannot collapse: star state {state}.")
+            # This leads to a failed binary
+            return f"The star cannot collapse: star state {state}."
 
         star.metallicity = star.metallicity_history[-1]
 
@@ -966,6 +971,8 @@ class StepSN(object):
                            "m_disk_accreted", "m_disk_radiated",
                            "co_core_mass"]:
                 setattr(star, key, None)
+
+        return
 
     def PISN_prescription(self, star):
         """Compute baryonic remnant mass for the PPISN and PISN prescription.
@@ -982,7 +989,7 @@ class StepSN(object):
 
         """
         if self.PISN is None:
-            return None
+            return
 
         else:
             # perform the PISN prescription in terms of the
