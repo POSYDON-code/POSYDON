@@ -182,7 +182,7 @@ class TestSlurmScriptCreation:
 
             # Check that the file was created
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "slurm_array.slurm")
             assert os.path.exists(filename)
 
             # Check file content
@@ -219,7 +219,7 @@ class TestSlurmScriptCreation:
                 path_to_posydon_data="/data"
             )
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "slurm_array.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -251,7 +251,7 @@ class TestSlurmScriptCreation:
                 path_to_posydon_data="/data"
             )
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "slurm_array.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -282,7 +282,7 @@ class TestSlurmScriptCreation:
                 path_to_posydon_data="/data"
             )
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_slurm_array.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "slurm_array.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -314,7 +314,7 @@ class TestSlurmScriptCreation:
 
             # Check that the file was created
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_merge_popsyn.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "merge_popsyn.slurm")
             assert os.path.exists(filename)
 
             # Check file content
@@ -346,7 +346,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_merge_popsyn.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "merge_popsyn.slurm")
             with open(filename, "r") as f:
                 content = f.read()
                 # Check that walltime was overridden to 14 minutes
@@ -373,7 +373,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_merge_popsyn.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "merge_popsyn.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -414,7 +414,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_rescue.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "rescue.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -452,7 +452,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_rescue.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "rescue.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -494,7 +494,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_rescue.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "rescue.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -530,7 +530,7 @@ class TestSlurmScriptCreation:
             )
 
             str_met = convert_metallicity_to_string(metallicity)
-            filename = f"{str_met}_Zsun_rescue.slurm"
+            filename = os.path.join("slurm_jobs", str_met, "rescue.slurm")
             assert os.path.exists(filename)
 
             with open(filename, "r") as f:
@@ -556,9 +556,9 @@ class TestSlurmScriptCreation:
                 content = f.read()
                 assert "#!/bin/bash" in content
                 # Check that scripts for each metallicity are referenced
-                assert "1e+00_Zsun_slurm_array.slurm" in content
-                assert "1e-02_Zsun_slurm_array.slurm" in content
-                assert "2e+00_Zsun_slurm_array.slurm" in content
+                assert "slurm_jobs/1e+00/slurm_array.slurm" in content
+                assert "slurm_jobs/1e-02/slurm_array.slurm" in content
+                assert "slurm_jobs/2e+00/slurm_array.slurm" in content
                 assert "sbatch --parsable" in content
                 assert "--dependency=afterok" in content
         finally:
@@ -571,12 +571,13 @@ class TestSlurmScriptCreation:
 
         try:
             rescue_scripts = [
-                str(tmp_path / "1e+00_Zsun_rescue.slurm"),
-                str(tmp_path / "1e-02_Zsun_rescue.slurm")
+                str(tmp_path / "slurm_jobs" / "1e+00" / "rescue.slurm"),
+                str(tmp_path / "slurm_jobs" / "1e-02" / "rescue.slurm")
             ]
 
             # Create dummy rescue script files
             for script in rescue_scripts:
+                os.makedirs(os.path.dirname(script), exist_ok=True)
                 with open(script, "w") as f:
                     f.write("#!/bin/bash\n")
 
@@ -589,10 +590,10 @@ class TestSlurmScriptCreation:
             with open(resubmit_file, "r") as f:
                 content = f.read()
                 assert "#!/bin/bash" in content
-                assert "1e+00_Zsun_rescue.slurm" in content
-                assert "1e-02_Zsun_rescue.slurm" in content
-                assert "1e+00_Zsun_merge_popsyn.slurm" in content
-                assert "1e-02_Zsun_merge_popsyn.slurm" in content
+                assert "slurm_jobs/1e+00/rescue.slurm" in content
+                assert "slurm_jobs/1e-02/rescue.slurm" in content
+                assert "slurm_jobs/1e+00/merge_popsyn.slurm" in content
+                assert "slurm_jobs/1e-02/merge_popsyn.slurm" in content
         finally:
             os.chdir(original_dir)
 
@@ -640,7 +641,9 @@ class TestRescueScriptFunctions:
 
 
         # Create a mock SLURM array script
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -662,7 +665,7 @@ class TestRescueScriptFunctions:
             result = totest.create_batch_rescue_script(mock_args, mock_batch_status)
 
             # Check that rescue script was created
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             assert rescue_script.exists()
             assert result == str(rescue_script)
 
@@ -689,7 +692,9 @@ class TestRescueScriptFunctions:
         args.email = "new@example.com"   # Override email
 
         # Create a mock SLURM array script with different values
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -711,7 +716,7 @@ class TestRescueScriptFunctions:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
             # Verify that the rescue script uses the overridden values
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
 
             # Check overridden values
@@ -741,7 +746,9 @@ class TestRescueScriptFunctions:
         args.exclude = None              # Don't override
 
         # Create a mock SLURM array script
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -763,7 +770,7 @@ class TestRescueScriptFunctions:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
             # Verify mixed values (some from original, some overridden)
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
 
             # Original values should be preserved
@@ -795,7 +802,9 @@ class TestRescueScriptFunctions:
         args.exclude = None              # Don't override
 
         # Create a mock SLURM array script
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -817,7 +826,7 @@ class TestRescueScriptFunctions:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
             # Verify all values come from original script (no overrides)
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
 
             # All values should be from original script
@@ -847,7 +856,9 @@ class TestRescueScriptFunctions:
 
         # Create a mock SLURM array script with array format that doesn't have a dash
         # (e.g., just a single number or comma-separated list)
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=5
@@ -867,7 +878,7 @@ class TestRescueScriptFunctions:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
             # Verify script was still created
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             assert rescue_script.exists()
         finally:
             os.chdir(original_dir)
@@ -888,7 +899,9 @@ class TestRescueScriptFunctions:
         args.exclude = None
 
         # SLURM script with --exclude= directive
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -907,7 +920,7 @@ class TestRescueScriptFunctions:
         try:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
             # Verify exclude was parsed from SLURM and passed to rescue script
             assert "#SBATCH --exclude=node01,node02" in content
@@ -932,7 +945,9 @@ class TestRescueScriptFunctions:
         args.exclude = None
 
         # SLURM script with %N in array (max concurrent jobs)
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9%5
@@ -950,7 +965,7 @@ class TestRescueScriptFunctions:
         try:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
             # Verify max_concurrent_jobs was parsed from SLURM and included in rescue script
             assert "%5" in content
@@ -974,7 +989,9 @@ class TestRescueScriptFunctions:
         args.max_concurrent_jobs = 3
         args.exclude = None
 
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -992,7 +1009,7 @@ class TestRescueScriptFunctions:
         try:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
             # Verify max_concurrent_jobs from args is used in rescue script
             assert "%3" in content
@@ -1016,7 +1033,9 @@ class TestRescueScriptFunctions:
         args.max_concurrent_jobs = None
         args.exclude = "badnode01"
 
-        slurm_script = run_folder / "1e+00_Zsun_slurm_array.slurm"
+        slurm_dir = run_folder / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        slurm_script = slurm_dir / "slurm_array.slurm"
         slurm_content = textwrap.dedent("""\
             #!/bin/bash
             #SBATCH --array=0-9
@@ -1034,7 +1053,7 @@ class TestRescueScriptFunctions:
         try:
             result = totest.create_batch_rescue_script(args, mock_batch_status)
 
-            rescue_script = run_folder / "1e+00_Zsun_rescue.slurm"
+            rescue_script = slurm_dir / "rescue.slurm"
             content = rescue_script.read_text()
             # Verify exclude from args is used in rescue script
             assert "#SBATCH --exclude=badnode01" in content

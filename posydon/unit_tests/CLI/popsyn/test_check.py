@@ -357,7 +357,9 @@ class TestGetExpectedBatchCount:
         # Create SLURM script
         metallicity = 1.0
         str_met = convert_metallicity_to_string(metallicity)
-        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_dir = tmp_path / "slurm_jobs" / str_met
+        slurm_dir.mkdir(parents=True)
+        slurm_file = slurm_dir / "slurm_array.slurm"
         slurm_content = """#!/bin/bash
 #SBATCH --array=0-9
 #SBATCH --job-name=test
@@ -372,7 +374,9 @@ class TestGetExpectedBatchCount:
         # Create SLURM script without #SBATCH --array= line
         metallicity = 1.0
         str_met = convert_metallicity_to_string(metallicity)
-        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_dir = tmp_path / "slurm_jobs" / str_met
+        slurm_dir.mkdir(parents=True)
+        slurm_file = slurm_dir / "slurm_array.slurm"
         slurm_content = """#!/bin/bash
 #SBATCH --job-name=test
 #SBATCH --time=24:00:00
@@ -388,7 +392,9 @@ class TestGetExpectedBatchCount:
         # Create SLURM script with array format without dash
         metallicity = 1.0
         str_met = convert_metallicity_to_string(metallicity)
-        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_dir = tmp_path / "slurm_jobs" / str_met
+        slurm_dir.mkdir(parents=True)
+        slurm_file = slurm_dir / "slurm_array.slurm"
         slurm_content = """#!/bin/bash
 #SBATCH --array=5
 #SBATCH --job-name=test
@@ -402,7 +408,9 @@ class TestGetExpectedBatchCount:
         """Test get_expected_batch_count with % (max concurrent jobs) in array range."""
         metallicity = 1.0
         str_met = convert_metallicity_to_string(metallicity)
-        slurm_file = tmp_path / f"{str_met}_Zsun_slurm_array.slurm"
+        slurm_dir = tmp_path / "slurm_jobs" / str_met
+        slurm_dir.mkdir(parents=True)
+        slurm_file = slurm_dir / "slurm_array.slurm"
         slurm_content = """#!/bin/bash
 #SBATCH --array=0-9%5
 #SBATCH --job-name=test
@@ -931,7 +939,9 @@ class TestHandleBatchesComplete:
     ):
         """Test when user confirms to resubmit merge jobs."""
         # Create merge script
-        merge_script = tmp_path / "7_Zsun_merge_popsyn.slurm"
+        slurm_dir = tmp_path / "slurm_jobs" / "1e+00"
+        slurm_dir.mkdir(parents=True)
+        merge_script = slurm_dir / "merge_popsyn.slurm"
         merge_script.write_text("#!/bin/bash\\n")
 
         missing_files = {1.0: False}

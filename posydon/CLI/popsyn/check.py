@@ -25,9 +25,9 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
 
 # File naming patterns
-MERGE_SCRIPT_PATTERN = "{met}_Zsun_merge_popsyn.slurm"
-ARRAY_SCRIPT_PATTERN = "{met}_Zsun_slurm_array.slurm"
-RESCUE_SCRIPT_PATTERN = "{met}_Zsun_rescue.slurm"
+MERGE_SCRIPT_PATTERN = "slurm_jobs/{met}/merge_popsyn.slurm"
+ARRAY_SCRIPT_PATTERN = "slurm_jobs/{met}/slurm_array.slurm"
+RESCUE_SCRIPT_PATTERN = "slurm_jobs/{met}/rescue.slurm"
 RESUBMIT_SCRIPT = "resubmit_slurm.sh"
 
 def get_ini_file(args):

@@ -172,7 +172,7 @@ def create_slurm_array(metallicity,
     '''Creates the slurm array script for population synthesis job arrays.
 
     Creates a SLURM submission script file named
-    "{str_met}_Zsun_slurm_array.slurm" where str_met is the metallicity
+    "slurm_jobs/{str_met}/slurm_array.slurm" where str_met is the metallicity
     converted to string format.
 
     Parameters
@@ -237,7 +237,9 @@ def create_slurm_array(metallicity,
 
     text = text_pre + optional_section + text_post
 
-    filename = f"{str_met}_Zsun_slurm_array.slurm"
+    slurm_dir = os.path.join('slurm_jobs', str_met)
+    os.makedirs(slurm_dir, exist_ok=True)
+    filename = os.path.join(slurm_dir, 'slurm_array.slurm')
     if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
@@ -254,7 +256,7 @@ def create_slurm_merge(metallicity,
     '''Creates the slurm submit script for merging population synthesis results.
 
     Creates a SLURM submission script file named
-    "{str_met}_Zsun_merge_popsyn.slurm" where str_met is the metallicity
+    "slurm_jobs/{str_met}/merge_popsyn.slurm" where str_met is the metallicity
     converted to string format.
 
     Parameters
@@ -313,7 +315,9 @@ def create_slurm_merge(metallicity,
 
     text = text_pre + optional_section + text_post
 
-    filename = f'{str_met}_Zsun_merge_popsyn.slurm'
+    slurm_dir = os.path.join('slurm_jobs', str_met)
+    os.makedirs(slurm_dir, exist_ok=True)
+    filename = os.path.join(slurm_dir, 'merge_popsyn.slurm')
     if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
@@ -336,7 +340,7 @@ def create_slurm_rescue(metallicity,
     '''Creates the slurm rescue script for resubmitting failed population synthesis jobs.
 
     Creates a SLURM submission script file named
-    "{str_met}_Zsun_rescue.slurm" where str_met is the metallicity
+    "slurm_jobs/{str_met}/rescue.slurm" where str_met is the metallicity
     converted to string format.
 
     Parameters
@@ -409,7 +413,9 @@ def create_slurm_rescue(metallicity,
 
     text = text_pre + optional_section + text_post
 
-    filename = f'{str_met}_Zsun_rescue.slurm'
+    slurm_dir = os.path.join('slurm_jobs', str_met)
+    os.makedirs(slurm_dir, exist_ok=True)
+    filename = os.path.join(slurm_dir, 'rescue.slurm')
     if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace ' + filename, "OverwriteWarning")
     with open(filename, mode='w') as file:
@@ -470,11 +476,11 @@ def create_bash_submit_script(filename, metallicities):
         for met in metallicities:
             str_met = convert_metallicity_to_string(met)
             file.write("array=$(sbatch --parsable "
-                       f"{str_met}_Zsun_slurm_array.slurm)\n")
+                       f"slurm_jobs/{str_met}/slurm_array.slurm)\n")
             file.write("echo '"+str_met+" job array submitted as '${array}\n")
             file.write("merge=$(sbatch --parsable --dependency=afterok:${array} "
                        "--kill-on-invalid-dep=yes "
-                       f'{str_met}_Zsun_merge_popsyn.slurm)\n')
+                       f"slurm_jobs/{str_met}/merge_popsyn.slurm)\n")
             file.write("echo '"+str_met+" merge job submitted as '${merge}\n")
 
     print_success("Setup complete. You can now submit the jobs using './slurm_submit.sh'")
@@ -500,7 +506,7 @@ def create_batch_rescue_script(args, batch_status):
     run_folder = args.run_folder
     metallicity = batch_status['metallicity']
     str_met = convert_metallicity_to_string(metallicity)
-    slurm_script = os.path.join(run_folder, f'{str_met}_Zsun_slurm_array.slurm')
+    slurm_script = os.path.join(run_folder, 'slurm_jobs', str_met, 'slurm_array.slurm')
 
     # Extract missing indices from batch_status
     missing_indices = batch_status.get('missing_indices', [])
@@ -586,7 +592,7 @@ def create_batch_rescue_script(args, batch_status):
         path_to_posydon_data=path_to_posydon_data
     )
 
-    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
+    rescue_script = os.path.join(run_folder, 'slurm_jobs', str_met, 'rescue.slurm')
     print_success(f"Rescue script generated: {rescue_script}")
     return rescue_script
 
@@ -600,7 +606,6 @@ def create_bash_submit_rescue_script(filename, rescue_scripts):
     rescue_scripts : list of str
         The list of rescue script paths
     """
-    MERGE_SCRIPT_PATTERN = "{met}_Zsun_merge_popsyn.slurm"
     RESUBMIT_SCRIPT = "resubmit_slurm.sh"
 
     # Generate a resubmit_slurm.sh script
@@ -609,15 +614,15 @@ def create_bash_submit_rescue_script(filename, rescue_scripts):
     with open(resubmit_sh_file, 'w') as f:
         f.write("#!/bin/bash\n")
         for script in rescue_scripts:
-            script_basename = os.path.basename(script)
-            met = script_basename.split('_')[0]
-            merge_script = MERGE_SCRIPT_PATTERN.format(met=met)
-            f.write(f'resubmit=$(sbatch --parsable {script_basename})\n')
+            str_met = os.path.basename(os.path.dirname(script))
+            rescue_script_rel = os.path.join('slurm_jobs', str_met, 'rescue.slurm')
+            merge_script_rel = os.path.join('slurm_jobs', str_met, 'merge_popsyn.slurm')
+            f.write(f'resubmit=$(sbatch --parsable {rescue_script_rel})\n')
             f.write("echo 'Rescue script submitted as '${resubmit}\n")
             f.write("merge=$(sbatch --parsable "
                     "--dependency=afterok:${resubmit} "
                     "--kill-on-invalid-dep=yes "
-                    f"{merge_script})\n")
+                    f"{merge_script_rel})\n")
             f.write("echo 'Merge job submitted as '${merge}\n")
 
     print(f"Rescue scripts ready to be resubmitted by 'sh {resubmit_sh_file}'")
