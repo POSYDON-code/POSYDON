@@ -224,7 +224,7 @@ def create_slurm_array(metallicity,
         #!/bin/bash
         #SBATCH --array=0-{job_array_length}
         #SBATCH --job-name={str_met}_popsyn
-        #SBATCH --output=./{str_met}_logs/popsyn_%A_%a.out
+        #SBATCH --output=./logs/{str_met}/popsyn_%A_%a.out
         #SBATCH --time={walltime}
         #SBATCH --mem-per-cpu={mem_per_cpu}
     ''')
@@ -301,7 +301,7 @@ def create_slurm_merge(metallicity,
     text_pre = textwrap.dedent(f'''\
         #!/bin/bash
         #SBATCH --job-name={str_met}_Zsun_merge
-        #SBATCH --output=./{str_met}_logs/popsyn_merge.out
+        #SBATCH --output=./logs/{str_met}/popsyn_merge.out
         #SBATCH --mem-per-cpu={mem_per_cpu}
         #SBATCH --time={merge_walltime}
     ''')
@@ -392,7 +392,7 @@ def create_slurm_rescue(metallicity,
         #!/bin/bash
         #SBATCH --array={job_array_str}
         #SBATCH --job-name={str_met}_popsyn_rescue
-        #SBATCH --output=./{str_met}_logs/rescue_%A_%a.out
+        #SBATCH --output=./logs/{str_met}/rescue_%A_%a.out
         #SBATCH --time={walltime}
         #SBATCH --mem-per-cpu={mem_per_cpu}
     ''')

@@ -115,7 +115,7 @@ def setup_popsyn_function(args):
     for met in metallicities:
         # create log directory
         str_met = convert_metallicity_to_string(met)
-        os.makedirs(f'{str_met}_logs', exist_ok=True)
+        os.makedirs(os.path.join('logs', str_met), exist_ok=True)
 
         # create SLURM array submission script for this metallicity
         create_slurm_scripts(met, args)

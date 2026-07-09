@@ -186,8 +186,8 @@ class TestSetupPopsynFunction:
         assert mock_makedirs.call_count == len(metallicities)
         # Verify the directory names
         calls = [call[0][0] for call in mock_makedirs.call_args_list]
-        assert any(['1e+00_logs' in call for call in calls])
-        assert any(['1e-01_logs' in call for call in calls])
+        assert any(['1e+00' in call and 'logs' in call for call in calls])
+        assert any(['1e-01' in call and 'logs' in call for call in calls])
 
 
 class TestFlatMassRatioWarning:

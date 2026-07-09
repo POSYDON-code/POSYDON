@@ -419,7 +419,7 @@ def select_job_id(run_folder, str_met):
     int or None
         Selected job ID, or None if no logs found
     """
-    jobIDs = glob.glob(os.path.join(run_folder, f'{str_met}_logs/popsyn_*.out'))
+    jobIDs = glob.glob(os.path.join(run_folder, f'logs/{str_met}/popsyn_*.out'))
 
     if len(jobIDs) == 0:
         print("\n\033[33mNo log files found. Cannot determine failure reasons.\033[0m")
@@ -491,7 +491,7 @@ def read_batch_log_file(log_file_path, batch_index, str_met, jobID):
             if "DUE TO TIME LIMIT" in str(last_3_lines):
                 print(f"Batch {batch_index}: Wall time exceeded")
             else:
-                print(f"{str_met}_logs/popsyn_{jobID}_{batch_index}.out:")
+                print(f"logs/{str_met}/popsyn_{jobID}_{batch_index}.out:")
                 for i, line in enumerate(last_3_lines):
                     print(f"  {i+1}: {line}")
         else:
@@ -500,7 +500,7 @@ def read_batch_log_file(log_file_path, batch_index, str_met, jobID):
             if "DUE TO TIME LIMIT" in lines[0]:
                 print("  Wall time exceeded")
             else:
-                print(f"{str_met}_logs/popsyn_{jobID}_{batch_index}.out:")
+                print(f"logs/{str_met}/popsyn_{jobID}_{batch_index}.out:")
                 for i, line in enumerate(lines):
                     print(f"  {i+1}: {line.strip()}")
 
@@ -531,7 +531,7 @@ def analyze_missing_batch_logs(run_folder, str_met, missing_indices):
 
     for index in missing_indices:
         log_file_path = os.path.join(run_folder,
-                                    f'{str_met}_logs/popsyn_{jobID}_{index}.out')
+                                    f'logs/{str_met}/popsyn_{jobID}_{index}.out')
         read_batch_log_file(log_file_path, index, str_met, jobID)
 
 def check_batch(run_folder, metallicity, batch_folder_name):

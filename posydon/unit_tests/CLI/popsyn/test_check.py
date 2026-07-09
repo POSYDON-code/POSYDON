@@ -481,8 +481,8 @@ class TestSelectJobId:
     def test_select_job_id_single_job(self, tmp_path):
         """Test with a single job ID."""
         # Create log directory and files
-        log_dir = tmp_path / "1e+00_logs"
-        log_dir.mkdir()
+        log_dir = tmp_path / "logs" / "1e+00"
+        log_dir.mkdir(parents=True)
 
         (log_dir / "popsyn_12345_0.out").write_text("log")
         (log_dir / "popsyn_12345_1.out").write_text("log")
@@ -493,8 +493,8 @@ class TestSelectJobId:
     def test_select_job_id_multiple_jobs(self, tmp_path, monkeypatch):
         """Test with multiple job IDs and valid selection (line 439->exit branch)."""
         # Create log directory and files
-        log_dir = tmp_path / "1e+00_logs"
-        log_dir.mkdir()
+        log_dir = tmp_path / "logs" / "1e+00"
+        log_dir.mkdir(parents=True)
 
         (log_dir / "popsyn_12345_0.out").write_text("log")
         (log_dir / "popsyn_67890_0.out").write_text("log")
@@ -510,8 +510,8 @@ class TestSelectJobId:
     def test_select_job_id_multiple_jobs_first_index(self, tmp_path, monkeypatch):
         """Test with multiple job IDs selecting first index (also tests 439->exit)."""
         # Create log directory and files
-        log_dir = tmp_path / "1e+00_logs"
-        log_dir.mkdir()
+        log_dir = tmp_path / "logs" / "1e+00"
+        log_dir.mkdir(parents=True)
 
         (log_dir / "popsyn_12345_0.out").write_text("log")
         (log_dir / "popsyn_67890_0.out").write_text("log")
@@ -565,7 +565,7 @@ class TestReadBatchLogFile:
         # Should detect time limit in the last 3 lines
         assert "Wall time exceeded" in captured.out
         # Should NOT print individual lines when time limit is detected
-        assert "1e+00_logs/popsyn_12345_5.out:" not in captured.out
+        assert "logs/1e+00/popsyn_12345_5.out:" not in captured.out
 
     def test_read_batch_log_file_normal(self, tmp_path, capsys):
         """Test normal log file reading without time limit."""
@@ -575,7 +575,7 @@ class TestReadBatchLogFile:
         totest.read_batch_log_file(str(log_file), 7, "1e+00", 12345)
         captured = capsys.readouterr()
         # Should print the log file path and last 3 lines
-        assert "1e+00_logs/popsyn_12345_7.out:" in captured.out
+        assert "logs/1e+00/popsyn_12345_7.out:" in captured.out
         assert "Line 1" in captured.out or "Line 2" in captured.out or "Line 3" in captured.out
 
     def test_read_batch_log_file_few_lines(self, tmp_path, capsys):
@@ -587,7 +587,7 @@ class TestReadBatchLogFile:
         captured = capsys.readouterr()
         assert "File contains 2 line(s):" in captured.out
         assert "Only one line" in captured.out
-        assert "1e+00_logs/popsyn_12345_3.out:" in captured.out
+        assert "logs/1e+00/popsyn_12345_3.out:" in captured.out
 
     def test_read_batch_log_file_few_lines_time_limit(self, tmp_path, capsys):
         """Test log file with <3 lines containing time limit (lines 481-482)."""
