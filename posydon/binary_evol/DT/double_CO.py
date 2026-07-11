@@ -69,16 +69,16 @@ class _SBrentqDenseOutput:
         result = np.empty((4, len(tau_target)))
         tau_lo = self.sol(self.s_lo)[1]
         tau_hi = self.sol(self.s_hi)[1]
-        
-        # An absolute tolerance for floating-point comparisons scaled 
+
+        # An absolute tolerance for floating-point comparisons scaled
         # with |tau_hi| when tau_hi >= 1, otherwise 1
         # (so the tolerance does not become unrealistically small).
         eps = 100 * np.finfo(float).eps * max(1.0, abs(tau_hi))
-        
+
         for i, tau in enumerate(tau_target):
             f_lo = tau_lo - tau
             f_hi = tau_hi - tau
-            
+
             if f_lo * f_hi > 0:
                 print(
                     f"FAILED at i={i}: "
