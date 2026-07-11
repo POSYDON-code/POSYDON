@@ -4,6 +4,8 @@ __authors__ = [
     ]
 
 import os
+import shutil
+import warnings
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -16,7 +18,17 @@ from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
-plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
+style_path = os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle")
+if shutil.which('latex'):
+    plt.style.use(style_path)
+else:
+    warnings.warn(
+        "LaTeX not found; using matplotlib mathtext for math rendering. "
+        "Install texlive-latex-base for LaTeX formatting."
+    )
+    rc_params = mpl.rc_params_from_file(style_path, use_default_template=False)
+    rc_params['text.usetex'] = False
+    plt.rcParams.update(rc_params)
 
 cm = mpl.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
