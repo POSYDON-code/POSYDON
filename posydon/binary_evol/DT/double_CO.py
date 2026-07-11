@@ -68,21 +68,21 @@ class _SBrentqDenseOutput:
         # convert physical time to dimensionless time
         tau_target = (t_phys - self.t0_phys) / self.t_scale
         result = np.empty((4, len(tau_target)))
-        # tau range to be covered by root-finding, 
+        # tau range to be covered by root-finding,
         # tau(s_lo) and tau(s_hi)
         tau_lo = self.sol(self.s_lo)[1]
         tau_hi = self.sol(self.s_hi)[1]
-        
-        # An absolute tolerance for floating-point comparisons 
-        # based on machine floating-point precision, scaled 
+
+        # An absolute tolerance for floating-point comparisons
+        # based on machine floating-point precision, scaled
         # to |tau_hi|, |tau_lo|, or 1.0, whichever is largest.
-        # (At least 1.0 scale so the tolerance does not become 
+        # (At least 1.0 scale so the tolerance does not become
         #  unreasonably small.)
         tau_scale = max(1.0, abs(tau_lo), abs(tau_hi))
         eps = 100 * np.finfo(float).eps * tau_scale
-        
+
         for i, tau in enumerate(tau_target):
-            
+
             # check f(a) lower bound
             if abs(tau - tau_lo) <= eps:
                 s_star = self.s_lo
