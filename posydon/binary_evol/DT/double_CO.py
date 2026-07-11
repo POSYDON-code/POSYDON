@@ -66,15 +66,38 @@ class _SBrentqDenseOutput:
     def __call__(self, t_phys):
         t_phys = np.atleast_1d(np.asarray(t_phys, dtype=float))
         tau_target = (t_phys - self.t0_phys) / self.t_scale
+        result = np.empty((4, len(tau_target)))
+        tau_lo = self.sol(self.s_lo)[1]
+        tau_hi = self.sol(self.s_hi)[1]
+        
+        # An absolute tolerance for floating-point comparisons scaled 
+        # with |tau_hi| when tau_hi >= 1, otherwise 1
+        # (so the tolerance does not become unrealistically small).
+        eps = 100 * np.finfo(float).eps * max(1.0, abs(tau_hi))
+        
+        for i, tau in enumerate(tau_target):
+            f_lo = tau_lo - tau
+            f_hi = tau_hi - tau
+            
+            if f_lo * f_hi > 0:
+                print(
+                    f"FAILED at i={i}: "
+                    f"tau_target={tau}, "
+                    f"f_lo={f_lo}, "
+                    f"f_hi={f_hi}"
+                )
 
-        n = len(tau_target)
-        result = np.empty((4, n))
-        for i in range(n):
-            s_star = brentq(
-                lambda s: self.sol(s)[1] - tau_target[i],
-                self.s_lo, self.s_hi,
-                xtol=1e-14, rtol=1e-14,
-            )
+            if abs(tau - tau_lo) <= eps:
+                s_star = self.s_lo
+            elif abs(tau - tau_hi) <= eps:
+                s_star = self.s_hi
+            else:
+                s_star = brentq(
+                    lambda s: self.sol(s)[1] - tau,
+                    self.s_lo,
+                    self.s_hi,
+                    xtol=1e-14,
+                    rtol=1e-14)
             raw = self.sol(s_star)          # [l, tau, omega_sec, omega_pri]
             alpha = np.exp(-s_star)
             result[0, i] = alpha * self.a0_Rsun   # separation (Rsun)
@@ -85,6 +108,7 @@ class _SBrentqDenseOutput:
         if result.shape[1] == 1:
             return result[:, 0]
         return result
+
 
 
 class DoubleCO(detached_step):
