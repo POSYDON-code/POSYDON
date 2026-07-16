@@ -79,16 +79,27 @@ class _SBrentqDenseOutput:
         # (At least 1.0 scale so the tolerance does not become
         #  unreasonably small.)
         tau_scale = max(1.0, abs(tau_lo), abs(tau_hi))
-        eps = 100 * np.finfo(float).eps * tau_scale
+        # Treat endpoint residuals smaller than eps as zero to guard
+        # against floating-point roundoff near the integration endpoints.
+        tol = 1e4
+        eps = tol * np.finfo(float).eps * tau_scale
 
         for i, tau in enumerate(tau_target):
 
-            # check f(a) lower bound
-            if abs(tau - tau_lo) <= eps:
+            # function values at integration boundaries
+            fa = tau_lo - tau
+            fb = tau_hi - tau
+
+            # check lower endpoint
+            if abs(fa) <= eps:
                 s_star = self.s_lo
-            # check f(b) upper bound
-            elif abs(tau - tau_hi) <= eps:
+            # check upper endpoint
+            elif abs(fb) <= eps:
                 s_star = self.s_hi
+            elif fa * fb > 0:
+                raise ValueError(f"Requested tau={tau:.17e} outside interval "
+                                 f"[{tau_lo:.17e}, {tau_hi:.17e}].")
+            # else root find for a solution
             else:
                 s_star = brentq(
                     lambda s: self.sol(s)[1] - tau,
