@@ -65,16 +65,48 @@ class _SBrentqDenseOutput:
 
     def __call__(self, t_phys):
         t_phys = np.atleast_1d(np.asarray(t_phys, dtype=float))
+        # convert physical time to dimensionless time
         tau_target = (t_phys - self.t0_phys) / self.t_scale
+        result = np.empty((4, len(tau_target)))
+        # tau range to be covered by root-finding,
+        # tau(s_lo) and tau(s_hi)
+        tau_lo = self.sol(self.s_lo)[1]
+        tau_hi = self.sol(self.s_hi)[1]
 
-        n = len(tau_target)
-        result = np.empty((4, n))
-        for i in range(n):
-            s_star = brentq(
-                lambda s: self.sol(s)[1] - tau_target[i],
-                self.s_lo, self.s_hi,
-                xtol=1e-14, rtol=1e-14,
-            )
+        # An absolute tolerance for floating-point comparisons
+        # based on machine floating-point precision, scaled
+        # to |tau_hi|, |tau_lo|, or 1.0, whichever is largest.
+        # (At least 1.0 scale so the tolerance does not become
+        #  unreasonably small.)
+        tau_scale = max(1.0, abs(tau_lo), abs(tau_hi))
+        # Treat endpoint residuals smaller than eps as zero to guard
+        # against floating-point roundoff near the integration endpoints.
+        tol = 1e4
+        eps = tol * np.finfo(float).eps * tau_scale
+
+        for i, tau in enumerate(tau_target):
+
+            # function values at integration boundaries
+            fa = tau_lo - tau
+            fb = tau_hi - tau
+
+            # check lower endpoint
+            if abs(fa) <= eps:
+                s_star = self.s_lo
+            # check upper endpoint
+            elif abs(fb) <= eps:
+                s_star = self.s_hi
+            elif fa * fb > 0:
+                raise ValueError(f"Requested tau={tau:.17e} outside interval "
+                                 f"[{tau_lo:.17e}, {tau_hi:.17e}].")
+            # else root find for a solution
+            else:
+                s_star = brentq(
+                    lambda s: self.sol(s)[1] - tau,
+                    self.s_lo,
+                    self.s_hi,
+                    xtol=1e-14,
+                    rtol=1e-14)
             raw = self.sol(s_star)          # [l, tau, omega_sec, omega_pri]
             alpha = np.exp(-s_star)
             result[0, i] = alpha * self.a0_Rsun   # separation (Rsun)
@@ -85,6 +117,7 @@ class _SBrentqDenseOutput:
         if result.shape[1] == 1:
             return result[:, 0]
         return result
+
 
 
 class DoubleCO(detached_step):
