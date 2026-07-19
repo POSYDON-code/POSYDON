@@ -222,7 +222,6 @@ from posydon.utils.common_functions import (
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.gridutils import (
     LazyHDF5,
-    _get_grid_column,
     add_field,
     fix_He_core,
     join_lists,
@@ -1500,8 +1499,8 @@ class PSyGrid:
             new_dtype[dtype[0]] = dtype[1]
 
         if lazy:
-                initial_values = LazyHDF5(initial_values)
-                final_values = LazyHDF5(final_values, dtype_set=new_dtype)
+            initial_values = LazyHDF5(initial_values)
+            final_values = LazyHDF5(final_values, dtype_set=new_dtype)
         else:
             initial_values = initial_values[()]
             final_values = final_values[()]
@@ -1528,6 +1527,9 @@ class PSyGrid:
                     arr = ds[()]
                     if sn_dtype:
                         arr = arr.astype(list(sn_dtype.items()))
+                    # this is typically unreachable, maybe occurs w/ corrupted data
+                    else: # pragma: no cover
+                        pass
                     self._SN_values[model_name] = arr
 
         # load MESA dirs
@@ -1567,7 +1569,11 @@ class PSyGrid:
         else:
             raise KeyError("Some runs are missing from the HDF5 grid.")
 
+<<<<<<< HEAD
         # load the compression args for later use
+=======
+        # set the compression arguments
+>>>>>>> v2.3
         self._make_compression_args()
 
         self._say("\tDone.")
@@ -1747,11 +1753,9 @@ class PSyGrid:
         # Include SN model columns (moved out of final_values after migration)
         for model_name, sn_ds in self.SN_MODELS.items():
             for short_key in sn_ds.dtype.names:
-                prefix = short_key[:3]           # 'S1_' or 'S2_'
-                rest = short_key[3:]             # e.g. 'CO_type'
-                full_key = f'{prefix}{model_name}_{rest}'
-                new_col_name = "final_" + full_key
-                df[new_col_name] = np.array(sn_ds[short_key])
+                prefix, field_name = short_key.split('_', 1)
+                full_key = f"final_{prefix}_{model_name}_{field_name}"
+                df[full_key] = np.array(sn_ds[short_key])
         return df
 
     def __len__(self):

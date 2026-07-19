@@ -915,7 +915,8 @@ class PopulationIO:
                 try:
                     tmp_df[c] = [self.ini_params[c]]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
             store.put("ini_parameters", tmp_df)
 
     def _load_ini_params(self, filename):
@@ -937,7 +938,8 @@ class PopulationIO:
                 try:
                     self.ini_params[c] = tmp_df[c][0]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
 
 
 
@@ -2251,7 +2253,7 @@ class TransientPopulation(Population):
         model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
-            time = self.select(columns=["time"]).values
+            time = self.select(columns=["time"]).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Create histogram with model weights
@@ -2263,7 +2265,7 @@ class TransientPopulation(Population):
                 raise ValueError("The metallicity is not present in the population!")
 
             time_df = self.select(columns=['metallicity', 'time'])
-            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).values
+            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Get weights for the specific metallicity

@@ -587,6 +587,11 @@ class TestFunctions:
             for qty in ['CO_type', 'SN_type', 'CO_interpolation_class']:
                 EXTRA_COLUMNS[f'S{star_i}_{MODEL}_{qty}'] = ['None'] * n
 
+        # add a column without SN_MODEL prefix for testing
+        #EXTRA_COLUMNS['test_other_column'] = np.arange(n, dtype=np.float64)
+        # add a unicode string column for testing
+        #grid.final_values['unicode_column'] = np.array(['a'] * n, dtype='U70')
+
         totest.add_post_processed_quantities(grid, list(grid.MESA_dirs),
                                              EXTRA_COLUMNS)
 
@@ -632,3 +637,32 @@ class TestFunctions:
         with h5py.File(grid_path, 'r') as f:
             assert list(f['grid/SN_MODELS'].keys()).count(MODEL) == 1, (
                 "SN_MODEL dataset duplicated after second write")
+
+
+        # do some last tests, edge cases and things
+        grid3 = PSyGrid()
+        grid3.load(grid_path)
+        # test presence of a column other than SN data in EXTRA_COLUMNS
+        EXTRA_COLUMNS['other_column'] = np.arange(n, dtype=np.float64)
+        # case where extras has a column that also exists in final_values
+        EXTRA_COLUMNS['age'] = np.arange(n, dtype=np.float64)
+        # case where final_values needs no conversion from unicode to bytes
+        # (we convert it here, beforehand)
+        new_dtype = []
+        final_values = np.array(grid3.final_values)
+        for field in final_values.dtype.names:
+            dt = final_values.dtype[field]
+            if dt.kind == "U":
+                new_dtype.append((field, "S70"))
+            else:
+                new_dtype.append((field, dt))
+        grid3.final_values = final_values.astype(new_dtype)
+
+        # test case where grid is missing the final_values dataset
+        grid3._reload_hdf5_file(writeable=True)
+        if 'final_values' in grid3.hdf5['grid']:
+            del grid3.hdf5['grid']['final_values']
+        grid3._reload_hdf5_file(writeable=False)
+
+        totest.add_post_processed_quantities(grid3, list(grid3.MESA_dirs),
+                                             EXTRA_COLUMNS)

@@ -143,6 +143,7 @@ for Z in $METALLICITIES; do
         --output "$OUTPUT_FILE" \
         --branch "$BRANCH" \
         --sha "$ACTUAL_SHA" \
+        --ini "$TEST_INI" \
         2>&1 | tee "$LOG_FILE"
     EXIT_CODE=${PIPESTATUS[0]}
 
