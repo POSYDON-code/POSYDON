@@ -717,7 +717,9 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
     elif rerun_type == 'no_age_limit+dedt_energy_eqn':
         replace_text = "matthias_lbv_thermo_dedt_noAgeLimit-dcc42e1d6d89fc267826970643e7f4f1bf463171"
     elif rerun_type == 'wd_accretion':
-        replace_text = "sg_v2.x_development_noAgelimit-dd87ef99dc7d460b52e5e492e0e736f7783a64ad"
+        replace_text = "sg_v2.x_development_noAgelimit-7e9ba56f55f2bd80eee8c43e5be3a17d5d931035"
+    elif rerun_type == 'relax_hard_limits':
+        replace_text = "sg_v2.x_development_relax_hard_limits-445fee5c5fe50bf11e48ea3d77108c85fb5969ce"
     elif rerun_type == 'other': # e.g. 'envelope_mass_limit', 'fe_core_infall_limit'
         # this rerun uses the default inlist commit
         return
@@ -892,7 +894,8 @@ def logic_rerun(grid, rerun_type):
     elif ((rerun_type == 'dedt_energy_eqn') or
           (rerun_type == 'LBV_wind+dedt_energy_eqn') or
           (rerun_type == 'no_age_limit+dedt_energy_eqn') or
-          (rerun_type == 'wd_accretion')):
+          (rerun_type == 'wd_accretion') or
+          (rerun_type == 'relax_hard_limits')):
         termination_flags = TF1_POOL_ERROR
     elif ((rerun_type == 'dedt_hepulse')
           or (rerun_type == 'LBV_wind+dedt_hepulse')):
