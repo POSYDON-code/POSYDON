@@ -258,12 +258,8 @@ def parse_inifile(inifile):
                                              _eval(node.right))
             elif isinstance(node, ast.List):
                 return [_eval(x) for x in node.elts]
-            elif isinstance(node, ast.Name): # pragma: no cover
-                # return regular string, since True/False/None are handled
-                # as ast.NameConstant in python3, not ast.Name
-                return node.id
             elif isinstance(node, ast.NameConstant):
-                # None, True, False are nameconstants in python3 but names in 2
+                # return True, False, or None
                 return node.value
             else:
                 raise Exception('Unsupported type {}'.format(node))
