@@ -1,11 +1,8 @@
 name: Baseline Validation (Comment Triggered)
 
-on: workflow_dispatch
-  #issue_comment:
-  #  types: [created]
-
-
-
+on:
+  issue_comment:
+    types: [created]
 
 # Only one validation run per PR at a time; a new trigger comment supersedes
 # an in-flight run for the same PR.
