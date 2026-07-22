@@ -4,6 +4,8 @@ on:
   issue_comment:
     types: [created]
 
+on: workflow_dispatch
+
 # Only one validation run per PR at a time; a new trigger comment supersedes
 # an in-flight run for the same PR.
 concurrency:
