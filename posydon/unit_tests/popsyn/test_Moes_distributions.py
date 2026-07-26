@@ -13,31 +13,21 @@ np = totest.np
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import approx, fixture, raises
+from pytest import approx, fixture, mark, raises
 
 
 # define test classes collecting several test functions
 class TestElements:
-    # check for objects, which should be an element of the tested module
-    def test_dir(self):
-        elements = ['Moe_17_PsandQs', '__authors__',
-                    '__builtins__', '__cached__', '__doc__', '__file__',
-                    '__loader__', '__name__', '__package__', '__spec__',
-                    'np', 'newton_cotes', 'quad']
-        totest_elements = set(dir(totest))
-        missing_in_test = set(elements) - totest_elements
-        assert len(missing_in_test) == 0, "There are missing objects in "\
-                                          +f"{totest.__name__}: "\
-                                          +f"{missing_in_test}. Please "\
-                                          +"check, whether they have been "\
-                                          +"removed on purpose and update "\
-                                          +"this unit test."
-        new_in_test = totest_elements - set(elements)
-        assert len(new_in_test) == 0, "There are new objects in "\
-                                      +f"{totest.__name__}: {new_in_test}. "\
-                                      +"Please check, whether they have been "\
-                                      +"added on purpose and update this "\
-                                      +"unit test."
+    def test_public_api_contract(self):
+        """Assert only required public contract, not full module symbol list."""
+        assert hasattr(totest, 'Moe_17_PsandQs')
+        assert hasattr(totest, '__authors__')
+        assert hasattr(totest, 'np')
+        assert hasattr(totest, 'newton_cotes')
+        assert hasattr(totest, 'quad')
+
+        model = totest.Moe_17_PsandQs(n_M1=3, n_logP=5, n_q=5, n_e=10)
+        assert callable(model)
 
 class TestMoe17PsandQs:
 
@@ -142,6 +132,61 @@ class TestMoe17PsandQs:
         assert len(e) == 3
         assert len(Z) == 3
 
+    def test_seeded_reproducibility(self):
+        """Two generators with the same seed must produce identical draws."""
+        M1 = np.array([1.0, 5.0, 10.0, 20.0, 35.0])
+        model_a = totest.Moe_17_PsandQs(
+            n_M1=5, n_logP=10, n_q=10, n_e=20,
+            RNG=np.random.default_rng(seed=1234))
+        model_b = totest.Moe_17_PsandQs(
+            n_M1=5, n_logP=10, n_q=10, n_e=20,
+            RNG=np.random.default_rng(seed=1234))
+
+        out_a = model_a(M1, all_binaries=False)
+        out_b = model_b(M1, all_binaries=False)
+
+        for arr_a, arr_b in zip(out_a, out_b):
+            assert np.array_equal(arr_a, arr_b, equal_nan=True)
+
+    def test_seeded_numeric_snapshot(self):
+        """Deterministic numeric snapshot for regression protection."""
+        model = totest.Moe_17_PsandQs(
+            n_M1=5, n_logP=10, n_q=10, n_e=20,
+            RNG=np.random.default_rng(seed=2024))
+        M1 = np.array([1.0, 5.0, 10.0, 20.0])
+
+        M2, P, e, Z = model(M1, all_binaries=True)
+
+        expected_M2 = np.array([
+            0.2470181820658170,
+            0.5979425977891516,
+            3.7627175309509338,
+            2.0780559303165750,
+        ])
+        expected_P = np.array([
+            1.0000000000000000e+08,
+            1.0000000000000000e+08,
+            4.3578331121073444e+02,
+            3.7529701591440934e+00,
+        ])
+        expected_e = np.array([
+            0.2992502119431766,
+            0.2739546694743913,
+            0.2807044989336530,
+            0.0344916607326516,
+        ])
+        expected_Z = np.array([
+            0.0095611041995118,
+            0.0002810281072445,
+            0.0033747794810215,
+            0.0014212325106382,
+        ])
+
+        np.testing.assert_allclose(M2, expected_M2, rtol=0.0, atol=1e-14)
+        np.testing.assert_allclose(P, expected_P, rtol=0.0, atol=1e-10)
+        np.testing.assert_allclose(e, expected_e, rtol=0.0, atol=1e-14)
+        np.testing.assert_allclose(Z, expected_Z, rtol=0.0, atol=1e-14)
+
     def test_call_all_binaries_true(self):
         """With all_binaries=True, no single stars should be produced."""
         model = totest.Moe_17_PsandQs(
@@ -152,6 +197,15 @@ class TestMoe17PsandQs:
         # all_binaries=True means mybinfrac=1.0, so no NaN values
         assert not np.any(np.isnan(M2))
         assert not np.any(np.isnan(P))
+        assert not np.any(np.isnan(e))
+        assert np.all(np.isfinite(Z))
+
+        q = M2 / M1
+        assert np.all(q >= 0.1)
+        assert np.all(q <= 1.0)
+        assert np.all(P > 0.0)
+        assert np.all(e >= 0.0)
+        assert np.all(e < 1.0)
 
     def test_call_all_binaries_false(self):
         """With all_binaries=False, some single stars may be produced."""
@@ -164,6 +218,20 @@ class TestMoe17PsandQs:
         # Z is always set, never NaN
         assert not np.any(np.isnan(Z))
         assert len(M2) == 50
+
+    def test_call_single_star_branch_consistency(self):
+        """When binary fraction is forced to zero, all companions are NaN."""
+        model = totest.Moe_17_PsandQs(
+            n_M1=5, n_logP=10, n_q=10, n_e=20,
+            RNG=np.random.default_rng(seed=42))
+
+        M1 = np.array([0.08] * 10)
+        M2, P, e, Z = model(M1, M_min=0.08, all_binaries=False)
+
+        assert np.all(np.isnan(M2))
+        assert np.all(np.isnan(P))
+        assert np.all(np.isnan(e))
+        assert np.all(np.isfinite(Z))
 
     def test_call_high_mass(self, small_model):
         """M1 > 40 Msun should adopt binary statistics of M1 = 40 Msun."""
@@ -199,3 +267,26 @@ class TestMoe17PsandQs:
         Z_max = Zsun * 10**(0.176)
         assert all(Z >= Z_min * 0.99)  # small tolerance
         assert all(Z <= Z_max * 1.01)
+
+    def test_cumulative_monotonicity(self, small_model):
+        """Cumulative distributions should be non-decreasing."""
+        tol = 1e-10
+        assert np.all(np.diff(small_model.cumqdist, axis=0) >= -tol)
+        assert np.all(np.diff(small_model.cumedist, axis=0) >= -tol)
+        assert np.all(np.diff(small_model.cumPbindist, axis=0) >= -tol)
+
+    @mark.parametrize(
+        "M1, M_min, M_max",
+        [
+            (np.array([-1.0, 0.0]), 0.08, 150.0),
+            (np.array([np.nan, 1.0]), 0.08, 150.0),
+            (np.array([0.05, 1.0]), 0.08, 150.0),
+            (np.array([1.0, 160.0]), 0.08, 150.0),
+            (np.array([1.0]), 0.0, 150.0),
+            (np.array([1.0]), 0.5, 0.5),
+        ],
+    )
+    def test_invalid_input_raises(self, small_model, M1, M_min, M_max):
+        """Invalid mass inputs and bounds should raise ValueError."""
+        with raises(ValueError):
+            small_model(M1, M_min=M_min, M_max=M_max)

@@ -400,7 +400,21 @@ class Moe_17_PsandQs():
                 - the eccentricity
                 - the metallicity
         """
+        if not np.isfinite(M_min) or M_min <= 0.0:
+            raise ValueError("M_min must be a positive finite value.")
+        if not np.isfinite(M_max) or M_max <= M_min:
+            raise ValueError("M_max must be finite and larger than M_min.")
+
         M1s = np.atleast_1d(M1)
+        if np.any(~np.isfinite(M1s)):
+            raise ValueError("Primary masses M1 must all be finite.")
+        if np.any(M1s <= 0.0):
+            raise ValueError("Primary masses M1 must all be strictly positive.")
+        if np.any(M1s < M_min):
+            raise ValueError("Primary masses M1 must be >= M_min.")
+        if np.any(M1s > M_max):
+            raise ValueError("Primary masses M1 must be <= M_max.")
+
         M2s = []
         logPs = []
         es = []
@@ -448,15 +462,21 @@ class Moe_17_PsandQs():
                 mycumqdist = self.cumqdist[:,indlogP,indM1].flatten()
                 if(M1 < 0.8):
                     q_min = M_min / M1
-                    # Calculate cumulative probability at q = q_min
-                    cum_qmin = np.interp(q_min, self.qv, mycumqdist)
-                    # Rescale and renormalize cumulative distribution for q > q_min
-                    mycumqdist = mycumqdist - cum_qmin
-                    mycumqdist = mycumqdist / max(mycumqdist)
-                    # Set probability = 0 where q < q_min
-                    mycumqdist[self.qv <= q_min] = 0.0
-                # Given M1 & P, select q from cumulative mass ratio distribution
-                myq = np.interp(self.RNG.random(), mycumqdist, self.qv)
+                    if q_min >= 1.0:
+                        myq = 1.0
+                    else:
+                        # Calculate cumulative probability at q = q_min
+                        cum_qmin = np.interp(q_min, self.qv, mycumqdist)
+                        # Rescale and renormalize cumulative distribution for q > q_min
+                        mycumqdist = mycumqdist - cum_qmin
+                        mycumqdist = mycumqdist / max(mycumqdist)
+                        # Set probability = 0 where q < q_min
+                        mycumqdist[self.qv <= q_min] = 0.0
+                        # Given M1 & P, select q from cumulative distribution
+                        myq = np.interp(self.RNG.random(), mycumqdist, self.qv)
+                else:
+                    # Given M1 & P, select q from cumulative mass ratio distribution
+                    myq = np.interp(self.RNG.random(), mycumqdist, self.qv)
             else:
                 # If instead random number > binary star fraction, generate single
                 # star
