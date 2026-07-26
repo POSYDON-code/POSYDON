@@ -62,7 +62,11 @@ def get_IMF_pdf(kwargs):
         IMF_pdf = imf.pdf
     except AttributeError:
         # if not found, default to a flat distribution
-        IMF_pdf = lambda m1: np.ones_like(m1) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        m_range = kwargs['primary_mass_max'] - kwargs['primary_mass_min']
+        if m_range == 0:
+            raise ValueError("primary_mass_max must be greater than "
+                             "primary_mass_min for IMF fallback.")
+        IMF_pdf = lambda m1: np.ones_like(m1) / m_range
         Pwarn(f"The primary_mass_scheme '{primary_mass_scheme}' is not recognized. "
               "Using a flat mass distribution instead.", "UnsupportedModelWarning")
 
@@ -96,22 +100,13 @@ def get_mass_ratio_pdf(kwargs):
         and ('q_min' not in kwargs and 'q_max' not in kwargs)):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
-        def get_pdf_for_m1(m1):
+        def q_pdf(q, m1):
             m1 = np.atleast_1d(m1)
-            minimum = np.max(
-                [kwargs['secondary_mass_min'] / m1, np.zeros(len(m1))],
-                axis=0)
-
-            maximum = np.min(
-                [kwargs['secondary_mass_max'] / m1, np.ones(len(m1))],
-                axis=0)
-
-            # Use FlatMassRatio distribution class
-            q_dist = lambda q: np.where((q > minimum) & (q <= maximum),
-                                        1/(maximum - minimum),
-                                        0)
-            return q_dist
-        q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
+            minimum = np.maximum(kwargs['secondary_mass_min'] / m1, 0.0)
+            maximum = np.minimum(kwargs['secondary_mass_max'] / m1, 1.0)
+            return np.where((q > minimum) & (q <= maximum),
+                            1 / (maximum - minimum),
+                            0)
     elif kwargs['secondary_mass_scheme'] == 'flat_mass_ratio':
         # flat mass ratio, where bounds are given
         from posydon.popsyn.distributions import FlatMassRatio
@@ -200,11 +195,16 @@ def get_period_pdf(kwargs):
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            # Since the outer function is set in PDF(P) and inner as P(a),
-            # we need to do a change of variables.
+            # Since the outer PDF function expects P but the underlying
+            # distribution is defined over orbital separation a, we need
+            # a change of variables:
             # PDF(P) = PDF(a) * |da/dP|
+            # Using Kepler's law: P^2 = (4*pi^2/(G*(m1+m2))) * a^3
+            # => a^3 ∝ (m1+m2) * P^2  =>  a ∝ P^(2/3)
             # da/dP = (2/3) * (a/P)
-            # PDF(P) = (2/3) * log_uniform(log_a)
+            # So PDF(P) = PDF(a) * (2/3) * (a/P)
+            # PDF(a) = log_uniform(log_a) on the log of separation
+            # PDF(P) = (2/3) * log_uniform(log_a) * (a/P)
             period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
                 orbital_separation_from_period(P, m1, q*m1)
             ) * 2./3.
@@ -217,17 +217,17 @@ def get_period_pdf(kwargs):
 
     return period_pdf
 
-def get_pdf(kwargs, mass_pdf=False):
+def get_pdf(kwargs, skip_period=False):
     """Function that builds a PDF function given the simulation parameters
 
     Parameters
     ----------
     kwargs : dict
         Dictionary containing the simulation parameters
-    mass_pdf : bool, optional
-        If True, the PDF will return the mass distribution only.
-        If False, it will return the full PDF including mass ratio, binary fraction,
-        and period distributions. Default is False.
+    skip_period : bool, optional
+        If True, the PDF will exclude the period distribution term.
+        If False, it will return the full PDF including mass ratio, binary
+        fraction, and period distributions. Default is False.
 
     Returns
     -------
@@ -240,7 +240,7 @@ def get_pdf(kwargs, mass_pdf=False):
     f_b_pdf = get_binary_fraction_pdf(kwargs)
     period_pdf = get_period_pdf(kwargs)
 
-    if mass_pdf:
+    if skip_period:
         pdf_function = lambda m1, q=0, P=0, binary=False: (
             np.where(# binaries
                      np.asarray(binary),
@@ -285,7 +285,7 @@ def get_mean_mass(params):
         Mean mass of the population
     '''
 
-    PDF = get_pdf(params, mass_pdf=True)
+    PDF = get_pdf(params, skip_period=True)
 
     # integration bounds
     m1_min = params['primary_mass_min']
@@ -393,8 +393,8 @@ def calculate_model_weights(pop_data,
         raise ValueError("No binaries simulated, but requested")
 
     # build the pdf functions
-    PDF_sim = get_pdf(simulation_parameters, mass_pdf=False)
-    PDF_pop = get_pdf(population_parameters, mass_pdf=False)
+    PDF_sim = get_pdf(simulation_parameters, skip_period=False)
+    PDF_pop = get_pdf(population_parameters, skip_period=False)
 
     # initial properties
     mean_mass_sim = get_mean_mass(simulation_parameters)

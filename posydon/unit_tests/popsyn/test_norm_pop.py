@@ -336,6 +336,26 @@ class TestGetMeanMass:
         mean_mass = norm_pop.get_mean_mass(params)
         assert mean_mass > 0
 
+    def test_mean_mass_with_explicit_q_bounds(self):
+        # Test the branch where q_min and q_max are explicitly provided
+        params = {
+            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_min': 10,
+            'primary_mass_max': 20,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'q_min': 0.2,
+            'q_max': 0.8,
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.5,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+
+        mean_mass = norm_pop.get_mean_mass(params)
+        assert mean_mass > 0
+
 
 class TestGetPdf:
     def test_single_star_pdf(self):
@@ -379,7 +399,7 @@ class TestGetPdf:
             'orbital_period_max': 6000,
 
         }
-        pdf_func = norm_pop.get_pdf(kwargs, mass_pdf=True)
+        pdf_func = norm_pop.get_pdf(kwargs, skip_period=True)
         m1_val = 10
         # For binary, expected = f_b*IMF_pdf*q_pdf = 0.3*(1/99)*1 = 0.3/99
         # for valid q (e.g. 0.5)
@@ -409,12 +429,37 @@ class TestGetPdf:
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
         }
-        pdf_func = norm_pop.get_pdf(kwargs, mass_pdf=True)
+        pdf_func = norm_pop.get_pdf(kwargs, skip_period=True)
         m1_val = 10
         # For non-binary stars:
         # expected = (1 - f_b)*DummyIMF.pdf = 0.3*0.5 = 0.15
         result = pdf_func(m1_val, binary=False)
         assert np.allclose(result, 0.15)
+
+    def test_mass_pdf_with_binary(self):
+        # Test mass_pdf=True with binary stars
+        kwargs = {
+            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_min': 1,
+            'primary_mass_max': 100,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'q_min': 0,
+            'q_max': 1,
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.3,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+        }
+        pdf_func = norm_pop.get_pdf(kwargs, skip_period=True)
+        m1_val = 10
+        # For binary with mass_pdf=True, expected = f_b * IMF_pdf * q_pdf
+        # = 0.3 * (1/99) * 1 = 0.3/99
+        imf_val = 1.0 / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
+        expected = 0.3 * imf_val * 1
+        result = pdf_func(m1_val, q=0.5, binary=True)
+        assert np.allclose(result, expected)
 
 ###############################
 # Test the reweighting function
@@ -828,6 +873,105 @@ class TestReweighting():
                                                    base_simulation_kwargs,
                                                    base_population_kwargs)
         assert len(weights) == len(base_pop_data)
+        assert np.all(weights >= 0)
+
+    def test_population_smaller_sample_space(self, base_simulation_kwargs):
+        # Test reweighting when target population has a narrower mass range
+        base_simulation_kwargs['number_of_binaries'] = 100000
+        base_simulation_kwargs['binary_fraction_const'] = 0.
+
+        wide_sample_primary_mass_max = 40
+        base_simulation_kwargs['primary_mass_min'] = 7.
+        base_simulation_kwargs['primary_mass_max'] = wide_sample_primary_mass_max
+        wide_sample = pop_data(base_simulation_kwargs)
+
+        narrow_kwargs = base_simulation_kwargs.copy()
+        narrow_kwargs['primary_mass_min'] = 7.
+        narrow_kwargs['primary_mass_max'] = 20
+
+        narrow_sample = pop_data(narrow_kwargs)
+
+        M_sim = (wide_sample['S1_mass_i'].sum()
+                 + wide_sample['S2_mass_i'].sum())
+        wide_weights = norm_pop.calculate_model_weights(wide_sample,
+                                                        M_sim,
+                                                        base_simulation_kwargs,
+                                                        narrow_kwargs)
+
+        M_sim = (narrow_sample['S1_mass_i'].sum()
+                 + narrow_sample['S2_mass_i'].sum())
+        narrow_weights = norm_pop.calculate_model_weights(narrow_sample,
+                                                          M_sim,
+                                                          narrow_kwargs,
+                                                          narrow_kwargs)
+
+        assert len(wide_weights) == len(wide_sample)
+
+        mask = wide_sample['S1_mass_i'] <= 20
+        selection = wide_weights[mask]
+        assert np.isclose(np.nansum(selection), np.nansum(narrow_weights), atol=1e-3)
+
+    def test_changing_period_distribution(self, base_simulation_kwargs):
+        # Test reweighting when period distribution changes
+        # Note: both samples must be generated with the same sampling scheme
+        # (Sana+12_period_extended), but the population PDF uses power_law
+        base_simulation_kwargs['number_of_binaries'] = 100000
+        base_simulation_kwargs['binary_fraction_const'] = 1.
+        base_simulation_kwargs['primary_mass_min'] = 7.
+        base_simulation_kwargs['primary_mass_max'] = 20
+
+        sim_sample = pop_data(base_simulation_kwargs)
+
+        # Population uses a different period scheme for PDF evaluation
+        pop_kwargs = base_simulation_kwargs.copy()
+        pop_kwargs['orbital_period_scheme'] = 'power_law'
+        pop_kwargs['power_law_slope'] = -0.55
+
+        # Generate a reference sample with the same sampling scheme
+        ref_sample = pop_data(base_simulation_kwargs)
+
+        M_sim = (sim_sample['S1_mass_i'].sum()
+                 + sim_sample['S2_mass_i'].sum())
+        sim_weights = norm_pop.calculate_model_weights(sim_sample,
+                                                       M_sim,
+                                                       base_simulation_kwargs,
+                                                       pop_kwargs)
+
+        M_sim = (ref_sample['S1_mass_i'].sum()
+                 + ref_sample['S2_mass_i'].sum())
+        ref_weights = norm_pop.calculate_model_weights(ref_sample,
+                                                       M_sim,
+                                                       pop_kwargs,
+                                                       pop_kwargs)
+
+        assert len(sim_weights) == len(sim_sample)
+        assert np.all(sim_weights >= 0)
+        assert np.isclose(np.nansum(sim_weights), np.nansum(ref_weights), atol=1e-3)
+
+    def test_zero_weight_sim_pdf(self, base_simulation_kwargs):
+        # Test that when PDF_sim returns zero, the weight is zero
+        base_simulation_kwargs['number_of_binaries'] = 100000
+        base_simulation_kwargs['binary_fraction_const'] = 1.
+        base_simulation_kwargs['primary_mass_min'] = 7.
+        base_simulation_kwargs['primary_mass_max'] = 20
+
+        sim_sample = pop_data(base_simulation_kwargs)
+
+        # Population with a very narrow q range that excludes most systems
+        pop_kwargs = base_simulation_kwargs.copy()
+        pop_kwargs['q_min'] = 0.9
+        pop_kwargs['q_max'] = 1.0
+
+        M_sim = (sim_sample['S1_mass_i'].sum()
+                 + sim_sample['S2_mass_i'].sum())
+        weights = norm_pop.calculate_model_weights(sim_sample,
+                                                   M_sim,
+                                                   base_simulation_kwargs,
+                                                   pop_kwargs)
+
+        assert len(weights) == len(sim_sample)
+        # Some weights should be zero (systems with q < 0.9)
+        assert np.any(weights == 0)
         assert np.all(weights >= 0)
 
 
