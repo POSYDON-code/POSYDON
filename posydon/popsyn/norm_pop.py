@@ -6,6 +6,7 @@ __authors__ = [
 
 import numpy as np
 from scipy.integrate import dblquad, nquad, quad
+from scipy.interpolate import RegularGridInterpolator
 
 import posydon.popsyn.IMFs as IMFs
 from posydon.popsyn import independent_sample
@@ -16,9 +17,129 @@ from posydon.popsyn.distributions import (
     PowerLawPeriod,
     Sana12Period,
 )
+from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils import constants as const
 from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.utils.posydonwarning import Pwarn
+
+_gen_Moe_17_PsandQs = None
+
+
+def _get_moe_generator(kwargs):
+    """Return a cached Moe & Di Stefano grid generator."""
+    global _gen_Moe_17_PsandQs
+
+    if _gen_Moe_17_PsandQs is None:
+        _gen_Moe_17_PsandQs = Moe_17_PsandQs(**kwargs)
+    return _gen_Moe_17_PsandQs
+
+
+def _build_moe_pdf_helpers(kwargs):
+    """Build interpolation helpers for the Moe & Di Stefano sampler."""
+
+    moe = _get_moe_generator(kwargs)
+    m1_grid = moe.M1v
+    logp_grid = moe.logPv
+    q_grid = moe.qv
+
+    binary_fraction_grid = np.clip(moe.cumPbindist[-1, :], 0.0, 1.0)
+    binary_fraction_pdf = RegularGridInterpolator(
+        (m1_grid,),
+        binary_fraction_grid,
+        bounds_error=False,
+        fill_value=None,
+    )
+
+    period_pdf_grid = np.zeros_like(moe.cumPbindist)
+    q_pdf_grid = np.zeros_like(moe.cumqdist)
+    q_mean_grid = np.zeros((len(logp_grid), len(m1_grid)))
+
+    for i in range(len(m1_grid)):
+        period_pdf_grid[:, i] = np.clip(
+            np.gradient(moe.cumPbindist[:, i], logp_grid, edge_order=2),
+            0.0,
+            None,
+        )
+        for j in range(len(logp_grid)):
+            q_pdf_grid[:, j, i] = np.clip(
+                np.gradient(moe.cumqdist[:, j, i], q_grid, edge_order=2),
+                0.0,
+                None,
+            )
+            q_mean_grid[j, i] = np.trapz(q_grid * q_pdf_grid[:, j, i], q_grid)
+
+    period_pdf = RegularGridInterpolator(
+        (logp_grid, m1_grid),
+        period_pdf_grid,
+        bounds_error=False,
+        fill_value=0.0,
+    )
+    q_pdf = RegularGridInterpolator(
+        (q_grid, logp_grid, m1_grid),
+        q_pdf_grid,
+        bounds_error=False,
+        fill_value=0.0,
+    )
+    q_mean = RegularGridInterpolator(
+        (logp_grid, m1_grid),
+        q_mean_grid,
+        bounds_error=False,
+        fill_value=0.0,
+    )
+
+    return moe, binary_fraction_pdf, period_pdf, q_pdf, q_mean
+
+
+def _moe_primary_pdf(kwargs):
+    IMF_pdf = get_IMF_pdf(kwargs)
+    moe, binary_fraction_pdf, _, _, _ = _build_moe_pdf_helpers(kwargs)
+
+    def pdf(m1, binary=False):
+        m1 = np.asarray(m1)
+        binary = np.asarray(binary)
+        m1_clipped = np.clip(m1, moe.M1v[0], moe.M1v[-1])
+        f_binary = np.clip(binary_fraction_pdf(m1_clipped), 0.0, 1.0)
+        return np.where(binary,
+                        IMF_pdf(m1) * f_binary,
+                        IMF_pdf(m1) * (1.0 - f_binary))
+
+    return pdf
+
+
+def _moe_full_pdf(kwargs):
+    IMF_pdf = get_IMF_pdf(kwargs)
+    moe, binary_fraction_pdf, period_pdf, q_pdf, _ = _build_moe_pdf_helpers(kwargs)
+
+    if kwargs.get('orbital_scheme', 'period') != 'period':
+        raise ValueError("Moe+17-PsandQs reweighting currently supports only orbital_scheme='period'.")
+
+    def pdf(m1, q=0, P=0, binary=False):
+        m1 = np.asarray(m1)
+        q = np.asarray(q)
+        P = np.asarray(P)
+        binary = np.asarray(binary)
+
+        m1_clipped = np.clip(m1, moe.M1v[0], moe.M1v[-1])
+        logP = np.where(np.asarray(P) > 0, np.log10(np.asarray(P)), moe.logPv[0])
+        logP_clipped = np.clip(logP, moe.logPv[0], moe.logPv[-1])
+        q_clipped = np.clip(q, moe.qv[0], moe.qv[-1])
+        f_binary = np.clip(binary_fraction_pdf(m1_clipped), 0.0, 1.0)
+
+        binary_density = IMF_pdf(m1) * period_pdf(np.column_stack([logP_clipped, m1_clipped]))
+        q_density = q_pdf(np.column_stack([q_clipped, logP_clipped, m1_clipped]))
+
+        return np.where(binary,
+                        binary_density * q_density,
+                        IMF_pdf(m1) * (1.0 - f_binary))
+
+    return pdf
+
+
+def get_moe_pdf(kwargs, mass_pdf=False):
+    """Return a Moe & Di Stefano initial-condition PDF."""
+    if mass_pdf:
+        return _moe_primary_pdf(kwargs)
+    return _moe_full_pdf(kwargs)
 
 
 def get_IMF_pdf(kwargs):
@@ -235,6 +356,9 @@ def get_pdf(kwargs, mass_pdf=False):
         Function that returns a probability density function
     """
 
+    if independent_sample.use_Moe_17_PsandQs(**kwargs):
+        return get_moe_pdf(kwargs, mass_pdf=mass_pdf)
+
     IMF_pdf = get_IMF_pdf(kwargs)
     q_pdf = get_mass_ratio_pdf(kwargs)
     f_b_pdf = get_binary_fraction_pdf(kwargs)
@@ -284,6 +408,33 @@ def get_mean_mass(params):
     mean_mass : float
         Mean mass of the population
     '''
+
+    if independent_sample.use_Moe_17_PsandQs(**params):
+        moe, binary_fraction_pdf, _, _, q_mean = _build_moe_pdf_helpers(params)
+        IMF_pdf = get_IMF_pdf(params)
+
+        m1_grid = moe.M1v
+        logp_grid = moe.logPv
+
+        m1_clipped = np.clip(m1_grid, params['primary_mass_min'], params['primary_mass_max'])
+        f_binary = np.clip(binary_fraction_pdf(m1_clipped), 0.0, 1.0)
+
+        binary_mass_at_m1 = np.zeros_like(m1_grid)
+        for i, m1 in enumerate(m1_grid):
+            p_bin_logp = np.clip(
+                np.gradient(moe.cumPbindist[:, i], logp_grid, edge_order=2),
+                0.0,
+                None,
+            )
+            q_expect = q_mean(np.column_stack([logp_grid, np.full_like(logp_grid, m1)]))
+            binary_mass_at_m1[i] = np.trapz(p_bin_logp * m1 * (1.0 + q_expect), logp_grid)
+
+        single_mass_at_m1 = m1_grid * (1.0 - f_binary)
+        mean_mass = np.trapz(
+            IMF_pdf(m1_grid) * (single_mass_at_m1 + binary_mass_at_m1),
+            m1_grid,
+        )
+        return mean_mass
 
     PDF = get_pdf(params, mass_pdf=True)
 
@@ -385,12 +536,16 @@ def calculate_model_weights(pop_data,
 
     """
 
-    f_b_sim = simulation_parameters['binary_fraction_const']
-    f_b_pop = population_parameters['binary_fraction_const']
-    if (f_b_sim == 1) and (f_b_pop == 0):
-        raise ValueError("No single stars simulated, but requested")
-    if (f_b_sim == 0) and (f_b_pop == 1):
-        raise ValueError("No binaries simulated, but requested")
+    sim_is_moe = independent_sample.use_Moe_17_PsandQs(**simulation_parameters)
+    pop_is_moe = independent_sample.use_Moe_17_PsandQs(**population_parameters)
+
+    if not sim_is_moe and not pop_is_moe:
+        f_b_sim = simulation_parameters['binary_fraction_const']
+        f_b_pop = population_parameters['binary_fraction_const']
+        if (f_b_sim == 1) and (f_b_pop == 0):
+            raise ValueError("No single stars simulated, but requested")
+        if (f_b_sim == 0) and (f_b_pop == 1):
+            raise ValueError("No binaries simulated, but requested")
 
     # build the pdf functions
     PDF_sim = get_pdf(simulation_parameters, mass_pdf=False)

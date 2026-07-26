@@ -867,6 +867,101 @@ class TestBinaryFractions():
         selection = expanded_weights[mask]
         assert np.isclose(np.nansum(selection), np.nansum(small_weights), atol=1e-3)
 
+
+def moe_kwargs_template():
+    return {
+        'number_of_binaries': 2000,
+        'primary_mass_scheme': 'Kroupa2001',
+        'primary_mass_min': 7,
+        'primary_mass_max': 40,
+        'secondary_mass_scheme': 'Moe+17-PsandQs',
+        'binary_fraction_scheme': 'const',
+        'binary_fraction_const': 1.0,
+        'orbital_scheme': 'period',
+        'orbital_period_scheme': 'Moe+17-PsandQs',
+        'orbital_period_min': 1.412,
+        'orbital_period_max': 1e8,
+        'eccentricity_scheme': 'zero',
+    }
+
+
+class TestMoeReweighting:
+
+    def test_same_moe_sample_space(self):
+        kwargs = moe_kwargs_template()
+        sample = pop_data(kwargs.copy())
+
+        M_sim = sample['S1_mass_i'].sum() + sample['S2_mass_i'].sum()
+        weights = norm_pop.calculate_model_weights(sample, M_sim, kwargs, kwargs)
+
+        assert len(weights) == len(sample)
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights >= 0)
+        assert np.allclose(weights, 1.0 / M_sim, rtol=1e-2, atol=1e-12)
+
+    def test_moe_to_standard_weights_finite(self):
+        sim_kwargs = moe_kwargs_template()
+        pop_kwargs = {
+            'number_of_binaries': 2000,
+            'primary_mass_scheme': 'Kroupa2001',
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.7,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6e3,
+            'eccentricity_scheme': 'zero',
+            'q_min': 0.0,
+            'q_max': 1.0,
+        }
+        sim_kwargs['binary_fraction_const'] = 0.7
+
+        sample = pop_data(sim_kwargs.copy())
+        M_sim = sample['S1_mass_i'].sum() + sample['S2_mass_i'].sum()
+
+        weights = norm_pop.calculate_model_weights(sample, M_sim, sim_kwargs, pop_kwargs)
+
+        assert len(weights) == len(sample)
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights >= 0)
+
+    def test_standard_to_moe_weights_finite(self):
+        sim_kwargs = {
+            'number_of_binaries': 2000,
+            'primary_mass_scheme': 'Kroupa2001',
+            'binary_fraction_const': 0.7,
+            'binary_fraction_scheme': 'const',
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6e3,
+            'eccentricity_scheme': 'zero',
+            'q_min': 0.0,
+            'q_max': 1.0,
+        }
+
+        pop_kwargs = moe_kwargs_template()
+        pop_kwargs['binary_fraction_const'] = 0.7
+
+        sample = pop_data(sim_kwargs.copy())
+        M_sim = sample['S1_mass_i'].sum() + sample['S2_mass_i'].sum()
+
+        weights = norm_pop.calculate_model_weights(sample, M_sim, sim_kwargs, pop_kwargs)
+
+        assert len(weights) == len(sample)
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights >= 0)
+
     def test_single_star_population_error(self, base_simulation_kwargs):
         # no binaries
         base_simulation_kwargs['number_of_binaries'] =  100000
