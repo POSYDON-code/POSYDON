@@ -22,6 +22,13 @@ __authors__ = [
 import numpy as np
 from scipy.integrate import newton_cotes, quad
 
+_PERIOD_INTERMEDIATE_ALPHA = 0.018
+_PERIOD_INTERMEDIATE_WIDTH = 0.7
+_MASS_RATIO_SPLIT = 0.3
+_TWIN_Q_THRESHOLD = 0.95
+_ECCENTRICITY_MIN = 0.0001
+_ECCENTRICITY_MAX_OFFSET = 0.99
+
 
 class Moe_17_PsandQs():
     """Generate initial parameters following Moe & Di Stefano (2017) [1]_.
@@ -94,6 +101,122 @@ class Moe_17_PsandQs():
             ret += integrate_newton_cotes(x[idx:idx + p], f[idx:idx + p])
         return ret
 
+    def _twin_fraction(self, mylogP, FtwinlogPle1, logPtwin):
+        """Return excess twin fraction at period mylogP."""
+        if mylogP <= 1.0:
+            Ftwin = FtwinlogPle1
+        else:
+            Ftwin = FtwinlogPle1 * (1.0 - (mylogP - 1.0) / (logPtwin - 1.0))
+        if mylogP >= logPtwin:
+            Ftwin = 0.0
+        return Ftwin
+
+    def _gamma_largeq(self, myM1, mylogP):
+        """Return gamma_largeq slope from Eqns. 9-11 and interpolation."""
+        if mylogP < 5.0:
+            gl_1p2 = -0.5
+        else:
+            gl_1p2 = -0.5 - 0.3 * (mylogP - 5.0)
+
+        if mylogP <= 1.0:
+            gl_3p5 = -0.5
+        elif mylogP <= 4.5:
+            gl_3p5 = -0.5 - 0.2 * (mylogP - 1.0)
+        elif mylogP <= 6.5:
+            gl_3p5 = -1.2 - 0.4 * (mylogP - 4.5)
+        else:
+            gl_3p5 = -2.0
+
+        if mylogP <= 1.0:
+            gl_6 = -0.5
+        elif mylogP <= 2.0:
+            gl_6 = -0.5 - 0.9 * (mylogP - 1.0)
+        elif mylogP <= 4.0:
+            gl_6 = -1.4 - 0.3 * (mylogP - 2.0)
+        else:
+            gl_6 = -2.0
+
+        if myM1 <= 1.2:
+            return gl_1p2
+        if myM1 <= 3.5:
+            return np.interp(np.log10(myM1), np.log10([1.2, 3.5]),
+                             [gl_1p2, gl_3p5])
+        if myM1 <= 6.0:
+            return np.interp(np.log10(myM1), np.log10([3.5, 6.0]),
+                             [gl_3p5, gl_6])
+        return gl_6
+
+    def _gamma_smallq(self, myM1, mylogP):
+        """Return gamma_smallq slope from Eqns. 13-15 and interpolation."""
+        gs_1p2 = 0.3
+
+        if mylogP <= 2.5:
+            gs_3p5 = 0.2
+        elif mylogP <= 5.5:
+            gs_3p5 = 0.2 - 0.3 * (mylogP - 2.5)
+        else:
+            gs_3p5 = -0.7 - 0.2 * (mylogP - 5.5)
+
+        if mylogP <= 1.0:
+            gs_6 = 0.1
+        elif mylogP <= 3.0:
+            gs_6 = 0.1 - 0.15 * (mylogP - 1.0)
+        elif mylogP <= 5.6:
+            gs_6 = -0.2 - 0.50 * (mylogP - 3.0)
+        else:
+            gs_6 = -1.5
+
+        if myM1 <= 1.2:
+            return gs_1p2
+        if myM1 <= 3.5:
+            return np.interp(np.log10(myM1), np.log10([1.2, 3.5]),
+                             [gs_1p2, gs_3p5])
+        if myM1 <= 6.0:
+            return np.interp(np.log10(myM1), np.log10([3.5, 6.0]),
+                             [gs_3p5, gs_6])
+        return gs_6
+
+    def _eta_slope(self, myM1, mylogP):
+        """Return eccentricity slope eta from Eqns. 17-18 and interpolation."""
+        if mylogP >= 0.7:
+            eta_3 = 0.6 - 0.7 / (mylogP - 0.5)
+            eta_7 = 0.9 - 0.2 / (mylogP - 0.5)
+        else:
+            eta_3 = -2.9
+            eta_7 = -0.1
+
+        if myM1 <= 3.0:
+            return eta_3
+        if myM1 <= 7.0:
+            return np.interp(np.log10(myM1), np.log10([3.0, 7.0]),
+                             [eta_3, eta_7])
+        return eta_7
+
+    def _companion_frequency_q_gt_0p3(self, mylogP, flogPle1,
+                                      flogPeq2p7, flogPeq5p5):
+        """Return flogP for companions with q > 0.3 (Eqn. 23)."""
+        if mylogP <= 1.0:
+            return flogPle1
+        if mylogP <= 2.7 - _PERIOD_INTERMEDIATE_WIDTH:
+            return flogPle1 + (
+                (flogPeq2p7 - flogPle1 - _PERIOD_INTERMEDIATE_ALPHA
+                 * _PERIOD_INTERMEDIATE_WIDTH)
+                * (mylogP - 1.0)
+                / (1.7 - _PERIOD_INTERMEDIATE_WIDTH)
+            )
+        if mylogP <= 2.7 + _PERIOD_INTERMEDIATE_WIDTH:
+            return flogPeq2p7 + _PERIOD_INTERMEDIATE_ALPHA * (mylogP - 2.7)
+        if mylogP <= 5.5:
+            return (
+                flogPeq2p7 + _PERIOD_INTERMEDIATE_ALPHA
+                * _PERIOD_INTERMEDIATE_WIDTH
+                + (flogPeq5p5 - flogPeq2p7 - _PERIOD_INTERMEDIATE_ALPHA
+                   * _PERIOD_INTERMEDIATE_WIDTH)
+                * (mylogP - 2.7 - _PERIOD_INTERMEDIATE_WIDTH)
+                / (2.8 - _PERIOD_INTERMEDIATE_WIDTH)
+            )
+        return flogPeq5p5 * np.exp(-0.3 * (mylogP - 5.5))
+
     def __init__(self, n_M1=101, n_logP=158, n_q=91, n_e=200,
                  orbital_period_min=1.412, orbital_period_max=1e8, **kwargs):
         """Initializing the class.
@@ -127,7 +250,9 @@ class Moe_17_PsandQs():
         self.qv = np.linspace(0.1, 1.0, self.numq)
         # 0.0001 < e < 0.9901 with self.nume steps
         # Maxwell Moe: set minimum to non-zero value to avoid numerical errors
-        self.ev = 0.0001 + np.linspace(0.0, 0.99, self.nume)
+        self.ev = _ECCENTRICITY_MIN + np.linspace(0.0,
+                              _ECCENTRICITY_MAX_OFFSET,
+                              self.nume)
         # Distribution functions (first setup gird, fill later in loop):
         # Frequency of companions with q > 0.1 per decade of orbital period.
         # Bottom panel in Fig. 36 of M+D17
@@ -143,17 +268,13 @@ class Moe_17_PsandQs():
         # Given M1, the cumulative period distribution of the inner binary
         # Normalized so that max(cumPbindist) = total binary frac. (NOT unity)
         self.cumPbindist = np.zeros([self.numlogP, self.numM1])
-        # Slope alpha of period distribution across intermediate periods
-        # 2.7 - DlogP < log P < 2.7 + DlogP, see Section 9.3 and Eqn. 23.
-        alpha = 0.018
-        DlogP = 0.7
         # Heaviside function for twins with 0.95 < q < 1.00
-        Heaviside = np.where(self.qv >= 0.95, 1.0, 0.0)
+        Heaviside = np.where(self.qv >= _TWIN_Q_THRESHOLD, 1.0, 0.0)
         # normalize so that integral is unity
         Heaviside = Heaviside / self._idl_tabulate(self.qv, Heaviside)
         # Relevant indices with respect to mass ratio
-        indlq = np.flatnonzero(self.qv >= 0.3)
-        indsq = (self.qv < 0.3)
+        indlq = np.flatnonzero(self.qv >= _MASS_RATIO_SPLIT)
+        indsq = (self.qv < _MASS_RATIO_SPLIT)
         indq0p3 = np.min(indlq)
 
         # Loop through primary mass
@@ -177,81 +298,9 @@ class Moe_17_PsandQs():
             for j, mylogP in enumerate(self.logPv):
                 # Given M1 and P, set excess twin fraction;
                 # section 9.1 and Eqn. 5
-                if(mylogP <= 1.0):
-                    Ftwin = FtwinlogPle1
-                else:
-                    Ftwin = FtwinlogPle1 * (1.0-(mylogP-1)/(logPtwin-1.0))
-                if(mylogP >= logPtwin):
-                    Ftwin = 0.0
-                # Power-law slope gamma_largeq for M1 < 1.2 Msun and various P;
-                # Eqn. 9
-                if(mylogP < 5.0):
-                    gl_1p2 = -0.5
-                if(mylogP >= 5.0):
-                    gl_1p2 = -0.5 - 0.3 * (mylogP-5.0)
-                # Power-law slope gamma_largeq for M1 = 3.5 Msun and various P;
-                # Eqn. 10
-                if(mylogP <= 1.0):
-                    gl_3p5 = -0.5
-                if((mylogP > 1.0) and (mylogP <= 4.5)):
-                    gl_3p5 = -0.5 - 0.2 * (mylogP-1.0)
-                if((mylogP > 4.5) and (mylogP <= 6.5)):
-                    gl_3p5 = -1.2 - 0.4 * (mylogP-4.5)
-                if(mylogP > 6.5):
-                    gl_3p5 = -2.0
-                # Power-law slope gamma_largeq for M1 > 6 Msun and various P;
-                # Eqn. 11
-                if(mylogP <= 1.0):
-                    gl_6 = -0.5
-                if((mylogP > 1.0) and (mylogP <= 2.0)):
-                    gl_6 = -0.5 - 0.9 * (mylogP-1.0)
-                if((mylogP > 2.0) and (mylogP <= 4.0)):
-                    gl_6 = -1.4 - 0.3 * (mylogP-2.0)
-                if(mylogP > 4.0):
-                    gl_6 = -2.0
-                # Given P, interpolate gamma_largeq w/ respect to M1 at myM1
-                if(myM1 <= 1.2):
-                    gl = gl_1p2
-                if((myM1 > 1.2) and (myM1 <= 3.5)):
-                    gl = np.interp(np.log10(myM1), np.log10([1.2,3.5]),
-                                   [gl_1p2,gl_3p5])
-                if((myM1 > 3.5) and (myM1 <= 6.0)):
-                    gl = np.interp(np.log10(myM1), np.log10([3.5,6.0]),
-                                   [gl_3p5,gl_6])
-                if(myM1 > 6.0):
-                    gl = gl_6
-                # Power-law slope gamma_smallq for M1 < 1.2 Msun and all P;
-                # Eqn. 13
-                gs_1p2 = 0.3
-                # Power-law slope gamma_smallq for M1 = 3.5 Msun and various P;
-                # Eqn. 14
-                if(mylogP <= 2.5):
-                    gs_3p5 = 0.2
-                if((mylogP > 2.5) and (mylogP <= 5.5)):
-                    gs_3p5 = 0.2 - 0.3 * (mylogP-2.5)
-                if(mylogP > 5.5):
-                    gs_3p5 = -0.7 - 0.2 * (mylogP-5.5)
-                # Power-law slope gamma_smallq for M1 > 6 Msun and various P;
-                # Eqn. 15
-                if(mylogP <= 1.0):
-                    gs_6 = 0.1
-                if((mylogP > 1.0) and (mylogP <= 3.0)):
-                    gs_6 = 0.1 - 0.15 * (mylogP-1.)
-                if((mylogP > 3.0) and (mylogP <= 5.6)):
-                    gs_6 = -0.2 - 0.50 * (mylogP-3.)
-                if(mylogP > 5.6):
-                    gs_6 = -1.5
-                # Given P, interpolate gamma_smallq w/ respect to M1 at myM1
-                if(myM1 <= 1.2):
-                    gs = gs_1p2
-                if((myM1 > 1.2) and (myM1 <= 3.5)):
-                    gs = np.interp(np.log10(myM1), np.log10([1.2,3.5]),
-                                   [gs_1p2,gs_3p5])
-                if((myM1 > 3.5) and (myM1 <= 6.0)):
-                    gs = np.interp(np.log10(myM1), np.log10([3.5,6.0]),
-                                   [gs_3p5,gs_6])
-                if(myM1 > 6.0):
-                    gs = gs_6
+                Ftwin = self._twin_fraction(mylogP, FtwinlogPle1, logPtwin)
+                gl = self._gamma_largeq(myM1, mylogP)
+                gs = self._gamma_smallq(myM1, mylogP)
                 # Given Ftwin, gamma_smallq, and gamma_largeq at the specified
                 # M1 & P, tabulate the cumulative mass ratio distribution
                 # across 0.1 < q < 1.0
@@ -262,7 +311,8 @@ class Moe_17_PsandQs():
                 # add twins
                 fq = fq * (1.0-Ftwin) + Heaviside * Ftwin
                 # slope across 0.1 < q < 0.3
-                fq[indsq] = (fq[indq0p3] * (self.qv[indsq]/0.3)**gs)
+                fq[indsq] = (fq[indq0p3]
+                             * (self.qv[indsq]/_MASS_RATIO_SPLIT)**gs)
                 # cumulative distribution
                 cumfq = np.cumsum(fq) - fq[0]
                 # normalize cumfq(q=1.0) = 1
@@ -274,24 +324,7 @@ class Moe_17_PsandQs():
                 q_factor = self._idl_tabulate(self.qv, fq)
                 # Given M1 & P, calculate power-law slope eta of eccentricity
                 # distribution
-                if(mylogP >= 0.7):
-                    # For log P > 0.7 use fits in Section 9.2.
-                    # Power-law slope eta for M1 < 3 Msun and log P > 0.7
-                    eta_3 = 0.6 - 0.7 / (mylogP-0.5)  #; Eqn. 17
-                    # Power-law slope eta for M1 > 7 Msun and log P > 0.7
-                    eta_7 = 0.9 - 0.2 / (mylogP-0.5)  #; Eqn. 18
-                else:
-                    # For log P < 0.7, set eta to fitted values at log P = 0.7
-                    eta_3 = -2.9
-                    eta_7 = -0.1
-                # Given P, interpolate eta with respect to M1 at myM1
-                if(myM1 <= 3.0):
-                    eta = eta_3
-                if((myM1 > 3.0) and (myM1 <= 7.0)):
-                    eta = np.interp(np.log10(myM1), np.log10([3.0,7.0]),
-                                    [eta_3, eta_7])
-                if(myM1 > 7.0):
-                    eta = eta_7
+                eta = self._eta_slope(myM1, mylogP)
                 # Given eta at the specified M1 and P, tabulate eccentricity
                 # distribution
                 if(10**mylogP <= 2.0):
@@ -324,19 +357,8 @@ class Moe_17_PsandQs():
                 # flogPle1, flogPeq2p7, and flogPeq5p5, calculate frequency
                 # flogP of companions with q > 0.3 per decade of orbital period
                 # at given P (Section 9.3 and Eqn. 23)
-                if(mylogP <= 1.0):
-                    flogP = flogPle1
-                if((mylogP > 1.0) and (mylogP <= 2.7-DlogP)):
-                    flogP = flogPle1 + ((flogPeq2p7-flogPle1-alpha*DlogP)
-                                        * (mylogP-1.0)/(1.7-DlogP))
-                if((mylogP > 2.7-DlogP) and (mylogP <= 2.7+DlogP)):
-                    flogP = flogPeq2p7 + alpha * (mylogP-2.7)
-                if((mylogP > 2.7+DlogP) and (mylogP <= 5.5)):
-                    flogP = (flogPeq2p7 + alpha * DlogP
-                             + (flogPeq5p5-flogPeq2p7-alpha*DlogP)
-                               *(mylogP-2.7-DlogP)/(2.8-DlogP))
-                if(mylogP > 5.5):
-                    flogP = flogPeq5p5 * np.exp(-0.3*(mylogP-5.5))
+                flogP = self._companion_frequency_q_gt_0p3(
+                    mylogP, flogPle1, flogPeq2p7, flogPeq5p5)
                 # Convert frequency of companions with q > 0.3 to frequency of
                 # companions with q > 0.1 according to q_factor; save to grid
                 self.flogP_sq[j,i] = flogP * q_factor
@@ -393,10 +415,10 @@ class Moe_17_PsandQs():
 
         Returns
         -------
-        M2, logP, e, Z : each being of same type as M1
+        M2, P, e, Z : each being of same type as M1
             The four values are:
                 - the mass of the secondary in Msun
-                - the log10 of the period in days
+            - the period in days
                 - the eccentricity
                 - the metallicity
         """
