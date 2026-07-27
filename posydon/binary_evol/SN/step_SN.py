@@ -1825,6 +1825,8 @@ class StepSN(object):
                 Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
                 Vkz = Vkick * sin_theta * np.cos(phi)
 
+                # some comment
+
 
                 # Eq 4, in Kalogera, V. 1996, ApJ, 471, 352
                 # extended to Eq 14 in Wong, T.-W., Valsecchi, F., Fragos, T., & Kalogera, V. 2012, ApJ, 747, 111
