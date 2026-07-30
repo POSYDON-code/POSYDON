@@ -18,7 +18,6 @@ from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
-
 style_path = os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle")
 if shutil.which('latex'):
     plt.style.use(style_path)
