@@ -264,11 +264,7 @@ class MergedStep(IsolatedStep):
                     )
 
 
-                if self.HMS_HMS_merging_rejuvenation : # according to Schneider+2016
-
-                    # Not used?
-                    #X_average1 = star_base.total_mass_h1 / star_base.mass
-                    #X_average2 = comp.total_mass_h1 / comp.mass
+                if self.HMS_HMS_merging_rejuvenation:  # according to Schneider+2016
 
                     Z_div_Zsun_init = star_base.metallicity
                     if Z_div_Zsun_init in zams_table.keys():
@@ -278,10 +274,16 @@ class MergedStep(IsolatedStep):
                     Z_initial = Z_div_Zsun_init * Zsun
                     X_initial = 1.0 - Y_initial - Z_initial
 
-                    merged_star.mass = (star_base.mass + comp.mass) * (1.-rel_mass_lost_HMS_HMS)
+                    # The change of masses occurs after the calculation of weighted averages
+                    total_mass = star_base.mass + comp.mass
+                    merged_star.mass = total_mass * (1. - rel_mass_lost_HMS_HMS)
 
-                    X_average_merged = (star_base.total_mass_h1 + comp.total_mass_h1 - (1.-rel_mass_lost_HMS_HMS) * X_initial) / merged_star.mass
-                    Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4 - (1.-rel_mass_lost_HMS_HMS) * Y_initial) / merged_star.mass
+                    # Eq. 8 of Schneider+2016 (p2357):
+                    # <X> = (M_H,1 + M_H,2 - phi*(M_1 + M_2)*X_0) / M_merged
+                    X_average_merged = (star_base.total_mass_h1 + comp.total_mass_h1
+                                        - rel_mass_lost_HMS_HMS * total_mass * X_initial) / merged_star.mass
+                    Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4
+                                        - rel_mass_lost_HMS_HMS * total_mass * Y_initial) / merged_star.mass
 
                     # for below merged_star.properties...
                     # this is only consistent with the merged_star.total_mass_h1 above if we assume full mixing during merger
@@ -295,8 +297,9 @@ class MergedStep(IsolatedStep):
                     merged_star.surface_he4 = Y_average_merged
 
                     for key in STARPROPERTIES:
-                    # these stellar attributes become np.nan
-                        if key in [ "center_c12", "center_n14", "center_o16"]:
+                        # these stellar attributes become np.nan
+                        if key in ["center_c12", "center_n14", "center_o16",
+                                   "surface_c12", "surface_n14", "surface_o16"]:
                             setattr(merged_star, key, np.nan)
 
                 else:
@@ -313,11 +316,11 @@ class MergedStep(IsolatedStep):
                                                                                     mass_weight1="mass",
                                                                                     mass_weight2='mass'))
 
-                # The change of masses occurs after the calculation of weighted averages
-                merged_star.mass = (star_base.mass + comp.mass) * (1.-self.rel_mass_lost_HMS_HMS)
-                merged_star.total_mass_h1 = merged_star.center_h1 * merged_star.mass
-                # very simplified assumption of X_average_merged = merged_star.center_h1
-                #^ should work ok for both center_h1 and total_mass_h1 matching with single stars models
+                    # The change of masses occurs after the calculation of weighted averages
+                    merged_star.mass = (star_base.mass + comp.mass) * (1. - rel_mass_lost_HMS_HMS)
+                    merged_star.total_mass_h1 = merged_star.center_h1 * merged_star.mass
+                    # very simplified assumption of X_average_merged = merged_star.center_h1
+                    # ^ should work ok for both center_h1 and total_mass_h1 matching with single stars models
 
                 # Set parameters that are not expected to be meaningful after a merger to np.nan
                 self._apply_nan_attributes(merged_star,
