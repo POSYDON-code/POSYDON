@@ -65,27 +65,101 @@ EPS = 1.0e-9   # to avoid numerical precision errors
 
 
 def boltzman_constraint_func(log_L, log_R):
-    """Boltzmann law constraint."""
+    """Boltzmann law constraint.
+
+    Parameters
+    ----------
+    log_L : float
+        Logarithm (base 10) of the luminosity in Lsun.
+    log_R : float
+        Logarithm (base 10) of the radius in Rsun.
+
+    Returns
+    -------
+    float
+        The effective temperature in log scale.
+
+    """
     return np.log10(stefan_boltzmann_law(10.0 ** log_L, 10.0 ** log_R))
 
 
 def kepler_3rd_law_func(period_days, mass1, mass2):
-    """Kepler's 3rd law constraint."""
+    """Kepler's 3rd law constraint.
+
+    Parameters
+    ----------
+    period_days : float
+        Orbital period in days.
+    mass1 : float
+        Mass of the first star in solar units.
+    mass2 : float
+        Mass of the second star in solar units.
+
+    Returns
+    -------
+    float
+        The separation of the binary in solar radii.
+
+    """
     return orbital_separation_from_period(period_days, mass1, mass2)
 
 
 def Lnuc_func(log_LH, log_LHe, log_LZ):
-    """Total nuclear luminosity should be the sum of H, He and the rest."""
+    """Total nuclear luminosity should be the sum of H, He and the rest.
+
+    Parameters
+    ----------
+    log_LH : float
+        Logarithm (base 10) of the H burning luminosity.
+    log_LHe : float
+        Logarithm (base 10) of the He burning luminosity.
+    log_LZ : float
+        Logarithm (base 10) of the metal burning luminosity.
+
+    Returns
+    -------
+    float
+        The total nuclear luminosity in log scale.
+
+    """
     return np.log10(10.0**log_LH + 10.0**log_LHe + 10.0**log_LZ)
 
 
 def lg_system_mdot_func(lg_system_mdot, lg_mtransfer_rate):
-    """System mdot must be less than the total mass-transfer rate."""
+    """System mdot must be less than the total mass-transfer rate.
+
+    Parameters
+    ----------
+    lg_system_mdot : float
+        Logarithm (base 10) of the system mass-loss rate.
+    lg_mtransfer_rate : float
+        Logarithm (base 10) of the mass-transfer rate.
+
+    Returns
+    -------
+    float
+        The minimum of the two input values.
+
+    """
     return min(lg_system_mdot, lg_mtransfer_rate)
 
 
 def xfer_fraction_func(lg_system_mdot_2, lg_mtransfer_rate):
-    """Infer the xfer_fraction from the system and mass-transfer rate."""
+    """Infer the xfer_fraction from the system and mass-transfer rate.
+
+    Parameters
+    ----------
+    lg_system_mdot_2 : float
+        Logarithm (base 10) of the system mass-loss rate of star 2.
+    lg_mtransfer_rate : float
+        Logarithm (base 10) of the mass-transfer rate.
+
+    Returns
+    -------
+    float
+        The fraction of the mass transfer retained by the accretor.
+
+    """
     if lg_system_mdot_2 < -98.0 or lg_mtransfer_rate < -98.0:
         return 1.0
     if np.isfinite(lg_system_mdot_2 + lg_mtransfer_rate):
