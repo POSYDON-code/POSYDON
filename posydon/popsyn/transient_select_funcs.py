@@ -126,7 +126,7 @@ def GRB_selection(history_chunk, oneline_chunk, formation_channels_chunk=None, S
 
 
 def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
-    '''Calculate the effective spin of two masses.
+    """Calculate the effective spin of two masses.
 
     Parameters
     ----------
@@ -148,7 +148,7 @@ def chi_eff(m_1, m_2, a_1, a_2, tilt_1, tilt_2):
     np.ndarray
         The effective spin of the BHs.
 
-    '''
+    """
     if pd.isna(a_1).any():
         Pwarn("a_1 contains undefined values, replacing them with 0.0",
               'ReplaceValueWarning')
@@ -236,7 +236,7 @@ def mass_ratio(m_1, m_2):
     return q
 
 def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chunk=None):
-    '''A BBH selection function to create a transient population of BBHs mergers.
+    """A BBH selection function to create a transient population of BBHs mergers.
 
     This is an example function for selecting BBH mergers and some of their properties.
     Additional properties from the history or oneline can be added to the transient population.
@@ -262,7 +262,7 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
         - time : the time of the event
         - metallicity : the metallicity of the event
 
-    '''
+    """
 
     indices = oneline_chunk.index.to_numpy()
     df_transients = pd.DataFrame(index = indices)

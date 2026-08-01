@@ -161,7 +161,7 @@ class SFHBase(ABC):
         pass
 
     def _distribute_cdf(self, cdf_func, metallicity_bins):
-        '''Distribute the SFR over the metallicity bins using the CDF.
+        """Distribute the SFR over the metallicity bins using the CDF.
 
         Parameters
         ----------
@@ -174,7 +174,7 @@ class SFHBase(ABC):
         -------
         ndarray
             Fraction of the SFR in the given metallicity bin at the given redshift.
-        '''
+        """
         # verify if the metallicity bins are sorted
         if not np.all(np.diff(metallicity_bins) > 0):
             raise ValueError("Metallicity bins must be sorted "

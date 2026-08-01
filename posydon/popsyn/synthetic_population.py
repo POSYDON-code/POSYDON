@@ -267,7 +267,7 @@ class DFInterface:
 
 
     def select(self, key, where=None, start=None, stop=None, columns=None):
-        '''Select a subset of the key table based on the given conditions.
+        """Select a subset of the key table based on the given conditions.
 
         Parameters
         ----------
@@ -286,7 +286,7 @@ class DFInterface:
         -------
         pandas.DataFrame
             The selected data as a DataFrame.
-        '''
+        """
         # we have to chunk the read because of memory issues
         with pd.HDFStore(self.filename, mode="r") as store:
             iterator = store.select(key, where=where, start=start, stop=stop, columns=columns, chunksize=self.chunksize)
@@ -298,7 +298,7 @@ class DFInterface:
         return out
 
     def get_repr(self, key):
-        '''Return a string representation of the key table.
+        """Return a string representation of the key table.
 
         Parameters
         ----------
@@ -310,7 +310,7 @@ class DFInterface:
         str
             The string representation of the key table.
 
-        '''
+        """
         with pd.HDFStore(self.filename, mode="r") as store:
             return store.select(key, start=0, stop=10).__repr__()
 

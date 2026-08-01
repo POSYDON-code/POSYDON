@@ -22,7 +22,7 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def get_IMF_pdf(kwargs):
-    '''Get the IMF pdf function.
+    """Get the IMF pdf function.
 
     Supported schemes based on the IMF module:
     Additional parameters can be passed to the scheme
@@ -49,7 +49,7 @@ def get_IMF_pdf(kwargs):
     -------
     IMF_pdf : function
         Function that returns the IMF PDF
-    '''
+    """
 
     primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
     scheme_kwargs = kwargs.get(primary_mass_scheme, {})
@@ -149,7 +149,7 @@ def get_mass_ratio_pdf(kwargs):
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
-    '''Get the binary fraction pdf function.
+    """Get the binary fraction pdf function.
 
     Supported schemes:
     - `const` with `binary_fraction_const`
@@ -165,7 +165,7 @@ def get_binary_fraction_pdf(kwargs):
     -------
     pdf : function
         Function that returns the binary fraction PDF
-    '''
+    """
     if kwargs['binary_fraction_scheme'] == 'const':
         f_b = kwargs['binary_fraction_const']
         binary_fraction_pdf = lambda binary: np.where(np.asarray(binary),
@@ -177,7 +177,7 @@ def get_binary_fraction_pdf(kwargs):
     return binary_fraction_pdf
 
 def get_period_pdf(kwargs):
-    '''Get the period pdf function.
+    """Get the period pdf function.
 
     Parameters
     ----------
@@ -189,7 +189,7 @@ def get_period_pdf(kwargs):
     pdf : function
         Function that returns the period PDF, which expects the following
         parameters; P, m1
-    '''
+    """
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
             period = Sana12Period(
@@ -281,7 +281,7 @@ def get_pdf(kwargs, mass_pdf=False):
     return pdf_function
 
 def get_mean_mass(params):
-    '''Calculate the mean mass of the population.
+    """Calculate the mean mass of the population.
 
     Integrates the mass distribution to calculate the mean mass of
     the population
@@ -295,7 +295,7 @@ def get_mean_mass(params):
     -------
     mean_mass : float
         Mean mass of the population
-    '''
+    """
 
     PDF = get_pdf(params, mass_pdf=True)
 

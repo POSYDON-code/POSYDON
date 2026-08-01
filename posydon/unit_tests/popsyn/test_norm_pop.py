@@ -448,7 +448,7 @@ def base_population_kwargs(base_simulation_kwargs):
 
 
 def pop_data(kwargs):
-    '''generate a population of stars'''
+    """generate a population of stars"""
     RNG = np.random.default_rng(seed=42)
     kwargs['RNG'] = RNG
     sample = generate_independent_samples(**kwargs)
@@ -801,7 +801,7 @@ class TestReweighting():
         assert np.isclose(np.sum(selection), np.sum(small_weights), atol=1e-3)
 
     def test_same_sample_space(self, base_simulation_kwargs):
-        '''Same sample space the weights should be the same as the simulation'''
+        """Same sample space the weights should be the same as the simulation"""
 
         base_pop_data = pop_data(base_simulation_kwargs)
         M_sim = (base_pop_data['S1_mass_i'].sum()
@@ -818,7 +818,7 @@ class TestReweighting():
     def test_mass_ratio_extension(self,
                                   base_simulation_kwargs,
                                   base_population_kwargs,):
-        '''Sample space for mass ratio extension'''
+        """Sample space for mass ratio extension"""
 
         base_pop_data = pop_data(base_simulation_kwargs)
         M_sim = (base_pop_data['S1_mass_i'].sum()
