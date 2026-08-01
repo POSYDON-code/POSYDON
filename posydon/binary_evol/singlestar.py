@@ -120,6 +120,7 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE = {
 }
 
 def properties_massless_remnant():
+    """Return the STARPROPERTIES values describing a massless remnant."""
     PROPERTIES_MASSLESS = {}
     for key in STARPROPERTIES:
         PROPERTIES_MASSLESS[key] =  np.nan
@@ -128,6 +129,13 @@ def properties_massless_remnant():
     return PROPERTIES_MASSLESS
 
 def convert_star_to_massless_remnant(star):
+    """Convert the given star object into a massless remnant.
+
+    Parameters
+    ----------
+    star : SingleStar
+        The star object to convert.
+    """
     for key in STARPROPERTIES:
         setattr(star, key, properties_massless_remnant()[key])
     return star
@@ -138,8 +146,8 @@ class SingleStar:
     def __init__(self, **kwargs):
         """Initialize the star.
 
-        Arguments
-        ---------
+        Parameters
+        ----------
         **kwargs : dict
           List of initialization parameters for a star.
         """
@@ -425,27 +433,18 @@ class SingleStar:
 
         Parameters
         ----------
-        extra_columns : dict( 'name':dtype, .... )
-            Extra star history parameters to return in DataFrame that are not
-            included in STARPROPERTIES. All columns must have an
-            associated pandas data type.
-            Can be used in combination with `only_select_columns`.
-            Assumes names have no suffix.
-        ignore_columns : list
-            Names of STARPROPERTIES parameters to ignore.
-            Assumes names have `_history` suffix.
-        only_select_columns : list
-            Names of the only columns to include.
-            Can be used in combination with `extra_columns`.
-            Assumes names have `_history` suffix.
-        include_profile : bool
-            Include the star's profile in the dataframe (NOT RECOMMENDED)
-        null_value : float, optional
-            Replace all None values with something else (for saving).
-            Default is np.nan.
-        prefix : str, optional
-            Prefix to all column names. (e.g. 'star_1', 'S1')
-            Default has no prefix.
+        **kwargs : dict
+            Optional keyword arguments controlling the DataFrame construction.
+            Supported options are: ``extra_columns`` (dict of name -> dtype
+            of extra star history columns to include, assumed to have no
+            suffix), ``ignore_columns`` (list of STARPROPERTIES names to
+            ignore, assumed to have a ``_history`` suffix),
+            ``only_select_columns`` (list of the only columns to include,
+            assumed to have a ``_history`` suffix), ``include_profile`` (bool,
+            include the star's profile in the DataFrame; NOT RECOMMENDED),
+            ``null_value`` (value replacing all None values, default np.nan)
+            and ``prefix`` (str, prefix to all column names, e.g. 'star_1',
+            'S1'; default has no prefix).
 
         Returns
         -------
@@ -526,14 +525,14 @@ class SingleStar:
 
         Parameters
         ----------
-        scalar_names : list of str
-            Names of any values to be added to the oneline DataFrame.
         history : bool
             Include the history initial-final values from to_df method.
         prefix : str
             Any prefix to go at the beginning of all columns names.
-        **kwargs
-            All options for the to_df method.
+        **kwargs : dict
+            Additional options for the to_df method, e.g. ``scalar_names``
+            (list of str, names of any values to be added to the oneline
+            DataFrame).
 
         Returns
         -------
@@ -596,7 +595,24 @@ class SingleStar:
 
     @staticmethod
     def from_run(run, history=False, profile=False, which_star=None):
-        """Create a SingleStar object from a single-star grid run."""
+        """Create a SingleStar object from a single-star grid run.
+
+        Parameters
+        ----------
+        run : Run
+            Single-star grid run containing the star history and final values.
+        history : bool
+            Whether to load the full history or only the final values.
+        profile : bool
+            Whether to include the final stellar profile.
+        which_star : str or None
+            Which star column prefix to use (e.g. "S1").
+
+        Returns
+        -------
+        SingleStar
+            The star object created from the grid run.
+        """
         star = SingleStar()
         star_history = run.history1
         prefix = "S1"

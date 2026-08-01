@@ -1,42 +1,38 @@
+"""Default prescription for gravitational wave radiation in binary evolution."""
+
 import posydon.utils.constants as const
 
 
 def default_gravrad(a, e, primary, secondary, verbose = False):
-    """
-        Calculates the change in orbital separation and eccentricity
-    due to gravitational wave radiation, according to:
+    """Calculate the change in orbital separation and eccentricity.
+
+    Due to gravitational wave radiation, according to:
 
         Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
 
     Parameters
     ----------
-        a : float
-            The current orbital separation. [Rsolar]
-
-        e : float
-            The current orbital eccentricity.
-
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        verbose : bool
-            True if we want to print stuff.
+    a : float
+        The current orbital separation. [Rsolar]
+    e : float
+        The current orbital eccentricity.
+    primary : SingleStar object
+        A single star object, representing the primary (more evolved) star in
+        the binary and containing its properties.
+    secondary : SingleStar object
+        A single star object, representing the secondary (less evolved) star
+        in the binary and containing its properties.
+    verbose : bool
+        True if we want to print stuff.
 
     Returns
     -------
-        da : float
-            The change in orbital separation for a time step in
-        step_detached's solve_ivp(). [Rsolar/yr]
-
-        de : float
-            The change in orbital eccentricity for a time step in
-        step_detached's solve_ivp().
-
+    da : float
+        The change in orbital separation for a time step in step_detached's
+        solve_ivp(). [Rsolar/yr]
+    de : float
+        The change in orbital eccentricity for a time step in step_detached's
+        solve_ivp().
     """
 
     m1 = primary.latest["mass"]

@@ -181,37 +181,44 @@ class MesaGridStep:
 
         Parameters
         ----------
-        interpolation_method : 'nearest_neighbour', 'linear_knn_interpolation'
-                               'linear_NN_interpolation'
-             - nearest_neighbour requires a psygrid in the h5 format
-             - linear_knn_interpolation requires a pkl file trained with
-               interpolation class linear inteprolation, knn classification
-             - linear_NN_interpolation requires a pkl file trained with
-                 interpolation class linear inteprolation, neural network
-                 classification
-        track_interpolation: bool
-             - True requires `nearest_neighbour` and will append the entire
-               MESA history of properties.
-        stop_method : stop_at_end or stop_at_max_time
-             - stop_at_end will stop the binary at the end of the MESA track
-             - stop_at_max_time binary will stop in the middle of a MESA track
-               if doing so would exceed the binary's max_time
-             - stop_at_condition will stop the binary when a five condition is
-               met (see next parameters)
-        stop_var_name: keys in STARPROPERTIES and
-             BINARYPROPERTIES
-             - key is one of the STARPROPERTIES and BINARYPROPERTIES
-        stop_star: star_1 or star_2
-             - if you choose stop_var_name from STARPROPERTIES you need to
-               indicate which star you are referring too
-        stop_value: float
-             - when value is reached in the next MESA history model, the binary
-               will stop the evolution
-        stop_interpolate: True or False
-             - True can only be chosen if stop_var_name='time', it means that
-               the binary properties will be linearly interpolated between two
-               timestamp to determine their values at the arbitrary time
-               stop_value
+        **kwargs : dict
+            Keyword arguments that override the defaults in `DEFAULT_KWARGS`.
+            The supported keys are:
+
+            - interpolation_method : 'nearest_neighbour',
+              'linear_knn_interpolation' or 'linear_NN_interpolation'
+              - nearest_neighbour requires a psygrid in the h5 format.
+              - linear_knn_interpolation requires a pkl file trained with the
+                interpolation class linear interpolation, knn classification.
+              - linear_NN_interpolation requires a pkl file trained with the
+                interpolation class linear interpolation, neural network
+                classification.
+            - track_interpolation : bool
+              True requires `nearest_neighbour` and will append the entire
+              MESA history of properties.
+            - stop_method : 'stop_at_end', 'stop_at_max_time' or
+              'stop_at_condition'
+              - stop_at_end will stop the binary at the end of the MESA track.
+              - stop_at_max_time will stop the binary in the middle of a MESA
+                track if doing so would exceed the binary's max_time.
+              - stop_at_condition will stop the binary when a condition is met
+                (see the next parameters).
+            - stop_var_name : keys in STARPROPERTIES and BINARYPROPERTIES
+              The key is one of the STARPROPERTIES and BINARYPROPERTIES.
+            - stop_star : 'star_1' or 'star_2'
+              If you choose stop_var_name from STARPROPERTIES you need to
+              indicate which star you are referring to.
+            - stop_value : float
+              When value is reached in the next MESA history model, the binary
+              will stop the evolution.
+            - stop_interpolate : bool
+              True can only be chosen if stop_var_name='time', it means that
+              the binary properties will be linearly interpolated between two
+              timestamps to determine their values at the arbitrary time
+              stop_value.
+            - metallicity, grid_path, interpolation_path,
+              interpolation_filename, save_initial_conditions, RNG, verbose :
+              additional settings, see `DEFAULT_KWARGS`.
 
         """
         # read kwargs to initialize the class
@@ -280,6 +287,19 @@ class MesaGridStep:
     def _find_boundaries(self):
         """Infer the grid boundaries (min/max of masses and orbital period)."""
         def initial_values_min_max(parameter_name):
+            """Return the min and max of the initial values of a parameter.
+
+            Parameters
+            ----------
+            parameter_name : str
+                Name of the grid column with the initial values.
+
+            Returns
+            -------
+            tuple
+                The minimum and maximum initial values of the parameter.
+
+            """
             # get the request column from the initial values
             initial = self._psyTrackInterp.grid.initial_values[parameter_name]
             # get the final values - NaN for ignored/failed runs
@@ -312,7 +332,14 @@ class MesaGridStep:
         self._psyTrackInterp.train()
 
     def load_Interp(self, filename):
-        """Load the interpolator that has been trained on the grid."""
+        """Load the interpolator that has been trained on the grid.
+
+        Parameters
+        ----------
+        filename : str
+            Path to the pkl file containing the trained interpolator.
+
+        """
         if self.verbose:
             print("loading Interp: {}".format(filename))
 
@@ -442,7 +469,17 @@ class MesaGridStep:
         return
 
     def step(self, binary, interp_method=None):
-        """Take the step by calling the appropriate interpolator."""
+        """Take the step by calling the appropriate interpolator.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object to evolve.
+        interp_method : str or None
+            The interpolation method to use. If None, the method stored in
+            `self.interpolation_method` is used.
+
+        """
         if interp_method is None:
             interp_method = self.interpolation_method
 
@@ -462,7 +499,14 @@ class MesaGridStep:
                              format(interp_method))
 
     def single_star(self, star_type):
-        """Check if the type of the star is supported."""
+        """Check if the type of the star is supported.
+
+        Parameters
+        ----------
+        star_type : str
+            The type of the star, e.g. 'single-HMS' or 'single-HeMS'.
+
+        """
         if star_type == 'single-HMS':
             pass
         elif star_type == 'single-HeMS':
@@ -877,7 +921,16 @@ class MesaGridStep:
                     setattr(star, SN_MODEL_NAME, values)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
-        """Update the binary through initial-final interpolation."""
+        """Update the binary through initial-final interpolation.
+
+        Parameters
+        ----------
+        star_1_CO : bool
+            `True` if star_1 is a compact object.
+        star_2_CO : bool
+            `True` if star_2 is a compact object.
+
+        """
         # TODO: simplify verbosity of code
         binary = self.binary
         stars = [binary.star_1, binary.star_2]
@@ -1061,7 +1114,26 @@ class MesaGridStep:
                     interpolate=None,
                     star_1_CO=False,
                     star_2_CO=False):
-        """Update the binary event if max time has been exceeded."""
+        """Update the binary event if max time has been exceeded.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object to evolve.
+        property : str or None
+            The property to consider for the stopping condition.
+        value : float or None
+            The value of the property at which to stop.
+        star : str or None
+            The star ('star_1' or 'star_2') to which the property belongs.
+        interpolate : bool or None
+            Whether to interpolate the binary properties up to the stop value.
+        star_1_CO : bool
+            `True` if star_1 is a compact object.
+        star_2_CO : bool
+            `True` if star_2 is a compact object.
+
+        """
         if binary.properties.max_simulation_time - binary.time < 0.0:
             binary.event = 'MaxTime_exceeded'
             return
@@ -1093,6 +1165,31 @@ class MesaGridStep:
                           interpolate=False,
                           star_1_CO=False,
                           star_2_CO=False):
+        """Stop the binary when the given property reaches a value.
+
+        The binary is evolved until the property reaches the desired value,
+        optionally interpolating the binary properties to the stopping time.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object to evolve.
+        property : str
+            The property to consider for the stopping condition. It must be a
+            key in STARPROPERTIES or BINARYPROPERTIES.
+        value : float or None
+            The value of the property at which to stop the binary.
+        star : str
+            The star ('star_1' or 'star_2') to which the property belongs.
+        interpolate : bool
+            Whether to interpolate the binary properties up to the stop value.
+            Only supported for property='time'.
+        star_1_CO : bool
+            `True` if star_1 is a compact object.
+        star_2_CO : bool
+            `True` if star_2 is a compact object.
+
+        """
         if property in STARPROPERTIES:
             if star == 'star_1':
                 current_property = getattr(binary.star_1, property)
@@ -1292,7 +1389,16 @@ class MS_MS_step(MesaGridStep):
     """Class for performing the MESA step for a MS-MS binary."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a MS_MS_step instance."""
+        """Initialize a MS_MS_step instance.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments passed to the parent `MesaGridStep`.
+        **kwargs :
+            Keyword arguments passed to the parent `MesaGridStep`.
+
+        """
         self.grid_type = 'HMS_HMS'
         self.interp_in_q = True
         super().__init__(*args, **kwargs)
@@ -1394,7 +1500,16 @@ class CO_HMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HMS_RLO binary."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a CO_HMS_RLO_step instance."""
+        """Initialize a CO_HMS_RLO_step instance.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments passed to the parent `MesaGridStep`.
+        **kwargs :
+            Keyword arguments passed to the parent `MesaGridStep`.
+
+        """
         self.grid_type = 'CO_HMS_RLO'
         self.interp_in_q = False
         super().__init__(*args, **kwargs)
@@ -1509,7 +1624,16 @@ class CO_HeMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS_RLO binary."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a CO_HeMS_RLO_step instance."""
+        """Initialize a CO_HeMS_RLO_step instance.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments passed to the parent `MesaGridStep`.
+        **kwargs :
+            Keyword arguments passed to the parent `MesaGridStep`.
+
+        """
         self.grid_type = 'CO_HeMS_RLO'
         self.interp_in_q = False
         super().__init__(*args, **kwargs)
@@ -1624,7 +1748,16 @@ class CO_HeMS_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS binary."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a CO_HeMS_step instance."""
+        """Initialize a CO_HeMS_step instance.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments passed to the parent `MesaGridStep`.
+        **kwargs :
+            Keyword arguments passed to the parent `MesaGridStep`.
+
+        """
         self.grid_type = 'CO_HeMS'
         self.interp_in_q = False
         super().__init__(*args, **kwargs)
@@ -1723,7 +1856,16 @@ class HMS_HMS_RLO_step(MesaGridStep):
     using `initial_eccentricity_flow_chart`."""
 
     def __init__(self, *args, **kwargs):
-        """Initialize a HMS_HMS_RLO_step instance."""
+        """Initialize a HMS_HMS_RLO_step instance.
+
+        Parameters
+        ----------
+        *args :
+            Positional arguments passed to the parent `MesaGridStep`.
+        **kwargs :
+            Keyword arguments passed to the parent `MesaGridStep`.
+
+        """
         self.grid_type = 'HMS_HMS_RLO'
         self.interp_in_q = True
         super().__init__(*args, **kwargs)

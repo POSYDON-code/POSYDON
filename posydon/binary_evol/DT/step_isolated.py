@@ -16,15 +16,23 @@ from posydon.utils.posydonerror import FlowError
 
 
 class IsolatedStep(detached_step):
-    """Evolve an isolated star (a single star, a merger product, a runaway star, etc.)
+    """Evolve an isolated star (a single star, a merger product, a runaway star, etc.).
 
     The star will be matched in the beginning of the step and will be evolved
     until core-collapse or maximum simulation time,
     based on a grid of single star HDF5 grid.
-
     """
 
     def __init__(self, *args, **kwargs):
+        """Initialize the isolated step.
+
+        Parameters
+        ----------
+        *args : tuple
+            Additional positional arguments passed to the parent class.
+        **kwargs : dict
+            Additional keyword arguments passed to the parent class.
+        """
 
         super().__init__(*args, **kwargs)
 
@@ -59,12 +67,32 @@ class IsolatedStep(detached_step):
 
 
     def initialize_isolated_binary_orbit(self,binary):
+        """Initialize the orbital parameters of an isolated binary.
+
+        The orbital period is set to a very large value and the eccentricity
+        to zero, so that the detached step will not complain about the
+        isolated binary's orbit.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary system to initialize.
+        """
         # I give values to the orbital parameters so that the detached step will not complain
         binary.orbital_period = 10.**99
         binary.eccentricity = 0.0
         binary.separation = orbital_separation_from_period(binary.orbital_period, binary.star_1.mass, binary.star_2.mass)
 
     def re_erase_isolated_binary_orbit(self,binary):
+        """Reset the orbital parameters of an isolated binary.
+
+        The orbital period, eccentricity and separation are set to np.nan.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary system to reset.
+        """
         # I give values to the orbital parameters so that the detached step will not complain
         binary.orbital_period = np.nan
         binary.eccentricity = np.nan
