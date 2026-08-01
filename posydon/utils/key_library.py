@@ -1,6 +1,7 @@
-"""Dictionary containing data column name (key) translations between POSYDON h5
-file PSyGrid data names (items) and MESA data names (keys).
+"""Dictionary translating data column names between POSYDON and MESA.
 
+Translations map POSYDON h5 file PSyGrid data names (items) to MESA data
+names (keys).
 """
 
 __authors__ = [

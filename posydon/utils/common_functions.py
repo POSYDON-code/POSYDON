@@ -94,7 +94,18 @@ DEFAULT_CE_OPTION_FOR_LAMBDA = \
 
 
 def is_number(s):
-    """Check if the input can be converted to a float."""
+    """Check if the input can be converted to a float.
+
+    Parameters
+    ----------
+    s : object
+        The input to check.
+
+    Returns
+    -------
+    bool
+        True if the input can be converted to a float, False otherwise.
+    """
     try:
         float(s)
         return True
@@ -128,7 +139,20 @@ def zero_negative_values(arr, key): # pragma no cover
 
 
 def stefan_boltzmann_law(L, R):
-    """Compute the effective temperature give the luminosity and radius."""
+    """Compute the effective temperature given the luminosity and radius.
+
+    Parameters
+    ----------
+    L : float
+        The luminosity of the star in Lsun.
+    R : float
+        The radius of the star in Rsun.
+
+    Returns
+    -------
+    float
+        The effective temperature of the star in K.
+    """
     #TODO: check for invalid or negative inputs
     return (L * const.Lsun / (4.0 * np.pi * (R*const.Rsun) ** 2.0)
             / const.boltz_sigma) ** (1.0 / 4.0)
@@ -143,6 +167,8 @@ def rzams(m, z=0.02, Zsun=0.02):
         The masses of the stars in Msun.
     z : float
         The metallicity of the star.
+    Zsun : float
+        The solar metallicity used for normalization.
 
     Returns
     -------
@@ -392,19 +418,20 @@ def orbital_period_from_separation(separation, m1, m2):
 
 
 def eddington_limit(binary, idx=-1):
-    """Calculate the Eddington limit & radtiative efficiency of compact object.
+    """Calculate the Eddington limit & radiative efficiency of a compact object.
 
     Parameters
     ----------
     binary : BinaryStar
         The binary object.
-
+    idx : int, optional
+        Index of the state to use from the state history (default is -1, i.e.
+        the current state).
 
     Returns
     -------
     tuple
         The Eddington accretion limit and radiative efficiency in solar units.
-
     """
     if binary.star_1.state in ['NS', 'BH', 'WD']:
         accretor = binary.star_1
@@ -456,8 +483,9 @@ def eddington_limit(binary, idx=-1):
 
 
 def beaming(binary):
-    """Calculate the geometrical beaming of a super-Eddington accreting source
-    [1]_, [2]_.
+    """Calculate the geometrical beaming of a super-Eddington accreting source.
+
+    See [1]_, [2]_.
 
     Compute the super-Eddington isotropic-equivalent accretion rate and the
     beaming factor of a star. This does not change the intrinsic accretion onto
@@ -476,13 +504,12 @@ def beaming(binary):
     -------
     tuple
         The super-Eddington isotropic-equivalent accretion rate and beaming
-        factor respcetively in solar units.
+        factor respectively in solar units.
 
     References
     ----------
     .. [1] Shakura, N. I. & Sunyaev, R. A. 1973, A&A, 24, 337
     .. [2] King A. R., 2008, MNRAS, 385, L113
-
     """
     mdot_edd = eddington_limit(binary, idx=-1)[0]
 
@@ -522,6 +549,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         default: -1
     wind_disk_criteria : bool
         default: True, see [5]_
+    RNG : numpy.random.Generator, optional
+        Random number generator used for sampling the wind velocity.
     scheme : str
         There are different options:
 
@@ -851,7 +880,6 @@ def read_histogram_from_file(path):
 
     Usage: bin_edges, bin_counts = read_histogram_from_file("a_histogram.csv").
 
-
     Parameters
     ----------
     path : str
@@ -861,7 +889,6 @@ def read_histogram_from_file(path):
     -------
     list of arrays
         The bin edges and bin counts of the histogram.
-
     """
     with open(path, "r") as f:
         arrays = []
@@ -970,6 +997,20 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
         # Eq. (5.11) at e_0, i.e. a_0 = a(e_0), solved for c_0 in
         # Peters 1964 Phys. Rev. 136, B1224
         def c_0(a0, e0):
+            """Compute the constant c0 of Eq. (5.11) in Peters 1964.
+
+            Parameters
+            ----------
+            a0 : float
+                Initial semi-major axis.
+            e0 : float
+                Initial eccentricity.
+
+            Returns
+            -------
+            float
+                The constant c0.
+            """
             return ((a0 * (1 - e0**2)) * (e0**(-12.0 / 19))
                     * (1 + (121.0 / 304) * e0**2)**(-870.0 / 2299))
 
@@ -977,6 +1018,18 @@ def inspiral_timescale_from_separation(star1_mass, star2_mass,
 
         # Eq. (5.14)
         def integrand(e):
+            """Compute the integrand of Eq. (5.14) in Peters 1964.
+
+            Parameters
+            ----------
+            e : float
+                Eccentricity.
+
+            Returns
+            -------
+            float
+                The value of the integrand.
+            """
             return (e**(29. / 19) * (1 + (121. / 304) * e**2)**(1181.0 / 2299)
                     / (1 - e**2)**(3.0 / 2))
 
@@ -1001,10 +1054,10 @@ def inspiral_timescale_from_orbital_period(star1_mass, star2_mass,
         Mass of star 1 in Msun.
     star2_mass : float
         Mass of star 2 in Msun.
-    orbital_separation : type
-        Binary separation in Rsun.
-    eccentricity : type
-        Eccentricity of the binary orbit. Must be 0 <= ecc <1.
+    orbital_period : float
+        Binary orbital period in days.
+    eccentricity : float
+        Eccentricity of the binary orbit. Must be 0 <= ecc < 1.
 
     Returns
     -------
@@ -1029,6 +1082,20 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
 
     Based on Thorne 1974 eq. 2a.
 
+    Parameters
+    ----------
+    spin_i : float
+        Initial dimensionless spin of the black hole.
+    star_mass_preMT : float
+        Mass of the black hole before mass transfer in Msun.
+    star_mass_postMT : float
+        Mass of the black hole after mass transfer in Msun.
+
+    Returns
+    -------
+    float or None
+        The dimensionless spin of the black hole after mass transfer, or
+        None if any of the inputs is invalid (None, zero or negative).
     """
     if ((star_mass_preMT is None) or (star_mass_preMT<=0.0) or
         (star_mass_postMT is None) or (star_mass_postMT<=0.0) or
@@ -1052,22 +1119,21 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
 def check_state_of_star(star, i=None, star_CO=False):
     """Get the state of a SingleStar.
 
-    Arguments
+    Parameters
     ----------
-    star: SingleStar
+    star : SingleStar
         The star for which the state will be computed.
-    i : integer
+    i : integer, optional
         Index of the model for which we want to calculate the state of the
-        SingleStar object. Default = -1 (the final).
-    star_CO: bool
+        SingleStar object. Default = None (the final).
+    star_CO : bool, optional
         True if we want to assume a compact object (WD/NS/BH).
         False if the state will be calculated by its attributes.
 
     Returns
     -------
     state : str
-        state at of the star object at index i of the history.
-
+        State of the star object at index i of the history.
     """
     if star_CO:
         star_mass = star.mass_history[i] if i is not None else star.mass
@@ -1135,9 +1201,14 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
     ----------
     binary : BinaryStar
         The POSYDON binary star.
-    i : int
+    interpolation_class : str, optional
+        The class of the interpolation result. Can be None, 'not_converged',
+        'initial_MT' or 'unstable_MT'.
+    i : int, optional
         The index of the history in which we want to calculate the state of the
         binary object. Default (None) is the current state.
+    verbose : bool, optional
+        Whether to print additional information.
 
     Returns
     -------
@@ -1160,7 +1231,6 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
 
     If RLO then returns either ['RLO1',  None, 'caseXX'] or
     ['RLO2',  None, 'caseXX'] or maybe ['RLO2',  'oRLO2', 'caseXX'].
-
     """
     # initializing: ['binary_state','binary_event','MT_case']
     if binary is None:
@@ -1265,19 +1335,24 @@ def get_binary_state_and_event_and_mt_case_array(binary, N=None,
                                                  verbose=False):
     """Calculate the evolutionary states with an array of history data.
 
-    Arguments
+    Parameters
     ----------
-    binary: POSYDON BinaryStar object
-    N : array
-        index of the history in which we want to calculate the state of the
-        SingleStar object
+    binary : BinaryStar
+        The POSYDON binary star.
+    N : int, optional
+        Number of history steps (from the end) for which the states are
+        calculated. If None, only the current evolutionary state is computed.
+    verbose : bool, optional
+        Whether to print additional information.
 
     Returns
     -------
-    binary_state : str(see in check_state_of_star)
-    binary_event :
-    MT_case :
-
+    binary_state : str or list of str
+        The binary state (see `get_binary_state_and_event_and_mt_case`).
+    binary_event : str or list of str
+        The binary event.
+    MT_case : str or list of str
+        The mass transfer case.
     """
     if N is None:               # focus on current evolutonary state
         result = get_binary_state_and_event_and_mt_case(binary, i=None,
@@ -1477,7 +1552,34 @@ def set_binary_to_failed(binary):
 def infer_star_state(star_mass=None, surface_h1=None,
                      center_h1=None, center_he4=None, center_c12=None,
                      log_LH=None, log_LHe=None, log_Lnuc=None, star_CO=False):
-    """Infer the star state (corresponding to termination flags 2 and 3)."""
+    """Infer the star state (corresponding to termination flags 2 and 3).
+
+    Parameters
+    ----------
+    star_mass : float, optional
+        Mass of the star in Msun.
+    surface_h1 : float, optional
+        Surface hydrogen mass fraction.
+    center_h1 : float, optional
+        Central hydrogen mass fraction.
+    center_he4 : float, optional
+        Central helium mass fraction.
+    center_c12 : float, optional
+        Central carbon mass fraction.
+    log_LH : float, optional
+        Logarithm of the luminosity produced by hydrogen burning.
+    log_LHe : float, optional
+        Logarithm of the luminosity produced by helium burning.
+    log_Lnuc : float, optional
+        Logarithm of the total nuclear luminosity.
+    star_CO : bool, optional
+        If True, assume the star is a compact object (WD/NS/BH).
+
+    Returns
+    -------
+    str
+        The inferred evolutionary state of the star.
+    """
     if star_CO:
         if ((pd.isna(star_mass)) or (star_mass<=0)):
             return "massless_remnant"
@@ -1699,20 +1801,19 @@ def cumulative_mass_transfer_string(cumulative_integers):
 
 
 def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
-    """Get the cumulative MT string from a list of integer MT casses.
+    """Get the cumulative MT string from a list of integer MT cases.
 
-    Arguments
+    Parameters
     ----------
-    MT_cases: list of integers
+    MT_cases : list of integers
         A list of MT cases.
-    shift_cases: bool
+    shift_cases : bool, optional
         Flag to shift non-physical cases like A1 after B1 will turn into B1.
 
     Returns
     -------
     str
         A string summarizing the mass transfer cases.
-
     """
     if shift_cases:
         case_1_min = MT_CASE_NO_RLO
@@ -1750,17 +1851,17 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
 
 
 def get_i_He_depl(history):
-    """Get the index of He depletion in the history
+    """Get the index of He depletion in the history.
 
-    Arguments
-    ---------
-    history: numpy-array
-        Stellar history from MESA
+    Parameters
+    ----------
+    history : numpy.ndarray
+        Stellar history from MESA.
 
-    Return
-    ------
+    Returns
+    -------
     int
-        index of He depletion (-1 if no He depletion is found)
+        Index of He depletion (-1 if no He depletion is found).
     """
     if (('surface_h1' in history.dtype.names) and
         ('center_h1' in history.dtype.names) and
@@ -1787,24 +1888,24 @@ def get_i_He_depl(history):
 def calculate_Patton20_values_at_He_depl(star):
     """Calculate the carbon core mass and abundance very close to ignition.
 
-    This is important for using the Patton+2020 SN prescription
+    This is important for using the Patton+2020 SN prescription.
 
-    Arguments
+    Parameters
     ----------
-    star: SingleStar object holding the history of its attributes.
+    star : SingleStar
+        SingleStar object holding the history of its attributes.
 
     Returns
     -------
     None
 
-    It updates the following values in the star object
-    co_core_mass_at_He_depletion: float
+    It updates the following values in the star object:
+    co_core_mass_at_He_depletion : float
         co_core_mass at He core depletion
         (almost at the same time as carbon core ignition)
     avg_c_in_c_core_at_He_depletion : float
         avg carbon abundance inside CO_core_mass at He core depletion
         (almost at the same time as carbon core ignition)
-
     """
     co_core_mass_at_He_depletion = None
     avg_c_in_c_core_at_He_depletion = None
@@ -1833,12 +1934,15 @@ def calculate_Patton20_values_at_He_depl(star):
 def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
     """Find the envelope mass for different core boundary abundance thresholds.
 
-    The results are meant to be used in collabration with the respective
+    The results are meant to be used in collaboration with the respective
     `lambda_CE_*cent`, `lambda_CE_pure_He_star_10cent`.
 
-    Arguments
+    Parameters
     ----------
-    star: SingleStar object holding the history of its attributes.
+    star : SingleStar
+        SingleStar object holding the history of its attributes.
+    verbose : bool, optional
+        Whether to print additional information.
 
     Returns
     -------
@@ -2014,7 +2118,18 @@ def CEE_parameters_from_core_abundance_thresholds(star, verbose=False):
 
 
 def initialize_empty_array(arr):
-    """Initialize an empty record array with NaNs and empty strings."""
+    """Initialize an empty record array with NaNs and empty strings.
+
+    Parameters
+    ----------
+    arr : numpy.recarray
+        The record array whose values will be reset.
+
+    Returns
+    -------
+    numpy.recarray
+        A copy of the input array with all values set to NaN.
+    """
     res = arr.copy()
     for colname in res.dtype.names:
         if np.issubsctype(res[colname], float):
@@ -2193,12 +2308,12 @@ def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
     ----------
     period_i : float
         Initial period
-    Mdon_i: float
+    Mdon_i : float
         Initial donor mass
-    Mdon_f: float
-        Final donor mass (should be in the same unit's of Mdon_i)
-    Mdon_i: float
-        Initial accretor's mass (should be in the same unit's of Mdon_i)
+    Mdon_f : float
+        Final donor mass (should be in the same units as Mdon_i)
+    Macc_i : float
+        Initial accretor's mass (should be in the same units as Mdon_i)
     alpha : float [0-1]
         Fraction of DM_don (= Mdon_i - Mdon_f) from the donor,
         lost from the donor's vicinity
@@ -2211,7 +2326,6 @@ def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
     -------
     period_f : float
         final period at the end of stable MT, in the same units as period_i
-
     """
     DM_don = Mdon_i - Mdon_f    # mass lost from donor (>0)
     if DM_don < 0:
@@ -2238,7 +2352,28 @@ def period_change_stable_MT(period_i, Mdon_i, Mdon_f, Macc_i,
 
 def linear_interpolation_between_two_cells(array_y, array_x, x_target,
                                            top=None, bot=None, verbose=False):
-    """Interpolate quantities between two star profile shells."""
+    """Interpolate quantities between two star profile shells.
+
+    Parameters
+    ----------
+    array_y : array
+        Array of the dependent quantity to interpolate.
+    array_x : array
+        Array of the independent quantity.
+    x_target : float
+        Value of the independent quantity at which to interpolate.
+    top : int, optional
+        Index of the upper shell; inferred if None.
+    bot : int, optional
+        Index of the lower shell; inferred if None.
+    verbose : bool, optional
+        Whether to print additional information.
+
+    Returns
+    -------
+    float
+        The interpolated value of the dependent quantity.
+    """
     if (pd.isna(top) and pd.isna(bot)):
         top = np.argmax(array_x >= x_target)
         bot = top - 1
@@ -2297,10 +2432,10 @@ def calculate_lambda_from_profile(
         core_element_fraction_definition=0.1, ind_core=None,
         common_envelope_alpha_thermal=1.0, tolerance=0.001,
         CO_core_in_Hrich_star=False, verbose=False):
-    """Calculate common-enevelope lambda from the profile of a star.
+    """Calculate common-envelope lambda from the profile of a star.
 
-     We also pass a more accurate calculation of the donor core mass for the
-     purposes of common-envelope evolution.
+    We also pass a more accurate calculation of the donor core mass for the
+    purposes of common-envelope evolution.
 
     Parameters
     ----------
@@ -2308,6 +2443,10 @@ def calculate_lambda_from_profile(
         Donor's star profile from MESA
     donor_star_state : string
         The POSYDON evolutionary state of the donor star
+    m1_i : float, optional
+        Initial donor mass.
+    radius1 : float, optional
+        Initial donor radius.
     common_envelope_option_for_lambda : str
         Available options:
         * 'default_lambda': using for lambda the constant value of
@@ -2343,7 +2482,7 @@ def calculate_lambda_from_profile(
     tolerance : float
         The tolerance of numerical difference in two floats when comparing
         and testing results.
-    CO_core_in_Hrich_star: Bool
+    CO_core_in_Hrich_star : bool
         This should be true if we want to calculate the boundary of CO core in
         a H-rich star (and not of the helium core).
     verbose : bool
@@ -2351,16 +2490,15 @@ def calculate_lambda_from_profile(
 
     Returns
     -------
-    lambda_CE: float
+    lambda_CE : float
         lambda_CE for the envelope of the donor in CEE,
         calculated from profile
-    mc1_i: float
+    mc1_i : float
         More accurate calculation of the donor core mass for the purposes
         of CEE.
-    rc1_i: float
+    rc1_i : float
         More accurate calculation of the donor core radius for the purposes
         of CEE.
-
     """
     # get mass and radius and dm from profile
     donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
@@ -2749,15 +2887,17 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
         at the donor's MESA profile
     factor_internal_energy : float
         The factor to multiply with internal energy to be taken into
-        account when we calculate the  binding energy of the enevelope
+        account when we calculate the binding energy of the envelope
     verbose : bool
-        In case we want information about the CEE  (the default is False).
+        In case we want information about the CEE (the default is False).
+    tolerance : float
+        The tolerance of numerical difference in two floats when comparing
+        and testing results.
 
     Returns
     -------
     Ebind_i : float
         The total binding energy of the envelope of the star
-
     """
     # Sum of gravitational energy from surface to core boundary
     Grav_energy = 0.0
@@ -2797,30 +2937,40 @@ def calculate_binding_energy(donor_mass, donor_radius, donor_dm,
     return Ebind_i
 
 def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
-                             mc1_i, rc1_i,
-                             m1_i = 0.0, radius1 = 0.0,
-                             factor_internal_energy=1.0,tolerance=0.001
-                             ):
-    """Calculate the mass lost from the envelope for an energy budget of Ebind_threshold
+                                                     mc1_i, rc1_i,
+                                                     m1_i=0.0, radius1=0.0,
+                                                     factor_internal_energy=1.0,
+                                                     tolerance=0.001):
+    """Calculate the mass lost from the envelope for a given energy budget.
 
     Parameters
     ----------
     profile : numpy.array
-        Donor's star profile from MESA
+        Donor's star profile from MESA.
     Ebind_threshold : float
-        Orbital energy used from the spiral in to partial unbind the envelope. Positive
-        We integrate from surface to calcualte the partial loss of mass during CE that merges.
-    factor_internal_energy : float
+        Orbital energy used from the spiral in to partially unbind the
+        envelope. Positive.
+        We integrate from the surface to calculate the partial loss of
+        mass during CE that merges.
+    mc1_i : float
+        Initial core mass.
+    rc1_i : float
+        Initial core radius.
+    m1_i : float, optional
+        Initial total mass of the star.
+    radius1 : float, optional
+        Initial radius of the star.
+    factor_internal_energy : float, optional
         The factor to multiply with internal energy to be taken into
-        account when we calculate the  binding energy of the enevelope
-    verbose : bool
-        In case we want information about the CEE  (the default is False).
+        account when we calculate the binding energy of the envelope.
+    tolerance : float, optional
+        The tolerance of numerical difference in two floats when
+        comparing and testing results.
 
     Returns
     -------
-    Ebind_i : float
-        The total binding energy of the envelope of the star
-
+    M_ejected : float
+        The mass ejected from the envelope for the given energy budget.
     """
 
     donor_mass, donor_radius, donor_dm = get_mass_radius_dm_from_profile(
@@ -2860,7 +3010,23 @@ def calculate_Mejected_for_integrated_binding_energy(profile, Ebind_threshold,
     return M_ejected
 
 def convert_metallicity_to_string(Z):
-    """Check if metallicity is supported by POSYDON v2."""
+    """Check if metallicity is supported by POSYDON v2.
+
+    Parameters
+    ----------
+    Z : float
+        The metallicity value to check.
+
+    Returns
+    -------
+    str
+        The metallicity formatted as a string.
+
+    Raises
+    ------
+    ValueError
+        If the metallicity is not supported by POSYDON v2.
+    """
     # check supported metallicity
     valid_Z = [2e+00,1e+00,4.5e-01,2e-01,1e-01,1e-02,1e-03,1e-04]
     if not Z in valid_Z:
@@ -2868,8 +3034,7 @@ def convert_metallicity_to_string(Z):
     return f'{Z:1.1e}'.replace('.0','')
 
 def rotate(axis, angle):
-    """Generate rotation matrix to rotate a vector about an arbitrary axis by
-        a given angle
+    """Generate a rotation matrix to rotate a vector about an arbitrary axis.
 
     Parameters
     ----------
