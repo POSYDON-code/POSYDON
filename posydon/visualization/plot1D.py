@@ -63,6 +63,9 @@ class plot1D(object):
         history : str
             The x, y, z variables are read from either: "binary_history",
             "history1", "history2".
+        star_states : list
+            List of star states for each run used to color the HR diagram
+            tracks.
         HR : bool
             If `True`, an HR diagram will be plotted.
         verbose : bool
@@ -363,7 +366,14 @@ class plot1D(object):
                            **self.xlabel_kwargs)
 
     def set_ylabel(self, i):
-        """Add y label."""
+        """Add y label.
+
+        Parameters
+        ----------
+        i : int
+            Index of the run to plot.
+
+        """
         if self.ylabel is not None:
             if isinstance(self.ylabel, str):
                 plt.ylabel(self.ylabel, **self.ylabel_kwargs)
@@ -437,7 +447,7 @@ class plot1D(object):
 
         Parameters
         ----------
-        scatters : object
+        scatter : object
             matplotlib scatter object.
 
         """
@@ -471,6 +481,21 @@ class plot1D(object):
         """Constant radius lines for the HR diagram."""
 
         def luminosity(Teff, R):
+            """Compute the luminosity for a given effective temperature and radius.
+
+            Parameters
+            ----------
+            Teff : float or numpy.ndarray
+                Effective temperature in Kelvin.
+            R : float or numpy.ndarray
+                Radius in solar radii.
+
+            Returns
+            -------
+            float or numpy.ndarray
+                Luminosity in solar luminosities.
+
+            """
             return (
                 4
                 * np.pi
