@@ -14,7 +14,7 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 class IMFBase(ABC):
-    '''Base class for Initial Mass Functions (IMFs)'''
+    """Base class for Initial Mass Functions (IMFs)."""
     def __init__(self, m_min, m_max):
         """Initialize the IMF with minimum and maximum mass limits.
 
@@ -67,8 +67,9 @@ class IMFBase(ABC):
         return 1.0 / integral
 
     def pdf(self, m):
-        """Compute the probability density function (PDF) values
-        for the input mass(es).
+        """Compute the probability density function (PDF) values.
+
+        The PDF is evaluated at the input mass(es).
 
         Parameters
         ----------
@@ -95,21 +96,42 @@ class IMFBase(ABC):
     def imf(self, m): # pragma: no cover
         '''Computes the IMF value for a given mass or array of masses 'm'.
 
+        Parameters
+        ----------
+        m : float or array_like
+            Stellar mass or array of stellar masses [Msun].
+
         Raises
         -------
-        Raises a NotImplementedError if the method is not
-        implemented in a subclass.
+        NotImplementedError
+            If the method is not implemented in a subclass.
         '''
         pass
 
     @abstractmethod
     def rvs(self, size=1, rng=None): # pragma: no cover
+        """Draw random samples from the IMF.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random mass samples in solar masses.
+        """
         pass
 
 
 class Salpeter(IMFBase):
     """
-    Initial Mass Function based on Salpeter (1955), which is defined as:
+    Initial Mass Function based on Salpeter (1955).
+
+    The IMF is defined as:
 
         dN/dM = m^-2.35
 
@@ -138,6 +160,17 @@ class Salpeter(IMFBase):
     """
 
     def __init__(self, alpha=2.35, m_min=0.01, m_max=200.0):
+        """Initialize the Salpeter IMF with a power-law index and mass limits.
+
+        Parameters
+        ----------
+        alpha : float, optional
+            The power-law index of the IMF (default is 2.35).
+        m_min : float, optional
+            The minimum allowable mass (default is 0.01) [Msun].
+        m_max : float, optional
+            The maximum allowable mass (default is 200.0) [Msun].
+        """
         self.alpha = alpha
         super().__init__(m_min, m_max)
 
@@ -147,6 +180,13 @@ class Salpeter(IMFBase):
                 f"m_max={self.m_max})")
 
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Salpeter IMF</h3>"
                 f"<p>alpha = {self.alpha}</p>"
                 f"<p>m_min = {self.m_min}</p>"
@@ -207,7 +247,9 @@ class Salpeter(IMFBase):
 
 class Kroupa1993(IMFBase):
     """
-    Initial Mass Function based on Kroupa et al. (1993), which is defined as:
+    Initial Mass Function based on Kroupa et al. (1993).
+
+    The IMF is defined as:
 
         dN/dM = m^-2.7
 
@@ -236,6 +278,17 @@ class Kroupa1993(IMFBase):
     """
 
     def __init__(self, alpha=2.7, m_min=0.01, m_max=200.0):
+        """Initialize the Kroupa1993 IMF with a power-law index and mass limits.
+
+        Parameters
+        ----------
+        alpha : float, optional
+            The power-law index of the IMF (default is 2.7).
+        m_min : float, optional
+            The minimum allowable mass (default is 0.01) [Msun].
+        m_max : float, optional
+            The maximum allowable mass (default is 200.0) [Msun].
+        """
         self.alpha = alpha
         super().__init__(m_min, m_max)
 
@@ -245,6 +298,13 @@ class Kroupa1993(IMFBase):
                 f"m_max={self.m_max})")
 
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Kroupa (1993) IMF</h3>"
                 f"<p>alpha = {self.alpha}</p>"
                 f"<p>m_min = {self.m_min}</p>"
@@ -304,8 +364,9 @@ class Kroupa1993(IMFBase):
 
 
 class Kroupa2001(IMFBase):
-    """Initial Mass Function based on Kroupa (2001), which is
-    defined as a broken power-law:
+    """Initial Mass Function based on Kroupa (2001).
+
+    It is defined as a broken power-law:
 
         dN/dM = m^-0.3 for 0.01 <= m < 0.08
         dN/dM = m^-1.3 for 0.08 <= m < 0.5
@@ -356,6 +417,25 @@ class Kroupa2001(IMFBase):
                  alpha1=0.3, alpha2=1.3, alpha3=2.3,
                  m1break=0.08, m2break=0.5,
                  m_min=0.01, m_max=200.0):
+        """Initialize the Kroupa2001 IMF with broken power-law parameters.
+
+        Parameters
+        ----------
+        alpha1 : float, optional
+            The power-law index for m < m1break (default is 0.3).
+        alpha2 : float, optional
+            The power-law index for m1break <= m < m2break (default is 1.3).
+        alpha3 : float, optional
+            The power-law index for m >= m2break (default is 2.3).
+        m1break : float, optional
+            The first mass break (default is 0.08) [Msun].
+        m2break : float, optional
+            The second mass break (default is 0.5) [Msun].
+        m_min : float, optional
+            The minimum allowable mass (default is 0.01) [Msun].
+        m_max : float, optional
+            The maximum allowable mass (default is 200.0) [Msun].
+        """
         self.alpha1 = alpha1
         self.alpha2 = alpha2
         self.alpha3 = alpha3
@@ -370,6 +450,13 @@ class Kroupa2001(IMFBase):
                 f"m_min={self.m_min}, m_max={self.m_max})")
 
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Kroupa (2001) IMF</h3>"
                 f"<p>alpha1 = {self.alpha1}</p>"
                 f"<p>alpha2 = {self.alpha2}</p>"
@@ -446,9 +533,10 @@ class Kroupa2001(IMFBase):
 
 
 class Chabrier2003(IMFBase):
-    """Chabrier2003 Initial Mass Function (IMF), which is defined as
-    a lognormal distribution for low-mass stars and a power-law distribution
-    for high-mass stars:
+    """Chabrier2003 Initial Mass Function (IMF).
+
+    It is defined as a lognormal distribution for low-mass stars and a
+    power-law distribution for high-mass stars:
 
         dN/dM = 1/(m * sqrt(2*pi) * sigma)
               * exp(- (log10(m) - log10(m_c))^2 / (2 * sigma^2)) for m < m_break
@@ -480,6 +568,27 @@ class Chabrier2003(IMFBase):
 
     def __init__(self, m_c=0.22, sigma=0.57, alpha=2.3,
                  m_break=1.0, m_min=0.01, m_max=200.0):
+        """Initialize the Chabrier2003 IMF with lognormal and power-law parameters.
+
+        Parameters
+        ----------
+        m_c : float, optional
+            Characteristic mass of the lognormal component
+            (default: 0.22) [Msun].
+        sigma : float, optional
+            The dispersion (standard deviation) of the lognormal component
+            (default: 0.57).
+        alpha : float, optional
+            The power-law index governing the high-mass end of the IMF
+            (default: 2.3).
+        m_break : float, optional
+            The mass at which the IMF transitions from a lognormal
+            to a power-law behavior (default: 1.0) [Msun].
+        m_min : float, optional
+            The minimum mass considered in the IMF (default: 0.01) [Msun].
+        m_max : float, optional
+            The maximum mass considered in the IMF (default: 200.0) [Msun].
+        """
         self.m_c = m_c
         self.sigma = sigma
         self.alpha = alpha
@@ -493,6 +602,13 @@ class Chabrier2003(IMFBase):
                 f"m_min={self.m_min}, m_max={self.m_max})")
 
     def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return (f"<h3>Chabrier IMF</h3>"
                 f"<p>m_c = {self.m_c}</p>"
                 f"<p>sigma = {self.sigma}</p>"

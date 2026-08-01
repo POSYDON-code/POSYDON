@@ -82,8 +82,7 @@ class FlatMassRatio:
                 f"<p>q_max = {self.q_max}</p>")
 
     def _calculate_normalization(self):
-        """Calculate the normalization constant for the flat mass ratio
-        distribution.
+        """Calculate the normalization constant for the flat distribution.
 
         Returns
         -------
@@ -222,8 +221,7 @@ class PowerLawMassRatio:
                 f"<p>q_max = {self.q_max}</p>")
 
     def _calculate_normalization(self):
-        """Calculate the normalization constant for the power law mass ratio
-        distribution.
+        """Calculate the normalization constant for the power law distribution.
 
         Returns
         -------
@@ -277,6 +275,8 @@ class PowerLawMassRatio:
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of grid points used for the inverse sampling.
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
 
@@ -368,8 +368,12 @@ class Sana12Period():
                 f"<p>p_max = {self.p_max}</p>")
 
     def _calculate_normalization(self, m1):
-        """Calculate the normalization constant for the Sana12 period
-        distribution.
+        """Calculate the normalization constant for the Sana12 distribution.
+
+        Parameters
+        ----------
+        m1 : float
+            Primary mass used to select the low- or high-mass normalization.
 
         Returns
         -------
@@ -530,6 +534,18 @@ class Sana12Period():
         if n_high > 0:
             # Create PDF function for rejection sampler
             def pdf_high_mass(logp):
+                """PDF for high-mass stars in log period space.
+
+                Parameters
+                ----------
+                logp : float or array
+                    Log10 of period(s).
+
+                Returns
+                -------
+                float or ndarray
+                    Distribution value(s).
+                """
                 return self.sana12_period(logp, self.mbreak + 1)
 
             periods[high_mass_mask] = 10**rejection_sampler(
@@ -609,8 +625,7 @@ class PowerLawPeriod():
                 f"<p>p_max = {self.p_max}</p>")
 
     def _calculate_normalization(self):
-        """Calculate the normalization constant for the power law period
-        distribution.
+        """Calculate the normalization constant for the period distribution.
 
         Returns
         -------
@@ -676,6 +691,9 @@ class PowerLawPeriod():
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of grid points used for the inverse sampling
+            (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
 
@@ -872,8 +890,7 @@ class ThermalEccentricity:
                 f"<p>e_max = {self.e_max}</p>")
 
     def _calculate_normalization(self):
-        """Calculate the normalization constant for the thermal eccentricity
-        distribution.
+        """Calculate the normalization constant for the distribution.
 
         Returns
         -------
