@@ -122,7 +122,21 @@ MAXIMUM_STEP_TIME = 120
 
 
 def signal_handler(signum, frame):
-    """React to a maximum time signal."""
+    """React to a maximum time signal.
+
+    Parameters
+    ----------
+    signum : int
+        The signal number that was received.
+    frame : frame object
+        The current stack frame.
+
+    Raises
+    ------
+    RuntimeError
+        If the maximum allotted time for a binary step is exceeded.
+
+    """
     raise RuntimeError("Binary Step Exceeded Allotted Time: {}".
                     format(MAXIMUM_STEP_TIME))
 
@@ -137,16 +151,18 @@ class BinaryStar:
                  **binary_kwargs):
         """Initialize a binary star.
 
-        Arguments
-        ---------
-        properties : SimulationProperties
-            Instance of the SimulationProperties class (default: None)
+        Parameters
+        ----------
         star_1 : SingleStar
-            The first star of the binary.
+            The first star of the binary (default: None).
         star_2 : Star
-            The second star of the binary.
+            The second star of the binary (default: None).
+        index : int
+            The binary index (default: None).
+        properties : SimulationProperties
+            Instance of the SimulationProperties class (default: None).
         **binary_kwargs : dictionary
-            List of initialization parameters for a binary
+            List of initialization parameters for a binary.
         """
         # Binary Index
         self.index = index
@@ -319,8 +335,9 @@ class BinaryStar:
 
     def check_who_exists(self):
         """
-            Check and store which binary components exist (are not
-        massless remnants). This sets additional class attributes
+            Check and store which binary components exist.
+        Binary components that are massless remnants are considered not to
+        exist. This sets additional class attributes
 
             self.non_existent_companion with the following values:
                -1 if neither star exists
@@ -416,27 +433,17 @@ class BinaryStar:
 
         Parameters
         ----------
-        extra_columns : dict( 'name':dtype, .... )
-            Extra binary parameters to return in DataFrame that are not
-            included in BINARYPROPERTIES. All columns must have an
-            associated pandas data type.
-            Can be used in combination with `only_select_columns`.
-            Assumes names have no suffix.
-        ignore_columns : list
-            Names of binary parameters to ignore.
-            Assumes names have `_history` suffix.
-        only_select_columns : list
-            Names of the only columns to include.
-            Assumes names have `_history` suffix.
-            Can be used in combination with `extra_columns`.
-        null_value : float
-            Replace all None values with something else (for saving).
-            Default is np.nan.
-        include_S1, include_S2 : bool
-            Choose to include star 1 or 2 data to the DataFrame.
-            The default is to include both.
-        S1_kwargs, S2_kwargs : dict
-            kwargs to pass to each star's 'to_df' method (extra/ignore columns)
+        **kwargs : dict
+            Optional keyword arguments. The supported keys are
+            'extra_columns' (dict of 'name':dtype, with the extra binary
+            parameters to return in the DataFrame that are not included in
+            BINARYPROPERTIES), 'ignore_columns' (list of names of binary
+            parameters to ignore), 'only_select_columns' (list of the only
+            column names to include), 'null_value' (float to replace None
+            values with, default np.nan), 'include_S1' and 'include_S2'
+            (bool, whether to include star 1 or 2 data), and 'S1_kwargs'
+            and 'S2_kwargs' (dict of kwargs to pass to each star's 'to_df'
+            method).
 
         Returns
         -------
@@ -449,15 +456,15 @@ class BinaryStar:
             """Iterate through data_to_save to append null values.
 
             Parameters
-            -----------
+            ----------
             data_to_save : list[str]
-                Columns to save to the final dataframe
+                Columns to save to the final dataframe.
             all_keys : list[str]
                 All available keys to store.
-           properties_dtypes : dict
-               Types of all available keys
-           max_col_length: int
-               The maximum length of columns.
+            properties_dtypes : dict
+                Types of all available keys.
+            max_col_length : int
+                The maximum length of columns.
             """
             for i, col in enumerate(data_to_save):
 
@@ -609,13 +616,15 @@ class BinaryStar:
 
         Parameters
         ----------
+        cls : type
+            The BinaryStar class.
         dataframe : Pandas DataFrame
             data to turn into a BinaryStar instance.
-        index : int, optional
-            Sets the binary index.
-        extra_columns : dict, optional
-            Column names to be added directly to binary
-            not in BINARYPROPERTIES.
+        **kwargs : dict
+            Optional keyword arguments. The supported keys are 'index' (int,
+            sets the binary index) and 'extra_columns' (dict, column names
+            to be added directly to the binary that are not in
+            BINARYPROPERTIES).
 
         Returns
         -------
@@ -725,7 +734,25 @@ class BinaryStar:
         return binary
 
     def to_oneline_df(self, scalar_names=[], history=True, **kwargs):
-        """Convert binary into a single row DataFrame."""
+        """Convert binary into a single row DataFrame.
+
+        Parameters
+        ----------
+        scalar_names : list[str]
+            Names of scalar attributes to add to the oneline DataFrame.
+        history : bool
+            Whether to include the initial and final history values in the
+            oneline DataFrame (default: True).
+        **kwargs : dict
+            Optional keyword arguments passed to 'to_df' and to each star's
+            'to_oneline_df' method.
+
+        Returns
+        -------
+        pandas DataFrame
+            The single row DataFrame describing the binary.
+
+        """
         if history:
             bin_kwargs = kwargs.copy()
             output_df = self.to_df(**bin_kwargs)
@@ -801,13 +828,14 @@ class BinaryStar:
 
         Parameters
         ----------
+        cls : type
+            The BinaryStar class.
         oneline_df : DataFrame
             A oneline DataFrame describing a binary.
-        index : int, None
-            Binary index
-        extra_columns : dict
-            Names of any extra history columns not inlcuded
-            in BINARYPROPERTIES
+        **kwargs : dict
+            Optional keyword arguments. The supported keys are 'index' (int,
+            binary index) and 'extra_columns' (dict, names of any extra
+            history columns not inlcuded in BINARYPROPERTIES).
 
         Returns
         -------
@@ -963,7 +991,19 @@ class BinaryStar:
             s += str(getattr(self, name)) + gap
 
         def nan_if_not_int_or_float(value):
-            """Return nan if `value` is neither int nor float."""
+            """Return nan if `value` is neither int nor float.
+
+            Parameters
+            ----------
+            value : object
+                The value to check.
+
+            Returns
+            -------
+            float or int
+                The value if it is an int or float, otherwise np.nan.
+
+            """
             if isinstance(value, (float, int)):
                 return value
             return np.nan
@@ -979,7 +1019,26 @@ class BinaryStar:
 
     @staticmethod
     def from_run(run, history=False, profiles=False):
-        """Create a BinaryStar object from a PSyGrid run."""
+        """Create a BinaryStar object from a PSyGrid run.
+
+        Parameters
+        ----------
+        run : PSyGrid run
+            The PSyGrid run object containing the binary and star history
+            and final values.
+        history : bool
+            Whether to keep the full history of the run or only the final
+            values (default: False).
+        profiles : bool
+            Whether to set the star profiles from the final profiles of the
+            run (default: False).
+
+        Returns
+        -------
+        BinaryStar
+            The BinaryStar object built from the run.
+
+        """
         binary = BinaryStar()
 
         # get the data for the binary
