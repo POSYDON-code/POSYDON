@@ -27,6 +27,7 @@ class IgnoreReason():
     """Class for handling ignore reasons when creating new grids."""
 
     def __init__(self):
+        """Initialize the ignore reason handler with no reason set."""
         self.reason = None
         self.order = None
 
