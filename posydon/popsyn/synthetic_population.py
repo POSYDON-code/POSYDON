@@ -146,8 +146,14 @@ class PopulationRunner:
         in the `binary_populations` list and calls the `evolve` method on each population. After evolving
         each population, it merges them using the `merge_parallel_runs` method.
 
-        Note:
-            The `merge_parallel_runs` method is called only if the `comm` attribute of the population is `None`.
+        Parameters
+        ----------
+        overwrite : bool, optional
+            If `True`, overwrite pre-existing temporary directories. Default is False.
+
+        Notes
+        -----
+        The `merge_parallel_runs` method is called only if the `comm` attribute of the population is `None`.
 
         """
         for pop in self.binary_populations:
@@ -170,6 +176,8 @@ class PopulationRunner:
         ----------
         pop : BinaryPopulation
             The binary population whose files have to be merged.
+        overwrite : bool, optional
+            If `True`, overwrite a pre-existing merged file. Default is False.
 
         """
         Zstr = convert_metallicity_to_string(pop.metallicity)
@@ -215,11 +223,12 @@ class DFInterface:
     """A class to handle the interface between the population file and the History and Oneline classes."""
 
     def __init__(self):
+        """Initialize the DFInterface object."""
         self.filename = None
         self.chunksize = None
 
     def head(self, key, n=10):
-        """Return the first n rows of the key table
+        """Return the first n rows of the key table.
 
         Parameters
         ----------
@@ -512,7 +521,7 @@ class History(DFInterface):
         return np.sum(self.lengths.values)
 
     def head(self, n=10):
-        """Return the first n rows of the history table
+        """Return the first n rows of the history table.
 
         Parameters
         ----------
@@ -530,16 +539,15 @@ class History(DFInterface):
     def tail(self, n=10):
         """Return the last n rows of the history table.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         n : int, optional
             Number of rows to return. Default is 10.
 
-        Returns:
-        --------
+        Returns
+        -------
         pandas.DataFrame
             The last n rows of the history table.
-
         """
         return super().tail("history", n)
 
@@ -846,8 +854,8 @@ class PopulationIO:
     """
 
     def __init__(self):
+        """Initialize the PopulationIO object."""
         self.verbose = False
-
 
     def _load_metadata(self, filename):
         """Load the metadata from the file.
@@ -1161,7 +1169,7 @@ class Population(PopulationIO):
         return base_str
 
     def export_selection(self, selection, filename, overwrite=False, append=False, history_chunksize=1000000):
-        """Export a selection of the population to a new file
+        """Export a selection of the population to a new file.
 
         This method exports a selection of systems from the population to a new file.
         The selected systems are specified by their indices in the population.
@@ -1171,15 +1179,18 @@ class Population(PopulationIO):
         the existing file if it already exists and the indices will be shifted
         based on the current length of data in the file that is being appended to.
 
-
         Parameters
         ----------
         selection : list of int
             The indices of the systems to export.
         filename : str
             The name of the export file to create or append to.
-        chunksize : int, optional
-            The number of systems to export at a time. Default is 1000000.
+        overwrite : bool, optional
+            If `True`, overwrite the file if it already exists. Default is False.
+        append : bool, optional
+            If `True`, append the selected systems to the existing file. Default is False.
+        history_chunksize : int, optional
+            The number of systems to export at a time when writing the history table. Default is 1000000.
 
         Raises
         ------
@@ -1410,7 +1421,6 @@ class Population(PopulationIO):
         mt_history is a boolean that determines if the detailed mass-transfer history
         from the HMS-HMS grid is included in the formation channels.
 
-
         Parameters
         ----------
         mt_history : bool, optional
@@ -1444,6 +1454,21 @@ class Population(PopulationIO):
                 del store["formation_channels"]
 
         def get_events(group):
+            """Combine the events of a binary into a single channel string.
+
+            If the binary experienced a stable or reverse mass-transfer phase, the
+            `oRLO1` information is combined with the first event.
+
+            Parameters
+            ----------
+            group : pandas.DataFrame
+                The events of a single binary system.
+
+            Returns
+            -------
+            pandas.Series
+                A Series containing the combined channel string.
+            """
             # for now, only append information for RLO1; unstable_MT information already exists
             if "oRLO1" in group["interp_class_HMS_HMS"].tolist() or "oRLO1-reverse" in group["interp_class_HMS_HMS"].tolist() :
                 combined_events = (
@@ -1457,6 +1482,21 @@ class Population(PopulationIO):
             return pd.Series({"channel_debug": combined_events})
 
         def get_mt_history(row):
+            """Apply the mass-transfer history to the formation channel.
+
+            If the system experienced a stable contact phase, the corresponding
+            channel is updated to `oRLO1-contact`.
+
+            Parameters
+            ----------
+            row : pandas.Series
+                A row of the oneline dataframe.
+
+            Returns
+            -------
+            str
+                The formation channel, updated with the mass-transfer history.
+            """
             if (
                 pd.notna(row["mt_history_HMS_HMS"])
                 and row["mt_history_HMS_HMS"] == "Stable contact phase"
@@ -1545,7 +1585,7 @@ class Population(PopulationIO):
             print("formation_channels written to population file!")
 
     def _write_formation_channels(self, filename, df):
-        """Write the formation channels to the population file
+        """Write the formation channels to the population file.
 
         This will append the formation channels to the population file, while restricting the maximum
         length of the channel and channel_debug columns to 100 characters.
@@ -1594,7 +1634,7 @@ class Population(PopulationIO):
 
     def create_transient_population(
         self, func, transient_name, oneline_cols=None, hist_cols=None):
-        """Given a function, create a TransientPopulation
+        """Given a function, create a TransientPopulation.
 
         This method creates a transient population using the provided function.
         `func` is given the history, oneline, and formation channels dataframes as arguments.
@@ -1614,6 +1654,9 @@ class Population(PopulationIO):
                 - oneline_chunk : pd.DataFrame
                 - formation_channels_chunk : pd.DataFrame
             and return a pd.DataFrame containing the transient population, which needs to contain the columns 'time' and 'metallicity'.
+
+        transient_name : str
+            The name of the transient population to create.
 
         oneline_cols : list of str, optional
             Columns to extract from the oneline dataframe. Default is all columns.
@@ -1736,9 +1779,14 @@ class Population(PopulationIO):
         return synth_pop
 
     def plot_binary_evolution(self, index):  # pragma: no cover
-        """Plot the binary evolution of a system
+        """Plot the binary evolution of a system.
 
         This method is not currently implemented.
+
+        Parameters
+        ----------
+        index : int
+            The index of the binary system to plot.
         """
         pass
 
@@ -1766,7 +1814,6 @@ class TransientPopulation(Population):
 
         This method initializes the TransientPopulation object by linking it to the population file.
         The transient population linked is located at '/transients/{transient_name}' in the population file.
-
 
         Parameters
         ----------
@@ -2191,8 +2238,10 @@ class TransientPopulation(Population):
         ----------
         model_weight_identifier : str
             Identifier for the model weights to be used for calculating efficiency.
-        channel : bool, optional
+        channels : bool, optional
             If True, plot the subchannels. Default is False.
+        **kwargs : dict
+            Additional keyword arguments to pass to the plotting function.
         """
         if model_weight_identifier is None:
             raise ValueError("Model weight identifier not provided!")
@@ -2292,7 +2341,7 @@ class TransientPopulation(Population):
             The type of grid to plot.
         met_Zsun : float
             The metallicity of the Sun.
-        **kwargs
+        **kwargs : dict
             Additional keyword arguments to pass to the plot_pop.plot_popsyn_over_grid_slice function.
 
         """
@@ -2401,8 +2450,8 @@ class Rates(TransientPopulation):
         with the specified transient name and star formation history identifier.
         The path in the file is '/transients/{transient_name}/rates/{SFH_identifier}'.
 
-        Parameters:
-        -----------
+        Parameters
+        ----------
         filename : str
             The path to the file containing the transient population data.
         transient_name : str
@@ -2760,8 +2809,8 @@ class Rates(TransientPopulation):
         channel : str, optional
             The channel to plot the histogram for. Default is None.
             A channel column must be present in the transient population.
-        **kwargs
-            Additional keyword arguments to pass to the plot
+        **kwargs : dict
+            Additional keyword arguments to pass to the plot.
 
         Raises
         ------
@@ -2822,7 +2871,16 @@ class Rates(TransientPopulation):
             plot_pop.plot_hist_properties(df, bins=bins, **kwargs)
 
     def plot_intrinsic_rate(self, channels=False, **kwargs):  # pragma: no cover
-        """Plot the intrinsic rate density of the transient population."""
+        """Plot the intrinsic rate density of the transient population.
+
+        Parameters
+        ----------
+        channels : bool, optional
+            If True, plot the intrinsic rate density for each channel separately.
+            Default is False.
+        **kwargs : dict
+            Additional keyword arguments to pass to the plotting function.
+        """
 
         plot_pop.plot_rate_density(self.intrinsic_rate_density, channels=channels, **kwargs)
 

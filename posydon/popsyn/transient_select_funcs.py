@@ -1,3 +1,5 @@
+"""Selection functions to create transient populations (GRBs, BBHs, etc.)."""
+
 import os
 import warnings
 
@@ -198,11 +200,37 @@ def effective_precession(theta_1, theta_2, a1, a2, m1, m2):
     return chi_p
 
 def m_chirp(m_1, m_2):
-    '''Calculate the chirp mass of two masses.'''
+    """Calculate the chirp mass of two masses.
+
+    Parameters
+    ----------
+    m_1 : float or np.ndarray
+        The mass of the first object.
+    m_2 : float or np.ndarray
+        The mass of the second object.
+
+    Returns
+    -------
+    float or np.ndarray
+        The chirp mass.
+    """
     return (m_1*m_2)**(3./5)/(m_1+m_2)**(1./5)
 
 def mass_ratio(m_1, m_2):
-    '''Calculate the mass ratio of two masses.'''
+    """Calculate the mass ratio of two masses.
+
+    Parameters
+    ----------
+    m_1 : float or np.ndarray
+        The mass of the first object.
+    m_2 : float or np.ndarray
+        The mass of the second object.
+
+    Returns
+    -------
+    float or np.ndarray
+        The mass ratio (q <= 1).
+    """
     q = m_2/m_1
     q[q>1.] = 1./q[q>1.]
     return q
@@ -265,7 +293,7 @@ def BBH_selection_function(history_chunk, oneline_chunk, formation_channels_chun
 
 
 def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weights_chunk, verbose=False):
-    '''Calculate the observability of a DCO population.
+    """Calculate the observability of a DCO population.
 
     Parameters
     ----------
@@ -279,8 +307,18 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
 
         GW detector sensitivity and network configuration you want to use, see arXiv:1304.0670v3
         detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/public
+    transient_pop_chunk : pd.DataFrame
+        The transient population chunk.
+    z_events_chunk : pd.DataFrame
+        The redshift events chunk.
+    z_weights_chunk : pd.DataFrame
+        The redshift weights chunk.
+    verbose : bool, optional
+        Enables verbose output.
 
-    Note: The population must have the following columns:
+    Note
+    ----
+    The population must have the following columns:
     - S1_mass : the mass of the first BH
 
     For the following columns, the function will try to calculate them if they are not present:
@@ -292,7 +330,11 @@ def DCO_detectability(sensitivity, transient_pop_chunk, z_events_chunk, z_weight
 
     These have to be present and a valid value. If not, the function will raise an error!
 
-    '''
+    Returns
+    -------
+    pd.DataFrame
+        The detectable weights.
+    """
     available_sensitivities = ['O3actual_H1L1V1', 'O4low_H1L1V1', 'O4high_H1L1V1', 'design_H1L1V1']
     if sensitivity not in available_sensitivities:
         raise ValueError(f'Unknown sensitivity {sensitivity}. Available sensitivities are {available_sensitivities}')
