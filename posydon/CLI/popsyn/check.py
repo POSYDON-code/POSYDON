@@ -108,7 +108,7 @@ def validate_run_folder(run_folder):
         )
 
 def get_binary_params(ini_file):
-    '''Read the binary population parameters from the INI file
+    '''Read the binary population parameters from the INI file.
 
     Parameters
     ----------
@@ -267,8 +267,7 @@ def check_binary_counts(run_folder, metallicities, expected_count):
     return all_match, counts_dict
 
 def check_run_status(run_folder, metallicities, number_of_binaries):
-    """Check whether the population files exist and if they have
-    the expected number of binary counts.
+    """Check whether the population files exist and have the expected binary counts.
 
     Parameters
     ----------
@@ -674,8 +673,6 @@ def submit_slurm_job(script_path):
     ----------
     script_path : str
         Path to the SLURM script to submit
-    description : str, optional
-        Description of the job for error messages
 
     Returns
     -------

@@ -18,7 +18,7 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
-    '''Checks if the step_SN model is valid for this script
+    '''Checks if the step_SN model is valid for this script.
 
     Parameters
     ----------
@@ -49,7 +49,7 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
         return True
 
 def validate_ini_file(ini_file):
-    '''Validates the ini file for population synthesis
+    '''Validates the ini file for population synthesis.
 
     Parameters
     ----------
@@ -75,7 +75,7 @@ def validate_ini_file(ini_file):
 ################################################
 
 def setup_popsyn_function(args):
-    '''Function to setup the population synthesis run
+    '''Function to setup the population synthesis run.
 
     Parameters
     ----------

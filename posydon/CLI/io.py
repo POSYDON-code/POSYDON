@@ -71,6 +71,17 @@ def clear_previous_lines(num_lines):
 ## Main population setup
 
 def create_merge_script_text(ini_file):
+    '''Creates the text for the merge script of the population synthesis run.
+
+    The generated script combines the "evolution.combined.h5" files
+    from the different job arrays in the "temp_directory" into a
+    single "{MET}_Zsun_population.h5" file in the run directory.
+
+    Parameters
+    ----------
+    ini_file : str
+        Path to the .ini file containing population synthesis parameters.
+    '''
     text = textwrap.dedent(f'''\
         from posydon.popsyn.binarypopulation import BinaryPopulation
         from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -99,6 +110,17 @@ def create_merge_script_text(ini_file):
     return text
 
 def create_run_script_text(ini_file):
+    '''Creates the text for the run script of the population synthesis run.
+
+    The generated script runs the POSYDON population at a specific metallicity.
+    The script takes a metallicity as a command-line input and uses it to run
+    the BinaryPopulation with.
+
+    Parameters
+    ----------
+    ini_file : str
+        Path to the .ini file containing population synthesis parameters.
+    '''
     text = textwrap.dedent(f'''\
         from posydon.popsyn.binarypopulation import BinaryPopulation
         from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -191,6 +213,10 @@ def create_slurm_array(metallicity,
         SLURM account to charge the job to
     mem_per_cpu : str
         Memory per CPU allocation (e.g., "4G")
+    max_concurrent_jobs : int, optional
+        Maximum number of concurrent jobs to run
+    exclude : str, optional
+        Nodes to exclude from the job
     path_to_posydon : str
         Path to the POSYDON installation
     path_to_posydon_data : str
@@ -357,6 +383,10 @@ def create_slurm_rescue(metallicity,
         SLURM account to charge the job to
     mem_per_cpu : str
         Memory per CPU allocation (e.g., "4G")
+    max_concurrent_jobs : int, optional
+        Maximum number of concurrent jobs to run
+    exclude : str, optional
+        Nodes to exclude from the job
     path_to_posydon : str
         Path to the POSYDON installation
     path_to_posydon_data : str
