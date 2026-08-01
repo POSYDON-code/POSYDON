@@ -1,3 +1,6 @@
+"""Presentation of multiple or hierarchical VH diagrams."""
+
+
 from posydon.visualization.VH_diagram.GraphVisualizer import (
     ConnectedItem,
     GraphVisualizerCase,
@@ -44,7 +47,18 @@ class VHdiagramm_m:
         displayMode=DisplayMode.WINDOW,
         figsize=(10, 8)
     ):
-        """Initialize a VHdiagram_m instance."""
+        """Initialize a VHdiagram_m instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file containing the data.
+        path : str
+            Path where the file is located.
+        index : list of int
+            Indexes of the binaries to present.
+
+        """
         self._app = (
             QApplication.instance()
         )
@@ -71,17 +85,34 @@ class VHdiagramm_m:
 
     #Return indexes witch have been sorted hierarchycally for tree view
     def get_sorted_index(self):
+        """Return the indexes sorted hierarchically for the tree view.
+
+        Returns
+        -------
+        list of int
+            Indexes of the sorted columns.
+
+        """
         if type(self._presenter) == Presenter_h :
             return [dataf.index[0] for dataf in self._presenter._columns_data]
         else :#return empty if Presenter_h has no been called
             return []
 
     def _display_inline_b(self):
+        """Display the VH diagram inline in a notebook."""
         filepath = self._presenter.screen()
         self._presenter.close()
         display(Image(filename=filepath))
 
     def _display_inline_s(self, figsize):
+        """Display the VH diagram inline in a notebook.
+
+        Parameters
+        ----------
+        figsize : tuple
+            Size of the figure to display.
+
+        """
         filepath = self._presenter.screen()
         self._presenter.close()
         image = plt.imread(filepath)
@@ -92,13 +123,35 @@ class VHdiagramm_m:
         plt.axis("off")
 
 class Presenter_m(Presenter):
-    """Handle multiple Diagram view"""
+    """Handle multiple Diagram view."""
+
     def __init__(self,filename, path="./", frequency=None):
+        """Initialize a Presenter_m instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file containing the data.
+        path : str
+            Path where the file is located.
+        frequency : dict, optional
+            Frequency of each binary index.
+
+        """
         super(Presenter_m, self).__init__(filename, path)
         self._frequency = frequency
 
     def present_m(self, indexes, mode=PresenterMode.DETAILED):
-        """Preset the binary."""
+        """Present the binaries.
+
+        Parameters
+        ----------
+        indexes : list of int
+            Binary indexes to present.
+        mode : PresenterMode
+            Mode used to display the binaries.
+
+        """
         self._present_mode = mode
         self._visualizer.options().set_showed_mode(self._present_mode)
         self._visualizer().reset()
@@ -151,14 +204,36 @@ class Presenter_m(Presenter):
         self._visualizer().get_column(self._state_id).set_title(f"{self._current_index} : {self._frequency[self._current_index] : .2f} %")
 
 class Presenter_h(Presenter):
-    """Handles drawing binaries as hierarchical trees"""
+    """Handles drawing binaries as hierarchical trees."""
+
     def __init__(self,filename, path="./", frequency=None):
+        """Initialize a Presenter_h instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file containing the data.
+        path : str
+            Path where the file is located.
+        frequency : dict, optional
+            Frequency of each binary index.
+
+        """
         super(Presenter_h, self).__init__(filename, path)
         self._frequency = frequency
         self._column_width = 400 #fixed but could be dynamic
 
     def present_h(self, indexes, mode=None):
-        """Preset the binary."""
+        """Present the binaries in a hierarchical tree.
+
+        Parameters
+        ----------
+        indexes : list of int
+            Binary indexes to present.
+        mode : PresenterMode, optional
+            Mode used to display the binaries.
+
+        """
         self._present_mode = PresenterMode.DIAGRAM #only available mode
         self._visualizer.options().set_showed_mode(self._present_mode) #keep
         self._visualizer().reset()
@@ -197,8 +272,19 @@ class Presenter_h(Presenter):
         self._columns_data = new_col_data
 
     def _tuple_h(self, info_col):
-        """Return a list of filenames of the picture (or centered_text) from the list of
-        StateInfos/CaseInfos for a given column"""
+        """Return a list of filenames (or centered_text) of a given column.
+
+        Parameters
+        ----------
+        info_col : list of StateInfos/CaseInfos
+            List of Infos of the column.
+
+        Returns
+        -------
+        list of str
+            List of filenames (or centered_text) of the column.
+
+        """
         return [(os.path.split(info.S1_filename)[-1] +
                 os.path.split(info.S2_filename)[-1] if (
                     info.event_filename == None
@@ -208,7 +294,21 @@ class Presenter_h(Presenter):
                 for info in info_col]
 
     def _compareInfos(self, info0, info1):
-        """Conpare two Infos objects (can be CaseInfos or StateInfos)"""
+        """Compare two Infos objects (can be CaseInfos or StateInfos).
+
+        Parameters
+        ----------
+        info0 : CaseInfos or StateInfos
+            First Infos object to compare.
+        info1 : CaseInfos or StateInfos
+            Second Infos object to compare.
+
+        Returns
+        -------
+        bool
+            True if the two Infos are identical, False otherwise.
+
+        """
         if type(info0) == type(info1):
             if type(info0) == StateInfos :
                 if info0.event_filename == None == info1.event_filename :
@@ -227,8 +327,20 @@ class Presenter_h(Presenter):
                           end_col,
                           line,
                           parent_col=None):
-        """Remove consecutive horizontally duplicated state to get the tree view
-        (recursively)"""
+        """Remove consecutive horizontally duplicated states recursively.
+
+        Parameters
+        ----------
+        start_col : int
+            Index of the first column of the range.
+        end_col : int
+            Index of the last column of the range.
+        line : int
+            Line index of the state to inspect.
+        parent_col : int, optional
+            Index of the parent column.
+
+        """
         if start_col > end_col :
             return
         if start_col == end_col :
@@ -301,8 +413,18 @@ class Presenter_h(Presenter):
 
 
     def _center_column(self, range_column, line):
-        """move states in a range of columns from far right to center
-        also setting the sum of same states's frequencies appearance to be printed"""
+        """Move states in a range of columns from far right to center.
+
+        Also sets the sum of the same states' frequencies appearance to be printed.
+
+        Parameters
+        ----------
+        range_column : list of list of int
+            Ranges of columns to center.
+        line : int
+            Line index of the states to center.
+
+        """
         for k,j in range_column:
             if j - k >= 1 :
                 info = self._infos[j][line]
@@ -333,7 +455,7 @@ class Presenter_h(Presenter):
 
 
     def _update_visualisation_h(self):
-        """Hierarchy PresenterMode for the moment is only PresenterMode.DIAGRAM"""
+        """Hierarchy PresenterMode for the moment is only PresenterMode.DIAGRAM."""
         if self._current_index is None:
             return
 
@@ -350,12 +472,13 @@ class Presenter_h(Presenter):
 
 
     def _prepare_diagram_columns_h(self):
-        """Add columns for Diagram view set column minimum width and add index to _columns_indexes"""
+        """Add columns for Diagram view, set column minimum width and add index to _columns_indexes."""
         self._state_id = self._visualizer().add_column(columnTYPE.CONNECTED)
         self._visualizer()._layout.setColumnMinimumWidth(self._state_id, self._column_width)
         self._columns_indexes.append(self._state_id)
 
     def _diagram_presentation_h(self):
+        """Present the binaries in the hierarchical diagram view."""
 
         simplified_datas = []#list of columns's simplified datas
         for i in self._columns_indexes:
@@ -405,6 +528,22 @@ class Presenter_h(Presenter):
         self._paint_obl_edges()
 
     def _prepare_diagram_line(self, data, max_distance):
+        """Prepare widget information to display one hierarchical diagram line.
+
+        Parameters
+        ----------
+        data : dictionary of SimplifiedInfo
+            Infos formatted to be displayed in widgets.
+        max_distance : float
+            Max distance between 2 stars, used to set the normalized distance
+            for this state.
+
+        Returns
+        -------
+        list of StateInfos
+            List containing the StateInfos to display.
+
+        """
 
         state_info = StateInfos(self._state_id)
         if self._distance_representation and "separation" in data:
@@ -474,7 +613,7 @@ class Presenter_h(Presenter):
         return [state_info]
 
     def _paint_obl_edges(self):
-        """Adding oblic edges to be painted as ConnectedItem from edges added in self._edges"""
+        """Add oblique edges to be painted as ConnectedItem from edges added in self._edges."""
         for i1,j1,i2,j2 in self._edges[1:] :
             self._visualizer()._columns[j1]._connected_items.append(
                         ConnectedItem(
