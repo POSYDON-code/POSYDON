@@ -3105,7 +3105,7 @@ class Couch20_corecollapse(object):
 
 
 def check_SN_CO_match(SN_type, state):
-    '''Check if the SN type matches the stellar state of the given star.
+    """Check if the SN type matches the stellar state of the given star.
 
     Parameters
     ----------
@@ -3118,7 +3118,7 @@ def check_SN_CO_match(SN_type, state):
     -------
     correct_SN_type : bool
         True if the SN type matches the stellar state of the star.
-    '''
+    """
     # TODO: remove star.state == PISN, because PISN shouldn't be a stellar state
     if state == 'PISN':
         state = 'massless_remnant'

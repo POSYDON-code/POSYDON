@@ -71,7 +71,7 @@ def clear_previous_lines(num_lines):
 ## Main population setup
 
 def create_merge_script_text(ini_file):
-    '''Creates the text for the merge script of the population synthesis run.
+    """Creates the text for the merge script of the population synthesis run.
 
     The generated script combines the "evolution.combined.h5" files
     from the different job arrays in the "temp_directory" into a
@@ -81,7 +81,7 @@ def create_merge_script_text(ini_file):
     ----------
     ini_file : str
         Path to the .ini file containing population synthesis parameters.
-    '''
+    """
     text = textwrap.dedent(f'''\
         from posydon.popsyn.binarypopulation import BinaryPopulation
         from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -110,7 +110,7 @@ def create_merge_script_text(ini_file):
     return text
 
 def create_run_script_text(ini_file):
-    '''Creates the text for the run script of the population synthesis run.
+    """Creates the text for the run script of the population synthesis run.
 
     The generated script runs the POSYDON population at a specific metallicity.
     The script takes a metallicity as a command-line input and uses it to run
@@ -120,7 +120,7 @@ def create_run_script_text(ini_file):
     ----------
     ini_file : str
         Path to the .ini file containing population synthesis parameters.
-    '''
+    """
     text = textwrap.dedent(f'''\
         from posydon.popsyn.binarypopulation import BinaryPopulation
         from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -143,7 +143,7 @@ def create_run_script_text(ini_file):
     return text
 
 def create_run_script(ini_file):
-    '''Creates a run script for the population synthesis run.
+    """Creates a run script for the population synthesis run.
 
     This function creates a script that will run the POSYDON population at a specific metallicity.
     The script takes a metallicity as a command-line input.
@@ -153,7 +153,7 @@ def create_run_script(ini_file):
     ----------
     ini_file : str
         Path to the .ini file containing population synthesis parameters.
-    '''
+    """
 
     filename ='run_metallicity.py'
     if os.path.exists(filename): # pragma: no cover
@@ -162,7 +162,7 @@ def create_run_script(ini_file):
         file.write(create_run_script_text(ini_file))
 
 def create_merge_script(ini_file):
-    '''Creates a merge script for the population synthesis run.
+    """Creates a merge script for the population synthesis run.
 
     The created merge script will combine the "evolution.combined.h5" files
     from the different job arrays in the "temp_directory" into a
@@ -172,7 +172,7 @@ def create_merge_script(ini_file):
     ----------
     ini_file : str
         Path to the .ini file containing population synthesis parameters.
-    '''
+    """
 
     filename='merge_metallicity.py'
     if os.path.exists(filename): # pragma: no cover
@@ -191,7 +191,7 @@ def create_slurm_array(metallicity,
                         exclude,
                         path_to_posydon,
                         path_to_posydon_data):
-    '''Creates the slurm array script for population synthesis job arrays.
+    """Creates the slurm array script for population synthesis job arrays.
 
     Creates a SLURM submission script file named
     "{str_met}_Zsun_slurm_array.slurm" where str_met is the metallicity
@@ -221,7 +221,7 @@ def create_slurm_array(metallicity,
         Path to the POSYDON installation
     path_to_posydon_data : str
         Path to the POSYDON_DATA directory
-    '''
+    """
     str_met = convert_metallicity_to_string(metallicity)
     job_array_length = job_array_length - 1  # 0 already included
 
@@ -277,7 +277,7 @@ def create_slurm_merge(metallicity,
                        mem_per_cpu,
                        path_to_posydon,
                        path_to_posydon_data):
-    '''Creates the slurm submit script for merging population synthesis results.
+    """Creates the slurm submit script for merging population synthesis results.
 
     Creates a SLURM submission script file named
     "{str_met}_Zsun_merge_popsyn.slurm" where str_met is the metallicity
@@ -301,7 +301,7 @@ def create_slurm_merge(metallicity,
         Path to the POSYDON installation
     path_to_posydon_data : str
         Path to the POSYDON_DATA directory
-    '''
+    """
     str_met = convert_metallicity_to_string(metallicity)
 
     # Override walltime for debug-cpu partition
@@ -359,7 +359,7 @@ def create_slurm_rescue(metallicity,
                         exclude,
                         path_to_posydon,
                         path_to_posydon_data):
-    '''Creates the slurm rescue script for resubmitting failed population synthesis jobs.
+    """Creates the slurm rescue script for resubmitting failed population synthesis jobs.
 
     Creates a SLURM submission script file named
     "{str_met}_Zsun_rescue.slurm" where str_met is the metallicity
@@ -391,7 +391,7 @@ def create_slurm_rescue(metallicity,
         Path to the POSYDON installation
     path_to_posydon_data : str
         Path to the POSYDON_DATA directory
-    '''
+    """
     str_met = convert_metallicity_to_string(metallicity)
 
     # Format job array string for SBATCH
@@ -448,19 +448,19 @@ def create_slurm_rescue(metallicity,
 ## Main Functions for Population Synthesis Setup ##
 
 def create_python_scripts(ini_file):
-    '''Creates the run and merge scripts for population synthesis.
+    """Creates the run and merge scripts for population synthesis.
 
     Parameters
     ----------
     ini_file : str
         Path to the .ini file containing population synthesis parameters.
-    '''
+    """
     create_run_script(ini_file)
     create_merge_script(ini_file)
     print("Created run script and merge script")
 
 def create_slurm_scripts(metallicity, args): # pragma: no cover
-    '''Creates the slurm scripts for population synthesis.
+    """Creates the slurm scripts for population synthesis.
 
     Parameters
     ----------
@@ -468,7 +468,7 @@ def create_slurm_scripts(metallicity, args): # pragma: no cover
         The metallicity in solar units (e.g., 0.02 for Z=0.02)
     args : argparse.Namespace
         the arguments passed to the function
-    '''
+    """
     create_slurm_array(metallicity, args.job_array, args.partition, args.email,
                        args.walltime, args.account, args.mem_per_cpu,
                        args.max_concurrent_jobs, args.exclude,
@@ -483,7 +483,7 @@ def create_slurm_scripts(metallicity, args): # pragma: no cover
     print(f"SLURM script created for metallicity {convert_metallicity_to_string(metallicity)}")
 
 def create_bash_submit_script(filename, metallicities):
-    '''Creates the bash submission script for all SLURM jobs.
+    """Creates the bash submission script for all SLURM jobs.
 
     Parameters
     ----------
@@ -491,7 +491,7 @@ def create_bash_submit_script(filename, metallicities):
         The name of the bash submission script to create
     metallicities : list of float
         The list of metallicities in solar units
-    '''
+    """
 
     if os.path.exists(filename): # pragma: no cover
         Pwarn('Replace '+filename, "OverwriteWarning")

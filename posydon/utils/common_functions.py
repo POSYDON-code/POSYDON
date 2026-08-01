@@ -1537,13 +1537,13 @@ def flip_stars(binary):
 
 
 def set_binary_to_failed(binary):
-    '''Set the properties of the binary to indicate that it has failed.
+    """Set the properties of the binary to indicate that it has failed.
 
     Parameters
     ----------
     binary : BinaryStar
         The binary to set to failed.
-    '''
+    """
     binary.state = "ERR"
     binary.event = "FAILED"
     binary.append_state()

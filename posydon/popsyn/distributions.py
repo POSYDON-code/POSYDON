@@ -444,7 +444,7 @@ class Sana12Period():
 
 
     def pdf(self, p, m1):
-        '''Probability density function of the Sana12 period distribution.
+        """Probability density function of the Sana12 period distribution.
         Conditional on m1.
 
         Normalised in logP space to 1.
@@ -461,7 +461,7 @@ class Sana12Period():
         float or ndarray
             Probability density at period p.
 
-        '''
+        """
         p = np.asarray(p)
         m1 = np.asarray(m1)
         if m1.size == 1:
@@ -559,7 +559,7 @@ class Sana12Period():
 
 
 class PowerLawPeriod():
-    '''Power law period distribution with slope pi and boundaries m_min, m_max.
+    """Power law period distribution with slope pi and boundaries m_min, m_max.
 
     Normalised in logP space to 1.
 
@@ -572,7 +572,7 @@ class PowerLawPeriod():
     p_max : float
         Maximum period.
 
-    '''
+    """
 
     def __init__(self, slope=-0.55, p_min=1.4, p_max=3e6):
         """Initialize the power law period distribution.

@@ -94,7 +94,7 @@ class IMFBase(ABC):
     # This forces that the method is implemented in a sub-class
     @abstractmethod
     def imf(self, m): # pragma: no cover
-        '''Computes the IMF value for a given mass or array of masses 'm'.
+        """Computes the IMF value for a given mass or array of masses 'm'.
 
         Parameters
         ----------
@@ -105,7 +105,7 @@ class IMFBase(ABC):
         -------
         NotImplementedError
             If the method is not implemented in a subclass.
-        '''
+        """
         pass
 
     @abstractmethod
@@ -193,7 +193,7 @@ class Salpeter(IMFBase):
                 f"<p>m_max = {self.m_max}</p>")
 
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'.
+        """Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
 
         Parameters
@@ -205,7 +205,7 @@ class Salpeter(IMFBase):
         -------
         float or ndarray
             The IMF value for the given mass or masses.
-        '''
+        """
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
@@ -311,7 +311,7 @@ class Kroupa1993(IMFBase):
                 f"<p>m_max = {self.m_max}</p>")
 
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'.
+        """Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
 
         Parameters
@@ -323,7 +323,7 @@ class Kroupa1993(IMFBase):
         -------
         float or ndarray
             The IMF value for the given mass or masses.
-        '''
+        """
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
@@ -467,7 +467,7 @@ class Kroupa2001(IMFBase):
                 f"<p>m_max = {self.m_max}</p>")
 
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'.
+        """Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
 
         Parameters
@@ -479,7 +479,7 @@ class Kroupa2001(IMFBase):
         -------
         float or ndarray
             The IMF value for the given mass or masses.
-        '''
+        """
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")
@@ -618,7 +618,7 @@ class Chabrier2003(IMFBase):
                 f"<p>m_max = {self.m_max}</p>")
 
     def imf(self, m):
-        '''Computes the IMF value for a given mass or array of masses 'm'.
+        """Computes the IMF value for a given mass or array of masses 'm'.
         Raises a ValueError if any value in 'm' is less than or equal to zero.
 
         Parameters
@@ -630,7 +630,7 @@ class Chabrier2003(IMFBase):
         -------
         float or ndarray
             The IMF value for the given mass or masses
-        '''
+        """
         m = np.asarray(m)
         if np.any(m <= 0):
             raise ValueError("Mass must be positive.")

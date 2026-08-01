@@ -39,13 +39,13 @@ class DisruptedStep(IsolatedStep):
 
     def __call__(self,binary):
 
-        '''
+        """
         if binary.state == "disrupted":
             #find which star is a CO, the other will be evolved in isolation
             if binary.star_1 in STAR_STATES_CO:   ## TODO KEEP IT AS CORE-COLLAPSE
                 binary.star_1 = None
             elif binary.star_2 in STAR_STATES_CO:
                 binary.star_2 = None
-        '''
+        """
 
         super().__call__(binary)

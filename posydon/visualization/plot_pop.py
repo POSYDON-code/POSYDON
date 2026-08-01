@@ -38,7 +38,7 @@ COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i]
 
 
 def plot_perley16_rate_density(ax=None):
-    '''Plot the GRB rate density from Perley et al. (2016).
+    """Plot the GRB rate density from Perley et al. (2016).
 
     plot the long gamma-ray burst rate density from Perley et al. (2016)
     if ax is None, it plotted on the latest axis, otherwise it is added to the given axis
@@ -47,7 +47,7 @@ def plot_perley16_rate_density(ax=None):
     ----------
     ax : matplotlib.axes.Axes (optional)
         Axes object to plot the data on
-    '''
+    """
     # Perley et al. (2016)
 
     z_P16 = np.array([0.3,0.75,1.35,1.75,2.3,3.1,4,5.2,7.])
@@ -248,7 +248,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
                                 log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
-    '''Plot the population synthesis data over a grid slice.
+    """Plot the population synthesis data over a grid slice.
 
     Outputs one or multiple plots of the population synthesis data over a grid slice.
     Either stores the plots in a directory or shows them.
@@ -290,7 +290,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         File extension for saving the plot
     verbose : bool (optional)
         Print information
-    '''
+    """
 
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
@@ -358,7 +358,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
             plt.close()
 
 def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
-    '''Get the population data of a given metallicity for plotting.
+    """Get the population data of a given metallicity for plotting.
 
     Parameters
     ----------
@@ -378,7 +378,7 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     -------
     data : DataFrame
         Population data of the given metallicity and channel and grid type
-    '''
+    """
 
     # 1. mask channel
     if channel is not None:
@@ -436,7 +436,7 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     return data
 
 def setup_grid_slice_plotting(grid, grid_type, plot_extension):
-    '''Setup the values for plotting the grid slice.
+    """Setup the values for plotting the grid slice.
 
     Parameters
     ----------
@@ -460,7 +460,7 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
         String of the 3D variable to slice the grid
     tmp_fname : str
         Template file name for saving the plot
-    '''
+    """
 
     if grid_type == "HMS-HMS":
         grid_q_unique = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
@@ -503,7 +503,7 @@ def plot_population_data(data,
                          log_prop=False,
                          alpha=0.3,
                          s=5):
-    '''Plot the population data based on the grid slice parameters.
+    """Plot the population data based on the grid slice parameters.
 
     Parameters
     ----------
@@ -523,7 +523,7 @@ def plot_population_data(data,
         Transparency of the data points
     s : float (optional)
         Size of the data points
-    '''
+    """
 
     # get only slice data
     if slice_3D_var_str == 'mass_ratio':
@@ -581,7 +581,7 @@ def plot_population_data(data,
                     zorder=0.5)
 
 def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
-    '''Plot the grid slice.
+    """Plot the grid slice.
 
     Parameters
     ----------
@@ -596,7 +596,7 @@ def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag
     PLOT_PROPERTIES : dict
         Dictionary of plot properties
 
-    '''
+    """
     grid.plot2D('star_1_mass', 'period_days', None,
                 termination_flag=termination_flag,
                 grid_3D=True, slice_3D_var_str=slice_3D_var_str,
