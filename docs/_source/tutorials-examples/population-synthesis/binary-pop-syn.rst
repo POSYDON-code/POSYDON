@@ -72,7 +72,9 @@ In this tutorial, you will learn how to change the assumption of star-formation 
 X-ray binaries: computing the X-ray luminosity function 🩻
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
+*Coming soon*: a tutorial in which you compute the X-ray luminosity function of
+X-ray binaries, leveraging the ``SyntheticPopulation`` class to analyze the
+populations you produce.
 
 
 Evolving Single Binaries 🐞
@@ -115,9 +117,8 @@ Dive into the nitty-gritty of POSYDON's inner workings. Customize, extend, and t
 
 Customizing the Population Synthesis Class 🛠️
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   - Understand the foundational class driving our binary-star population synthesis. Learn to modify and adapt it to your needs.
-   - 🔗 [Delve into class customizations](link-to-customization-notebook1)
-
-(Add other in-depth customization tutorials here...)
+   - Understand the foundational class driving binary-star population synthesis.
+     Learn how to modify and adapt it to your needs by following the
+     :ref:`custom step and flow <add-step-user-module>` guide.
 
 Remember, mastering POSYDON is a journey, not a destination. As you progress through these tutorials, you'll uncover layers of capabilities and functionalities. Keep exploring and happy simulating!

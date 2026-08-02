@@ -5,6 +5,26 @@ Stellar & Binary-star Simulation
 ################################
 
 
+Why the object hierarchy matters
+==================================
+
+The whole of POSYDON's population-synthesis machinery is built on a small set of
+Python classes that wrap the physics of stars and binaries. If you want to
+understand the code -- rather than just run it -- it pays to first soak in this
+idea:
+
+* a star is a ``SingleStar`` (its structure and evolutionary history);
+* a binary is a ``BinaryStar`` (the pair plus the two ``SingleStar`` objects);
+* a collection of binaries evolved together is a ``BinaryPopulation``;
+* one or more populations (e.g. at different metallicities) are combined into a
+  ``SyntheticPopulation``;
+* the knobs that control *how* each binary evolves live in the
+  ``SimulationProperties`` / flow-chart and configuration objects.
+
+Each object delegates its behavior to the physics modules (detached, common
+envelope, supernova) through the binary's evolving "state" and "event", and that
+is what the rest of this section documents object by object.
+
 
 
 POSYDON: Building Populations with Object-Oriented Design
