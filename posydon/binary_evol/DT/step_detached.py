@@ -640,8 +640,15 @@ class detached_step:
                            "mass_transfer_case",
                            "nearest_neighbour_distance",
                            "state", "metallicity", "V_sys"]:
-                    # For star objects, the state is calculated further below
-                    history = [getattr(obj, key)] * len(t)
+                    # For star objects, the state is calculated further below.
+                    # During intermediate timesteps (dt/n_o_steps_history set),
+                    # the binary's event is only meaningful at the end of the
+                    # step, so fill intermediate rows with None instead of
+                    # propagating the stale event (e.g. redirect_from_*).
+                    if key == "event" and obj == binary:
+                        history = [None] * len(t)
+                    else:
+                        history = [getattr(obj, key)] * len(t)
 
                 # replace the actual surf_avg_w with the effective omega,
                 # which takes into account the whole star
