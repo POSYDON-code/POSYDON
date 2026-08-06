@@ -5,6 +5,25 @@
 # ============================================================
 FROM quay.io/jupyter/scipy-notebook:latest
 
+# Install MESA SDK dependencies as root:
+#   binutils     - development tools (for SDKs prior to 23.7.2)
+#   make         - dependency/compilation tool
+#   perl         - scripting language
+#   libx11-dev   - X11 windowing library + development headers
+#   zlib1g-dev   - Z compression library + development headers
+#   tcsh         - the C shell / derivatives
+USER root
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        binutils \
+        make \
+        perl \
+        libx11-dev \
+        zlib1g-dev \
+        tcsh && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 USER ${NB_UID}
 
 # Create a dedicated conda environment for POSYDON
