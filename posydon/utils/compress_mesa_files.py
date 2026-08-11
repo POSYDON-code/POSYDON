@@ -103,8 +103,8 @@ def set_up_test(args):
     """Set up a testing directory in the requested directory. It copies data
     from the mesa_dir into the testing directory.
 
-    Parameters (keys in `args`)
-    ---------------------------
+    Parameters
+    ----------
     mesa_dir : string
         The directory where the MESA tracks are stored.
     test_dir : string

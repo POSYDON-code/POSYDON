@@ -90,7 +90,7 @@ path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
 class StepSN(object):
     """The supernova step in POSYDON.
 
-    Keyword Arguments
+    Other Parameters
     ----------
     mechanism : str
         Mechanism to perform the core-collapse on the star object and

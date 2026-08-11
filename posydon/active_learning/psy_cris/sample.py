@@ -195,8 +195,8 @@ class Sampler:
             TD_verbose : bool, optional
                 Print more diagnostic information.
 
-        Rreturns
-        --------
+        Returns
+        -------
         array
         """
         normalized_probs, where_not_nan = self._Classifier_.return_probs(

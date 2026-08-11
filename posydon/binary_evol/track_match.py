@@ -71,24 +71,25 @@ class TrackMatcher:
     quantities) that are used to determine the quality of the match may be
     customized. By default, the metrics are as follows:
 
-      Initial stellar matching metrics
-      ========================================
+        Notes
+        -----
 
-      MS:          mass,                      center X, radius, He core mass
-      post-MS:     mass,                      center Y, radius, He core mass
-      stripped He: He core mass (mass proxy), center Y, radius
+        Initial stellar matching metrics:
+
+        MS:          mass,                      center X, radius, He core mass
+        post-MS:     mass,                      center Y, radius, He core mass
+        stripped He: He core mass (mass proxy), center Y, radius
 
         If an initial match can not be found, alternative sets of metrics are
     used. For example, stars after mass transfer could swell up so that log_R
     is not appropriate for matching. Lists for HMS and postMS stars drop
     radius as a matching metric in these alternatives:
 
-      Alternative stellar matching metrics
-      ========================================
+        Alternative stellar matching metrics:
 
-      MS:          total mass,                      center X, He core mass
-      post-MS:     total mass,                      center Y, He core mass
-      stripped He: He core mass (total mass proxy), center Y, radius
+        MS:          total mass,                      center X, He core mass
+        post-MS:     total mass,                      center Y, He core mass
+        stripped He: He core mass (total mass proxy), center Y, radius
 
     The available matching methods are:
 

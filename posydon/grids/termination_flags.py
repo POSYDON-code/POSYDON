@@ -312,7 +312,7 @@ def get_detected_initial_RLO(grid):
     grid : a PSyGrid
         The grid to check.
 
-    Retruns
+    Returns
     -------
     list
         A list containing systems already detected to be initial_MT based on
@@ -372,7 +372,7 @@ def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
     known_initial_RLO : list of dict
         Boundary to apply.
 
-    Retruns
+    Returns
     -------
     dict
         Containing the key parameters (e.g. initial masses, period) of the

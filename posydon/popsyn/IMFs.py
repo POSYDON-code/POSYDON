@@ -454,7 +454,7 @@ class Chabrier2003(IMFBase):
               * exp(- (log10(m) - log10(m_c))^2 / (2 * sigma^2)) for m < m_break
         dN/dM = C * (m / m_break)^(-alpha) for m >= m_break
 
-    Reference
+    References
     ----------
     Chabrier, (2003). PASP, 115(809), 763-795.
     https://ui.adsabs.harvard.edu/abs/2003PASP..115..763C/abstract

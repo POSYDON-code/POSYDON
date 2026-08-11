@@ -41,7 +41,7 @@ def get_shell_comoving_volume(z_hor_i, z_hor_f, sensitivity="infinite"):
     Returns
     -------
     double
-        Retruns the comoving volume between the two shells z_hor_i
+        Returns the comoving volume between the two shells z_hor_i
         and z_hor_f in Gpc^3.
 
     """

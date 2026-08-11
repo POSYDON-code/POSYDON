@@ -79,8 +79,8 @@ class StepCEE(object):
     verbose : bool
         If True, the messages will be printed in the console.
 
-    Keyword Arguments
-    -----------------
+    Other Parameters
+    ----------------
     prescription : str
         Prescription to use for computing the prediction of common envelope
         evolution. Available options are:

@@ -205,8 +205,8 @@ def do_small_class_proposal(table_data, n_neighbors, n_new_points=1,
     around the point with length scale given by the average distance between
     nearest neighbors (in each axis).
 
-    Params
-    ------
+    Parameters
+    ----------
     data : ndarray
         Data to train the NearestNeighbors class on.
     n_neighbors : int

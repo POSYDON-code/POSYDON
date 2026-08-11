@@ -1052,7 +1052,7 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
 def check_state_of_star(star, i=None, star_CO=False):
     """Get the state of a SingleStar.
 
-    Arguments
+    Parameters
     ----------
     star: SingleStar
         The star for which the state will be computed.
@@ -1265,7 +1265,7 @@ def get_binary_state_and_event_and_mt_case_array(binary, N=None,
                                                  verbose=False):
     """Calculate the evolutionary states with an array of history data.
 
-    Arguments
+    Parameters
     ----------
     binary: POSYDON BinaryStar object
     N : array
@@ -1757,8 +1757,8 @@ def get_i_He_depl(history):
     history: numpy-array
         Stellar history from MESA
 
-    Return
-    ------
+    Returns
+    -------
     int
         index of He depletion (-1 if no He depletion is found)
     """

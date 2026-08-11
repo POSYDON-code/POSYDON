@@ -1,6 +1,6 @@
 """Provides the functions that handle input/output of Job data.
 
-Example
+Examples
 -------
     print("Example using new script (Simone's runs)")
     path = "/home/konstantinos/pCloudDrive/"

@@ -714,7 +714,7 @@ class BaseIFInterpolator:
     def train_classifiers(self, grid, method='kNN', **options):
         """Train the classifiers.
 
-        Paramaters
+        Parameters
         ----------
 
         grid : PSyGrid
@@ -742,7 +742,7 @@ class BaseIFInterpolator:
     def train_classifier(self, grid, key, method='kNN', **options):
         """Train a specific classifier.
 
-        Paramaters
+        Parameters
         ----------
         grid : PSyGrid
             The training grid
