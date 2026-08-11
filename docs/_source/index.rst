@@ -34,7 +34,7 @@ We've tried to group the documentation into four distinct sections to help you n
 
 .. toctree::
    :maxdepth: 1
-   :caption: How-to
+   :caption: How-to (Getting Started)
 
    getting-started/prerequisites
    getting-started/installation-guide
@@ -43,7 +43,7 @@ We've tried to group the documentation into four distinct sections to help you n
 
 .. toctree::
    :maxdepth: 1
-   :caption: Tutorials (Getting Started)
+   :caption: Tutorials
 
    tutorials-examples/population-synthesis/binary-pop-syn
    tutorials-examples/generating-datasets/generating-datasets

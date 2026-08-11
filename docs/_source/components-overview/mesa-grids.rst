@@ -22,6 +22,7 @@ Running dynamic type grids
 
 Learn how to run dynamic type grids using the POSYDON API. Dynamic grids are
 currently **experimental**; see :ref:`dynamic_grid`.
+
 .. toctree::
 
    mesa_grids/dynamic
