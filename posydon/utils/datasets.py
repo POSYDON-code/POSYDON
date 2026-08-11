@@ -42,7 +42,7 @@ ZENODO_COLLECTION['auxiliary'] = {
                    + "detector sensitivity (of O3, O4low, O4high, design of "\
                    + "three gravitational wave detectors H1, L1, V1). About "\
                    + "4GB on disk.",
-    'md5': "7eed35f08065628656fd140c03800cd6",
+    'md5': "a7434279e38e701f580995cebb1b54fb",
     'title': "Auxiliary POSYDON data",
     'url': "https://zenodo.org/records/21791937",
 }
@@ -136,7 +136,7 @@ ZENODO_COLLECTION['DR2_grids_0.01Zsun'] = {
                    + "contains single-HMS, single-HeMS, HMS-HMS, HMS-HMS_RLO,"\
                    + " CO-HMS_RLO, CO-HeMS, CO-HeMS_RLO all at 0.01 solar "\
                    + "metallicity.",
-    'md5': "25157c0e156c729b3a4cecbe878cbf51",
+    'md5': "670ba8c5c3250b70514911a62c444495",
     'title': "POSYDON DR2 dataset at 0.01 Zsun",
     'url': "https://zenodo.org/records/21791937",
 }
