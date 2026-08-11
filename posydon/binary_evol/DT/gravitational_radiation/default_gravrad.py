@@ -4,9 +4,9 @@ import posydon.utils.constants as const
 
 
 def default_gravrad(a, e, primary, secondary, verbose = False):
-    """Calculate the change in orbital separation and eccentricity.
+    """Calculate the change in orbital separation and eccentricity due to gravitational wave radiation.
 
-    Due to gravitational wave radiation, according to:
+    Follows the description in:
 
         Junker, W., & Schafer, G. 1992, MNRAS, 254, 146
 
