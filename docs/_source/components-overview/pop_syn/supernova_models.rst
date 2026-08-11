@@ -19,17 +19,64 @@ Core-Collapse Mechanisms
 
 POSYDON supports the following core-collapse mechanisms:
 
-* **Fryer+12-rapid** and **Fryer+12-delayed**: Classical rapid and delayed supernova engines from Fryer et al. (2012)
+.. list-table:: Core-collapse mechanisms
+   :header-rows: 1
+   :widths: 20 10 70
 
-* **Sukhbold+16-engine**: Uses pre-computed results from Sukhbold et al. (2016) based on neutrino-powered explosions, with different engine variants (N20, W20)
+   * - Mechanism
+     - Engine
+     - Description
+   * - **Fryer+12-delayed**
+     - ``None``
+     - Classical rapid and delayed supernova engines from Fryer et al. (2012)
+   * - **Fryer+12-rapid**
+     - ``None``
+     - Classical rapid and delayed supernova engines from Fryer et al. (2012)
+   * - **Sukhbold+16-engine**
+     - ``N20``, ``W20``, ``S19.8``, ``W15``, ``W18``
+     - Uses pre-computed results from Sukhbold et al. (2016) based on neutrino-powered explosions
+   * - **Patton&Sukhbold20-engine**
+     -  ``N20``, ``W20``, ``S19.8``, ``W15``, ``W18``
+     - Advanced engine combining Patton & Sukhbold (2020) results for realistic explosion landscapes
+   * - **Maltsev+25-engine**
+     - ``M16``
+     - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
+   * - **Couch+20-engine**
+     - ``"1.0", "1.2", "1.23", "1.25", "1.27", "1.3", "1.4"``
+     - Simulations of turbulence-aided neutrino-driven core-collapse supernovae from Couch et al. (2020)
+   * - **direct**
+     - ``None``
+     - Simplified prescriptions that directly collapse the pre-supernova to the baryonic mass
+   * - **direct_he_core**
+     - ``None``
+     - Simplified prescriptions that directly collapse the pre-supernova to the baryonic mass of the helium core
 
-* **Patton&Sukhbold20-engine**: Advanced engine combining Patton & Sukhbold (2020) results for realistic explosion landscapes, with variants (N20, W20)
 
-* **Maltsev+25-engine**: Latest engine from Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid below M_CO < 10 Msun!**
 
-* **Couch+20-engine**: Simulations of turbulence-aided neutrino-driven core-collapse supernovae from Couch et al. (2020)
+Pulsational pair-instability supernova prescriptions
+----------------------------------------------------
 
-* **direct** and **direct_he_core**: Simplified prescriptions that directly collapse the pre-supernova or He-core mass to the baryonic mass
+POSYDON also supports pulsational pair-instability supernova (PPISN) prescriptions, which can be set in the configuration file:
+
+.. list-table:: (P)PISN prescriptions
+   :header-rows: 1
+   :widths: 20 10 70
+
+   * - Prescription
+     - Parameters
+     - Description
+   * - **Marchant+19**
+     - ``None``
+     - Marchant et al. (2019) prescription for PPISN and PISN mass loss from
+     | Breivik et al. (2020).
+   * - **Hendriks+23**
+     - ``PISN_CO_shift`` and ``PPI_extra_mass_loss``
+     - Hendriks et al. (2023) prescription for PPISN and PISN mass loss.
+     | ``PISN_CO_shift`` shifts the CO core mass threshold for PPI onset
+     | and ``PPI_extra_mass_loss`` adds extra mass loss during PPISN events.
+     | PISN occurs if the remnant mass after PPI mass loss is less than 10 Msun.
+
+
 
 Computational Approaches
 ------------------------
