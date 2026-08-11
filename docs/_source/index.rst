@@ -71,7 +71,7 @@ We've tried to group the documentation into four distinct sections to help you n
 
 .. toctree::
    :maxdepth: 1
-   :caption: Reference
+   :caption: API Reference
 
    components-overview/mesa-grids
    api_reference/posydon
@@ -80,25 +80,13 @@ We've tried to group the documentation into four distinct sections to help you n
 
 .. toctree::
    :maxdepth: 1
-   :caption: Introduction
+   :caption: Additional Information
 
    introduction-acknowledgements/intro
    Collaborative Team <https://posydon.org/team.html>
    Publications <https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA>
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Releases and Datasets
-
    Releases <https://github.com/POSYDON-code/POSYDON/releases>
    Datasets <https://zenodo.org/communities/posydon/>
-
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Support and Contact
-
    contact-support/contact-information
    troubleshooting-faqs/installation-issues
    troubleshooting-faqs/code-questions

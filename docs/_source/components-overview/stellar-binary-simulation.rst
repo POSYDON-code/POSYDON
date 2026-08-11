@@ -124,3 +124,16 @@ determined the amount of stars that are formed at each moment in time.
     :maxdepth: 1
 
     pop_syn/star_formation_history
+
+
+
+Supernova models
+----------------
+In POSYDON, we provide a variety of supernova models that can be used to simulate the evolution of binary systems.
+We have both pre-trained interpolators that can be used to predict the outcome of a supernova event
+and on-the-fly calculations that can be used to compute the outcome of a supernova event during the simulation.
+
+.. toctree::
+    :maxdepth: 1
+
+    pop_syn/supernova_models
