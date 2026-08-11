@@ -103,8 +103,28 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
 def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
                        orbital_period_scheme='', eccentricity_scheme='',
                        **kwargs):
-    """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
+    """Check whether Moe & Di Stefano (2017) [1]_ should be used.
+
+    This determines whether Moe & Di Stefano (2017) should be used for the
     initial sampling.
+
+    Parameters
+    ----------
+    secondary_mass_scheme : str, optional
+        The scheme for sampling secondary masses.
+    orbital_scheme : str, optional
+        The scheme for sampling orbital periods or separations.
+    orbital_period_scheme : str, optional
+        The scheme for sampling orbital periods.
+    eccentricity_scheme : str, optional
+        The scheme for sampling eccentricities.
+    **kwargs : dict
+        Additional keyword arguments.
+
+    Returns
+    -------
+    bool
+        True if Moe & Di Stefano (2017) should be used.
 
     References
     ----------
@@ -125,7 +145,28 @@ def generate_orbital_periods(primary_masses,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
-    """Randomly generate orbital periods for a sample of binaries."""
+    """Randomly generate orbital periods for a sample of binaries.
+
+    Parameters
+    ----------
+    primary_masses : ndarray of floats
+        The primary masses used to sample the periods.
+    number_of_binaries : int, optional
+        Number of binaries to sample.
+    orbital_period_min : float, optional
+        Minimum orbital period in days.
+    orbital_period_max : float, optional
+        Maximum orbital period in days.
+    orbital_period_scheme : str, optional
+        Distribution from which the orbital periods are randomly drawn.
+    **kwargs : dict
+        Additional keyword arguments, e.g. `RNG`.
+
+    Returns
+    -------
+    ndarray of floats
+        Randomly drawn orbital periods.
+    """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
     # Check inputs
@@ -168,6 +209,8 @@ def generate_orbital_separations(number_of_binaries=1,
         Standard deviation of the lorgnormal distribution.
     orbital_separation_scheme : string
         Distribution from which the orbital separations are randomly drawn
+    **kwargs : dict
+        Additional keyword arguments, e.g. `RNG`.
 
     Returns
     -------
@@ -280,6 +323,8 @@ def generate_primary_masses(number_of_binaries=1,
         Maximum primary mass
     primary_mass_scheme : string
         Distribution from which the primary masses are randomly drawn
+    **kwargs : dict
+        Additional keyword arguments, e.g. `RNG`.
 
     Returns
     -------
@@ -336,6 +381,8 @@ def generate_secondary_masses(primary_masses,
         Maximum secondary mass
     secondary_mass_scheme : string
         Distribution from which the secondary masses are randomly drawn
+    **kwargs : dict
+        Additional keyword arguments, e.g. `RNG`.
 
     Returns
     -------
@@ -377,23 +424,28 @@ def generate_secondary_masses(primary_masses,
 
 def generate_binary_fraction(m1=None, binary_fraction_const=1,
                              binary_fraction_scheme='const', **kwargs):
-    """
-    Getting the binary fraction depending on the scheme. The two possible
-    option are a constant binary fraction and a binary fraction based on the
-    values given in Moe and Di Stefano (2017).
+    """Get the binary fraction depending on the scheme.
 
-    Parameters:
-    --------------------
-    binary scheme: string
-        Determines if the value of the binary fraction will be constant or not
-    binary fraction const: int
-        Gives the value the constant value of the binary if the constant scheme
-        is choosen.
+    The two possible options are a constant binary fraction and a binary
+    fraction based on the values given in Moe and Di Stefano (2017).
+
+    Parameters
+    ----------
+    m1 : ndarray of floats
+        The primary masses.
+    binary_fraction_const : int, optional
+        Gives the value of the constant binary fraction if the constant
+        scheme is chosen.
+    binary_fraction_scheme : string, optional
+        Determines if the value of the binary fraction will be constant or
+        mass-dependent.
+    **kwargs : dict
+        Additional keyword arguments.
 
     Returns
-    ------------------
-    binary fraction: int
-
+    -------
+    ndarray of floats
+        The binary fraction for each primary mass.
     """
     binary_fraction_scheme_options = ['const','Moe+17-massdependent']
 

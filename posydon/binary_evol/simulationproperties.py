@@ -67,7 +67,7 @@ class SimulationProperties:
 
         Parameters
         ----------
-        flow_chart : dict
+        flow : dict
             A POSYDON flow_chart dictionary.
 
         step_HMS_HMS : tuple
@@ -133,6 +133,10 @@ class SimulationProperties:
             Each tuple contains a hooks class and kwargs or the extra step name
             (e.g., 'extra_pre_evolve', 'extra_pre_step', 'extra_post_step',
             'extra_post_evolve') and the corresponding function.
+
+        **kwargs : dict
+            Additional keyword arguments, e.g., grid paths and simulation
+            limits, used to configure the simulation properties.
         """
 
         self.kwargs = kwargs
@@ -226,8 +230,9 @@ class SimulationProperties:
 
     def set_path(self, path_name, path_str):
         """
-        Set and normalize a grid path attribute that points to one of the
-        MESA grids needed for binary evolution. By default, these are the
+        Set and normalize a grid path attribute pointing to one of the MESA grids needed for binary evolution.
+
+        By default, these are the
         grids inside of the directory name held in $PATH_TO_POSYDON_DATA.
 
         For example, for the step_HMS_HMS, the grid would be
@@ -283,7 +288,9 @@ class SimulationProperties:
 
     def preload_imports(self):
         """
-            Preload the imports of detached_step and MesaGridStep to avoid
+        Preload the imports of detached_step and MesaGridStep.
+
+        This avoids
         importing them when they are needed when `close()` is called. In
         particular, detached_step imports sklearn, which in turn utilizes
         loky, which invokes its own register.at_exit call. If this happens
@@ -306,6 +313,9 @@ class SimulationProperties:
 
         Parameters
         ----------
+        cls : class
+            The SimulationProperties class used to construct the new instance.
+
         path : str
             Path to an inifile to load in.
 
@@ -326,7 +336,7 @@ class SimulationProperties:
         verbose : bool
             Print useful info.
 
-        **override_sim_kwargs
+        **override_sim_kwargs : dict
             Additional keyword arguments that override values specified
             in the .ini file when constructing the SimulationProperties
             instance.
@@ -361,6 +371,11 @@ class SimulationProperties:
             to steps as they are loaded. Should be one of e.g., 2.0, 1.0,
             4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
             metallicities available in your POSYDON_DATA grids.
+
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the simulation. Defaults to a new NumPy Generator instance
+            created via ``np.random.default_rng()``.
 
         verbose : bool
             Print extra information.
@@ -415,6 +430,11 @@ class SimulationProperties:
             Metallicity (Z) to assign to the step if required and not already
             specified in the step keyword arguments. Default supported values
             are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.
+
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the step. Defaults to a new NumPy Generator instance created via
+            ``np.random.default_rng()``.
 
         from_ini : str, optional
             Path to an `.ini` file containing step configuration. If provided
@@ -491,21 +511,25 @@ class SimulationProperties:
         metallicity : float or None
             Default metallicity value to use for the step if not explicitly
             provided in ``step_kwargs``.
+        RNG : numpy.random.Generator, optional
+            Random number generator used for any stochastic components of
+            the step.
         step_name : str
             Name of the pipeline step being checked.
-        step_kwargs : dict
-            Keyword arguments for the step. This dictionary may be modified
-            in-place to include validated metallicity and/or a TrackMatcher
-            instance.
+        step_tup : tuple
+            A tuple of the form ``(step_class, kwargs_dict)``. The kwargs
+            dictionary may be modified in-place to include validated
+            metallicity and/or a TrackMatcher instance.
         verbose : bool, optional
             If True, print the keyword arguments used to construct the
             TrackMatcher.
 
         Returns
         -------
-        dict
-            The updated ``step_kwargs`` dictionary, containing a validated
-            ``metallicity`` entry and potentially a ``track_matcher`` object.
+        tuple
+            The updated ``step_tup`` tuple, whose kwargs dictionary contains a
+            validated ``metallicity`` entry and potentially a ``track_matcher``
+            object.
 
         Notes
         -----
@@ -723,19 +747,47 @@ class EvolveHooks:
         pass
 
     def pre_evolve(self, binary):
-        """Perform actions before a binary evolves."""
+        """Perform actions before a binary evolves.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        """
         return binary
 
     def pre_step(self, binary, step_name):
-        """Perform actions before every evolution step."""
+        """Perform actions before every evolution step.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        step_name : str
+            The name of the step about to be called (as defined in the flow).
+        """
         return binary
 
     def post_step(self, binary, step_name):
-        """Perform acctions after every evolution step."""
+        """Perform acctions after every evolution step.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after the step is executed.
+        step_name : str
+            The name of the step that was called (as defined in the flow).
+        """
         return binary
 
     def post_evolve(self, binary):
-        """Perform actions after a binary exits the evolution loop."""
+        """Perform actions after a binary exits the evolution loop.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after evolution is ended.
+        """
         return binary
 
 
@@ -747,21 +799,44 @@ class TimingHooks(EvolveHooks):
     >>> pop.to_df(extra_columns={'step_times': float})
     """
     def __init__(self):
+        """Initialize the extra binary column for step times."""
         self.extra_binary_col_names = ["step_times"]
 
     def pre_evolve(self, binary):
-        """Initialize the step time to match history."""
+        """Initialize the step time to match history.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        """
         if not hasattr(binary, 'step_times'):
             binary.step_times = [0.0]
         return binary
 
     def pre_step(self, binary, step_name):
-        """Record the wall time before taking the step."""
+        """Record the wall time before taking the step.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        step_name : str
+            The name of the step about to be called (as defined in the flow).
+        """
         self.step_start_time = time.time()
         return binary
 
     def post_step(self, binary, step_name):
-        """Record the duration of the step."""
+        """Record the duration of the step.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after the step is executed.
+        step_name : str
+            The name of the step that was called (as defined in the flow).
+        """
 
         binary.step_times.append(time.time() - self.step_start_time)
 
@@ -775,7 +850,13 @@ class TimingHooks(EvolveHooks):
         return binary
 
     def post_evolve(self, binary):
-        """Add None's to step_times to match history rows."""
+        """Add None's to step_times to match history rows.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after evolution is ended.
+        """
         if binary.event == 'END' or binary.event == 'FAILED':
             diff = int(len(binary.event_history) - len(binary.step_times))
             binary.step_times += [None] * diff
@@ -790,20 +871,43 @@ class StepNamesHooks(EvolveHooks):
     >>> pop.to_df(extra_columns={'step_names': str})
     """
     def __init__(self):
+        """Initialize the extra binary column for step names."""
         self.extra_binary_col_names = ["step_names"]
 
     def pre_evolve(self, binary):
-        """Initialize the step name to match history."""
+        """Initialize the step name to match history.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        """
         if not hasattr(binary, 'step_names'):
             binary.step_names = ['initial_cond']
         return binary
 
     def pre_step(self, binary, step_name):
-        """Do not do anything before the step."""
+        """Do not do anything before the step.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        step_name : str
+            The name of the step about to be called (as defined in the flow).
+        """
         return binary
 
     def post_step(self, binary, step_name):
-        """Record the step name."""
+        """Record the step name.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after the step is executed.
+        step_name : str
+            The name of the step that was called (as defined in the flow).
+        """
 
         binary.step_names.append(step_name)
         len_binary_hist = len(binary.event_history)
@@ -818,7 +922,13 @@ class StepNamesHooks(EvolveHooks):
         return binary
 
     def post_evolve(self, binary):
-        """Ensure None's are append to step_names to match rows in history."""
+        """Ensure None's are append to step_names to match rows in history.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after evolution is ended.
+        """
         if binary.event == 'END' or binary.event == 'FAILED':
             diff = int(len(binary.event_history) - len(binary.step_names))
             binary.step_names += [None]*diff
@@ -829,11 +939,25 @@ class PrintStepInfoHooks(EvolveHooks):
     """Simple example for adding extra print info."""
 
     def pre_step(self, binary, step_name):
-        """Print the step name for each binary, before taking it."""
+        """Print the step name for each binary, before taking it.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary before evolution starts.
+        step_name : str
+            The name of the step about to be called (as defined in the flow).
+        """
         print(binary.index, step_name)
         return binary
 
     def post_evolve(self, binary):
-        """Report at the end of the evolution of each binary."""
+        """Report at the end of the evolution of each binary.
+
+        Parameters
+        ----------
+        binary : instance of <class, BinaryStar>
+            The binary after evolution is ended.
+        """
         print("End evol for binary {}".format(binary.index), end='\n'*2)
         return binary

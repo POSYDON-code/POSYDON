@@ -305,7 +305,7 @@ def infer_interpolation_class(tf1, tf2):
 
 
 def get_detected_initial_RLO(grid):
-    """Generates a list of already detected initial RLO
+    """Generate a list of already detected initial RLO systems.
 
     Parameters
     ----------
@@ -317,7 +317,7 @@ def get_detected_initial_RLO(grid):
     list
         A list containing systems already detected to be initial_MT based on
         termination_flag_1. For each system there is a dictionary with the
-        impartant data, e.g. initial masses, periods, termination_flags
+        important data, e.g. initial masses, periods, termination_flags
     """
     #new list
     detected = []
@@ -361,7 +361,7 @@ def get_detected_initial_RLO(grid):
 
 
 def get_nearest_known_initial_RLO(mass1, mass2, known_initial_RLO):
-    """Find the nearest system of initial RLO in the known ones
+    """Find the nearest known system of initial RLO.
 
     Parameters
     ----------

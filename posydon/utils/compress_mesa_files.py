@@ -1,7 +1,4 @@
-"""Functions for bin/compress-mesa to handle the compression of files created
-with MESA
-
-"""
+"""Functions for bin/compress-mesa to handle the compression of MESA files."""
 
 __authors__ = [
     "Konstantinos Kovlakas <Konstantinos.Kovlakas@unige.ch>",
@@ -21,13 +18,12 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def _parse_commandline():
-    """Parse the arguments given on the command line
+    """Parse the arguments given on the command line.
 
-        Returns
-        -------
-        Namespace
-            All the passed arguments from the command line or their defaults.
-
+    Returns
+    -------
+    Namespace
+        All the passed arguments from the command line or their defaults.
     """
     parser = argparse.ArgumentParser(description="Compressing MESA files")
     parser.add_argument("-td", "--test_dir",
@@ -100,20 +96,22 @@ def textsize(filesize, floatfmt=".3g", base=1024, threshold=1000):
 
 
 def set_up_test(args):
-    """Set up a testing directory in the requested directory. It copies data
-    from the mesa_dir into the testing directory.
+    """Set up a testing directory in the requested directory.
+
+    It copies data from the mesa_dir into the testing directory.
 
     Parameters
     ----------
-    mesa_dir : string
-        The directory where the MESA tracks are stored.
-    test_dir : string
-        The directory where the test directory is to be set up.
-    dsr : float
-        Downsampling rate when creating test directory. The test directory will
-        contain a random sample of the runs from mesa_dir, downsampled by the
-        factor set here.
-
+    args : Namespace
+        The parsed command-line arguments with the following keys:
+        mesa_dir : string
+            The directory where the MESA tracks are stored.
+        test_dir : string
+            The directory where the test directory is to be set up.
+        dsr : float
+            Downsampling rate when creating test directory. The test directory
+            will contain a random sample of the runs from mesa_dir, downsampled
+            by the factor set here.
     """
     if args.test_dir is None:
         raise NameError("--test_dir needs to be specified for set_up_test")
@@ -156,8 +154,7 @@ def set_up_test(args):
 
 
 def get_size(start_path="."):
-    """Gets the size of a directory and selects MESA files for compression and
-    removal.
+    """Get the size of a directory and select MESA files for compression.
 
     Parameters
     ----------
@@ -178,7 +175,6 @@ def get_size(start_path="."):
         Number of files to remove.
     n_compress_files : int
         Number of files to compress.
-
     """
     total_size = 0
     remove_files = []
@@ -222,15 +218,16 @@ def get_size(start_path="."):
 
 
 def compress_dir(args):
-    """Compresses a directory containing tracks evolved with MESA.
+    """Compress a directory containing tracks evolved with MESA.
 
-    Parameters (keys in `args`)
-    ---------------------------
-    verbose : bool
-        Enable/Disable additional output.
-    mesa_dir : string
-        The directory where the MESA tracks are stored.
-
+    Parameters
+    ----------
+    args : Namespace
+        The parsed command-line arguments with the following keys:
+        verbose : bool
+            Enable/Disable additional output.
+        mesa_dir : string
+            The directory where the MESA tracks are stored.
     """
     if args.mesa_dir is None:
         raise NameError("mesa_dir needs to be specified for set_up_test")
@@ -285,9 +282,7 @@ def compress_dir(args):
 
 
 def _compress_MESA():
-    """Run the compression of MESA files
-
-    """
+    """Run the compression of MESA files."""
     args = _parse_commandline()
     if args.test_dir is not None:
         set_up_test(args)

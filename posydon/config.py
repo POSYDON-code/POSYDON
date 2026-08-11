@@ -1,3 +1,5 @@
+"""Configuration helpers for environment paths in POSYDON."""
+
 import os
 
 from dotenv import load_dotenv
