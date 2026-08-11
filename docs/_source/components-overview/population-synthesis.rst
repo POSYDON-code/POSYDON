@@ -2,6 +2,12 @@
 
 Population Synthesis
 ====================
+The population synthesis framework is built on top of the `_stellar-binary-simulation`_ framework, and
+evolves a population of binaries using the `BinaryPopulation`_ class.
+
+It uses the same configuration file as the `_stellar-binary-simulation`_ framework, but it also allows to specify the initial conditions of the population, such as the initial mass function, the initial mass ratio distribution, and the initial orbital period distribution. See `SimulationProperties`_ for more information on the configuration parameters.
+
+
 
 The Binary Population Object
 ----------------------------

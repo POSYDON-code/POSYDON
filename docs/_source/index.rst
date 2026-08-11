@@ -68,6 +68,7 @@ We've tried to group the documentation into four distinct sections to help you n
    components-overview/processing-pipeline
    components-overview/machine-learning-components
    components-overview/stellar-binary-simulation
+   components-overview/population-synthesis
 
 .. toctree::
    :maxdepth: 1
