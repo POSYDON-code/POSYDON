@@ -36,10 +36,6 @@ def ensure_path(name):
 
 
 # POSYDON environment variables
-repo_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 PATH_TO_POSYDON = ensure_path("PATH_TO_POSYDON")
 path_to_posydon_data = ensure_path("PATH_TO_POSYDON_DATA")
-if path_to_posydon_data.endswith("POSYDON_data"):
-    PATH_TO_POSYDON_DATA = path_to_posydon_data
-else:
-    PATH_TO_POSYDON_DATA = os.path.join(path_to_posydon_data, "POSYDON_data")
+PATH_TO_POSYDON_DATA = os.path.join(path_to_posydon_data, "POSYDON_data")
