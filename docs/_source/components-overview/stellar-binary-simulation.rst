@@ -137,3 +137,12 @@ and on-the-fly calculations that can be used to compute the outcome of a superno
     :maxdepth: 1
 
     pop_syn/supernova_models
+
+Reweighting Populations
+-----------------------
+POSYDON provides a reweighting framework that allows users to reweight the results of a population synthesis model to match a different set of initial conditions. This is useful for exploring the effects of different initial conditions on the results of a population synthesis model without having to run a new simulation.
+
+.. toctree::
+    :maxdepth: 1
+
+    pop_syn/reweighting
