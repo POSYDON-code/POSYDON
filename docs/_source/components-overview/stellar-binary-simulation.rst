@@ -5,8 +5,6 @@ Stellar & Binary-star Simulation
 ################################
 
 
-
-
 POSYDON: Building Populations with Object-Oriented Design
 =========================================================
 
@@ -34,19 +32,6 @@ The `BinaryStar` object contains the binary properties and its evolutionary hist
     :titlesonly:
 
     pop_syn/binary_star
-
-
-----
-
-The Binary Population Object
-----------------------------
-
-The `BinaryPopulation` object contains a list of `BinaryStar` objects and the `SimulationProperties` object which contains the information about the population synthesis model.
-
-.. toctree::
-    :maxdepth: 1
-
-    pop_syn/binary_population
 
 
 ----
@@ -103,30 +88,6 @@ To allow users to easier add functions for their own needs without changing the 
 ----
 
 
-The Synthetic Population Object
--------------------------------
-
-The `SyntheticPopulation` object contains a collection of `BinaryPopulation` objects run, e.g. at different metallicities or with different model assumptions. It also provide the POSYDON API interface to analyse, process, and visualize the results of a POSYDON population synthesis model.
-
-.. toctree::
-    :maxdepth: 1
-
-    pop_syn/synthetic_population
-
-
-The Star Formation History
----------------------------
-
-The star formation history is a key component in population synthesis, since it
-determined the amount of stars that are formed at each moment in time.
-
-.. toctree::
-    :maxdepth: 1
-
-    pop_syn/star_formation_history
-
-
-
 Supernova models
 ----------------
 In POSYDON, we provide a variety of supernova models that can be used to simulate the evolution of binary systems.
@@ -137,12 +98,3 @@ and on-the-fly calculations that can be used to compute the outcome of a superno
     :maxdepth: 1
 
     pop_syn/supernova_models
-
-Reweighting Populations
------------------------
-POSYDON provides a reweighting framework that allows users to reweight the results of a population synthesis model to match a different set of initial conditions. This is useful for exploring the effects of different initial conditions on the results of a population synthesis model without having to run a new simulation.
-
-.. toctree::
-    :maxdepth: 1
-
-    pop_syn/reweighting
