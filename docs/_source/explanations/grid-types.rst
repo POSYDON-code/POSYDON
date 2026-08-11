@@ -14,14 +14,14 @@ What grids are there?
 
 POSYDON ships with different grid types:
 
-- ``HMS-HMS``_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries
-- ``HMS-HMS_RLO``_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries, starting from Roche-lobe overflow (RLO)
-- ``HMS-CO_RLO``_ grids: hydrogen-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
-- ``HeMS-CO``_ grids: helium-rich main-sequence primaries with a compact object companion (CO)
-- ``HeMS-CO_RLO``_ grids: helium-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
+- ``HMS-HMS`` grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries
+- ``HMS-HMS_RLO`` grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries, starting from Roche-lobe overflow (RLO)
+- ``HMS-CO_RLO`` grids: hydrogen-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
+- ``HeMS-CO`` grids: helium-rich main-sequence primaries with a compact object companion (CO)
+- ``HeMS-CO_RLO`` grids: helium-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
 
-- ``single_HMS``_ grids: single hydrogen-rich main-sequence stars
-- ``single_HeMS``_ grids: single helium-rich main-sequence stars
+- ``single_HMS`` grids: single hydrogen-rich main-sequence stars
+- ``single_HeMS`` grids: single helium-rich main-sequence stars
 
 What a grid contains
 --------------------

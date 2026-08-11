@@ -45,8 +45,8 @@ Memory:
 - Recommended: 16GB RAM
 
 The amount of memory a population run needs per CPU, and the related
-``dump_rate`` setting, are covered in the :ref:`memory tuning <memory-tuning>`
-how-to.
+``dump_rate`` setting, are covered in the installation guide and the
+population-synthesis examples.
 
 CPU:
 
