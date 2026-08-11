@@ -22,7 +22,7 @@ from pytest import raises
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['PATH_TO_POSYDON', 'PATH_TO_POSYDON_DATA', '__builtins__',\
+        elements = ['PATH_TO_POSYDON', 'PATH_TO_POSYDON_DATA', 'path_to_posydon_data', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'ensure_path',\
                     'load_dotenv', 'os']
