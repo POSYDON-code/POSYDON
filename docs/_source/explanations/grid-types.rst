@@ -14,21 +14,21 @@ What grids are there?
 
 POSYDON ships with different grid types:
 
-- `HMS-HMS`_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries
-- `HMS-HMS_RLO`_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries, starting from Roche-lobe overflow (RLO)
-- `HMS-CO_RLO`_ grids: hydrogen-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
-- `HeMS-CO`_ grids: helium-rich main-sequence primaries with a compact object companion (CO)
-- `HeMS-CO_RLO`_ grids: helium-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
+- ``HMS-HMS``_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries
+- ``HMS-HMS_RLO``_ grids: hydrogen-rich main-sequence primaries with hydrogen-rich main-sequence secondaries, starting from Roche-lobe overflow (RLO)
+- ``HMS-CO_RLO``_ grids: hydrogen-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
+- ``HeMS-CO``_ grids: helium-rich main-sequence primaries with a compact object companion (CO)
+- ``HeMS-CO_RLO``_ grids: helium-rich main-sequence primaries with a compact object companion (CO), starting from Roche-lobe overflow (RLO)
 
-- `single_HMS`_ grids: single hydrogen-rich main-sequence stars
-- `single_HeMS`_ grids: single helium-rich main-sequence stars
+- ``single_HMS``_ grids: single hydrogen-rich main-sequence stars
+- ``single_HeMS``_ grids: single helium-rich main-sequence stars
 
 What a grid contains
 --------------------
 
 Each grid contains a set of MESA simulations that are down-sampled to save disk space.
-For each run, the grid contains the `initial_values`, `final_values`, and `history`
-of the simulation. The `history` is split between the `binary_history` and
+For each run, the grid contains the ``initial_values``, ``final_values``, and ``history``
+of the simulation. The ``history`` is split between the ``binary_history`` and
 the histories of the individual stars (``history1`` and ``history2``).
 
 The grid therefore spans a defined region of this parameter space, sampled on a

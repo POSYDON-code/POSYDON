@@ -64,7 +64,7 @@ We've tried to group the documentation into four distinct sections to help you n
    :caption: Explanation
 
    explanation/grid-types
-   expalanation/data-releases
+   explanation/data-releases
    components-overview/processing-pipeline
    components-overview/machine-learning-components
    components-overview/stellar-binary-simulation
