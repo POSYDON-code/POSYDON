@@ -20,34 +20,21 @@ POSYDON is a next-generation single- and binary-star population synthesis tool. 
 
 To stay up-to-date with the latest news about POSYDON, check out our `official website <https://www.posydon.org>`_ for more details.
 
-How is this Documentation Structured?
--------------------------------------
 
-- **Introductions** Discover what POSYDON is, its objectives, and its science scope.
-- **Getting Started:** A quick guide to get POSYDON up and running on your machine.
-- **User Guides:** Detailed guides on using various features.
-- **Tutorials and Examples:** Step-by-step walk-throughs of typical use-cases.
-- **POSYDON School Materials:** Access resources from the POSYDON school.
-- **In-Depth Components Overview:** Delve deep into the core components of POSYDON.
-- **API Reference:** A comprehensive reference for developers.
-- **Troubleshooting and FAQs:** Answers to common questions and problems.
-- **Contributing to POSYDON:** Join our community and help us grow!
-- **Release Notes and Changelog:** Stay updated with our version history.
-- **Contact and Support:** Reach out to us with your queries or feedback.
+Using this Documentation
+------------------------
 
-.. - **POSYDON Workflow:** Learn about how to conduct simulations from start to finish.
+We've tried to group the documentation into four distinct sections to help you navigate easily:
+
+- **Tutorials:** Step-by-step guides to help you get started and explore POSYDON's capabilities.
+- **User Guides:** In-depth explanations of POSYDON's features and functionalities.
+- **Reference:** For developers and advanced users, detailing the classes, methods, and functions available in POSYDON.
+- **Explanation:** Background and conceptual material on the POSYDON framework.
+
 
 .. toctree::
    :maxdepth: 1
-   :caption: Introduction
-
-   introduction-acknowledgements/intro
-   Collaborative Team <https://posydon.org/team.html>
-   Publications <https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA>
-
-.. toctree::
-   :maxdepth: 1
-   :caption: Getting Started
+   :caption: How-to
 
    getting-started/prerequisites
    getting-started/installation-guide
@@ -56,8 +43,7 @@ How is this Documentation Structured?
 
 .. toctree::
    :maxdepth: 1
-   :titlesonly:
-   :caption: Tutorials and Examples
+   :caption: Tutorials (Getting Started)
 
    tutorials-examples/population-synthesis/binary-pop-syn
    tutorials-examples/generating-datasets/generating-datasets
@@ -70,22 +56,35 @@ How is this Documentation Structured?
 
    POSYDON School 2025 <https://github.com/POSYDON-code/POSYDON-2025-School-Labs>
 
+
+
 .. toctree::
    :maxdepth: 1
    :titlesonly:
-   :caption: In-Depth Components Overview
+   :caption: Explanation
 
-   components-overview/mesa-grids
+   explanation/grid-types
+   expalanation/data-releases
    components-overview/processing-pipeline
    components-overview/machine-learning-components
    components-overview/stellar-binary-simulation
 
 .. toctree::
    :maxdepth: 1
-   :caption: API Reference
+   :caption: Reference
 
+   components-overview/mesa-grids
    api_reference/posydon
    api_reference/bin
+
+
+.. toctree::
+   :maxdepth: 1
+   :caption: Introduction
+
+   introduction-acknowledgements/intro
+   Collaborative Team <https://posydon.org/team.html>
+   Publications <https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA>
 
 
 .. toctree::
