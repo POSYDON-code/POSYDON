@@ -22,6 +22,8 @@ from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
 from posydon.utils.posydonwarning import Pwarn
 
+import math
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def _parse_commandline():
     """Parse the arguments given on the command-line
@@ -124,7 +126,25 @@ def list_datasets(individual_sets=False, verbose=False):
                     print(wrapper.fill("more information at "
                                        +ZENODO_COLLECTION[dataset]['url']))
 
-def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
+def _download_chunk_range(url, start, end, chunk_id, filepath, progress_callback):
+    """Downloads a single block range from Zenodo and updates a progress tracking file."""
+    headers = {"Range": f"bytes={start}-{end}"}
+    req = urllib.request.Request(url, headers=headers)
+    
+    # Write directly to the assigned segment offset using standard file seeks
+    with urllib.request.urlopen(req) as response:
+        with open(filepath, "r+b") as f:
+            f.seek(start)
+            block_size = 1024 * 1024
+            while True:
+                buffer = response.read(block_size)
+                if not buffer:
+                    break
+                f.write(buffer)
+                # Fallback hook for your custom progress tracker context
+                progress_callback(len(buffer))
+
+def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False, num_threads=8):
     """Download a data set from Zenodo if they do not exist.
 
         Parameters
@@ -142,7 +162,6 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
     if dataset not in ZENODO_COLLECTION:
         raise KeyError(f"The dataset '{dataset}' is not defined.")
 
-    # First, generate filename and make sure the path does not exist
     data_url = ZENODO_COLLECTION[dataset]['data']
     if data_url is None:
         raise ValueError(f"The dataset '{dataset}' has no publication yet.")
@@ -150,51 +169,77 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
     if original_md5 is None:
         MD5_check = False
         Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
+        
     filename = os.path.basename(data_url)
     directory = os.path.dirname(PATH_TO_POSYDON_DATA)
     filepath = os.path.join(directory, filename)
+    
     if not os.path.isdir(os.path.dirname(filepath)):
-        raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a "
-                                 "valid directory.")
+        raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a valid directory.")
     if os.path.exists(filepath):
         raise FileExistsError(f"POSYDON data already exists at {filepath}.")
 
-    # Download the data
-    print(f"Downloading POSYDON data '{dataset}' from Zenodo to {directory}")
-    urllib.request.urlretrieve(data_url, filepath, ProgressBar())
+    print(f"Downloading POSYDON data '{dataset}' via {num_threads} threads...")
+    
+    # Fetch total dataset size via a HEAD request to Zenodo
+    req = urllib.request.Request(data_url, method='HEAD')
+    with urllib.request.urlopen(req) as resp:
+        total_size = int(resp.headers.get('Content-Length', 0))
+    
+    if total_size == 0:
+        raise ValueError("Could not retrieve file size from Zenodo.")
+
+    # Create an empty file with the full size payload to safely write out of order
+    with open(filepath, "wb") as f:
+        f.truncate(total_size)
+
+    # Setup clean block progress tracking via tqdm
+    chunk_size = math.ceil(total_size / num_threads)
+    
+    with tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading") as pbar:
+        def update_progress(bytes_written):
+            pbar.update(bytes_written)
+
+        # Fire parallel thread workers
+        with ThreadPoolExecutor(max_workers=num_threads) as executor:
+            futures = []
+            for i in range(num_threads):
+                start = i * chunk_size
+                end = min(total_size - 1, start + chunk_size - 1)
+                futures.append(
+                    executor.submit(_download_chunk_range, data_url, start, end, i, filepath, update_progress)
+                )
+            
+            # Wait for all thread pools to successfully resolve
+            for future in as_completed(futures):
+                future.result()
 
     # Compare original MD5 with freshly calculated
     if MD5_check:
+        print("Verifying MD5 Checksum...")
         try:
-            with open(filepath, "rb") as file_to_check:
-                # read contents of the file
-                data = file_to_check.read()
-
-            # pipe contents of the file through
-            md5_returned = hashlib.md5(data).hexdigest()
+            # Use chunking, 4096 bytes at a time to not overload RAM with large files.
+            md5_hash = hashlib.md5()
+            with open(filepath, "rb") as f:
+                for byte_block in iter(lambda: f.read(4096), b""):
+                    md5_hash.update(byte_block)
+            md5_returned = md5_hash.hexdigest()
 
             if original_md5 == md5_returned:
                 if verbose:
                     print("MD5 verified.")
             else:
-                # Delete file - we cannot rely upon that data
                 os.remove(filepath)
-
-                # Raise value error
                 raise ValueError("MD5 verification failed!.")
-        except:
-            print('Failed to read the tar.gz file for MD5 verification, '
-                  'cannot guarantee file integrity (this error seems to '
-                  'happen only on macOS).')
+        except Exception as e:
+            print(f'Failed MD5 verification check: {e}')
 
-    # extract each file
+    # Extract file archives
     print(f"Extracting POSYDON data '{dataset}' from tar file...")
     with tarfile.open(filepath) as tar:
-        for member in tqdm(iterable=tar.getmembers(),
-                           total=len(tar.getmembers())):
+        for member in tqdm(iterable=tar.getmembers(), total=len(tar.getmembers())):
             tar.extract(member=member, path=directory)
 
-    # remove tar files after extracted
     if os.path.exists(filepath):
         if verbose:
             print('Removed downloaded tar file.')

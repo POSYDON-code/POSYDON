@@ -318,6 +318,9 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
+            Pwarn(f"While loading interpolators, unable to find {filename}."
+                   "Attempting to download the data from Zenodo.",
+                   "MissingFilesWarning")
             data_download()
 
         # Load interpolator
