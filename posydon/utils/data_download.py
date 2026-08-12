@@ -10,10 +10,12 @@ __authors__ = [
 
 import argparse
 import hashlib
+import math
 import os
 import tarfile
 import textwrap
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import progressbar
 from tqdm import tqdm
@@ -22,8 +24,6 @@ from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.datasets import COMPLETE_SETS, ZENODO_COLLECTION
 from posydon.utils.posydonwarning import Pwarn
 
-import math
-from concurrent.futures import ThreadPoolExecutor, as_completed
 
 def _parse_commandline():
     """Parse the arguments given on the command-line
@@ -130,7 +130,7 @@ def _download_chunk_range(url, start, end, chunk_id, filepath, progress_callback
     """Downloads a single block range from Zenodo and updates a progress tracking file."""
     headers = {"Range": f"bytes={start}-{end}"}
     req = urllib.request.Request(url, headers=headers)
-    
+
     # Write directly to the assigned segment offset using standard file seeks
     with urllib.request.urlopen(req) as response:
         with open(filepath, "r+b") as f:
@@ -169,23 +169,23 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False, num
     if original_md5 is None:
         MD5_check = False
         Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
-        
+
     filename = os.path.basename(data_url)
     directory = os.path.dirname(PATH_TO_POSYDON_DATA)
     filepath = os.path.join(directory, filename)
-    
+
     if not os.path.isdir(os.path.dirname(filepath)):
         raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a valid directory.")
     if os.path.exists(filepath):
         raise FileExistsError(f"POSYDON data already exists at {filepath}.")
 
     print(f"Downloading POSYDON data '{dataset}' via {num_threads} threads...")
-    
+
     # Fetch total dataset size via a HEAD request to Zenodo
     req = urllib.request.Request(data_url, method='HEAD')
     with urllib.request.urlopen(req) as resp:
         total_size = int(resp.headers.get('Content-Length', 0))
-    
+
     if total_size == 0:
         raise ValueError("Could not retrieve file size from Zenodo.")
 
@@ -195,7 +195,7 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False, num
 
     # Setup clean block progress tracking via tqdm
     chunk_size = math.ceil(total_size / num_threads)
-    
+
     with tqdm(total=total_size, unit='B', unit_scale=True, desc="Downloading") as pbar:
         def update_progress(bytes_written):
             pbar.update(bytes_written)
@@ -209,7 +209,7 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False, num
                 futures.append(
                     executor.submit(_download_chunk_range, data_url, start, end, i, filepath, update_progress)
                 )
-            
+
             # Wait for all thread pools to successfully resolve
             for future in as_completed(futures):
                 future.result()
