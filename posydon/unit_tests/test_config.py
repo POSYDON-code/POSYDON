@@ -22,10 +22,10 @@ from pytest import raises
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = ['PATH_TO_POSYDON', 'PATH_TO_POSYDON_DATA', 'path_to_posydon_data', '__builtins__',\
+        elements = ['PATH_TO_POSYDON', 'PATH_TO_POSYDON_DATA', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'ensure_path',\
-                    'load_dotenv', 'os']
+                    'load_dotenv', 'os', 'path_to_posydon_data']
         assert dir(totest) == elements, "There might be added or removed "\
                                         + "objects without an update on the "\
                                         + "unit test."
