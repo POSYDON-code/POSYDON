@@ -72,6 +72,7 @@ docs/_build/
 docs/_tmp/
 docs/_source/_build/
 docs/_source/api_reference
+docs/_source/_build/
 docs/checkautodoc
 *.h5
 *.batch
