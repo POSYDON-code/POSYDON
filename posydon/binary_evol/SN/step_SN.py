@@ -459,6 +459,9 @@ class StepSN(object):
         # this should occour only on the first or second core-collapse
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
+
+            binary.star_1.mass_transfer_history = copy.deepcopy(binary.mass_transfer_case_history)
+
             # collapse star
             model_err = self.collapse_star(star=binary.star_1)
             if model_err is not None:
@@ -468,7 +471,12 @@ class StepSN(object):
             self._reset_other_star_properties(star=binary.star_2)
             binary.update_star_states()
 
+            del binary.star_1.mass_transfer_history
+
         elif binary.event == "CC2":
+
+            binary.star_2.mass_transfer_history = copy.deepcopy(binary.mass_transfer_case_history)
+
             # collapse star
             model_err = self.collapse_star(star=binary.star_2)
             if model_err is not None:
@@ -477,6 +485,9 @@ class StepSN(object):
 
             self._reset_other_star_properties(star=binary.star_1)
             binary.update_star_states()
+
+            del binary.star_2.mass_transfer_history
+
         else:
             raise ValueError("Something went wrong: "
                              "invalid call of supernova step!")
@@ -2463,23 +2474,29 @@ class StepSN(object):
             k1 = Muller_k_parameters[engine][0]
             k2 = Muller_k_parameters[engine][1]
 
+            print(CO_core_mass, Xi, sc, mu4M4, mu4, k1, k2)
+
             if CO_core_mass <= 2.5:
                 m_rem = 1.25
                 f_fb = 0.0
                 state = 'NS'
-
             # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
             # However, since this outcome depends on the mass-transfer (MT) history, we handle it
             # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
             # with fallback = 1 at this stage.
             elif CO_core_mass >= 10.0:
+
+                # Follow the "rapid" prescription from Maltsev+25
+                m_rem, f_fb, state = self.get_remnant_above_10Msun(star, conserve_hydrogen_envelope)
+
+                #print("Above!")
                 # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
-                else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
+                #if conserve_hydrogen_envelope:
+                #    m_rem = star.mass
+                #else:
+                #    m_rem = star.he_core_mass
+                #f_fb = 1.0
+                #state = 'BH'
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
@@ -2510,6 +2527,128 @@ class StepSN(object):
                     state = 'BH'
 
         return m_rem, f_fb, state
+
+
+    def get_remnant_above_10Msun(self, star, conserve_hydrogen_envelope=False):
+        """
+        Above M_CO > 10Msun, the Patton & Sukhbold 2020 grids do not contain models.
+        While the boundaries from Maltsev+25 allow for some successful explosions above this mass.
+
+        Until new linkage is available from carbon depletion models to explodibility,
+        we have to use the mass transfer history and M_CO modelling to determine
+        the final remnant type.
+
+        Above M_CO > 10Msun, there are the following boundaries:
+        At Zsun:
+        single:
+        10Msun < M_CO < 10.2 Msun -> successful SN with NS remnant
+        10.2Msun < M_CO < 13.0 Msun -> successful SN with NS or fallback BH remnant (15%)
+        -> The figure in Maltsev+25 shows that the fallback BH fraction is 15% in this range, but the rapid
+        description in the text says 10%
+        M_CO > 13.0 Msun -> direct collapse to BH implossion.
+
+        X_C >= 0.15 -> From Fig 5 and Maltsev+25 code + text just before Section 3.3
+        """
+        boundaries = {
+            'single': {        #Zsun #Zsun/10
+                'M_CO_NS_1' : [9.0, 7.4],
+                'M_CO_NS_2' : [10.2, 11.0],
+                'M_CO_3' : [13.0, 12.9],
+                },
+            'case_A' : {
+                'M_CO_NS_1' : [11.1, 10.4],
+                'M_CO_NS_2' : [12.1, 11.1],
+                'M_CO_3' : [15.4, 13.7],
+                },
+            'case_B' : {
+                'M_CO_NS_1' : [9.9, 9.3],
+                'M_CO_NS_2' : [10.3, 10.3],
+                'M_CO_3' : [15.3, 13.75], # Average of Case B1 and Be
+                },
+            'case_C' : {
+                'M_CO_NS_1' : [9.6, 8.9],
+                'M_CO_NS_2' : [10.7, 9.5],
+                'M_CO_3' : [13.2, 12.3],
+            }
+        }
+        # Get required parameters
+        M_CO = star.co_core_mass_at_He_depletion
+
+        # Get MT_type from the star
+        MT_type = self.mt_type_maltsev(star) # Not available in star object.
+        print(f"MT_type: {MT_type}")
+        # Additional checks for other types of systems that have to be added to
+        # one of the MT_type categories.
+
+        M_NS_1_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_NS_1'], star.metallicity)
+        M_NS_2_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_NS_2'], star.metallicity)
+        M_CO_3_boundary = self.interpolate_Maltsev25_boundaries(boundaries[MT_type]['M_CO_3'], star.metallicity)
+        print(M_NS_1_boundary, M_NS_2_boundary, M_CO_3_boundary)
+
+        # Everythin here is above 10Msun.
+
+        def stochastic_NS_or_BH(self, star, conserve_hydrogen_envelope):
+            rand_number = self.RNG.uniform(0,1)
+            if rand_number <= 0.15:  # probability for fallback = 0.15 in Section 3.1.2.
+                m_rem = star.mass if conserve_hydrogen_envelope else star.he_core_mass
+                f_fb = 0.99
+                return m_rem, f_fb, 'BH'
+            else:
+                m_rem = 1.4 # NEED a mass description!
+                f_fb = 0.0
+                return m_rem, f_fb, 'NS'
+
+        if M_CO < M_NS_1_boundary:
+            # 15% chance of fallback BH, 85% chance of NS
+            m_rem, f_fb, state =  stochastic_NS_or_BH(self, star, conserve_hydrogen_envelope)
+
+        elif M_CO >= M_NS_1_boundary and M_CO < M_NS_2_boundary:
+            # NS formation is guaranteed
+            m_rem = 1.4 # NEED a mass description!
+            f_fb = 0.0
+            state = 'NS'
+
+        elif M_CO >= M_NS_2_boundary and M_CO < M_CO_3_boundary:
+            # 15% chance of fallback BH, 85% chance of NS
+            m_rem, f_fb, state = stochastic_NS_or_BH(self, star, conserve_hydrogen_envelope)
+
+        elif M_CO >= M_CO_3_boundary:
+            # Direct collapse to BH
+            if conserve_hydrogen_envelope:
+                m_rem = star.mass
+            else:
+                m_rem = star.he_core_mass
+            f_fb = 1.0
+            state = 'BH'
+
+        else:
+            raise ValueError("M_CO is not in any of the expected ranges for M_CO > 10Msun")
+
+        print(m_rem, f_fb, state)
+
+        return m_rem, f_fb, state
+
+    def mt_type_maltsev(self, star):
+
+        types = ['single', 'Case_A', 'Case_B', 'Case_C']
+        print(star.mass_transfer_history)
+        # find first MT interaction in the mass transfer history
+        # starting from the last event and going backwards
+        last = 'single'
+        for event in reversed(star.mass_transfer_history):
+            if event == 'None':
+                return last
+            else:
+                last = event[:-1]  # remove the last character which is the mass transfer case number
+
+        return 'single'  # If no mass transfer events, classify as single
+
+
+    def interpolate_Maltsev25_boundaries(self, boundary, Z):
+        a = boundary[0]
+        b = (boundary[0] - boundary[1])
+        return  a + np.log10(Z)*b
+
 
     def NS_vs_fallbackBH(self, comp_val, mco_val, M4_val, mu4M4_val):
         a, b = 1.75, -0.044  # eq. (8) of [8]_
