@@ -37,10 +37,25 @@ def default_gravrad(a, e, primary, secondary, verbose = False):
             The change in orbital eccentricity for a time step in
         step_detached's solve_ivp().
 
+    Notes
+    -----
+        The expressions are only valid for bound orbits, i.e. 0 <= e < 1.
+    For e >= 1 (unbound orbits) or non-finite e, (0.0, 0.0) is returned
+    instead of dividing by the vanishing (1 - e**2)**(9/2) and
+    (1 - e**2)**(7/2) denominators.
+
     """
 
     m1 = primary.latest["mass"]
     m2 = secondary.latest["mass"]
+
+    # The Junker & Schafer (1992) expressions below are only valid for
+    # bound orbits, i.e. 0 <= e < 1. For e >= 1 (unbound orbits) or
+    # non-finite e the denominators (1 - e**2)**(9/2) and (1 - e**2)**(7/2)
+    # vanish or become complex, so return no gravitational-radiation-driven
+    # change instead of silently producing inf/NaN.
+    if not (0.0 <= e < 1.0):
+        return 0.0, 0.0
 
     v = (m1 * m2 / (m1 + m2) ** 2)
 
