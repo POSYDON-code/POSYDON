@@ -3,8 +3,8 @@
 import numpy as np
 import pytest
 
-from posydon.utils import xrb
 from posydon.utils import constants as const
+from posydon.utils import xrb
 
 
 def test_black_hole_radiative_efficiency_scalars_and_arrays():
