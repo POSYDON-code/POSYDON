@@ -507,7 +507,7 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                scheme='Hurley+2002'):
+                RNG=np.random.default_rng(), scheme='Hurley+2002'):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -629,7 +629,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
             pass
 
     n = np.sqrt((G * (m_acc + m) * Msun) / ((radius * Rsun)**3))
-    t0 = np.random.rand(len(sep)) * 2 * np.pi / n
+    t0 = RNG.random(len(sep)) * 2 * np.pi / n
     E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
                np.ones_like(sep) * np.pi / 2,
                maxiter=100)
@@ -882,6 +882,31 @@ def read_histogram_from_file(path):
                          " line.")
 
     return arrays
+
+
+def beta_gw(star1_mass, star2_mass):
+    """Evaluate Peters' beta coefficient (equation 5.9 from Peters 1964).
+
+    Parameters
+    ----------
+    star1_mass : float
+        Mass of the first star in solar masses.
+    star2_mass : float
+        Mass of the second star in solar masses.
+
+    Returns
+    -------
+    float
+        Peters' beta coefficient with masses given in solar units.
+        To obtain the full CGS beta (cm^4 s^-1), multiply the result
+        by ``const.Msun**3``.
+
+    References
+    ----------
+    .. [1] Peters 1964 Phys. Rev. 136, B1224
+
+    """
+    return (64.0 / 5.0) * const.standard_cgrav**3 / const.clight**5 * star1_mass * star2_mass * (star1_mass + star2_mass)
 
 
 def inspiral_timescale_from_separation(star1_mass, star2_mass,

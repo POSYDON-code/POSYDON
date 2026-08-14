@@ -68,7 +68,7 @@ class TestElements:
                     'PROPERTIES_ALLOWED', 'PROPERTIES_TO_BE_CONSISTENT',\
                     'PROPERTIES_TO_BE_NONE', 'PROPERTIES_TO_BE_SET',\
                     'PSyGrid', 'PSyGridIterator', 'PSyRunView', 'Pwarn',\
-                    'TERMINATION_FLAG_COLUMNS',\
+                    'LazyHDF5', 'TERMINATION_FLAG_COLUMNS',\
                     'TERMINATION_FLAG_COLUMNS_SINGLE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE',\
                     'THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C', 'TrackDownsampler',\
@@ -87,7 +87,7 @@ class TestElements:
                     'keep_till_central_abundance_He_C', 'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
-                    'read_initial_values', 'scrub', 'tqdm'}
+                    'read_initial_values', 'scrub', 'rfn', 'tqdm'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -970,6 +970,29 @@ class TestPSyGrid:
                                   profile)
 
     @fixture
+    def grid_path_single(self, tmp_path, star_history, profile):
+        # a path to a single-star psygrid file for testing
+        # Create a minimal binary_history for grid creation, then modify
+        minimal_binary_history = np.array([(1.0, 1.0), (1.1, 1.0e+2)],
+                                          dtype=[('period_days', '<f8'), ('age', '<f8')])
+        path = get_simple_PSyGrid(tmp_path, 10, minimal_binary_history, star_history, profile)
+        # modify hdf5 file to set binary=False in config
+        with h5py.File(path, "a") as hdf5_file:
+            old_config = hdf5_file.attrs["config"]
+            # Parse and modify the config
+            new_config = old_config.replace("'binary': True", "'binary': False")
+            hdf5_file.attrs["config"] = new_config
+            # Remove binary_history datasets and keep only history1
+            for r in range(1, 3):  # runs 1 and 2
+                if f"/grid/run{r}/binary_history" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/binary_history"]
+                if f"/grid/run{r}/history2" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/history2"]
+                if f"/grid/run{r}/final_profile2" in hdf5_file:
+                    del hdf5_file[f"/grid/run{r}/final_profile2"]
+        return path
+
+    @fixture
     def grid_path_negative_run(self, tmp_path, binary_history, star_history,\
                                profile):
         # a path to a psygrid file for testing
@@ -1015,9 +1038,17 @@ class TestPSyGrid:
                     del hdf5_file[f"/grid/{key}/"]
         return path
 
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 6, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+
+        return path
+
     # test the PSyGrid class
     def test_init(self, PSyGrid, monkeypatch):
-        def mock_load(self, filepath=None):
+        def mock_load(self, filepath=None, lazy=True):
             return filepath
         assert isroutine(PSyGrid.__init__)
         # check that the instance is of correct type and all code in the
@@ -1979,7 +2010,7 @@ class TestPSyGrid:
             assert test_run.psygrid == PSyGrid
             assert test_run.index == i
 
-    def test_get_pandas_initial_final(self, PSyGrid, grid_path):
+    def test_get_pandas_initial_final(self, PSyGrid, grid_path, grid_path_sne_data):
         assert isroutine(PSyGrid.get_pandas_initial_final)
         with raises(AttributeError, match="'NoneType' object has no "\
                                           +"attribute 'dtype'"):
@@ -2007,6 +2038,11 @@ class TestPSyGrid:
             assert np.array_equal(PSyGrid.final_values[key],\
                                   np.array(test_df["final_"+key]),\
                                   equal_nan=allow_nan)
+
+            # test case where grid has SNe model data
+            sne_grid = totest.PSyGrid()
+            sne_grid.load(grid_path_sne_data)
+            test_df = sne_grid.get_pandas_initial_final()
 
     def test_len(self, PSyGrid):
         assert isroutine(PSyGrid.__len__)
@@ -2338,6 +2374,112 @@ class TestPSyGrid:
         assert 'star_states' in PSyGrid.kwargs
         assert PSyGrid.kwargs['star_states'] is not None
 
+    def test_HR_binary_grid_with_states(self, PSyGrid, grid_path, monkeypatch):
+        """Test HR diagram with states=True for binary grids.
+
+        This test addresses issue #689 where plotting HR diagrams with
+        states=True on binary grids crashed due to incorrect column naming
+        conventions for binary vs single-star grids.
+        """
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
+
+        # Load the grid and ensure it's a binary grid
+        try:
+            PSyGrid.load(grid_path)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path
+            return
+
+        # Skip if not a binary grid
+        if not PSyGrid.config["binary"]:
+            return
+
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+
+        # Test states with history1 - covers lines 2016-2017
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history1', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history1'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
+
+        # Test states with history2 - covers lines 2018-2019, 2024-2025
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history2', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history2'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
+
+        # Test that using binary_history with states raises an error
+        PSyGrid.kwargs = None
+        with raises(ValueError, match="For binary grids with states=True, "\
+                                     +"history must be 'history1' or "\
+                                     +"'history2', not 'binary_history'"):
+            PSyGrid.HR(0, history='binary_history', states=True)
+
+    def test_HR_single_star_grid_with_states(self, PSyGrid, grid_path_single, monkeypatch):
+        """Test HR diagram with states=True for single-star grids.
+
+        This test ensures that single-star grids with states=True work correctly,
+        covering lines 2028-2031 in psygrid.py which handle the single-star case.
+        """
+        class mock_plot1D_class:
+            def __init__(self, run, **kwargs):
+                if len(run) < 1:
+                    raise ValueError("No runs to plot.")
+                elif len(run) == 1:
+                    kwargs['idx'] = run[0].index
+                else:
+                    idx_list = []
+                    for r in run:
+                        idx_list.append(r.index)
+                    kwargs['idx'] = idx_list
+                run[0].psygrid.kwargs = kwargs
+            def __call__(self):
+                return
+
+        # Load the grid
+        try:
+            PSyGrid.load(grid_path_single)
+        except: # skip test as test on load should fail
+            assert "/" in grid_path_single
+            return
+
+        # Skip if it's a binary grid (we want single-star)
+        if PSyGrid.config["binary"]:
+            return
+
+        monkeypatch.setattr(totest, "plot1D", mock_plot1D_class)
+
+        # Test states with history1 - covers lines 2028-2031
+        PSyGrid.kwargs = None
+        PSyGrid.HR(0, history='history1', states=True)
+        assert PSyGrid.kwargs['idx'] == 0
+        assert PSyGrid.kwargs['HR'] == True
+        assert PSyGrid.kwargs['history'] == 'history1'
+        assert 'star_states' in PSyGrid.kwargs
+        assert PSyGrid.kwargs['star_states'] is not None
+        assert len(PSyGrid.kwargs['star_states']) == 1
+
     def test_eq(self, PSyGrid, grid_path, capsys, monkeypatch):
         def mock_getitem(self, index):
             if (("description" in self.config) and (self.config["description"]\
@@ -2525,6 +2667,14 @@ class TestPSyRunView:
         # initialize an instance of the class with defaults
         return totest.PSyRunView(PSyGrid, 0)
 
+    @fixture
+    def grid_path_sne_data(self, tmp_path, binary_history, star_history,\
+                           profile):
+        path = get_simple_PSyGrid(tmp_path, 1, binary_history, star_history,\
+                                  profile, add_SN_MODELS=True)
+
+        return path
+
     # test the PSyRunView class
     def test_init(self, PSyRunView, PSyGrid):
         assert isroutine(PSyRunView.__init__)
@@ -2595,3 +2745,37 @@ class TestPSyRunView:
             assert f"View of the run {i} in the file "\
                    +f"'{PSyRunView.psygrid.filepath}' at key "\
                    +f"'{PSyRunView._hdf5_key()}'" == PSyRunView.__str__()
+
+    def test_get_SN_data(self, grid_path_sne_data):
+        """PSyRunView.get_SN_data returns per-model SN dict or None."""
+        import h5py as _h5py
+
+        from posydon.grids.psygrid import H5_REC_STR_DTYPE
+
+        MODEL = 'SN_MODEL_v2_01'
+
+        # Load grid and verify SN_MODELS dict is populated.
+        test_grid = totest.PSyGrid()
+        test_grid.load(grid_path_sne_data)
+        assert isinstance(test_grid.SN_MODELS, dict)
+        assert MODEL in test_grid.SN_MODELS
+
+        # Check that get_SN_run_data returns the correct dict.
+        row = test_grid.get_SN_run_data(0, MODEL)
+        assert isinstance(row, dict)
+        assert 'S1_CO_type' in row
+        # The value should be a Python str after dtype conversion.
+        assert isinstance(row['S1_CO_type'], str)
+
+        # Check unknown model returns None.
+        assert test_grid.get_SN_run_data(0, 'not_a_model') is None
+
+        # Check via PSyRunView.get_SN_data.
+        view = test_grid[0]
+        row_via_view = view.get_SN_data(MODEL)
+        assert row_via_view is not None
+        assert row_via_view['S1_CO_type'] == row['S1_CO_type']
+
+        # Unknown model via view also returns None.
+        assert view.get_SN_data('not_a_model') is None
+        test_grid.close()

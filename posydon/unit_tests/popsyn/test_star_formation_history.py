@@ -823,8 +823,6 @@ class TestChruslinska21:
         result = chruslinska_model.fSFR(z, met_bins)
         np.testing.assert_allclose(result[0], np.zeros_like(result[0]))
 
-
-
 class TestZavala21:
     """Tests for the Zavala21 SFH model with mocked data loading."""
 

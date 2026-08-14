@@ -20,7 +20,7 @@ import numpy as np
 import pandas as pd
 
 from posydon.utils.constants import Zsun
-from posydon.utils.gridutils import add_field
+from posydon.utils.gridutils import _get_grid_column, add_field
 from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.combine_TF import combine_TF12
 from posydon.visualization.plot_defaults import (
@@ -633,6 +633,63 @@ class plot2D(object):
                                   'likely all values are NaN.',
                                   "InappropriateValueWarning")
                     sc_last = sc
+                else:
+                    # Plot with default color when z_var is None and color is None
+                    if self.slice_at_RLO:
+                        for i in range(len(self.x_var[selection])):
+                            if not isinstance(self.x_var_oRLO[selection][i],
+                                              float):
+                                if not any(
+                                    pd.isna(self.x_var_oRLO[selection][i])
+                                ) and not any(pd.isna(
+                                        self.y_var_oRLO[selection][i])):
+                                    plt.plot(
+                                        self.x_var[selection][i],
+                                        self.y_var[selection][i],
+                                        marker=".",
+                                        color="black",
+                                    )
+                                    plt.plot(
+                                        self.x_var_oRLO[selection][i],
+                                        self.y_var_oRLO[selection][i],
+                                        color="black",
+                                    )
+                                sc = ax.scatter(
+                                    self.x_var_oRLO[selection][i][-1],
+                                    self.y_var_oRLO[selection][i][-1],
+                                    marker=self.MARKERS_COLORS_LEGENDS[
+                                        flag][0],
+                                    linewidths=self.MARKERS_COLORS_LEGENDS[
+                                        flag][1],
+                                    c='gray',
+                                    s=self.marker_size,
+                                )
+                            else:
+                                plt.plot(
+                                    self.x_var[selection][i],
+                                    self.y_var[selection][i],
+                                    marker=".",
+                                    color="black",
+                                )
+                                sc = ax.scatter(
+                                    self.x_var[selection][i],
+                                    self.y_var[selection][i],
+                                    marker=self.MARKERS_COLORS_LEGENDS[
+                                        flag][0],
+                                    linewidths=self.MARKERS_COLORS_LEGENDS[
+                                        flag][1],
+                                    c='gray',
+                                    s=self.marker_size,
+                                )
+                    else:
+                        sc = ax.scatter(
+                            self.x_var[selection],
+                            self.y_var[selection],
+                            marker=self.MARKERS_COLORS_LEGENDS[flag][0],
+                            linewidths=self.MARKERS_COLORS_LEGENDS[flag][1],
+                            c='gray',
+                            s=self.marker_size,
+                        )
             # collect scatters for legend
             if self.MARKERS_COLORS_LEGENDS[flag][3] not in scatters_legend:
                 scatters.append(sc)
@@ -684,7 +741,7 @@ class plot2D(object):
         elif 'relative_change' in self.z_var_str:
             key = self.z_var_str.split('relative_change_')[1]
             relative_change_key = (
-                (old_final_values[key] - old_initial_values[key])
+                (_get_grid_column(self.psygrid, key) - old_initial_values[key])
                 / old_initial_values[key])
             new_final_values = add_field(old_final_values,
                                          [(self.z_var_str, "<f8")])
@@ -910,7 +967,7 @@ class plot2D(object):
             elif self.binary_history:
                 final_values = []
                 for run in self.psygrid:
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if run.binary_history is None:
                         final_values.append(np.nan)
@@ -929,9 +986,11 @@ class plot2D(object):
             # read final values from final_values
             else:
                 if self.log10_z:
-                    self.z_var = np.log10(self.final_values[self.z_var_str])
+                    self.z_var = np.log10(
+                        _get_grid_column(self.psygrid, self.z_var_str))
                 else:
-                    self.z_var = self.final_values[self.z_var_str]
+                    self.z_var = _get_grid_column(
+                        self.psygrid, self.z_var_str)
 
         # take the z_var at oRLO
         else:
@@ -948,7 +1007,7 @@ class plot2D(object):
                     else:
                         raise ValueError(
                             "wrong selected_star_history_for_z_var")
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if history is None:
                         values.append(np.nan)
@@ -976,7 +1035,7 @@ class plot2D(object):
             elif self.binary_history:
                 values = []
                 for run in self.psygrid:
-                    # failed runs are stored as signle values or None
+                    # failed runs are stored as single values or None
                     # and not arrays
                     if run.binary_history is None:
                         values.append(np.nan)

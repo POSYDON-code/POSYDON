@@ -1,0 +1,7 @@
+workdirs/
+output/
+logs/
+baselines/
+test_*.h5
+*.ini
+*.txt

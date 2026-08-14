@@ -6,9 +6,8 @@ import os
 import numpy as np
 import pandas as pd
 
-from posydon.utils.constants import Msun, Rsun, clight
-from posydon.utils.constants import secyer as secyear
-from posydon.utils.constants import standard_cgrav as cgrav
+from posydon.grids.lazy_hdf import LazyHDF5
+from posydon.utils.common_functions import inspiral_timescale_from_orbital_period
 from posydon.utils.limits_thresholds import LG_MTRANSFER_RATE_THRESHOLD
 from posydon.utils.posydonwarning import Pwarn
 
@@ -20,8 +19,36 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu"
 ]
 
+
+def _get_grid_column(grid, key):
+    """Return a column array sourced from final_values or SN_MODELS datasets.
+
+    SN model columns (e.g. 'S1_SN_MODEL_v2_01_CO_type') are stored with
+    stripped short names ('S1_CO_type') inside per-model SN datasets.
+    This helper transparently routes to the correct source.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+    key : str
+        Full column name (e.g. 'S1_SN_MODEL_v2_01_CO_type').
+
+    Returns
+    -------
+    np.ndarray
+    """
+    if key in grid.final_values.dtype.names:
+        return np.array(grid.final_values[key])
+    for model_name, ds in grid.SN_MODELS.items():
+        infix = f'{model_name}_'
+        prefix_len = 3  # len('S1_') == len('S2_')
+        if key[prefix_len:prefix_len + len(infix)] == infix:
+            short = key[:prefix_len] + key[prefix_len + len(infix):]
+            return np.array(ds[short])
+    raise KeyError(f"Column {key!r} not found in final_values or SN_MODELS")
 
 def join_lists(A, B):
     """Make a joint list of A and B without elements already in A and keeping
@@ -107,6 +134,8 @@ def fix_He_core(history):
     return history
 
 
+# TODO: replace with numpy.lib.recfunctions?
+# allows adding multiple fields to a structured array as well. (more efficient probably?)
 def add_field(a, descr):
     """Return a new array that is like `a`, but has additional fields.
 
@@ -142,11 +171,15 @@ def add_field(a, descr):
     True
 
     """
-    if a.dtype.fields is None:
-        raise ValueError("'a' must be a structured numpy array")
+    if a.dtype.fields is None or len(a.dtype.fields) == 0:
+        raise ValueError("'a.dtype.fields' must not be empty or None.")
     b = np.empty(a.shape, dtype=a.dtype.descr + descr)
     for name in a.dtype.names:
         b[name] = a[name]
+
+    if isinstance(a, LazyHDF5):
+        b = LazyHDF5(b)
+
     return b
 
 
@@ -241,89 +274,6 @@ def get_final_proposed_points(proposed_x, grid_x, proposed_y, grid_y):
     print('Number of unique mapped coordinates:', len(mapped_x))
 
     return mapped_x, mapped_y
-
-
-def T_merger_P(P, m1, m2):
-    """Merger time given initial orbital period and masses of binary.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr)
-
-    """
-    return T_merger_a(kepler3_a(P, m1, m2), m1, m2)
-
-
-def beta_gw(m1, m2):
-    """Evaluate the "beta" (equation 5.9) from Peters (1964).
-
-    Parameters
-    ----------
-    m1 : float
-        Mass of the first star.
-    m2 : type
-        Mass of the second star.
-
-    Returns
-    -------
-    float
-        Peters' beta in cgs units.
-
-    """
-    return 64. / 5. * cgrav**3 / clight**5 * m1 * m2 * (m1 + m2)
-
-
-def kepler3_a(P, m1, m2):
-    """Calculate the semimajor axis of a binary from its period and masses.
-
-    Parameters
-    ----------
-    P : float
-        Orbital period (days).
-    m1 : float
-        Mass of first star.
-    m2 : type
-        Mass of second star.
-
-    Returns
-    -------
-    float
-        Semi-major axis (Rsun) using Kepler's third law.
-
-    """
-    return ((P * 24.0 * 3600.0)**2.0
-            * cgrav * (m1 + m2) * Msun / (4.0 * np.pi**2))**(1.0 / 3.0) / Rsun
-
-
-def T_merger_a(a, m1, m2):
-    """Merger time given initial orbital separation and masses of binary.
-
-    Parameters
-    ----------
-    a : float
-        Orbital separation (Rsun).
-    m1 : float
-        Mass of first star (Msun).
-    m2 : float
-        Mass of second star (Msun).
-
-    Returns
-    -------
-    float
-        Merger time (Gyr) following Peters (1964), eq. (5.10).
-
-    """
-    return (a * Rsun)**4 / (4. * beta_gw(m1, m2) * Msun**3) / (secyear * 1.0e9)
 
 
 def convert_output_to_table(
@@ -443,10 +393,11 @@ def convert_output_to_table(
                 values["C_core_2(Msun)"] = hist["c_core_mass"].iloc[-1]
 
             if binary_history_file is not None:
-                tmerge = T_merger_P(
-                    binary_history["period_days"].iloc[-1],
+                tmerge = inspiral_timescale_from_orbital_period(
                     binary_history["star_1_mass"].iloc[-1],
-                    binary_history["star_2_mass"].iloc[-1])
+                    binary_history["star_2_mass"].iloc[-1],
+                    binary_history["period_days"].iloc[-1],
+                    0.0) / 1000.0
                 max_lg_mtransfer_rate = binary_history[
                     "lg_mtransfer_rate"].max()
 

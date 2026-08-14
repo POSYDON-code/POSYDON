@@ -176,6 +176,7 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Seth Gossage <seth.gossage@northwestern.edu"
 ]
 
 
@@ -188,6 +189,7 @@ import h5py
 import numpy as np
 import pandas as pd
 import tqdm
+from numpy.lib import recfunctions as rfn
 
 from posydon.grids.downsampling import TrackDownsampler
 from posydon.grids.io import (
@@ -196,6 +198,7 @@ from posydon.grids.io import (
     initial_values_from_dirname,
     read_initial_values,
 )
+from posydon.grids.lazy_hdf import LazyHDF5
 from posydon.grids.scrubbing import (
     keep_after_RLO,
     keep_till_central_abundance_He_C,
@@ -218,6 +221,7 @@ from posydon.utils.common_functions import (
 )
 from posydon.utils.configfile import ConfigFile
 from posydon.utils.gridutils import (
+    LazyHDF5,
     add_field,
     fix_He_core,
     join_lists,
@@ -386,7 +390,7 @@ GRIDPROPERTIES = {
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
 
-    def __init__(self, filepath=None, verbose=False):
+    def __init__(self, filepath=None, verbose=False, lazy=False):
         """Initialize the PSyGrid, and if `filename` is provided, open it.
 
         Parameters
@@ -401,7 +405,8 @@ class PSyGrid:
         self.filepath = filepath
         self.verbose = verbose
         if self.filepath is not None:
-            self.load(self.filepath)
+            self.load(self.filepath, lazy=lazy)
+
 
     def _reset(self):
         """(Re)set attributes to defaults, except `filename` and `verbose`."""
@@ -410,10 +415,12 @@ class PSyGrid:
         self.MESA_dirs = []
         self.initial_values = None
         self.final_values = None
+        self._SN_values = {}
         self.config = ConfigFile()
         self._make_compression_args()
         self.n_runs = 0
         self.eeps = None
+
 
     def _make_compression_args(self):
         """Convert compression information from the config."""
@@ -1393,8 +1400,9 @@ class PSyGrid:
             raise ValueError("`array` has {} elements but the grid has {} runs"
                              .format(len(arr), len(self)))
 
-        if not isinstance(self.final_values, np.ndarray):
-            raise TypeError("The final values have to be a ndarray.")
+        if not isinstance(self.final_values, (np.ndarray, LazyHDF5)):
+            raise TypeError("The final values have to be a ndarray or LazyHDF5 object."
+                            "Instead, it is {}.".format(type(self.final_values)))
 
         if colname in self.final_values.dtype.names:
             if overwrite:
@@ -1411,8 +1419,9 @@ class PSyGrid:
 
     def update_final_values(self):
         """Update the final values in the HDF5 file."""
-        if not isinstance(self.final_values, np.ndarray):
-            raise TypeError("The final values have to be a ndarray.")
+        if not isinstance(self.final_values, (np.ndarray, LazyHDF5)):
+            raise TypeError("The final values have to be a ndarray or LazyHDF5 object."
+                            "Instead, it is {}.".format(type(self.final_values)))
 
         self._reload_hdf5_file(writeable=True)
         new_dtype = []
@@ -1447,7 +1456,7 @@ class PSyGrid:
         mode = "a" if writeable else "r"
         self.hdf5 = h5py.File(self.filepath, mode, **driver_args)
 
-    def load(self, filepath=None):
+    def load(self, filepath=None, lazy=True):
         """Load up a previously created PSyGrid object from an HDF5 file.
 
         Parameters
@@ -1455,6 +1464,11 @@ class PSyGrid:
         filepath : str or None (default: None)
             Location of the HDF5 file to be loaded. If not provided, assume
             it was defined during the initialization (argument: `filepath`).
+
+        lazy : bool (default: True)
+            If True, load hdf5 files lazily. This means that MESA data
+            will not be loaded into RAM (which can be in the GB range).
+            This comes at a small cost to I/O.
 
         """
         self._say("Loading HDF5 grid...")
@@ -1472,18 +1486,51 @@ class PSyGrid:
         hdf5 = self.hdf5
         # load initial/final_values
         self._say("\tLoading initial/final values...")
-        self.initial_values = hdf5['/grid/initial_values'][()]
-        self.final_values = hdf5['/grid/final_values'][()]
+        initial_values = hdf5['/grid/initial_values']
+        final_values = hdf5['/grid/final_values']
 
         # change ASCII to UNICODE in termination flags in `final_values`
-        new_dtype = []
-        for dtype in self.final_values.dtype.descr:
+        new_dtype = {}
+        for dtype in final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))
-            new_dtype.append(dtype)
-        self.final_values = self.final_values.astype(new_dtype)
+            new_dtype[dtype[0]] = dtype[1]
+
+        if lazy:
+            initial_values = LazyHDF5(initial_values)
+            final_values = LazyHDF5(final_values, dtype_set=new_dtype)
+        else:
+            initial_values = initial_values[()]
+            final_values = final_values[()]
+            new_dtype = list(new_dtype.items())
+            final_values = final_values.astype(new_dtype)
+
+        self.initial_values = initial_values
+        self.final_values = final_values
+
+        # load SN_MODELS datasets if present
+        self._SN_values = {}
+        if 'SN_MODELS' in hdf5['/grid']:
+            self._say("\tLoading SN_MODELS datasets...")
+            for model_name, ds in hdf5['/grid/SN_MODELS'].items():
+                sn_dtype = {}
+                for dname, dtp in ds.dtype.descr:
+                    if '_type' in dname or '_state' in dname or '_class' in dname:
+                        sn_dtype[dname] = H5_REC_STR_DTYPE.replace('S', 'U')
+                    else:
+                        sn_dtype[dname] = dtp
+                if lazy:
+                    self._SN_values[model_name] = LazyHDF5(ds, dtype_set=sn_dtype)
+                else:
+                    arr = ds[()]
+                    if sn_dtype:
+                        arr = arr.astype(list(sn_dtype.items()))
+                    # this is typically unreachable, maybe occurs w/ corrupted data
+                    else: # pragma: no cover
+                        pass
+                    self._SN_values[model_name] = arr
 
         # load MESA dirs
         self._say("\tAcquiring paths to MESA directories...")
@@ -1521,6 +1568,9 @@ class PSyGrid:
             self.n_runs = n_expected
         else:
             raise KeyError("Some runs are missing from the HDF5 grid.")
+
+        # set the compression arguments
+        self._make_compression_args()
 
         self._say("\tDone.")
 
@@ -1654,6 +1704,30 @@ class PSyGrid:
             raise IndexError("Index {} out of bounds.".format(index))
         return PSyRunView(self, index)
 
+    @property
+    def SN_MODELS(self):
+        """Dict mapping SN_MODEL_NAME to its LazyHDF5 or ndarray dataset."""
+        return self._SN_values
+
+    def get_SN_run_data(self, run_index, model_name):
+        """Return a dict of SN quantities (short names) for one run.
+
+        Parameters
+        ----------
+        run_index : int
+        model_name : str
+            Key from SN_MODELS (e.g. 'SN_MODEL_v2_01').
+
+        Returns
+        -------
+        dict or None
+            Keys like 'S1_CO_type', 'S1_mass', etc.; None if model absent.
+        """
+        if model_name not in self._SN_values:
+            return None
+        row = self._SN_values[model_name][run_index]
+        return {name: row[name] for name in row.dtype.names}
+
     def get_pandas_initial_final(self):
         """Convert the initial/final values into a single Pandas dataframe.
 
@@ -1671,6 +1745,13 @@ class PSyGrid:
         for key in self.final_values.dtype.names:
             new_col_name = "final_" + key
             df[new_col_name] = self.final_values[key]
+
+        # Include SN model columns (moved out of final_values after migration)
+        for model_name, sn_ds in self.SN_MODELS.items():
+            for short_key in sn_ds.dtype.names:
+                prefix, field_name = short_key.split('_', 1)
+                full_key = f"final_{prefix}_{model_name}_{field_name}"
+                df[full_key] = np.array(sn_ds[short_key])
         return df
 
     def __len__(self):
@@ -2006,12 +2087,30 @@ class PSyGrid:
             raise TypeError('Invalid idx = {}!'.format(idx))
 
         if states:
-            from posydon.binary_evol.singlestar import SingleStar
             star_states = []
-            for run in runs:
-                star = SingleStar.from_run(run, history=True, profile=False)
-                star_states.append(check_state_of_star_history_array(
-                    star, N=len(star.mass_history)))
+            # Check if this is a binary grid
+            if self.config["binary"]:
+                from posydon.binary_evol.binarystar import BinaryStar
+                for run in runs:
+                    binary = BinaryStar.from_run(run, history=True, profiles=False)
+                    # Extract the appropriate star based on history parameter
+                    if history == 'history1':
+                        star = binary.star_1
+                    elif history == 'history2':
+                        star = binary.star_2
+                    else:
+                        raise ValueError(
+                            f"For binary grids with states=True, history must be "
+                            f"'history1' or 'history2', not '{history}'"
+                        )
+                    star_states.append(check_state_of_star_history_array(
+                        star, N=len(star.mass_history)))
+            else:
+                from posydon.binary_evol.singlestar import SingleStar
+                for run in runs:
+                    star = SingleStar.from_run(run, history=True, profile=False)
+                    star_states.append(check_state_of_star_history_array(
+                        star, N=len(star.mass_history)))
         else:
             star_states = None
 
@@ -2236,6 +2335,20 @@ class PSyRunView:
 
         """
         return self[key]
+
+    def get_SN_data(self, model_name):
+        """Return SN dataset row dict for this run and the given model.
+
+        Parameters
+        ----------
+        model_name : str
+            Key from SN_MODELS (e.g. 'SN_MODEL_v2_01').
+
+        Returns
+        -------
+        dict or None
+        """
+        return self.psygrid.get_SN_run_data(self.index, model_name)
 
     def __str__(self):
         """Return a summary of the PSyRunView in a string.

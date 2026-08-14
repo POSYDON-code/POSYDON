@@ -125,7 +125,8 @@ class TestSetupPopsynFunction:
         """Test that ValueError is raised when number of binaries is too small."""
         mock_binarypop.return_value = {
             'metallicities': [1.0],
-            'number_of_binaries': 5  # Less than job_array (10)
+            'number_of_binaries': 5,  # Less than job_array (10)
+            'secondary_mass_scheme': 'q=1'
         }
 
         with pytest.raises(ValueError, match="number of binaries is less than the job array"):
@@ -147,7 +148,8 @@ class TestSetupPopsynFunction:
         metallicities = [0.01, 1.0]
         mock_binarypop.return_value = {
             'metallicities': metallicities,
-            'number_of_binaries': 1000
+            'number_of_binaries': 1000,
+            'secondary_mass_scheme': 'q=1'
         }
 
         # Call function
@@ -174,7 +176,8 @@ class TestSetupPopsynFunction:
         metallicities = [0.1, 1.0]
         mock_binarypop.return_value = {
             'metallicities': metallicities,
-            'number_of_binaries': 1000
+            'number_of_binaries': 1000,
+            'secondary_mass_scheme': 'q=1'
         }
 
         totest.setup_popsyn_function(mock_args)
@@ -185,6 +188,90 @@ class TestSetupPopsynFunction:
         calls = [call[0][0] for call in mock_makedirs.call_args_list]
         assert any(['1e+00_logs' in call for call in calls])
         assert any(['1e-01_logs' in call for call in calls])
+
+
+class TestFlatMassRatioWarning:
+    """Test class for flat_mass_ratio mass ratio warning logic."""
+
+    @pytest.fixture
+    def mock_args(self):
+        """Create mock command-line arguments."""
+        args = MagicMock()
+        args.ini_file = "test.ini"
+        args.job_array = 10
+        return args
+
+    @patch('posydon.CLI.popsyn.setup.validate_ini_file')
+    @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.create_python_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
+    @patch('posydon.CLI.popsyn.setup.Pwarn')
+    @patch('os.makedirs')
+    def test_flat_mass_ratio_low_q_issues_warning(
+        self, mock_makedirs, mock_pwarn, mock_bash, mock_slurm,
+        mock_python, mock_binarypop, mock_validate, mock_args
+    ):
+        """Test warning is issued when q_min < 0.05 with flat_mass_ratio."""
+        mock_binarypop.return_value = {
+            'metallicities': [1.0],
+            'number_of_binaries': 1000,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.1,
+            'primary_mass_max': 150.0,
+        }
+
+        totest.setup_popsyn_function(mock_args)
+
+        mock_pwarn.assert_called_once()
+        call_args = mock_pwarn.call_args[0]
+        assert 'InappropriateValueWarning' in call_args
+
+    @patch('posydon.CLI.popsyn.setup.validate_ini_file')
+    @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.create_python_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
+    @patch('posydon.CLI.popsyn.setup.Pwarn')
+    @patch('os.makedirs')
+    def test_flat_mass_ratio_acceptable_q_no_warning(
+        self, mock_makedirs, mock_pwarn, mock_bash, mock_slurm,
+        mock_python, mock_binarypop, mock_validate, mock_args
+    ):
+        """Test no warning is issued when q_min >= 0.05 with flat_mass_ratio."""
+        mock_binarypop.return_value = {
+            'metallicities': [1.0],
+            'number_of_binaries': 1000,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 5.0,
+            'primary_mass_max': 80.0,
+        }
+
+        totest.setup_popsyn_function(mock_args)
+
+        mock_pwarn.assert_not_called()
+
+    @patch('posydon.CLI.popsyn.setup.validate_ini_file')
+    @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.create_python_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
+    @patch('posydon.CLI.popsyn.setup.Pwarn')
+    @patch('os.makedirs')
+    def test_non_flat_mass_ratio_scheme_no_warning(
+        self, mock_makedirs, mock_pwarn, mock_bash, mock_slurm,
+        mock_python, mock_binarypop, mock_validate, mock_args
+    ):
+        """Test no warning is issued when secondary_mass_scheme is not flat_mass_ratio."""
+        mock_binarypop.return_value = {
+            'metallicities': [1.0],
+            'number_of_binaries': 1000,
+            'secondary_mass_scheme': 'q=1',
+        }
+
+        totest.setup_popsyn_function(mock_args)
+
+        mock_pwarn.assert_not_called()
 
 
 class TestIntegration:
@@ -211,7 +298,8 @@ class TestIntegration:
         }
         mock_binarypop.return_value = {
             'metallicities': [1.0],
-            'number_of_binaries': 100
+            'number_of_binaries': 100,
+            'secondary_mass_scheme': 'q=1'
         }
 
         # Create mock args

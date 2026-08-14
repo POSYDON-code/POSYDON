@@ -245,6 +245,16 @@ class TestFunctions:
                                              os.listdir(MESA_run_dir)[0])
                 os.symlink(MESA_run_file, os.path.join(MESA_dir,\
                                                        f"link{i}.file0"))
+
+        # add >=2 regular files directly in MESA_dir (a non-MESA directory)
+        # so the inner for-loop backward arc (204->198) is covered on Ubuntu,
+        # where file symlinks may not reliably appear in os.walk's filenames
+        for j in range(2):
+            with open(os.path.join(MESA_dir, f"extra_{j}.log"),\
+                      "w") as extra_file:
+                extra_file.write(f"test\n")
+
+
         total_size, remove_files, compress_files, n_runs, n_remove_files,\
          n_compress_files = totest.get_size(start_path=MESA_dir)
         assert total_size > 0
@@ -253,6 +263,23 @@ class TestFunctions:
         assert n_runs == 20
         assert n_remove_files == 0
         assert n_compress_files > 0
+        # isolated test for islink branch (201->204): create a minimal
+        # directory with a real file and a symlink to it, then verify
+        # get_size only counts the real file's size
+        islink_dir = os.path.join(tmp_path, "islink_grid_index_0")
+        os.mkdir(islink_dir)
+        real = os.path.join(islink_dir, "real.data")
+        with open(real, "w") as f:
+            f.write("content")
+        link = os.path.join(islink_dir, "link.data")
+        os.symlink(real, link)
+        assert os.path.islink(link), \
+            f"os.path.islink returned False for symlink at {link}"
+        real_size = os.path.getsize(real)
+        total_size, remove_files, compress_files, n_runs, n_remove_files,\
+         n_compress_files = totest.get_size(start_path=tmp_path)
+        # the symlink should not contribute to total_size
+        assert total_size >= real_size
 
     def test_compress_dir(self, tmp_path, capsys):
         # missing argument

@@ -25,10 +25,6 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 from posydon.binary_evol.DT.gravitational_radiation.default_gravrad import (
     default_gravrad,
 )
-from posydon.binary_evol.DT.key_library import (
-    DEFAULT_TRANSLATED_KEYS,
-    DEFAULT_TRANSLATION,
-)
 from posydon.binary_evol.DT.magnetic_braking.prescriptions import (
     CARB_braking,
     G18_braking,
@@ -36,7 +32,6 @@ from posydon.binary_evol.DT.magnetic_braking.prescriptions import (
     RVJ83_braking,
 )
 from posydon.binary_evol.DT.tides.default_tides import default_tides
-from posydon.binary_evol.DT.track_match import TrackMatcher
 from posydon.binary_evol.DT.winds.default_winds import (
     default_sep_from_winds,
     default_spin_from_winds,
@@ -58,6 +53,10 @@ from posydon.utils.common_functions import (
     roche_lobe_radius,
     set_binary_to_failed,
     zero_negative_values,
+)
+from posydon.utils.key_library import (
+    DEFAULT_TRANSLATED_KEYS,
+    DEFAULT_TRANSLATION,
 )
 from posydon.utils.posydonerror import (
     ClassificationError,
@@ -86,73 +85,6 @@ class detached_step:
 
     Parameters
     ----------
-    path : str
-        Path to the directory that contains POSYDON data HDF5 files. Defaults
-        to the PATH_TO_POSYDON_DATA environment variable. Used for track
-        matching.
-
-    metallicity : float
-        The metallicity of the grid. This should be one of the eight
-        supported metallicities:
-
-            [2e+00, 1e+00, 4.5e-01, 2e-01, 1e-01, 1e-02, 1e-03, 1e-04]
-
-        and this will be converted to a corresponding string (e.g.,
-        1e+00 --> "1e+00_Zsun"). Used for track matching.
-
-    matching_method : str
-        Method to find the best match between a star from a previous step and a
-        point in a single star evolution track. Options:
-
-            "root": Tries to find a root of two matching quantities. It is
-                    possible to not find one, causing the evolution to fail.
-
-            "minimize": Minimizes the sum of squares of differences of
-                        various quantities between the previous evolution step and
-                        a stellar evolution track.
-
-        Used for track matching.
-
-    grid_name_Hrich : str
-        Name of the single star H-rich grid h5 file,
-        including its parent directory. This is set to
-        (for example):
-
-            grid_name_Hrich = 'single_HMS/1e+00_Zsun.h5'
-
-        by default if not specified. Used for track matching.
-
-    grid_name_strippedHe : str
-        Name of the single star He-rich grid h5 file. This is
-        set to (for example):
-
-            grid_name_strippedHe = 'single_HeMS/1e+00_Zsun.h5'
-
-        by default if not specified. Used for track matching.
-
-    list_for_matching_HMS : list
-        A list of mixed type that specifies properties of the matching
-        process for HMS stars. Used for track matching.
-
-    list_for_matching_postMS : list
-        A list of mixed type that specifies properties of the matching
-        process for postMS stars. Used for track matching.
-
-    list_for_matching_HeStar : list
-        A list of mixed type that specifies properties of the matching
-        process for He stars. Used for track matching.
-
-    record_matching : bool
-        Whether properties of the matched star(s) should be recorded in the
-        binary evolution history. Used for track matching.
-
-    Attributes
-    ----------
-    KEYS : list[str]
-        Contains keywords corresponding to MESA data column names
-        which are used to extract quantities from the single star
-        evolution grids.
-
     dt : float
         The timestep size, in years, to be appended to the history of the
         binary. None means only the final step. Note: do not select very
@@ -202,10 +134,6 @@ class detached_step:
         evolved until RLO commences once again, but without changing the
         orbit.
 
-    translate : dict
-        Dictionary containing data column name (key) translations between
-        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).
-
     track_matcher : TrackMatcher object
         The TrackMatcher object performs functions related to matching
         binary stellar evolution components to single star evolution models.
@@ -213,80 +141,76 @@ class detached_step:
     verbose : bool
         True if we want to print stuff.
 
+    Attributes
+    ----------
+    KEYS : list[str]
+        Contains keywords corresponding to MESA data column names
+        which are used to extract quantities from the single star
+        evolution grids.
+
+    translate : dict
+        Dictionary containing data column name (key) translations between
+        POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).
+
+    evo : detached_evolution
+        Handler object responsible for performing the detached binary
+        evolution.
+
+    evo_kwargs : dict
+        Keyword arguments used to initialize ``detached_evolution``.
+
     """
 
-    def __init__(
-            self,
-            dt=None,
-            n_o_steps_history=None,
-            do_wind_loss=True,
-            do_tides=True,
-            do_gravitational_radiation=True,
-            do_magnetic_braking=True,
-            magnetic_braking_mode="RVJ83",
-            do_stellar_evolution_and_spin_from_winds=True,
-            RLO_orbit_at_orbit_with_same_am=False,
-            record_matching=False,
-            verbose=False,
-            grid_name_Hrich=None,
-            grid_name_strippedHe=None,
-            metallicity=None,
-            path=PATH_TO_POSYDON_DATA,
-            matching_method="minimize",
-            matching_tolerance=1e-2,
-            matching_tolerance_hard=1e-1,
-            list_for_matching_HMS=None,
-            list_for_matching_postMS=None,
-            list_for_matching_HeStar=None
-    ):
-        """Initialize the step. See class documentation for details."""
-        self.dt = dt
-        self.n_o_steps_history = n_o_steps_history
-        self.do_wind_loss = do_wind_loss
-        self.do_tides = do_tides
-        self.do_gravitational_radiation = do_gravitational_radiation
-        self.do_magnetic_braking = do_magnetic_braking
-        self.magnetic_braking_mode = magnetic_braking_mode
-        self.do_stellar_evolution_and_spin_from_winds = (
-            do_stellar_evolution_and_spin_from_winds
-        )
-        self.RLO_orbit_at_orbit_with_same_am = RLO_orbit_at_orbit_with_same_am
-        self.verbose = verbose
+    # settings in .ini will override
+    DEFAULT_KWARGS = {"dt": None,
+                      "n_o_steps_history": None,
+                      "do_wind_loss": True,
+                      "do_tides": True,
+                      "do_gravitational_radiation": True,
+                      "do_magnetic_braking": True,
+                      "magnetic_braking_mode": "RVJ83",
+                      "do_stellar_evolution_and_spin_from_winds": True,
+                      "RLO_orbit_at_orbit_with_same_am": False,
+                      "metallicity": None,
+                      "track_matcher": None,
+                      "RNG": np.random.default_rng(),
+                      "verbose": False}
 
-        if self.verbose:
-            print(
-                dt,
-                n_o_steps_history,
-                matching_method,
-                do_wind_loss,
-                do_tides,
-                do_gravitational_radiation,
-                do_magnetic_braking,
-                magnetic_braking_mode,
-                do_stellar_evolution_and_spin_from_winds)
+    def __init__(self, **kwargs):
+
+        """Initialize the step. See class documentation for details."""
+        # read kwargs to initialize the class
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise ValueError(key + " is not a valid parameter name!")
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, kwargs.get(varname, default_value))
+        else:
+            for varname in self.DEFAULT_KWARGS:
+                default_value = self.DEFAULT_KWARGS[varname]
+                setattr(self, varname, default_value)
 
         self.translate = DEFAULT_TRANSLATION
-
         # these are the KEYS read from POSYDON h5 grid files (after translating
         # them to the appropriate columns)
         self.KEYS = DEFAULT_TRANSLATED_KEYS
 
-        # creating a track matching object
-        self.track_matcher = TrackMatcher(grid_name_Hrich = grid_name_Hrich,
-                                          grid_name_strippedHe = grid_name_strippedHe,
-                                          path=path, metallicity = metallicity,
-                                          matching_method = matching_method,
-                                          matching_tolerance=matching_tolerance,
-                                          matching_tolerance_hard=matching_tolerance_hard,
-                                          list_for_matching_HMS = list_for_matching_HMS,
-                                          list_for_matching_HeStar = list_for_matching_HeStar,
-                                          list_for_matching_postMS = list_for_matching_postMS,
-                                          record_matching = record_matching,
-                                          verbose = self.verbose)
-
         # create evolution handler object
         self.init_evo_kwargs()
         self.evo = detached_evolution(**self.evo_kwargs)
+
+        if self.verbose:
+            print(self.dt,
+                  self.n_o_steps_history,
+                  self.track_matcher.matching_method,
+                  self.do_wind_loss,
+                  self.do_tides,
+                  self.do_gravitational_radiation,
+                  self.do_magnetic_braking,
+                  self.magnetic_braking_mode,
+                  self.do_stellar_evolution_and_spin_from_winds)
 
         return
 
@@ -301,12 +225,12 @@ class detached_step:
             "magnetic_braking_mode": self.magnetic_braking_mode,
             "do_stellar_evolution_and_spin_from_winds": self.do_stellar_evolution_and_spin_from_winds,
             "do_gravitational_radiation": self.do_gravitational_radiation,
-            "verbose": self.verbose,
-        }
+            "verbose": self.verbose}
 
     def __repr__(self):
         """Return the name of evolution step."""
-        return "Detached Step."
+        return "detached_step:\n" + \
+            "\n".join([f"{key} = {getattr(self, key)}" for key in self.__dict__])
 
     def __call__(self, binary):
         """
@@ -429,7 +353,7 @@ class detached_step:
             elif primary.co:
                 mdot_acc = np.atleast_1d(bondi_hoyle(
                     binary, primary, secondary, slice(-len(t), None),
-                    wind_disk_criteria=True, scheme='Kudritzki+2000'))
+                    wind_disk_criteria=True, RNG=self.RNG, scheme='Kudritzki+2000'))
                 primary.lg_mdot = np.log10(mdot_acc.item(-1))
                 primary.lg_mdot_history[len(primary.lg_mdot_history) - len(t) + 1:] = np.log10(mdot_acc[:-1])
             else:
@@ -850,6 +774,102 @@ class detached_step:
                     getattr(obj, key + "_history").extend(history)
 
 class detached_evolution:
+    """
+    ODE system describing the evolution of a detached binary.
+
+    This class defines the differential equations governing the orbital
+    evolution and stellar spin evolution of a detached binary system.
+    It is designed to be passed directly to ``scipy.integrate.solve_ivp``,
+    with ``__call__`` returning the derivatives of the system state.
+
+    The evolution can include contributions from several physical processes:
+
+    - Stellar wind mass loss
+    - Tidal interactions
+    - Magnetic braking
+    - Gravitational wave radiation
+    - Spin evolution from stellar winds and structural changes
+
+    The stellar properties required for these calculations are obtained
+    from interpolated single-star evolution tracks associated with the
+    ``SingleStar`` objects (binary components) and their
+    PChipInterpolator2 objects.
+
+    Parameters
+    ----------
+    primary : SingleStar, optional
+        Primary star of the binary (typically the more evolved star).
+        These must have an ``interp1d`` interpolator to return stellar
+        properties as a function of time.
+
+    secondary : SingleStar, optional
+        Secondary star of the binary.
+
+    do_wind_loss : bool, optional
+        If True, include orbital evolution due to stellar wind mass loss.
+
+    do_tides : bool, optional
+        If True, include tidal interactions affecting orbital separation,
+        eccentricity, and stellar spin.
+
+    do_magnetic_braking : bool, optional
+        If True, include stellar spin evolution due to magnetic braking.
+
+    magnetic_braking_mode : {"RVJ83", "M15", "G18", "CARB"}, optional
+        Magnetic braking prescription:
+
+        - RVJ83 — Rappaport, Verbunt & Joss (1983)
+        - M15 — Matt et al. (2015)
+        - G18 — Garraffo et al. (2018)
+        - CARB — Van & Ivanova (2019)
+
+    do_stellar_evolution_and_spin_from_winds : bool, optional
+        If True, include spin evolution caused by stellar structural
+        evolution and angular momentum loss from winds.
+
+    do_gravitational_radiation : bool, optional
+        If True, include orbital evolution from gravitational wave emission.
+
+    verbose : bool, optional
+        If True, print diagnostic information during the integration.
+
+    Attributes
+    ----------
+    primary : SingleStar
+        Primary star used in the evolution.
+
+    secondary : SingleStar
+        Secondary star used in the evolution.
+
+    a : float
+        Current orbital separation (solar radii).
+
+    e : float
+        Current orbital eccentricity.
+
+    phys_keys : list of str
+        Names of stellar quantities tracked from the interpolated stellar
+        evolution models.
+
+    t : float
+        Current system age during integration.
+
+    Notes
+    -----
+    The system state vector ``y`` evolved by ``solve_ivp`` is defined as::
+
+        y = [a, e, omega_secondary, omega_primary]
+
+    where
+
+    - ``a`` is the orbital separation (R☉)
+    - ``e`` is the orbital eccentricity
+    - ``omega_secondary`` is the spin angular velocity of the secondary (rad/yr)
+    - ``omega_primary`` is the spin angular velocity of the primary (rad/yr)
+
+    Event functions defined in this class detect important transitions such
+    as Roche-lobe overflow or reaching the end of a stellar evolution track.
+    """
 
     def __init__(self, primary=None, secondary=None,
                     do_wind_loss=True,
@@ -1159,7 +1179,7 @@ class detached_evolution:
         y[3] = np.max([y[3], 0])
         self.primary.latest["omega"] = y[3]
 
-        # store current delta(t)/time
+        # store current time
         self.t = t
 
     def __call__(self, t, y):

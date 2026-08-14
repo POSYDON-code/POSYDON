@@ -48,7 +48,8 @@ class TestElements:
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
                     'post_process_grid', 'print_CC_quantities', 'tqdm',\
-                    'get_SN_MODEL'}
+                    'get_SN_MODEL', 'H5_REC_STR_DTYPE', 'h5py',\
+                    'recfunctions'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -529,10 +530,7 @@ class TestFunctions:
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)
 
-    def test_add_post_processed_quantities(self, grid, monkeypatch):
-        def mock_add_column(colname, array, where="final_values",\
-                            overwrite=True):
-            self.newcolumns[colname] = array
+    def test_add_post_processed_quantities(self, grid):
         # missing argument
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'grid', "\
@@ -547,17 +545,124 @@ class TestFunctions:
         with raises(ValueError, match="EXTRA_COLUMNS do not follow the "\
                                       +"correct order of grid!"):
             totest.add_post_processed_quantities(grid, ["Unit"], None)
-        # examples: nothing to add
+        # examples: nothing to add — should be a no-op
         totest.add_post_processed_quantities(grid, ["Test"], {})
         assert grid.final_values is None
-        # examples: add columns
-        with monkeypatch.context() as mp:
-            mp.setattr(grid, "add_column", mock_add_column)
-            EXTRA_COLUMNS = {'test_state': ["unit"], 'test_type': ["test"],\
-                             'test_class': ["unittest"], 'mt_history': [""],\
-                             'value': [1.0], 'values': [0.0, 1.0]}
-            self.newcolumns = {}
-            totest.add_post_processed_quantities(grid, ["Test"], EXTRA_COLUMNS)
-            for k,v in EXTRA_COLUMNS.items():
-                for i in range(len(v)):
-                    assert self.newcolumns[k][i] == v[i]
+
+    def test_add_post_processed_quantities_sn_schema(self, grid_path,
+                                                      binary_history,
+                                                      star_history, profile):
+        """SN columns land in /grid/SN_MODELS, not in final_values."""
+        import h5py
+
+        from posydon.grids.psygrid import PSyGrid
+        from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL
+
+        # Use just the first SN model to keep the test fast.
+        MODEL = list(SN_MODELS.keys())[0]
+
+        grid = PSyGrid()
+        grid.load(grid_path)
+        n = grid.n_runs + 1  # total entries including run0
+
+        # Build minimal SN EXTRA_COLUMNS for one model.
+        sn_val = np.nan
+        sn_str = b'None'
+        str_dtype = np.dtype('S70')
+        EXTRA_COLUMNS = {}
+        for star_i in (1, 2):
+            for qty in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                        'm_disk_accreted', 'm_disk_radiated',
+                        'CO_interpolation_class', 'M4', 'mu4',
+                        'h1_mass_ej', 'he4_mass_ej']:
+                col = f'S{star_i}_{MODEL}_{qty}'
+                EXTRA_COLUMNS[col] = [sn_val] * n
+        # Rename state → CO_type as the writer expects.
+        for star_i in (1, 2):
+            old = f'S{star_i}_{MODEL}_state'
+            new = f'S{star_i}_{MODEL}_CO_type'
+            EXTRA_COLUMNS[new] = EXTRA_COLUMNS.pop(old)
+        # Make string columns actual strings so dtype detection works.
+        for star_i in (1, 2):
+            for qty in ['CO_type', 'SN_type', 'CO_interpolation_class']:
+                EXTRA_COLUMNS[f'S{star_i}_{MODEL}_{qty}'] = ['None'] * n
+
+        # add a column without SN_MODEL prefix for testing
+        #EXTRA_COLUMNS['test_other_column'] = np.arange(n, dtype=np.float64)
+        # add a unicode string column for testing
+        #grid.final_values['unicode_column'] = np.array(['a'] * n, dtype='U70')
+
+        totest.add_post_processed_quantities(grid, list(grid.MESA_dirs),
+                                             EXTRA_COLUMNS)
+
+        # Re-open the HDF5 to inspect the schema.
+        with h5py.File(grid_path, 'r') as f:
+            # SN columns must be absent from final_values.
+            fv_names = f['grid/final_values'].dtype.names
+            assert not any('SN_MODEL' in nm for nm in fv_names), (
+                "SN_MODEL columns found in final_values")
+
+            # SN_MODELS group must exist with a dataset for the model.
+            assert 'SN_MODELS' in f['grid'], "SN_MODELS group missing"
+            assert MODEL in f['grid/SN_MODELS'], f"{MODEL} dataset missing"
+
+            ds = f[f'grid/SN_MODELS/{MODEL}']
+            short_names = ds.dtype.names
+
+            # Short names must not contain the model name.
+            for nm in short_names:
+                assert MODEL not in nm, (
+                    f"Model name found in short field name: {nm}")
+
+            # Short names for string fields should be there.
+            assert 'S1_CO_type' in short_names
+            assert 'S1_SN_type' in short_names
+            # Full names must NOT be present.
+            assert f'S1_{MODEL}_CO_type' not in short_names
+
+            # Attrs must contain the model's mechanism.
+            model_params = get_SN_MODEL(MODEL)
+            for key in model_params:
+                assert key in ds.attrs, f"Attr {key!r} missing from dataset"
+
+            # dtype of string field should be bytes (S-dtype) in HDF5.
+            assert ds.dtype['S1_CO_type'].kind == 'S', (
+                "S1_CO_type not stored as bytes in HDF5")
+
+        # Overwrite semantics: calling again should not error or duplicate.
+        grid2 = PSyGrid()
+        grid2.load(grid_path)
+        totest.add_post_processed_quantities(grid2, list(grid2.MESA_dirs),
+                                             EXTRA_COLUMNS)
+        with h5py.File(grid_path, 'r') as f:
+            assert list(f['grid/SN_MODELS'].keys()).count(MODEL) == 1, (
+                "SN_MODEL dataset duplicated after second write")
+
+
+        # do some last tests, edge cases and things
+        grid3 = PSyGrid()
+        grid3.load(grid_path)
+        # test presence of a column other than SN data in EXTRA_COLUMNS
+        EXTRA_COLUMNS['other_column'] = np.arange(n, dtype=np.float64)
+        # case where extras has a column that also exists in final_values
+        EXTRA_COLUMNS['age'] = np.arange(n, dtype=np.float64)
+        # case where final_values needs no conversion from unicode to bytes
+        # (we convert it here, beforehand)
+        new_dtype = []
+        final_values = np.array(grid3.final_values)
+        for field in final_values.dtype.names:
+            dt = final_values.dtype[field]
+            if dt.kind == "U":
+                new_dtype.append((field, "S70"))
+            else:
+                new_dtype.append((field, dt))
+        grid3.final_values = final_values.astype(new_dtype)
+
+        # test case where grid is missing the final_values dataset
+        grid3._reload_hdf5_file(writeable=True)
+        if 'final_values' in grid3.hdf5['grid']:
+            del grid3.hdf5['grid']['final_values']
+        grid3._reload_hdf5_file(writeable=False)
+
+        totest.add_post_processed_quantities(grid3, list(grid3.MESA_dirs),
+                                             EXTRA_COLUMNS)

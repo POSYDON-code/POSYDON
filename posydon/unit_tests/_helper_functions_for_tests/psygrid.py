@@ -16,12 +16,13 @@ import h5py
 import numpy as np
 
 from posydon.grids.psygrid import H5_UNICODE_DTYPE, PSyGrid
+from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL
 
 
 # helper functions
 def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
                 n_runs=6, initial_values_dtypes=None,\
-                final_values_dtypes=None):
+                final_values_dtypes=None, add_SN_MODELS=False):
     """Create a PSyGrid file with some runs
 
     Parameters
@@ -295,13 +296,54 @@ def get_PSyGrid(dir_path, idx, binary_history, star_history, profile,\
             fin_vals += [tuple(fin_vals_run)]
         fin_val = np.array(fin_vals, dtype=fin_dtypes)
         hdf5_file.create_dataset("/grid/final_values", data=fin_val)
+
+        if add_SN_MODELS:
+            # Create SN data
+            SN_MODELS_group = hdf5_file["grid"].create_group("SN_MODELS")
+            # Just use the first SN model for testing
+            MODEL = next(iter(SN_MODELS))
+            n = n_runs + 1
+
+            # Build (post-processed) EXTRA_COLUMNS into hdf5 for tests
+            EXTRA_COLUMNS = {}
+            for star_i in (1, 2):
+                for qty in (
+                    "state", "SN_type", "f_fb", "mass", "spin",
+                    "m_disk_accreted", "m_disk_radiated",
+                    "CO_interpolation_class", "M4", "mu4",
+                    "h1_mass_ej", "he4_mass_ej"
+                ):
+                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array([np.nan] * n,
+                                                                        dtype="<f8")
+
+                # Writer expects CO_type rather than state
+                EXTRA_COLUMNS[f"S{star_i}_{MODEL}_CO_type"] = \
+                    EXTRA_COLUMNS.pop(f"S{star_i}_{MODEL}_state")
+
+                for qty in ("CO_type", "SN_type", "CO_interpolation_class"):
+                    EXTRA_COLUMNS[f"S{star_i}_{MODEL}_{qty}"] = np.array(["None"] * n,
+                                                                        dtype="S70")
+
+            sn_data = np.rec.fromarrays(
+                EXTRA_COLUMNS.values(),
+                names=[name.replace(f"{MODEL}_", "") for name in EXTRA_COLUMNS],
+            )
+
+            SN_MODELS_group.create_dataset(MODEL, data=sn_data)
+
+            for key, value in get_SN_MODEL(MODEL).items():
+                SN_MODELS_group[MODEL].attrs[key] = value
+
+        # other things
         hdf5_file.attrs["config"] = json.dumps(str(dict(Grid.config)))
         rel_paths = np.array(MESA_paths, dtype=H5_STRING)
         hdf5_file.create_dataset("relative_file_paths", data=rel_paths)
+
     return path
 
 
-def get_simple_PSyGrid(dir_path, idx, binary_history, star_history, profile):
+def get_simple_PSyGrid(dir_path, idx, binary_history, star_history, profile,
+                       add_SN_MODELS=False):
     """Create a PSyGrid file with two runs (+ the empty run0) and reduced
     columns in the initial and final values.
 
@@ -329,4 +371,5 @@ def get_simple_PSyGrid(dir_path, idx, binary_history, star_history, profile):
                                                          '<f8')],\
                        final_values_dtypes=[('period_days', '<f8'),\
                                             ('termination_flag_1',\
-                                             h5py.string_dtype())])
+                                             h5py.string_dtype())],
+                       add_SN_MODELS=add_SN_MODELS)

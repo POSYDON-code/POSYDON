@@ -165,6 +165,8 @@ def create_slurm_array(metallicity,
                         walltime,
                         account,
                         mem_per_cpu,
+                        max_concurrent_jobs,
+                        exclude,
                         path_to_posydon,
                         path_to_posydon_data):
     '''Creates the slurm array script for population synthesis job arrays.
@@ -208,10 +210,15 @@ def create_slurm_array(metallicity,
             "#SBATCH --mail-type=FAIL",
             f"#SBATCH --mail-user={email}"
         ])
+    if exclude is not None:
+        optional_directives.append(f"#SBATCH --exclude={exclude}")
 
     optional_section = "\n".join(optional_directives)
     if optional_section:
         optional_section += "\n"
+
+    if max_concurrent_jobs is not None:
+        job_array_length = f"{job_array_length}%{max_concurrent_jobs}"
 
     text_pre = textwrap.dedent(f'''\
         #!/bin/bash
@@ -322,6 +329,8 @@ def create_slurm_rescue(metallicity,
                         walltime,
                         account,
                         mem_per_cpu,
+                        max_concurrent_jobs,
+                        exclude,
                         path_to_posydon,
                         path_to_posydon_data):
     '''Creates the slurm rescue script for resubmitting failed population synthesis jobs.
@@ -369,10 +378,15 @@ def create_slurm_rescue(metallicity,
             "#SBATCH --mail-type=FAIL",
             f"#SBATCH --mail-user={email}"
         ])
+    if exclude is not None:
+        optional_directives.append(f"#SBATCH --exclude={exclude}")
 
     optional_section = "\n".join(optional_directives)
     if optional_section:
         optional_section += "\n"
+
+    if max_concurrent_jobs is not None:
+        job_array_str = f"{job_array_str}%{max_concurrent_jobs}"
 
     text_pre = textwrap.dedent(f'''\
         #!/bin/bash
@@ -427,6 +441,7 @@ def create_slurm_scripts(metallicity, args): # pragma: no cover
     '''
     create_slurm_array(metallicity, args.job_array, args.partition, args.email,
                        args.walltime, args.account, args.mem_per_cpu,
+                       args.max_concurrent_jobs, args.exclude,
                        PATH_TO_POSYDON,
                        os.path.dirname(PATH_TO_POSYDON_DATA))
 
@@ -508,12 +523,19 @@ def create_batch_rescue_script(args, batch_status):
     mem_per_cpu = None
     path_to_posydon = None
     path_to_posydon_data = None
+    max_concurrent_jobs = None
+    exclude = None
 
     for line in lines:
         if line.startswith('#SBATCH --array='):
             array_range = line.split('=')[1].strip()
-            if '-' in array_range:
-                start, end = map(int, array_range.split('-'))
+            if '%' in array_range:
+                tmp_array_range = array_range.split('%')[0]
+                max_concurrent_jobs = int(array_range.split('%')[1])
+            else:
+                tmp_array_range = array_range
+            if '-' in tmp_array_range:
+                start, end = map(int, tmp_array_range.split('-'))
                 job_array_length = end - start + 1
         elif line.startswith("#SBATCH --time="):
             walltime = line.split('=')[1].strip()
@@ -525,6 +547,8 @@ def create_batch_rescue_script(args, batch_status):
             account = line.split('=')[1].strip()
         elif line.startswith("#SBATCH --mail-user="):
             email = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --exclude="):
+            exclude = line.split('=')[1].strip()
         elif line.startswith("export PATH_TO_POSYDON="):
             path_to_posydon = line.split('=')[1].strip()
         elif line.startswith("export PATH_TO_POSYDON_DATA="):
@@ -541,6 +565,10 @@ def create_batch_rescue_script(args, batch_status):
         account = args.account
     if args.email is not None:
         email = args.email
+    if args.max_concurrent_jobs is not None:
+        max_concurrent_jobs = args.max_concurrent_jobs
+    if args.exclude is not None:
+        exclude = args.exclude
 
     # Create the rescue script
     create_slurm_rescue(
@@ -552,6 +580,8 @@ def create_batch_rescue_script(args, batch_status):
         walltime=walltime,
         account=account,
         mem_per_cpu=mem_per_cpu,
+        max_concurrent_jobs=max_concurrent_jobs,
+        exclude=exclude,
         path_to_posydon=path_to_posydon,
         path_to_posydon_data=path_to_posydon_data
     )

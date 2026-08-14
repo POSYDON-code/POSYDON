@@ -5,8 +5,12 @@ __authors__ = [
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
 ]
 
-# import the module which will be tested
 import posydon.utils.gridutils as totest
+
+# import the module which will be tested
+from posydon.grids.lazy_hdf import LazyHDF5
+from posydon.grids.psygrid import PSyGrid
+from posydon.unit_tests._helper_functions_for_tests.psygrid import get_PSyGrid
 
 # aliases
 np = totest.np
@@ -22,6 +26,24 @@ from pytest import approx, fixture, raises, warns
 from posydon.utils.posydonwarning import MissingFilesWarning
 
 
+@fixture
+def star_history():
+    # a temporary star history for testing
+    return np.array([(1.0, 0.2), (1.0e+2, 0.9), (1.0e+3, 0.2)],\
+                    dtype=[('star_age', '<f8'), ('center_he4', '<f8')])
+
+@fixture
+def binary_history():
+    # a temporary binary history for testing
+    return np.array([(1.0, 1.0), (1.1, 1.0e+2), (1.2, 1.0e+3)],\
+                    dtype=[('period_days', '<f8'), ('age', '<f8')])
+
+@fixture
+def profile():
+    # a temporary profile for testing
+    return np.array([(2.0, 1.0e+3), (1.1, 1.0e+2), (0.1, 1.0)],\
+                    dtype=[('mass', '<f8'), ('radius', '<f8')])
+
 # define test classes collecting several test functions
 class TestElements:
     # check for objects, which should be an element of the tested module
@@ -31,16 +53,17 @@ class TestElements:
         ## does not clear the warning registy correctly.
         if hasattr(totest, '__warningregistry__'):
             del totest.__warningregistry__
-        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Msun', 'Pwarn', 'Rsun',\
-                    'T_merger_P', 'T_merger_a', '__authors__', '__builtins__',\
+        elements = {'LG_MTRANSFER_RATE_THRESHOLD', 'Pwarn',\
+                    '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'add_field',\
-                    'beta_gw', 'cgrav', 'clean_inlist_file', 'clight',\
+                    'clean_inlist_file', '_get_grid_column', 'LazyHDF5',\
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
-                    'join_lists', 'kepler3_a', 'np', 'os', 'pd',\
-                    'read_EEP_data_file', 'read_MESA_data_file', 'secyear'}
+                    'inspiral_timescale_from_orbital_period',\
+                    'join_lists', 'np', 'os', 'pd',\
+                    'read_EEP_data_file', 'read_MESA_data_file'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -83,18 +106,6 @@ class TestElements:
     def test_instance_get_final_proposed_points(self):
         assert isroutine(totest.get_final_proposed_points)
 
-    def test_instance_T_merger_P(self):
-        assert isroutine(totest.T_merger_P)
-
-    def test_instance_beta_gw(self):
-        assert isroutine(totest.beta_gw)
-
-    def test_instance_kepler3_a(self):
-        assert isroutine(totest.kepler3_a)
-
-    def test_instance_T_merger_a(self):
-        assert isroutine(totest.T_merger_a)
-
     def test_instance_convert_output_to_table(self):
         assert isroutine(totest.convert_output_to_table)
 
@@ -120,9 +131,9 @@ class TestFunctions:
     def MESA_data(self):
         # mock data: 3 columns and 2 rows; it contains different
         # types(int, float) and different signs(positive, negative)
-        return np.array([(1, 2, 3.3), (1, -2, -3.3)],\
+        return LazyHDF5(np.array([(1, 2, 3.3), (1, -2, -3.3)],\
                         dtype=[('COL1', '<f8'), ('COL2', '<f8'),\
-                               ('COL3', '<f8')])
+                               ('COL3', '<f8')]))
 
     @fixture
     def MESA_data_path(self, data_path, MESA_data):
@@ -384,7 +395,36 @@ class TestFunctions:
             test_file.write("test_empty = ''\n")
         return path
 
+    @fixture
+    def psygrid(self, tmp_path, binary_history, star_history, profile):
+        # A PSyGrid object for testing
+        grid_path = get_PSyGrid(tmp_path, 1, binary_history,
+                           star_history, profile, add_SN_MODELS=True)
+        return PSyGrid(grid_path)
+
     # test functions
+    def test_get_grid_column(self, psygrid):
+        # missing argument
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'grid' and 'key'"):
+            totest._get_grid_column()
+        # bad input
+        with raises(AttributeError, match = "'NoneType' object has no attribute 'final_values'"):
+            totest._get_grid_column(None, 'age')
+        with raises(TypeError, match = "'int' object is not subscriptable"):
+            totest._get_grid_column(psygrid, 0)
+        with raises(KeyError, match = "Column '' not found in final_values or SN_MODELS"):
+            totest._get_grid_column(psygrid, "")
+
+        # test getting a normal column
+        column_data = totest._get_grid_column(psygrid, 'age')
+        assert np.array_equal(column_data, psygrid.final_values['age'],
+                              equal_nan=True)
+
+        # test getting a SN column
+        column_data = totest._get_grid_column(psygrid, 'S1_SN_MODEL_v2_01_CO_type')
+        assert np.array_equal(column_data, psygrid.SN_MODELS['SN_MODEL_v2_01']['S1_CO_type'])
+
     def test_join_lists(self):
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
@@ -498,7 +538,7 @@ class TestFunctions:
                                      +"arguments: 'a' and 'descr'"):
             totest.add_field()
         # add to empty ndarray
-        with raises(ValueError, match="'a' must be a structured numpy array"):
+        with raises(ValueError, match="'a.dtype.fields' must not be empty or None."):
             totest.add_field(np.array([]), [('new', '<f8')])
         # add to test data
         extended_ndarray = totest.add_field(MESA_data, [('new', '<f8')])
@@ -554,57 +594,6 @@ class TestFunctions:
                                                  np.linspace(0.1, 0.5, 3))
         assert np.allclose(mx, np.array([0.1, 0.3, 0.3, 0.5]))
         assert np.allclose(my, np.array([0.3, 0.3, 0.5, 0.5]))
-
-    def test_T_merger_P(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.T_merger_P()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(0.37210532488, abs=6e-12)),\
-                 (2.0, 15.0, 30.0, approx(2.36272153666, abs=6e-12)),\
-                 (1.0, 30.0, 30.0, approx(0.20477745195, abs=6e-12)),\
-                 (1.0, 15.0, 60.0, approx(0.22058982311, abs=6e-12))]
-        for (P, m1, m2, r) in tests:
-            assert totest.T_merger_P(P, m1, m2) == r
-
-    def test_beta_gw(self):
-        # missing argument
-        with raises(TypeError, match="missing 2 required positional "\
-                                     +"arguments: 'm1' and 'm2'"):
-            totest.beta_gw()
-        # examples
-        tests = [(15.0, 30.0, approx(3.18232660295e-69, abs=6e-81)),\
-                 (30.0, 30.0, approx(8.48620427454e-69, abs=6e-81)),\
-                 (30.0, 60.0, approx(2.54586128236e-68, abs=6e-80))]
-        for (m1, m2, r) in tests:
-            assert totest.beta_gw(m1, m2) == r
-
-    def test_kepler3_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'P', 'm1', and 'm2'"):
-            totest.kepler3_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(14.9643417735, abs=6e-11)),\
-                 (2.0, 15.0, 30.0, approx(23.7544118733, abs=6e-11)),\
-                 (1.0, 30.0, 30.0, approx(16.4703892879, abs=6e-11)),\
-                 (1.0, 15.0, 60.0, approx(17.7421890201, abs=6e-11))]
-        for (P, m1, m2, r) in tests:
-            assert totest.kepler3_a(P, m1, m2) == r
-
-    def test_T_merger_a(self):
-        # missing argument
-        with raises(TypeError, match="missing 3 required positional "\
-                                     +"arguments: 'a', 'm1', and 'm2'"):
-            totest.T_merger_a()
-        # examples
-        tests = [(1.0, 15.0, 30.0, approx(7.42053829341e-06, abs=6e-18)),\
-                 (2.0, 15.0, 30.0, approx(1.18728612695e-04, abs=6e-16)),\
-                 (1.0, 30.0, 30.0, approx(2.78270186003e-06, abs=6e-18)),\
-                 (1.0, 15.0, 60.0, approx(2.22616148802e-06, abs=6e-18))]
-        for (a, m1, m2, r) in tests:
-            assert totest.T_merger_a(a, m1, m2) == r
 
     def test_convert_output_to_table(self, no_path, out_path,\
                                      MESA_BH_data_tight_orbit,\

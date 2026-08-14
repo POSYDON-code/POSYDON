@@ -14,6 +14,18 @@ Installing POSYDON
 Anaconda (Recommended)
 ----------------------
 
+.. important::
+    **Conda Version Requirements**: POSYDON requires a recent version of conda (version >= 23.1.0) with the libmamba solver for efficient dependency resolution. Older conda versions (especially those prior to v23.1.0) may take an extremely long time (hours or more) to resolve dependencies and may fail to complete installation.
+
+    To check your conda version and solver configuration:
+
+    .. code-block:: bash
+
+        conda --version
+        conda config --show solver
+
+    If you're using an older conda version or experiencing slow installation, please see the :ref:`troubleshooting guide <installation-issues>` for detailed instructions on updating conda or configuring the libmamba solver.
+
 1. **Install Anaconda**
 
     If you haven't already, download and install Anaconda from `Anaconda's official website <https://www.anaconda.com/products/distribution>`_.
