@@ -2055,7 +2055,7 @@ def is_in_ball(x, x0, ux, log):
         w = (np.log10(x) > np.log10(x0) - d) & (np.log10(x) < np.log10(x0) + d)
     else:
         d = np.diff(ux)[0] / 2
-        w = (x > x - d) & (x < x + d)
+        w = (x > x0 - d) & (x < x0 + d)
     return w
 
 
