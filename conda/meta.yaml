@@ -2,7 +2,7 @@
 
 package:
   name: "{{ name|lower }}"
-  version: {{ GIT_DESCRIBE_TAG }}
+  version: {{ GIT_DESCRIBE_TAG.lstrip('v') }}
 
 source:
   path: ..
