@@ -11,6 +11,9 @@ jobs:
 
     - name: Checkout
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+        fetch-tags: true
 
     - name: publish-to-conda
       uses: POSYDON-code/publish_to_anaconda@v1.0.1
