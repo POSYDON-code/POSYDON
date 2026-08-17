@@ -110,7 +110,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.grids.SN_MODELS</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">This file contains all supernova models we use in our post processing and, as a</span>
 <span class="sd">consequence, what the user will be able to select in the initial/final</span>
 <span class="sd">interpolation. There is a default supernova model, which is used to fill not</span>
@@ -119,452 +119,452 @@
 <span class="sd">`get_SN_MODEL` provides the supernova model with all parameters and</span>
 <span class="sd">`get_SN_MODEL_NAME` findes the matching model to a given set of supernova</span>
 <span class="sd">parameters of the step_SN.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Max Briel &lt;max.briel@gmail.com&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
                                              <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">)</span>
 
 <span class="n">DEFAULT_SN_MODEL</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-delayed&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PISN&quot;</span><span class="p">:</span> <span class="s2">&quot;Hendriks+23&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;PISN_CO_shift&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-    <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span>
-    <span class="s2">&quot;ECSN&quot;</span><span class="p">:</span> <span class="s2">&quot;Tauris+15&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;conserve_hydrogen_PPI&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;max_neutrino_mass_loss&quot;</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
-    <span class="s2">&quot;max_NS_mass&quot;</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
-    <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;use_profiles&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s2">&quot;allow_spin_None&quot;</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-    <span class="s2">&quot;approx_at_he_depletion&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Fryer+12-delayed"</span><span class="p">,</span>
+    <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">""</span><span class="p">,</span>
+    <span class="s2">"PISN"</span><span class="p">:</span> <span class="s2">"Hendriks+23"</span><span class="p">,</span>
+    <span class="s2">"PISN_CO_shift"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="o">-</span><span class="mf">20.0</span><span class="p">,</span>
+    <span class="s2">"ECSN"</span><span class="p">:</span> <span class="s2">"Tauris+15"</span><span class="p">,</span>
+    <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"conserve_hydrogen_PPI"</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"max_neutrino_mass_loss"</span><span class="p">:</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
+    <span class="s2">"max_NS_mass"</span><span class="p">:</span> <span class="n">STATE_NS_STARMASS_UPPER_LIMIT</span><span class="p">,</span>
+    <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"use_profiles"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s2">"allow_spin_None"</span> <span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="s2">"approx_at_he_depletion"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">}</span>
 
 <span class="c1"># pre-defined supernova models values not changed to the default model are put</span>
 <span class="c1"># as comments</span>
 <span class="n">SN_MODELS</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s2">&quot;SN_MODEL_v2_01&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="c1">#        &quot;mechanism&quot;: &quot;Fryer+12-delayed&quot;,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_01"</span><span class="p">:</span> <span class="p">{</span>
+<span class="c1">#        "mechanism": "Fryer+12-delayed",</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_02&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="c1">#        &quot;mechanism&quot;: &quot;Fryer+12-delayed&quot;,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_02"</span><span class="p">:</span> <span class="p">{</span>
+<span class="c1">#        "mechanism": "Fryer+12-delayed",</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_03&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="c1">#        &quot;mechanism&quot;: &quot;Fryer+12-delayed&quot;,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_03"</span><span class="p">:</span> <span class="p">{</span>
+<span class="c1">#        "mechanism": "Fryer+12-delayed",</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_04&quot;</span><span class="p">:</span> <span class="p">{</span>
-<span class="c1">#        &quot;mechanism&quot;: &quot;Fryer+12-delayed&quot;,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_04"</span><span class="p">:</span> <span class="p">{</span>
+<span class="c1">#        "mechanism": "Fryer+12-delayed",</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_05&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_05"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Fryer+12-rapid"</span><span class="p">,</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_06&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_06"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Fryer+12-rapid"</span><span class="p">,</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_07&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_07"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Fryer+12-rapid"</span><span class="p">,</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_08&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Fryer+12-rapid&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;engine&quot;: &quot;&quot;,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_08"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Fryer+12-rapid"</span><span class="p">,</span>
+<span class="c1">#        "engine": "",</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_09&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_09"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_10&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_10"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_11&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_11"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_12&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_12"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_13&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_13"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_14&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_14"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_15&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_15"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_16&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;N20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_16"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"N20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_17&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_17"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_18&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_18"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_19&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_19"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_20&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Sukhbold+16-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_20"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Sukhbold+16-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_21&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_21"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_22&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-<span class="c1">#        &quot;PPI_extra_mass_loss&quot;: -20.0,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_22"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+<span class="c1">#        "PPI_extra_mass_loss": -20.0,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_23&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-<span class="c1">#        &quot;conserve_hydrogen_envelope&quot; : False,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_23"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+<span class="c1">#        "conserve_hydrogen_envelope" : False,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
-    <span class="s2">&quot;SN_MODEL_v2_24&quot;</span><span class="p">:</span> <span class="p">{</span>
-        <span class="s2">&quot;mechanism&quot;</span><span class="p">:</span> <span class="s2">&quot;Patton&amp;Sukhbold20-engine&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;engine&quot;</span><span class="p">:</span> <span class="s2">&quot;W20&quot;</span><span class="p">,</span>
-<span class="c1">#        &quot;PISN&quot;: &quot;Hendriks+23&quot;,</span>
-<span class="c1">#        &quot;PISN_CO_shift&quot;: 0.0,</span>
-        <span class="s2">&quot;PPI_extra_mass_loss&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
-<span class="c1">#        &quot;ECSN&quot;: &quot;Tauris+15&quot;,</span>
-        <span class="s2">&quot;conserve_hydrogen_envelope&quot;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-<span class="c1">#        &quot;conserve_hydrogen_PPI&quot; : False,</span>
-<span class="c1">#        &quot;max_neutrino_mass_loss&quot;: NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
-<span class="c1">#        &quot;max_NS_mass&quot;: STATE_NS_STARMASS_UPPER_LIMIT,</span>
-        <span class="s2">&quot;use_interp_values&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;use_profiles&quot;: True,</span>
-        <span class="s2">&quot;use_core_masses&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-<span class="c1">#        &quot;allow_spin_None&quot; : False,</span>
-<span class="c1">#        &quot;approx_at_he_depletion&quot;: False,</span>
+    <span class="s2">"SN_MODEL_v2_24"</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">"mechanism"</span><span class="p">:</span> <span class="s2">"Patton&amp;Sukhbold20-engine"</span><span class="p">,</span>
+        <span class="s2">"engine"</span><span class="p">:</span> <span class="s2">"W20"</span><span class="p">,</span>
+<span class="c1">#        "PISN": "Hendriks+23",</span>
+<span class="c1">#        "PISN_CO_shift": 0.0,</span>
+        <span class="s2">"PPI_extra_mass_loss"</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+<span class="c1">#        "ECSN": "Tauris+15",</span>
+        <span class="s2">"conserve_hydrogen_envelope"</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<span class="c1">#        "conserve_hydrogen_PPI" : False,</span>
+<span class="c1">#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,</span>
+<span class="c1">#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,</span>
+        <span class="s2">"use_interp_values"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "use_profiles": True,</span>
+        <span class="s2">"use_core_masses"</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+<span class="c1">#        "allow_spin_None" : False,</span>
+<span class="c1">#        "approx_at_he_depletion": False,</span>
     <span class="p">},</span>
 <span class="p">}</span>
 
 <div class="viewcode-block" id="get_SN_MODEL">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.SN_MODELS.get_SN_MODEL">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_SN_MODEL</span><span class="p">(</span><span class="n">name</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get predefined supernova model with all properties.</span>
+<span class="w">    </span><span class="sd">"""Get predefined supernova model with all properties.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -578,7 +578,7 @@
 <span class="sd">        name does not exist in the pre-defined models, the default supernova</span>
 <span class="sd">        model is returned.</span>
 <span class="sd">    </span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="p">:</span>
         <span class="n">SN_MODEL</span> <span class="o">=</span> <span class="n">DEFAULT_SN_MODEL</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="n">SN_MODEL</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">SN_MODELS</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
@@ -590,7 +590,7 @@
 <div class="viewcode-block" id="get_SN_MODEL_NAME">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.SN_MODELS.get_SN_MODEL_NAME">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_SN_MODEL_NAME</span><span class="p">(</span><span class="n">input_SN_MODEL</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Find SN_MODEL_NAME that matches input_SN_MODEL.</span>
+<span class="w">    </span><span class="sd">"""Find SN_MODEL_NAME that matches input_SN_MODEL.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -604,28 +604,28 @@
 <span class="sd">    SN_MODEL_NAME_SEL : str</span>
 <span class="sd">        Name of the model in SN_MODELS that matches input_SN_MODEL.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">SN_MODEL_NAME_SEL</span> <span class="o">=</span> <span class="kc">None</span>
     <span class="k">for</span> <span class="n">SN_MODEL_NAME</span><span class="p">,</span> <span class="n">SN_MODEL</span> <span class="ow">in</span> <span class="n">SN_MODELS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="n">tmp</span> <span class="o">=</span> <span class="n">SN_MODEL_NAME</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">DEFAULT_SN_MODEL</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
             <span class="n">val</span> <span class="o">=</span> <span class="n">SN_MODEL</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">DEFAULT_SN_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-            <span class="k">if</span> <span class="s2">&quot;use_&quot;</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="n">key</span><span class="o">==</span><span class="s2">&quot;ECSN&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"use_"</span> <span class="ow">in</span> <span class="n">key</span> <span class="ow">or</span> <span class="n">key</span><span class="o">==</span><span class="s2">"ECSN"</span><span class="p">:</span>
                 <span class="c1"># escape values, which are allowed to differ</span>
                 <span class="k">continue</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">input_SN_MODEL</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">&#39;missing key:&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_SN_MODEL</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">'missing key:'</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_SN_MODEL</span><span class="p">)</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">break</span>
             <span class="k">elif</span> <span class="n">input_SN_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">!=</span> <span class="n">val</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">&#39;mismatch:&#39;</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_SN_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="s1">'mismatch:'</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">input_SN_MODEL</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="n">val</span><span class="p">)</span>
                 <span class="n">tmp</span> <span class="o">=</span> <span class="kc">None</span>
                 <span class="k">break</span>
         <span class="k">if</span> <span class="n">tmp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;matched to supernova model:&#39;</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">'matched to supernova model:'</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
             <span class="n">SN_MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">tmp</span>
             
     <span class="k">return</span> <span class="n">SN_MODEL_NAME_SEL</span></div>

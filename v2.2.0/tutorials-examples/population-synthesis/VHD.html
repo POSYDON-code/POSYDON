@@ -146,7 +146,7 @@
 <h3>Simple Usage<a class="headerlink" href="#simple-usage" title="Link to this heading"></a></h3>
 <p>To visualize a specific binary within an interactive window, use the following code:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagram</span>
-<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">&#39;population.h5&#39;</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">&#39;./dataset/&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">18976</span><span class="p">)</span>
+<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">'population.h5'</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="s1">'./dataset/'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">18976</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../../_images/detailled_window.png" src="../../_images/detailled_window.png" />
@@ -164,7 +164,7 @@
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">VHdiagram</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
-<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">&#39;population.h5&#39;</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">19628</span><span class="p">,</span> <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">)</span>
+<span class="n">VHdiagram</span><span class="p">(</span><span class="s1">'population.h5'</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">19628</span><span class="p">,</span> <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">)</span>
 </pre></div>
 </div>
 <img alt="../../_images/diagram_window.png" src="../../_images/diagram_window.png" />
@@ -176,7 +176,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.Presenter</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
 <span class="n">VHdiagram</span><span class="p">(</span>
-    <span class="s2">&quot;population.h5&quot;</span><span class="p">,</span>
+    <span class="s2">"population.h5"</span><span class="p">,</span>
     <span class="n">index</span><span class="o">=</span><span class="mi">19628</span><span class="p">,</span>
     <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
     <span class="n">displayMode</span><span class="o">=</span><span class="n">DisplayMode</span><span class="o">.</span><span class="n">INLINE_B</span><span class="p">,</span>
@@ -195,7 +195,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayMode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
-<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">'./data/population.h5'</span><span class="p">,</span>
                 <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
                 <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                 <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
@@ -211,7 +211,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VHdiagram</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayMode</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
-<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+<span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">'./data/population.h5'</span><span class="p">,</span>
                 <span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="mi">19627</span><span class="p">,</span><span class="mi">19628</span><span class="p">,</span><span class="mi">19629</span><span class="p">,</span><span class="mi">19630</span><span class="p">],</span>
                 <span class="n">hierarchy</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                 <span class="n">presentMode</span><span class="o">=</span><span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">,</span>
@@ -228,7 +228,7 @@
 <p>Use the <cite>ParseDataFrame</cite> class to iterate through the binary file, counting identical binary simulations:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.visualization.VH_diagram.ParseDataFrame</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParseDataFrame</span>
 
-<span class="n">parse_df</span> <span class="o">=</span> <span class="n">ParseDataFrame</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">)</span>
+<span class="n">parse_df</span> <span class="o">=</span> <span class="n">ParseDataFrame</span><span class="p">(</span><span class="s1">'./data/population.h5'</span><span class="p">)</span>
 <span class="n">parse_df</span><span class="o">.</span><span class="n">count_dict</span>
 </pre></div>
 </div>
@@ -239,7 +239,7 @@
 <section id="sorting-binaries">
 <h3>Sorting Binaries<a class="headerlink" href="#sorting-binaries" title="Link to this heading"></a></h3>
 <p>You can sort binaries based on filenames of images representing their steps:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">&#39;./data/population.h5&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">VHD</span> <span class="o">=</span> <span class="n">VHdiagramm_m</span><span class="p">(</span><span class="s1">'./data/population.h5'</span><span class="p">,</span>
                 <span class="n">index</span><span class="o">=</span><span class="n">VHD</span><span class="o">.</span><span class="n">get_sorted_index</span><span class="p">(),</span>
                 <span class="n">frequency</span><span class="o">=</span><span class="n">parse_df</span><span class="o">.</span><span class="n">get_frequencies</span><span class="p">(),</span>
                 <span class="n">hierarchy</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>

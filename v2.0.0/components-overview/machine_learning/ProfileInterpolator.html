@@ -137,13 +137,13 @@ simulation stored in the data directory of the POSYDON repository. The
 grid and saved to <code class="docutils literal notranslate"><span class="pre">filename</span></code> using the function <code class="docutils literal notranslate"><span class="pre">save</span></code>. The Boolean
 argument``hms_s2`` should be set to True only to extract star 2 profiles from
 the HMS-HMS grid.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiler</span> <span class="o">=</span> <span class="n">CompileData</span><span class="p">(</span><span class="n">train_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/training/grid.h5&#39;</span><span class="p">,</span>
-                       <span class="n">test_path</span> <span class="o">=</span> <span class="s1">&#39;/path/to/testing/grid.h5&#39;</span><span class="p">,</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">compiler</span> <span class="o">=</span> <span class="n">CompileData</span><span class="p">(</span><span class="n">train_path</span> <span class="o">=</span> <span class="s1">'/path/to/training/grid.h5'</span><span class="p">,</span>
+                       <span class="n">test_path</span> <span class="o">=</span> <span class="s1">'/path/to/testing/grid.h5'</span><span class="p">,</span>
                        <span class="n">hms_s2</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
-                       <span class="n">profile_names</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">,</span><span class="s1">&#39;logRho&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">,</span><span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;z_mass_fraction_metals&#39;</span><span class="p">,</span><span class="s1">&#39;omega&#39;</span><span class="p">,</span><span class="s1">&#39;energy&#39;</span><span class="p">])</span>
-<span class="n">compiler</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;/path/for/profiles/datafile.pkl&#39;</span><span class="p">)</span>
+                       <span class="n">profile_names</span><span class="o">=</span><span class="p">[</span><span class="s1">'radius'</span><span class="p">,</span><span class="s1">'logRho'</span><span class="p">,</span>
+                       <span class="s1">'x_mass_fraction_H'</span><span class="p">,</span><span class="s1">'y_mass_fraction_He'</span><span class="p">,</span>
+                       <span class="s1">'z_mass_fraction_metals'</span><span class="p">,</span><span class="s1">'omega'</span><span class="p">,</span><span class="s1">'energy'</span><span class="p">])</span>
+<span class="n">compiler</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s1">'/path/for/profiles/datafile.pkl'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -153,7 +153,7 @@ the HMS-HMS grid.</p>
 object instance and then use the <code class="docutils literal notranslate"><span class="pre">load</span></code> function which specifies the path
 to a <code class="samp docutils literal notranslate"><span class="pre">pkl</span></code> file from which the pretrained interpolator can be loaded.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ProfileInterpolator</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/path/to/profile/interpolator.pkl&quot;</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">"/path/to/profile/interpolator.pkl"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -174,9 +174,9 @@ histories for the composition and density model training. Once again, the
 Boolean argument <code class="docutils literal notranslate"><span class="pre">hms_s2</span></code> should be set to True to build an interpolator for
 star 2 profiles from the HMS-HMS grid.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">ProfileInterpolator</span><span class="p">()</span>
-<span class="n">model</span><span class="o">.</span><span class="n">load_profiles</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;/path/to/profiles/datafile.pkl&quot;</span><span class="p">,</span>
+<span class="n">model</span><span class="o">.</span><span class="n">load_profiles</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">"/path/to/profiles/datafile.pkl"</span><span class="p">,</span>
                     <span class="n">valid_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">)</span>
-<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">IF_interpolator</span> <span class="o">=</span> <span class="s2">&quot;/path/to/IFinterpolator.pkl&quot;</span><span class="p">,</span>
+<span class="n">model</span><span class="o">.</span><span class="n">train</span><span class="p">(</span><span class="n">IF_interpolator</span> <span class="o">=</span> <span class="s2">"/path/to/IFinterpolator.pkl"</span><span class="p">,</span>
             <span class="n">density_epochs</span><span class="o">=</span><span class="mi">3000</span><span class="p">,</span>
             <span class="n">density_patience</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
             <span class="n">comp_bounds_epochs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span>
@@ -200,7 +200,7 @@ Helium mass fraction. All profiles share the same coordinates.</p>
 </div>
 <p>Finally a trained interpolator can be easily saved by specifying a path to a
 <code class="samp docutils literal notranslate"><span class="pre">pkl</span></code> file where the interpolator will be saved to.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;path/for/profile/interpolator.pkl&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">"path/for/profile/interpolator.pkl"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -209,10 +209,10 @@ Helium mass fraction. All profiles share the same coordinates.</p>
 <p>To evaluate the interpolator on the testing grid, we can pull the testing data
 out of the <code class="docutils literal notranslate"><span class="pre">ProfileInterpolator</span></code> class as follows:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">test_initial</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_initial</span>
-<span class="n">test_mass_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">&quot;total_mass&quot;</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
-<span class="n">test_density_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;logRho&quot;</span><span class="p">)]</span>
-<span class="n">test_H_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;x_mass_fraction_H&quot;</span><span class="p">)]</span>
-<span class="n">test_He_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">&quot;y_mass_fraction_He&quot;</span><span class="p">)]</span>
+<span class="n">test_mass_coords</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">test_scalars</span><span class="p">[</span><span class="s2">"total_mass"</span><span class="p">])</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">200</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">])</span>
+<span class="n">test_density_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"logRho"</span><span class="p">)]</span>
+<span class="n">test_H_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"x_mass_fraction_H"</span><span class="p">)]</span>
+<span class="n">test_He_profiles</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">test_profiles</span><span class="p">[:,</span><span class="n">model</span><span class="o">.</span><span class="n">names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s2">"y_mass_fraction_He"</span><span class="p">)]</span>
 </pre></div>
 </div>
 </section>

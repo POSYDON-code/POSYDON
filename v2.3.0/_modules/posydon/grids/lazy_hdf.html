@@ -117,7 +117,7 @@
              
   <h1>Source code for posydon.grids.lazy_hdf</h1><div class="highlight"><pre>
 <span></span><span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
+    <span class="s2">"Seth Gossage &lt;seth.gossage@northwestern.edu&gt;"</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -127,7 +127,7 @@
 <div class="viewcode-block" id="LazyHDF5">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.lazy_hdf.LazyHDF5">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LazyHDF5</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Lazy wrapper around an HDF5 dataset with optional dtype conversion.</span>
 
 <span class="sd">    This class provides a lightweight interface for accessing data from an</span>
@@ -161,7 +161,7 @@
 <span class="sd">      modifying it.</span>
 <span class="sd">    - The ``dtype`` property reflects the converted dtype if ``dtype_set`` is</span>
 <span class="sd">      provided.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataset</span><span class="p">,</span> <span class="n">dtype_set</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dataset</span> <span class="o">=</span> <span class="n">dataset</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dtype_set</span> <span class="o">=</span> <span class="n">dtype_set</span>

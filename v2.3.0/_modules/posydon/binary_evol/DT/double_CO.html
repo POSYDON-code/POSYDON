@@ -116,14 +116,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.binary_evol.DT.double_CO</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Detached evolution for double compact-object binaries.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Detached evolution for double compact-object binaries.</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Zepei Xing &lt;Zepei.Xing@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Zepei Xing &lt;Zepei.Xing@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -142,7 +142,7 @@
 
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_event</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a decorator that sets solve_ivp event attributes.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Return a decorator that sets solve_ivp event attributes."""</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
         <span class="n">f</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
@@ -151,7 +151,7 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_SBrentqDenseOutput</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dense output for the s = -ln(alpha) formulation of the Peters equations.</span>
+<span class="w">    </span><span class="sd">"""Dense output for the s = -ln(alpha) formulation of the Peters equations.</span>
 
 <span class="sd">    Inverts the monotone tau(s) mapping via ``brentq`` root-finding on the</span>
 <span class="sd">    native ODE dense output, then converts back to physical variables</span>
@@ -171,7 +171,7 @@
 <span class="sd">        Lower bound of s integration range.</span>
 <span class="sd">    s_hi : float</span>
 <span class="sd">        Upper bound of s integration range.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">a0_Rsun</span><span class="p">,</span> <span class="n">t_scale</span><span class="p">,</span> <span class="n">t0_phys</span><span class="p">,</span> <span class="n">s_lo</span><span class="p">,</span> <span class="n">s_hi</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="n">sol</span>
@@ -215,8 +215,8 @@
             <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fb</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">eps</span><span class="p">:</span>
                 <span class="n">s_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_hi</span>
             <span class="k">elif</span> <span class="n">fa</span> <span class="o">*</span> <span class="n">fb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Requested tau=</span><span class="si">{</span><span class="n">tau</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2"> outside interval &quot;</span>
-                                 <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">tau_lo</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">tau_hi</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">].&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requested tau=</span><span class="si">{</span><span class="n">tau</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2"> outside interval "</span>
+                                 <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">tau_lo</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">tau_hi</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">]."</span><span class="p">)</span>
             <span class="c1"># else root find for a solution</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">s_star</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span>
@@ -241,13 +241,13 @@
 <div class="viewcode-block" id="DoubleCO">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DoubleCO</span><span class="p">(</span><span class="n">detached_step</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evolve a double compact-object binary due to gravitational radiation.</span>
+<span class="w">    </span><span class="sd">"""Evolve a double compact-object binary due to gravitational radiation.</span>
 
 <span class="sd">    The binary will be evolved until the two compact objects come into contact</span>
 <span class="sd">    or until maximum simulation time, based on the quadrupole approximation</span>
 <span class="sd">    of gravitational radiation.  The integration is performed in dimensionless</span>
 <span class="sd">    variables to guarantee numerical stability.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -261,19 +261,19 @@
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;contact&quot;</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CO_contact&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"contact"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"CO_contact"</span>
 
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;detached&quot;</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;maxtime&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"detached"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"maxtime"</span>
 
 <div class="viewcode-block" id="DoubleCO.solve_ODEs">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO.solve_ODEs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">solve_ODEs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Solve the Peters (1964) GW inspiral.</span>
+<span class="w">        </span><span class="sd">"""Solve the Peters (1964) GW inspiral.</span>
 
 <span class="sd">        We do two transformations to the standard Peters equations:</span>
 <span class="sd">        1. We remove the dimensionality by using the dimensionless separation \alpha = a/a0 and</span>
@@ -281,7 +281,7 @@
 <span class="sd">           and t0 is the characteristic GW timescale.</span>
 <span class="sd">        2. We then substitute s = -ln(\alpha) to eliminate the singularity in the Peters equations,</span>
 <span class="sd">           which removes the alpha^-3 and alpha^-4 prefactors that cause numerical issues for tight binaries.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span>
         <span class="n">t0_phys</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span>                                     <span class="c1"># [yr]</span>
 
@@ -330,7 +330,7 @@
         <span class="k">try</span><span class="p">:</span>
             <span class="n">res</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="p">,</span>
                             <span class="n">events</span><span class="o">=</span><span class="n">ev_maxtime</span><span class="p">,</span>
-                            <span class="n">method</span><span class="o">=</span><span class="s2">&quot;RK45&quot;</span><span class="p">,</span>
+                            <span class="n">method</span><span class="o">=</span><span class="s2">"RK45"</span><span class="p">,</span>
                             <span class="n">t_span</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">s_contact</span><span class="p">),</span>
                             <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">l0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
                                 <span class="n">secondary</span><span class="o">.</span><span class="n">omega0</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">omega0</span><span class="p">],</span>
@@ -340,8 +340,8 @@
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
             <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span>
-                <span class="s2">&quot;SciPy encountered an error while solving &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;GR equations (s-formulation): </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="s2">"SciPy encountered an error while solving "</span>
+                <span class="sa">f</span><span class="s2">"GR equations (s-formulation): </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
             <span class="p">)</span>
 
         <span class="c1"># --- map solution back to physical units ----------------------------</span>
@@ -392,14 +392,14 @@
 <div class="viewcode-block" id="double_CO_evolution">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.double_CO_evolution">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">double_CO_evolution</span><span class="p">(</span><span class="n">detached_evolution</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evolution object for double compact-object binaries.</span>
+<span class="w">    </span><span class="sd">"""Evolution object for double compact-object binaries.</span>
 
 <span class="sd">    Only gravitational radiation is active; tides, winds, and magnetic</span>
 <span class="sd">    braking are disabled.  The actual ODE right-hand side is defined as a</span>
 <span class="sd">    dimensionless local function inside ``DoubleCO.solve_ODEs``; this class</span>
 <span class="sd">    exists so that the ``detached_step`` pipeline (track matching, property</span>
 <span class="sd">    updates) has a valid ``evo`` object.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -410,7 +410,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Differential equation describing the orbital evolution of a double</span>
+<span class="w">        </span><span class="sd">"""Differential equation describing the orbital evolution of a double</span>
 <span class="sd">        compact object binary.</span>
 
 <span class="sd">        Parameters</span>
@@ -420,7 +420,7 @@
 <span class="sd">        y : array_like</span>
 <span class="sd">            State vector at s, [l, tau, secondary.omega, primary.omega],</span>
 <span class="sd">            where l = ln(e) and tau = t / t0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -429,26 +429,26 @@
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_g</span><span class="p">(</span><span class="n">e2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Peters (1964) f(e): denominator function for the da/dt equation.</span>
+<span class="w">        </span><span class="sd">"""Peters (1964) f(e): denominator function for the da/dt equation.</span>
 
 <span class="sd">        Defined as f(e) = 1 + (73/24)e^2 + (37/96)e^4 in Peters (1964), Eq. 5.11.</span>
 <span class="sd">        Named _g here to match the GW-integration convention.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">73.0</span> <span class="o">/</span> <span class="mf">24.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">37.0</span> <span class="o">/</span> <span class="mf">96.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">e2</span>
 
     <span class="nd">@staticmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_f</span><span class="p">(</span><span class="n">e2</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Peters (1964) g(e): numerator function for the de/dt equation.</span>
+<span class="w">        </span><span class="sd">"""Peters (1964) g(e): numerator function for the de/dt equation.</span>
 
 <span class="sd">        Defined as g(e) = 1 + (121/304)e^2 in Peters (1964), Eq. 5.13.</span>
 <span class="sd">        Named _f here to match the GW-integration convention.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">121.0</span> <span class="o">/</span> <span class="mf">304.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span>
 
 <div class="viewcode-block" id="double_CO_evolution.rhs">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.double_CO_evolution.rhs">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Right-hand side of the ODE system in ln-space.</span>
+<span class="w">        </span><span class="sd">"""Right-hand side of the ODE system in ln-space.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -457,7 +457,7 @@
 <span class="sd">        y : array_like</span>
 <span class="sd">            State vector at s, [l, tau, secondary.omega, primary.omega],</span>
 <span class="sd">            where l = ln(e).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">l</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
         <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
         <span class="n">e2</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="n">e</span>

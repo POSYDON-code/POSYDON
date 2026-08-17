@@ -122,11 +122,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.binary_evol.SN.profile_collapse</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Collapse the profile of a star object into a BH.</span>
+<span></span><span class="sd">"""Collapse the profile of a star object into a BH.</span>
 
 <span class="sd">This script is based on the physics explained in Appendix D of Bavera+2020.</span>
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">integrate</span>
@@ -136,22 +136,22 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.limits_thresholds</span><span class="w"> </span><span class="kn">import</span> <span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <span class="n">__credits__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Aldo Batta &lt;aldobatta@gmail.com&gt;&#39;</span><span class="p">,</span>
+    <span class="s1">'Aldo Batta &lt;aldobatta@gmail.com&gt;'</span><span class="p">,</span>
 <span class="p">]</span>
 
 <div class="viewcode-block" id="get_ejecta_element_mass_at_collapse">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.SN.html#posydon.binary_evol.SN.profile_collapse.get_ejecta_element_mass_at_collapse">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_ejecta_element_mass_at_collapse</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">compact_object_mass</span><span class="p">,</span> <span class="n">verbose</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the masses of H1, He4, and O16 in the ejecta.</span>
+<span class="w">    </span><span class="sd">"""Calculate the masses of H1, He4, and O16 in the ejecta.</span>
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    star : object</span>
@@ -169,29 +169,29 @@
 <span class="sd">        Hydrogen mass in the ejecta. (in Msun)</span>
 <span class="sd">    he4_mass_ej : float</span>
 <span class="sd">        Helium mass in the ejecta. (in Msun)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
 
     <span class="c1"># read star quantities</span>
-    <span class="n">profile_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell outer total mass in Msun</span>
-    <span class="c1"># shell&#39;s mass</span>
+    <span class="n">profile_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'mass'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell outer total mass in Msun</span>
+    <span class="c1"># shell's mass</span>
     <span class="n">dm_all</span> <span class="o">=</span> <span class="n">profile_mass_all</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">profile_mass_all</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
-    <span class="k">if</span> <span class="s1">&#39;x_mass_fraction_H&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="n">XH_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;x_mass_fraction_H&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># h1 mass fraction</span>
-    <span class="k">if</span> <span class="s1">&#39;y_mass_fraction_He&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="n">YHe_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;y_mass_fraction_He&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
+    <span class="k">if</span> <span class="s1">'x_mass_fraction_H'</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">XH_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'x_mass_fraction_H'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># h1 mass fraction</span>
+    <span class="k">if</span> <span class="s1">'y_mass_fraction_He'</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="n">YHe_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'y_mass_fraction_He'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
 
-    <span class="c1">#print(&quot;profile_mass_all[-1], compact_object_mass&quot;, profile_mass_all[-1], compact_object_mass)</span>
+    <span class="c1">#print("profile_mass_all[-1], compact_object_mass", profile_mass_all[-1], compact_object_mass)</span>
     <span class="k">if</span> <span class="n">profile_mass_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">compact_object_mass</span><span class="p">:</span>
-        <span class="c1"># This catches the case that all the star&#39;s profile is collapsed.</span>
+        <span class="c1"># This catches the case that all the star's profile is collapsed.</span>
         <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
         <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># Find the index where the profile mass exceeds the compact object mass</span>
         <span class="n">i_rem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">profile_mass_all</span> <span class="o">&gt;</span> <span class="n">compact_object_mass</span><span class="p">)</span>
-        <span class="c1">#print(&quot;i_rem, len(dm_all)&quot;, i_rem, len(dm_all))</span>
-        <span class="c1">#print(&quot;mass coordinate above which it is ejected&quot;, profile_mass_all[i_rem])</span>
+        <span class="c1">#print("i_rem, len(dm_all)", i_rem, len(dm_all))</span>
+        <span class="c1">#print("mass coordinate above which it is ejected", profile_mass_all[i_rem])</span>
 
         <span class="c1"># Ensure the index is within bounds</span>
         <span class="k">if</span> <span class="n">i_rem</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dm_all</span><span class="p">):</span>
@@ -207,11 +207,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
                 <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Mismatch in array lengths, cannot calculate ejected masses accurately.&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Mismatch in array lengths, cannot calculate ejected masses accurately."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">h1_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
             <span class="n">he4_mass_ej</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Warning: Index out of bounds, cannot calculate ejected masses.&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Warning: Index out of bounds, cannot calculate ejected masses."</span><span class="p">)</span>
         <span class="c1">#print(h1_mass_ej, he4_mass_ej, np.sum(dm_ejected))</span>
     <span class="k">return</span> <span class="n">h1_mass_ej</span><span class="p">,</span> <span class="n">he4_mass_ej</span></div>
 
@@ -222,7 +222,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">get_initial_BH_properties</span><span class="p">(</span><span class="n">star</span><span class="p">,</span> <span class="n">mass_collapsing</span><span class="p">,</span> <span class="n">mass_central_BH</span><span class="p">,</span>
                               <span class="n">neutrino_mass_loss</span><span class="p">,</span> <span class="n">max_neutrino_mass_loss</span><span class="p">,</span>
                               <span class="n">verbose</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Collapse directly the center of the star and return useful quantities.</span>
+<span class="w">    </span><span class="sd">"""Collapse directly the center of the star and return useful quantities.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -252,31 +252,31 @@
 <span class="sd">    J_initial_BH : float</span>
 <span class="sd">        Angular momentum of the initial BH in g*cm^2/s.</span>
 <span class="sd">    angular_frequency_i : array floats</span>
-<span class="sd">        Shell&#39;s angular frequencies in s^-1 collapsing onto the</span>
+<span class="sd">        Shell's angular frequencies in s^-1 collapsing onto the</span>
 <span class="sd">        initially-formed BH.</span>
 <span class="sd">    enclosed_mass_i : array floats</span>
-<span class="sd">        Shell&#39;s enclosed masses in g collapsing onto the initially formed BH.</span>
+<span class="sd">        Shell's enclosed masses in g collapsing onto the initially formed BH.</span>
 <span class="sd">    radius_i : array floats</span>
-<span class="sd">        Shell&#39;s radii in cm collapsing onto the initially formed BH.</span>
+<span class="sd">        Shell's radii in cm collapsing onto the initially formed BH.</span>
 <span class="sd">    density_i : array floats</span>
-<span class="sd">        Shell&#39;s densities in g/cm^3 collapsing onto the initially formed BH.</span>
+<span class="sd">        Shell's densities in g/cm^3 collapsing onto the initially formed BH.</span>
 <span class="sd">    dm_i : array floats</span>
-<span class="sd">        Shell&#39;s masses in g collapsing onto the initially formed BH.</span>
+<span class="sd">        Shell's masses in g collapsing onto the initially formed BH.</span>
 <span class="sd">    dm_i : array floats</span>
-<span class="sd">        Shell&#39;s width in cm collapsing onto the initially formed BH.</span>
+<span class="sd">        Shell's width in cm collapsing onto the initially formed BH.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">neutrino_mass_loss</span> <span class="o">&lt;</span> <span class="mf">0.</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;Something went wrong, neutrino_mass_loss must be positive!&#39;</span><span class="p">)</span>
+            <span class="s1">'Something went wrong, neutrino_mass_loss must be positive!'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">neutrino_mass_loss</span> <span class="o">&gt;</span> <span class="n">max_neutrino_mass_loss</span><span class="p">:</span>
         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s1">&#39;Something went wrong, &#39;</span><span class="p">,</span>
-            <span class="s1">&#39;max_neutrino_mass_loss = </span><span class="si">{:2.2f}</span><span class="s1"> Msun&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s1">'Something went wrong, '</span><span class="p">,</span>
+            <span class="s1">'max_neutrino_mass_loss = </span><span class="si">{:2.2f}</span><span class="s1"> Msun'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">max_neutrino_mass_loss</span><span class="p">),</span>
-            <span class="s1">&#39;while neutrino_mass_loss = </span><span class="si">{:2.2f}</span><span class="s1"> Msun&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">neutrino_mass_loss</span><span class="p">),</span> <span class="s1">&#39;was passed!&#39;</span><span class="p">)</span>
+            <span class="s1">'while neutrino_mass_loss = </span><span class="si">{:2.2f}</span><span class="s1"> Msun'</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">neutrino_mass_loss</span><span class="p">),</span> <span class="s1">'was passed!'</span><span class="p">)</span>
 
     <span class="c1"># load units and convert to CGS units</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span>
@@ -287,13 +287,13 @@
     <span class="n">neutrino_mass_loss</span> <span class="o">*=</span> <span class="n">Mo</span>
 
     <span class="c1"># read star quantities</span>
-    <span class="n">enclosed_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;mass&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Mo</span>  <span class="c1"># cell outer total mass</span>
-    <span class="n">radius_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;radius&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ro</span>  <span class="c1"># cell outer radius</span>
-    <span class="n">density_all</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;logRho&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># cell density</span>
-    <span class="n">angular_frequency_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell angular freq.</span>
-    <span class="k">if</span> <span class="s1">&#39;he4&#39;</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
-        <span class="c1"># he3_all = star.profile[&#39;he3&#39;][::-1]  # he4 mass fraction</span>
-        <span class="n">he4_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">&#39;he4&#39;</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
+    <span class="n">enclosed_mass_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'mass'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">Mo</span>  <span class="c1"># cell outer total mass</span>
+    <span class="n">radius_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'radius'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">Ro</span>  <span class="c1"># cell outer radius</span>
+    <span class="n">density_all</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="p">(</span><span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'logRho'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>  <span class="c1"># cell density</span>
+    <span class="n">angular_frequency_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'omega'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># cell angular freq.</span>
+    <span class="k">if</span> <span class="s1">'he4'</span> <span class="ow">in</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+        <span class="c1"># he3_all = star.profile['he3'][::-1]  # he4 mass fraction</span>
+        <span class="n">he4_all</span> <span class="o">=</span> <span class="n">star</span><span class="o">.</span><span class="n">profile</span><span class="p">[</span><span class="s1">'he4'</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># he4 mass fraction</span>
         <span class="n">he3_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">))</span>  <span class="c1"># ENHANCEMENT support he3</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">he4_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">))</span>
@@ -303,10 +303,10 @@
     <span class="c1"># index of the layers up to m_rembar from Fryer prescription</span>
     <span class="c1"># (+1 for the range)</span>
     <span class="k">if</span> <span class="n">enclosed_mass_all</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">Mo</span> <span class="o">&lt;=</span> <span class="n">mass_collapsing</span><span class="p">:</span>
-        <span class="c1"># This catches the case that all the star&#39;s profile is callapsed.</span>
-        <span class="c1"># Note that the &#39;mass&#39; of the MESA profile is the enclosed mass of that</span>
+        <span class="c1"># This catches the case that all the star's profile is callapsed.</span>
+        <span class="c1"># Note that the 'mass' of the MESA profile is the enclosed mass of that</span>
         <span class="c1"># shell; the mass of the whole star is then</span>
-        <span class="c1">#     star.profile[&#39;mass&#39;][::-1][-1] + dm,</span>
+        <span class="c1">#     star.profile['mass'][::-1][-1] + dm,</span>
         <span class="c1"># where dm is the mass of the last shell.</span>
         <span class="n">i_rem</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">enclosed_mass_all</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -341,9 +341,9 @@
     <span class="n">he3_i</span> <span class="o">=</span> <span class="n">he3</span><span class="p">[</span><span class="n">index_initial_BH</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
     <span class="n">he4_i</span> <span class="o">=</span> <span class="n">he4</span><span class="p">[</span><span class="n">index_initial_BH</span> <span class="o">+</span> <span class="mi">1</span><span class="p">:]</span>
 
-    <span class="c1"># shell&#39;s mass</span>
+    <span class="c1"># shell's mass</span>
     <span class="n">dm</span> <span class="o">=</span> <span class="n">enclosed_mass</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">enclosed_mass</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-    <span class="c1"># shell&#39;s width</span>
+    <span class="c1"># shell's width</span>
     <span class="n">dr</span> <span class="o">=</span> <span class="n">radius</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">radius</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># dm has len(enclosed_mass_initial_BH) = len(dM_initial_BH)-1</span>
@@ -377,15 +377,15 @@
     <span class="n">a_initial_BH</span> <span class="o">=</span> <span class="n">J_initial_BH</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">G</span> <span class="o">*</span> <span class="n">mass_initial_BH</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Initializing the BH properties for 1D collapse.&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The BH formed from the &#39;</span><span class="p">,</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Initializing the BH properties for 1D collapse.'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'The BH formed from the '</span><span class="p">,</span>
               <span class="nb">round</span><span class="p">(</span><span class="n">mass_central_BH</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span>
-                    <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;innermost solar masses has mass&#39;</span><span class="p">,</span>
+                    <span class="mi">2</span><span class="p">),</span> <span class="s1">'innermost solar masses has mass'</span><span class="p">,</span>
               <span class="nb">round</span><span class="p">(</span><span class="n">mass_initial_BH</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span>
-                    <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M_sun (&#39;</span><span class="p">,</span> <span class="n">neutrino_mass_loss</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span>
-              <span class="s1">&#39;M_sun were lost thorugh neutrinos) and a = Jc/GM^2 =&#39;</span><span class="p">,</span>
+                    <span class="mi">2</span><span class="p">),</span> <span class="s1">'M_sun ('</span><span class="p">,</span> <span class="n">neutrino_mass_loss</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span>
+              <span class="s1">'M_sun were lost thorugh neutrinos) and a = Jc/GM^2 ='</span><span class="p">,</span>
               <span class="nb">round</span><span class="p">(</span><span class="n">a_initial_BH</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="p">[</span>
@@ -399,7 +399,7 @@
 <div class="viewcode-block" id="compute_isco_properties">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.SN.html#posydon.binary_evol.SN.profile_collapse.compute_isco_properties">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">compute_isco_properties</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">m_BH</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the BH innermost stable circular orbit (ISCO) parameters.</span>
+<span class="w">    </span><span class="sd">"""Compute the BH innermost stable circular orbit (ISCO) parameters.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -417,7 +417,7 @@
 <span class="sd">    efficiency : float</span>
 <span class="sd">        Orbital energy efficiency at ISCO.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># load units</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">clight</span>
@@ -434,8 +434,8 @@
         <span class="p">(</span><span class="n">G</span> <span class="o">*</span> <span class="n">m_BH</span> <span class="o">/</span> <span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_isco</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span> <span class="o">*</span> <span class="n">r_isco</span><span class="o">**</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">+</span> <span class="n">a</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
         <span class="o">/</span> <span class="p">(</span><span class="n">r_isco</span><span class="o">**</span><span class="p">(</span><span class="mf">3.</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">r_isco</span><span class="o">**</span><span class="p">(</span><span class="mf">3.</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">r_isco</span><span class="o">**</span><span class="mf">0.5</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>
     <span class="p">)</span>
-    <span class="c1"># fraction of disk&#39;s mass accreted by BH</span>
-    <span class="c1"># (1-efficiency) of the rest mass is &quot;radiated&quot; away</span>
+    <span class="c1"># fraction of disk's mass accreted by BH</span>
+    <span class="c1"># (1-efficiency) of the rest mass is "radiated" away</span>
     <span class="n">efficiency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="mf">2.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">r_isco</span><span class="p">))</span>
 
     <span class="c1"># assign CGS units</span>
@@ -453,7 +453,7 @@
                         <span class="n">neutrino_mass_loss</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                         <span class="n">max_neutrino_mass_loss</span><span class="o">=</span><span class="n">NEUTRINO_MASS_LOSS_UPPER_LIMIT</span><span class="p">,</span>
                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Do the core collapse of a star object with MESA profile provided.</span>
+<span class="w">    </span><span class="sd">"""Do the core collapse of a star object with MESA profile provided.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -488,10 +488,10 @@
 <span class="sd">    J_accreted_array : array floats</span>
 <span class="sd">        Angular momentum accreted from a given shell by the BH in CGS units.</span>
 <span class="sd">    J_total_array : array floats</span>
-<span class="sd">        Total angular momentum in accreted shells plus BH&#39;s initial angular</span>
+<span class="sd">        Total angular momentum in accreted shells plus BH's initial angular</span>
 <span class="sd">        momentum in CGS units.</span>
 <span class="sd">    J_disk_shell_array : array floats</span>
-<span class="sd">        Angular momentum accreted from the shell&#39;s part collapsing to form a</span>
+<span class="sd">        Angular momentum accreted from the shell's part collapsing to form a</span>
 <span class="sd">        disk in CGS units.</span>
 <span class="sd">    radiation_eff_array : array floats</span>
 <span class="sd">        Fraction of accretion disk radiated away, this is one minus accretion</span>
@@ -506,17 +506,17 @@
 <span class="sd">    M_disk_array : array floats</span>
 <span class="sd">        Cumulative mass accreted thorugh the disk in g.</span>
 <span class="sd">    dm_direct_array : array floats</span>
-<span class="sd">        Shell&#39;s mass accreted through direct collapse in g.</span>
+<span class="sd">        Shell's mass accreted through direct collapse in g.</span>
 <span class="sd">    dm_disk_array : array floats</span>
-<span class="sd">        Shell&#39;s mass accreted thorugh the disk in g.</span>
+<span class="sd">        Shell's mass accreted thorugh the disk in g.</span>
 <span class="sd">    j_shell_array : array floats</span>
-<span class="sd">        Shell&#39;s specific angular momentum in CGS.</span>
+<span class="sd">        Shell's specific angular momentum in CGS.</span>
 <span class="sd">    M_total_array : array floats</span>
 <span class="sd">        Cumulative mass of shells and initial BH in g.</span>
 <span class="sd">    a_star_array : array floats</span>
 <span class="sd">        Dimensionless spin parameter of the star.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># convert to CGS units</span>
     <span class="n">G</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">standard_cgrav</span>
     <span class="n">c</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">clight</span>
@@ -543,7 +543,7 @@
             <span class="c1">#arr, arr</span>
         <span class="p">]</span>
 
-    <span class="c1"># shell&#39;s specific angular momentum at equator</span>
+    <span class="c1"># shell's specific angular momentum at equator</span>
     <span class="n">j_shells</span> <span class="o">=</span> <span class="n">Omega_shells</span> <span class="o">*</span> <span class="n">radius_shells</span><span class="o">**</span><span class="mi">2</span>
 
     <span class="k">if</span> <span class="n">a_BH</span> <span class="o">&gt;</span> <span class="mf">0.99</span><span class="p">:</span>
@@ -562,16 +562,16 @@
     <span class="n">J_total</span> <span class="o">=</span> <span class="n">J_BH</span>
 
     <span class="c1"># =======================================================</span>
-    <span class="c1"># Initialize lists that will contain the BH&#39;s properties</span>
+    <span class="c1"># Initialize lists that will contain the BH's properties</span>
     <span class="c1"># as a function of the collapsed shells and information</span>
     <span class="c1"># of mass fraction of material with low j and high j</span>
 
     <span class="n">J_accreted_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">J_BH</span><span class="p">]</span>  <span class="c1"># angular momentum accreted by BH</span>
     <span class="n">J_total_array</span> <span class="o">=</span> <span class="p">[</span>
         <span class="n">J_total</span>
-    <span class="p">]</span>  <span class="c1"># total angular momentum in accreted shells + BH&#39;s initial J</span>
+    <span class="p">]</span>  <span class="c1"># total angular momentum in accreted shells + BH's initial J</span>
     <span class="n">M_BH_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">M_BH</span><span class="p">]</span>  <span class="c1"># BH mass</span>
-    <span class="n">a_BH_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_BH</span><span class="p">]</span>  <span class="c1"># BH&#39;s spin</span>
+    <span class="n">a_BH_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_BH</span><span class="p">]</span>  <span class="c1"># BH's spin</span>
     <span class="n">radiation_eff_array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span> <span class="o">-</span> <span class="n">eff</span><span class="p">]</span>  <span class="c1"># fraction of accretion disk radiated away</span>
     <span class="n">r_isco_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">r_isco</span><span class="p">]</span>  <span class="c1"># radius of ISCO</span>
     <span class="n">j_isco_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">j_isco</span>
@@ -584,9 +584,9 @@
     <span class="n">dm_direct_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">dm_direct</span>
                        <span class="p">]</span>  <span class="c1"># mass in shell with j &lt; j_isco (direct collapse)</span>
     <span class="n">M_total_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">M_total</span><span class="p">]</span>  <span class="c1"># integrated mass (shells + initial BH)</span>
-    <span class="n">j_shell_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">j_shells</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># shell&#39;s specific angular momentum</span>
-    <span class="n">a_star_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_BH</span><span class="p">]</span>  <span class="c1"># star&#39;s spin parameter</span>
-    <span class="n">J_disk_shell_array</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span>  <span class="c1"># angular momentum of the shell&#39;s disk</span>
+    <span class="n">j_shell_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">j_shells</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>  <span class="c1"># shell's specific angular momentum</span>
+    <span class="n">a_star_array</span> <span class="o">=</span> <span class="p">[</span><span class="n">a_BH</span><span class="p">]</span>  <span class="c1"># star's spin parameter</span>
+    <span class="n">J_disk_shell_array</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span>  <span class="c1"># angular momentum of the shell's disk</span>
 
     <span class="c1"># compute BH properties as each shell collapses</span>
     <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dm</span><span class="p">):</span>
@@ -605,7 +605,7 @@
         <span class="n">he4_shell</span> <span class="o">=</span> <span class="n">he4</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
 
         <span class="c1"># Determine if the specific angular momentum of the shell can form</span>
-        <span class="c1"># a disk or not and update BH&#39;s properties</span>
+        <span class="c1"># a disk or not and update BH's properties</span>
 
         <span class="c1"># All mass collapses directly to the BH</span>
         <span class="k">if</span> <span class="n">j_shell</span> <span class="o">&lt;</span> <span class="n">j_isco</span><span class="p">:</span>
@@ -628,7 +628,7 @@
             <span class="c1"># angular momentum of entire shell: J_shell=J_direct</span>
             <span class="n">J_direct</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">Omega_shell</span> <span class="o">*</span> <span class="n">rho_shell</span><span class="p">)</span> <span class="o">*</span> <span class="n">temp1</span> <span class="o">*</span> <span class="n">temp2</span>
 
-            <span class="c1"># Update BH&#39;s angular momentum content and mass</span>
+            <span class="c1"># Update BH's angular momentum content and mass</span>
             <span class="n">J_BH</span> <span class="o">=</span> <span class="n">J_BH</span> <span class="o">+</span> <span class="n">J_direct</span>
             <span class="n">M_BH</span> <span class="o">=</span> <span class="n">M_BH</span> <span class="o">+</span> <span class="n">dm_shell</span>
 
@@ -667,11 +667,11 @@
 
             <span class="n">J_direct</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="n">Omega_shell</span> <span class="o">*</span> <span class="n">rho_shell</span><span class="p">)</span> <span class="o">*</span> <span class="n">temp1</span> <span class="o">*</span> <span class="n">temp2</span>
 
-            <span class="c1"># shell&#39;s mass fraction that will collapse directly</span>
+            <span class="c1"># shell's mass fraction that will collapse directly</span>
             <span class="c1"># eq. 8 of Batta &amp; Ramirez-Ruiz (2019)</span>
             <span class="c1"># (typo corrected, see Bavera et al. (2020))</span>
             <span class="n">dm_direct</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_disk</span><span class="p">))</span> <span class="o">*</span> <span class="n">dm_shell</span>
-            <span class="c1"># shell&#39;s mass fraction that will form an accretion disk</span>
+            <span class="c1"># shell's mass fraction that will form an accretion disk</span>
             <span class="c1"># note that we assume that only mass collapsing directy loses</span>
             <span class="c1"># neutrinos</span>
             <span class="n">dm_disk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">theta_disk</span><span class="p">)</span> <span class="o">*</span> <span class="n">dm_shell</span>
@@ -680,7 +680,7 @@
             <span class="c1"># eq. 8 of Batta &amp; Ramirez-Ruiz (2019)</span>
             <span class="n">J_disk</span> <span class="o">=</span> <span class="n">j_isco</span> <span class="o">*</span> <span class="n">dm_disk</span>
 
-            <span class="c1"># Update BH&#39;s angular momentum content and mass</span>
+            <span class="c1"># Update BH's angular momentum content and mass</span>
             <span class="n">J_BH</span> <span class="o">=</span> <span class="n">J_BH</span> <span class="o">+</span> <span class="n">J_disk</span> <span class="o">+</span> <span class="n">J_direct</span>
             <span class="n">M_BH</span> <span class="o">=</span> <span class="n">M_BH</span> <span class="o">+</span> <span class="n">dm_disk</span> <span class="o">*</span> <span class="n">eff</span> <span class="o">+</span> <span class="n">dm_direct</span>
 
@@ -694,10 +694,10 @@
             <span class="c1"># max He mass tht can be ejected during the disk formation</span>
             <span class="n">max_he_mass_ejected</span> <span class="o">+=</span> <span class="n">dm_shell</span> <span class="o">*</span> <span class="p">(</span><span class="n">he3_shell</span> <span class="o">+</span> <span class="n">he4_shell</span><span class="p">)</span>
 
-        <span class="c1"># Update BH&#39;s spin parameter</span>
+        <span class="c1"># Update BH's spin parameter</span>
         <span class="n">a_BH</span> <span class="o">=</span> <span class="n">J_BH</span> <span class="o">*</span> <span class="n">c</span> <span class="o">/</span> <span class="p">(</span><span class="n">G</span> <span class="o">*</span> <span class="n">M_BH</span><span class="o">**</span><span class="mf">2.</span><span class="p">)</span>
 
-        <span class="c1"># Shell&#39;s angular momentum (same as J_direct if j &lt; j_isco ) assuming</span>
+        <span class="c1"># Shell's angular momentum (same as J_direct if j &lt; j_isco ) assuming</span>
         <span class="n">J_shell</span> <span class="o">=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mf">3.</span> <span class="o">*</span> <span class="n">temp2</span> <span class="o">*</span> <span class="n">Omega_shell</span> <span class="o">*</span> <span class="n">rho_shell</span>
         <span class="n">M_total</span> <span class="o">=</span> <span class="n">M_total</span> <span class="o">+</span> <span class="n">dm_direct</span> <span class="o">+</span> <span class="n">dm_disk</span>
         <span class="n">J_total</span> <span class="o">=</span> <span class="n">J_total</span> <span class="o">+</span> <span class="n">J_shell</span>
@@ -706,7 +706,7 @@
         <span class="c1"># Check if a &gt; 1: this should not happen!</span>
         <span class="k">if</span> <span class="n">a_BH</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;We got a=</span><span class="si">{:.5g}</span><span class="s2"> from shell </span><span class="si">{}</span><span class="s2"> containing </span><span class="si">{:.5g}</span><span class="s2"> M_sun&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">"We got a=</span><span class="si">{:.5g}</span><span class="s2"> from shell </span><span class="si">{}</span><span class="s2"> containing </span><span class="si">{:.5g}</span><span class="s2"> M_sun"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">a_BH</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">dm_shell</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">))</span>
 
         <span class="c1"># Append all quantities to the arrays</span>
@@ -741,16 +741,16 @@
     <span class="n">max_he_mass_ejected</span> <span class="o">/=</span> <span class="n">Mo</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Evolving BH properties in 1D collapse&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;The BH formed from the collapse of the entire star with mass&#39;</span><span class="p">,</span>
-              <span class="nb">round</span><span class="p">(</span><span class="n">enclosed_mass</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M_sun has mass&#39;</span><span class="p">,</span>
-              <span class="nb">round</span><span class="p">(</span><span class="n">M_BH_total</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M_sun&#39;</span><span class="p">,</span> <span class="s1">&#39;and a = &#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">a_BH_total</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
-              <span class="s1">&#39;.&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;A disk of total mass&#39;</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">M_disk_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">&#39;M_sun&#39;</span><span class="p">,</span>
-              <span class="s1">&#39;was formed around the BH.&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Evolving BH properties in 1D collapse'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'The BH formed from the collapse of the entire star with mass'</span><span class="p">,</span>
+              <span class="nb">round</span><span class="p">(</span><span class="n">enclosed_mass</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">'M_sun has mass'</span><span class="p">,</span>
+              <span class="nb">round</span><span class="p">(</span><span class="n">M_BH_total</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">'M_sun'</span><span class="p">,</span> <span class="s1">'and a = '</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">a_BH_total</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
+              <span class="s1">'.'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'A disk of total mass'</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">M_disk_array</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">Mo</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="s1">'M_sun'</span><span class="p">,</span>
+              <span class="s1">'was formed around the BH.'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="p">[</span>
         <span class="n">M_BH_total</span><span class="p">,</span>

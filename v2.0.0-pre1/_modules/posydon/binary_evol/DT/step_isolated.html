@@ -122,13 +122,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.binary_evol.DT.step_isolated</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Isolated evolution step.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Isolated evolution step."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span>
+    <span class="s2">"Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -142,13 +142,13 @@
 <div class="viewcode-block" id="IsolatedStep">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_isolated.IsolatedStep">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IsolatedStep</span><span class="p">(</span><span class="n">detached_step</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evolve an isolated star (a single star, a merger product, a runaway star, etc.)</span>
+<span class="w">    </span><span class="sd">"""Evolve an isolated star (a single star, a merger product, a runaway star, etc.)</span>
 
 <span class="sd">    The star will be matched in the beginning of the step and will be evolved</span>
 <span class="sd">    until core-collapse or maximum simulation time,</span>
 <span class="sd">    based on a grid of single star HDF5 grid.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
         <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -177,27 +177,27 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">            and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure</span>
 <span class="sd">            put period at extreme, and initiate detached step with one star (and one non-evolving compact object),</span>
 <span class="sd">            with no orbital changes apart from spin change due to winds and deformation</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">initialize_isolated_binary_orbit</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;initially_single_star&#39;</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">&#39;merged&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">'initially_single_star'</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s1">'merged'</span><span class="p">:</span>
             <span class="k">pass</span>
-<span class="w">            </span><span class="sd">&#39;&#39;&#39;</span>
-<span class="sd">            if binary.star_1.state.state == &#39;massless_remnant&#39; or binary.star_2.state == &#39;massless_remnant&#39;:</span>
+<span class="w">            </span><span class="sd">'''</span>
+<span class="sd">            if binary.star_1.state.state == 'massless_remnant' or binary.star_2.state == 'massless_remnant':</span>
 <span class="sd">                pass</span>
 <span class="sd">            else:</span>
-<span class="sd">                raise FlowError(&quot;In merged or initially single stars, step one of the two stars should be &#39;massless_remnant&#39; &quot;)</span>
-<span class="sd">            &#39;&#39;&#39;</span>
-        <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">&quot;disrupted&quot;</span><span class="p">:</span>
+<span class="sd">                raise FlowError("In merged or initially single stars, step one of the two stars should be 'massless_remnant' ")</span>
+<span class="sd">            '''</span>
+        <span class="k">elif</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">==</span> <span class="s2">"disrupted"</span><span class="p">:</span>
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="n">FlowError</span><span class="p">(</span><span class="s2">&quot;In isolated step binary.state==&#39;disrupted&#39; or &#39;initially_single_star&#39; or &#39;merged&#39; &quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">FlowError</span><span class="p">(</span><span class="s2">"In isolated step binary.state=='disrupted' or 'initially_single_star' or 'merged' "</span><span class="p">)</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
 

@@ -118,7 +118,7 @@
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.winds.html#posydon.binary_evol.DT.winds.default_winds.default_spin_from_winds">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">default_spin_from_winds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        This function calculates the change in angular rotation rates </span>
 <span class="sd">    from wind loss.</span>
 
@@ -147,26 +147,26 @@
 <span class="sd">    -------</span>
 <span class="sd">        dOmega_sec : float</span>
 <span class="sd">            The change in rotation rate of the secondary (less evolved) </span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 <span class="sd">        </span>
 <span class="sd">        dOmega_pri : float</span>
 <span class="sd">            The change in rotation rate of the primary (more evolved) </span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
+<span class="sd">    """</span>
 
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
-    <span class="n">Idot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;Idot&quot;</span><span class="p">]</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span>
+    <span class="n">Idot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"Idot"</span><span class="p">]</span>
 
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
-    <span class="n">Idot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;Idot&quot;</span><span class="p">]</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span>
+    <span class="n">Idot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"Idot"</span><span class="p">]</span>
 
-    <span class="c1"># Due to the secondary&#39;s own evolution, we have:</span>
+    <span class="c1"># Due to the secondary's own evolution, we have:</span>
     <span class="c1"># domega_spin/dt = d(Jspin/I)/dt = dJspin/dt * 1/I + Jspin*d(1/I)/dt.</span>
     <span class="c1"># These are the two terms calculated below.</span>
     <span class="n">dOmega_spin_wind_sec</span> <span class="o">=</span> <span class="p">(</span>
@@ -193,7 +193,7 @@
     <span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span>
-            <span class="s2">&quot;dOmega_spin_wind , dOmega_deformation = &quot;</span><span class="p">,</span>
+            <span class="s2">"dOmega_spin_wind , dOmega_deformation = "</span><span class="p">,</span>
             <span class="n">dOmega_spin_wind_sec</span><span class="p">,</span>
             <span class="n">dOmega_deformation_sec</span><span class="p">,</span>
             <span class="n">dOmega_spin_wind_pri</span><span class="p">,</span>
@@ -203,8 +203,8 @@
     <span class="n">dOmega_pri</span> <span class="o">=</span> <span class="n">dOmega_spin_wind_pri</span> <span class="o">+</span> <span class="n">dOmega_deformation_pri</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;a[Ro],e,Omega[rad/yr] have been =&quot;</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">omega2</span><span class="p">,</span> <span class="n">omega1</span><span class="p">)</span>
-        <span class="c1">#print(&quot;da,de,dOmega (all) in 1yr is = &quot;,</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"a[Ro],e,Omega[rad/yr] have been ="</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">omega2</span><span class="p">,</span> <span class="n">omega1</span><span class="p">)</span>
+        <span class="c1">#print("da,de,dOmega (all) in 1yr is = ",</span>
         <span class="c1">#    da, de, dOmega_sec, dOmega_pri)</span>
 
     <span class="k">return</span> <span class="n">dOmega_sec</span><span class="p">,</span> <span class="n">dOmega_pri</span></div>
@@ -214,7 +214,7 @@
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.winds.html#posydon.binary_evol.DT.winds.default_winds.default_sep_from_winds">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">default_sep_from_winds</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        This function calculates the change in orbital separation from </span>
 <span class="sd">    wind loss, as e.g., in:</span>
 
@@ -247,15 +247,15 @@
 <span class="sd">    -------</span>
 <span class="sd">        da_mt_tot : float</span>
 <span class="sd">            The change in orbital separation from both stars </span>
-<span class="sd">        for a time step in step_detached&#39;s solve_ivp(). [Rsolar/yr]</span>
+<span class="sd">        for a time step in step_detached's solve_ivp(). [Rsolar/yr]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="c1"># Msol</span>
-    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span> <span class="c1"># Msol</span>
+    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="c1"># Msol</span>
-    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span> <span class="c1"># Msol</span>
+    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span> <span class="c1"># Msol/yr</span>
 
     <span class="n">q1</span> <span class="o">=</span> <span class="n">m2</span> <span class="o">/</span> <span class="n">m1</span>
     <span class="n">k11</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">q1</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">mdot_2</span> <span class="o">/</span> <span class="n">m2</span><span class="p">)</span>
@@ -272,7 +272,7 @@
     <span class="n">da_mt_pri</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k12</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k22</span> <span class="o">+</span> <span class="n">k32</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;da_mt = &quot;</span><span class="p">,</span> <span class="n">da_mt_sec</span><span class="p">,</span> <span class="n">da_mt_pri</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"da_mt = "</span><span class="p">,</span> <span class="n">da_mt_sec</span><span class="p">,</span> <span class="n">da_mt_pri</span><span class="p">)</span>
 
     <span class="n">da_mt_tot</span> <span class="o">=</span> <span class="n">da_mt_sec</span> <span class="o">+</span> <span class="n">da_mt_pri</span>
 

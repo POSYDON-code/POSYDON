@@ -116,66 +116,66 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.utils.ignorereason</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Class for handling ignore reasons when creating new grids.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Class for handling ignore reasons when creating new grids."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <span class="n">IGNORE_REASONS_PRIORITY</span> <span class="o">=</span> <span class="p">[</span>
     <span class="c1"># missing data files</span>
-    <span class="s1">&#39;ignored_no_history1&#39;</span><span class="p">,</span>              <span class="c1"># history1 is always needed</span>
-    <span class="s1">&#39;ignored_no_binary_history&#39;</span><span class="p">,</span>        <span class="c1"># needed for all binaries</span>
+    <span class="s1">'ignored_no_history1'</span><span class="p">,</span>              <span class="c1"># history1 is always needed</span>
+    <span class="s1">'ignored_no_binary_history'</span><span class="p">,</span>        <span class="c1"># needed for all binaries</span>
     <span class="c1"># corrupted data files</span>
-    <span class="s1">&#39;corrupted_history1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;corrupted_binary_history&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;corrupted_history2&#39;</span><span class="p">,</span>
+    <span class="s1">'corrupted_history1'</span><span class="p">,</span>
+    <span class="s1">'corrupted_binary_history'</span><span class="p">,</span>
+    <span class="s1">'corrupted_history2'</span><span class="p">,</span>
     <span class="c1"># issues with specific data files</span>
-    <span class="s1">&#39;ignored_scrubbed_history&#39;</span><span class="p">,</span>         <span class="c1"># issues when scrubbing history data</span>
-    <span class="s1">&#39;ignored_no_final_profile&#39;</span><span class="p">,</span>         <span class="c1"># issues with final profile data</span>
+    <span class="s1">'ignored_scrubbed_history'</span><span class="p">,</span>         <span class="c1"># issues when scrubbing history data</span>
+    <span class="s1">'ignored_no_final_profile'</span><span class="p">,</span>         <span class="c1"># issues with final profile data</span>
     <span class="c1"># binaries to be ignored for specialized grids</span>
-    <span class="s1">&#39;ignored_no_RLO&#39;</span>
+    <span class="s1">'ignored_no_RLO'</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="IgnoreReason">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.ignorereason.IgnoreReason">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IgnoreReason</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class for handling ignore reasons when creating new grids.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class for handling ignore reasons when creating new grids."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return True if an ignore reason has been set.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return True if an ignore reason has been set."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">reason</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__setattr__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Only allow to set an ignore reason, and only from a defined list.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">&quot;reason&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Only allow to set an ignore reason, and only from a defined list."""</span>
+        <span class="k">if</span> <span class="n">name</span> <span class="o">!=</span> <span class="s2">"reason"</span><span class="p">:</span>
             <span class="k">return</span>
 
         <span class="c1"># allow resetting the ignore reason</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"order"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
             <span class="k">return</span>
 
         <span class="c1"># check if new value is valid</span>
         <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">IGNORE_REASONS_PRIORITY</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Ignore reason `</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">` not recognized.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ignore reason `</span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2">` not recognized."</span><span class="p">)</span>
 
         <span class="n">new_order</span> <span class="o">=</span> <span class="n">IGNORE_REASONS_PRIORITY</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
         <span class="c1"># if previous reason was None, or higher priority... update</span>
-        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
-                <span class="ow">or</span> <span class="p">(</span><span class="n">new_order</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">])):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;reason&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
-            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_order</span>
+        <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="ow">or</span> <span class="p">(</span><span class="n">new_order</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"order"</span><span class="p">])):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"reason"</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+            <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="s2">"order"</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_order</span>
             <span class="k">return</span></div>
 
 </pre></div>

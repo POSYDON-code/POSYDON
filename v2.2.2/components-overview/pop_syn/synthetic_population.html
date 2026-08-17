@@ -142,7 +142,7 @@ You can find more information about the file structure here: <a class="reference
 It will not load in the data immediately, but only when requested.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
-<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;path/to/population.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'path/to/population.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>There are three main components of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population" title="posydon.popsyn.synthetic_population.Population"><code class="xref py py-class docutils literal notranslate"><span class="pre">Population</span></code></a> object:</p>
@@ -174,7 +174,7 @@ See <a class="reference internal" href="single_star.html#single-star"><span clas
 </div>
 <p>This will return the complete history of the first binary in the population, including all its columns.</p>
 <p>If you want to access a specific column, you can do so by using the column name.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mass_1</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mass_1</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'S1_mass'</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>A more powerful feature is the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.History.select" title="posydon.popsyn.synthetic_population.History.select"><code class="xref py py-func docutils literal notranslate"><span class="pre">History.select()</span></code></a> function, which allows you to select specific rows or columns from the history table. Here’s an example:</p>
@@ -184,10 +184,10 @@ See <a class="reference internal" href="single_star.html#single-star"><span clas
 for specific columns and the index. The columns are limited to those containing strings.</p>
 </div>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># using where with the index</span>
-<span class="n">mass_10</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;index==10&#39;</span><span class="p">)</span>
+<span class="n">mass_10</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'S1_mass'</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">'index==10'</span><span class="p">)</span>
 
 <span class="c1"># using where with a string column</span>
-<span class="n">mass_ZAMS</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;event == &quot;ZAMS&quot;&#39;</span><span class="p">)</span>
+<span class="n">mass_ZAMS</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'S1_mass'</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">'event == "ZAMS"'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you want to have a peak, you can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">head()</span></code> or <code class="xref py py-meth docutils literal notranslate"><span class="pre">tail()</span></code> functions.</p>
@@ -212,7 +212,7 @@ The indices are useful in selecting systems from the population.</p>
 <span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">indices</span><span class="p">)</span>
 
 <span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">'history'</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>
@@ -251,13 +251,13 @@ The additional values are the scalar values from the individual stars and the bi
 </table>
 <p>Like the <code class="code docutils literal notranslate"><span class="pre">history</span></code> access, you can access the oneline data by using the index of the system or the columns.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">binary_0</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">mass</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">]</span>
-<span class="n">selection</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;index==10&#39;</span><span class="p">)</span>
+<span class="n">mass</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="s1">'S1_mass_i'</span><span class="p">]</span>
+<span class="n">selection</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'S1_mass_i'</span><span class="p">],</span> <span class="n">where</span><span class="o">=</span><span class="s1">'index==10'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>You can check the columns and indices of the oneline table with <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Oneline.columns" title="posydon.popsyn.synthetic_population.Oneline.columns"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Population.oneline.columns</span></code></a> and <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.columns" title="posydon.popsyn.synthetic_population.Population.columns"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Population.columns['oneline']</span></code></a>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">&#39;oneline&#39;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">'oneline'</span><span class="p">])</span>
 </pre></div>
 </div>
 <p>The number of systems in the population can be found with <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Oneline.number_of_systems" title="posydon.popsyn.synthetic_population.Oneline.number_of_systems"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Population.oneline.number_of_systems</span></code></a>.
@@ -297,12 +297,12 @@ The <cite>underlying_mass</cite> is calculated with the assumption that binary f
 <p>The class function <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Population.export_selection" title="posydon.popsyn.synthetic_population.Population.export_selection"><code class="xref py py-func docutils literal notranslate"><span class="pre">Population.export_selection</span></code></a> allows you to export part of the population to a new HDF5 file.
 It takes a list of indices of the systems you want to export, and the path to the new file.
 This will copy the systems with the given indices to the new file, which includes their history, oneline data, and formation channels (if presen).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;path/to/new_population.h5&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">'path/to/new_population.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If the file already exists, the function will raise an error. If you want to overwrite or append to the file, you can use the <code class="code docutils literal notranslate"><span class="pre">overwrite</span></code> argument or <code class="code docutils literal notranslate"><span class="pre">append</span></code> argument.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;path/to/new_population.h5&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">&#39;path/to/new_population.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">'path/to/new_population.h5'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span> <span class="s1">'path/to/new_population.h5'</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -317,7 +317,7 @@ The <a class="reference internal" href="../../api_reference/posydon.popsyn.html#
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransientPopulation</span>
 
 <span class="c1"># where transient_name is the name of the transient population in the file</span>
-<span class="n">trans_pop</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">&#39;path/to/population.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">)</span>
+<span class="n">trans_pop</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">'path/to/population.h5'</span><span class="p">,</span> <span class="s1">'transient_name'</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="creating-a-transientpopulation">
@@ -375,7 +375,7 @@ These are required to plot over the grid slices.</p>
 </div>
 <p>If you like to write to a folder, you can use <code class="code docutils literal notranslate"><span class="pre">plot_dir='path/to/dir'</span></code> and use <code class="code docutils literal notranslate"><span class="pre">save_fig=True</span></code>.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># plot the HMS-HMS grid at 1e-4 with S1_spin and q=0.7</span>
-<span class="n">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="s1">&#39;HMS-HMS&#39;</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">],</span> <span class="n">prop</span><span class="o">=</span><span class="s1">&#39;S1_spin&#39;</span><span class="p">,</span> <span class="n">prop_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s1">&#39;ZAMS_oRLO1_CC1_oRLO2_CC2_END&#39;</span><span class="p">)</span>
+<span class="n">plot_popsyn_over_grid_slice</span><span class="p">(</span><span class="s1">'HMS-HMS'</span><span class="p">,</span> <span class="mf">1e-4</span><span class="p">,</span> <span class="n">slices</span><span class="o">=</span><span class="p">[</span><span class="mf">0.7</span><span class="p">],</span> <span class="n">prop</span><span class="o">=</span><span class="s1">'S1_spin'</span><span class="p">,</span> <span class="n">prop_range</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mf">0.3</span><span class="p">],</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">channel</span><span class="o">=</span><span class="s1">'ZAMS_oRLO1_CC1_oRLO2_CC2_END'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -387,7 +387,7 @@ and is used to access the cosmic rate data of the transient population.</p>
 <p>It also allows the user to calculate the intrinsic rate density of the events in the population, and apply observational effects to the population.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rates</span>
 
-<span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">&#39;path/to/population.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">,</span> <span class="s1">&#39;SFH_identifier&#39;</span><span class="p">)</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">'path/to/population.h5'</span><span class="p">,</span> <span class="s1">'transient_name'</span><span class="p">,</span> <span class="s1">'SFH_identifier'</span><span class="p">)</span>
 </pre></div>
 </div>
 <section id="creating-a-rates-object">
@@ -470,7 +470,7 @@ This populates the <code class="code docutils literal notranslate"><span class="
 <h3>Plotting Rates<a class="headerlink" href="#plotting-rates" title="Link to this heading"></a></h3>
 <p>Besides plotting the intrinsic rate, you can plot the distribution of properties of the population.
 You can use any property in the TransientPopulation table.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S1_mass'</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -490,11 +490,11 @@ We have included an example in the <code class="xref py py-func docutils literal
 <p>However, since that function requires a detection argument, it requires a wrapper to work with our function here.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCO_detactability</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">DCO_wrapper</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">):</span>
-  <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">&#39;design_H1L1V1&#39;</span>
+  <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">'design_H1L1V1'</span>
   <span class="k">return</span> <span class="n">DCO_detactability</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># We also give it a name, which is used as an identifier in the file</span>
-<span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">'design_H1L1V1'</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -503,7 +503,7 @@ We have included an example in the <code class="xref py py-func docutils literal
 <p>The observable population is accesed through the <code class="code docutils literal notranslate"><span class="pre">observable_population</span></code> attribute of the <a class="reference internal" href="../../api_reference/posydon.popsyn.html#posydon.popsyn.synthetic_population.Rates" title="posydon.popsyn.synthetic_population.Rates"><code class="xref py py-class docutils literal notranslate"><span class="pre">Rates</span></code></a> object.
 You need the observable_identifier to access the data, which can be accessed with <a class="reference internal" href="../../api_reference/posydon.popsyn.html#id24" title="posydon.popsyn.synthetic_population.Rates.observable_population_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Rates.observable_population_names</span></code></a></p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">observable_population_names</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">'design_H1L1V1'</span><span class="p">))</span>
 </pre></div>
 </div>
 </section>
@@ -511,7 +511,7 @@ You need the observable_identifier to access the data, which can be accessed wit
 <h3>Plotting the observable population<a class="headerlink" href="#plotting-the-observable-population" title="Link to this heading"></a></h3>
 <p>The observable population can be plotted in the same way as the intrinsic rate density.
 However, you need to define which observable population you want to plot.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S1_mass'</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">'design_H1L1V1'</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>If you like to overplot multiple properties, you can set <code class="docutils literal notranslate"><span class="pre">show=False</span></code> and manually provide an axis.</p>
@@ -520,8 +520,8 @@ However, you need to define which observable population you want to plot.</p>
 <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S2_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S1_mass'</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">'design_H1L1V1'</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S2_mass'</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">'design_H1L1V1'</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>

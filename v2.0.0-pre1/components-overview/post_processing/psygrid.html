@@ -311,11 +311,11 @@ is the path to the directory, where the MESA runs are in.</p>
 </table>
 <p>You can read the MESA data into an existing <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object, which may
 overwrites data:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_grid_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_grid_path</span><span class="o">=</span><span class="s2">"."</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>or combine the initialization with the creation:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_grid_path</span><span class="o">=</span><span class="s2">&quot;.&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">()</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">MESA_grid_path</span><span class="o">=</span><span class="s2">"."</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -323,12 +323,12 @@ overwrites data:</p>
 <h2>Loading a <cite>PSyGrid</cite> object<a class="headerlink" href="#loading-a-psygrid-object" title="Link to this heading"></a></h2>
 <p>You can load an existing h5 file (e.g. “myPSyGrid.h5”) into a <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code>
 object by</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s2">&quot;myPSyGrid.h5&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s2">"myPSyGrid.h5"</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>It is more convenient to load the file directly when initializing the
 <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s2">&quot;myPSyGrid.h5&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="s2">"myPSyGrid.h5"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -389,7 +389,7 @@ respectively. To get a tuple of all the available values use</p>
 <p>Each value you then get for example via <code class="samp docutils literal notranslate"><span class="pre">mygrid.initial_values[</span><em><span class="pre">VALUE</span></em><span class="pre">]</span></code>.
 It will return a numpy array with the this value for all the runs. So you get
 the initial mass of star 1 in the third run with</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">'star_1_mass'</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -439,16 +439,16 @@ entries. This holds for the number of list entries of MESA directories, too.</p>
 <p>Again you can check for the contents of the components with
 <code class="samp docutils literal notranslate"><span class="pre">dtype.names</span></code>, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">myrun</span> <span class="o">=</span> <span class="n">mygrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">myrun</span><span class="p">[</span><span class="s1">&#39;binary_history&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<span class="n">myrun</span><span class="p">[</span><span class="s1">'binary_history'</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
 </pre></div>
 </div>
 <p>Now you know a second way to get the initial mass of star 1 in the third run
 with a one-liner</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;initial_values&#39;</span><span class="p">][</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'initial_values'</span><span class="p">][</span><span class="s1">'star_1_mass'</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>You would may think of a third way being</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;binary_history&#39;</span><span class="p">][</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'binary_history'</span><span class="p">][</span><span class="s1">'star_1_mass'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
 </pre></div>
 </div>
 <p>But this will not give the initial value, while it is close to it. The reason
@@ -495,14 +495,14 @@ over a <code class="samp docutils literal notranslate"><span class="pre">PSyGrid
 <code class="samp docutils literal notranslate"><span class="pre">PSyGrid</span></code> object. Hence the following two codes will produce the same
 output. The first one loops through the numpy array if the initial companion
 mass</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">mass</span> <span class="ow">in</span> <span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">]:</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">mass</span> <span class="ow">in</span> <span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">'star_2_mass'</span><span class="p">]:</span>
     <span class="nb">print</span><span class="p">(</span><span class="n">mass</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>while the second one loops through the runs and prints the initial companion
 mass</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">run</span> <span class="ow">in</span> <span class="n">mygrid</span><span class="p">:</span>
-    <span class="nb">print</span><span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="s1">&#39;initial_values&#39;</span><span class="p">][</span><span class="s1">&#39;star_2_mass&#39;</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">run</span><span class="p">[</span><span class="s1">'initial_values'</span><span class="p">][</span><span class="s1">'star_2_mass'</span><span class="p">])</span>
 </pre></div>
 </div>
 </section>
@@ -513,8 +513,8 @@ to only use our dedicated functions to add content to the object. There is a
 function to add an extra column to the <code class="samp docutils literal notranslate"><span class="pre">final_values</span></code>. Here is an example
 how to add a new column which contains the final orbital period in units of
 years instead of days:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_column_data</span> <span class="o">=</span> <span class="n">mygrid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;period_days&#39;</span><span class="p">]</span><span class="o">/</span><span class="mf">365.25</span>
-<span class="n">mygrid</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">&#39;period_years&#39;</span><span class="p">,</span> <span class="n">new_column_data</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">&#39;final_values&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_column_data</span> <span class="o">=</span> <span class="n">mygrid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">'period_days'</span><span class="p">]</span><span class="o">/</span><span class="mf">365.25</span>
+<span class="n">mygrid</span><span class="o">.</span><span class="n">add_column</span><span class="p">(</span><span class="s1">'period_years'</span><span class="p">,</span> <span class="n">new_column_data</span><span class="p">,</span> <span class="n">where</span><span class="o">=</span><span class="s1">'final_values'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>The four arguments are a string with the name of the new field, the data to be

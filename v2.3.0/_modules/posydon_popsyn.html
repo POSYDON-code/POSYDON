@@ -135,169 +135,169 @@
 <div class="viewcode-block" id="rescue_popsyn_function">
 <a class="viewcode-back" href="../api_reference/posydon_popsyn.html#posydon_popsyn.rescue_popsyn_function">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rescue_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Deprecated wrapper for check_popsyn_function.</span>
+<span class="w">    </span><span class="sd">"""Deprecated wrapper for check_popsyn_function.</span>
 
 <span class="sd">    This function is deprecated and will be removed in a future version.</span>
-<span class="sd">    Use &#39;posydon-popsyn check&#39; instead.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    Use 'posydon-popsyn check' instead.</span>
+<span class="sd">    """</span>
     <span class="n">Pwarn</span><span class="p">(</span>
-        <span class="s2">&quot;The &#39;rescue&#39; command is deprecated and will be removed in a future version. &quot;</span>
-        <span class="s2">&quot;Please use &#39;posydon-popsyn check&#39; instead, which now includes rescue functionality.&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;DeprecationWarning&quot;</span>
+        <span class="s2">"The 'rescue' command is deprecated and will be removed in a future version. "</span>
+        <span class="s2">"Please use 'posydon-popsyn check' instead, which now includes rescue functionality."</span><span class="p">,</span>
+        <span class="s2">"DeprecationWarning"</span>
     <span class="p">)</span>
     <span class="n">check_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">)</span></div>
 
 
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">'__main__'</span><span class="p">:</span>
 
     <span class="n">parser</span> <span class="o">=</span> <span class="n">argparse</span><span class="o">.</span><span class="n">ArgumentParser</span><span class="p">(</span>
-        <span class="n">prog</span><span class="o">=</span><span class="s1">&#39;posydon-popsyn&#39;</span><span class="p">,</span>
-        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;POSYDON population synthesis command line tool&#39;</span><span class="p">)</span>
-    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">&#39;subcommands&#39;</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">&#39;command&#39;</span><span class="p">)</span>
+        <span class="n">prog</span><span class="o">=</span><span class="s1">'posydon-popsyn'</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">'POSYDON population synthesis command line tool'</span><span class="p">)</span>
+    <span class="n">subparsers</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">add_subparsers</span><span class="p">(</span><span class="n">title</span><span class="o">=</span><span class="s1">'subcommands'</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="s1">'command'</span><span class="p">)</span>
     <span class="n">subparsers</span><span class="o">.</span><span class="n">required</span> <span class="o">=</span> <span class="kc">True</span>
 
     <span class="c1"># setup a run subcommand</span>
-    <span class="n">setup_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">&#39;setup&#39;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">&#39;setup a population run&#39;</span><span class="p">)</span>
+    <span class="n">setup_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span><span class="s1">'setup'</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s1">'setup a population run'</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;ini_file&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;a population ini file for which you want to setup a population run&#39;</span><span class="p">,</span>
+        <span class="s1">'ini_file'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'a population ini file for which you want to setup a population run'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--job_array&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the number of job in the job array you want to run&#39;</span><span class="p">,</span>
+        <span class="s1">'-j'</span><span class="p">,</span> <span class="s1">'--job_array'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the number of job in the job array you want to run'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--email&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;an email for the slurm scripts&#39;</span><span class="p">,</span>
+        <span class="s1">'--email'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'an email for the slurm scripts'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--partition&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;what cluster partition you want to run the script on&#39;</span><span class="p">,</span>
+        <span class="s1">'--partition'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'what cluster partition you want to run the script on'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime for the population synthesis in SLURM format&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;23:00:00&#39;</span><span class="p">)</span>
+        <span class="s1">'--walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime for the population synthesis in SLURM format'</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">'23:00:00'</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--merge_walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime for the merge script in SLURM format&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;12:00:00&#39;</span><span class="p">)</span>
+        <span class="s1">'--merge_walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime for the merge script in SLURM format'</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">'12:00:00'</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--mem_per_cpu&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the memory per cpu per job array in SLURM format&#39;</span><span class="p">,</span>
-        <span class="n">default</span><span class="o">=</span><span class="s1">&#39;9G&#39;</span><span class="p">)</span>
+        <span class="s1">'--mem_per_cpu'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the memory per cpu per job array in SLURM format'</span><span class="p">,</span>
+        <span class="n">default</span><span class="o">=</span><span class="s1">'9G'</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--account&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the account you would like to use&#39;</span><span class="p">,</span>
+        <span class="s1">'--account'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the account you would like to use'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--max_concurrent_jobs&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the maximum number of concurrent jobs to run in the job array&#39;</span><span class="p">,</span>
+        <span class="s1">'--max_concurrent_jobs'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the maximum number of concurrent jobs to run in the job array'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--exclude&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;a comma-separated list of nodes to exclude when submitting the job&#39;</span><span class="p">,</span>
+        <span class="s1">'--exclude'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'a comma-separated list of nodes to exclude when submitting the job'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">setup_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">setup_popsyn_function</span><span class="p">)</span>
 
     <span class="c1"># Check the run subcommand</span>
     <span class="n">check_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s1">&#39;check&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;check the status of a population run and generate rescue scripts if needed&#39;</span><span class="p">)</span>
+        <span class="s1">'check'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'check the status of a population run and generate rescue scripts if needed'</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;run_folder&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the folder where the population run is located&#39;</span><span class="p">,</span>
+        <span class="s1">'run_folder'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the folder where the population run is located'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--job_array&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the number of job in the job array (used for rescue script generation)&#39;</span><span class="p">,</span>
+        <span class="s1">'-j'</span><span class="p">,</span> <span class="s1">'--job_array'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the number of job in the job array (used for rescue script generation)'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--email&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;an email for the slurm scripts&#39;</span><span class="p">,</span>
+        <span class="s1">'--email'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'an email for the slurm scripts'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--partition&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;what cluster partition you want to run the script on&#39;</span><span class="p">,</span>
+        <span class="s1">'--partition'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'what cluster partition you want to run the script on'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime you would like to use in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--merge_walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use for the merge script in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--merge_walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime you would like to use for the merge script in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--mem_per_cpu&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the memory per cpu you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--mem_per_cpu'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the memory per cpu you would like to use in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--account&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the account you would like to use&#39;</span><span class="p">,</span>
+        <span class="s1">'--account'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the account you would like to use'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--max_concurrent_jobs&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the maximum number of concurrent jobs to run in the job array&#39;</span><span class="p">,</span>
+        <span class="s1">'--max_concurrent_jobs'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the maximum number of concurrent jobs to run in the job array'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--exclude&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;a comma-separated list of nodes to exclude when submitting the job&#39;</span><span class="p">,</span>
+        <span class="s1">'--exclude'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'a comma-separated list of nodes to exclude when submitting the job'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">check_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">check_popsyn_function</span><span class="p">)</span>
 
     <span class="c1"># Rescue the run subcommand (DEPRECATED)</span>
     <span class="n">rescue_parser</span> <span class="o">=</span> <span class="n">subparsers</span><span class="o">.</span><span class="n">add_parser</span><span class="p">(</span>
-        <span class="s1">&#39;rescue&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;(DEPRECATED: use &quot;check&quot; instead) rescue a failed population run&#39;</span><span class="p">)</span>
+        <span class="s1">'rescue'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'(DEPRECATED: use "check" instead) rescue a failed population run'</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;run_folder&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the folder where the population run is located&#39;</span><span class="p">,</span>
+        <span class="s1">'run_folder'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the folder where the population run is located'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;-j&#39;</span><span class="p">,</span> <span class="s1">&#39;--job_array&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the number of job in the job array you want to run&#39;</span><span class="p">,</span>
+        <span class="s1">'-j'</span><span class="p">,</span> <span class="s1">'--job_array'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the number of job in the job array you want to run'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--email&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;an email for the slurm scripts&#39;</span><span class="p">,</span>
+        <span class="s1">'--email'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'an email for the slurm scripts'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--partition&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;what cluster partition you want to run the script on&#39;</span><span class="p">,</span>
+        <span class="s1">'--partition'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'what cluster partition you want to run the script on'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime you would like to use in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--merge_walltime&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the walltime you would like to use for the merge script in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--merge_walltime'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the walltime you would like to use for the merge script in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--mem_per_cpu&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the memory per cpu you would like to use in SLURM format&#39;</span><span class="p">,</span>
+        <span class="s1">'--mem_per_cpu'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the memory per cpu you would like to use in SLURM format'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--account&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the account you would like to use&#39;</span><span class="p">,</span>
+        <span class="s1">'--account'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the account you would like to use'</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--max_concurrent_jobs&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;the maximum number of concurrent jobs to run in the job array&#39;</span><span class="p">,</span>
+        <span class="s1">'--max_concurrent_jobs'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'the maximum number of concurrent jobs to run in the job array'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">int</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">add_argument</span><span class="p">(</span>
-        <span class="s1">&#39;--exclude&#39;</span><span class="p">,</span>
-        <span class="n">help</span><span class="o">=</span><span class="s1">&#39;a comma-separated list of nodes to exclude when submitting the job&#39;</span><span class="p">,</span>
+        <span class="s1">'--exclude'</span><span class="p">,</span>
+        <span class="n">help</span><span class="o">=</span><span class="s1">'a comma-separated list of nodes to exclude when submitting the job'</span><span class="p">,</span>
         <span class="nb">type</span><span class="o">=</span><span class="nb">str</span><span class="p">,</span>
         <span class="n">default</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
     <span class="n">rescue_parser</span><span class="o">.</span><span class="n">set_defaults</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="n">rescue_popsyn_function</span><span class="p">)</span>

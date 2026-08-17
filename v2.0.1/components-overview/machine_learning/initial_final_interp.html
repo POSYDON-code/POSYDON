@@ -136,7 +136,7 @@ constructor which specifies the path to a <code class="samp docutils literal not
 the pretrained interpolator can be loaded from. POSYDON provides
 various pretrained models whose corresponding <code class="samp docutils literal notranslate"><span class="pre">pkl</span></code> files
 can be found in the data directory of the POSYDON repository.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">IFInterpolator</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;path/to/file.pkl&quot;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">IFInterpolator</span><span class="p">(</span><span class="n">filename</span> <span class="o">=</span> <span class="s2">"path/to/file.pkl"</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -180,56 +180,56 @@ instances of the <code class="docutils literal notranslate"><span class="pre">Ba
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.interpolation.IF_interpolation</span><span class="w"> </span><span class="kn">import</span> <span class="n">IFInterpolator</span>
 
-<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s2">&quot;path/to/h5/file.h5&quot;</span><span class="p">)</span> <span class="c1"># loading grid from h5 file</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s2">"path/to/h5/file.h5"</span><span class="p">)</span> <span class="c1"># loading grid from h5 file</span>
 
 <span class="n">interp</span> <span class="o">=</span> <span class="n">IFInterpolator</span><span class="p">(</span><span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="p">,</span> <span class="n">interpolators</span> <span class="o">=</span> <span class="p">[</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;no_MT&quot;</span><span class="p">,</span> <span class="s2">&quot;stable_MT&quot;</span><span class="p">,</span> <span class="s2">&quot;unstable_MT&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">first</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s2">&quot;interpolation_class&quot;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"no_MT"</span><span class="p">,</span> <span class="s2">"stable_MT"</span><span class="p">,</span> <span class="s2">"unstable_MT"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">first</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"interpolation_class"</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s2">"interpolation_class"</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">second</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_direct_state&#39;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s1">&#39;S1_direct_state&#39;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"BH"</span><span class="p">,</span> <span class="s2">"WD"</span><span class="p">,</span> <span class="s2">"NS"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">second</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s1">'S1_direct_state'</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s1">'S1_direct_state'</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">third</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_Fryer+12-rapid_state&#39;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s1">&#39;S1_Fryer+12-rapid_state&#39;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"BH"</span><span class="p">,</span> <span class="s2">"WD"</span><span class="p">,</span> <span class="s2">"NS"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">third</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s1">'S1_Fryer+12-rapid_state'</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s1">'S1_Fryer+12-rapid_state'</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">fourth</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_Fryer+12-delayed_state&#39;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s1">&#39;S1_Fryer+12-delayed_state&#39;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"BH"</span><span class="p">,</span> <span class="s2">"WD"</span><span class="p">,</span> <span class="s2">"NS"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">fourth</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s1">'S1_Fryer+12-delayed_state'</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s1">'S1_Fryer+12-delayed_state'</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">fifth</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_Sukhbold+16-engineN20_state&#39;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s1">&#39;S1_Sukhbold+16-engineN20_state&#39;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"BH"</span><span class="p">,</span> <span class="s2">"WD"</span><span class="p">,</span> <span class="s2">"NS"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">fifth</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s1">'S1_Sukhbold+16-engineN20_state'</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s1">'S1_Sukhbold+16-engineN20_state'</span>
     <span class="p">},</span>
     <span class="p">{</span>
-        <span class="s2">&quot;interp_method&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="s2">&quot;linear&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;interp_classes&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;BH&quot;</span><span class="p">,</span> <span class="s2">&quot;WD&quot;</span><span class="p">,</span> <span class="s2">&quot;NS&quot;</span><span class="p">],</span>
-        <span class="s2">&quot;out_keys&quot;</span><span class="p">:</span> <span class="n">sixth</span><span class="p">,</span>
-        <span class="s2">&quot;class_method&quot;</span><span class="p">:</span> <span class="s2">&quot;kNN&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;c_keys&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20_state&#39;</span><span class="p">],</span>
-        <span class="s2">&quot;c_key&quot;</span><span class="p">:</span> <span class="s1">&#39;S1_Patton&amp;Sukhbold20-engineN20_state&#39;</span>
+        <span class="s2">"interp_method"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">,</span> <span class="s2">"linear"</span><span class="p">],</span>
+        <span class="s2">"interp_classes"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"None"</span><span class="p">,</span> <span class="s2">"BH"</span><span class="p">,</span> <span class="s2">"WD"</span><span class="p">,</span> <span class="s2">"NS"</span><span class="p">],</span>
+        <span class="s2">"out_keys"</span><span class="p">:</span> <span class="n">sixth</span><span class="p">,</span>
+        <span class="s2">"class_method"</span><span class="p">:</span> <span class="s2">"kNN"</span><span class="p">,</span>
+        <span class="s2">"c_keys"</span><span class="p">:</span> <span class="p">[</span><span class="s1">'S1_Patton&amp;Sukhbold20-engineN20_state'</span><span class="p">],</span>
+        <span class="s2">"c_key"</span><span class="p">:</span> <span class="s1">'S1_Patton&amp;Sukhbold20-engineN20_state'</span>
     <span class="p">}</span>
 <span class="p">])</span> <span class="c1"># constructing IFInterpolator</span>
 
@@ -256,7 +256,7 @@ vector given an input vector.</p>
 </div>
 <p>Finally a trained interpolator can be easily saved by specifying a path to
 a <code class="samp docutils literal notranslate"><span class="pre">pkl</span></code> file where the interpolator will be saved to.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;path/to/file.pkl&quot;</span><span class="p">)</span> <span class="c1"># saving interpolator</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">"path/to/file.pkl"</span><span class="p">)</span> <span class="c1"># saving interpolator</span>
 </pre></div>
 </div>
 </section>

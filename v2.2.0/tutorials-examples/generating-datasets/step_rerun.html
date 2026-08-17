@@ -174,8 +174,8 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s1">&#39;grid_params/pipeline_yggdrasil.ini&#39;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">&#39;./pipeline.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s1">'grid_params/pipeline_yggdrasil.ini'</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">'./pipeline.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -198,7 +198,7 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
 
-<span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;POSYDON_data/tutorials/processing-pipeline&#39;</span><span class="p">)</span>
+<span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">'POSYDON_data/tutorials/processing-pipeline'</span><span class="p">)</span>
 <span class="n">PATH_TO_GRIDS</span>
 </pre></div>
 </div>
@@ -222,13 +222,13 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 </pre></div>
 </div>
 <p>And edit the <code class="docutils literal notranslate"><span class="pre">[rerun]</span></code> section of the file to</p>
-<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;HMS-HMS&#39;]</span>
-<span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;1e-01_Zsun&#39;]</span>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['HMS-HMS']</span>
+<span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['1e-01_Zsun']</span>
 <span class="w">                </span><span class="na">]</span>
-<span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;test_grid&#39;]]</span>
-<span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;LITE&#39;]]</span>
+<span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['test_grid']]</span>
+<span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['LITE']]</span>
 <span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="na">RERUN_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;opacity_max&#39;</span>
+<span class="na">RERUN_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'opacity_max'</span>
 </pre></div>
 </div>
 <p>Also remember to set</p>

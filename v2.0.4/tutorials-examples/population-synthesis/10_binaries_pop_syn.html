@@ -178,8 +178,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">"posydon/popsyn/population_params_default.ini"</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">'./population_params.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -207,7 +207,7 @@ number_of_binaries = 10
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
-<span class="n">poprun</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">&#39;./population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">poprun</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">'./population_params.ini'</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -215,9 +215,9 @@ number_of_binaries = 10
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of binary populations:&#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">))</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Metallicity:&#39;</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Number of binaries:&#39;</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="s1">'Number of binary populations:'</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Metallicity:'</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'Number of binaries:'</span><span class="p">,</span> <span class="n">poprun</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">number_of_binaries</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -260,7 +260,7 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
-<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'1e+00_Zsun_population.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -310,7 +310,7 @@ will be created for each metallicity.</p>
 <p>You can access individual binaries or selections of the population using several methods:</p>
 <div class="highlight-none notranslate"><div class="highlight"><pre><span></span>1. pop.history[5]
 2. pop.history[[0,4]]
-3. pop.history[&#39;time&#39;]
+3. pop.history['time']
 4. pop.history.select()
 </pre></div>
 </div>
@@ -336,7 +336,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">'time'</span><span class="p">]</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -353,7 +353,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">&#39;history&#39;</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">columns</span><span class="p">[</span><span class="s1">'history'</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -368,7 +368,7 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># using the select function</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == 9&#39;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">'index == 9'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -377,7 +377,7 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># selecting all RLO2 states and only time and state columns</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;state == RLO2&#39;</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">])</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">'state == RLO2'</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'time'</span><span class="p">,</span> <span class="s1">'state'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -439,7 +439,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == 9&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">'index == 9'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -447,7 +447,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">&#39;index == [0,9]&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">where</span><span class="o">=</span><span class="s1">'index == [0,9]'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -457,7 +457,7 @@ will be created for each metallicity.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="o">.</span><span class="n">columns</span>
 <span class="c1"># or</span>
-<span class="c1"># pop.columns[&#39;oneline&#39;]</span>
+<span class="c1"># pop.columns['oneline']</span>
 </pre></div>
 </div>
 </div>
@@ -491,7 +491,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'1e+00_Zsun_population.h5'</span><span class="p">)</span>
 <span class="n">pop</span><span class="o">.</span><span class="n">formation_channels</span>
 </pre></div>
 </div>
@@ -507,7 +507,7 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">9</span><span class="p">]</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">'selected.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -515,7 +515,7 @@ will be created for each metallicity.</p>
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'selected.h5'</span><span class="p">)</span>
 <span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
 </pre></div>
 </div>
@@ -527,7 +527,7 @@ will be created for each metallicity.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;selected simulated mass: &#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">oneline</span><span class="p">[[</span><span class="s1">&#39;S1_mass_i&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass_i&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">'selected simulated mass: '</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">oneline</span><span class="p">[[</span><span class="s1">'S1_mass_i'</span><span class="p">,</span> <span class="s1">'S2_mass_i'</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()))</span>
 </pre></div>
 </div>
 </div>
@@ -538,9 +538,9 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># this will overwrite the existing file</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">'selected.h5'</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
-<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'selected.h5'</span><span class="p">)</span>
 <span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
 <br/></pre></div>
 </div>
@@ -550,8 +550,8 @@ will be created for each metallicity.</p>
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will add to the file and add the extra simulated mass</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">&#39;selected.h5&#39;</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;selected.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">indices</span><span class="p">,</span> <span class="s1">'selected.h5'</span><span class="p">,</span> <span class="n">append</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">selected</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'selected.h5'</span><span class="p">)</span>
 <span class="n">selected</span><span class="o">.</span><span class="n">mass_per_metallicity</span>
 </pre></div>
 </div>
@@ -572,8 +572,8 @@ will be created for each metallicity.</p>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%%writefile</span> script.py
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
-    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+    <span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">"./population_params.ini"</span><span class="p">)</span>
     <span class="n">synth_pop</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -595,7 +595,7 @@ will be created for each metallicity.</p>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">PopulationRunner</span>
 
-<span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">&quot;./population_params.ini&quot;</span><span class="p">)</span>
+<span class="n">synth_pop</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s2">"./population_params.ini"</span><span class="p">)</span>
 <span class="k">for</span> <span class="n">pop</span> <span class="ow">in</span> <span class="n">synth_pop</span><span class="o">.</span><span class="n">binary_populations</span><span class="p">:</span>
     <span class="n">synth_pop</span><span class="o">.</span><span class="n">merge_parallel_runs</span><span class="p">(</span><span class="n">pop</span><span class="p">)</span>
 </pre></div>

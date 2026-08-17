@@ -122,15 +122,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.star_formation_history</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Implements the selection of different star-formation history scenarios.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Implements the selection of different star-formation history scenarios."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Max Briel &lt;max.briel@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Max Briel &lt;max.briel@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -150,19 +150,19 @@
 
 
 <span class="n">SFH_SCENARIOS</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;burst&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;constant&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;custom_linear&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;custom_log10&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;custom_linear_histogram&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;custom_log10_histogram&quot;</span><span class="p">,</span>
+    <span class="s2">"burst"</span><span class="p">,</span>
+    <span class="s2">"constant"</span><span class="p">,</span>
+    <span class="s2">"custom_linear"</span><span class="p">,</span>
+    <span class="s2">"custom_log10"</span><span class="p">,</span>
+    <span class="s2">"custom_linear_histogram"</span><span class="p">,</span>
+    <span class="s2">"custom_log10_histogram"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
 <div class="viewcode-block" id="get_formation_times">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.get_formation_times">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_formation_times</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">,</span> <span class="n">star_formation</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get formation times of binaries in a population based on a SFH scenario.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_formation_times</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">,</span> <span class="n">star_formation</span><span class="o">=</span><span class="s2">"constant"</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Get formation times of binaries in a population based on a SFH scenario.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -184,41 +184,41 @@
 <span class="sd">    -------</span>
 <span class="sd">    array</span>
 <span class="sd">        The formation times array.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RNG&quot;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="sd">    """</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"RNG"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
     <span class="n">scenario</span> <span class="o">=</span> <span class="n">star_formation</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
 
-    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">&quot;burst&quot;</span><span class="p">:</span>
-        <span class="n">burst_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;burst_time&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">"burst"</span><span class="p">:</span>
+        <span class="n">burst_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"burst_time"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">N_binaries</span><span class="p">)</span> <span class="o">*</span> <span class="n">burst_time</span>
 
-    <span class="n">max_time_default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_simulation_time&quot;</span><span class="p">,</span> <span class="n">age_of_universe</span><span class="p">)</span>
-    <span class="n">max_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;max_time&quot;</span><span class="p">,</span> <span class="n">max_time_default</span><span class="p">)</span>
+    <span class="n">max_time_default</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_simulation_time"</span><span class="p">,</span> <span class="n">age_of_universe</span><span class="p">)</span>
+    <span class="n">max_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"max_time"</span><span class="p">,</span> <span class="n">max_time_default</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">&quot;constant&quot;</span><span class="p">:</span>
-        <span class="n">min_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;min_time&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scenario</span> <span class="o">==</span> <span class="s2">"constant"</span><span class="p">:</span>
+        <span class="n">min_time</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"min_time"</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">N_binaries</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="n">min_time</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">max_time</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;custom_linear&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_log10&quot;</span><span class="p">]:</span>
-        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_ages_file&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"custom_linear"</span><span class="p">,</span> <span class="s2">"custom_log10"</span><span class="p">]:</span>
+        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"custom_ages_file"</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">custom_ages_file</span><span class="p">,</span> <span class="n">unpack</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="n">rejection_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">N_binaries</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;log10&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"log10"</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
             <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">current_binary_ages</span>
         <span class="k">return</span> <span class="n">max_time</span> <span class="o">-</span> <span class="n">current_binary_ages</span>
 
-    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;custom_linear_histogram&quot;</span><span class="p">,</span> <span class="s2">&quot;custom_log10_histogram&quot;</span><span class="p">]:</span>
-        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;custom_ages_file&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">scenario</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"custom_linear_histogram"</span><span class="p">,</span> <span class="s2">"custom_log10_histogram"</span><span class="p">]:</span>
+        <span class="n">custom_ages_file</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"custom_ages_file"</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="n">read_histogram_from_file</span><span class="p">(</span><span class="n">custom_ages_file</span><span class="p">)</span>
         <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="n">histogram_sampler</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s2">&quot;log10&quot;</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"log10"</span> <span class="ow">in</span> <span class="n">scenario</span><span class="p">:</span>
             <span class="n">current_binary_ages</span> <span class="o">=</span> <span class="mf">10.0</span><span class="o">**</span><span class="n">current_binary_ages</span>
         <span class="k">return</span> <span class="n">max_time</span> <span class="o">-</span> <span class="n">current_binary_ages</span>
 
     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-        <span class="s2">&quot;Unknown star formation scenario &#39;</span><span class="si">{}</span><span class="s2">&#39; given. Valid options: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-            <span class="n">star_formation</span><span class="p">,</span> <span class="s2">&quot;,&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SFH_SCENARIOS</span><span class="p">)</span>
+        <span class="s2">"Unknown star formation scenario '</span><span class="si">{}</span><span class="s2">' given. Valid options: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">star_formation</span><span class="p">,</span> <span class="s2">","</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">SFH_SCENARIOS</span><span class="p">)</span>
         <span class="p">)</span>
     <span class="p">)</span></div>
 
@@ -227,17 +227,17 @@
 <div class="viewcode-block" id="get_illustrisTNG_data">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.get_illustrisTNG_data">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_illustrisTNG_data</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Load IllustrisTNG SFR dataset.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Load IllustrisTNG SFR dataset."""</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Loading IllustrisTNG data...&quot;</span><span class="p">)</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">&quot;SFR/IllustrisTNG.npz&quot;</span><span class="p">))</span></div>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Loading IllustrisTNG data..."</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"SFR/IllustrisTNG.npz"</span><span class="p">))</span></div>
 
 
 
 <div class="viewcode-block" id="star_formation_rate">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.star_formation_rate">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">star_formation_rate</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Star formation rate in M_sun yr^-1 Mpc^-3.</span>
+<span class="w">    </span><span class="sd">"""Star formation rate in M_sun yr^-1 Mpc^-3.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -255,34 +255,34 @@
 <span class="sd">    double</span>
 <span class="sd">        The total mass of stars in M_sun formed per comoving volume Mpc^-3</span>
 <span class="sd">        per year.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Fragos17&quot;</span><span class="p">:</span>
+<span class="sd">    """</span>
+    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Fragos17"</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.6</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.2</span><span class="p">)</span> <span class="o">**</span> <span class="mf">6.2</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span>
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Dickinson14"</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="mf">0.015</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.7</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.9</span><span class="p">)</span> <span class="o">**</span> <span class="mf">5.6</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span>
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Neijssel+19"</span><span class="p">:</span>
         <span class="k">return</span> <span class="p">(</span>
             <span class="mf">0.01</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mf">2.77</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="p">((</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.9</span><span class="p">)</span> <span class="o">**</span> <span class="mf">4.7</span><span class="p">)</span>
         <span class="p">)</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span>
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;IllustrisTNG&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"IllustrisTNG"</span><span class="p">:</span>
         <span class="n">illustris_data</span> <span class="o">=</span> <span class="n">get_illustrisTNG_data</span><span class="p">()</span>
-        <span class="n">SFR</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;SFR&quot;</span><span class="p">]</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span>
-        <span class="n">redshifts</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;redshifts&quot;</span><span class="p">]</span>
+        <span class="n">SFR</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">"SFR"</span><span class="p">]</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span>
+        <span class="n">redshifts</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">"redshifts"</span><span class="p">]</span>
         <span class="n">SFR_interp</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">redshifts</span><span class="p">,</span> <span class="n">SFR</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">SFR_interp</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SFR!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SFR!"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="mean_metallicity">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.mean_metallicity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">mean_metallicity</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Empiric mean metallicity function.</span>
+<span class="w">    </span><span class="sd">"""Empiric mean metallicity function.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -299,39 +299,39 @@
 <span class="sd">    double</span>
 <span class="sd">        Mean metallicty of the universe at the given redhist.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Fragos17&quot;</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Fragos17"</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Dickinson14"</span><span class="p">:</span>
         <span class="k">return</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="mf">0.153</span> <span class="o">-</span> <span class="mf">0.074</span> <span class="o">*</span> <span class="n">z</span><span class="o">**</span><span class="mf">1.34</span><span class="p">)</span> <span class="o">*</span> <span class="n">Zsun</span>
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Neijssel+19"</span><span class="p">:</span>
         <span class="k">return</span> <span class="mf">0.035</span> <span class="o">*</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.23</span> <span class="o">*</span> <span class="n">z</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SFR!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SFR!"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="std_log_metallicity_dist">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.std_log_metallicity_dist">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">std_log_metallicity_dist</span><span class="p">(</span><span class="n">sigma</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Standard deviation of the log-metallicity distribution.</span>
+<span class="w">    </span><span class="sd">"""Standard deviation of the log-metallicity distribution.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
 <span class="sd">    double</span>
 <span class="sd">        Standard deviation of the adopted distribution.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">&quot;Bavera+20&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">"Bavera+20"</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.5</span>
-        <span class="k">elif</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">sigma</span> <span class="o">==</span> <span class="s2">"Neijssel+19"</span><span class="p">:</span>
             <span class="k">return</span> <span class="mf">0.39</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Uknown sigma choice!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Uknown sigma choice!"</span><span class="p">)</span>
     <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="nb">float</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">sigma</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid sigma value </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s2">!&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Invalid sigma value </span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s2">!"</span><span class="p">)</span></div>
 
 
 
@@ -340,7 +340,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">SFR_Z_fraction_at_given_redshift</span><span class="p">(</span>
     <span class="n">z</span><span class="p">,</span> <span class="n">SFR</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">metallicity_bins</span><span class="p">,</span> <span class="n">Z_max</span><span class="p">,</span> <span class="n">select_one_met</span>
 <span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;&#39;Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).</span>
+<span class="w">    </span><span class="sd">"""'Fraction of the SFR at a given redshift z in a given metallicity bin as in Eq. (B.8) of Bavera et al. (2020).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -354,7 +354,7 @@
 <span class="sd">        - Neijssel+19 see arXiv:1906.08136</span>
 <span class="sd">    sigma : double / string</span>
 <span class="sd">        Standard deviation of the log-metallicity distribution.</span>
-<span class="sd">        If string, it can be &#39;Bavera+20&#39; or &#39;Neijssel+19&#39;.</span>
+<span class="sd">        If string, it can be 'Bavera+20' or 'Neijssel+19'.</span>
 <span class="sd">    metallicity_bins : array</span>
 <span class="sd">        Metallicity bins edges in absolute metallicity.</span>
 <span class="sd">    Z_max : double</span>
@@ -368,9 +368,9 @@
 <span class="sd">    array</span>
 <span class="sd">        Fraction of the SFR in the given metallicity bin at the given redshift.</span>
 <span class="sd">        In absolute metallicity.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Fragos17&quot;</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Fragos17"</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Dickinson14"</span><span class="p">:</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">std_log_metallicity_dist</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
         <span class="c1"># renormalisation constant. We can use mu[0], since we integrate over the whole metallicity range</span>
@@ -385,7 +385,7 @@
             <span class="n">fSFR</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span>
             <span class="n">fSFR</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span><span class="o">/</span><span class="n">norm</span>
 
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Neijssel+19"</span><span class="p">:</span>
         <span class="c1"># assume a truncated ln-normal distribution of metallicities</span>
         <span class="n">sigma</span> <span class="o">=</span> <span class="n">std_log_metallicity_dist</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
         <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.0</span>
@@ -405,12 +405,12 @@
             <span class="n">fSFR</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">/</span> <span class="n">norm</span>
             <span class="n">fSFR</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">norm</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span><span class="o">/</span><span class="n">norm</span>
 
-    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;IllustrisTNG&quot;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"IllustrisTNG"</span><span class="p">:</span>
         <span class="c1"># numerically itegrate the IlluystrisTNG SFR(z,Z)</span>
         <span class="n">illustris_data</span> <span class="o">=</span> <span class="n">get_illustrisTNG_data</span><span class="p">()</span>
-        <span class="n">redshifts</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;redshifts&quot;</span><span class="p">]</span>
-        <span class="n">Z</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;mets&quot;</span><span class="p">]</span>
-        <span class="n">M</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">&quot;M&quot;</span><span class="p">]</span>  <span class="c1"># Msun</span>
+        <span class="n">redshifts</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">"redshifts"</span><span class="p">]</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">"mets"</span><span class="p">]</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">illustris_data</span><span class="p">[</span><span class="s2">"M"</span><span class="p">]</span>  <span class="c1"># Msun</span>
         <span class="c1"># only use data within the metallicity bounds (no lower bound)</span>
         <span class="n">Z_max_mask</span> <span class="o">=</span> <span class="n">Z</span> <span class="o">&lt;=</span> <span class="n">Z_max</span>
         <span class="n">redshift_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">redshifts</span> <span class="o">&lt;=</span> <span class="n">i</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">z</span><span class="p">])</span>
@@ -440,7 +440,7 @@
                         <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Z_dist_cdf_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
                         <span class="n">fSFR</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">Z_dist_cdf_interp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">metallicity_bins</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SFR!&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SFR!"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">fSFR</span></div>
 
@@ -449,7 +449,7 @@
 <div class="viewcode-block" id="integrated_SFRH_over_redshift">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.star_formation_history.integrated_SFRH_over_redshift">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">integrated_SFRH_over_redshift</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">Z_max</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).</span>
+<span class="w">    </span><span class="sd">"""Integrated SFR history over z as in Eq. (B.10) of Bavera et al. (2020).</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -467,17 +467,17 @@
 <span class="sd">        The total mass of stars formed per comoving volume at a given</span>
 <span class="sd">        metallicity Z.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">E</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Omega_m</span><span class="o">=</span><span class="n">cosmology</span><span class="o">.</span><span class="n">Om0</span><span class="p">):</span>
         <span class="n">Omega_L</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">Omega_m</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">Omega_m</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="n">Omega_L</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="n">Z</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Fragos17&quot;</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Madau+Dickinson14&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Fragos17"</span> <span class="ow">or</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Madau+Dickinson14"</span><span class="p">:</span>
             <span class="n">sigma</span> <span class="o">=</span> <span class="n">std_log_metallicity_dist</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
             <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
-            <span class="n">H_0</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">H0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;1/yr&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># yr</span>
+            <span class="n">H_0</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">H0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1/yr"</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># yr</span>
             <span class="c1"># put a cutoff on metallicity at Z_max</span>
             <span class="n">norm</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Z_max</span><span class="p">),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -486,17 +486,17 @@
                 <span class="o">/</span> <span class="n">norm</span>
                 <span class="o">*</span> <span class="p">(</span><span class="n">H_0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">E</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="p">)</span>
-        <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">&quot;Neijssel+19&quot;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">SFR</span> <span class="o">==</span> <span class="s2">"Neijssel+19"</span><span class="p">:</span>
             <span class="n">sigma</span> <span class="o">=</span> <span class="n">std_log_metallicity_dist</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
             <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">mean_metallicity</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.0</span>
-            <span class="n">H_0</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">H0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">&quot;1/yr&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># yr</span>
+            <span class="n">H_0</span> <span class="o">=</span> <span class="n">cosmology</span><span class="o">.</span><span class="n">H0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="s2">"1/yr"</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># yr</span>
             <span class="k">return</span> <span class="p">(</span>
                 <span class="n">star_formation_rate</span><span class="p">(</span><span class="n">SFR</span><span class="p">,</span> <span class="n">z</span><span class="p">)</span>
                 <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">),</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
                 <span class="o">*</span> <span class="p">(</span><span class="n">H_0</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">E</span><span class="p">(</span><span class="n">z</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SFR!&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid SFR!"</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">sp</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">Z</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># M_sun yr^-1 Mpc^-3</span></div>
 

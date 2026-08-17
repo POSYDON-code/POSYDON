@@ -112,13 +112,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.binary_evol.DT.step_initially_single</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Merging and isolated evolution step.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Merging and isolated evolution step."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span>
+    <span class="s2">"Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span>
 <span class="p">]</span>
 
 
@@ -128,8 +128,8 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">STAR_STATES_H_RICH</span><span class="p">,</span> <span class="n">STAR_STATES_HE_RICH</span><span class="p">)</span>
 
-<span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;H-rich_Core_H_burning&quot;</span><span class="p">]</span>
-<span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;stripped_He_Core_He_burning&quot;</span><span class="p">]</span>
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"H-rich_Core_H_burning"</span><span class="p">]</span>
+<span class="n">LIST_ACCEPTABLE_STATES_FOR_HeMS</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"stripped_He_Core_He_burning"</span><span class="p">]</span>
 
 <span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span> <span class="o">=</span> <span class="n">STAR_STATES_H_RICH</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="p">[</span><span class="n">LIST_ACCEPTABLE_STATES_FOR_POSTMS</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">LIST_ACCEPTABLE_STATES_FOR_HMS</span><span class="p">]</span>
@@ -140,9 +140,9 @@
 <div class="viewcode-block" id="InitiallySingleStep">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.step_initially_single.InitiallySingleStep">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InitiallySingleStep</span><span class="p">(</span><span class="n">IsolatedStep</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Prepare a runaway star to do an an isolated_step)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
         <span class="n">grid_name_Hrich</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
@@ -158,8 +158,8 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">binary</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="s2">&quot;initially_single_star&quot;</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">&quot;sent to InitiallySingleStep without the binary.state being initially_single_star&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">!=</span> <span class="s2">"initially_single_star"</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s2">"sent to InitiallySingleStep without the binary.state being initially_single_star"</span><span class="p">)</span>
 
         <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="kc">None</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span></div>

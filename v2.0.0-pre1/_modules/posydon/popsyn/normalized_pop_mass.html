@@ -122,15 +122,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.normalized_pop_mass</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Compute the underlying stellar population mass for a given simulation.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Compute the underlying stellar population mass for a given simulation."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Dimitris Souropanis &lt;dsouropanis@ia.forth.gr&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Dimitris Souropanis &lt;dsouropanis@ia.forth.gr&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -146,7 +146,7 @@
     <span class="n">simulated_mass_binaries</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f_bin</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
 <span class="p">):</span>
 
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the initial total mass of the population.</span>
+<span class="w">    </span><span class="sd">"""Compute the initial total mass of the population.</span>
 
 
 <span class="sd">     Parameters</span>
@@ -155,7 +155,7 @@
 <span class="sd">        Total simulated mass, simulated mass of binary systems and simulated</span>
 <span class="sd">        mass of single stars, respectively.</span>
 <span class="sd">    f_bin: float</span>
-<span class="sd">        The binary fraction of your population in &quot;nature&quot;.</span>
+<span class="sd">        The binary fraction of your population in "nature".</span>
 <span class="sd">        If not provided, the default value is set to 0.7</span>
 
 <span class="sd">     Parameters are expected to be provided as keyword arguments (kwargs):</span>
@@ -183,7 +183,7 @@
 <span class="sd">    </span>
 <span class="sd">        </span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># ENHANCEMENT: the code should assume default values of the POSYDON sampler</span>
     <span class="c1"># if not provided in kwargs.</span>
     
@@ -191,12 +191,12 @@
     <span class="n">f_bin_nature</span> <span class="o">=</span> <span class="n">f_bin</span> <span class="c1">#This parameter represents the preferred fraction</span>
                          <span class="c1"># of binary systems within your population,</span>
                          <span class="c1"># allowing users to input any value ranging from 0.1 to 1.                               </span>
-    <span class="n">f_bin_simulated</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">]</span>
+    <span class="n">f_bin_simulated</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'binary_fraction_const'</span><span class="p">]</span>
 
     <span class="n">m_min</span> <span class="o">=</span> <span class="mf">0.01</span>
     <span class="n">m_max</span> <span class="o">=</span> <span class="mf">200.0</span>
-    <span class="n">m_a</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">]</span>
-    <span class="n">m_b</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span>
+    <span class="n">m_a</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'primary_mass_min'</span><span class="p">]</span>
+    <span class="n">m_b</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'primary_mass_max'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">simulated_mass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">initial_ZAMS_mass</span> <span class="o">=</span> <span class="n">independent_sample</span><span class="o">.</span><span class="n">generate_independent_samples</span><span class="p">(</span>
@@ -250,8 +250,8 @@
         <span class="k">return</span> <span class="n">f_model</span>
 
     <span class="c1"># Kroupa P., 2001, MNRAS, 322, 231</span>
-    <span class="k">if</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Kroupa2001&#39;</span>
-            <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'primary_mass_scheme'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Kroupa2001'</span>
+            <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'secondary_mass_scheme'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'flat_mass_ratio'</span><span class="p">):</span>
         <span class="n">m_1</span> <span class="o">=</span> <span class="mf">0.08</span>
         <span class="n">m_2</span> <span class="o">=</span> <span class="mf">0.5</span>
         <span class="n">alpha1</span> <span class="o">=</span> <span class="mf">0.3</span>
@@ -259,17 +259,17 @@
         <span class="n">alpha3</span> <span class="o">=</span> <span class="mf">2.3</span>
 
     <span class="c1"># Salpeter E. E., 1955, ApJ, 121, 161</span>
-    <span class="k">elif</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Salpeter&#39;</span>
-            <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">):</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'primary_mass_scheme'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'Salpeter'</span>
+            <span class="ow">and</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'secondary_mass_scheme'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'flat_mass_ratio'</span><span class="p">):</span>
         <span class="n">m_1</span> <span class="o">=</span> <span class="mf">0.08</span>
         <span class="n">m_2</span> <span class="o">=</span> <span class="mf">0.5</span>
         <span class="n">alpha1</span> <span class="o">=</span> <span class="mf">2.35</span>
         <span class="n">alpha2</span> <span class="o">=</span> <span class="mf">2.35</span>
         <span class="n">alpha3</span> <span class="o">=</span> <span class="mf">2.35</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;Scheme not included yet: primary_mass_scheme=&quot;</span>
-              <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;primary_mass_scheme&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, secondary_mass_scheme&quot;</span>
-              <span class="sa">f</span><span class="s2">&quot;=</span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="s2">"Scheme not included yet: primary_mass_scheme="</span>
+              <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'primary_mass_scheme'</span><span class="p">]</span><span class="si">}</span><span class="s2">, secondary_mass_scheme"</span>
+              <span class="sa">f</span><span class="s2">"=</span><span class="si">{</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'secondary_mass_scheme'</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"UnsupportedModelWarning"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     
@@ -300,9 +300,9 @@
 
             
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;We apologize for not having simulated single stars. Please &quot;</span>
-                <span class="s2">&quot;provide a value greater than 0 and less than or equal to 1.&quot;</span><span class="p">,</span> 
-                <span class="s2">&quot;UnsupportedModelWarning&quot;</span><span class="p">)</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">"We apologize for not having simulated single stars. Please "</span>
+                <span class="s2">"provide a value greater than 0 and less than or equal to 1."</span><span class="p">,</span> 
+                <span class="s2">"UnsupportedModelWarning"</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
 
     <span class="k">if</span> <span class="p">(</span><span class="n">f_bin_simulated</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span> <span class="c1">#when you have modeled both binary and single stars</span>

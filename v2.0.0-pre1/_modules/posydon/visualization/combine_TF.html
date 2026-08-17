@@ -122,14 +122,14 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.combine_TF</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for combining termination flags for visualization purposes.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Module for combining termination flags for visualization purposes."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -138,224 +138,224 @@
 <span class="c1"># TODO: rename the varaible, these are termination flags that indicates</span>
 <span class="c1"># the star has reached the end of the evolution</span>
 <span class="n">TF1_POOL_STABLE</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;Primary has depleted central carbon&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Secondary has depleted central carbon&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Primary got stopped before central carbon depletion&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Secondary got stopped before central carbon depletion&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Primary enters pair-instability regime&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Secondary enters pair-instability regime&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Primary enters pulsational pair-instability regime&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Secondary enters pulsational pair-instability regime&#39;</span><span class="p">,</span>
-    <span class="c1"># &#39;offcenter neon ignition for primary&#39;,</span>
-    <span class="c1"># &#39;offcenter neon ignition for secondary&#39;,</span>
-    <span class="s1">&#39;envelope_mass_limit&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;gamma_center_limit&#39;</span><span class="p">,</span>
-    <span class="c1"># &#39;Reached TPAGB&#39;,</span>
-    <span class="s1">&#39;max_age&#39;</span>
+    <span class="s1">'Primary has depleted central carbon'</span><span class="p">,</span>
+    <span class="s1">'Secondary has depleted central carbon'</span><span class="p">,</span>
+    <span class="s1">'Primary got stopped before central carbon depletion'</span><span class="p">,</span>
+    <span class="s1">'Secondary got stopped before central carbon depletion'</span><span class="p">,</span>
+    <span class="s1">'Primary enters pair-instability regime'</span><span class="p">,</span>
+    <span class="s1">'Secondary enters pair-instability regime'</span><span class="p">,</span>
+    <span class="s1">'Primary enters pulsational pair-instability regime'</span><span class="p">,</span>
+    <span class="s1">'Secondary enters pulsational pair-instability regime'</span><span class="p">,</span>
+    <span class="c1"># 'offcenter neon ignition for primary',</span>
+    <span class="c1"># 'offcenter neon ignition for secondary',</span>
+    <span class="s1">'envelope_mass_limit'</span><span class="p">,</span>
+    <span class="s1">'gamma_center_limit'</span><span class="p">,</span>
+    <span class="c1"># 'Reached TPAGB',</span>
+    <span class="s1">'max_age'</span>
     <span class="p">]</span>
 
 <span class="n">TF1_POOL_UNSTABLE</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;overflow from L2 (D_L2) distance for q(=Macc/Mdon)&gt;1, donor is star 1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2 (D_L2) distance for q(=Macc/Mdon)&lt;1, donor is star 1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 2&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 2&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Reached maximum mass transfer rate: 1d-1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Reached maximum mass transfer rate: Exceeded photon trapping radius&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Both stars fill their Roche Lobe and at least one of them is off MS&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Terminate due to L2 overflow during case A&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Both stars fill their Roche Lobe and t_kh &gt; t_acc&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 2&#39;</span>
+    <span class="s1">'overflow from L2 (D_L2) distance for q(=Macc/Mdon)&gt;1, donor is star 1'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 1'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 1'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2 (D_L2) distance for q(=Macc/Mdon)&lt;1, donor is star 1'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2 (R_L2) surface for q(=Macc/Mdon)&lt;1, donor is star 2'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2 (R_L2) surface for q(=Macc/Mdon)&gt;1, donor is star 2'</span><span class="p">,</span>
+    <span class="s1">'Reached maximum mass transfer rate: 1d-1'</span><span class="p">,</span>
+    <span class="s1">'Reached maximum mass transfer rate: Exceeded photon trapping radius'</span><span class="p">,</span>
+    <span class="s1">'Both stars fill their Roche Lobe and at least one of them is off MS'</span><span class="p">,</span>
+    <span class="s1">'Terminate due to L2 overflow during case A'</span><span class="p">,</span>
+    <span class="s1">'Both stars fill their Roche Lobe and t_kh &gt; t_acc'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 1'</span><span class="p">,</span>
+    <span class="s1">'overflow from L2, t_kh &gt; t_acc and w &gt; w_crit_lim, donor is star 2'</span>
     <span class="p">]</span>
 
 <span class="n">TF1_POOL_INITIAL_RLO</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;forced_initial_RLO&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;Terminate because of overflowing initial model&#39;</span><span class="p">,</span>
+    <span class="s1">'forced_initial_RLO'</span><span class="p">,</span>
+    <span class="s1">'Terminate because of overflowing initial model'</span><span class="p">,</span>
     <span class="p">]</span>
 
 <span class="n">TF1_POOL_ERROR</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;logQ_min_limit&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;min_timestep_limit&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;reach cluster timelimit&#39;</span><span class="p">,</span>
+    <span class="s1">'logQ_min_limit'</span><span class="p">,</span>
+    <span class="s1">'min_timestep_limit'</span><span class="p">,</span>
+    <span class="s1">'reach cluster timelimit'</span><span class="p">,</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_NO_RLO</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;no_RLOF&#39;</span><span class="p">,</span>
+    <span class="s1">'no_RLOF'</span><span class="p">,</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_INITIAL_RLO</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;initial_RLOF&#39;</span><span class="p">,</span>
+    <span class="s1">'initial_RLOF'</span><span class="p">,</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_UNSTABLE</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;L2_RLOF&quot;</span>
+    <span class="s2">"L2_RLOF"</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_UNKNOWN</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;None&#39;</span>
+    <span class="s1">'None'</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_CONT</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;contact_during_MS&#39;</span>
+    <span class="s1">'contact_during_MS'</span>
     <span class="p">]</span>
                         
 <span class="n">TF2_POOL_A</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;case_A1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;case_A2&#39;</span>
+    <span class="s1">'case_A1'</span><span class="p">,</span>
+    <span class="s1">'case_A2'</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_B</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;case_B1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;case_B2&#39;</span>
+    <span class="s1">'case_B1'</span><span class="p">,</span>
+    <span class="s1">'case_B2'</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_C</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;case_C1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;case_C2&#39;</span><span class="p">,</span>
+    <span class="s1">'case_C1'</span><span class="p">,</span>
+    <span class="s1">'case_C2'</span><span class="p">,</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_BA</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s1">&#39;case_BA1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;case_BA2&#39;</span>
+    <span class="s1">'case_BA1'</span><span class="p">,</span>
+    <span class="s1">'case_BA2'</span>
     <span class="p">]</span>
 
 <span class="n">TF2_POOL_BB</span> <span class="o">=</span> <span class="p">[</span>
-<span class="c1">#    &#39;case_A1/B1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_A2/B2/BB2&#39;,</span>
-<span class="c1">#    &#39;case_B1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_B2/BB2&#39;,</span>
-<span class="c1">#    &#39;case_B1/C1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_B2/C2/BB2&#39;,</span>
-<span class="c1">#    &#39;case_BA1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_BA2/BB2&#39;,</span>
-<span class="c1">#    &#39;case_C1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_C2/BB2&#39;,</span>
-    <span class="s1">&#39;case_BB1&#39;</span><span class="p">,</span>
-    <span class="s1">&#39;case_BB2&#39;</span>
+<span class="c1">#    'case_A1/B1/BB1',</span>
+<span class="c1">#    'case_A2/B2/BB2',</span>
+<span class="c1">#    'case_B1/BB1',</span>
+<span class="c1">#    'case_B2/BB2',</span>
+<span class="c1">#    'case_B1/C1/BB1',</span>
+<span class="c1">#    'case_B2/C2/BB2',</span>
+<span class="c1">#    'case_BA1/BB1',</span>
+<span class="c1">#    'case_BA2/BB2',</span>
+<span class="c1">#    'case_C1/BB1',</span>
+<span class="c1">#    'case_C2/BB2',</span>
+    <span class="s1">'case_BB1'</span><span class="p">,</span>
+    <span class="s1">'case_BB2'</span>
     <span class="p">]</span>
 
 <span class="c1">#TF2_POOL_AB = [</span>
-<span class="c1">#    &#39;case_A1/B1&#39;,</span>
-<span class="c1">#    &#39;case_A2/B2&#39;,</span>
-<span class="c1">#    &#39;case_A1/B1/C1&#39;,</span>
-<span class="c1">#    &#39;case_A2/B2/C2&#39;,</span>
-<span class="c1">#    &#39;case_A1/B1/C1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_A2/B2/C2/BB2&#39;,</span>
-<span class="c1">#    &#39;case_A1/B1/A1&#39;,</span>
-<span class="c1">#    &#39;case_A2/B2/A2&#39;</span>
+<span class="c1">#    'case_A1/B1',</span>
+<span class="c1">#    'case_A2/B2',</span>
+<span class="c1">#    'case_A1/B1/C1',</span>
+<span class="c1">#    'case_A2/B2/C2',</span>
+<span class="c1">#    'case_A1/B1/C1/BB1',</span>
+<span class="c1">#    'case_A2/B2/C2/BB2',</span>
+<span class="c1">#    'case_A1/B1/A1',</span>
+<span class="c1">#    'case_A2/B2/A2'</span>
 <span class="c1">#    ]</span>
 
 <span class="c1">#TF2_POOL_AC = [</span>
-<span class="c1">#    &#39;case_A1/C1&#39;,</span>
-<span class="c1">#    &#39;case_A2/C2&#39;</span>
+<span class="c1">#    'case_A1/C1',</span>
+<span class="c1">#    'case_A2/C2'</span>
 <span class="c1">#    ]</span>
 
 <span class="c1">#TF2_POOL_ABB = [</span>
-<span class="c1">#    &#39;case_A1/BB1&#39;,</span>
-<span class="c1">#    &#39;case_A2/BB2&#39;</span>
+<span class="c1">#    'case_A1/BB1',</span>
+<span class="c1">#    'case_A2/BB2'</span>
 <span class="c1">#    ]</span>
 
 <span class="c1">#TF2_POOL_BC = [</span>
-<span class="c1">#    &#39;case_B1/C1&#39;,</span>
-<span class="c1">#    &#39;case_B2/C2&#39;</span>
+<span class="c1">#    'case_B1/C1',</span>
+<span class="c1">#    'case_B2/C2'</span>
 <span class="c1">#    ]</span>
 
 <div class="viewcode-block" id="combine_TF12">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.combine_TF.combine_TF12">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">combine_TF12</span><span class="p">(</span><span class="n">IC</span><span class="p">,</span> <span class="n">TF2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the combination of interpolation classion and termination flag 2.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Get the combination of interpolation classion and termination flag 2."""</span>
     <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">IC</span><span class="p">)</span>
-    <span class="n">TF12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;unknown&#39;</span><span class="p">]</span><span class="o">*</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;U25&#39;</span><span class="p">)</span>
+    <span class="n">TF12</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">'unknown'</span><span class="p">]</span><span class="o">*</span><span class="n">N</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'U25'</span><span class="p">)</span>
 
     <span class="c1"># mask unknown cases during history TF2</span>
-    <span class="n">TF2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">tf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">tf</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">&quot;?case&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">tf</span><span class="p">)</span> <span class="k">for</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">]</span>
+    <span class="n">TF2</span> <span class="o">=</span> <span class="p">[(</span><span class="n">tf</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="k">if</span> <span class="n">tf</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"?case"</span><span class="p">)</span> <span class="k">else</span> <span class="n">tf</span><span class="p">)</span> <span class="k">for</span> <span class="n">tf</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">]</span>
 
     <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">):</span>
-        <span class="k">if</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;initial_MT&#39;</span><span class="p">:</span>
-            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Initial RLOF&#39;</span>
-        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;not_converged&#39;</span><span class="p">:</span>
-            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Not converged&#39;</span>
-        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;no_MT&#39;</span><span class="p">:</span>
-            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;no_RLOF&#39;</span>
-        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;stable_reverse_MT&#39;</span><span class="p">:</span>
-            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse stable MT&#39;</span>
-        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;stable_MT&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;1&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse stable MT&#39;</span>
+        <span class="k">if</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'initial_MT'</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Initial RLOF'</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'not_converged'</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Not converged'</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'no_MT'</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'no_RLOF'</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'stable_reverse_MT'</span><span class="p">:</span>
+            <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reverse stable MT'</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'stable_MT'</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'1'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">'2'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reverse stable MT'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_CONT</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable contact&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable contact'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_A</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case A&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case A'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_B</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case B&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case B'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_C</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case C&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case C'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BA</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case BA&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case BA'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BB</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case BB&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case BB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_AB:</span>
-<span class="c1">#                TF12[i] = &#39;Stable case AB&#39;</span>
+<span class="c1">#                TF12[i] = 'Stable case AB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_AC:</span>
-<span class="c1">#                TF12[i] = &#39;Stable case AC&#39;</span>
+<span class="c1">#                TF12[i] = 'Stable case AC'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_ABB:</span>
-<span class="c1">#                TF12[i] = &#39;Stable case ABB&#39;</span>
+<span class="c1">#                TF12[i] = 'Stable case ABB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_BC:</span>
-<span class="c1">#                TF12[i] = &#39;Stable case BC&#39;</span>
-            <span class="k">elif</span> <span class="s1">&#39;case_nonburning&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable case n&#39;</span>
-            <span class="k">elif</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+<span class="c1">#                TF12[i] = 'Stable case BC'</span>
+            <span class="k">elif</span> <span class="s1">'case_nonburning'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable case n'</span>
+            <span class="k">elif</span> <span class="s1">'/'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="c1"># multiple cases, split them up</span>
-                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
                 <span class="c1"># record first case</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Stable &#39;</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Stable '</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span><span class="s1">' '</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="c1"># record last case</span>
-                <span class="k">if</span> <span class="s1">&#39;nonburning&#39;</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;n&#39;</span>
+                <span class="k">if</span> <span class="s1">'nonburning'</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">'n'</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;unstable_MT&#39;</span><span class="p">:</span>
-            <span class="k">if</span> <span class="s1">&#39;1&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">&#39;2&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Reverse unstable MT&#39;</span>
+        <span class="k">elif</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'unstable_MT'</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s1">'1'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">and</span> <span class="s1">'2'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Reverse unstable MT'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_CONT</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable contact&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable contact'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_A</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case A&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case A'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_B</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case B&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case B'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_C</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case C&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case C'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BA</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case BA&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case BA'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_BB</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case BB&#39;</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case BB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_AB:</span>
-<span class="c1">#                TF12[i] = &#39;Unstable case AB&#39;</span>
+<span class="c1">#                TF12[i] = 'Unstable case AB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_AC:</span>
-<span class="c1">#                TF12[i] = &#39;Unstable case AC&#39;</span>
+<span class="c1">#                TF12[i] = 'Unstable case AC'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_ABB:</span>
-<span class="c1">#                TF12[i] = &#39;Unstable case ABB&#39;</span>
+<span class="c1">#                TF12[i] = 'Unstable case ABB'</span>
 <span class="c1">#            elif TF2[i] in TF2_POOL_BC:</span>
-<span class="c1">#                TF12[i] = &#39;Unstable case BC&#39;</span>
+<span class="c1">#                TF12[i] = 'Unstable case BC'</span>
             <span class="k">elif</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">TF2_POOL_UNSTABLE</span><span class="p">:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Unstable L2 RLOF&quot;</span>
-            <span class="k">elif</span> <span class="s1">&#39;case_nonburning&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable case n&#39;</span>
-            <span class="k">elif</span> <span class="s1">&#39;/&#39;</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s2">"Unstable L2 RLOF"</span>
+            <span class="k">elif</span> <span class="s1">'case_nonburning'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable case n'</span>
+            <span class="k">elif</span> <span class="s1">'/'</span> <span class="ow">in</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
                 <span class="c1"># multiple cases, split them up</span>
-                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
+                <span class="n">MTcases</span> <span class="o">=</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">'/'</span><span class="p">)</span>
                 <span class="c1"># record first case</span>
-                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;Unstable &#39;</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span><span class="s1">&#39; &#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="s1">'Unstable '</span><span class="o">+</span><span class="n">MTcases</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span><span class="s1">' '</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
                 <span class="c1"># record last case</span>
-                <span class="k">if</span> <span class="s1">&#39;nonburning&#39;</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
-                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">&#39;n&#39;</span>
+                <span class="k">if</span> <span class="s1">'nonburning'</span> <span class="ow">in</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="s1">'n'</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">MTcases</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># catch if something is missing from the logic</span>
-        <span class="k">if</span> <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;unknown&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">TF12</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'unknown'</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">IC</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">TF2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
 

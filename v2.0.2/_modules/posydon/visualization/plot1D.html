@@ -112,17 +112,17 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.plot1D</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Plotting class for 1D (MESA) psygrids.</span>
+<span></span><span class="sd">"""Plotting class for 1D (MESA) psygrids.</span>
 
 <span class="sd">The 1D visualization plotting class allows to plot 1D tracks of PsyGrid</span>
 <span class="sd">objects. The PsyGrid object is composed of nD MESA grid run with POSYDON</span>
 <span class="sd">and post processed with the psygrid object into an h5 file.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -140,7 +140,7 @@
 <div class="viewcode-block" id="plot1D">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">plot1D</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plotting class for 1D (MESA) grids.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Plotting class for 1D (MESA) grids."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
@@ -148,13 +148,13 @@
         <span class="n">x_var_str</span><span class="p">,</span>
         <span class="n">y_var_str</span><span class="p">,</span>
         <span class="n">z_var_str</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-        <span class="n">history</span><span class="o">=</span><span class="s2">&quot;binary_history&quot;</span><span class="p">,</span>
+        <span class="n">history</span><span class="o">=</span><span class="s2">"binary_history"</span><span class="p">,</span>
         <span class="n">star_states</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">HR</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read a PsyGrid object and plot a 1D track of x vs y.</span>
+<span class="w">        </span><span class="sd">"""Read a PsyGrid object and plot a 1D track of x vs y.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -163,19 +163,19 @@
 <span class="sd">            plot.</span>
 <span class="sd">        x_var_str : str</span>
 <span class="sd">            String of values to plot on the x axis. Allowed strings are the</span>
-<span class="sd">            one in `psygrid.history.dtype.names` where &quot;history&quot; needs to be</span>
+<span class="sd">            one in `psygrid.history.dtype.names` where "history" needs to be</span>
 <span class="sd">            chosen accordingly.</span>
 <span class="sd">        y_var_str : str or list of str</span>
 <span class="sd">            String or list of stringvalues to plot on the y axis. Allowed</span>
 <span class="sd">            strings are the one in `psygrid.history.dtype.names` where</span>
-<span class="sd">            &quot;history&quot; needs to be chosen accordingly.</span>
+<span class="sd">            "history" needs to be chosen accordingly.</span>
 <span class="sd">        z_var_str : str</span>
 <span class="sd">            String of values to plot on the z axis (displayed with a color).</span>
 <span class="sd">            Allowed strings are the one in `psygrid.history.dtype.names` where</span>
-<span class="sd">            &quot;history&quot; needs to be chosen accordingly.</span>
+<span class="sd">            "history" needs to be chosen accordingly.</span>
 <span class="sd">        history : str</span>
-<span class="sd">            The x, y, z variables are read from either: &quot;binary_history&quot;,</span>
-<span class="sd">            &quot;history1&quot;, &quot;history2&quot;.</span>
+<span class="sd">            The x, y, z variables are read from either: "binary_history",</span>
+<span class="sd">            "history1", "history2".</span>
 <span class="sd">        HR : bool</span>
 <span class="sd">            If `True`, an HR diagram will be plotted.</span>
 <span class="sd">        verbose : bool</span>
@@ -184,7 +184,7 @@
 <span class="sd">            Dictionary containing extra visualisation options (cf.</span>
 <span class="sd">            `PLOT_PROPERTIES` in `plot_defaults.py`.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">HR</span> <span class="o">=</span> <span class="n">HR</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">run</span> <span class="o">=</span> <span class="n">run</span>
@@ -193,12 +193,12 @@
         <span class="c1"># read kwargs</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">PLOT_PROPERTIES</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">&quot; is not a valid parameter name!&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">key</span> <span class="o">+</span> <span class="s2">" is not a valid parameter name!"</span><span class="p">)</span>
 
         <span class="k">for</span> <span class="n">varname</span> <span class="ow">in</span> <span class="n">PLOT_PROPERTIES</span><span class="p">:</span>
             <span class="n">default_value</span> <span class="o">=</span> <span class="n">PLOT_PROPERTIES</span><span class="p">[</span><span class="n">varname</span><span class="p">]</span>
             <span class="k">if</span> <span class="p">(</span>
-                <span class="n">varname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;colorbar&quot;</span><span class="p">,</span> <span class="s2">&quot;legend1D&quot;</span><span class="p">,</span> <span class="s2">&quot;legend2D&quot;</span><span class="p">]</span>
+                <span class="n">varname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"colorbar"</span><span class="p">,</span> <span class="s2">"legend1D"</span><span class="p">,</span> <span class="s2">"legend2D"</span><span class="p">]</span>
                 <span class="ow">or</span> <span class="n">varname</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
             <span class="p">):</span>
                 <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">varname</span><span class="p">,</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">varname</span><span class="p">,</span> <span class="n">default_value</span><span class="p">))</span>
@@ -215,9 +215,9 @@
         <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rcParams</span><span class="p">)</span>
 
         <span class="c1"># history</span>
-        <span class="k">if</span> <span class="n">history</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;binary_history&quot;</span><span class="p">,</span> <span class="s2">&quot;history1&quot;</span><span class="p">,</span> <span class="s2">&quot;history2&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">history</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"binary_history"</span><span class="p">,</span> <span class="s2">"history1"</span><span class="p">,</span> <span class="s2">"history2"</span><span class="p">]:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;history is must be either binary_history or history1/2!&quot;</span><span class="p">)</span>
+                <span class="s2">"history is must be either binary_history or history1/2!"</span><span class="p">)</span>
 
         <span class="c1"># store the history values</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
@@ -237,7 +237,7 @@
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x_var_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">x_var_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;x_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"x_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">x_var_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -245,12 +245,12 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">x_var_str</span> <span class="o">=</span> <span class="n">x_var_str</span>
         <span class="k">elif</span> <span class="n">x_var_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;x_var_str = </span><span class="si">{}</span><span class="s2"> is not available a str type!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x_var_str</span><span class="p">)</span>
+                <span class="s2">"x_var_str = </span><span class="si">{}</span><span class="s2"> is not available a str type!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">x_var_str</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">y_var_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">y_var_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;y_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"y_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">y_var_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -261,13 +261,13 @@
             <span class="k">for</span> <span class="n">var_str</span> <span class="ow">in</span> <span class="n">y_var_str</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">var_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
                     <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                        <span class="s2">&quot;y_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span>
+                        <span class="s2">"y_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span>
                         <span class="nb">format</span><span class="p">(</span><span class="n">var_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">y_var_str</span> <span class="o">=</span> <span class="n">y_var_str</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_plots</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y_var_str</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">x_var_str</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;y_var_str = </span><span class="si">{}</span><span class="s2"> is not available a str type!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_var_str</span><span class="p">)</span>
+                <span class="s2">"y_var_str = </span><span class="si">{}</span><span class="s2"> is not available a str type!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">y_var_str</span><span class="p">)</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">number_of_plots</span> <span class="o">=</span> <span class="mi">1</span>
@@ -276,7 +276,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">z_var_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="k">if</span> <span class="n">z_var_str</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;z_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"z_var_str = </span><span class="si">{}</span><span class="s2"> is not available in run.</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">z_var_str</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -285,10 +285,10 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">number_of_plots</span> <span class="o">=</span> <span class="mi">1</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;z_var_str = </span><span class="si">{}</span><span class="s2"> is not str type!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">z_var_str</span><span class="p">))</span>
+                <span class="s2">"z_var_str = </span><span class="si">{}</span><span class="s2"> is not str type!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">z_var_str</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Generate the plot when the class is called.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Generate the plot when the class is called."""</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">HR</span><span class="p">:</span>
             <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">)</span>
 
@@ -313,7 +313,7 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">plot_panel</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_var_str</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                    <span class="s2">&quot;number_of_plots=</span><span class="si">{}</span><span class="s2"> must be a positive integer!&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"number_of_plots=</span><span class="si">{}</span><span class="s2"> must be a positive integer!"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">number_of_plots</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -344,7 +344,7 @@
 <div class="viewcode-block" id="plot1D.plot_panel">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.plot_panel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="n">y_var_str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the 1D pannel.</span>
+<span class="w">        </span><span class="sd">"""Plot the 1D pannel.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -355,7 +355,7 @@
 <span class="sd">        y_var_str : str</span>
 <span class="sd">            String or list of stringvalues to plot on the y axis.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_var_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 
             <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
@@ -406,14 +406,14 @@
 <div class="viewcode-block" id="plot1D.update_values_to_plot">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.update_values_to_plot">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">update_values_to_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_var_str</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update all values to plot.</span>
+<span class="w">        </span><span class="sd">"""Update all values to plot.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        y_var_str : str</span>
 <span class="sd">            String or list of stringvalues to plot on the y axis.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># save values to plot</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_x</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">x_var</span> <span class="o">=</span> <span class="p">[]</span>
@@ -458,13 +458,13 @@
 <div class="viewcode-block" id="plot1D.set_title">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_title">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_title</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add title.</span>
+<span class="w">        </span><span class="sd">"""Add title.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        fig : object</span>
 <span class="sd">            matplotlib figure object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">number_of_plots</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="n">fontdict</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title_font_dict</span><span class="p">,</span>
                       <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">title_loc</span><span class="p">)</span>
@@ -475,7 +475,7 @@
 <div class="viewcode-block" id="plot1D.set_xlabel">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_xlabel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_xlabel</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add x label.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Add x label."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">xlabel_kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -490,7 +490,7 @@
 <div class="viewcode-block" id="plot1D.set_ylabel">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_ylabel">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_ylabel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add y label.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Add y label."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ylabel_kwargs</span><span class="p">)</span>
@@ -520,7 +520,7 @@
 <div class="viewcode-block" id="plot1D.set_xlim">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_xlim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_xlim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set x axes limits.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set x axes limits."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">)</span></div>
 
@@ -528,7 +528,7 @@
 <div class="viewcode-block" id="plot1D.set_ylim">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_ylim">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_ylim</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set y axes limits.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set y axes limits."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">)</span></div>
 
@@ -536,7 +536,7 @@
 <div class="viewcode-block" id="plot1D.set_legend">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_legend">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_legend</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">lines</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add legend.</span>
+<span class="w">        </span><span class="sd">"""Add legend.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -544,46 +544,46 @@
 <span class="sd">            matplotlib figure axes.</span>
 <span class="sd">        lines : object</span>
 <span class="sd">            matplotlib lines object.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;lines_legend&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"lines_legend"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
 
             <span class="c1"># defailt: shrink current axis by 20% and put tje legend to</span>
             <span class="c1"># the right of the current axis</span>
             <span class="n">box</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_position</span><span class="p">(</span>
-                <span class="p">[</span><span class="n">box</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;shrink_box&quot;</span><span class="p">],</span>
+                <span class="p">[</span><span class="n">box</span><span class="o">.</span><span class="n">x0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">y0</span><span class="p">,</span> <span class="n">box</span><span class="o">.</span><span class="n">width</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"shrink_box"</span><span class="p">],</span>
                  <span class="n">box</span><span class="o">.</span><span class="n">height</span><span class="p">])</span>
 
             <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
                 <span class="n">lines</span><span class="p">,</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;lines_legend&quot;</span><span class="p">],</span>
-                <span class="n">borderaxespad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;borderaxespad&quot;</span><span class="p">],</span>
-                <span class="n">handletextpad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;handletextpad&quot;</span><span class="p">],</span>
-                <span class="n">columnspacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;columnspacing&quot;</span><span class="p">],</span>
-                <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span>
-                <span class="n">title_fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;title_font_size&quot;</span><span class="p">],</span>
-                <span class="n">prop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;prop&quot;</span><span class="p">],</span>
-                <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">],</span>
-                <span class="n">ncol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;ncol&quot;</span><span class="p">],</span>
-                <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;bbox_to_anchor&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"lines_legend"</span><span class="p">],</span>
+                <span class="n">borderaxespad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"borderaxespad"</span><span class="p">],</span>
+                <span class="n">handletextpad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"handletextpad"</span><span class="p">],</span>
+                <span class="n">columnspacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"columnspacing"</span><span class="p">],</span>
+                <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"title"</span><span class="p">],</span>
+                <span class="n">title_fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"title_font_size"</span><span class="p">],</span>
+                <span class="n">prop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"prop"</span><span class="p">],</span>
+                <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">],</span>
+                <span class="n">ncol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"ncol"</span><span class="p">],</span>
+                <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"bbox_to_anchor"</span><span class="p">],</span>
             <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="plot1D.set_color_bar">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.set_color_bar">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_color_bar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scatter</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add colorbar.</span>
+<span class="w">        </span><span class="sd">"""Add colorbar.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        scatters : object</span>
 <span class="sd">            matplotlib scatter object.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"label"</span><span class="p">]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">z_var_str</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-            <span class="n">z_var_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_var_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S1_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;S2_&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">)</span>
+            <span class="n">z_var_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">z_var_str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'S1_'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'S2_'</span><span class="p">,</span> <span class="s1">''</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">z_var_str</span> <span class="ow">in</span> <span class="n">DEFAULT_LABELS</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log10_z</span><span class="p">:</span>
                     <span class="n">label</span> <span class="o">=</span> <span class="n">DEFAULT_LABELS</span><span class="p">[</span><span class="n">z_var_str</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
@@ -596,21 +596,21 @@
 
         <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
             <span class="n">mappable</span><span class="o">=</span><span class="n">scatter</span><span class="p">,</span>
-            <span class="n">orientation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;orientation&quot;</span><span class="p">],</span>
-            <span class="n">fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;fraction&quot;</span><span class="p">],</span>
-            <span class="n">pad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;pad&quot;</span><span class="p">],</span>
-            <span class="n">shrink</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;shrink&quot;</span><span class="p">],</span>
-            <span class="n">aspect</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;aspect&quot;</span><span class="p">],</span>
-            <span class="n">anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;anchor&quot;</span><span class="p">],</span>
-            <span class="n">panchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;panchor&quot;</span><span class="p">],</span>
-            <span class="n">extend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;extend&quot;</span><span class="p">],</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">&quot;label_size&quot;</span><span class="p">])</span></div>
+            <span class="n">orientation</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"orientation"</span><span class="p">],</span>
+            <span class="n">fraction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"fraction"</span><span class="p">],</span>
+            <span class="n">pad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"pad"</span><span class="p">],</span>
+            <span class="n">shrink</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"shrink"</span><span class="p">],</span>
+            <span class="n">aspect</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"aspect"</span><span class="p">],</span>
+            <span class="n">anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"anchor"</span><span class="p">],</span>
+            <span class="n">panchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"panchor"</span><span class="p">],</span>
+            <span class="n">extend</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"extend"</span><span class="p">],</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">colorbar</span><span class="p">[</span><span class="s2">"label_size"</span><span class="p">])</span></div>
 
 
 <div class="viewcode-block" id="plot1D.lines_constant_radius">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.lines_constant_radius">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">lines_constant_radius</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constant radius lines for the HR diagram.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Constant radius lines for the HR diagram."""</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">luminosity</span><span class="p">(</span><span class="n">Teff</span><span class="p">,</span> <span class="n">R</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span>
@@ -625,9 +625,9 @@
         <span class="c1"># constan radius line</span>
         <span class="n">Teff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">3.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span>
-            <span class="p">[</span><span class="sa">r</span><span class="s2">&quot;$0.001\,R_\odot$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$0.01\,R_\odot$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$0.1\,R_\odot$&quot;</span><span class="p">,</span>
-             <span class="sa">r</span><span class="s2">&quot;$1\,R_\odot$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$10\,R_\odot$&quot;</span><span class="p">,</span> <span class="sa">r</span><span class="s2">&quot;$100\,R_\odot$&quot;</span><span class="p">,</span>
-             <span class="sa">r</span><span class="s2">&quot;$1000\,R_\odot$&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="sa">r</span><span class="s2">"$0.001\,R_\odot$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$0.01\,R_\odot$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$0.1\,R_\odot$"</span><span class="p">,</span>
+             <span class="sa">r</span><span class="s2">"$1\,R_\odot$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$10\,R_\odot$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$100\,R_\odot$"</span><span class="p">,</span>
+             <span class="sa">r</span><span class="s2">"$1000\,R_\odot$"</span><span class="p">],</span>
             <span class="n">Teff</span><span class="p">,</span>
             <span class="p">[</span>
                 <span class="n">luminosity</span><span class="p">(</span><span class="n">Teff</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">0.001</span><span class="p">),</span>
@@ -644,15 +644,15 @@
 <div class="viewcode-block" id="plot1D.HR_diagram">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.plot1D.plot1D.HR_diagram">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">HR_diagram</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot and HR diagram.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="s2">&quot;log_Teff&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Plot and HR diagram."""</span>
+        <span class="k">if</span> <span class="s2">"log_Teff"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;You cannot plot an HR diagram without log_Teff in history!&quot;</span>
+                <span class="s2">"You cannot plot an HR diagram without log_Teff in history!"</span>
             <span class="p">)</span>
 
-        <span class="k">if</span> <span class="s2">&quot;log_L&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s2">"log_L"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history_str</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;You cannot plot an HR diagram without log_L in history!&quot;</span><span class="p">)</span>
+                <span class="s2">"You cannot plot an HR diagram without log_L in history!"</span><span class="p">)</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">figsize</span><span class="p">)</span>
         <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
@@ -674,8 +674,8 @@
                     <span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">Teff</span><span class="p">[</span><span class="nb">slice</span><span class="p">]),</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">L</span><span class="p">[</span><span class="nb">slice</span><span class="p">]),</span>
-                        <span class="s2">&quot;-.&quot;</span><span class="p">,</span>
-                        <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span>
+                        <span class="s2">"-."</span><span class="p">,</span>
+                        <span class="n">color</span><span class="o">=</span><span class="s2">"gray"</span><span class="p">,</span>
                         <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
                         <span class="n">zorder</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -691,17 +691,17 @@
         <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_runs</span><span class="p">):</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_states</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="p">(</span><span class="n">line</span><span class="p">,)</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">],</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">],</span>
                 <span class="p">)</span>
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">],</span>
-                     <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+                    <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">],</span>
+                     <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">]])</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
                 <span class="n">segments</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">points</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
                 <span class="n">convention</span> <span class="o">=</span> <span class="n">DEFAULT_MARKERS_COLORS_LEGENDS</span><span class="p">[</span>
-                    <span class="s1">&#39;termination_flag_4&#39;</span><span class="p">]</span>
+                    <span class="s1">'termination_flag_4'</span><span class="p">]</span>
                 <span class="n">states_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">convention</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
                                  <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">star_states</span><span class="p">[</span><span class="n">j</span><span class="p">]]</span>
                 <span class="n">lc</span> <span class="o">=</span> <span class="n">LineCollection</span><span class="p">(</span><span class="n">segments</span><span class="p">,</span>
@@ -711,72 +711,72 @@
                 <span class="c1"># the code does not work plus the majority of stars do not have</span>
                 <span class="c1"># the points in the EEPs</span>
                 <span class="c1"># end = np.logical_or(self.star_states[j] ==</span>
-                <span class="c1">#                     &#39;H-rich_Central_C_depletion&#39;,</span>
+                <span class="c1">#                     'H-rich_Central_C_depletion',</span>
                 <span class="c1">#                     self.star_states[j]</span>
-                <span class="c1">#                     == &#39;stripped_He_Central_C_depletion&#39;)</span>
-                <span class="c1"># end_x = self.history[j][&quot;log_Teff&quot;][end]</span>
-                <span class="c1"># end_y = self.history[j][&quot;log_L&quot;][end]</span>
-                <span class="c1"># ax.plot(end_x, end_y, marker=&#39;o&#39;, markersize=10,</span>
-                <span class="c1">#         color=convention[&#39;H-rich_Central_C_depletion&#39;][2])</span>
+                <span class="c1">#                     == 'stripped_He_Central_C_depletion')</span>
+                <span class="c1"># end_x = self.history[j]["log_Teff"][end]</span>
+                <span class="c1"># end_y = self.history[j]["log_L"][end]</span>
+                <span class="c1"># ax.plot(end_x, end_y, marker='o', markersize=10,</span>
+                <span class="c1">#         color=convention['H-rich_Central_C_depletion'][2])</span>
                 <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
                     <span class="n">custom_lines</span> <span class="o">=</span> <span class="p">[]</span>
                     <span class="n">custom_legend</span> <span class="o">=</span> <span class="p">[]</span>
-                    <span class="n">key_skip</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;undetermined_evolutionary_state&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;BH&#39;</span><span class="p">,</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;ignored_no_binary_history&#39;</span><span class="p">,</span> <span class="s1">&#39;ignored_no_RLO&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;H-rich_non_burning&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;stripped_He_non_burning&#39;</span><span class="p">,</span>
-                                <span class="s1">&#39;accreted_He_Core_H_burning&#39;</span><span class="p">]</span>
+                    <span class="n">key_skip</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'undetermined_evolutionary_state'</span><span class="p">,</span>
+                                <span class="s1">'BH'</span><span class="p">,</span> <span class="s1">'NS'</span><span class="p">,</span>
+                                <span class="s1">'ignored_no_binary_history'</span><span class="p">,</span> <span class="s1">'ignored_no_RLO'</span><span class="p">,</span>
+                                <span class="s1">'H-rich_non_burning'</span><span class="p">,</span>
+                                <span class="s1">'stripped_He_non_burning'</span><span class="p">,</span>
+                                <span class="s1">'accreted_He_Core_H_burning'</span><span class="p">]</span>
                     <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">convention</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
                         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_skip</span><span class="p">:</span>
                             <span class="k">continue</span>
                         <span class="n">custom_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span>
                                                    <span class="n">color</span><span class="o">=</span><span class="n">convention</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="mi">2</span><span class="p">]))</span>
-                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">,</span> <span class="s1">&#39; &#39;</span><span class="p">)</span>
-                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Core&#39;</span><span class="p">,</span> <span class="s1">&#39;core&#39;</span><span class="p">)</span>
-                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Shell&#39;</span><span class="p">,</span> <span class="s1">&#39;shell&#39;</span><span class="p">)</span>
-                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;Central&#39;</span><span class="p">,</span> <span class="s1">&#39;central&#39;</span><span class="p">)</span>
+                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'_'</span><span class="p">,</span> <span class="s1">' '</span><span class="p">)</span>
+                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'Core'</span><span class="p">,</span> <span class="s1">'core'</span><span class="p">)</span>
+                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'Shell'</span><span class="p">,</span> <span class="s1">'shell'</span><span class="p">)</span>
+                        <span class="n">edited_key</span> <span class="o">=</span> <span class="n">edited_key</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">'Central'</span><span class="p">,</span> <span class="s1">'central'</span><span class="p">)</span>
                         <span class="n">custom_legend</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">edited_key</span><span class="p">)</span>
                     <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">custom_lines</span><span class="p">,</span> <span class="n">custom_legend</span><span class="p">,</span>
-                              <span class="n">borderaxespad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;borderaxespad&quot;</span><span class="p">],</span>
-                              <span class="n">handletextpad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;handletextpad&quot;</span><span class="p">],</span>
-                              <span class="n">columnspacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;columnspacing&quot;</span><span class="p">],</span>
-                              <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">],</span>
-                              <span class="n">title_fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;title_font_size&quot;</span><span class="p">],</span>
-                              <span class="n">prop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;prop&quot;</span><span class="p">],</span>
-                              <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;loc&quot;</span><span class="p">],</span>
-                              <span class="n">ncol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;ncol&quot;</span><span class="p">],</span>
-                              <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">&quot;bbox_to_anchor&quot;</span><span class="p">])</span>
+                              <span class="n">borderaxespad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"borderaxespad"</span><span class="p">],</span>
+                              <span class="n">handletextpad</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"handletextpad"</span><span class="p">],</span>
+                              <span class="n">columnspacing</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"columnspacing"</span><span class="p">],</span>
+                              <span class="n">title</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"title"</span><span class="p">],</span>
+                              <span class="n">title_fontsize</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"title_font_size"</span><span class="p">],</span>
+                              <span class="n">prop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"prop"</span><span class="p">],</span>
+                              <span class="n">loc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"loc"</span><span class="p">],</span>
+                              <span class="n">ncol</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"ncol"</span><span class="p">],</span>
+                              <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">legend1D</span><span class="p">[</span><span class="s2">"bbox_to_anchor"</span><span class="p">])</span>
 
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span>
-                <span class="s2">&quot;star_mass&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
+                <span class="s2">"star_mass"</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">):</span>
                 <span class="n">plt</span><span class="o">.</span><span class="n">text</span><span class="p">(</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
-                    <span class="sa">r</span><span class="s1">&#39;$</span><span class="si">%3.1f</span><span class="s1"> \, M_\odot$&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;star_mass&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mf">1.1</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
+                    <span class="sa">r</span><span class="s1">'$</span><span class="si">%3.1f</span><span class="s1"> \, M_\odot$'</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"star_mass"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span>
                     <span class="n">fontsize</span><span class="o">=</span><span class="mi">5</span>
                 <span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
-            <span class="k">elif</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
+            <span class="k">elif</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xmin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
-            <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_Teff&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
+            <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">xmax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_Teff"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
-            <span class="k">elif</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
+            <span class="k">elif</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ymin</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">0.98</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
-            <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">&quot;log_L&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
+            <span class="k">elif</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ymax</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="s2">"log_L"</span><span class="p">])</span> <span class="o">*</span> <span class="mf">1.02</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(T_\mathrm</span><span class="si">{eff}</span><span class="s2">/K)$&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">(L/L_\odot)$&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xlabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(T_\mathrm</span><span class="si">{eff}</span><span class="s2">/K)$"</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ylabel</span> <span class="o">=</span> <span class="sa">r</span><span class="s2">"$\log_</span><span class="si">{10}</span><span class="s2">(L/L_\odot)$"</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">()</span>

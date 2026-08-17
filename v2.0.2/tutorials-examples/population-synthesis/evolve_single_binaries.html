@@ -154,8 +154,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">"posydon/popsyn/population_params_default.ini"</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">'./population_params.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -168,18 +168,18 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
 
 <span class="c1"># Load the simulation properties from the default ini file.</span>
-<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">'population_params.ini'</span><span class="p">)</span>
 <span class="c1"># manually add the metallicity to each step that requires it</span>
-<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'metallicity'</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
 
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_detached&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_disrupted&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_merged&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_initially_single&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_HMS_HMS'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HeMS'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HMS_RLO'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HeMS_RLO'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_detached'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_disrupted'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_merged'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_initially_single'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
 
 <span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
 <span class="c1"># Load the steps and required data</span>
@@ -201,13 +201,13 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">30.782576</span><span class="p">,</span>
-                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">})</span>
-<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span><span class="mf">20.273864</span><span class="p">,</span>
-                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'mass'</span><span class="p">:</span> <span class="mf">30.782576</span><span class="p">,</span>
+                      <span class="s1">'state'</span><span class="p">:</span> <span class="s1">'H-rich_Core_H_burning'</span><span class="p">})</span>
+<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'mass'</span><span class="p">:</span><span class="mf">20.273864</span><span class="p">,</span>
+                      <span class="s1">'state'</span><span class="p">:</span> <span class="s1">'H-rich_Core_H_burning'</span><span class="p">})</span>
 
 <span class="n">BINARY</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">STAR1</span><span class="p">,</span> <span class="n">STAR2</span><span class="p">,</span>
-                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">:</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">:</span><span class="mf">3513.150157</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">'time'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span> <span class="s1">'state'</span><span class="p">:</span> <span class="s1">'detached'</span><span class="p">,</span> <span class="s1">'event'</span><span class="p">:</span> <span class="s1">'ZAMS'</span><span class="p">,</span> <span class="s1">'orbital_period'</span><span class="p">:</span><span class="mf">3513.150157</span><span class="p">,</span> <span class="s1">'eccentricity'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
                     <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -227,9 +227,9 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we will add the step names to the dataframe</span>
-<span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">,</span> <span class="s1">&#39;step_names&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">,</span> <span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_mass&#39;</span><span class="p">]</span>
+<span class="n">col</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'time'</span><span class="p">,</span> <span class="s1">'step_names'</span><span class="p">,</span> <span class="s1">'state'</span><span class="p">,</span> <span class="s1">'event'</span><span class="p">,</span> <span class="s1">'orbital_period'</span><span class="p">,</span> <span class="s1">'eccentricity'</span><span class="p">,</span> <span class="s1">'S1_state'</span><span class="p">,</span> <span class="s1">'S2_state'</span><span class="p">,</span> <span class="s1">'S1_mass'</span><span class="p">,</span> <span class="s1">'S2_mass'</span><span class="p">]</span>
 
-<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -270,7 +270,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># This will be exactly the same evolution as the previous one</span>
-<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -303,7 +303,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -334,9 +334,9 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
 
-<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;PATH/TO/TUTORIAL/POPULATIONS/&#39;</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'PATH/TO/TUTORIAL/POPULATIONS/'</span>
 
-<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">/BBH_contact.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">data_path</span><span class="si">}</span><span class="s1">/BBH_contact.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -347,14 +347,14 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Because the original population contains two extra columns. These have to be defined manually here.</span>
 <span class="c1"># Otherwise, resetting the binaries will fail.</span>
 <span class="n">BINARY</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="o">.</span><span class="n">from_df</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
-                            <span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span><span class="s1">&#39;step_times&#39;</span><span class="p">:</span><span class="s1">&#39;float&#39;</span><span class="p">})</span>
+                            <span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">,</span><span class="s1">'step_times'</span><span class="p">:</span><span class="s1">'float'</span><span class="p">})</span>
 
 <span class="c1"># you have to set the simulation properties for the binary</span>
 <span class="n">BINARY</span><span class="o">.</span><span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span>
 
 <span class="c1"># Set the natal kick arrays from the oneline to get the exact same evolution as the original binary</span>
-<span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;S1_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;S1_natal_kick_array_3&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
-<span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">&#39;S2_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_natal_kick_array_3&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_1</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">'S1_natal_kick_array_0'</span><span class="p">,</span> <span class="s1">'S1_natal_kick_array_1'</span><span class="p">,</span> <span class="s1">'S1_natal_kick_array_2'</span><span class="p">,</span> <span class="s1">'S1_natal_kick_array_3'</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">star_2</span><span class="o">.</span><span class="n">natal_kick_array</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">][[</span><span class="s1">'S2_natal_kick_array_0'</span><span class="p">,</span> <span class="s1">'S2_natal_kick_array_1'</span><span class="p">,</span> <span class="s1">'S2_natal_kick_array_2'</span><span class="p">,</span> <span class="s1">'S2_natal_kick_array_3'</span><span class="p">]]</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
@@ -362,7 +362,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -379,7 +379,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BINARY</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">BINARY</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -397,21 +397,21 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we initialise the binary to be tight and Roche lobe overflowing in a circular orbit.</span>
-<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
-                                           <span class="s1">&#39;spin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
-                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
-                                           <span class="s1">&#39;natal_kick_array&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
-                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
-                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
-                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'NS'</span><span class="p">,</span>
+                                           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+                                           <span class="s1">'spin'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
+                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span>
+                                           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                                           <span class="s1">'natal_kick_array'</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">'time'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'RLO2'</span><span class="p">,</span>
+                       <span class="s1">'event'</span> <span class="p">:</span> <span class="s1">'oRLO2'</span><span class="p">,</span>
+                       <span class="s1">'orbital_period'</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                       <span class="s1">'eccentricity'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
                     <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
                     <span class="p">)</span>
 <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -420,21 +420,21 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># we perform the same evolution, but with a stripped helium star to go to the CO_HeMS_RLO grid</span>
-<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
-                                           <span class="s1">&#39;spin&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
-                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;stripped_He_Core_He_burning&#39;</span><span class="p">,</span>
-                                           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
-                                           <span class="s1">&#39;natal_kick_array&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
-                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
-                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;RLO2&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="s1">&#39;oRLO2&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
-                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+<span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'NS'</span><span class="p">,</span>
+                                           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">1.1</span><span class="p">,</span>
+                                           <span class="s1">'spin'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,}),</span>
+                    <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'stripped_He_Core_He_burning'</span><span class="p">,</span>
+                                           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">2.5</span><span class="p">,</span>
+                                           <span class="s1">'natal_kick_array'</span> <span class="p">:</span> <span class="p">[</span><span class="mf">10.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]}),</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">'time'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'RLO2'</span><span class="p">,</span>
+                       <span class="s1">'event'</span> <span class="p">:</span> <span class="s1">'oRLO2'</span><span class="p">,</span>
+                       <span class="s1">'orbital_period'</span> <span class="p">:</span> <span class="mf">1.</span><span class="p">,</span>
+                       <span class="s1">'eccentricity'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
                     <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
                     <span class="p">)</span>
 <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
@@ -469,33 +469,33 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span><span class="mf">1.2</span><span class="p">,</span>
-                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;NS&#39;</span><span class="p">})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">STAR1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'mass'</span><span class="p">:</span><span class="mf">1.2</span><span class="p">,</span>
+                      <span class="s1">'state'</span><span class="p">:</span> <span class="s1">'NS'</span><span class="p">})</span>
 
-<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">&#39;mass&#39;</span><span class="p">:</span> <span class="mf">17.782576</span><span class="p">,</span>
-                      <span class="s1">&#39;state&#39;</span><span class="p">:</span> <span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span>
+<span class="n">STAR2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="s1">'mass'</span><span class="p">:</span> <span class="mf">17.782576</span><span class="p">,</span>
+                      <span class="s1">'state'</span><span class="p">:</span> <span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span>
                       <span class="c1"># add the metallicity and central abundances</span>
-                      <span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="n">Z</span><span class="p">,</span>
-                      <span class="s1">&#39;center_h1&#39;</span><span class="p">:</span><span class="n">X</span><span class="p">,</span>
-                      <span class="s1">&#39;center_he4&#39;</span><span class="p">:</span><span class="n">Y</span><span class="p">,</span>
+                      <span class="s1">'metallicity'</span><span class="p">:</span><span class="n">Z</span><span class="p">,</span>
+                      <span class="s1">'center_h1'</span><span class="p">:</span><span class="n">X</span><span class="p">,</span>
+                      <span class="s1">'center_he4'</span><span class="p">:</span><span class="n">Y</span><span class="p">,</span>
                       <span class="c1"># add a numerical value for the radius</span>
-                      <span class="s1">&#39;log_R&#39;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+                      <span class="s1">'log_R'</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
                       <span class="c1"># add the helium core mass</span>
-                      <span class="s1">&#39;he_core_mass&#39;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+                      <span class="s1">'he_core_mass'</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
                       <span class="p">})</span>
 
 <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">STAR1</span><span class="p">,</span> <span class="n">STAR2</span><span class="p">,</span>
-                    <span class="o">**</span><span class="p">{</span><span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
-                       <span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
-                       <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-                       <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">5000.</span><span class="p">,</span>
+                    <span class="o">**</span><span class="p">{</span><span class="s1">'time'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+                       <span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'detached'</span><span class="p">,</span>
+                       <span class="s1">'event'</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+                       <span class="s1">'orbital_period'</span> <span class="p">:</span> <span class="mf">5000.</span><span class="p">,</span>
                         <span class="c1"># calculate the separation; current bug that the separation is not automatically calculated if orbital period is given</span>
-                       <span class="s1">&#39;separation&#39;</span><span class="p">:</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="mf">5000.</span><span class="p">,</span> <span class="mf">17.782576</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
-                       <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
+                       <span class="s1">'separation'</span><span class="p">:</span> <span class="n">orbital_separation_from_period</span><span class="p">(</span><span class="mf">5000.</span><span class="p">,</span> <span class="mf">17.782576</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">),</span>
+                       <span class="s1">'eccentricity'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">},</span>
                     <span class="n">properties</span> <span class="o">=</span> <span class="n">sim_prop</span><span class="p">,</span>
                     <span class="p">)</span>
 <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
-<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">})[</span><span class="n">col</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>

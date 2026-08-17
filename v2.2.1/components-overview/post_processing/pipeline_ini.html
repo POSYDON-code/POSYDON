@@ -162,12 +162,12 @@ in the working directory.</p>
 <a class="reference internal" href="../mesa_grids/inifile.html#inifile-slurm"><span class="std std-ref">[slurm] section for running the grids</span></a>. Here is an
 example to show the supported key words:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[account]</span>
-<span class="w">    </span><span class="na">ACCOUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;fragkos&#39;</span>
-<span class="w">    </span><span class="na">PARTITION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;public-cpu&#39;</span>
-<span class="w">    </span><span class="na">WALLTIME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;23:00:00&#39;</span>
-<span class="w">    </span><span class="na">MAILTYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;ALL&#39;</span>
-<span class="w">    </span><span class="na">EMAIL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;matthias.kruckow@unige.ch&#39;</span>
-<span class="w">    </span><span class="na">GROUP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;GL_S_Astro_POSYDON&#39;</span>
+<span class="w">    </span><span class="na">ACCOUNT</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'fragkos'</span>
+<span class="w">    </span><span class="na">PARTITION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'public-cpu'</span>
+<span class="w">    </span><span class="na">WALLTIME</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'23:00:00'</span>
+<span class="w">    </span><span class="na">MAILTYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'ALL'</span>
+<span class="w">    </span><span class="na">EMAIL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'matthias.kruckow@unige.ch'</span>
+<span class="w">    </span><span class="na">GROUP</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'GL_S_Astro_POSYDON'</span>
 </pre></div>
 </div>
 <p>The last one <code class="samp docutils literal notranslate"><span class="pre">GROUP</span></code> is a bit special. If it is set, ownership
@@ -189,9 +189,9 @@ plots can be set according to the restrictions of
 <code class="samp docutils literal notranslate"><span class="pre">multipage-pdf</span></code>, which will create a PDF, where several plots are stored
 as pages in a single PDF.</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="k">[pipeline setup]</span>
-<span class="w">    </span><span class="na">PATH_TO_GRIDS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/&#39;</span>
-<span class="w">    </span><span class="na">VERSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;&#39;</span><span class="w"> </span><span class="c1"># to have a version below the grid type level</span>
-<span class="w">    </span><span class="na">PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;.&#39;</span><span class="w"> </span><span class="c1"># working dir</span>
+<span class="w">    </span><span class="na">PATH_TO_GRIDS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/'</span>
+<span class="w">    </span><span class="na">VERSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">''</span><span class="w"> </span><span class="c1"># to have a version below the grid type level</span>
+<span class="w">    </span><span class="na">PATH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'.'</span><span class="w"> </span><span class="c1"># working dir</span>
 <span class="w">    </span><span class="na">VERBOSE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 
 <span class="w">    </span><span class="c1"># steps</span>
@@ -204,7 +204,7 @@ as pages in a single PDF.</p>
 <span class="w">    </span><span class="na">RERUN</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">False</span>
 <span class="w">    </span><span class="c1"># additions</span>
 <span class="w">    </span><span class="na">MAKE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="w">    </span><span class="na">PLOT_EXTENSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;pdf&#39;</span>
+<span class="w">    </span><span class="na">PLOT_EXTENSION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'pdf'</span>
 <span class="w">    </span><span class="na">MAKE_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 </pre></div>
 </div>
@@ -295,226 +295,226 @@ that step:</p>
 <p>Here is an example of all the <a class="reference internal" href="pipeline/pipeline_steps.html#pipeline-steps"><span class="std std-ref">steps</span></a>:</p>
 <div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="c1">#CREATE_GRID_SLICES</span>
 <span class="k">[step_1]</span>
-<span class="w">    </span><span class="c1"># e.g. [&#39;CO-HMS_RLO&#39;,&#39;CO-HeMS&#39;,&#39;HMS-HMS&#39;]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
-<span class="w">    </span><span class="c1"># e.g. [&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">    </span><span class="c1"># e.g. ['CO-HMS_RLO','CO-HeMS','HMS-HMS']</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
+<span class="w">    </span><span class="c1"># e.g. ['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;, &#39;rerun_TPAGBwind_grid_low_res_combined&#39;,</span>
-<span class="w">                    </span><span class="na">&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;, &#39;rerun_TPAGBwind_grid_random_combined&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'rerun_PISN_grid_low_res_combined', 'rerun_TPAGBwind_grid_low_res_combined',</span>
+<span class="w">                    </span><span class="na">'grid_random_1', 'rerun_PISN_grid_random_combined', 'rerun_TPAGBwind_grid_random_combined'],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;,</span>
-<span class="w">                    </span><span class="na">&#39;grid_random_1&#39;, &#39;grid_random_rerun&#39;, &#39;rerun_PISN_grid_random_combined&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'rerun_PISN_grid_low_res_combined',</span>
+<span class="w">                    </span><span class="na">'grid_random_1', 'grid_random_rerun', 'rerun_PISN_grid_random_combined'],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;grid_low_res_3&#39;, &#39;grid_low_res_4&#39;, &#39;grid_low_res_5&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;, &#39;rerun_reverse_MT_grid_low_res_combined&#39;, &#39;rerun_TPAGBwind_grid_low_res_combined&#39;,</span>
-<span class="w">                    </span><span class="na">&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;, &#39;rerun_reverse_MT_grid_random_combined&#39;, &#39;rerun_TPAGBwind_grid_random_combined&#39;]</span>
+<span class="w">                   </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'grid_low_res_3', 'grid_low_res_4', 'grid_low_res_5', 'rerun_PISN_grid_low_res_combined', 'rerun_reverse_MT_grid_low_res_combined', 'rerun_TPAGBwind_grid_low_res_combined',</span>
+<span class="w">                    </span><span class="na">'grid_random_1', 'rerun_PISN_grid_random_combined', 'rerun_reverse_MT_grid_random_combined', 'rerun_TPAGBwind_grid_random_combined']</span>
 <span class="w">                  </span><span class="na">]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;ORIGINAL&#39;, &#39;LITE_RLO&#39;, &#39;ORIGINAL_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'ORIGINAL', 'LITE_RLO', 'ORIGINAL_RLO'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;ORIGINAL&#39;, &#39;LITE_RLO&#39;, &#39;ORIGINAL_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'ORIGINAL', 'LITE_RLO', 'ORIGINAL_RLO'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;, &#39;ORIGINAL&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE', 'ORIGINAL']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 <span class="w">    </span><span class="c1"># EXTRA PARAMETERS</span>
 <span class="w">    </span><span class="c1"># only applied to HMS grids</span>
 <span class="w">    </span><span class="na">STOP_BEFORE_CARBON_DEPLETION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
-<span class="w">    </span><span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
+<span class="w">    </span><span class="c1"># supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting</span>
 <span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[]</span>
-<span class="w">    </span><span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
+<span class="w">    </span><span class="c1"># supported checks: e.g. 'failure_rate'</span>
 <span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[]</span>
 
 <span class="c1">#COMBINE_GRID_SLICES</span>
 <span class="k">[step_2]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;, &#39;rerun_TPAGBwind_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;, &#39;rerun_TPAGBwind_grid_random_combined&#39;]],</span>
+<span class="w">                   </span><span class="na">[['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'rerun_PISN_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'rerun_PISN_grid_low_res_combined', 'rerun_TPAGBwind_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'rerun_PISN_grid_random_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'rerun_PISN_grid_random_combined', 'rerun_TPAGBwind_grid_random_combined']],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;grid_random_rerun&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;grid_random_rerun&#39;, &#39;rerun_PISN_grid_random_combined&#39;]],</span>
+<span class="w">                   </span><span class="na">[['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'rerun_PISN_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'grid_random_rerun'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'grid_random_rerun', 'rerun_PISN_grid_random_combined']],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="na">[[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;grid_low_res_3&#39;, &#39;grid_low_res_4&#39;, &#39;grid_low_res_5&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;grid_low_res_3&#39;, &#39;grid_low_res_4&#39;, &#39;grid_low_res_5&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;grid_low_res_3&#39;, &#39;grid_low_res_4&#39;, &#39;grid_low_res_5&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;, &#39;rerun_reverse_MT_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_low_res_0&#39;, &#39;grid_low_res_1&#39;, &#39;grid_low_res_2&#39;, &#39;grid_low_res_3&#39;, &#39;grid_low_res_4&#39;, &#39;grid_low_res_5&#39;, &#39;rerun_PISN_grid_low_res_combined&#39;, &#39;rerun_reverse_MT_grid_low_res_combined&#39;, &#39;rerun_TPAGBwind_grid_low_res_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;],</span>
-<span class="w">                    </span><span class="na">[&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;, &#39;rerun_reverse_MT_grid_random_combined&#39;],</span>
-<span class="w">                    </span><span class="k">[&#39;grid_random_1&#39;, &#39;rerun_PISN_grid_random_combined&#39;, &#39;rerun_reverse_MT_grid_random_combined&#39;, &#39;rerun_TPAGBwind_grid_random_combined&#39;]]</span>
+<span class="w">                   </span><span class="na">[['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'grid_low_res_3', 'grid_low_res_4', 'grid_low_res_5'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'grid_low_res_3', 'grid_low_res_4', 'grid_low_res_5', 'rerun_PISN_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'grid_low_res_3', 'grid_low_res_4', 'grid_low_res_5', 'rerun_PISN_grid_low_res_combined', 'rerun_reverse_MT_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_low_res_0', 'grid_low_res_1', 'grid_low_res_2', 'grid_low_res_3', 'grid_low_res_4', 'grid_low_res_5', 'rerun_PISN_grid_low_res_combined', 'rerun_reverse_MT_grid_low_res_combined', 'rerun_TPAGBwind_grid_low_res_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'rerun_PISN_grid_random_combined'],</span>
+<span class="w">                    </span><span class="na">['grid_random_1', 'rerun_PISN_grid_random_combined', 'rerun_reverse_MT_grid_random_combined'],</span>
+<span class="w">                    </span><span class="k">['grid_random_1', 'rerun_PISN_grid_random_combined', 'rerun_reverse_MT_grid_random_combined', 'rerun_TPAGBwind_grid_random_combined']]</span>
 <span class="w">                  </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRIDS_COMBINED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                      </span><span class="na">[&#39;grid_low_res_combined&#39;, &#39;grid_low_res_combined_rerun1_PISN&#39;, &#39;grid_low_res_combined_rerun3_TPAGBwind&#39;,</span>
-<span class="w">                       </span><span class="na">&#39;grid_random_combined&#39;, &#39;grid_random_combined_rerun1_PISN&#39;, &#39;grid_random_combined_rerun3_TPAGBwind&#39;],</span>
+<span class="w">                      </span><span class="na">['grid_low_res_combined', 'grid_low_res_combined_rerun1_PISN', 'grid_low_res_combined_rerun3_TPAGBwind',</span>
+<span class="w">                       </span><span class="na">'grid_random_combined', 'grid_random_combined_rerun1_PISN', 'grid_random_combined_rerun3_TPAGBwind'],</span>
 <span class="w">                      </span><span class="c1"># CO-HeMS</span>
-<span class="w">                      </span><span class="na">[&#39;grid_low_res_combined&#39;, &#39;grid_low_res_combined_rerun1_PISN&#39;,</span>
-<span class="w">                       </span><span class="na">&#39;grid_random_combined&#39;, &#39;grid_random_combined_rerun1_PISN&#39;],</span>
+<span class="w">                      </span><span class="na">['grid_low_res_combined', 'grid_low_res_combined_rerun1_PISN',</span>
+<span class="w">                       </span><span class="na">'grid_random_combined', 'grid_random_combined_rerun1_PISN'],</span>
 <span class="w">                      </span><span class="c1"># HMS-HMS</span>
-<span class="w">                      </span><span class="na">[&#39;grid_low_res_combined&#39;, &#39;grid_low_res_combined_rerun1_PISN&#39;, &#39;grid_low_res_combined_rerun2_reverse_MT&#39;, &#39;grid_low_res_combined_rerun3_TPAGBwind&#39;,</span>
-<span class="w">                       </span><span class="na">&#39;grid_random_combined&#39;, &#39;grid_random_combined_rerun1_PISN&#39;, &#39;grid_random_combined_rerun2_reverse_MT&#39;, &#39;grid_random_combined_rerun3_TPAGBwind&#39;]</span>
+<span class="w">                      </span><span class="na">['grid_low_res_combined', 'grid_low_res_combined_rerun1_PISN', 'grid_low_res_combined_rerun2_reverse_MT', 'grid_low_res_combined_rerun3_TPAGBwind',</span>
+<span class="w">                       </span><span class="na">'grid_random_combined', 'grid_random_combined_rerun1_PISN', 'grid_random_combined_rerun2_reverse_MT', 'grid_random_combined_rerun3_TPAGBwind']</span>
 <span class="w">                     </span><span class="na">]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;ORIGINAL&#39;, &#39;LITE_RLO&#39;, &#39;ORIGINAL_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'ORIGINAL', 'LITE_RLO', 'ORIGINAL_RLO'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;ORIGINAL&#39;, &#39;LITE_RLO&#39;, &#39;ORIGINAL_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'ORIGINAL', 'LITE_RLO', 'ORIGINAL_RLO'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;, &#39;ORIGINAL&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE', 'ORIGINAL']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="w">    </span><span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
-<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;PLOT_AFTER_COMBINE&#39;]</span>
-<span class="w">    </span><span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
-<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CHECK_AFTER_COMBINE&#39;]</span>
+<span class="w">    </span><span class="c1"># supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting</span>
+<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['PLOT_AFTER_COMBINE']</span>
+<span class="w">    </span><span class="c1"># supported checks: e.g. 'failure_rate'</span>
+<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CHECK_AFTER_COMBINE']</span>
 
 <span class="c1">#CALCULATE_EXTRA_VALUES</span>
 <span class="k">[step_3]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun3_TPAGBwind&#39;, &#39;grid_random_combined_rerun3_TPAGBwind&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun3_TPAGBwind', 'grid_random_combined_rerun3_TPAGBwind'],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun1_PISN&#39;, &#39;grid_random_combined_rerun1_PISN&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun1_PISN', 'grid_random_combined_rerun1_PISN'],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="k">[&#39;grid_low_res_combined_rerun3_TPAGBwind&#39;, &#39;grid_random_combined_rerun3_TPAGBwind&#39;]</span>
+<span class="w">                   </span><span class="k">['grid_low_res_combined_rerun3_TPAGBwind', 'grid_random_combined_rerun3_TPAGBwind']</span>
 <span class="w">                  </span><span class="na">]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">ORIGINAL_COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                             </span><span class="na">[&#39;ORIGINAL&#39;],</span>
+<span class="w">                             </span><span class="na">['ORIGINAL'],</span>
 <span class="w">                             </span><span class="c1"># CO-HeMS</span>
-<span class="w">                             </span><span class="na">[&#39;ORIGINAL&#39;],</span>
+<span class="w">                             </span><span class="na">['ORIGINAL'],</span>
 <span class="w">                             </span><span class="c1"># HMS-HMS</span>
-<span class="w">                             </span><span class="k">[&#39;ORIGINAL&#39;]</span>
+<span class="w">                             </span><span class="k">['ORIGINAL']</span>
 <span class="w">                            </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="w">    </span><span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
-<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;PLOT_AFTER_EXTRA&#39;]</span>
-<span class="w">    </span><span class="c1"># supported checks: e.g. &#39;failure_rate&#39;, &#39;CO_TYPE&#39;, &#39;SN_TYPE&#39;</span>
-<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CHECK_AFTER_EXTRA&#39;]</span>
+<span class="w">    </span><span class="c1"># supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting</span>
+<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['PLOT_AFTER_EXTRA']</span>
+<span class="w">    </span><span class="c1"># supported checks: e.g. 'failure_rate', 'CO_TYPE', 'SN_TYPE'</span>
+<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CHECK_AFTER_EXTRA']</span>
 
 <span class="c1">#TRAIN_INTERPOLATORS</span>
 <span class="k">[step_4]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun3_TPAGBwind_processed&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun3_TPAGBwind_processed'],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun1_PISN_processed&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun1_PISN_processed'],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="k">[&#39;grid_low_res_combined_rerun3_TPAGBwind_processed&#39;]</span>
+<span class="w">                   </span><span class="k">['grid_low_res_combined_rerun3_TPAGBwind_processed']</span>
 <span class="w">                  </span><span class="na">]</span>
-<span class="w">    </span><span class="na">INTERPOLATION_METHODS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&quot;linear&quot;,&quot;1NN&quot;]</span>
+<span class="w">    </span><span class="na">INTERPOLATION_METHODS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">["linear","1NN"]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">CONTROL_GRIDS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;grid_random_combined_rerun3_TPAGBwind_processed&#39;],</span>
+<span class="w">                     </span><span class="na">['grid_random_combined_rerun3_TPAGBwind_processed'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;grid_random_combined_rerun1_PISN_processed&#39;],</span>
+<span class="w">                     </span><span class="na">['grid_random_combined_rerun1_PISN_processed'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;grid_random_combined_rerun3_TPAGBwind_processed&#39;]</span>
+<span class="w">                     </span><span class="k">['grid_random_combined_rerun3_TPAGBwind_processed']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="w">    </span><span class="c1"># supported plots: e.g. &#39;combined_TF12&#39;, &#39;termination_flag_1&#39;, &#39;termination_flag_2&#39;, &#39;termination_flag_3&#39;, &#39;termination_flag_4&#39;, and any quantity valid for a Z-plotting</span>
-<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;PLOT_AFTER_TRAINING&#39;]</span>
-<span class="w">    </span><span class="c1"># supported checks: e.g. &#39;failure_rate&#39;</span>
-<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CHECK_AFTER_TRAINING&#39;]</span>
+<span class="w">    </span><span class="c1"># supported plots: e.g. 'combined_TF12', 'termination_flag_1', 'termination_flag_2', 'termination_flag_3', 'termination_flag_4', and any quantity valid for a Z-plotting</span>
+<span class="w">    </span><span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['PLOT_AFTER_TRAINING']</span>
+<span class="w">    </span><span class="c1"># supported checks: e.g. 'failure_rate'</span>
+<span class="w">    </span><span class="na">DO_CHECKS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CHECK_AFTER_TRAINING']</span>
 
 <span class="c1">#EXPORT_DATASET</span>
 <span class="k">[step_F]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun3_TPAGBwind_processed&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun3_TPAGBwind_processed'],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun1_PISN_processed&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun1_PISN_processed'],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="k">[&#39;grid_low_res_combined_rerun3_TPAGBwind_processed&#39;]</span>
+<span class="w">                   </span><span class="k">['grid_low_res_combined_rerun3_TPAGBwind_processed']</span>
 <span class="w">                  </span><span class="na">]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;, &#39;LITE_RLO&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE', 'LITE_RLO'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 
 <span class="c1">#EXPORT_RERUNS</span>
 <span class="k">[rerun]</span>
-<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;CO-HMS_RLO&#39;, &#39;CO-HeMS&#39;, &#39;HMS-HMS&#39;]</span>
+<span class="w">    </span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['CO-HMS_RLO', 'CO-HeMS', 'HMS-HMS']</span>
 <span class="w">    </span><span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># CO-HeMS</span>
-<span class="w">                     </span><span class="na">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;],</span>
+<span class="w">                     </span><span class="na">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun'],</span>
 <span class="w">                     </span><span class="c1"># HMS-HMS</span>
-<span class="w">                     </span><span class="k">[&#39;2e+00_Zsun&#39;, &#39;1e+00_Zsun&#39;, &#39;4.5e-01_Zsun&#39;, &#39;2e-01_Zsun&#39;, &#39;1e-01_Zsun&#39;, &#39;1e-02_Zsun&#39;, &#39;1e-03_Zsun&#39;, &#39;1e-04_Zsun&#39;]</span>
+<span class="w">                     </span><span class="k">['2e+00_Zsun', '1e+00_Zsun', '4.5e-01_Zsun', '2e-01_Zsun', '1e-01_Zsun', '1e-02_Zsun', '1e-03_Zsun', '1e-04_Zsun']</span>
 <span class="w">                    </span><span class="na">]</span>
 <span class="w">    </span><span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun3_TPAGBwind&#39;,&#39;grid_random_combined_rerun3_TPAGBwind&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun3_TPAGBwind','grid_random_combined_rerun3_TPAGBwind'],</span>
 <span class="w">                   </span><span class="c1"># CO-HeMS</span>
-<span class="w">                   </span><span class="na">[&#39;grid_low_res_combined_rerun1_PISN&#39;,&#39;grid_random_combined_rerun1_PISN&#39;],</span>
+<span class="w">                   </span><span class="na">['grid_low_res_combined_rerun1_PISN','grid_random_combined_rerun1_PISN'],</span>
 <span class="w">                   </span><span class="c1"># HMS-HMS</span>
-<span class="w">                   </span><span class="k">[&#39;grid_low_res_combined_rerun3_TPAGBwind&#39;,&#39;grid_random_combined_rerun3_TPAGBwind&#39;]</span>
+<span class="w">                   </span><span class="k">['grid_low_res_combined_rerun3_TPAGBwind','grid_random_combined_rerun3_TPAGBwind']</span>
 <span class="w">                  </span><span class="na">]</span>
 <span class="w">    </span><span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[</span><span class="c1"># CO-HMS_RLO</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE'],</span>
 <span class="w">                    </span><span class="c1"># CO-HeMS</span>
-<span class="w">                    </span><span class="na">[&#39;LITE&#39;],</span>
+<span class="w">                    </span><span class="na">['LITE'],</span>
 <span class="w">                    </span><span class="c1"># HMS-HMS</span>
-<span class="w">                    </span><span class="k">[&#39;LITE&#39;]</span>
+<span class="w">                    </span><span class="k">['LITE']</span>
 <span class="w">                   </span><span class="na">]</span>
 <span class="w">    </span><span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
-<span class="w">    </span><span class="c1"># example reruns are &#39;PISN&#39;, &#39;reverse_MT&#39;, &#39;TPAGBwind&#39;, &#39;opacity_max&#39;</span>
-<span class="w">    </span><span class="na">RERUN_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;opacity_max&#39;</span>
-<span class="w">    </span><span class="na">CLUSTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&#39;quest&#39;</span>
+<span class="w">    </span><span class="c1"># example reruns are 'PISN', 'reverse_MT', 'TPAGBwind', 'opacity_max'</span>
+<span class="w">    </span><span class="na">RERUN_TYPE</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'opacity_max'</span>
+<span class="w">    </span><span class="na">CLUSTER</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">'quest'</span>
 </pre></div>
 </div>
 <p>There are some predefined shortcuts for lists of <a class="reference internal" href="pipeline/pipeline_additions.html#pipeline-plots"><span class="std std-ref">plots</span></a>

@@ -110,15 +110,15 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.interpolation.eep</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for converting a MESA history file to an EEP track.</span>
+<span></span><span class="sd">"""Module for converting a MESA history file to an EEP track.</span>
 
 <span class="sd">Reference: Dotter, Aaron (2016), AJSS, 222, 1.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Aaron Dotter &lt;aaron.dotter@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Aaron Dotter &lt;aaron.dotter@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -127,24 +127,24 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.interpolate</span><span class="w"> </span><span class="kn">import</span> <span class="n">pchip</span>
 
 <span class="c1"># suggested lists of EEPs</span>
-<span class="n">ZAMSlo</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;IAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TRGB&#39;</span><span class="p">,</span> <span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">]</span>
-<span class="n">ZAMShi</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;IAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;TAMS&#39;</span><span class="p">,</span> <span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;CBURN&#39;</span><span class="p">]</span>
-<span class="n">HeZAMS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;ZACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;TACHEB&#39;</span><span class="p">,</span> <span class="s1">&#39;CBURN&#39;</span><span class="p">]</span>
+<span class="n">ZAMSlo</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'ZAMS'</span><span class="p">,</span> <span class="s1">'IAMS'</span><span class="p">,</span> <span class="s1">'TAMS'</span><span class="p">,</span> <span class="s1">'TRGB'</span><span class="p">,</span> <span class="s1">'ZACHEB'</span><span class="p">,</span> <span class="s1">'TACHEB'</span><span class="p">]</span>
+<span class="n">ZAMShi</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'ZAMS'</span><span class="p">,</span> <span class="s1">'IAMS'</span><span class="p">,</span> <span class="s1">'TAMS'</span><span class="p">,</span> <span class="s1">'ZACHEB'</span><span class="p">,</span> <span class="s1">'TACHEB'</span><span class="p">,</span> <span class="s1">'CBURN'</span><span class="p">]</span>
+<span class="n">HeZAMS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'ZACHEB'</span><span class="p">,</span> <span class="s1">'TACHEB'</span><span class="p">,</span> <span class="s1">'CBURN'</span><span class="p">]</span>
 
 
 <div class="viewcode-block" id="EEP">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.eep.EEP">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EEP</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert a MESA history file to Equivalent Evolutionary Phase track.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Convert a MESA history file to Equivalent Evolutionary Phase track."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">EEP_NAMES</span><span class="o">=</span><span class="n">ZAMShi</span><span class="p">,</span> <span class="n">EEP_INTERVAL</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load an MESA history file and construct the EEP instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Load an MESA history file and construct the EEP instance."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filename</span> <span class="o">=</span> <span class="n">filename</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">&quot;.gz&quot;</span><span class="p">):</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rt&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="s2">".gz"</span><span class="p">):</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="n">gzip</span><span class="o">.</span><span class="n">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"rt"</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span>
+                <span class="n">f</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">header1</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">header2</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
@@ -154,7 +154,7 @@
             <span class="n">tr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">genfromtxt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
             <span class="n">names</span> <span class="o">=</span> <span class="n">tr</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
         <span class="k">except</span> <span class="ne">IOError</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Failed to open: &quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"Failed to open: "</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
 
         <span class="c1"># this section attempts to find each of the EEPs for the track</span>
@@ -179,27 +179,27 @@
         <span class="c1"># if the EEP is in the input list, and it exists (&gt;0)</span>
         <span class="c1"># then add it to the official list of EEPs</span>
         <span class="k">for</span> <span class="n">eep</span> <span class="ow">in</span> <span class="n">EEP_NAMES</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;PreMS&#39;</span> <span class="ow">and</span> <span class="n">prems</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'PreMS'</span> <span class="ow">and</span> <span class="n">prems</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">prems</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;ZAMS&#39;</span> <span class="ow">and</span> <span class="n">zams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'ZAMS'</span> <span class="ow">and</span> <span class="n">zams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zams</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;IAMS&#39;</span> <span class="ow">and</span> <span class="n">iams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'IAMS'</span> <span class="ow">and</span> <span class="n">iams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">iams</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TAMS&#39;</span> <span class="ow">and</span> <span class="n">tams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'TAMS'</span> <span class="ow">and</span> <span class="n">tams</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tams</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TRGB&#39;</span> <span class="ow">and</span> <span class="n">trgb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'TRGB'</span> <span class="ow">and</span> <span class="n">trgb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">trgb</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;ZACHEB&#39;</span> <span class="ow">and</span> <span class="n">zacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'ZACHEB'</span> <span class="ow">and</span> <span class="n">zacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">zacheb</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TACHEB&#39;</span> <span class="ow">and</span> <span class="n">tacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'TACHEB'</span> <span class="ow">and</span> <span class="n">tacheb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tacheb</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;TPAGB&#39;</span> <span class="ow">and</span> <span class="n">tpagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'TPAGB'</span> <span class="ow">and</span> <span class="n">tpagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tpagb</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;PAGB&#39;</span> <span class="ow">and</span> <span class="n">pagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'PAGB'</span> <span class="ow">and</span> <span class="n">pagb</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pagb</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;WDCS&#39;</span> <span class="ow">and</span> <span class="n">wdcs</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'WDCS'</span> <span class="ow">and</span> <span class="n">wdcs</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">wdcs</span><span class="p">)</span>
-            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">&#39;CBURN&#39;</span> <span class="ow">and</span> <span class="n">cburn</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">eep</span> <span class="o">==</span> <span class="s1">'CBURN'</span> <span class="ow">and</span> <span class="n">cburn</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
                 <span class="n">eep_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cburn</span><span class="p">)</span>
 
         <span class="c1"># some bookkeeping</span>
@@ -233,7 +233,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_PreMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Dfrac</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">PreMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h2&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Dfrac</span><span class="o">*</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h2&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_h2'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Dfrac</span><span class="o">*</span><span class="n">tr</span><span class="p">[</span><span class="s1">'center_h2'</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
                 <span class="n">PreMS</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">PreMS</span>
@@ -241,7 +241,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_ZAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">dXc</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">ZAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">dXc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">'center_h1'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="n">tr</span><span class="p">[</span><span class="s1">'center_h1'</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span> <span class="o">&gt;</span> <span class="n">dXc</span><span class="p">:</span>
                 <span class="n">ZAMS</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">ZAMS</span>
@@ -249,7 +249,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_IAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Xc</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">IAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_h1'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
                 <span class="n">IAMS</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">IAMS</span>
@@ -257,49 +257,49 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_TAMS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Xc</span><span class="o">=</span><span class="mf">0.00001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">TAMS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_h1'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Xc</span><span class="p">:</span>
                 <span class="n">TAMS</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">TAMS</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_TRGB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-        <span class="n">Yc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.01</span>
+        <span class="n">Yc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.01</span>
         <span class="n">L_He_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.</span>
         <span class="n">Tc_min</span> <span class="o">=</span> <span class="mf">99.</span>
         <span class="n">TRGB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">TRGB1</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">TRGB2</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span><span class="p">:</span>
-                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
-                    <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_LHe'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
+                    <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_LHe'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">TRGB1</span> <span class="o">=</span> <span class="n">i</span>
-                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
-                    <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
+                    <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
                     <span class="n">TRGB2</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="n">TRGB</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">TRGB1</span><span class="p">,</span> <span class="n">TRGB2</span><span class="p">))</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_ZACHEB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">ZACHEB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
-        <span class="n">Yc_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.03</span><span class="p">)</span>
+        <span class="n">Yc_min</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span> <span class="o">-</span> <span class="mf">0.03</span><span class="p">)</span>
         <span class="n">L_He_max</span> <span class="o">=</span> <span class="o">-</span><span class="mf">99.</span>
         <span class="n">Tc_min</span> <span class="o">=</span> <span class="mf">99.</span>
         <span class="n">ZACHEB1</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="n">ZACHEB</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
-                <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_LHe&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_LHe'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">L_He_max</span><span class="p">:</span>
+                <span class="n">L_He_max</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_LHe'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">ZACHEB1</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">ZACHEB1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
-                <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Tc_min</span><span class="p">:</span>
+                <span class="n">Tc_min</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
                 <span class="n">ZACHEB</span> <span class="o">=</span> <span class="n">i</span>
         <span class="k">return</span> <span class="n">ZACHEB</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_TACHEB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">Yc_min</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">TACHEB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span><span class="p">:</span>
                 <span class="n">TACHEB</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">TACHEB</span>
@@ -309,8 +309,8 @@
         <span class="n">He_shell_min</span> <span class="o">=</span> <span class="mf">0.1</span>
         <span class="n">Yc_min</span> <span class="o">=</span> <span class="mf">1.0e-6</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="n">He_shell_mass</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;he_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">He_shell_mass</span> <span class="o">&lt;</span> <span class="n">He_shell_min</span><span class="p">:</span>
+            <span class="n">He_shell_mass</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'he_core_mass'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'c_core_mass'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">Yc_min</span> <span class="ow">and</span> <span class="n">He_shell_mass</span> <span class="o">&lt;</span> <span class="n">He_shell_min</span><span class="p">:</span>
                 <span class="n">TPAGB</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">TPAGB</span>
@@ -318,13 +318,13 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_PAGB</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">PAGB</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">core_mass_frac_min</span> <span class="o">=</span> <span class="mf">0.8</span>
-        <span class="n">Tc_now</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span>
-        <span class="n">Tc_end</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_T&#39;</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">Tc_now</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="n">guess</span><span class="p">]</span>
+        <span class="n">Tc_end</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_T'</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
         <span class="c1"># check for low-inter / high mass split</span>
         <span class="k">if</span> <span class="n">Tc_now</span> <span class="o">&gt;</span> <span class="n">Tc_end</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-                <span class="n">core_mass_frac</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;c_core_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;star_mass&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">core_mass_frac</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'c_core_mass'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">/</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'star_mass'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
                 <span class="k">if</span> <span class="n">core_mass_frac</span> <span class="o">&gt;</span> <span class="n">core_mass_frac_min</span><span class="p">:</span>
                     <span class="n">PAGB</span> <span class="o">=</span> <span class="n">i</span>
                     <span class="k">break</span>
@@ -334,7 +334,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_WDCS</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">10.</span><span class="p">,</span> <span class="n">guess</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="n">WDCS</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_gamma&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">gamma</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_gamma'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">gamma</span><span class="p">:</span>
                 <span class="n">WDCS</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
         <span class="k">return</span> <span class="n">WDCS</span>
@@ -343,9 +343,9 @@
         <span class="n">CBURN</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
         <span class="n">XY_min</span> <span class="o">=</span> <span class="mf">1.0E-6</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tr</span><span class="p">)):</span>
-            <span class="n">Xc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_h1&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">Yc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_he4&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
-            <span class="n">C12</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;center_c12&#39;</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">Xc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_h1'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">Yc</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_he4'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">C12</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'center_c12'</span><span class="p">][</span><span class="n">i</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">Xc</span> <span class="o">&lt;</span> <span class="n">XY_min</span> <span class="ow">and</span> <span class="n">Yc</span> <span class="o">&lt;</span> <span class="n">XY_min</span> <span class="ow">and</span> <span class="n">C12</span> <span class="o">&lt;</span> <span class="n">XC12</span><span class="p">:</span>
                 <span class="n">CBURN</span> <span class="o">=</span> <span class="n">i</span>
                 <span class="k">break</span>
@@ -354,12 +354,12 @@
     <span class="c1"># this function computes the distance metric along the evolutionary track</span>
     <span class="c1"># it is made up of several terms whose weights can be adjusted.  Currently</span>
     <span class="c1"># use the H-R and age information only.</span>
-    <span class="c1"># other terms can be added, must be &quot;monotonic increasing&quot;</span>
+    <span class="c1"># other terms can be added, must be "monotonic increasing"</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_metric_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tr</span><span class="p">):</span>
-        <span class="n">term1</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_Teff&#39;</span><span class="p">]</span>
-        <span class="n">term2</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_L&#39;</span><span class="p">]</span>
-        <span class="n">term3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">&#39;star_age&#39;</span><span class="p">])</span>
-        <span class="n">term4</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">&#39;log_center_Rho&#39;</span><span class="p">]</span>
+        <span class="n">term1</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_Teff'</span><span class="p">]</span>
+        <span class="n">term2</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_L'</span><span class="p">]</span>
+        <span class="n">term3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tr</span><span class="p">[</span><span class="s1">'star_age'</span><span class="p">])</span>
+        <span class="n">term4</span> <span class="o">=</span> <span class="n">tr</span><span class="p">[</span><span class="s1">'log_center_Rho'</span><span class="p">]</span>
         <span class="n">weight1</span> <span class="o">=</span> <span class="mf">2.0</span>
         <span class="n">weight2</span> <span class="o">=</span> <span class="mf">0.125</span>
         <span class="n">weight3</span> <span class="o">=</span> <span class="mf">1.0</span>

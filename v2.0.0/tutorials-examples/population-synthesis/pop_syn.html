@@ -140,8 +140,8 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">"posydon/popsyn/population_params_default.ini"</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">'./population_params.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -231,8 +231,8 @@ number_of_binaries = 1000
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
-<span class="n">file1</span> <span class="o">=</span> <span class="s1">&#39;1e-01_Zsun_population.h5&#39;</span>
-<span class="n">file2</span> <span class="o">=</span> <span class="s1">&#39;1e-02_Zsun_population.h5&#39;</span>
+<span class="n">file1</span> <span class="o">=</span> <span class="s1">'1e-01_Zsun_population.h5'</span>
+<span class="n">file2</span> <span class="o">=</span> <span class="s1">'1e-02_Zsun_population.h5'</span>
 
 <span class="n">pop1</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">file1</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">pop1</span><span class="o">.</span><span class="n">mass_per_metallicity</span><span class="p">)</span>

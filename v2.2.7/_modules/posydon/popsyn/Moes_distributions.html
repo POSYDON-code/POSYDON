@@ -116,10 +116,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.Moes_distributions</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""</span>
 <span class="sd">Generate initial parameters following Moe &amp; Di Stefano (2017).</span>
 <span class="sd">https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract</span>
-<span class="sd">This module is an adoption of the translation of Moe&#39;s IDL code into python by</span>
+<span class="sd">This module is an adoption of the translation of Moe's IDL code into python by</span>
 <span class="sd">Mads Sørensen (V. 0.1; 2017/02/03)</span>
 
 <span class="sd">NOTE my Maxwell Moe: This version produces only the statistical distributions</span>
@@ -129,11 +129,11 @@
 <span class="sd">an approximation to determine the fraction of those companions that are inner</span>
 <span class="sd">binaries vs. outer triples. Nevertheless, this approximation reproduces the</span>
 <span class="sd">overall multiplicity statistics.</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -144,7 +144,7 @@
 <div class="viewcode-block" id="Moe_17_PsandQs">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.Moes_distributions.Moe_17_PsandQs">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Moe_17_PsandQs</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate initial parameters following Moe &amp; Di Stefano (2017) [1]_.</span>
+<span class="w">    </span><span class="sd">"""Generate initial parameters following Moe &amp; Di Stefano (2017) [1]_.</span>
 
 <span class="sd">    References</span>
 <span class="sd">    ----------</span>
@@ -152,10 +152,10 @@
 <span class="sd">        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,</span>
 <span class="sd">        &lt;i&gt;The Astrophysical Journal Supplement Series&lt;/i&gt;, vol. 230, no. 2,</span>
 <span class="sd">        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_idl_tabulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Discrete integration in chunks to avoid instabilities for</span>
+<span class="w">        </span><span class="sd">"""Discrete integration in chunks to avoid instabilities for</span>
 <span class="sd">        Newton-Cotes rule at high degree.</span>
 <span class="sd">        This function is similar to the IDL function int_tabulated except, this</span>
 <span class="sd">        function seems to be slightly more exact in its solution. Therefore,</span>
@@ -175,10 +175,10 @@
 <span class="sd">        -------</span>
 <span class="sd">        ret : float</span>
 <span class="sd">            Integral value.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">integrate_newton_cotes</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">f</span><span class="p">):</span>
-<span class="w">            </span><span class="sd">&quot;&quot;&quot;Integrate f from x[0] to x[-1] via Newton cotes.</span>
+<span class="w">            </span><span class="sd">"""Integrate f from x[0] to x[-1] via Newton cotes.</span>
 
 <span class="sd">            Parameters</span>
 <span class="sd">            ----------</span>
@@ -192,7 +192,7 @@
 <span class="sd">            -------</span>
 <span class="sd">            float</span>
 <span class="sd">                Integral value.</span>
-<span class="sd">            &quot;&quot;&quot;</span>
+<span class="sd">            """</span>
             <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
                 <span class="c1"># x[0] and x[-1] are the same, hence integral over no range</span>
                 <span class="k">return</span> <span class="mi">0</span>
@@ -216,25 +216,25 @@
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_M1</span><span class="o">=</span><span class="mi">101</span><span class="p">,</span> <span class="n">n_logP</span><span class="o">=</span><span class="mi">158</span><span class="p">,</span> <span class="n">n_q</span><span class="o">=</span><span class="mi">91</span><span class="p">,</span> <span class="n">n_e</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
                  <span class="n">orbital_period_min</span><span class="o">=</span><span class="mf">1.412</span><span class="p">,</span> <span class="n">orbital_period_max</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializing the class.</span>
+<span class="w">        </span><span class="sd">"""Initializing the class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        n_M1 : int (Default: 101)</span>
-<span class="sd">            Number of supporting points in the primary&#39;s mass.</span>
+<span class="sd">            Number of supporting points in the primary's mass.</span>
 <span class="sd">        n_logP : int (Default: 158)</span>
 <span class="sd">            Number of supporting points in the logarithmic period.</span>
 <span class="sd">        n_q : int (Default: 91)</span>
 <span class="sd">            Number of supporting points in the mass ratio.</span>
 <span class="sd">        n_e : int (Default: 100)</span>
 <span class="sd">            Number of supporting points in the eccentricity.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numM1</span> <span class="o">=</span> <span class="n">n_M1</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numlogP</span> <span class="o">=</span> <span class="n">n_logP</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">numq</span> <span class="o">=</span> <span class="n">n_q</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">nume</span> <span class="o">=</span> <span class="n">n_e</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
         <span class="c1"># ranges where M+D17 has statistics corrected for selection effects:</span>
         <span class="c1"># 0.8 &lt; M1/Msun &lt; 40 with self.numM1 steps in log space</span>
@@ -488,17 +488,17 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">cumPbindist</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">mycumPbindist</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;Moe and Di Stefano 2017 distributions on a grid of &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">, n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">, n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">, and &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">"Moe and Di Stefano 2017 distributions on a grid of "</span>
+                <span class="sa">f</span><span class="s2">"n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">, n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">, n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">, and "</span>
+                <span class="sa">f</span><span class="s2">"n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="p">(</span><span class="s2">&quot;&lt;h3&gt;Moe and Di Stefano 2017 distributions on a grid of&lt;/h3&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="s2">"&lt;h3&gt;Moe and Di Stefano 2017 distributions on a grid of&lt;/h3&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;n_M1=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_M1</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_logP=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_logP</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;n_q=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_q</span><span class="si">}</span><span class="s2">&lt;/p&gt;&lt;p&gt;n_e=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_e</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">M1</span><span class="p">,</span> <span class="n">M_min</span><span class="o">=</span><span class="mf">0.08</span><span class="p">,</span> <span class="n">M_max</span><span class="o">=</span><span class="mf">150.0</span><span class="p">,</span> <span class="n">all_binaries</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initializing the class.</span>
+<span class="w">        </span><span class="sd">"""Initializing the class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -519,7 +519,7 @@
 <span class="sd">                - the log10 of the period in days</span>
 <span class="sd">                - the eccentricity</span>
 <span class="sd">                - the metallicity</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">M1s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">M1</span><span class="p">)</span>
         <span class="n">M2s</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="n">logPs</span> <span class="o">=</span> <span class="p">[]</span>

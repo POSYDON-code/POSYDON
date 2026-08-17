@@ -122,12 +122,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.active_learning.psy_cris.data</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for handling data for PSY-CRIS.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Module for handling data for PSY-CRIS."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -145,7 +145,7 @@
 <div class="viewcode-block" id="calc_avg_dist">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.calc_avg_dist">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_avg_dist</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="p">,</span> <span class="n">neighbor</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the average distance to the nearest neighbors in the data set.</span>
+<span class="w">    </span><span class="sd">"""Get the average distance to the nearest neighbors in the data set.</span>
 
 <span class="sd">    (NearestNeighbors from sklearn.neighbors)</span>
 
@@ -164,7 +164,7 @@
 <span class="sd">        The average distance between nearest neighbors.</span>
 <span class="sd">    g_indi : array</span>
 <span class="sd">        Indicies that correspond to the nearest neighbors.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">neighbor</span><span class="p">:</span>
         <span class="n">neigh</span> <span class="o">=</span> <span class="n">neighbor</span>
     <span class="k">else</span><span class="p">:</span>
@@ -186,7 +186,7 @@
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.calc_avg_p_change">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_avg_p_change</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">where_nearest_neighbors</span><span class="p">,</span>
                       <span class="n">undefined_p_change_val</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the average fractional change in a given data set.</span>
+<span class="w">    </span><span class="sd">"""Calculate the average fractional change in a given data set.</span>
 
 <span class="sd">    The method uses the N nearest neighbors (calculated beforehand).</span>
 
@@ -207,7 +207,7 @@
 <span class="sd">        neighbors. If any output values are 0, then a nan is put in place of a</span>
 <span class="sd">        percent change.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">where_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="n">where_not_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
@@ -240,7 +240,7 @@
 <div class="viewcode-block" id="TableData">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TableData</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    For managing data sets used for classification and regression.</span>
 
 <span class="sd">        Reads tables of simulation data where a single row represents one</span>
@@ -253,22 +253,22 @@
 <span class="sd">        Example data structure expected in files or pandas DataFrame:</span>
 
 <span class="sd">        0  input_1  input_2  outcome  output_1   output_2  output_3 ...</span>
-<span class="sd">        1    1.5      2.6      &quot;A&quot;       100       0.19       -     ...</span>
-<span class="sd">        2    1.5      3.0      &quot;B&quot;        -          -        -     ...</span>
-<span class="sd">        3    2.0      2.6      &quot;C&quot;        -          -        6     ...</span>
+<span class="sd">        1    1.5      2.6      "A"       100       0.19       -     ...</span>
+<span class="sd">        2    1.5      3.0      "B"        -          -        -     ...</span>
+<span class="sd">        3    2.0      2.6      "C"        -          -        6     ...</span>
 <span class="sd">        ...</span>
 
-<span class="sd">        The above table has dashes &#39;-&#39; in output columns to indicate NaN</span>
+<span class="sd">        The above table has dashes '-' in output columns to indicate NaN</span>
 <span class="sd">        values. You may have a similar structure if different classes have</span>
 <span class="sd">        fundamentally different outputs.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__vb_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose_bool</span><span class="p">,</span> <span class="n">info_string</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Help clean up verbose print statements and storing info.</span>
+<span class="w">        </span><span class="sd">"""Help clean up verbose print statements and storing info.</span>
 
 <span class="sd">        By default, store the passed info_string regardless of verbose_bool.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">verbose_bool</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">info_string</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_for_info_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">info_string</span><span class="p">)</span>
@@ -291,7 +291,7 @@
         <span class="n">read_csv_kwargs</span><span class="o">=</span><span class="p">{},</span>
         <span class="o">**</span><span class="n">kwargs</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the TableData instance.</span>
+<span class="w">        </span><span class="sd">"""Initialize the TableData instance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -299,9 +299,9 @@
 <span class="sd">            List of file paths to read in as data.</span>
 <span class="sd">            if None, a pandas DataFrame is used instead</span>
 <span class="sd">        input_cols : list</span>
-<span class="sd">            List of names of the columns which will be considered &#39;input&#39;.</span>
+<span class="sd">            List of names of the columns which will be considered 'input'.</span>
 <span class="sd">        output_cols : list</span>
-<span class="sd">            List of names of the columns which will be considered &#39;output&#39;.</span>
+<span class="sd">            List of names of the columns which will be considered 'output'.</span>
 <span class="sd">            This should include the class column name.</span>
 <span class="sd">        class_col_name : str</span>
 <span class="sd">            Name of column which contains classification data.</span>
@@ -310,8 +310,8 @@
 <span class="sd">        omit_vals : list, optional</span>
 <span class="sd">            Numerical values that you wish to omit from the entire data set.</span>
 <span class="sd">            If a row contains the value, the entire row is removed.</span>
-<span class="sd">            (For example you may want to omit all rows if they contain &quot;-1&quot; or</span>
-<span class="sd">            &quot;failed&quot;.)</span>
+<span class="sd">            (For example you may want to omit all rows if they contain "-1" or</span>
+<span class="sd">            "failed".)</span>
 <span class="sd">        omit_cols : list, optional</span>
 <span class="sd">            Column names that you wish to omit from the data set.</span>
 <span class="sd">        subset_interval : array, optional</span>
@@ -323,18 +323,18 @@
 <span class="sd">            List of integers that set the number of neighbors to use to</span>
 <span class="sd">            calculate average distances. (default None)</span>
 <span class="sd">        neighbor : instance of sklearn.neighbors.NearestNeighbors, optional</span>
-<span class="sd">            To use for average distances. See function &#39;calc_avg_dist()&#39;.</span>
+<span class="sd">            To use for average distances. See function 'calc_avg_dist()'.</span>
 <span class="sd">        undefined_p_change_val : optional, float</span>
 <span class="sd">            Sets the undefined value used when calculating percent change fails</span>
 <span class="sd">            due to zero values in the output data. Default uses nan.</span>
 <span class="sd">        verbose : bool, optional</span>
 <span class="sd">            Print statements with extra info.</span>
 <span class="sd">        read_csv_kwargs : dict, optional</span>
-<span class="sd">            Kwargs passed to the pandas function &#39;read_csv()&#39;.</span>
+<span class="sd">            Kwargs passed to the pandas function 'read_csv()'.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Extra kwargs</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_for_info_</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1"># storing info strings</span>
 
@@ -346,28 +346,28 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">class_col_name</span> <span class="o">=</span> <span class="n">class_col_name</span>
 
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">my_DataFrame</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;Using loaded Pandas DataFrame&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"Using loaded Pandas DataFrame"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span> <span class="o">=</span> <span class="n">my_DataFrame</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># Read in all data files and add to _df_list_</span>
-            <span class="n">info_str_01</span> <span class="o">=</span> <span class="s2">&quot;Reading in data from </span><span class="si">{0}</span><span class="s2"> file(s).&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">info_str_01</span> <span class="o">=</span> <span class="s2">"Reading in data from </span><span class="si">{0}</span><span class="s2"> file(s)."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">table_paths</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_01</span><span class="p">)</span>
 
             <span class="k">for</span> <span class="n">num</span><span class="p">,</span> <span class="n">path</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">table_paths</span><span class="p">):</span>
-                <span class="n">info_str_02</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+                <span class="n">info_str_02</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">'</span><span class="si">{0}</span><span class="s2">'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_02</span><span class="p">)</span>
 
                 <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">read_csv_kwargs</span><span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_df_list_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;df&quot;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"df"</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">num</span><span class="p">))</span>
 
-            <span class="n">info_str_03</span> <span class="o">=</span> <span class="s2">&quot;Finished reading data.</span><span class="se">\n</span><span class="s2">&quot;</span>
+            <span class="n">info_str_03</span> <span class="o">=</span> <span class="s2">"Finished reading data.</span><span class="se">\n</span><span class="s2">"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_03</span><span class="p">)</span>
 
             <span class="c1"># _df_index_keys_ setting index of Nth file</span>
-            <span class="c1"># the data is from with &#39;dfN&#39;.</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_list_</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">,</span>
+            <span class="c1"># the data is from with 'dfN'.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_list_</span><span class="p">,</span> <span class="n">join</span><span class="o">=</span><span class="s2">"outer"</span><span class="p">,</span>
                                          <span class="n">ignore_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                                          <span class="n">keys</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="p">,</span> <span class="n">sort</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
         <span class="c1"># remove rows and columns with unwanted data</span>
@@ -381,29 +381,29 @@
                                                          <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
                 <span class="n">ct</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">row_where_omit_val</span><span class="p">)</span>
 
-                <span class="n">info_str_04</span> <span class="o">=</span> <span class="s2">&quot; - Removed </span><span class="si">{0}</span><span class="s2"> rows containing: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">info_str_04</span> <span class="o">=</span> <span class="s2">" - Removed </span><span class="si">{0}</span><span class="s2"> rows containing: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="nb">len</span><span class="p">(</span><span class="n">row_where_omit_val</span><span class="p">),</span> <span class="n">omit_vals</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
                 <span class="p">)</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_04</span><span class="p">)</span>
-            <span class="n">info_str_05</span> <span class="o">=</span> <span class="s2">&quot;Removed a total of </span><span class="si">{0}</span><span class="s2"> rows.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
+            <span class="n">info_str_05</span> <span class="o">=</span> <span class="s2">"Removed a total of </span><span class="si">{0}</span><span class="s2"> rows."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ct</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_05</span><span class="p">)</span>
 
         <span class="c1"># remove entire columns</span>
         <span class="k">if</span> <span class="n">omit_cols</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="n">omit_cols</span><span class="p">)</span>
-            <span class="n">info_str_06</span> <span class="o">=</span> <span class="s2">&quot;Removed columns: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">omit_cols</span><span class="p">)</span>
+            <span class="n">info_str_06</span> <span class="o">=</span> <span class="s2">"Removed columns: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">omit_cols</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_06</span><span class="p">)</span>
 
         <span class="c1"># use a subset of the original data table</span>
         <span class="k">if</span> <span class="n">subset_interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">len_original_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">subset_interval</span><span class="p">,</span> <span class="p">:]</span>
-            <span class="n">info_str_07</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;--Using Subset--</span><span class="se">\n</span><span class="si">{0}</span><span class="s2"> percent of total data set.&quot;</span><span class="o">.</span>
+            <span class="n">info_str_07</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"--Using Subset--</span><span class="se">\n</span><span class="si">{0}</span><span class="s2"> percent of total data set."</span><span class="o">.</span>
                            <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">)</span> <span class="o">/</span> <span class="n">len_original_data</span>
                                   <span class="o">*</span> <span class="mi">100</span><span class="p">))</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_07</span><span class="p">)</span>
 
-        <span class="n">info_str_08</span> <span class="o">=</span> <span class="s2">&quot;Total number of data points: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">info_str_08</span> <span class="o">=</span> <span class="s2">"Total number of data points: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_08</span><span class="p">)</span>
 
@@ -414,8 +414,8 @@
         <span class="k">for</span> <span class="n">usr_input</span> <span class="ow">in</span> <span class="p">[</span><span class="n">input_cols</span><span class="p">,</span> <span class="n">output_cols</span><span class="p">]:</span>
             <span class="k">for</span> <span class="n">a_name</span> <span class="ow">in</span> <span class="n">usr_input</span><span class="p">:</span>
                 <span class="k">if</span> <span class="n">a_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">:</span>
-                    <span class="n">info_str_09</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Warning: No columns found with name &quot;</span>
-                                   <span class="s2">&quot;&#39;</span><span class="si">{0}</span><span class="s2">&#39;. Check your data.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a_name</span><span class="p">))</span>
+                    <span class="n">info_str_09</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Warning: No columns found with name "</span>
+                                   <span class="s2">"'</span><span class="si">{0}</span><span class="s2">'. Check your data."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">a_name</span><span class="p">))</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_09</span><span class="p">)</span>
                     <span class="c1"># raise Warning( info_str_09 ) TODO</span>
         <span class="n">input_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">input_cols</span> <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">col_names</span><span class="p">]</span>
@@ -436,7 +436,7 @@
                 <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">[</span><span class="n">class_col_name</span><span class="p">])</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_class_dtype_</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_unique_class_keys_</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">class_col_name</span><span class="p">:</span>
-            <span class="n">info_str_10</span> <span class="o">=</span> <span class="s2">&quot;Class column </span><span class="si">{0}</span><span class="s2"> not in </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">info_str_10</span> <span class="o">=</span> <span class="s2">"Class column </span><span class="si">{0}</span><span class="s2"> not in </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">class_col_name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
             <span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="kc">False</span><span class="p">,</span> <span class="n">info_str_10</span><span class="p">)</span>
@@ -446,11 +446,11 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">class_ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
 
         <span class="n">info_str_11</span> <span class="o">=</span> <span class="p">(</span>
-            <span class="s2">&quot;Input columns: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_cols</span><span class="p">))</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;Output columns: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">output_cols</span><span class="p">))</span>
-            <span class="o">+</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="o">+</span> <span class="s2">&quot;Unique classes found in &#39;</span><span class="si">{0}</span><span class="s2">&#39;: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="s2">"Input columns: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">input_cols</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="o">+</span> <span class="s2">"Output columns: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">output_cols</span><span class="p">))</span>
+            <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="o">+</span> <span class="s2">"Unique classes found in '</span><span class="si">{0}</span><span class="s2">': </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">class_col_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_classes</span>
             <span class="p">)</span>
         <span class="p">)</span>
@@ -472,12 +472,12 @@
 
         <span class="k">if</span> <span class="n">my_colors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_class_colors_</span> <span class="o">=</span> <span class="n">my_colors</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;Using custom class colors.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"Using custom class colors."</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_class_colors_</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;#EC6666&quot;</span><span class="p">,</span> <span class="s2">&quot;#90A245&quot;</span><span class="p">,</span> <span class="s2">&quot;#F5C258&quot;</span><span class="p">,</span> <span class="s2">&quot;#1668E8&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;#473335&quot;</span><span class="p">,</span> <span class="s2">&quot;#98C0CB&quot;</span><span class="p">,</span> <span class="s2">&quot;C0&quot;</span><span class="p">,</span> <span class="s2">&quot;C1&quot;</span><span class="p">,</span> <span class="s2">&quot;C2&quot;</span><span class="p">,</span>
-                                   <span class="s2">&quot;C3&quot;</span><span class="p">,</span> <span class="s2">&quot;C4&quot;</span><span class="p">,</span> <span class="s2">&quot;C5&quot;</span><span class="p">,</span> <span class="s2">&quot;C6&quot;</span><span class="p">,</span> <span class="s2">&quot;C7&quot;</span><span class="p">,</span> <span class="s2">&quot;C8&quot;</span><span class="p">]</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;Using default class colors.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_class_colors_</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"#EC6666"</span><span class="p">,</span> <span class="s2">"#90A245"</span><span class="p">,</span> <span class="s2">"#F5C258"</span><span class="p">,</span> <span class="s2">"#1668E8"</span><span class="p">,</span>
+                                   <span class="s2">"#473335"</span><span class="p">,</span> <span class="s2">"#98C0CB"</span><span class="p">,</span> <span class="s2">"C0"</span><span class="p">,</span> <span class="s2">"C1"</span><span class="p">,</span> <span class="s2">"C2"</span><span class="p">,</span>
+                                   <span class="s2">"C3"</span><span class="p">,</span> <span class="s2">"C4"</span><span class="p">,</span> <span class="s2">"C5"</span><span class="p">,</span> <span class="s2">"C6"</span><span class="p">,</span> <span class="s2">"C7"</span><span class="p">,</span> <span class="s2">"C8"</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"Using default class colors."</span><span class="p">)</span>
 
         <span class="c1"># --------- regression variables ---------</span>
 
@@ -488,15 +488,15 @@
             <span class="n">rows_where_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_output_</span><span class="p">[</span><span class="n">class_col_name</span><span class="p">]</span>
                                         <span class="o">==</span> <span class="n">cls_name</span><span class="p">)</span>
             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">rows_where_class</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-                <span class="n">info_str_extra_1</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Warning: no output with class name </span><span class="si">{0}</span><span class="s2">.&quot;</span>
+                <span class="n">info_str_extra_1</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Warning: no output with class name </span><span class="si">{0}</span><span class="s2">."</span>
                                     <span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">cls_name</span><span class="p">))</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_extra_1</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_regr_inputs_</span><span class="p">[</span><span class="n">cls_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">rows_where_class</span><span class="p">]</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_regr_outputs_</span><span class="p">[</span><span class="n">cls_name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span>
                 <span class="n">rows_where_class</span><span class="p">]</span>
 
-        <span class="n">info_str_12</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Finding values to regress:</span><span class="se">\n</span><span class="s2">&quot;</span>
-                       <span class="o">+</span> <span class="s2">&quot;Num output(s) </span><span class="se">\t</span><span class="s2"> Class Name&quot;</span><span class="p">)</span>
+        <span class="n">info_str_12</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Finding values to regress:</span><span class="se">\n</span><span class="s2">"</span>
+                       <span class="o">+</span> <span class="s2">"Num output(s) </span><span class="se">\t</span><span class="s2"> Class Name"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_12</span><span class="p">)</span>
 
         <span class="c1"># find valid regression data and link it to a class</span>
@@ -532,7 +532,7 @@
                 <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
                     <span class="n">bad_cols</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">col_num</span><span class="p">)</span>
 
-            <span class="n">info_str_13</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%7i</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span>
+            <span class="n">info_str_13</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%7i</span><span class="s2"> </span><span class="se">\t</span><span class="s2"> '</span><span class="si">%s</span><span class="s2">'"</span> <span class="o">%</span> <span class="p">(</span>
                 <span class="nb">len</span><span class="p">(</span><span class="n">cols_with_float</span><span class="p">),</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">_unique_class_keys_</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
             <span class="p">)</span>
@@ -554,8 +554,8 @@
         <span class="c1"># take Nearest Neighbors differences</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_undefined_p_change_val_</span> <span class="o">=</span> <span class="n">undefined_p_change_val</span>
         <span class="k">if</span> <span class="n">n_neighbors</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="n">info_str_14</span> <span class="o">=</span> <span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Calculate Average Distances &amp; &quot;</span>
-                           <span class="s2">&quot;Average Percent Change&quot;</span><span class="p">)</span>
+            <span class="n">info_str_14</span> <span class="o">=</span> <span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">Calculate Average Distances &amp; "</span>
+                           <span class="s2">"Average Percent Change"</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_14</span><span class="p">)</span>
 
             <span class="bp">self</span><span class="o">.</span><span class="n">_n_neighbors_</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n_neighbors</span><span class="p">]</span>
@@ -572,7 +572,7 @@
                 <span class="p">]</span>  <span class="c1"># either a DataFrame or np.nan</span>
 
                 <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">regr_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;class: &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"class: '</span><span class="si">{0}</span><span class="s2">'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">))</span>
 
                     <span class="c1"># find nearest neighbors in input space</span>
                     <span class="n">where_nearest_neighbors</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -583,7 +583,7 @@
                                 <span class="n">neighbor</span><span class="o">=</span><span class="n">neighbor</span><span class="p">)</span>
                         <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span>
-                                             <span class="s2">&quot;Skipping n = </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Error: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span>
+                                             <span class="s2">"Skipping n = </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">Error: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span>
                                              <span class="nb">format</span><span class="p">(</span><span class="n">n_</span><span class="p">,</span> <span class="n">err</span><span class="p">))</span>
                             <span class="n">avg_dist</span> <span class="o">=</span> <span class="kc">None</span>
                             <span class="k">continue</span>
@@ -595,14 +595,14 @@
                         <span class="n">where_zero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">data</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
                         <span class="c1"># where_not_zero = np.where(data != 0)[0]</span>
                         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
-                            <span class="n">info_str_15</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2"> -- </span><span class="si">{0}</span><span class="s2"> zeros in &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="n">info_str_15</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2"> -- </span><span class="si">{0}</span><span class="s2"> zeros in '</span><span class="si">{1}</span><span class="s2">'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                 <span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">),</span> <span class="n">_key</span>
                             <span class="p">)</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_15</span><span class="p">)</span>
                             <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_zero</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span>
-                                    <span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;Skipping percent change for &quot;</span>
-                                    <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">... All data is zero.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_key</span><span class="p">))</span>
+                                    <span class="n">verbose</span><span class="p">,</span> <span class="s2">"Skipping percent change for "</span>
+                                    <span class="s2">"</span><span class="si">{0}</span><span class="s2">... All data is zero."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">_key</span><span class="p">))</span>
                                 <span class="k">continue</span>
                         <span class="c1"># Take percent difference</span>
                         <span class="n">avg_p_change</span> <span class="o">=</span> <span class="n">calc_avg_p_change</span><span class="p">(</span>
@@ -610,17 +610,17 @@
                             <span class="n">undefined_p_change_val</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span>
                             <span class="n">_undefined_p_change_val_</span><span class="p">)</span>
                         <span class="k">if</span> <span class="n">avg_p_change</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;None in avg_p_change!? &quot;</span>
-                                             <span class="s2">&quot;This shouldn&#39;t happen...&quot;</span><span class="p">)</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"None in avg_p_change!? "</span>
+                                             <span class="s2">"This shouldn't happen..."</span><span class="p">)</span>
                         <span class="k">else</span><span class="p">:</span>
                             <span class="c1"># update into regr_dfs_per_class</span>
                             <span class="c1"># - all data available for regression</span>
                             <span class="n">my_kwargs</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
                             <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">avg_p_change</span><span class="p">)[</span><span class="mi">0</span><span class="p">]):</span>
-                                <span class="n">new_col_str</span> <span class="o">=</span> <span class="s2">&quot;APC</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                                <span class="n">new_col_str</span> <span class="o">=</span> <span class="s2">"APC</span><span class="si">{0}</span><span class="s2">_</span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                     <span class="bp">self</span><span class="o">.</span><span class="n">_n_neighbors_</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">_key</span>
                                 <span class="p">)</span>
-                                <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">&quot;</span> <span class="o">+</span> <span class="n">new_col_str</span><span class="p">)</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">"</span> <span class="o">+</span> <span class="n">new_col_str</span><span class="p">)</span>
                                 <span class="n">my_kwargs</span><span class="p">[</span><span class="n">new_col_str</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg_p_change</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
                             <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
                                 <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span>
@@ -630,10 +630,10 @@
 
                 <span class="k">else</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span>
-                        <span class="n">verbose</span><span class="p">,</span> <span class="s2">&quot;No regression data in &#39;</span><span class="si">{0}</span><span class="s2">&#39;.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+                        <span class="n">verbose</span><span class="p">,</span> <span class="s2">"No regression data in '</span><span class="si">{0}</span><span class="s2">'."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
                     <span class="p">)</span>
 
-        <span class="n">info_str_17</span> <span class="o">=</span> <span class="s2">&quot;::: TableData created in </span><span class="si">{0:.2f}</span><span class="s2"> seconds :::&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="n">info_str_17</span> <span class="o">=</span> <span class="s2">"::: TableData created in </span><span class="si">{0:.2f}</span><span class="s2"> seconds :::"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span>
         <span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">__vb_helper</span><span class="p">(</span><span class="n">verbose</span><span class="p">,</span> <span class="n">info_str_17</span><span class="p">)</span>
@@ -642,7 +642,7 @@
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.find_n_neighbors">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_n_neighbors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_data</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="p">,</span> <span class="n">neighbor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                          <span class="n">return_avg_dists</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the N nearest neighbors of a given set of arbitrary points.</span>
+<span class="w">        </span><span class="sd">"""Find the N nearest neighbors of a given set of arbitrary points.</span>
 
 <span class="sd">        Given a set of arbitrary input points, find the N nearest neighbors</span>
 <span class="sd">        to each point, not including themselves. Can also return average</span>
@@ -658,7 +658,7 @@
 <span class="sd">            For passing your own object.</span>
 <span class="sd">        return_avg_dists : bool, optional</span>
 <span class="sd">            If True, return the a dictionary with average distances between</span>
-<span class="sd">            the N nearest neighbors listed in &#39;n_neighbors&#39;.</span>
+<span class="sd">            the N nearest neighbors listed in 'n_neighbors'.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            class_key : str</span>
 <span class="sd">                If a DataFrame is given, specifies class column name.</span>
@@ -672,8 +672,8 @@
 <span class="sd">            Returned if return_avg_dists is True.</span>
 <span class="sd">            The average distances between the nearest neighbors.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;class_key&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="n">class_key</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"class_key"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">class_key</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">[</span><span class="n">class_key</span><span class="p">]</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">input_data</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -684,7 +684,7 @@
             <span class="k">pass</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;input_data must be pandas DataFrame or numpy array&quot;</span><span class="p">)</span>
+                <span class="s2">"input_data must be pandas DataFrame or numpy array"</span><span class="p">)</span>
 
         <span class="n">where_nearest_neighbors</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
         <span class="n">avg_distances</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -701,8 +701,8 @@
 
 <div class="viewcode-block" id="TableData.get_data">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.get_data">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get all data contained in TableData object.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">"full"</span><span class="p">,</span> <span class="n">return_df</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get all data contained in TableData object.</span>
 
 <span class="sd">        The data is returned after omission of columns and rows containing</span>
 <span class="sd">        specified values (if given) and taking a subset (if given) of the</span>
@@ -712,10 +712,10 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        what_data: str, list, optional</span>
-<span class="sd">            Default is &#39;full&#39; with other options &#39;input&#39;, or &#39;output&#39;.</span>
-<span class="sd">            &#39;full&#39; - original data table (after omission and subsets)</span>
-<span class="sd">            &#39;input&#39; - only data identified as inputs from &#39;full&#39; data set</span>
-<span class="sd">            &#39;output&#39; - only data identified as outputs from &#39;full&#39; data set</span>
+<span class="sd">            Default is 'full' with other options 'input', or 'output'.</span>
+<span class="sd">            'full' - original data table (after omission and subsets)</span>
+<span class="sd">            'input' - only data identified as inputs from 'full' data set</span>
+<span class="sd">            'output' - only data identified as outputs from 'full' data set</span>
 <span class="sd">        return_df: bool, optional</span>
 <span class="sd">            If True, return a pandas DataFrame object.</span>
 <span class="sd">            If False (default), return a numpy array.</span>
@@ -726,18 +726,18 @@
 <span class="sd">            Data before classification and regression data sorting is done.</span>
 <span class="sd">            Will return tuple of len(what_data) if a list is passed.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">,</span>
-            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_</span><span class="p">,</span>
-            <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">,</span>
+            <span class="s2">"input"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">,</span>
+            <span class="s2">"output"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_output_</span><span class="p">,</span>
+            <span class="s2">"full"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span><span class="p">,</span>
         <span class="p">}</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
             <span class="n">my_data</span> <span class="o">=</span> <span class="n">data_dict</span><span class="p">[</span><span class="n">what_data</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span>
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">my_data</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data_dict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">what_data</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{0}</span><span class="s2">&#39; not supported. Try </span><span class="si">{1}</span><span class="s2">.&quot;</span><span class="o">.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'</span><span class="si">{0}</span><span class="s2">' not supported. Try </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span>
                              <span class="nb">format</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">if</span> <span class="n">return_df</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">my_data</span>
@@ -748,7 +748,7 @@
 <div class="viewcode-block" id="TableData.get_binary_mapping_per_class">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.get_binary_mapping_per_class">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_binary_mapping_per_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get binary mapping (0 or 1) of the class data.</span>
+<span class="w">        </span><span class="sd">"""Get binary mapping (0 or 1) of the class data.</span>
 
 <span class="sd">        Get binary mapping (0 or 1) of the class data for each unique</span>
 <span class="sd">        classification. For each classification, a value of 1 is given</span>
@@ -767,9 +767,9 @@
 <span class="sd">        binary_class_data: ndarray</span>
 <span class="sd">            N by M array where N is the number of classes and M is the</span>
 <span class="sd">            number of classifications in the data set.</span>
-<span class="sd">            Order is determined by &#39;_unique_class_keys_&#39;.</span>
+<span class="sd">            Order is determined by '_unique_class_keys_'.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">cls</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
         <span class="c1"># create a different array for each class - one against all</span>
         <span class="n">binary_class_data</span> <span class="o">=</span> <span class="p">[]</span>
@@ -782,8 +782,8 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_return_data_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a regular or hidden class variable.&quot;&quot;&quot;</span>
-        <span class="n">hidden_name</span> <span class="o">=</span> <span class="s2">&quot;_&quot;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">&quot;_&quot;</span>
+<span class="w">        </span><span class="sd">"""Return a regular or hidden class variable."""</span>
+        <span class="n">hidden_name</span> <span class="o">=</span> <span class="s2">"_"</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s2">"_"</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
         <span class="k">elif</span> <span class="n">hidden_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="p">:</span>
@@ -791,7 +791,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
                 <span class="nb">print</span><span class="p">(</span>
-                    <span class="s2">&quot;</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2"> not in class variables: </span><span class="se">\n</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="s2">"</span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2"> not in class variables: </span><span class="se">\n</span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                         <span class="n">name</span><span class="p">,</span> <span class="n">hidden_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span>
                     <span class="p">)</span>
                 <span class="p">)</span>
@@ -799,27 +799,27 @@
 
 <div class="viewcode-block" id="TableData.get_class_data">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.get_class_data">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_class_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data related to classification.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_class_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">"full"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get data related to classification.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        what_data, str, list, optional</span>
-<span class="sd">            &#39;class_col&#39; (array)</span>
+<span class="sd">            'class_col' (array)</span>
 <span class="sd">                - Original classification data.</span>
-<span class="sd">            &#39;unique_class_keys&#39; (array)</span>
+<span class="sd">            'unique_class_keys' (array)</span>
 <span class="sd">                - Unique classes found in the classification data.</span>
-<span class="sd">            &#39;class_col_to_ids&#39; (array)</span>
+<span class="sd">            'class_col_to_ids' (array)</span>
 <span class="sd">                - Original classification data replaced with their</span>
 <span class="sd">                  respective class IDs (integers).</span>
-<span class="sd">            &#39;class_id_mapping&#39; (dict)</span>
+<span class="sd">            'class_id_mapping' (dict)</span>
 <span class="sd">                - Mapping between a classification from the original</span>
 <span class="sd">                  data set and its class ID.</span>
-<span class="sd">            &#39;binary_data&#39; (ndarray)</span>
+<span class="sd">            'binary_data' (ndarray)</span>
 <span class="sd">                - Iterating over the unique classes, classification data</span>
 <span class="sd">                  is turned into 1 or 0 if it matches the given class.</span>
-<span class="sd">                  See method &#39;get_binary_mapping_per_class()&#39;.</span>
-<span class="sd">            &#39;full&#39; (tuple)</span>
+<span class="sd">                  See method 'get_binary_mapping_per_class()'.</span>
+<span class="sd">            'full' (tuple)</span>
 <span class="sd">                - All options listed above. (Default)</span>
 
 <span class="sd">        Returns</span>
@@ -827,20 +827,20 @@
 <span class="sd">        class_data: tuple, ndarray, dict</span>
 <span class="sd">            An object containing the specified classification data.</span>
 <span class="sd">            Will return tuple of len(what_data) if a list is passed. Default: 5</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">binary_class_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_binary_mapping_per_class</span><span class="p">()</span>
         <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span>
             <span class="c1"># simply the class column</span>
-            <span class="s2">&quot;class_col&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_</span><span class="p">,</span>
+            <span class="s2">"class_col"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_</span><span class="p">,</span>
             <span class="c1"># unique values in class column</span>
-            <span class="s2">&quot;unique_class_keys&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_class_keys_</span><span class="p">,</span>
+            <span class="s2">"unique_class_keys"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_unique_class_keys_</span><span class="p">,</span>
             <span class="c1"># class column but class strings turned into integers (class IDs)</span>
-            <span class="s2">&quot;class_col_to_ids&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_to_ids_</span><span class="p">,</span>
+            <span class="s2">"class_col_to_ids"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_to_ids_</span><span class="p">,</span>
             <span class="c1"># maps between a class ID and the original class string</span>
-            <span class="s2">&quot;class_id_mapping&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_id_mapping_</span><span class="p">,</span>
+            <span class="s2">"class_id_mapping"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_id_mapping_</span><span class="p">,</span>
             <span class="c1"># for all classes, 1 where that class, 0 else</span>
-            <span class="s2">&quot;binary_data&quot;</span><span class="p">:</span> <span class="n">binary_class_data</span><span class="p">,</span>
-            <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span>
+            <span class="s2">"binary_data"</span><span class="p">:</span> <span class="n">binary_class_data</span><span class="p">,</span>
+            <span class="s2">"full"</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">(</span>
                 <span class="p">[</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_class_col_</span><span class="p">,</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_unique_class_keys_</span><span class="p">,</span>
@@ -855,35 +855,35 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">class_data</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data_dict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">what_data</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{0}</span><span class="s2">&#39; not supported. Try </span><span class="si">{1}</span><span class="s2">.&quot;</span><span class="o">.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'</span><span class="si">{0}</span><span class="s2">' not supported. Try </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span>
                              <span class="nb">format</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">class_data</span></div>
 
 
 <div class="viewcode-block" id="TableData.get_regr_data">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.get_regr_data">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_regr_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">&quot;full&quot;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get data related to regression all sorted by class in dictionaries.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_regr_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what_data</span><span class="o">=</span><span class="s2">"full"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Get data related to regression all sorted by class in dictionaries.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        what_data: str, list, optional</span>
-<span class="sd">            &#39;input&#39; - For each class, the input data with no cleaning.</span>
-<span class="sd">            &#39;raw_output&#39; - For each class, the output data with no cleaning.</span>
-<span class="sd">            &#39;output&#39; - For each class, the cleaned output data.</span>
-<span class="sd">            &#39;full&#39; - All options listed above in that respective order.</span>
+<span class="sd">            'input' - For each class, the input data with no cleaning.</span>
+<span class="sd">            'raw_output' - For each class, the output data with no cleaning.</span>
+<span class="sd">            'output' - For each class, the cleaned output data.</span>
+<span class="sd">            'full' - All options listed above in that respective order.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        data: tuple, ndarray or DataFrame</span>
 <span class="sd">            An object containing the specified regression data.</span>
 <span class="sd">            Will return tuple of len(what_data) if a list is passed. Default: 3</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">data_dict</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;input&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_inputs_</span><span class="p">,</span>
-            <span class="s2">&quot;raw_output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_outputs_</span><span class="p">,</span>
-            <span class="s2">&quot;output&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">,</span>
-            <span class="s2">&quot;full&quot;</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_regr_inputs_</span><span class="p">,</span>
+            <span class="s2">"input"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_inputs_</span><span class="p">,</span>
+            <span class="s2">"raw_output"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_outputs_</span><span class="p">,</span>
+            <span class="s2">"output"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">,</span>
+            <span class="s2">"full"</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_regr_inputs_</span><span class="p">,</span>
                            <span class="bp">self</span><span class="o">.</span><span class="n">_regr_outputs_</span><span class="p">,</span>
                            <span class="bp">self</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="p">]),</span>
         <span class="p">}</span>
@@ -892,7 +892,7 @@
         <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
             <span class="n">regr_data</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">data_dict</span><span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">lower</span><span class="p">()]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">what_data</span><span class="p">])</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;</span><span class="si">{0}</span><span class="s2">&#39; not supported. Try </span><span class="si">{1}</span><span class="s2">.&quot;</span><span class="o">.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'</span><span class="si">{0}</span><span class="s2">' not supported. Try </span><span class="si">{1}</span><span class="s2">."</span><span class="o">.</span>
                              <span class="nb">format</span><span class="p">(</span><span class="n">what_data</span><span class="p">,</span> <span class="n">data_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
         <span class="k">return</span> <span class="n">regr_data</span></div>
 
@@ -900,22 +900,22 @@
 <div class="viewcode-block" id="TableData.info">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Print info for the instance of TableData object.</span>
+<span class="w">        </span><span class="sd">"""Print info for the instance of TableData object.</span>
 
-<span class="sd">        For output descriptions see the method &#39;get_info()&#39;.</span>
+<span class="sd">        For output descriptions see the method 'get_info()'.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;File List: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files_</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;df Index Keys: </span><span class="se">\n</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---- VERBOSE OUTPUT START ----&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_for_info_</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;---- VERBOSE OUTPUT  END  ----&quot;</span><span class="p">)</span></div>
+<span class="sd">        """</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"File List: </span><span class="se">\n</span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_files_</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"df Index Keys: </span><span class="se">\n</span><span class="si">{0}</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="p">)))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"---- VERBOSE OUTPUT START ----"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_for_info_</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"---- VERBOSE OUTPUT  END  ----"</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TableData.get_info">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.data.TableData.get_info">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return what info is printed in the &#39;info()&#39; method.</span>
+<span class="w">        </span><span class="sd">"""Return what info is printed in the 'info()' method.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -927,8 +927,8 @@
 <span class="sd">            access data by file after they were joined.</span>
 <span class="sd">        for_info: list</span>
 <span class="sd">            Running list of print statements that include but</span>
-<span class="sd">            are not limited to what is shown if &#39;verbose=True&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">            are not limited to what is shown if 'verbose=True'.</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_files_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df_index_keys_</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_for_info_</span><span class="p">])</span></div>
 
 
@@ -941,10 +941,10 @@
         <span class="n">mark_size</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
         <span class="n">which_val</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
         <span class="n">save_fig</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">plt_str</span><span class="o">=</span><span class="s2">&quot;0&quot;</span><span class="p">,</span>
+        <span class="n">plt_str</span><span class="o">=</span><span class="s2">"0"</span><span class="p">,</span>
         <span class="n">color_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
     <span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the 3D classification data in a 2D plot.</span>
+<span class="w">        </span><span class="sd">"""Plot the 3D classification data in a 2D plot.</span>
 
 <span class="sd">        3 input axis with classification output.</span>
 
@@ -957,48 +957,48 @@
 <span class="sd">            Example:</span>
 <span class="sd">            The default orderd is col_1, col_2, col_3.</span>
 <span class="sd">            To change the horizontal axis from col_1 to col_2 you would use:</span>
-<span class="sd">                &#39;axes = [&quot;col_2&quot;, &quot;col_1&quot;, &quot;col_3&quot;]&#39;</span>
+<span class="sd">                'axes = ["col_2", "col_1", "col_3"]'</span>
 <span class="sd">        fig_size: tuple, optional, default = (4,5)</span>
-<span class="sd">            Size of the figure. (Matplotlib figure kwarg &#39;fig_size&#39;)</span>
+<span class="sd">            Size of the figure. (Matplotlib figure kwarg 'fig_size')</span>
 <span class="sd">        mark_size: float, optional, default = 12</span>
-<span class="sd">            Size of the scatter plot markers. (Matplotlib scatter kwarg &#39;s&#39;)</span>
+<span class="sd">            Size of the scatter plot markers. (Matplotlib scatter kwarg 's')</span>
 <span class="sd">        which_val: int, default = 0</span>
-<span class="sd">            Integer choosing what unique value to &#39;slice&#39; on in the</span>
+<span class="sd">            Integer choosing what unique value to 'slice' on in the</span>
 <span class="sd">            3D data such that it can be plotted on 2D.</span>
 <span class="sd">            (If you had x,y,z data you need to choose a z value)</span>
 <span class="sd">        save_fig: bool, default = False</span>
 <span class="sd">            Save the figure in the local directory.</span>
-<span class="sd">        plt_str: str, default = &#39;0&#39;</span>
+<span class="sd">        plt_str: str, default = '0'</span>
 <span class="sd">            If you are saving multiple figures you can pass a string</span>
 <span class="sd">            which will be added to the end of the default:</span>
-<span class="sd">            &quot;data_plot_{plt_str}.pdf&quot;</span>
+<span class="sd">            "data_plot_{plt_str}.pdf"</span>
 <span class="sd">        color_list: list, default = None</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        matplotlib figure</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">full_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_full_data_</span>
         <span class="n">input_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span>
 
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;2D input data&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"2D input data"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_data</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;3D input data&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"3D input data"</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">axes</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">first_axis</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">,</span> <span class="n">third_axis</span> <span class="o">=</span> <span class="n">axes</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">first_axis</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">,</span> <span class="n">third_axis</span> <span class="o">=</span> <span class="n">input_data</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Axes: </span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Axes: </span><span class="si">{0}</span><span class="s2">, </span><span class="si">{1}</span><span class="s2">, </span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span>
               <span class="nb">format</span><span class="p">(</span><span class="n">first_axis</span><span class="p">,</span> <span class="n">second_axis</span><span class="p">,</span> <span class="n">third_axis</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">color_list</span><span class="p">:</span>
             <span class="n">colors</span> <span class="o">=</span> <span class="n">color_list</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;To set default colors for this object,</span><span class="se">\</span>
-<span class="s2">                    re-istantiate using the option &#39;my_colors&#39;.&quot;</span>
+                <span class="s2">"To set default colors for this object,</span><span class="se">\</span>
+<span class="s2">                    re-istantiate using the option 'my_colors'."</span>
             <span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">colors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_colors_</span>
@@ -1014,16 +1014,16 @@
                 <span class="n">Line2D</span><span class="p">(</span>
                     <span class="p">[],</span>
                     <span class="p">[],</span>
-                    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span>
                     <span class="n">color</span><span class="o">=</span><span class="n">color_dict</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                     <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                    <span class="n">linestyle</span><span class="o">=</span><span class="s2">"None"</span><span class="p">,</span>
                     <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
         <span class="c1"># --------------</span>
 
-        <span class="c1"># Specify value of other &#39;3rd&#39; axis not in 2D plot</span>
+        <span class="c1"># Specify value of other '3rd' axis not in 2D plot</span>
         <span class="n">slice_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">full_data</span><span class="p">[</span><span class="n">third_axis</span><span class="p">])[</span><span class="n">which_val</span><span class="p">]</span>
 
         <span class="c1"># boolean data frame</span>
@@ -1038,22 +1038,22 @@
         <span class="n">class_to_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">color_dict</span><span class="p">[</span><span class="n">val</span><span class="p">]</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">IDs</span><span class="p">[</span><span class="n">what_index</span><span class="p">]]</span>
 
         <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">fig_size</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">third_axis</span> <span class="o">+</span> <span class="s2">&quot;= </span><span class="si">%f</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">slice_value</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">third_axis</span> <span class="o">+</span> <span class="s2">"= </span><span class="si">%f</span><span class="s2">"</span> <span class="o">%</span> <span class="p">(</span><span class="n">slice_value</span><span class="p">))</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span>
             <span class="n">data_to_plot</span><span class="p">[</span><span class="n">first_axis</span><span class="p">],</span>
             <span class="n">data_to_plot</span><span class="p">[</span><span class="n">second_axis</span><span class="p">],</span>
             <span class="n">c</span><span class="o">=</span><span class="n">class_to_colors</span><span class="p">,</span>
             <span class="n">cmap</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
             <span class="n">s</span><span class="o">=</span><span class="n">mark_size</span><span class="p">,</span>
-            <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+            <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="n">first_axis</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="n">second_axis</span><span class="p">)</span>
         <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_elements</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mf">1.03</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
-            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">&quot;data_plot_</span><span class="si">{0}</span><span class="s2">.pdf&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plt_str</span><span class="p">),</span>
-                        <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">&quot;tight&quot;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="s2">"data_plot_</span><span class="si">{0}</span><span class="s2">.pdf"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plt_str</span><span class="p">),</span>
+                        <span class="n">bbox_inches</span><span class="o">=</span><span class="s2">"tight"</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">fig</span></div>
 
 
@@ -1062,7 +1062,7 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">make_class_data_plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span><span class="p">,</span> <span class="n">axes_keys</span><span class="p">,</span> <span class="n">my_slice_vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                              <span class="n">my_class_colors</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">return_legend_handles</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                              <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot classification data on a given axis and figure.</span>
+<span class="w">        </span><span class="sd">"""Plot classification data on a given axis and figure.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1097,17 +1097,17 @@
 <span class="sd">            Updated axis after plotting.</span>
 <span class="sd">        handles : optional, list</span>
 <span class="sd">            List of legend handles connecting classes and their colors.</span>
-<span class="sd">            Returned if &#39;return_legend_handles&#39; is True. Default is False.</span>
+<span class="sd">            Returned if 'return_legend_handles' is True. Default is False.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># Converting class ids to colors for plotting</span>
         <span class="k">if</span> <span class="n">my_class_colors</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">class_colors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_class_colors_</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">my_class_colors</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;&#39;my_class_colors&#39; takes a list of strings&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"'my_class_colors' takes a list of strings"</span><span class="p">)</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using my_class_colors...&quot;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Using my_class_colors..."</span><span class="p">)</span>
             <span class="n">class_colors</span> <span class="o">=</span> <span class="n">my_class_colors</span>
 
         <span class="n">color_dict</span> <span class="o">=</span> <span class="n">OrderedDict</span><span class="p">()</span>
@@ -1124,10 +1124,10 @@
                 <span class="n">Line2D</span><span class="p">(</span>
                     <span class="p">[],</span>
                     <span class="p">[],</span>
-                    <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span>
                     <span class="n">color</span><span class="o">=</span><span class="n">color_dict</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
                     <span class="n">label</span><span class="o">=</span><span class="n">name</span><span class="p">,</span>
-                    <span class="n">linestyle</span><span class="o">=</span><span class="s2">&quot;None&quot;</span><span class="p">,</span>
+                    <span class="n">linestyle</span><span class="o">=</span><span class="s2">"None"</span><span class="p">,</span>
                     <span class="n">markersize</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span>
                 <span class="p">)</span>
             <span class="p">)</span>
@@ -1151,11 +1151,11 @@
             <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">slice_axis</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">slicing_axes</span><span class="p">):</span>
                 <span class="n">unique_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">[</span><span class="n">slice_axis</span><span class="p">])</span>
                 <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Slice Axis: &#39;</span><span class="si">{0}</span><span class="s2">&#39;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">slice_axis</span><span class="p">))</span>
-                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Unique values: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_vals</span><span class="p">)))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"Slice Axis: '</span><span class="si">{0}</span><span class="s2">'"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">slice_axis</span><span class="p">))</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Unique values: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">unique_vals</span><span class="p">)))</span>
                 <span class="k">if</span> <span class="n">my_slice_vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Slice value: </span><span class="si">{0}</span><span class="s2">, &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Slice value: </span><span class="si">{0}</span><span class="s2">, '</span><span class="si">{1}</span><span class="s2">'"</span><span class="o">.</span>
                               <span class="nb">format</span><span class="p">(</span><span class="n">slice_axis</span><span class="p">,</span> <span class="n">unique_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
                     <span class="n">where_this_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
                         <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">[</span><span class="n">slice_axis</span><span class="p">]</span> <span class="o">==</span> <span class="n">unique_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
@@ -1163,12 +1163,12 @@
                 <span class="k">else</span><span class="p">:</span>
                     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_slice_vals</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">slicing_axes</span><span class="p">):</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                            <span class="s2">&quot;Need </span><span class="si">{0}</span><span class="s2"> slice value(s) and </span><span class="si">{1}</span><span class="s2"> given.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                            <span class="s2">"Need </span><span class="si">{0}</span><span class="s2"> slice value(s) and </span><span class="si">{1}</span><span class="s2"> given."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                                 <span class="nb">len</span><span class="p">(</span><span class="n">slicing_axes</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">my_slice_vals</span><span class="p">)</span>
                             <span class="p">)</span>
                         <span class="p">)</span>
                     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Slice val: </span><span class="si">{0}</span><span class="s2">, &#39;</span><span class="si">{1}</span><span class="s2">&#39;&quot;</span><span class="o">.</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">Slice val: </span><span class="si">{0}</span><span class="s2">, '</span><span class="si">{1}</span><span class="s2">'"</span><span class="o">.</span>
                               <span class="nb">format</span><span class="p">(</span><span class="n">slice_axis</span><span class="p">,</span> <span class="n">my_slice_vals</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">my_slice_vals</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
                         <span class="n">where_this_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -1181,7 +1181,7 @@
                         <span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
                         <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                            <span class="s2">&quot;`my_slice_vals` must be list or dict, </span><span class="si">{0}</span><span class="s2"> given.&quot;</span><span class="o">.</span>
+                            <span class="s2">"`my_slice_vals` must be list or dict, </span><span class="si">{0}</span><span class="s2"> given."</span><span class="o">.</span>
                             <span class="nb">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">my_slice_vals</span><span class="p">)))</span>
                 <span class="n">running_bool_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">where_this_val</span><span class="p">)</span>  <span class="c1"># for one axis</span>
             <span class="n">all_results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
@@ -1195,9 +1195,9 @@
             <span class="n">y_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">[</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">rows_where_all_true</span><span class="p">]</span>
             <span class="n">class_to_colors</span> <span class="o">=</span> <span class="n">class_to_colors</span><span class="p">[</span><span class="n">rows_where_all_true</span><span class="p">]</span>
             <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">N total points: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">N total points: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span>
                       <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">[</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]])))</span>
-                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">N points in hyperplane: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\t</span><span class="s2">N points in hyperplane: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span>
                       <span class="nb">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">rows_where_all_true</span><span class="p">)))</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">x_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_input_</span><span class="p">[</span><span class="n">axes_keys</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>

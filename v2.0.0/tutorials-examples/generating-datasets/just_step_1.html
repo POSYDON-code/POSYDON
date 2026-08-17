@@ -156,8 +156,8 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s1">&#39;grid_params/pipeline_yggdrasil.ini&#39;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">&#39;./pipeline.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_ini</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s1">'grid_params/pipeline_yggdrasil.ini'</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_ini</span><span class="p">,</span> <span class="s1">'./pipeline.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -179,7 +179,7 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
 
-<span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">&#39;POSYDON_data/tutorials/processing-pipeline&#39;</span><span class="p">)</span>
+<span class="n">PATH_TO_GRIDS</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s1">'POSYDON_data/tutorials/processing-pipeline'</span><span class="p">)</span>
 <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">PATH_TO_GRIDS</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -203,10 +203,10 @@ env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS
 </pre></div>
 </div>
 <p>And edit the <code class="docutils literal notranslate"><span class="pre">[step_1]</span></code> section of the file to</p>
-<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[&#39;HMS-HMS&#39;]</span>
-<span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;1e-01_Zsun&#39;]]</span>
-<span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;test_grid&#39;]]</span>
-<span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[[&#39;LITE&#39;, &#39;ORIGINAL&#39;]]</span>
+<div class="highlight-ini notranslate"><div class="highlight"><pre><span></span><span class="na">GRID_TYPES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">['HMS-HMS']</span>
+<span class="na">METALLICITIES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['1e-01_Zsun']]</span>
+<span class="na">GRID_SLICES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['test_grid']]</span>
+<span class="na">COMPRESSIONS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[['LITE', 'ORIGINAL']]</span>
 <span class="na">DROP_MISSING_FILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">True</span>
 <span class="na">STOP_BEFORE_CARBON_DEPLETION</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">1</span>
 <span class="na">CREATE_PLOTS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">[]</span>
@@ -383,7 +383,7 @@ Loading HDF5 grid...
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
 
-<span class="n">path_to_lite_grid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_GRIDS</span><span class="p">,</span> <span class="s1">&#39;HMS-HMS/1e-01_Zsun/LITE/test_grid.h5&#39;</span><span class="p">)</span>
+<span class="n">path_to_lite_grid</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_GRIDS</span><span class="p">,</span> <span class="s1">'HMS-HMS/1e-01_Zsun/LITE/test_grid.h5'</span><span class="p">)</span>
 <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">path_to_lite_grid</span><span class="p">)</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
@@ -408,7 +408,7 @@ Loading HDF5 grid...
 
 <span class="c1"># show unique interpolation classes</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">])</span>
+<span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">'interpolation_class'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -428,7 +428,7 @@ array([&#39;initial_MT&#39;, &#39;no_MT&#39;, &#39;not_converged&#39;, &#39;stab
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">Counter</span>
-<span class="n">Counter</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">])</span>
+<span class="n">Counter</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">'interpolation_class'</span><span class="p">])</span>
 </pre></div>
 </div>
 </div>
@@ -450,7 +450,7 @@ Counter({&#39;stable_MT&#39;: 37,
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[45]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">&#39;interpolation_class&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;not_converged&#39;</span><span class="p">))</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">ids</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argwhere</span><span class="p">(</span><span class="n">grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s1">'interpolation_class'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'not_converged'</span><span class="p">))</span>
 <span class="n">ids</span>
 </pre></div>
 </div>
@@ -468,7 +468,7 @@ array([ 7, 19, 28, 35, 49, 63, 64, 70, 72, 77, 86])
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[46]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span><span class="o">.</span><span class="n">rerun</span><span class="p">(</span><span class="n">runs_to_rerun</span><span class="o">=</span><span class="n">ids</span><span class="p">,</span> <span class="n">new_mesa_flag</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;opacity_max&#39;</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">grid</span><span class="o">.</span><span class="n">rerun</span><span class="p">(</span><span class="n">runs_to_rerun</span><span class="o">=</span><span class="n">ids</span><span class="p">,</span> <span class="n">new_mesa_flag</span><span class="o">=</span><span class="p">{</span><span class="s1">'opacity_max'</span> <span class="p">:</span> <span class="mf">0.5</span><span class="p">})</span>
 </pre></div>
 </div>
 </div>

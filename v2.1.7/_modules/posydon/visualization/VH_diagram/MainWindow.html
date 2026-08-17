@@ -112,32 +112,32 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.VH_diagram.MainWindow</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Main Window handler for VH diagram.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Main Window handler for VH diagram."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="k">try</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QScrollArea</span><span class="p">,</span> <span class="n">QApplication</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyqtSignal</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory&#39;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">'PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory'</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.GraphVisualizer</span><span class="w"> </span><span class="kn">import</span> <span class="n">GraphVisualizer</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.OptionsWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">OptionsWindow</span>
 
 
 <span class="c1"># Indirection layer to combine options and widget</span>
-<span class="c1"># Options&#39;s signals maybe replaced by Obvsevable pattern</span>
+<span class="c1"># Options's signals maybe replaced by Obvsevable pattern</span>
 <div class="viewcode-block" id="VisualizerInterface">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.MainWindow.VisualizerInterface">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">VisualizerInterface</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle for all callback triggered by user.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Handle for all callback triggered by user."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_win</span><span class="p">,</span> <span class="n">visualizer</span><span class="p">,</span> <span class="n">options</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a VisualizerInterface instance.</span>
+<span class="w">        </span><span class="sd">"""Initialize a VisualizerInterface instance.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -148,13 +148,13 @@
 <span class="sd">        options : OptionsWindow</span>
 <span class="sd">            Window used to display options.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_main_win</span> <span class="o">=</span> <span class="n">main_win</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span> <span class="o">=</span> <span class="n">visualizer</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_options</span> <span class="o">=</span> <span class="n">options</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the visualizer.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the visualizer."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span>
 
 <div class="viewcode-block" id="VisualizerInterface.detail_required">
@@ -204,15 +204,15 @@
 <div class="viewcode-block" id="MainWindow">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.MainWindow.MainWindow">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Custom window to display the application.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Custom window to display the application."""</span>
 
     <span class="n">save_requiered</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a MainWindow instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize a MainWindow instance."""</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">MainWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Simulation visualisation&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Simulation visualisation"</span><span class="p">)</span>
 
         <span class="n">screen_geometry</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screenGeometry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">screen_geometry</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.66</span><span class="p">),</span>
@@ -224,7 +224,7 @@
 <div class="viewcode-block" id="MainWindow.start_visualization">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.MainWindow.MainWindow.start_visualization">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">start_visualization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Star the visualization.</span>
+<span class="w">        </span><span class="sd">"""Star the visualization.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -232,7 +232,7 @@
 <span class="sd">            Return the interface with current window, binded visualizer widget</span>
 <span class="sd">            and option window. Expose callbacks.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span> <span class="o">=</span> <span class="n">QScrollArea</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_visualizer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">scroll_area</span><span class="o">.</span><span class="n">setWidgetResizable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -242,12 +242,12 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup_visualizer_option</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare all displayed option on MenuBar.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Prepare all displayed option on MenuBar."""</span>
         <span class="n">bar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span>
         <span class="n">bar</span><span class="o">.</span><span class="n">setNativeMenuBar</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
-        <span class="n">option_action</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot; &amp;Options&quot;</span><span class="p">)</span>
+        <span class="n">option_action</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">" &amp;Options"</span><span class="p">)</span>
         <span class="n">option_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_show_option_window</span><span class="p">)</span>
-        <span class="n">option_action</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot; &amp;Save&quot;</span><span class="p">)</span>
+        <span class="n">option_action</span> <span class="o">=</span> <span class="n">bar</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">" &amp;Save"</span><span class="p">)</span>
         <span class="n">option_action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">save_requiered</span><span class="o">.</span><span class="n">emit</span><span class="p">())</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">setMenuBar</span><span class="p">(</span><span class="n">bar</span><span class="p">)</span>
 
@@ -257,7 +257,7 @@
 <div class="viewcode-block" id="MainWindow.closeEvent">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.MainWindow.MainWindow.closeEvent">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">closeEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>    <span class="c1"># Override closeEvent of QWidget</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Close the option window.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Close the option window."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_option_window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
 </div>
 

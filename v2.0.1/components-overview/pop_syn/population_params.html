@@ -169,7 +169,7 @@ Note that the loading of the simulation steps is separate from creating the obje
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
 
 <span class="c1"># read from file</span>
-<span class="n">sim_props</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">sim_props</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">'population_params.ini'</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># create SimulationProperties object</span>
 <span class="n">sim</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_props</span><span class="p">)</span>
@@ -1038,7 +1038,7 @@ When reading the binary population arguments from a <code class="docutils litera
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">binarypop_kwargs_from_ini</span>
 
 <span class="c1"># read from file</span>
-<span class="n">pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">pop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="s1">'population_params.ini'</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
 <span class="c1"># create BinaryPopulation object</span>
 <span class="n">pop</span> <span class="o">=</span> <span class="n">BinaryPopulation</span><span class="p">(</span><span class="o">**</span><span class="n">pop_params</span><span class="p">)</span>
@@ -1367,7 +1367,7 @@ the parameters here determine what output of that class will be outputted into t
 <div class="line">Note: <code class="docutils literal notranslate"><span class="pre">'step_times'</span></code> requires <code class="docutils literal notranslate"><span class="pre">TimingHooks</span></code> from <code class="docutils literal notranslate"><span class="pre">posydon.binary_evol.simulationproperties</span></code>.</div>
 </div>
 </td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span><span class="s1">&#39;string&#39;</span><span class="p">,</span> <span class="s1">&#39;step_times&#39;</span><span class="p">:</span><span class="s1">&#39;float64&#39;</span><span class="p">}</span>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span><span class="s1">'string'</span><span class="p">,</span> <span class="s1">'step_times'</span><span class="p">:</span><span class="s1">'float64'</span><span class="p">}</span>
 </pre></div>
 </div>
 </td>
@@ -1399,12 +1399,12 @@ the parameters here determine what output of that class will be outputted into t
 <li><p><code class="docutils literal notranslate"><span class="pre">'nearest_neighbour_distance'</span></code>: The distance to the nearest neighbour.</p></li>
 </ul>
 </td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
-<span class="s1">&#39;event&#39;</span><span class="p">,</span>
-<span class="s1">&#39;time&#39;</span><span class="p">,</span>
-<span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span>
-<span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span>
-<span class="s1">&#39;lg_mtransfer_rate&#39;</span><span class="p">]</span>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">'state'</span><span class="p">,</span>
+<span class="s1">'event'</span><span class="p">,</span>
+<span class="s1">'time'</span><span class="p">,</span>
+<span class="s1">'orbital_period'</span><span class="p">,</span>
+<span class="s1">'eccentricity'</span><span class="p">,</span>
+<span class="s1">'lg_mtransfer_rate'</span><span class="p">]</span>
 </pre></div>
 </div>
 </td>
@@ -1425,14 +1425,14 @@ the parameters here determine what output of that class will be outputted into t
 <li><p><code class="docutils literal notranslate"><span class="pre">'mt_history_CO_HeMS_RLO'</span></code>: mass transfer history for CO-HeMS-RLO</p></li>
 </ul>
 </td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;interp_class_HMS_HMS&#39;</span><span class="p">,</span>
-<span class="s1">&#39;interp_class_CO_HMS_RLO&#39;</span><span class="p">,</span>
-<span class="s1">&#39;interp_class_CO_HeMS&#39;</span><span class="p">,</span>
-<span class="s1">&#39;interp_class_CO_HeMS_RLO&#39;</span><span class="p">,</span>
-<span class="s1">&#39;mt_history_HMS_HMS&#39;</span><span class="p">,</span>
-<span class="s1">&#39;mt_history_CO_HMS_RLO&#39;</span><span class="p">,</span>
-<span class="s1">&#39;mt_history_CO_HeMS&#39;</span><span class="p">,</span>
-<span class="s1">&#39;mt_history_CO_HeMS_RLO&#39;</span><span class="p">]</span>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">'interp_class_HMS_HMS'</span><span class="p">,</span>
+<span class="s1">'interp_class_CO_HMS_RLO'</span><span class="p">,</span>
+<span class="s1">'interp_class_CO_HeMS'</span><span class="p">,</span>
+<span class="s1">'interp_class_CO_HeMS_RLO'</span><span class="p">,</span>
+<span class="s1">'mt_history_HMS_HMS'</span><span class="p">,</span>
+<span class="s1">'mt_history_CO_HMS_RLO'</span><span class="p">,</span>
+<span class="s1">'mt_history_CO_HeMS'</span><span class="p">,</span>
+<span class="s1">'mt_history_CO_HeMS_RLO'</span><span class="p">]</span>
 </pre></div>
 </div>
 </td>
@@ -1530,21 +1530,21 @@ the parameters here determine what output of that class will be outputted into t
 <li><p><code class="docutils literal notranslate"><span class="pre">'total_mass_he4'</span></code>: The total Helium mass.</p></li>
 </ul>
 </td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
-<span class="s1">&#39;mass&#39;</span><span class="p">,</span>
-<span class="s1">&#39;log_R&#39;</span><span class="p">,</span>
-<span class="s1">&#39;log_L&#39;</span><span class="p">,</span>
-<span class="s1">&#39;lg_mdot&#39;</span><span class="p">,</span>
-<span class="s1">&#39;he_core_mass&#39;</span><span class="p">,</span>
-<span class="s1">&#39;he_core_radius&#39;</span><span class="p">,</span>
-<span class="s1">&#39;co_core_mass&#39;</span><span class="p">,</span>
-<span class="s1">&#39;co_core_radius&#39;</span><span class="p">,</span>
-<span class="s1">&#39;center_h1&#39;</span><span class="p">,</span>
-<span class="s1">&#39;center_he4&#39;</span><span class="p">,</span>
-<span class="s1">&#39;surface_h1&#39;</span><span class="p">,</span>
-<span class="s1">&#39;surface_he4&#39;</span><span class="p">,</span>
-<span class="s1">&#39;surf_avg_omega_div_omega_crit&#39;</span><span class="p">,</span>
-<span class="s1">&#39;spin&#39;</span><span class="p">,]</span>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">'state'</span><span class="p">,</span>
+<span class="s1">'mass'</span><span class="p">,</span>
+<span class="s1">'log_R'</span><span class="p">,</span>
+<span class="s1">'log_L'</span><span class="p">,</span>
+<span class="s1">'lg_mdot'</span><span class="p">,</span>
+<span class="s1">'he_core_mass'</span><span class="p">,</span>
+<span class="s1">'he_core_radius'</span><span class="p">,</span>
+<span class="s1">'co_core_mass'</span><span class="p">,</span>
+<span class="s1">'co_core_radius'</span><span class="p">,</span>
+<span class="s1">'center_h1'</span><span class="p">,</span>
+<span class="s1">'center_he4'</span><span class="p">,</span>
+<span class="s1">'surface_h1'</span><span class="p">,</span>
+<span class="s1">'surface_he4'</span><span class="p">,</span>
+<span class="s1">'surf_avg_omega_div_omega_crit'</span><span class="p">,</span>
+<span class="s1">'spin'</span><span class="p">,]</span>
 </pre></div>
 </div>
 </td>
@@ -1565,11 +1565,11 @@ the parameters here determine what output of that class will be outputted into t
 <li><p><code class="docutils literal notranslate"><span class="pre">'m_disk_radiated'</span></code>: The mass radiated from the disk.</p></li>
 </ul>
 </td>
-<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">&#39;natal_kick_array&#39;</span><span class="p">,</span>
-<span class="s1">&#39;SN_type&#39;</span><span class="p">,</span>
-<span class="s1">&#39;f_fb&#39;</span><span class="p">,</span>
-<span class="s1">&#39;spin_orbit_tilt_first_SN&#39;</span><span class="p">,</span>
-<span class="s1">&#39;spin_orbit_tilt_second_SN&#39;</span><span class="p">,]</span>
+<td><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">[</span><span class="s1">'natal_kick_array'</span><span class="p">,</span>
+<span class="s1">'SN_type'</span><span class="p">,</span>
+<span class="s1">'f_fb'</span><span class="p">,</span>
+<span class="s1">'spin_orbit_tilt_first_SN'</span><span class="p">,</span>
+<span class="s1">'spin_orbit_tilt_second_SN'</span><span class="p">,]</span>
 </pre></div>
 </div>
 </td>

@@ -112,10 +112,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.distributions</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Period and mass ratio distributions module for POSYDON.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Period and mass ratio distributions module for POSYDON."""</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span>
+    <span class="s2">"Max Briel &lt;max.briel@gmail.com&gt;"</span>
 <span class="p">]</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">quad</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -123,7 +123,7 @@
 <div class="viewcode-block" id="FlatMassRatio">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.FlatMassRatio">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">FlatMassRatio</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Flat mass ratio distribution for binary star systems.</span>
+<span class="w">    </span><span class="sd">"""Flat mass ratio distribution for binary star systems.</span>
 <span class="sd">    </span>
 <span class="sd">    A uniform distribution for mass ratios q = m2/m1 within specified bounds.</span>
 <span class="sd">    This distribution assigns equal probability to all mass ratios within the</span>
@@ -145,10 +145,10 @@
 <span class="sd">    --------</span>
 <span class="sd">    &gt;&gt;&gt; dist = FlatMassRatio(q_min=0.1, q_max=0.8)</span>
 <span class="sd">    &gt;&gt;&gt; pdf_value = dist.pdf(0.5)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q_min</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">q_max</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the flat mass ratio distribution.</span>
+<span class="w">        </span><span class="sd">"""Initialize the flat mass ratio distribution.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -161,59 +161,59 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If q_min or q_max are not in (0, 1], or if q_min &gt;= q_max.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">q_min</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;q_min must be in (0, 1)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"q_min must be in (0, 1)"</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mi">0</span> <span class="o">&lt;</span> <span class="n">q_max</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;q_max must be in (0, 1)&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"q_max must be in (0, 1)"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">q_min</span> <span class="o">&gt;=</span> <span class="n">q_max</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;q_min must be less than q_max&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"q_min must be less than q_max"</span><span class="p">)</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">q_min</span> <span class="o">=</span> <span class="n">q_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span> <span class="o">=</span> <span class="n">q_max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_normalization</span><span class="p">()</span>
         
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string representation of the distribution.</span>
+<span class="w">        </span><span class="sd">"""Return string representation of the distribution.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            String representation showing the distribution parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;FlatMassRatio(q_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="si">}</span><span class="s2">, q_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"FlatMassRatio(q_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="si">}</span><span class="s2">, q_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="si">}</span><span class="s2">)"</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return HTML representation for Jupyter notebooks.</span>
+<span class="w">        </span><span class="sd">"""Return HTML representation for Jupyter notebooks.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            HTML string for rich display in notebooks.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;Flat Mass Ratio Distribution&lt;/h3&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;q_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;q_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;h3&gt;Flat Mass Ratio Distribution&lt;/h3&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;q_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;q_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span><span class="p">)</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the normalization constant for the flat mass ratio </span>
+<span class="w">        </span><span class="sd">"""Calculate the normalization constant for the flat mass ratio </span>
 <span class="sd">        distribution.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The normalization constant ensuring the PDF integrates to 1.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">integral</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flat_mass_ratio</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">integral</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Normalization integral is zero. &quot;</span>
-                             <span class="s2">&quot;Check mass ratio parameters.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Normalization integral is zero. "</span>
+                             <span class="s2">"Check mass ratio parameters."</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">integral</span>
     
 <div class="viewcode-block" id="FlatMassRatio.flat_mass_ratio">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.FlatMassRatio.flat_mass_ratio">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">flat_mass_ratio</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the flat mass ratio distribution at a given mass.</span>
+<span class="w">        </span><span class="sd">"""Compute the flat mass ratio distribution at a given mass.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -224,14 +224,14 @@
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            Distribution value (always 1.0 for flat distribution).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mf">1.0</span></div>
 
     
 <div class="viewcode-block" id="FlatMassRatio.pdf">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.FlatMassRatio.pdf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probability density function of the flat mass ratio distribution.</span>
+<span class="w">        </span><span class="sd">"""Probability density function of the flat mass ratio distribution.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -242,7 +242,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Probability density at mass ratio q.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
         <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">q</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">q</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_max</span><span class="p">)</span>
         <span class="n">pdf_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -255,7 +255,7 @@
 <div class="viewcode-block" id="Sana12Period">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.Sana12Period">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Sana12Period</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Period distribution from Sana et al. (2012).</span>
+<span class="w">    </span><span class="sd">"""Period distribution from Sana et al. (2012).</span>
 <span class="sd">    </span>
 <span class="sd">    Orbital period distribution for massive binary stars based on the</span>
 <span class="sd">    observational study by Sana H., et al., 2012, Science, 337, 444.</span>
@@ -284,10 +284,10 @@
 <span class="sd">    Sana H., et al., 2012, Science, 337, 444</span>
 <span class="sd">    Bavera S., et al., 2021, A&amp;A, 647, A153</span>
 <span class="sd">    (https://ui.adsabs.harvard.edu/abs/2021A%26A...647A.153B/abstract)</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p_min</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="mf">6e3</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the Sana12 period distribution.</span>
+<span class="w">        </span><span class="sd">"""Initialize the Sana12 period distribution.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -300,11 +300,11 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If p_min is not positive or p_max &lt;= p_min.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">p_min</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;p_min must be positive&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p_min must be positive"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p_max</span> <span class="o">&lt;=</span> <span class="n">p_min</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;p_max must be greater than p_min&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p_max must be greater than p_min"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="n">p_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="n">p_max</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">mbreak</span> <span class="o">=</span> <span class="mi">15</span>
@@ -318,37 +318,37 @@
                                         <span class="bp">self</span><span class="o">.</span><span class="n">high_mass_norm</span><span class="p">)</span>
         
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string representation of the distribution.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Sana12Period(p_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">, p_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="w">        </span><span class="sd">"""Return string representation of the distribution."""</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"Sana12Period(p_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">, p_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">)"</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return HTML representation for Jupyter notebooks.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;Sana12 Period Distribution&lt;/h3&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;p_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;p_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Return HTML representation for Jupyter notebooks."""</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;h3&gt;Sana12 Period Distribution&lt;/h3&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;p_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;p_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span><span class="p">)</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">m1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the normalization constant for the Sana12 period</span>
+<span class="w">        </span><span class="sd">"""Calculate the normalization constant for the Sana12 period</span>
 <span class="sd">        distribution.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The normalization constant ensuring the PDF integrates to 1.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">integral</span> <span class="o">=</span>  <span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sana12_period</span><span class="p">,</span>
                          <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="p">),</span>
                          <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">),</span>
                          <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">m1</span><span class="p">,))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">integral</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Normalization integral is zero. &quot;</span>
-                             <span class="s2">&quot;Check period parameters.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Normalization integral is zero. "</span>
+                             <span class="s2">"Check period parameters."</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">integral</span>
     
 <div class="viewcode-block" id="Sana12Period.sana12_period">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.Sana12Period.sana12_period">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">sana12_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logp</span><span class="p">,</span> <span class="n">m1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the Sana12 period distribution at given periods.</span>
+<span class="w">        </span><span class="sd">"""Compute the Sana12 period distribution at given periods.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -361,18 +361,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Distribution value(s).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">m1</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mass must be positive. &quot;</span>
-                             <span class="s2">&quot;Check parameters.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Mass must be positive. "</span>
+                             <span class="s2">"Check parameters."</span><span class="p">)</span>
 
         <span class="n">logp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">logp</span><span class="p">)</span>
         <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">m1</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">logp</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">m1</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">logp</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;m1 must be a single value or an array of &quot;</span>
-                             <span class="s2">&quot;the same length as p.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"m1 must be a single value or an array of "</span>
+                             <span class="s2">"the same length as p."</span><span class="p">)</span>
         
         <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">logp</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>        
 
@@ -402,7 +402,7 @@
 <div class="viewcode-block" id="Sana12Period.pdf">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.Sana12Period.pdf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">m1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&#39;&#39;&#39;Probability density function of the Sana12 period distribution.</span>
+<span class="w">        </span><span class="sd">'''Probability density function of the Sana12 period distribution.</span>
 <span class="sd">        Conditional on m1.</span>
 <span class="sd">        </span>
 <span class="sd">        Normalised in logP space to 1.</span>
@@ -419,14 +419,14 @@
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Probability density at period p.</span>
 <span class="sd">        </span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        '''</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">m1</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">m1</span><span class="p">)</span>
         <span class="k">elif</span> <span class="n">m1</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">p</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;m1 must be a single value or an array of &quot;</span>
-                             <span class="s2">&quot;the same length as p.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"m1 must be a single value or an array of "</span>
+                             <span class="s2">"the same length as p."</span><span class="p">)</span>
         
         <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">)</span>
         <span class="n">pdf_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -442,7 +442,7 @@
 <div class="viewcode-block" id="PowerLawPeriod">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.PowerLawPeriod">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PowerLawPeriod</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Power law period distribution with slope pi and boundaries m_min, m_max.</span>
+<span class="w">    </span><span class="sd">'''Power law period distribution with slope pi and boundaries m_min, m_max.</span>
 <span class="sd">    </span>
 <span class="sd">    Normalised in logP space to 1.</span>
 <span class="sd">    </span>
@@ -455,10 +455,10 @@
 <span class="sd">    p_max : float</span>
 <span class="sd">        Maximum period.</span>
 <span class="sd">    </span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">slope</span><span class="o">=-</span><span class="mf">0.55</span><span class="p">,</span> <span class="n">p_min</span><span class="o">=</span><span class="mf">1.4</span><span class="p">,</span> <span class="n">p_max</span><span class="o">=</span><span class="mf">3e6</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the power law period distribution.</span>
+<span class="w">        </span><span class="sd">"""Initialize the power law period distribution.</span>
 <span class="sd">        </span>
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -473,11 +473,11 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If p_min is not positive or p_max &lt;= p_min.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="n">p_min</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;p_min must be positive&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p_min must be positive"</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">p_max</span> <span class="o">&lt;=</span> <span class="n">p_min</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;p_max must be greater than p_min&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"p_max must be greater than p_min"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">=</span> <span class="n">slope</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span> <span class="o">=</span> <span class="n">p_min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span> <span class="o">=</span> <span class="n">p_max</span>
@@ -485,49 +485,49 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_normalization</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return string representation of the distribution.</span>
+<span class="w">        </span><span class="sd">"""Return string representation of the distribution.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            String representation showing the distribution parameters.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;PowerLawPeriod(slope=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="si">}</span><span class="s2">, p_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">, p_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">)&quot;</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"PowerLawPeriod(slope=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="si">}</span><span class="s2">, p_min=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">, p_max=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">)"</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return HTML representation for Jupyter notebooks.</span>
+<span class="w">        </span><span class="sd">"""Return HTML representation for Jupyter notebooks.</span>
 <span class="sd">        </span>
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        str</span>
 <span class="sd">            HTML string for rich display in notebooks.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;h3&gt;Power Law Period Distribution&lt;/h3&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;slope = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;p_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;&lt;p&gt;p_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;&quot;</span><span class="p">)</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">(</span><span class="sa">f</span><span class="s2">"&lt;h3&gt;Power Law Period Distribution&lt;/h3&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;slope = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">slope</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;p_min = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span>
+                <span class="sa">f</span><span class="s2">"&lt;p&gt;p_max = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="si">}</span><span class="s2">&lt;/p&gt;"</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the normalization constant for the power law period</span>
+<span class="w">        </span><span class="sd">"""Calculate the normalization constant for the power law period</span>
 <span class="sd">        distribution.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The normalization constant ensuring the PDF integrates to 1.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">integral</span> <span class="o">=</span> <span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">power_law_period</span><span class="p">,</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="p">),</span>
                         <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
         <span class="k">if</span> <span class="n">integral</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Normalization integral is zero. &quot;</span>
-                             <span class="s2">&quot;Check period parameters.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Normalization integral is zero. "</span>
+                             <span class="s2">"Check period parameters."</span><span class="p">)</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">integral</span>
     
 <div class="viewcode-block" id="PowerLawPeriod.power_law_period">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.PowerLawPeriod.power_law_period">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">power_law_period</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">logp</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute the power law period distribution at given periods.</span>
+<span class="w">        </span><span class="sd">"""Compute the power law period distribution at given periods.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -538,7 +538,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Distribution value(s).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">logp</span><span class="p">)</span>
 
         <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -551,7 +551,7 @@
 <div class="viewcode-block" id="PowerLawPeriod.pdf">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.PowerLawPeriod.pdf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Probability density function of the power law period distribution.</span>
+<span class="w">        </span><span class="sd">"""Probability density function of the power law period distribution.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -562,7 +562,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Probability density at period p.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
         <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">p</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p_max</span><span class="p">)</span>
         <span class="n">pdf_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
@@ -579,11 +579,11 @@
 <div class="viewcode-block" id="LogUniform">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.LogUniform">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">LogUniform</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Log-uniform distribution between specified minimum and maximum values.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Log-uniform distribution between specified minimum and maximum values.</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">min</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mf">1e5</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Initialize the log-uniform distribution.</span>
 
 <span class="sd">        Parameters</span>
@@ -597,31 +597,31 @@
 <span class="sd">        ------</span>
 <span class="sd">        ValueError</span>
 <span class="sd">            If min is not positive or max &lt;= min.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="nb">min</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;min must be positive&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"min must be positive"</span><span class="p">)</span>
         <span class="k">if</span> <span class="nb">max</span> <span class="o">&lt;=</span> <span class="nb">min</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max must be greater than min&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"max must be greater than min"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">min</span> <span class="o">=</span> <span class="nb">min</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">max</span> <span class="o">=</span> <span class="nb">max</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_normalization</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_normalization</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Calculate the normalization constant for the log-uniform distribution.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The normalization constant ensuring the PDF integrates to 1.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">))</span>
 
 <div class="viewcode-block" id="LogUniform.pdf">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.distributions.LogUniform.pdf">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Probability density function of the log-uniform distribution.</span>
 
 <span class="sd">        Parameters</span>
@@ -633,7 +633,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        float or ndarray</span>
 <span class="sd">            Probability density at x.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="n">valid</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
         <span class="n">pdf_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>

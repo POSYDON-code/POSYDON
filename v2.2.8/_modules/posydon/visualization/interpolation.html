@@ -116,11 +116,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.interpolation</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot; Module to evaluate IFInterpolator class &quot;&quot;&quot;</span>
+<span></span><span class="sd">""" Module to evaluate IFInterpolator class """</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Philipp Moura Srivastava &lt;philipp.msrivastava@gmail.com&gt;&quot;</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span>
+    <span class="s2">"Philipp Moura Srivastava &lt;philipp.msrivastava@gmail.com&gt;"</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -131,10 +131,10 @@
 <div class="viewcode-block" id="EvaluateIFInterpolator">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.interpolation.EvaluateIFInterpolator">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EvaluateIFInterpolator</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot; Class that is helpful for evaluating interpolation performance</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">""" Class that is helpful for evaluating interpolation performance</span>
+<span class="sd">    """</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">interpolator</span><span class="p">,</span> <span class="n">test_grid</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the EvaluateIFInterpolator class</span>
+<span class="w">        </span><span class="sd">""" Initialize the EvaluateIFInterpolator class</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -143,7 +143,7 @@
 <span class="sd">        test_grid : PSyGrid</span>
 <span class="sd">            Grid object containing testing tracks</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span> <span class="o">=</span> <span class="n">interpolator</span>
 
@@ -159,17 +159,17 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__compute_errs</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__compute_errs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that computes both interpolation and classification errors &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">""" Method that computes both interpolation and classification errors """</span>
 
         <span class="n">iv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">in_keys</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
                       <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># initial values</span>
         <span class="n">fv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">out_keys</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">(),</span>
                       <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="c1"># final values</span>
-        <span class="n">ic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">]</span> <span class="c1"># final values</span>
+        <span class="n">ic</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">"interpolation_class"</span><span class="p">]</span> <span class="c1"># final values</span>
 
         <span class="n">ivalid_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;not_converged&quot;</span><span class="p">)</span> <span class="o">&amp;</span>
-            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;initial_MT&quot;</span><span class="p">)</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">"interpolation_class"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"not_converged"</span><span class="p">)</span> <span class="o">&amp;</span>
+            <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">"interpolation_class"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"initial_MT"</span><span class="p">)</span>
         <span class="p">)</span>
 
         <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">test_interpolator</span><span class="p">(</span><span class="n">iv</span><span class="p">)</span> <span class="c1"># interpolated</span>
@@ -177,14 +177,14 @@
 
         <span class="bp">self</span><span class="o">.</span><span class="n">errs</span> <span class="o">=</span> <span class="p">{}</span>
 
-        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">&#39;ignore&#39;</span><span class="p">):</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">&quot;relative&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">fv</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">fv</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">&quot;absolute&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fv</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">&quot;valid_inds&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ivalid_inds</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s1">'ignore'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">"relative"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">fv</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span> <span class="o">/</span> <span class="n">fv</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">"absolute"</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">fv</span> <span class="o">-</span> <span class="n">i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">"valid_inds"</span><span class="p">]</span> <span class="o">=</span> <span class="n">ivalid_inds</span>
 
 
         <span class="n">cvalid_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;interpolation_class&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;not_converged&quot;</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">"interpolation_class"</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"not_converged"</span>
         <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">cfv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="n">cvalid_inds</span><span class="p">]</span>
@@ -204,8 +204,8 @@
 
             <span class="c1"># catch cases where nothing is classified, e.g.</span>
             <span class="c1"># S2_SN_MODEL_v2_XX_SN_type when S2 is a compact object</span>
-            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span>  <span class="n">classes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;None&#39;</span><span class="p">:</span>
-                <span class="n">matrix</span><span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">classes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span>  <span class="n">classes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'None'</span><span class="p">:</span>
+                <span class="n">matrix</span><span class="p">[</span><span class="s1">'None'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="k">for</span> <span class="n">_class</span> <span class="ow">in</span> <span class="n">classes</span><span class="p">:</span>
                     <span class="n">class_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">_class</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
@@ -226,19 +226,19 @@
 
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__format</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">title</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that formats keys for plots</span>
+<span class="w">        </span><span class="sd">""" Method that formats keys for plots</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        s : str</span>
 <span class="sd">            string to be formatted</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
-        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;_&quot;</span><span class="p">,</span> <span class="s2">&quot; &quot;</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">s</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">"_"</span><span class="p">,</span> <span class="s2">" "</span><span class="p">)</span><span class="o">.</span><span class="n">title</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">__find_labels</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that finds labels in classifier</span>
+<span class="w">        </span><span class="sd">""" Method that finds labels in classifier</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -249,18 +249,18 @@
 <span class="sd">        -------</span>
 <span class="sd">        list of class labels</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">labels</span> <span class="o">=</span> <span class="kc">None</span>
 
         <span class="k">for</span> <span class="n">interp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">interpolators</span><span class="p">:</span>
 
             <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">interp</span><span class="o">.</span><span class="n">classifiers</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-                <span class="c1"># if classifier does not exist assign &#39;None&#39; label</span>
+                <span class="c1"># if classifier does not exist assign 'None' label</span>
                 <span class="c1"># this happens, e.g. for S2_SN_MODEL_v2_XX_SN_type, when S2 is</span>
                 <span class="c1"># a compac object</span>
                 <span class="k">if</span> <span class="n">interp</span><span class="o">.</span><span class="n">classifiers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;None&#39;</span><span class="p">]</span>
+                    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'None'</span><span class="p">]</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">labels</span> <span class="o">=</span> <span class="n">interp</span><span class="o">.</span><span class="n">classifiers</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">labels</span>
 
@@ -276,9 +276,9 @@
 
 <div class="viewcode-block" id="EvaluateIFInterpolator.violin_plots">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.interpolation.EvaluateIFInterpolator.violin_plots">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">violin_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_type</span> <span class="o">=</span> <span class="s2">&quot;relative&quot;</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">violin_plots</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">err_type</span> <span class="o">=</span> <span class="s2">"relative"</span><span class="p">,</span> <span class="n">keys</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                      <span class="n">save_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">close_fig</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that plots distribution of specified error for given keys and</span>
+<span class="w">        </span><span class="sd">""" Method that plots distribution of specified error for given keys and</span>
 <span class="sd">        optionally saves it.</span>
 
 <span class="sd">        Parameters</span>
@@ -293,7 +293,7 @@
 <span class="sd">        close_fig: bool</span>
 <span class="sd">            Flag whether figure should be closed</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">keys</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">keys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_keys</span>
@@ -302,21 +302,21 @@
 
         <span class="n">errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clean_errs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="n">err_type</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_inds</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
 
-        <span class="n">n_tracks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">n_tracks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">final_values</span><span class="p">[</span><span class="s2">"star_1_mass"</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using </span><span class="si">{</span><span class="n">errs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">n_tracks</span><span class="si">}</span><span class="s2"> tracks in violin plots&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Using </span><span class="si">{</span><span class="n">errs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><span class="n">n_tracks</span><span class="si">}</span><span class="s2"> tracks in violin plots"</span><span class="p">)</span>
 
-        <span class="n">stable_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">&quot;stable_MT&quot;</span><span class="p">)</span>
-        <span class="n">no_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">&quot;no_MT&quot;</span><span class="p">)</span>
-        <span class="n">unstable_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">&quot;unstable_MT&quot;</span><span class="p">)</span>
-        <span class="c1">#TODO: add interpolation class &quot;stable_reverse_MT&quot;</span>
+        <span class="n">stable_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">"stable_MT"</span><span class="p">)</span>
+        <span class="n">no_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">"no_MT"</span><span class="p">)</span>
+        <span class="n">unstable_inds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ic</span> <span class="o">==</span> <span class="s2">"unstable_MT"</span><span class="p">)</span>
+        <span class="c1">#TODO: add interpolation class "stable_reverse_MT"</span>
 
         <span class="n">stable_errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clean_errs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="n">err_type</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_inds</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">stable_inds</span><span class="p">])</span>
         <span class="n">no_errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clean_errs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="n">err_type</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_inds</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">no_inds</span><span class="p">])</span>
         <span class="n">unstable_errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__clean_errs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="n">err_type</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_inds</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">unstable_inds</span><span class="p">])</span>
 
 
-        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">&quot;font.size&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">&quot;font.family&quot;</span><span class="p">:</span> <span class="s2">&quot;stixgeneral&quot;</span><span class="p">})</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">rcParams</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"font.size"</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span> <span class="s2">"font.family"</span><span class="p">:</span> <span class="s2">"stixgeneral"</span><span class="p">})</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">axs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span>
                                 <span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="mi">24</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
@@ -327,14 +327,14 @@
         <span class="n">no_plot</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">no_errs</span> <span class="o">+</span> <span class="mf">1.0e-8</span><span class="p">),</span> <span class="n">showmedians</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
         <span class="n">unstable_plot</span> <span class="o">=</span> <span class="n">axs</span><span class="o">.</span><span class="n">violinplot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">unstable_errs</span> <span class="o">+</span> <span class="mf">1.0e-8</span><span class="p">),</span> <span class="n">showmedians</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">points</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">)</span>
 
-        <span class="n">axs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Distribution of </span><span class="si">{</span><span class="n">err_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2"> Errors&quot;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Distribution of </span><span class="si">{</span><span class="n">err_type</span><span class="o">.</span><span class="n">capitalize</span><span class="p">()</span><span class="si">}</span><span class="s2"> Errors"</span><span class="p">)</span>
         <span class="n">axs</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span>
             <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">ec</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="p">(</span><span class="n">med</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)&quot;</span> <span class="k">for</span> <span class="n">ec</span><span class="p">,</span> <span class="n">med</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">errs</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">ec</span><span class="p">)</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="p">(</span><span class="n">med</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">%)"</span> <span class="k">for</span> <span class="n">ec</span><span class="p">,</span> <span class="n">med</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nanmedian</span><span class="p">(</span><span class="n">errs</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span><span class="p">))</span>
             <span class="p">],</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">20</span><span class="p">)</span>
 
-        <span class="n">axs</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Errors in Log 10 Scale&quot;</span><span class="p">)</span>
-        <span class="n">axs</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">&quot;y&quot;</span><span class="p">)</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Errors in Log 10 Scale"</span><span class="p">)</span>
+        <span class="n">axs</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="n">axis</span> <span class="o">=</span> <span class="s2">"y"</span><span class="p">)</span>
 
         <span class="k">def</span><span class="w"> </span><span class="nf">halve_paths</span><span class="p">(</span><span class="n">field</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 
@@ -352,31 +352,31 @@
 
         <span class="k">def</span><span class="w"> </span><span class="nf">customize_violinplot</span><span class="p">(</span><span class="n">plot</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">outlined</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
 
-            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">&quot;cmins&quot;</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
-            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">&quot;cmaxes&quot;</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
-            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">&quot;cmedians&quot;</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
+            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">"cmins"</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
+            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">"cmaxes"</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
+            <span class="n">halve_paths</span><span class="p">(</span><span class="n">plot</span><span class="p">[</span><span class="s2">"cmedians"</span><span class="p">],</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
 
-            <span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">plot</span><span class="p">[</span><span class="s2">&quot;bodies&quot;</span><span class="p">]:</span>
+            <span class="k">for</span> <span class="n">pc</span> <span class="ow">in</span> <span class="n">plot</span><span class="p">[</span><span class="s2">"bodies"</span><span class="p">]:</span>
 
                 <span class="n">halve_paths</span><span class="p">(</span><span class="n">pc</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">)</span>
 
 
-                <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">outlined</span> <span class="k">else</span> <span class="s2">&quot;None&quot;</span><span class="p">)</span>
+                <span class="n">pc</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="n">color</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">outlined</span> <span class="k">else</span> <span class="s2">"None"</span><span class="p">)</span>
                 <span class="n">pc</span><span class="o">.</span><span class="n">set_edgecolor</span><span class="p">(</span><span class="n">color</span><span class="p">)</span>
                 <span class="n">pc</span><span class="o">.</span><span class="n">set_linewidth</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
                 <span class="n">pc</span><span class="o">.</span><span class="n">set_alpha</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span>
 
-        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">rel_plot</span><span class="p">,</span> <span class="s2">&quot;coral&quot;</span><span class="p">)</span>
-        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">stable_plot</span><span class="p">,</span> <span class="s2">&quot;#1e90ff&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">no_plot</span><span class="p">,</span> <span class="s2">&quot;crimson&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
-        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">unstable_plot</span><span class="p">,</span> <span class="s2">&quot;olive&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">rel_plot</span><span class="p">,</span> <span class="s2">"coral"</span><span class="p">)</span>
+        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">stable_plot</span><span class="p">,</span> <span class="s2">"#1e90ff"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">no_plot</span><span class="p">,</span> <span class="s2">"crimson"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">customize_violinplot</span><span class="p">(</span><span class="n">unstable_plot</span><span class="p">,</span> <span class="s2">"olive"</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
 
         <span class="n">axs</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
-            <span class="p">[</span><span class="n">rel_plot</span><span class="p">[</span><span class="s2">&quot;bodies&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">stable_plot</span><span class="p">[</span><span class="s2">&quot;bodies&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">no_plot</span><span class="p">[</span><span class="s2">&quot;bodies&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">unstable_plot</span><span class="p">[</span><span class="s2">&quot;bodies&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
-            <span class="p">[</span><span class="s2">&quot;Relative Error&quot;</span><span class="p">,</span> <span class="s2">&quot;Stable MT Error&quot;</span><span class="p">,</span> <span class="s2">&quot;No MT Error&quot;</span><span class="p">,</span> <span class="s2">&quot;Unstable MT Error&quot;</span><span class="p">],</span>
+            <span class="p">[</span><span class="n">rel_plot</span><span class="p">[</span><span class="s2">"bodies"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">stable_plot</span><span class="p">[</span><span class="s2">"bodies"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">no_plot</span><span class="p">[</span><span class="s2">"bodies"</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">unstable_plot</span><span class="p">[</span><span class="s2">"bodies"</span><span class="p">][</span><span class="mi">0</span><span class="p">]],</span>
+            <span class="p">[</span><span class="s2">"Relative Error"</span><span class="p">,</span> <span class="s2">"Stable MT Error"</span><span class="p">,</span> <span class="s2">"No MT Error"</span><span class="p">,</span> <span class="s2">"Unstable MT Error"</span><span class="p">],</span>
             <span class="n">bbox_to_anchor</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">),</span>
-            <span class="n">loc</span> <span class="o">=</span> <span class="s2">&quot;lower left&quot;</span><span class="p">,</span>
-            <span class="n">mode</span> <span class="o">=</span> <span class="s2">&quot;expand&quot;</span><span class="p">,</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="s2">"lower left"</span><span class="p">,</span>
+            <span class="n">mode</span> <span class="o">=</span> <span class="s2">"expand"</span><span class="p">,</span>
             <span class="n">ncol</span> <span class="o">=</span> <span class="mi">4</span>
         <span class="p">)</span>
 
@@ -394,7 +394,7 @@
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.interpolation.EvaluateIFInterpolator.confusion_matrix">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">confusion_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="p">{},</span> <span class="n">save_path</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
                          <span class="n">close_fig</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that plots confusion matrices to evaluate classification</span>
+<span class="w">        </span><span class="sd">""" Method that plots confusion matrices to evaluate classification</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -407,42 +407,42 @@
 <span class="sd">        close_fig: bool</span>
 <span class="sd">            Flag whether figure should be closed</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Key not in List of Matrices&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">"Key not in List of Matrices"</span><span class="p">)</span>
 
         <span class="n">arr_mat</span> <span class="o">=</span> <span class="p">[]</span>
 
         <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
             <span class="n">arr_mat</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
-        <span class="n">figsize</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;figsize&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;figsize&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+        <span class="n">figsize</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">"figsize"</span><span class="p">]</span> <span class="k">if</span> <span class="s2">"figsize"</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
 
         <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span> <span class="o">=</span> <span class="n">figsize</span><span class="p">,</span> <span class="n">constrained_layout</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span>
 
         <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">arr_mat</span><span class="p">)</span>
 
-        <span class="n">x_axis</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="k">if</span> <span class="s2">&quot;x_axis&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;x_axis&quot;</span><span class="p">]</span>
-        <span class="n">y_axis</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="k">if</span> <span class="s2">&quot;y_axis&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;y_axis&quot;</span><span class="p">]</span>
-        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Confusion Matrix for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span> <span class="k">if</span> <span class="s2">&quot;title&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;title&quot;</span><span class="p">]</span>
+        <span class="n">x_axis</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="k">if</span> <span class="s2">"x_axis"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">"x_axis"</span><span class="p">]</span>
+        <span class="n">y_axis</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrices</span><span class="p">[</span><span class="n">key</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())[</span><span class="mi">0</span><span class="p">]]</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span> <span class="k">if</span> <span class="s2">"y_axis"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">"y_axis"</span><span class="p">]</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"Confusion Matrix for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">__format</span><span class="p">(</span><span class="n">key</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span> <span class="k">if</span> <span class="s2">"title"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> <span class="k">else</span> <span class="n">params</span><span class="p">[</span><span class="s2">"title"</span><span class="p">]</span>
 
         <span class="c1"># Show all ticks and label them with the respective list entries</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_xticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x_axis</span><span class="p">)),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">x_axis</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_yticks</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">y_axis</span><span class="p">)),</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">y_axis</span><span class="p">)</span>
 
         <span class="c1"># Rotate the tick labels and set their alignment.</span>
-        <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">ha</span> <span class="o">=</span> <span class="s2">&quot;right&quot;</span><span class="p">,</span>
-                <span class="n">rotation_mode</span> <span class="o">=</span> <span class="s2">&quot;anchor&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">setp</span><span class="p">(</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xticklabels</span><span class="p">(),</span> <span class="n">rotation</span> <span class="o">=</span> <span class="mi">45</span><span class="p">,</span> <span class="n">ha</span> <span class="o">=</span> <span class="s2">"right"</span><span class="p">,</span>
+                <span class="n">rotation_mode</span> <span class="o">=</span> <span class="s2">"anchor"</span><span class="p">)</span>
 
         <span class="c1"># Loop over data dimensions and create text annotations.</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr_mat</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr_mat</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
-                <span class="n">text</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">arr_mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
-                            <span class="n">ha</span> <span class="o">=</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">va</span> <span class="o">=</span> <span class="s2">&quot;center&quot;</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s2">&quot;w&quot;</span> <span class="k">if</span> <span class="n">arr_mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.9</span> <span class="k">else</span> <span class="s2">&quot;black&quot;</span><span class="p">)</span>
+                <span class="n">text</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="mi">100</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">arr_mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                            <span class="n">ha</span> <span class="o">=</span> <span class="s2">"center"</span><span class="p">,</span> <span class="n">va</span> <span class="o">=</span> <span class="s2">"center"</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="s2">"w"</span> <span class="k">if</span> <span class="n">arr_mat</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mf">0.9</span> <span class="k">else</span> <span class="s2">"black"</span><span class="p">)</span>
 
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Predicted&quot;</span><span class="p">)</span>
-        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Actual&quot;</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Predicted"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Actual"</span><span class="p">)</span>
         <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
 
         <span class="n">cax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">inset_axes</span><span class="p">([</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">])</span>
@@ -462,7 +462,7 @@
 <div class="viewcode-block" id="EvaluateIFInterpolator.classifiers">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.interpolation.EvaluateIFInterpolator.classifiers">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">classifiers</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that lists classifiers available &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">""" Method that lists classifiers available """</span>
         <span class="n">classes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolator</span><span class="o">.</span><span class="n">test_classifiers</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">in_keys</span><span class="p">]</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
@@ -475,7 +475,7 @@
 <div class="viewcode-block" id="EvaluateIFInterpolator.keys">
 <a class="viewcode-back" href="../../../api_reference/posydon.visualization.html#posydon.visualization.interpolation.EvaluateIFInterpolator.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Method that lists out keys available &quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">""" Method that lists out keys available """</span>
 
         <span class="n">out_keys</span> <span class="o">=</span> <span class="p">[]</span>
 
@@ -498,23 +498,23 @@
 
         <span class="n">k_ind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">out_keys</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">slice_3D_var_str</span> <span class="o">==</span> <span class="s1">&#39;mass_ratio&#39;</span><span class="p">:</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;star_1_mass&quot;</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="n">slice_3D_var_str</span> <span class="o">==</span> <span class="s1">&#39;star_2_mass&#39;</span><span class="p">:</span>
-            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">&quot;star_2_mass&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">slice_3D_var_str</span> <span class="o">==</span> <span class="s1">'mass_ratio'</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">"star_2_mass"</span><span class="p">]</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">"star_1_mass"</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">slice_3D_var_str</span> <span class="o">==</span> <span class="s1">'star_2_mass'</span><span class="p">:</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s2">"star_2_mass"</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;slice_3D_var_str must be either &#39;mass_ratio&#39; or &#39;star_2_mass&#39;&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"slice_3D_var_str must be either 'mass_ratio' or 'star_2_mass'"</span><span class="p">)</span>
 
         <span class="nb">slice</span> <span class="o">=</span> <span class="p">(</span><span class="n">var</span> <span class="o">&gt;=</span> <span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">var</span> <span class="o">&lt;=</span> <span class="n">slice_3D_var_range</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
 
-        <span class="n">slice_errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">&quot;relative&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_ind</span><span class="p">]</span>
-        <span class="n">slice_errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">slice_errs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">in_slice</span> <span class="ow">and</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">&quot;valid_inds&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">in_slice</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">slice</span><span class="p">)])</span>
+        <span class="n">slice_errs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">"relative"</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">[</span><span class="n">k_ind</span><span class="p">]</span>
+        <span class="n">slice_errs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">slice_errs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">if</span> <span class="n">in_slice</span> <span class="ow">and</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">errs</span><span class="p">[</span><span class="s2">"valid_inds"</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">in_slice</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">slice</span><span class="p">)])</span>
 
         <span class="c1"># find inf and assign large value else they are not plotted</span>
         <span class="n">slice_errs</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">slice_errs</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">1e99</span>
 
-        <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;period_days&#39;</span><span class="p">,</span> <span class="n">slice_errs</span><span class="p">,</span>
-                    <span class="n">termination_flag</span><span class="o">=</span><span class="s1">&#39;interpolation_class_errors&#39;</span><span class="p">,</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">test_grid</span><span class="o">.</span><span class="n">plot2D</span><span class="p">(</span><span class="s1">'star_1_mass'</span><span class="p">,</span> <span class="s1">'period_days'</span><span class="p">,</span> <span class="n">slice_errs</span><span class="p">,</span>
+                    <span class="n">termination_flag</span><span class="o">=</span><span class="s1">'interpolation_class_errors'</span><span class="p">,</span>
                     <span class="n">grid_3D</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">slice_3D_var_str</span><span class="o">=</span><span class="n">slice_3D_var_str</span><span class="p">,</span>
                     <span class="n">slice_3D_var_range</span><span class="o">=</span><span class="n">slice_3D_var_range</span><span class="p">,</span>
                     <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">PLOT_PROPERTIES</span><span class="p">)</span></div>

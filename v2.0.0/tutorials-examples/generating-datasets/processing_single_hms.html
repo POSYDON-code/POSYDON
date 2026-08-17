@@ -146,15 +146,15 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 
-<span class="n">grid_name</span> <span class="o">=</span> <span class="s1">&#39;single_hms_1e-01_Zsun&#39;</span>
-<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">&#39;../&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="p">)</span> <span class="k">if</span> <span class="s1">&#39;initial_mass&#39;</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
+<span class="n">grid_name</span> <span class="o">=</span> <span class="s1">'single_hms_1e-01_Zsun'</span>
+<span class="n">dirs</span> <span class="o">=</span> <span class="p">[</span> <span class="n">d</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="s1">'../'</span><span class="o">+</span><span class="n">grid_name</span><span class="p">)</span> <span class="k">if</span> <span class="s1">'initial_mass'</span> <span class="ow">in</span> <span class="n">d</span><span class="p">]</span>
 <span class="n">missing</span> <span class="o">=</span> <span class="p">[]</span>
 <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dirs</span><span class="p">))</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dirs</span><span class="p">)):</span>
-    <span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;../&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/LOGS1/history.data&#39;</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="s1">'../'</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">'/'</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">'/LOGS1/history.data'</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
-        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">&#39;./eeps/&#39;</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">&#39;/&#39;</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.data&#39;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;.data&#39;</span><span class="p">)</span>
+        <span class="n">shutil</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="s1">'./eeps/'</span><span class="o">+</span><span class="n">grid_name</span><span class="o">+</span><span class="s1">'/'</span><span class="o">+</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">'.data'</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">dirs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="s1">'.data'</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">missing</span> <span class="o">+=</span> <span class="p">[</span><span class="n">filename</span><span class="p">]</span>
 <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">missing</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
@@ -745,31 +745,31 @@ Writing input.single_hms_1e-01_Zsun
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.post_processing</span><span class="w"> </span><span class="kn">import</span> <span class="n">post_process_grid</span><span class="p">,</span> <span class="n">add_post_processed_quantities</span>
 
-<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
 
     <span class="n">i</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Job array index:&#39;</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
-    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;single_hms_1e-01_Zsun&#39;</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Job array index:'</span><span class="p">,</span><span class="n">i</span><span class="p">)</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'single_hms_1e-01_Zsun'</span><span class="p">]</span>
     <span class="n">name</span> <span class="o">=</span> <span class="n">names</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-    <span class="n">inpath</span> <span class="o">=</span> <span class="s2">&quot;../</span><span class="si">%s</span><span class="s2">/&quot;</span><span class="o">%</span><span class="n">name</span>
-    <span class="n">eep_path</span> <span class="o">=</span> <span class="s2">&quot;./eeps/eeps_</span><span class="si">%s</span><span class="s2">/&quot;</span><span class="o">%</span><span class="n">name</span>
-    <span class="n">outpath</span> <span class="o">=</span> <span class="s2">&quot;./&quot;</span>
-    <span class="n">grid_name</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">.h5&quot;</span><span class="o">%</span><span class="n">name</span>
+    <span class="n">inpath</span> <span class="o">=</span> <span class="s2">"../</span><span class="si">%s</span><span class="s2">/"</span><span class="o">%</span><span class="n">name</span>
+    <span class="n">eep_path</span> <span class="o">=</span> <span class="s2">"./eeps/eeps_</span><span class="si">%s</span><span class="s2">/"</span><span class="o">%</span><span class="n">name</span>
+    <span class="n">outpath</span> <span class="o">=</span> <span class="s2">"./"</span>
+    <span class="n">grid_name</span> <span class="o">=</span> <span class="s2">"</span><span class="si">%s</span><span class="s2">.h5"</span><span class="o">%</span><span class="n">name</span>
 
     <span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-    <span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">&quot;gzip9&quot;</span><span class="p">,</span> <span class="n">max_number_of_runs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eep</span><span class="o">=</span><span class="n">eep_path</span><span class="p">,</span>
-               <span class="o">**</span><span class="p">{</span><span class="s1">&#39;star1_history_saved_columns&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;star_mdot&#39;</span><span class="p">,</span><span class="s1">&#39;conv_mx1_top_r&#39;</span><span class="p">,</span> <span class="s1">&#39;conv_mx1_bot_r&#39;</span><span class="p">,</span><span class="s1">&#39;mass_conv_reg_fortides&#39;</span><span class="p">,</span>
-                                                   <span class="s1">&#39;thickness_conv_reg_fortides&#39;</span><span class="p">,</span> <span class="s1">&#39;radius_conv_reg_fortides&#39;</span><span class="p">,</span> <span class="s1">&#39;surface_he3&#39;</span><span class="p">,</span>
-                                                   <span class="c1">#&#39;photosphere_cell_density&#39;, &#39;surface_mu&#39;</span>
+    <span class="n">grid</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">inpath</span><span class="p">,</span> <span class="n">outpath</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">binary</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">compression</span><span class="o">=</span><span class="s2">"gzip9"</span><span class="p">,</span> <span class="n">max_number_of_runs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">eep</span><span class="o">=</span><span class="n">eep_path</span><span class="p">,</span>
+               <span class="o">**</span><span class="p">{</span><span class="s1">'star1_history_saved_columns'</span> <span class="p">:</span> <span class="p">[</span><span class="s1">'star_mdot'</span><span class="p">,</span><span class="s1">'conv_mx1_top_r'</span><span class="p">,</span> <span class="s1">'conv_mx1_bot_r'</span><span class="p">,</span><span class="s1">'mass_conv_reg_fortides'</span><span class="p">,</span>
+                                                   <span class="s1">'thickness_conv_reg_fortides'</span><span class="p">,</span> <span class="s1">'radius_conv_reg_fortides'</span><span class="p">,</span> <span class="s1">'surface_he3'</span><span class="p">,</span>
+                                                   <span class="c1">#'photosphere_cell_density', 'surface_mu'</span>
                                                   <span class="p">]})</span>
     <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done creating grid!&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Done creating grid!'</span><span class="p">)</span>
 
     <span class="n">path</span> <span class="o">=</span> <span class="n">outpath</span>
-    <span class="n">grid_name_processed</span> <span class="o">=</span> <span class="s1">&#39;processed_&#39;</span><span class="o">+</span><span class="n">grid_name</span>
+    <span class="n">grid_name_processed</span> <span class="o">=</span> <span class="s1">'processed_'</span><span class="o">+</span><span class="n">grid_name</span>
     <span class="c1"># copy file, it will be overwritten when we add columns</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Post processed grid file alredy exist, removing it...&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">'Post processed grid file alredy exist, removing it...'</span><span class="p">)</span>
         <span class="n">os</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
     <span class="n">copyfile</span><span class="p">(</span><span class="n">path</span><span class="o">+</span><span class="n">grid_name</span><span class="p">,</span> <span class="n">path</span><span class="o">+</span><span class="n">grid_name_processed</span><span class="p">)</span>
 
@@ -780,7 +780,7 @@ Writing input.single_hms_1e-01_Zsun
     <span class="n">grid</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
     <span class="k">del</span> <span class="n">MESA_dirs_EXTRA_COLUMNS</span>
     <span class="k">del</span> <span class="n">EXTRA_COLUMNS</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Done appending columns!&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">'Done appending columns!'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -806,7 +806,7 @@ Overwriting ./script.py
 #SBATCH --cpus-per-task 1
 #SBATCH --ntasks-per-node 1
 #SBATCH --time=06:00:00
-#SBATCH --job-name=&quot;psygrid_\${SLURM_ARRAY_TASK_ID}&quot;
+#SBATCH --job-name="psygrid_\${SLURM_ARRAY_TASK_ID}"
 #SBATCH --output=./log.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=simone.bavera@unige.ch
@@ -851,7 +851,7 @@ srun python ./script.py $SLURM_ARRAY_TASK_ID
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
 
-<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">&#39;./processed_single_hms_1e-01_Zsun.h5&#39;</span><span class="p">)</span>
+<span class="n">grid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="s1">'./processed_single_hms_1e-01_Zsun.h5'</span><span class="p">)</span>
 <span class="n">grid</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
 </pre></div>
 </div>
@@ -889,7 +889,7 @@ array([( 6277.99277501,  26.4097595 , 0., 0., 0., 0., 0., 0., 0.74661422, 0.2519
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1">#grid[0].history1.dtype.names</span>
-<span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">history1</span><span class="p">[</span><span class="s1">&#39;star_mass&#39;</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>
+<span class="n">grid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">history1</span><span class="p">[</span><span class="s1">'star_mass'</span><span class="p">][:</span><span class="mi">10</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>

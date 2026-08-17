@@ -116,18 +116,18 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.independent_sample</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Generate the initial parameters for a binary population.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Generate the initial parameters for a binary population."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@ufl.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Simone Bavera &lt;Simone.Bavera@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Jeffrey Andrews &lt;jeffrey.andrews@ufl.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Emmanouil Zapartas &lt;ezapartas@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Scott Coughlin &lt;scottcoughlin2014@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -142,12 +142,12 @@
 
 <div class="viewcode-block" id="generate_independent_samples">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.independent_sample.generate_independent_samples">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">generate_independent_samples</span><span class="p">(</span><span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">&#39;period&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomly generate a population of binaries at ZAMS.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_independent_samples</span><span class="p">(</span><span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">'period'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Randomly generate a population of binaries at ZAMS.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
-<span class="sd">    orbital_scheme : str (default: &#39;period&#39;)</span>
+<span class="sd">    orbital_scheme : str (default: 'period')</span>
 <span class="sd">        The scheme to use to get either orbital periods or separations</span>
 <span class="sd">    **kwargs : dictionary</span>
 <span class="sd">        kwargs from BinaryPopulation class</span>
@@ -163,7 +163,7 @@
 <span class="sd">    m2_set : ndarray of floats</span>
 <span class="sd">        Randomly drawn secondary masses</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">global</span> <span class="n">_gen_Moe_17_PsandQs</span>
 
     <span class="c1"># Generate primary masses</span>
@@ -174,39 +174,39 @@
         <span class="k">if</span> <span class="n">_gen_Moe_17_PsandQs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="n">_gen_Moe_17_PsandQs</span> <span class="o">=</span> <span class="n">Moe_17_PsandQs</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="c1"># use same defaults as generate_primary_masses</span>
-        <span class="n">M1_min</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_mass_min&quot;</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
-        <span class="n">M1_max</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;primary_mass_max&quot;</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
+        <span class="n">M1_min</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"primary_mass_min"</span><span class="p">,</span> <span class="mi">7</span><span class="p">)</span>
+        <span class="n">M1_max</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"primary_mass_max"</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span>
         <span class="c1"># generate samples</span>
         <span class="n">m2_set</span><span class="p">,</span> <span class="n">orbital_scheme_set</span><span class="p">,</span> <span class="n">eccentricity_set</span><span class="p">,</span> <span class="n">metallicity_set</span>\
          <span class="o">=</span> <span class="n">_gen_Moe_17_PsandQs</span><span class="p">(</span><span class="n">m1_set</span><span class="p">,</span> <span class="n">M_min</span><span class="o">=</span><span class="n">M1_min</span><span class="p">,</span> <span class="n">M_max</span><span class="o">=</span><span class="n">M1_max</span><span class="p">,</span>
                                <span class="n">all_binaries</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-        <span class="n">ecc_scheme</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;eccentricity_scheme&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">ecc_scheme</span> <span class="o">!=</span> <span class="s1">&#39;Moe+17-PsandQs&#39;</span><span class="p">:</span>
+        <span class="n">ecc_scheme</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'eccentricity_scheme'</span><span class="p">,</span> <span class="s1">'zero'</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ecc_scheme</span> <span class="o">!=</span> <span class="s1">'Moe+17-PsandQs'</span><span class="p">:</span>
             <span class="c1"># ensure that kwargs hold the current retrieved or</span>
             <span class="c1"># set value of eccentricity_scheme</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;eccentricity_scheme&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_scheme</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">'eccentricity_scheme'</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_scheme</span>
             <span class="n">eccentricity_set</span> <span class="o">=</span> <span class="n">generate_eccentricities</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
 
         <span class="c1"># Generate secondary masses</span>
         <span class="n">m2_set</span> <span class="o">=</span> <span class="n">generate_secondary_masses</span><span class="p">(</span><span class="n">m1_set</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;separation&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">'separation'</span><span class="p">:</span>
             <span class="c1"># Generate orbital separations</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">generate_orbital_separations</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;period&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">'period'</span><span class="p">:</span>
             <span class="c1"># Generate orbital periods</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">generate_orbital_periods</span><span class="p">(</span><span class="n">m1_set</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Allowed orbital schemes are separation or&quot;</span>
-                             <span class="s2">&quot; period.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Allowed orbital schemes are separation or"</span>
+                             <span class="s2">" period."</span><span class="p">)</span>
 
         <span class="c1"># Generate eccentricities</span>
         <span class="n">eccentricity_set</span> <span class="o">=</span> <span class="n">generate_eccentricities</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Calculate the binary fraction</span>
-        <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+        <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
         <span class="n">binary_fraction</span> <span class="o">=</span> <span class="n">generate_binary_fraction</span><span class="p">(</span><span class="n">m1</span><span class="o">=</span><span class="n">m1_set</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Set values to nan for single stars</span>
@@ -221,10 +221,10 @@
 
 <div class="viewcode-block" id="use_Moe_17_PsandQs">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.independent_sample.use_Moe_17_PsandQs">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">use_Moe_17_PsandQs</span><span class="p">(</span><span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
-                       <span class="n">orbital_period_scheme</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">eccentricity_scheme</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">use_Moe_17_PsandQs</span><span class="p">(</span><span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span>
+                       <span class="n">orbital_period_scheme</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">eccentricity_scheme</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span>
                        <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check whether Moe &amp; Di Stefano (2017) [1]_ should be used for the</span>
+<span class="w">    </span><span class="sd">"""Check whether Moe &amp; Di Stefano (2017) [1]_ should be used for the</span>
 <span class="sd">    initial sampling.</span>
 
 <span class="sd">    References</span>
@@ -233,11 +233,11 @@
 <span class="sd">        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,</span>
 <span class="sd">        &lt;i&gt;The Astrophysical Journal Supplement Series&lt;/i&gt;, vol. 230, no. 2,</span>
 <span class="sd">        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="p">((</span><span class="n">secondary_mass_scheme</span><span class="o">==</span><span class="s1">&#39;Moe+17-PsandQs&#39;</span><span class="p">)</span>
-            <span class="ow">or</span> <span class="p">((</span><span class="n">orbital_scheme</span><span class="o">==</span><span class="s1">&#39;period&#39;</span><span class="p">)</span>
-                <span class="ow">and</span> <span class="p">(</span><span class="n">orbital_period_scheme</span><span class="o">==</span><span class="s1">&#39;Moe+17-PsandQs&#39;</span><span class="p">))</span>
-            <span class="ow">or</span> <span class="p">(</span><span class="n">eccentricity_scheme</span><span class="o">==</span><span class="s1">&#39;Moe+17-PsandQs&#39;</span><span class="p">))</span></div>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">secondary_mass_scheme</span><span class="o">==</span><span class="s1">'Moe+17-PsandQs'</span><span class="p">)</span>
+            <span class="ow">or</span> <span class="p">((</span><span class="n">orbital_scheme</span><span class="o">==</span><span class="s1">'period'</span><span class="p">)</span>
+                <span class="ow">and</span> <span class="p">(</span><span class="n">orbital_period_scheme</span><span class="o">==</span><span class="s1">'Moe+17-PsandQs'</span><span class="p">))</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="n">eccentricity_scheme</span><span class="o">==</span><span class="s1">'Moe+17-PsandQs'</span><span class="p">))</span></div>
 
 
 
@@ -247,15 +247,15 @@
                              <span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                              <span class="n">orbital_period_min</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
                              <span class="n">orbital_period_max</span><span class="o">=</span><span class="mi">10</span><span class="o">**</span><span class="mf">3.5</span><span class="p">,</span>
-                             <span class="n">orbital_period_scheme</span><span class="o">=</span><span class="s1">&#39;Sana+12_period_extended&#39;</span><span class="p">,</span>
+                             <span class="n">orbital_period_scheme</span><span class="o">=</span><span class="s1">'Sana+12_period_extended'</span><span class="p">,</span>
                              <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Randomaly generate orbital periods for a sample of binaries.&quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="w">    </span><span class="sd">"""Randomaly generate orbital periods for a sample of binaries."""</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
     <span class="c1"># Check inputs</span>
 
     <span class="c1"># Sana H., et al., 2012, Science, 337, 444</span>
-    <span class="k">if</span> <span class="n">orbital_period_scheme</span> <span class="o">==</span> <span class="s1">&#39;Sana+12_period_extended&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">orbital_period_scheme</span> <span class="o">==</span> <span class="s1">'Sana+12_period_extended'</span><span class="p">:</span>
         <span class="c1"># compute periods as if all M1 &lt;= 15Msun (where pi = 0.0)</span>
         <span class="n">orbital_periods_M_lt_15</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
             <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_period_min</span><span class="p">),</span>
@@ -296,7 +296,7 @@
                                    <span class="n">orbital_periods_M_lt_15</span><span class="p">,</span>
                                    <span class="n">orbital_periods_M_gt_15</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed orbital period scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed orbital period scheme."</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">orbital_periods</span></div>
 
@@ -309,9 +309,9 @@
                                  <span class="n">orbital_separation_max</span><span class="o">=</span><span class="mf">1e5</span><span class="p">,</span>
                                  <span class="n">log_orbital_separation_mean</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                                  <span class="n">log_orbital_separation_sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-                                 <span class="n">orbital_separation_scheme</span><span class="o">=</span><span class="s1">&#39;log_uniform&#39;</span><span class="p">,</span>
+                                 <span class="n">orbital_separation_scheme</span><span class="o">=</span><span class="s1">'log_uniform'</span><span class="p">,</span>
                                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random orbital separations.</span>
+<span class="w">    </span><span class="sd">"""Generate random orbital separations.</span>
 
 <span class="sd">    Use the scheme defined in this particular instance of BinaryPopulation.</span>
 
@@ -334,33 +334,33 @@
 <span class="sd">    -------</span>
 <span class="sd">    orbital_separations : ndarray of floats</span>
 <span class="sd">        Randomly drawn orbital separations</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="sd">    """</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
-    <span class="n">orbital_separation_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;log_uniform&#39;</span><span class="p">,</span> <span class="s1">&#39;log_normal&#39;</span><span class="p">]</span>
+    <span class="n">orbital_separation_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'log_uniform'</span><span class="p">,</span> <span class="s1">'log_normal'</span><span class="p">]</span>
 
     <span class="c1"># Check inputs</span>
     <span class="k">if</span> <span class="n">orbital_separation_scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">orbital_separation_scheme_options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed &quot;</span>
-                         <span class="s2">&quot;orbital separation scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed "</span>
+                         <span class="s2">"orbital separation scheme."</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">orbital_separation_scheme</span> <span class="o">==</span> <span class="s1">&#39;log_uniform&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">orbital_separation_scheme</span> <span class="o">==</span> <span class="s1">'log_uniform'</span><span class="p">:</span>
         <span class="n">orbital_separations</span> <span class="o">=</span> <span class="mi">10</span><span class="o">**</span><span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
             <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_separation_min</span><span class="p">),</span>
             <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_separation_max</span><span class="p">),</span>
             <span class="n">size</span><span class="o">=</span><span class="n">number_of_binaries</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">orbital_separation_max</span> <span class="o">&lt;</span> <span class="n">orbital_separation_min</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`orbital_separation_max` must be &quot;</span>
-                         <span class="s2">&quot;larger than the orbital_separation_min.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`orbital_separation_max` must be "</span>
+                         <span class="s2">"larger than the orbital_separation_min."</span><span class="p">)</span>
 
-    <span class="k">elif</span> <span class="n">orbital_separation_scheme</span> <span class="o">==</span> <span class="s1">&#39;log_normal&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">orbital_separation_scheme</span> <span class="o">==</span> <span class="s1">'log_normal'</span><span class="p">:</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">log_orbital_separation_mean</span> <span class="ow">is</span> <span class="kc">None</span>
                 <span class="ow">or</span> <span class="n">log_orbital_separation_sigma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;For the `log_normal separation` scheme you must give &quot;</span>
-                <span class="s2">&quot;`log_orbital_separation_mean`, &quot;</span>
-                <span class="s2">&quot;`log_orbital_separation_sigma`.&quot;</span><span class="p">)</span>
+                <span class="s2">"For the `log_normal separation` scheme you must give "</span>
+                <span class="s2">"`log_orbital_separation_mean`, "</span>
+                <span class="s2">"`log_orbital_separation_sigma`."</span><span class="p">)</span>
 
         <span class="c1"># Set limits for truncated normal distribution</span>
         <span class="n">a_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">orbital_separation_min</span><span class="p">)</span>
@@ -387,9 +387,9 @@
 <div class="viewcode-block" id="generate_eccentricities">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.independent_sample.generate_eccentricities">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_eccentricities</span><span class="p">(</span><span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                            <span class="n">eccentricity_scheme</span><span class="o">=</span><span class="s1">&#39;thermal&#39;</span><span class="p">,</span>
+                            <span class="n">eccentricity_scheme</span><span class="o">=</span><span class="s1">'thermal'</span><span class="p">,</span>
                             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random eccentricities.</span>
+<span class="w">    </span><span class="sd">"""Generate random eccentricities.</span>
 
 <span class="sd">    Use the scheme defined in this particular instance of BinaryPopulation.</span>
 
@@ -407,19 +407,19 @@
 <span class="sd">    eccentricities : ndarray of floats</span>
 <span class="sd">        Randomly drawn eccentricities</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="sd">    """</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
-    <span class="n">eccentricity_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;thermal&#39;</span><span class="p">,</span> <span class="s1">&#39;uniform&#39;</span><span class="p">,</span> <span class="s1">&#39;zero&#39;</span><span class="p">]</span>
+    <span class="n">eccentricity_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'thermal'</span><span class="p">,</span> <span class="s1">'uniform'</span><span class="p">,</span> <span class="s1">'zero'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">eccentricity_scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">eccentricity_scheme_options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed eccentricity scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed eccentricity scheme."</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">&#39;thermal&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">'thermal'</span><span class="p">:</span>
         <span class="n">eccentricities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">number_of_binaries</span><span class="p">))</span>
-    <span class="k">elif</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">&#39;uniform&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">'uniform'</span><span class="p">:</span>
         <span class="n">eccentricities</span> <span class="o">=</span> <span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">number_of_binaries</span><span class="p">)</span>
-    <span class="k">elif</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">&#39;zero&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">eccentricity_scheme</span> <span class="o">==</span> <span class="s1">'zero'</span><span class="p">:</span>
         <span class="n">eccentricities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">number_of_binaries</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># This should never be reached</span>
@@ -434,9 +434,9 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_primary_masses</span><span class="p">(</span><span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                             <span class="n">primary_mass_min</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
                             <span class="n">primary_mass_max</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
-                            <span class="n">primary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;Salpeter&#39;</span><span class="p">,</span>
+                            <span class="n">primary_mass_scheme</span><span class="o">=</span><span class="s1">'Salpeter'</span><span class="p">,</span>
                             <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random primary masses.</span>
+<span class="w">    </span><span class="sd">"""Generate random primary masses.</span>
 
 <span class="sd">    Use the scheme defined in this particular instance of BinaryPopulation.</span>
 
@@ -456,16 +456,16 @@
 <span class="sd">    primary_masses : ndarray of floats</span>
 <span class="sd">        Randomly drawn primary masses</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="sd">    """</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
-    <span class="n">primary_mass_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Salpeter&#39;</span><span class="p">,</span> <span class="s1">&#39;Kroupa1993&#39;</span><span class="p">,</span> <span class="s1">&#39;Kroupa2001&#39;</span><span class="p">]</span>
+    <span class="n">primary_mass_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'Salpeter'</span><span class="p">,</span> <span class="s1">'Kroupa1993'</span><span class="p">,</span> <span class="s1">'Kroupa2001'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">primary_mass_scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">primary_mass_scheme_options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed primary mass scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed primary mass scheme."</span><span class="p">)</span>
 
     <span class="c1"># Salpeter E. E., 1955, ApJ, 121, 161</span>
-    <span class="k">if</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">&#39;Salpeter&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">'Salpeter'</span><span class="p">:</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.35</span>
         <span class="n">normalization_constant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">primary_mass_max</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
                                                 <span class="o">-</span> <span class="n">primary_mass_min</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
@@ -474,7 +474,7 @@
                           <span class="o">+</span> <span class="n">primary_mass_min</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
 
     <span class="c1"># Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545</span>
-    <span class="k">elif</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">&#39;Kroupa1993&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">'Kroupa1993'</span><span class="p">:</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.7</span>
         <span class="n">normalization_constant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">primary_mass_max</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
                                                 <span class="o">-</span> <span class="n">primary_mass_min</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
@@ -483,7 +483,7 @@
                           <span class="o">+</span> <span class="n">primary_mass_min</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
 
     <span class="c1"># Kroupa P., 2001, MNRAS, 322, 231</span>
-    <span class="k">elif</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">&#39;Kroupa2001&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">primary_mass_scheme</span> <span class="o">==</span> <span class="s1">'Kroupa2001'</span><span class="p">:</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="mf">2.3</span>
         <span class="n">normalization_constant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">primary_mass_max</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span>
                                                 <span class="o">-</span> <span class="n">primary_mass_min</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
@@ -503,9 +503,9 @@
                               <span class="n">number_of_binaries</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                               <span class="n">secondary_mass_min</span><span class="o">=</span><span class="mf">0.35</span><span class="p">,</span>
                               <span class="n">secondary_mass_max</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
-                              <span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">,</span>
+                              <span class="n">secondary_mass_scheme</span><span class="o">=</span><span class="s1">'flat_mass_ratio'</span><span class="p">,</span>
                               <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Generate random secondary masses.</span>
+<span class="w">    </span><span class="sd">"""Generate random secondary masses.</span>
 
 <span class="sd">    Use the scheme defined in this particular instance of BinaryPopulation.</span>
 
@@ -527,21 +527,21 @@
 <span class="sd">    secondary_masses : ndarray of floats</span>
 <span class="sd">        Randomly drawn secondary masses</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;RNG&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
+<span class="sd">    """</span>
+    <span class="n">RNG</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'RNG'</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">())</span>
 
-    <span class="n">secondary_mass_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;q=1&#39;</span><span class="p">]</span>
+    <span class="n">secondary_mass_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'flat_mass_ratio'</span><span class="p">,</span> <span class="s1">'q=1'</span><span class="p">]</span>
 
     <span class="c1"># Input parameter checks</span>
     <span class="k">if</span> <span class="n">secondary_mass_scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">secondary_mass_scheme_options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed secondary mass scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed secondary mass scheme."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">primary_masses</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">secondary_mass_min</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`secondary_mass_min` is &quot;</span>
-                         <span class="s2">&quot;larger than some primary masses&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`secondary_mass_min` is "</span>
+                         <span class="s2">"larger than some primary masses"</span><span class="p">)</span>
 
     <span class="c1"># Generate secondary masses</span>
-    <span class="k">if</span> <span class="n">secondary_mass_scheme</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">secondary_mass_scheme</span> <span class="o">==</span> <span class="s1">'flat_mass_ratio'</span><span class="p">:</span>
         <span class="n">mass_ratio_min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">secondary_mass_min</span> <span class="o">/</span> <span class="n">primary_masses</span><span class="p">,</span>
                                  <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">primary_masses</span><span class="p">))</span><span class="o">*</span><span class="mf">0.05</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
         <span class="n">mass_ratio_max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">secondary_mass_max</span> <span class="o">/</span> <span class="n">primary_masses</span><span class="p">,</span>
@@ -550,7 +550,7 @@
             <span class="p">(</span><span class="n">mass_ratio_max</span> <span class="o">-</span> <span class="n">mass_ratio_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">RNG</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span>
                 <span class="n">size</span><span class="o">=</span><span class="n">number_of_binaries</span><span class="p">)</span> <span class="o">+</span> <span class="n">mass_ratio_min</span><span class="p">)</span> <span class="o">*</span> <span class="n">primary_masses</span>
 
-    <span class="k">if</span> <span class="n">secondary_mass_scheme</span> <span class="o">==</span> <span class="s1">&#39;q=1&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">secondary_mass_scheme</span> <span class="o">==</span> <span class="s1">'q=1'</span><span class="p">:</span>
         <span class="n">secondary_masses</span> <span class="o">=</span> <span class="n">primary_masses</span>
 
     <span class="k">return</span> <span class="n">secondary_masses</span></div>
@@ -559,8 +559,8 @@
 <div class="viewcode-block" id="generate_binary_fraction">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.independent_sample.generate_binary_fraction">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">generate_binary_fraction</span><span class="p">(</span><span class="n">m1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">binary_fraction_const</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-                             <span class="n">binary_fraction_scheme</span><span class="o">=</span><span class="s1">&#39;const&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+                             <span class="n">binary_fraction_scheme</span><span class="o">=</span><span class="s1">'const'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    Getting the binary fraction depending on the scheme. The two possible</span>
 <span class="sd">    option are a constant binary fraction and a binary fraction based on the</span>
 <span class="sd">    values given in Moe and Di Stefano (2017).</span>
@@ -577,22 +577,22 @@
 <span class="sd">    ------------------</span>
 <span class="sd">    binary fraction: int</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">binary_fraction_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;const&#39;</span><span class="p">,</span><span class="s1">&#39;Moe+17-massdependent&#39;</span><span class="p">]</span>
+<span class="sd">    """</span>
+    <span class="n">binary_fraction_scheme_options</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'const'</span><span class="p">,</span><span class="s1">'Moe+17-massdependent'</span><span class="p">]</span>
 
     <span class="k">if</span> <span class="n">m1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There was not a primary mass provided in the inputs. Unable to return a binary fraction&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"There was not a primary mass provided in the inputs. Unable to return a binary fraction"</span><span class="p">)</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
         <span class="n">m1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m1</span><span class="p">)</span>
     <span class="n">binary_fraction</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
     <span class="c1"># Input parameter checks</span>
     <span class="k">if</span> <span class="n">binary_fraction_scheme</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">binary_fraction_scheme_options</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;You must provide an allowed binary fraction scheme.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"You must provide an allowed binary fraction scheme."</span><span class="p">)</span>
 
-    <span class="k">if</span> <span class="n">binary_fraction_scheme</span> <span class="o">==</span> <span class="s1">&#39;const&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">binary_fraction_scheme</span> <span class="o">==</span> <span class="s1">'const'</span><span class="p">:</span>
         <span class="n">binary_fraction</span> <span class="o">=</span> <span class="n">binary_fraction_const</span>
 
-    <span class="k">elif</span> <span class="n">binary_fraction_scheme</span> <span class="o">==</span> <span class="s1">&#39;Moe+17-massdependent&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">binary_fraction_scheme</span> <span class="o">==</span> <span class="s1">'Moe+17-massdependent'</span><span class="p">:</span>
         <span class="n">binary_fraction</span><span class="p">[(</span><span class="n">m1</span> <span class="o">&gt;</span> <span class="mi">16</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.94</span>
         <span class="n">binary_fraction</span><span class="p">[(</span><span class="n">m1</span> <span class="o">&lt;=</span> <span class="mi">16</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m1</span> <span class="o">&gt;</span> <span class="mi">9</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.84</span>
         <span class="n">binary_fraction</span><span class="p">[(</span><span class="n">m1</span> <span class="o">&lt;=</span> <span class="mi">9</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">m1</span> <span class="o">&gt;</span> <span class="mi">5</span><span class="p">)]</span> <span class="o">=</span> <span class="mf">0.76</span>

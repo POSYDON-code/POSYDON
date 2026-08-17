@@ -116,10 +116,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.CLI.popsyn.setup</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Utility functions for POSYDON population synthesis command line interface.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Utility functions for POSYDON population synthesis command line interface."""</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Max Briel &lt;max.briel@gmail.com&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Max Briel &lt;max.briel@gmail.com&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
@@ -138,7 +138,7 @@
 <div class="viewcode-block" id="check_SN_MODEL_validity">
 <a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.setup.check_SN_MODEL_validity">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_SN_MODEL_validity</span><span class="p">(</span><span class="n">ini_file</span><span class="p">,</span> <span class="n">verbose_on_fail</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Checks if the step_SN model is valid for this script</span>
+<span class="w">    </span><span class="sd">'''Checks if the step_SN model is valid for this script</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -151,12 +151,12 @@
 <span class="sd">    -------</span>
 <span class="sd">    bool</span>
 <span class="sd">        True if the model is valid or use_interp_values=False, False otherwise</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
 
     <span class="n">simprop_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">ini_file</span><span class="p">)</span>
-    <span class="n">step_SN_MODEL</span> <span class="o">=</span> <span class="n">simprop_kwargs</span><span class="p">[</span><span class="s1">&#39;step_SN&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">step_SN_MODEL</span> <span class="o">=</span> <span class="n">simprop_kwargs</span><span class="p">[</span><span class="s1">'step_SN'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
     <span class="c1"># always allow the use of non-interpolation values</span>
-    <span class="k">if</span> <span class="n">step_SN_MODEL</span><span class="p">[</span><span class="s1">&#39;use_interp_values&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">step_SN_MODEL</span><span class="p">[</span><span class="s1">'use_interp_values'</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">True</span>
     <span class="c1"># step_SN MODEL check</span>
     <span class="n">SN_MODEL_NAME_SEL</span> <span class="o">=</span> <span class="n">get_SN_MODEL_NAME</span><span class="p">(</span><span class="n">step_SN_MODEL</span><span class="p">)</span>
@@ -172,7 +172,7 @@
 <div class="viewcode-block" id="validate_ini_file">
 <a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.setup.validate_ini_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">validate_ini_file</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Validates the ini file for population synthesis</span>
+<span class="w">    </span><span class="sd">'''Validates the ini file for population synthesis</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -185,13 +185,13 @@
 <span class="sd">        if the ini file does not exist</span>
 <span class="sd">    ValueError</span>
 <span class="sd">        if the step_SN MODEL is not valid for this script</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;File </span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s1"> not found&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'File </span><span class="si">{</span><span class="n">ini_file</span><span class="si">}</span><span class="s1"> not found'</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="ow">not</span> <span class="n">check_SN_MODEL_validity</span><span class="p">(</span><span class="n">ini_file</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The step_SN MODEL is not valid for this script. &quot;</span>
-                         <span class="s2">&quot;Please check the MODEL in the ini file&quot;</span><span class="p">)</span></div>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The step_SN MODEL is not valid for this script. "</span>
+                         <span class="s2">"Please check the MODEL in the ini file"</span><span class="p">)</span></div>
 
 
 <span class="c1">################################################</span>
@@ -201,39 +201,39 @@
 <div class="viewcode-block" id="setup_popsyn_function">
 <a class="viewcode-back" href="../../../../api_reference/posydon.CLI.popsyn.html#posydon.CLI.popsyn.setup.setup_popsyn_function">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">setup_popsyn_function</span><span class="p">(</span><span class="n">args</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&#39;&#39;&#39;Function to setup the population synthesis run</span>
+<span class="w">    </span><span class="sd">'''Function to setup the population synthesis run</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    args : argparse.Namespace</span>
 <span class="sd">        the arguments passed to the function</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    '''</span>
 
     <span class="c1"># validate the ini file</span>
     <span class="n">validate_ini_file</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
 
     <span class="n">synpop_params</span> <span class="o">=</span> <span class="n">binarypop_kwargs_from_ini</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
     <span class="c1"># warn if mass ratio q = M2/M1 could fall below 0.05</span>
-    <span class="k">if</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;secondary_mass_scheme&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;flat_mass_ratio&#39;</span><span class="p">:</span>
-        <span class="n">q_min_possible</span> <span class="o">=</span> <span class="p">(</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">]</span>
-                          <span class="o">/</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">'secondary_mass_scheme'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'flat_mass_ratio'</span><span class="p">:</span>
+        <span class="n">q_min_possible</span> <span class="o">=</span> <span class="p">(</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">'secondary_mass_min'</span><span class="p">]</span>
+                          <span class="o">/</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">'primary_mass_max'</span><span class="p">])</span>
         <span class="k">if</span> <span class="n">q_min_possible</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">:</span>
             <span class="n">Pwarn</span><span class="p">(</span>
-                <span class="sa">f</span><span class="s2">&quot;With secondary_mass_min=&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;secondary_mass_min&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> and &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;primary_mass_max=&quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">, the mass &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;ratio q=M2/M1 can be as low as </span><span class="si">{</span><span class="n">q_min_possible</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">. &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;Some binaries with q&lt;0.05 might fall outside the POSYDON &quot;</span>
-                <span class="sa">f</span><span class="s2">&quot;default grids.&quot;</span><span class="p">,</span>
-                <span class="s2">&quot;InappropriateValueWarning&quot;</span>
+                <span class="sa">f</span><span class="s2">"With secondary_mass_min="</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">'secondary_mass_min'</span><span class="p">]</span><span class="si">}</span><span class="s2"> and "</span>
+                <span class="sa">f</span><span class="s2">"primary_mass_max="</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">synpop_params</span><span class="p">[</span><span class="s1">'primary_mass_max'</span><span class="p">]</span><span class="si">}</span><span class="s2">, the mass "</span>
+                <span class="sa">f</span><span class="s2">"ratio q=M2/M1 can be as low as </span><span class="si">{</span><span class="n">q_min_possible</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">. "</span>
+                <span class="sa">f</span><span class="s2">"Some binaries with q&lt;0.05 might fall outside the POSYDON "</span>
+                <span class="sa">f</span><span class="s2">"default grids."</span><span class="p">,</span>
+                <span class="s2">"InappropriateValueWarning"</span>
             <span class="p">)</span>
 
-    <span class="n">metallicities</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;metallicities&#39;</span><span class="p">]</span>
-    <span class="k">if</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">job_array</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The number of binaries is less than the job array&quot;</span>
-                         <span class="s2">&quot; length. Please increase the number of binaries or&quot;</span>
-                         <span class="s2">&quot; decrease the job array length&quot;</span><span class="p">)</span>
+    <span class="n">metallicities</span> <span class="o">=</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">'metallicities'</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">synpop_params</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">/</span> <span class="n">args</span><span class="o">.</span><span class="n">job_array</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The number of binaries is less than the job array"</span>
+                         <span class="s2">" length. Please increase the number of binaries or"</span>
+                         <span class="s2">" decrease the job array length"</span><span class="p">)</span>
 
     <span class="c1"># create the run_metallicity and merge_metallicity scripts</span>
     <span class="n">create_python_scripts</span><span class="p">(</span><span class="n">args</span><span class="o">.</span><span class="n">ini_file</span><span class="p">)</span>
@@ -241,13 +241,13 @@
     <span class="k">for</span> <span class="n">met</span> <span class="ow">in</span> <span class="n">metallicities</span><span class="p">:</span>
         <span class="c1"># create log directory</span>
         <span class="n">str_met</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">met</span><span class="p">)</span>
-        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs&#39;</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">str_met</span><span class="si">}</span><span class="s1">_logs'</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
         <span class="c1"># create SLURM array submission script for this metallicity</span>
         <span class="n">create_slurm_scripts</span><span class="p">(</span><span class="n">met</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
 
     <span class="c1"># create bash submission script for all metallicities at once</span>
-    <span class="n">create_bash_submit_script</span><span class="p">(</span><span class="s1">&#39;slurm_submit.sh&#39;</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">)</span></div>
+    <span class="n">create_bash_submit_script</span><span class="p">(</span><span class="s1">'slurm_submit.sh'</span><span class="p">,</span> <span class="n">metallicities</span><span class="p">)</span></div>
 
 </pre></div>
 

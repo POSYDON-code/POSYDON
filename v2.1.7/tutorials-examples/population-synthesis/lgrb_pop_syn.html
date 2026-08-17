@@ -140,7 +140,7 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 
-<span class="n">file</span> <span class="o">=</span> <span class="s1">&#39;BBH_contact.h5&#39;</span>
+<span class="n">file</span> <span class="o">=</span> <span class="s1">'BBH_contact.h5'</span>
 </pre></div>
 </div>
 </div>
@@ -175,7 +175,7 @@
 <span class="n">GRB_selection</span><span class="p">(</span><span class="n">BBH_population</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
               <span class="n">BBH_population</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">10</span><span class="p">],</span>
               <span class="n">BBH_population</span><span class="o">.</span><span class="n">formation_channels</span><span class="o">.</span><span class="n">loc</span><span class="p">[[</span><span class="mi">10</span><span class="p">]],</span>
-              <span class="n">S1_S2</span><span class="o">=</span><span class="s1">&#39;S2&#39;</span><span class="p">)</span>
+              <span class="n">S1_S2</span><span class="o">=</span><span class="s1">'S2'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -186,11 +186,11 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">GRB_wrapper</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;calculate the GRBs from star 1 and star 2 for a given chunk of the population&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""calculate the GRBs from star 1 and star 2 for a given chunk of the population"""</span>
     <span class="c1"># select potential GRBs from star 1</span>
-    <span class="n">df_1</span> <span class="o">=</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">)</span>
+    <span class="n">df_1</span> <span class="o">=</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">)</span>
     <span class="c1"># select potential GRBs from star 2</span>
-    <span class="n">df_2</span> <span class="o">=</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">&#39;S2&#39;</span><span class="p">)</span>
+    <span class="n">df_2</span> <span class="o">=</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">'S2'</span><span class="p">)</span>
 
     <span class="c1"># combine the two dataframes</span>
     <span class="k">if</span> <span class="n">df_1</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">df_2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -210,7 +210,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span> <span class="o">=</span> <span class="n">BBH_population</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">GRB_wrapper</span><span class="p">,</span> <span class="s1">&#39;LGRB&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span> <span class="o">=</span> <span class="n">BBH_population</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">GRB_wrapper</span><span class="p">,</span> <span class="s1">'LGRB'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -223,19 +223,19 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">pop_params</span> <span class="o">=</span> <span class="n">LGRB</span><span class="o">.</span><span class="n">ini_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="c1"># extending the IMF to higher and lower masses</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'primary_mass_min'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'primary_mass_max'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="c1"># use a flat mass ratio distribution</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'q_min'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'q_max'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 
 <span class="c1"># binary fraction</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;binary_fraction_const&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'binary_fraction_const'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
 
 <span class="c1"># model_weights_identifier is an arbitrary name for the set of weights</span>
 <span class="c1"># you are calculating. You can use it to keep track of different</span>
 <span class="c1"># sets of weights you might want to calculate.</span>
-<span class="n">LGRB</span><span class="o">.</span><span class="n">calculate_model_weights</span><span class="p">(</span><span class="n">model_weights_identifier</span><span class="o">=</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">,</span>
+<span class="n">LGRB</span><span class="o">.</span><span class="n">calculate_model_weights</span><span class="p">(</span><span class="n">model_weights_identifier</span><span class="o">=</span><span class="s1">'extended_IMF'</span><span class="p">,</span>
                                 <span class="n">population_parameters</span><span class="o">=</span><span class="n">pop_params</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -244,7 +244,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span><span class="o">.</span><span class="n">efficiency</span><span class="p">(</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span><span class="o">.</span><span class="n">efficiency</span><span class="p">(</span><span class="s1">'extended_IMF'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -252,7 +252,7 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span><span class="o">.</span><span class="n">plot_efficiency_over_metallicity</span><span class="p">(</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB</span><span class="o">.</span><span class="n">plot_efficiency_over_metallicity</span><span class="p">(</span><span class="s1">'extended_IMF'</span><span class="p">,</span> <span class="n">channels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -262,8 +262,8 @@
 <div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
 </pre></div>
 </div>
-<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB_rates</span> <span class="o">=</span> <span class="n">LGRB</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span>
-                                           <span class="n">model_weights</span><span class="o">=</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">)</span>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">LGRB_rates</span> <span class="o">=</span> <span class="n">LGRB</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">'IllustrisTNG'</span><span class="p">,</span>
+                                           <span class="n">model_weights</span><span class="o">=</span><span class="s1">'extended_IMF'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -280,7 +280,7 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rates</span>
-<span class="n">BBH_rates</span>  <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">&#39;BBH_contact.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">,</span> <span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">)</span>
+<span class="n">BBH_rates</span>  <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">'BBH_contact.h5'</span><span class="p">,</span> <span class="s1">'BBH'</span><span class="p">,</span> <span class="s1">'IllustrisTNG'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -298,10 +298,10 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">BBH_rates</span><span class="o">.</span><span class="n">centers_redshift_bins</span><span class="p">,</span> <span class="n">BBH_rates</span><span class="o">.</span><span class="n">intrinsic_rate_density</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LGRB_rates</span><span class="o">.</span><span class="n">centers_redshift_bins</span><span class="p">,</span> <span class="n">LGRB_rates</span><span class="o">.</span><span class="n">intrinsic_rate_density</span><span class="p">[</span><span class="s1">&#39;total&#39;</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;LGRB&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">BBH_rates</span><span class="o">.</span><span class="n">centers_redshift_bins</span><span class="p">,</span> <span class="n">BBH_rates</span><span class="o">.</span><span class="n">intrinsic_rate_density</span><span class="p">[</span><span class="s1">'total'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'BBH'</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">LGRB_rates</span><span class="o">.</span><span class="n">centers_redshift_bins</span><span class="p">,</span> <span class="n">LGRB_rates</span><span class="o">.</span><span class="n">intrinsic_rate_density</span><span class="p">[</span><span class="s1">'total'</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="s1">'LGRB'</span><span class="p">)</span>
 
-<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">yscale</span><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -321,11 +321,11 @@
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
-<span class="n">LGRB_rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_spin_postSN&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">LGRB_rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S2_spin_postSN&#39;</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S2&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">LGRB_rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S1_spin_postSN'</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'blue'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">LGRB_rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S2_spin_postSN'</span><span class="p">,</span> <span class="n">intrinsic</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S2'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'orange'</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;BH spin post LGRB&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;\# Events in bin&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'BH spin post LGRB'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'\# Events in bin'</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>

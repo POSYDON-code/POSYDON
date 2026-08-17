@@ -147,9 +147,9 @@ run a population containing more binaries, if you want to do a more thorough ana
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
 
-<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="si">}</span><span class="s1">/../tutorial_populations/&#39;</span>
+<span class="n">data_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="si">}</span><span class="s1">/../tutorial_populations/'</span>
 
-<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">&#39;1e+00_Zsun_population.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="n">data_path</span><span class="o">+</span><span class="s1">'1e+00_Zsun_population.h5'</span><span class="p">)</span>
 
 <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
 </pre></div>
@@ -169,21 +169,21 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># read the relevant data in one go</span>
 <span class="c1"># (faster than reading it in chunks, but requires more memory)</span>
-<span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span> <span class="s1">&#39;S2_state&#39;</span><span class="p">,</span> <span class="s1">&#39;event&#39;</span><span class="p">])</span>
+<span class="n">tmp_data</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">'S1_state'</span><span class="p">,</span> <span class="s1">'S2_state'</span><span class="p">,</span> <span class="s1">'event'</span><span class="p">])</span>
 <span class="c1"># Selection of S1 being a BH</span>
-<span class="n">S1_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S1_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+<span class="n">S1_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">'S1_state'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'BH'</span>
 <span class="c1"># Selection of S2 being a BH</span>
-<span class="n">S2_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;S2_state&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;BH&#39;</span>
+<span class="n">S2_state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">'S2_state'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'BH'</span>
 <span class="c1"># Selection of the binary system being in contact during the double CO phase.</span>
-<span class="n">state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">&#39;event&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;CO_contact&#39;</span>
+<span class="n">state</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="p">[</span><span class="s1">'event'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'CO_contact'</span>
 <span class="n">indices</span> <span class="o">=</span> <span class="n">tmp_data</span><span class="o">.</span><span class="n">index</span>
 <span class="k">del</span> <span class="n">tmp_data</span>
 <span class="n">mask</span> <span class="o">=</span> <span class="n">S1_state</span> <span class="o">&amp;</span> <span class="n">S2_state</span> <span class="o">&amp;</span> <span class="n">state</span>
 <span class="n">selected_indices</span> <span class="o">=</span> <span class="n">indices</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">to_list</span><span class="p">()</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Number of systems: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Number of systems: </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="si">}</span><span class="s1">'</span><span class="p">)</span>
 
 <span class="c1"># set overwrite to False to add to the file</span>
-<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="s1">&#39;Zsun_BBH_contact.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span><span class="o">.</span><span class="n">export_selection</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">,</span> <span class="s1">'Zsun_BBH_contact.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -192,7 +192,7 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Population</span>
-<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">&#39;Zsun_BBH_contact.h5&#39;</span><span class="p">)</span>
+<span class="n">pop</span> <span class="o">=</span> <span class="n">Population</span><span class="p">(</span><span class="s1">'Zsun_BBH_contact.h5'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -228,7 +228,7 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">BBH_selection_function</span>
-<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">BBH_selection_function</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
+<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">pop</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">BBH_selection_function</span><span class="p">,</span> <span class="s1">'BBH'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -240,23 +240,23 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">TransientPopulation</span>
 
-<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">&#39;Zsun_BBH_contact.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">)</span>
+<span class="n">BBH_mergers</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">'Zsun_BBH_contact.h5'</span><span class="p">,</span> <span class="s1">'BBH'</span><span class="p">)</span>
 
 <span class="n">pop_params</span> <span class="o">=</span> <span class="n">BBH_mergers</span><span class="o">.</span><span class="n">ini_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 <span class="c1"># extending the IMF to higher and lower masses</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;primary_mass_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'primary_mass_min'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'primary_mass_max'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">200</span>
 <span class="c1"># changing the slope of the IMF to be more top-heavy</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;q_min&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;q_max&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'q_min'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'q_max'</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="c1"># binary fraction</span>
-<span class="n">pop_params</span><span class="p">[</span><span class="s1">&#39;binary_fraction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
+<span class="n">pop_params</span><span class="p">[</span><span class="s1">'binary_fraction'</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.7</span>
 
 <span class="c1"># returns the underlying mass and stores it in the mass_per_metallicity attribute</span>
-<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">calculate_model_weights</span><span class="p">(</span><span class="n">model_weights_identifier</span><span class="o">=</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">,</span>
+<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">calculate_model_weights</span><span class="p">(</span><span class="n">model_weights_identifier</span><span class="o">=</span><span class="s1">'extended_IMF'</span><span class="p">,</span>
                                     <span class="n">population_parameters</span><span class="o">=</span><span class="n">pop_params</span><span class="p">)</span>
 
-<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">efficiency</span><span class="p">(</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">)</span>
+<span class="n">BBH_mergers</span><span class="o">.</span><span class="n">efficiency</span><span class="p">(</span><span class="s1">'extended_IMF'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -273,12 +273,12 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="n">MODEL_in</span> <span class="o">=</span> <span class="p">{</span>
-    <span class="s1">&#39;select_one_met&#39;</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
-    <span class="s1">&#39;dlogZ&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">*</span><span class="mi">2</span><span class="p">)],</span>
+    <span class="s1">'select_one_met'</span> <span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="s1">'dlogZ'</span> <span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">/</span><span class="mi">2</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="mf">0.0142</span><span class="o">*</span><span class="mi">2</span><span class="p">)],</span>
 <span class="p">}</span>
 
-<span class="n">rates</span> <span class="o">=</span> <span class="n">BBH_mergers</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span>
-                                             <span class="n">model_weights</span><span class="o">=</span><span class="s1">&#39;extended_IMF&#39;</span><span class="p">,</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">BBH_mergers</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">'IllustrisTNG'</span><span class="p">,</span>
+                                             <span class="n">model_weights</span><span class="o">=</span><span class="s1">'extended_IMF'</span><span class="p">,</span>
                                              <span class="n">MODEL_in</span><span class="o">=</span><span class="n">MODEL_in</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -310,10 +310,10 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.transient_select_funcs</span><span class="w"> </span><span class="kn">import</span> <span class="n">DCO_detectability</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.synthetic_population</span><span class="w"> </span><span class="kn">import</span> <span class="n">Rates</span>
 
-<span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">&#39;Zsun_BBH_contact.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;BBH&#39;</span><span class="p">,</span> <span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,)</span>
+<span class="n">rates</span> <span class="o">=</span> <span class="n">Rates</span><span class="p">(</span><span class="s1">'Zsun_BBH_contact.h5'</span><span class="p">,</span> <span class="s1">'BBH'</span><span class="p">,</span> <span class="s1">'IllustrisTNG'</span><span class="p">,)</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">DCO_wrapper</span><span class="p">(</span><span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">):</span>
-    <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">&#39;design_H1L1V1&#39;</span>
+    <span class="n">sensitivity</span> <span class="o">=</span> <span class="s1">'design_H1L1V1'</span>
     <span class="k">return</span> <span class="n">DCO_detectability</span><span class="p">(</span><span class="n">sensitivity</span><span class="p">,</span> <span class="n">transient_chunk</span><span class="p">,</span> <span class="n">z_events_chunk</span><span class="p">,</span> <span class="n">weights_chunk</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -323,7 +323,7 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We also give it a name, which is used as an identifier in the file</span>
-<span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">calculate_observable_population</span><span class="p">(</span><span class="n">DCO_wrapper</span><span class="p">,</span> <span class="s1">'design_H1L1V1'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -332,7 +332,7 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 </pre></div>
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We can now access this observable population</span>
-<span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">observable_population</span><span class="p">(</span><span class="s1">'design_H1L1V1'</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -350,9 +350,9 @@ Madau &amp; Fragos (2018) metallicity evolution (dashed line) in Fig. 22 of (see
 <span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
 
-<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">&#39;S1_mass&#39;</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">&#39;design_H1L1V1&#39;</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;PDF&#39;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Mass [Msun]&#39;</span><span class="p">)</span>
+<span class="n">rates</span><span class="o">.</span><span class="n">plot_hist_properties</span><span class="p">(</span><span class="s1">'S1_mass'</span><span class="p">,</span> <span class="n">intrinsice</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">observable</span><span class="o">=</span><span class="s1">'design_H1L1V1'</span><span class="p">,</span> <span class="n">normalise</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">'PDF'</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">'Mass [Msun]'</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>

@@ -112,11 +112,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.popsyn.sample_from_file</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Get the initial parameters for a binary population.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Get the initial parameters for a binary population."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -130,29 +130,29 @@
                                                <span class="n">generate_secondary_masses</span><span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
 
-<span class="n">PRIMARY_MASS_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s1_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;primary_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;mass_1&#39;</span><span class="p">,</span> <span class="s1">&#39;m_1&#39;</span><span class="p">,</span> <span class="s1">&#39;m1&#39;</span><span class="p">]</span>
-<span class="n">SECONDARY_MASS_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s2_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;secondary_mass&#39;</span><span class="p">,</span> <span class="s1">&#39;mass_2&#39;</span><span class="p">,</span> <span class="s1">&#39;m_2&#39;</span><span class="p">,</span> <span class="s1">&#39;m2&#39;</span><span class="p">]</span>
-<span class="n">PERIOD_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orbital_period&#39;</span><span class="p">,</span> <span class="s1">&#39;period&#39;</span><span class="p">,</span> <span class="s1">&#39;p_orb&#39;</span><span class="p">,</span> <span class="s1">&#39;porb&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">]</span>
-<span class="n">SEPARATION_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;orbital_separation&#39;</span><span class="p">,</span> <span class="s1">&#39;separation&#39;</span><span class="p">,</span> <span class="s1">&#39;semi-major_axis&#39;</span><span class="p">,</span>\
-                    <span class="s1">&#39;semi_major_axis&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">]</span>
-<span class="n">ECCENTRICITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;eccentricity&#39;</span><span class="p">,</span> <span class="s1">&#39;ecc&#39;</span><span class="p">,</span> <span class="s1">&#39;e&#39;</span><span class="p">]</span>
-<span class="n">PRIMARY_KICK_VELOCITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s1_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;w_1&#39;</span><span class="p">,</span> <span class="s1">&#39;w1&#39;</span><span class="p">]</span>
-<span class="n">SECONDARY_KICK_VELOCITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s2_natal_kick_array_0&#39;</span><span class="p">,</span> <span class="s1">&#39;w_2&#39;</span><span class="p">,</span> <span class="s1">&#39;w2&#39;</span><span class="p">]</span>
-<span class="n">PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s1_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;phi_1&#39;</span><span class="p">,</span> <span class="s1">&#39;phi1&#39;</span><span class="p">]</span>
-<span class="n">SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s2_natal_kick_array_1&#39;</span><span class="p">,</span> <span class="s1">&#39;phi_2&#39;</span><span class="p">,</span>\
-                                        <span class="s1">&#39;phi2&#39;</span><span class="p">]</span>
-<span class="n">PRIMARY_KICK_POLAR_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s1_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;theta_1&#39;</span><span class="p">,</span> <span class="s1">&#39;theta1&#39;</span><span class="p">]</span>
-<span class="n">SECONDARY_KICK_POLAR_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s2_natal_kick_array_2&#39;</span><span class="p">,</span> <span class="s1">&#39;theta_2&#39;</span><span class="p">,</span>\
-                                    <span class="s1">&#39;theta2&#39;</span><span class="p">]</span>
-<span class="n">PRIMARY_KICK_MEAN_ANOMALY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s1_natal_kick_array_3&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_anomaly_1&#39;</span><span class="p">,</span>\
-                                   <span class="s1">&#39;mean_anomaly1&#39;</span><span class="p">]</span>
-<span class="n">SECONDARY_KICK_MEAN_ANOMALY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;s2_natal_kick_array_3&#39;</span><span class="p">,</span>\
-                                     <span class="s1">&#39;mean_anomaly_2&#39;</span><span class="p">,</span> <span class="s1">&#39;mean_anomaly2&#39;</span><span class="p">]</span>
+<span class="n">PRIMARY_MASS_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s1_mass'</span><span class="p">,</span> <span class="s1">'primary_mass'</span><span class="p">,</span> <span class="s1">'mass_1'</span><span class="p">,</span> <span class="s1">'m_1'</span><span class="p">,</span> <span class="s1">'m1'</span><span class="p">]</span>
+<span class="n">SECONDARY_MASS_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s2_mass'</span><span class="p">,</span> <span class="s1">'secondary_mass'</span><span class="p">,</span> <span class="s1">'mass_2'</span><span class="p">,</span> <span class="s1">'m_2'</span><span class="p">,</span> <span class="s1">'m2'</span><span class="p">]</span>
+<span class="n">PERIOD_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'orbital_period'</span><span class="p">,</span> <span class="s1">'period'</span><span class="p">,</span> <span class="s1">'p_orb'</span><span class="p">,</span> <span class="s1">'porb'</span><span class="p">,</span> <span class="s1">'p'</span><span class="p">]</span>
+<span class="n">SEPARATION_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'orbital_separation'</span><span class="p">,</span> <span class="s1">'separation'</span><span class="p">,</span> <span class="s1">'semi-major_axis'</span><span class="p">,</span>\
+                    <span class="s1">'semi_major_axis'</span><span class="p">,</span> <span class="s1">'a'</span><span class="p">]</span>
+<span class="n">ECCENTRICITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'eccentricity'</span><span class="p">,</span> <span class="s1">'ecc'</span><span class="p">,</span> <span class="s1">'e'</span><span class="p">]</span>
+<span class="n">PRIMARY_KICK_VELOCITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s1_natal_kick_array_0'</span><span class="p">,</span> <span class="s1">'w_1'</span><span class="p">,</span> <span class="s1">'w1'</span><span class="p">]</span>
+<span class="n">SECONDARY_KICK_VELOCITY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s2_natal_kick_array_0'</span><span class="p">,</span> <span class="s1">'w_2'</span><span class="p">,</span> <span class="s1">'w2'</span><span class="p">]</span>
+<span class="n">PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s1_natal_kick_array_1'</span><span class="p">,</span> <span class="s1">'phi_1'</span><span class="p">,</span> <span class="s1">'phi1'</span><span class="p">]</span>
+<span class="n">SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s2_natal_kick_array_1'</span><span class="p">,</span> <span class="s1">'phi_2'</span><span class="p">,</span>\
+                                        <span class="s1">'phi2'</span><span class="p">]</span>
+<span class="n">PRIMARY_KICK_POLAR_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s1_natal_kick_array_2'</span><span class="p">,</span> <span class="s1">'theta_1'</span><span class="p">,</span> <span class="s1">'theta1'</span><span class="p">]</span>
+<span class="n">SECONDARY_KICK_POLAR_ANGLE_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s2_natal_kick_array_2'</span><span class="p">,</span> <span class="s1">'theta_2'</span><span class="p">,</span>\
+                                    <span class="s1">'theta2'</span><span class="p">]</span>
+<span class="n">PRIMARY_KICK_MEAN_ANOMALY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s1_natal_kick_array_3'</span><span class="p">,</span> <span class="s1">'mean_anomaly_1'</span><span class="p">,</span>\
+                                   <span class="s1">'mean_anomaly1'</span><span class="p">]</span>
+<span class="n">SECONDARY_KICK_MEAN_ANOMALY_NAMES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'s2_natal_kick_array_3'</span><span class="p">,</span>\
+                                     <span class="s1">'mean_anomaly_2'</span><span class="p">,</span> <span class="s1">'mean_anomaly2'</span><span class="p">]</span>
 
 <div class="viewcode-block" id="infer_key">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.sample_from_file.infer_key">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="p">[],</span> <span class="n">allowed_keys</span><span class="o">=</span><span class="p">[]):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Infer key from list of allowed keys.</span>
+<span class="w">    </span><span class="sd">"""Infer key from list of allowed keys.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -165,25 +165,25 @@
 <span class="sd">    -------</span>
 <span class="sd">    key : str</span>
 <span class="sd">        The first matched key.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">allowed_keys</span><span class="p">:</span>
         <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">available_keys</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">key</span><span class="o">.</span><span class="n">casefold</span><span class="p">()</span> <span class="o">==</span> <span class="n">k</span><span class="o">.</span><span class="n">casefold</span><span class="p">():</span>
                 <span class="k">return</span> <span class="n">key</span>
 
-    <span class="k">return</span> <span class="s1">&#39;&#39;</span></div>
+    <span class="k">return</span> <span class="s1">''</span></div>
 
 
 <div class="viewcode-block" id="get_samples_from_file">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.sample_from_file.get_samples_from_file">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_samples_from_file</span><span class="p">(</span><span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a population of binaries at ZAMS from a file.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_samples_from_file</span><span class="p">(</span><span class="n">orbital_scheme</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Read a population of binaries at ZAMS from a file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
 <span class="sd">    orbital_scheme : str</span>
-<span class="sd">        Scheme to get the orbit: &#39;separation&#39;, &#39;period&#39;</span>
+<span class="sd">        Scheme to get the orbit: 'separation', 'period'</span>
 <span class="sd">    **kwargs : dictionary</span>
 <span class="sd">        kwargs from BinaryPopulation class, which should contain</span>
 <span class="sd">        read_samples_from_file</span>
@@ -199,43 +199,43 @@
 <span class="sd">    m2_set : ndarray of floats</span>
 <span class="sd">        secondary masses</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="s1">&#39;read_samples_from_file&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;read_samples_from_file&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">'read_samples_from_file'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'read_samples_from_file'</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;In get_samples_from_file no &#39;read_samples_from_file&#39;&quot;</span>
-                       <span class="s2">&quot; in kwargs.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"In get_samples_from_file no 'read_samples_from_file'"</span>
+                       <span class="s2">" in kwargs."</span><span class="p">)</span>
     <span class="c1"># Check for number of binaries and save its value</span>
-    <span class="k">if</span> <span class="s1">&#39;number_of_binaries&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">'number_of_binaries'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="c1"># Check and read file into dataframe</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> not found!&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> not found!'</span><span class="p">)</span>
 
     <span class="c1"># Get number of data frame entries</span>
     <span class="n">set_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
     
     <span class="c1"># Get eccentricities</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">allowed_keys</span><span class="o">=</span><span class="n">ECCENTRICITY_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No eccentricity column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get&#39;</span>
-              <span class="s1">&#39; independent random ones.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No eccentricity column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get'</span>
+              <span class="s1">' independent random ones.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
         <span class="n">eccentricity_set</span> <span class="o">=</span> <span class="n">generate_eccentricities</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">eccentricity_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
     <span class="c1"># Get primary masses</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PRIMARY_MASS_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No primary mass column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get&#39;</span>
-              <span class="s1">&#39; independent random ones.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No primary mass column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get'</span>
+              <span class="s1">' independent random ones.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
         <span class="n">m1_set</span> <span class="o">=</span> <span class="n">generate_primary_masses</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">m1_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
@@ -243,41 +243,41 @@
     <span class="c1"># Get secondary masses</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SECONDARY_MASS_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No secondary mass column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get&#39;</span>
-              <span class="s1">&#39; independent random ones.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
-        <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No secondary mass column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get'</span>
+              <span class="s1">' independent random ones.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+        <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
         <span class="n">m2_set</span> <span class="o">=</span> <span class="n">generate_secondary_masses</span><span class="p">(</span><span class="n">m1_set</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">m2_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
 
-    <span class="k">if</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;separation&#39;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">'separation'</span><span class="p">:</span>
         <span class="c1"># Get orbital separations</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>
                         <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SEPARATION_NAMES</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No separation column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get&#39;</span>
-                  <span class="s1">&#39; independent random ones.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No separation column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get'</span>
+                  <span class="s1">' independent random ones.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">generate_orbital_separations</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
-    <span class="k">elif</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">&#39;period&#39;</span><span class="p">:</span>
+    <span class="k">elif</span> <span class="n">orbital_scheme</span> <span class="o">==</span> <span class="s1">'period'</span><span class="p">:</span>
         <span class="c1"># Get orbital periods</span>
         <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span> <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PERIOD_NAMES</span><span class="p">)</span>
-        <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No period column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get&#39;</span>
-                  <span class="s1">&#39; independent random ones.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
-            <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
+        <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No period column found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">, hence get'</span>
+                  <span class="s1">' independent random ones.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+            <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span> <span class="o">=</span> <span class="n">set_n</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">generate_orbital_periods</span><span class="p">(</span><span class="n">m1_set</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">orbital_scheme_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Allowed orbital schemes are separation or period.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Allowed orbital schemes are separation or period."</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">number_of_binaries</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
-        <span class="k">if</span> <span class="s1">&#39;index&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">'index'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'index'</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># Expand the sets by doubling them as long as it is needed</span>
@@ -300,7 +300,7 @@
 <div class="viewcode-block" id="get_kick_samples_from_file">
 <a class="viewcode-back" href="../../../api_reference/posydon.popsyn.html#posydon.popsyn.sample_from_file.get_kick_samples_from_file">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_kick_samples_from_file</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Read a kicks for population of binaries from a file.</span>
+<span class="w">    </span><span class="sd">"""Read a kicks for population of binaries from a file.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -317,18 +317,18 @@
 <span class="sd">        natal kick array for the secondary star</span>
 <span class="sd">        containing: kick velocity, azimuthal angle, polar angle, mean anomaly</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="k">if</span> <span class="s1">&#39;read_samples_from_file&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;read_samples_from_file&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">'read_samples_from_file'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'read_samples_from_file'</span><span class="p">]</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">&quot;In get_kick_samples_from_file no &quot;</span>
-                       <span class="s2">&quot;&#39;read_samples_from_file&#39; in kwargs.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="s2">"In get_kick_samples_from_file no "</span>
+                       <span class="s2">"'read_samples_from_file' in kwargs."</span><span class="p">)</span>
     <span class="c1"># Check and read file into dataframe</span>
     <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
         <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_csv</span><span class="p">(</span><span class="n">filename</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> not found!&#39;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1"> not found!'</span><span class="p">)</span>
 
     <span class="c1"># Get number of data frame entries</span>
     <span class="n">set_n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
@@ -337,36 +337,36 @@
     <span class="c1"># Velocity</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PRIMARY_KICK_VELOCITY_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No kick velocity column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No kick velocity column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">w_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">w_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Azimuthal angle</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PRIMARY_KICK_AZIMUTHAL_ANGLE_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No azimuthal angle column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No azimuthal angle column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">phi_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">phi_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Polar angle</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PRIMARY_KICK_POLAR_ANGLE_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No polar angle column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No polar angle column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">theta_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">theta_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Mean anomaly</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">PRIMARY_KICK_MEAN_ANOMALY_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No mean anomaly column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No mean anomaly column of primary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">mean_anomaly_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mean_anomaly_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
@@ -377,46 +377,46 @@
     <span class="c1"># Velocity</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SECONDARY_KICK_VELOCITY_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No kick velocity column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No kick velocity column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">w_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">w_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Azimuthal angle</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SECONDARY_KICK_AZIMUTHAL_ANGLE_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No azimuthal angle column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No azimuthal angle column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">phi_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">phi_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Polar angle</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SECONDARY_KICK_POLAR_ANGLE_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No polar angle column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No polar angle column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">theta_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">theta_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="c1"># Mean anomaly</span>
     <span class="n">key</span> <span class="o">=</span> <span class="n">infer_key</span><span class="p">(</span><span class="n">available_keys</span><span class="o">=</span><span class="n">df</span><span class="o">.</span><span class="n">keys</span><span class="p">(),</span>\
                     <span class="n">allowed_keys</span><span class="o">=</span><span class="n">SECONDARY_KICK_MEAN_ANOMALY_NAMES</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">&#39;&#39;</span><span class="p">:</span>
-        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;No mean anomaly column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,&#39;</span>
-              <span class="s1">&#39; hence do not set them.&#39;</span><span class="p">,</span> <span class="s2">&quot;ReplaceValueWarning&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">key</span><span class="o">==</span><span class="s1">''</span><span class="p">:</span>
+        <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s1">'No mean anomaly column of secondary found in </span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s1">,'</span>
+              <span class="s1">' hence do not set them.'</span><span class="p">,</span> <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
         <span class="n">mean_anomaly_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">set_n</span><span class="o">*</span><span class="p">[</span><span class="kc">None</span><span class="p">])</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">mean_anomaly_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
     <span class="n">kick_2_set</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">w_set</span><span class="p">,</span> <span class="n">phi_set</span><span class="p">,</span> <span class="n">theta_set</span><span class="p">,</span>\
                                         <span class="n">mean_anomaly_set</span><span class="p">]))</span>
 
-    <span class="k">if</span> <span class="s1">&#39;number_of_binaries&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-        <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;number_of_binaries&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s1">&#39;index&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;index&#39;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="s1">'number_of_binaries'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+        <span class="n">number_of_binaries</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'number_of_binaries'</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">'index'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'index'</span><span class="p">]</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">index</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="c1"># expand the sets by doubling them as long as it is needed</span>

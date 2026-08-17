@@ -110,10 +110,10 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.VH_diagram.ParseDataFrame</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Counting distincts occurence of binary simulation from a file&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Counting distincts occurence of binary simulation from a file"""</span>
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Wène Kouarfate &lt;Wene.Kouarfate@etu.unige.ch&gt;&quot;</span>
+    <span class="s2">"Wène Kouarfate &lt;Wene.Kouarfate@etu.unige.ch&gt;"</span>
 <span class="p">]</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -124,13 +124,13 @@
 <div class="viewcode-block" id="ParseDataFrame">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.ParseDataFrame.ParseDataFrame">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParseDataFrame</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle the binary parsing&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Handle the binary parsing"""</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
                  <span class="n">filename</span><span class="p">,</span>
-                 <span class="n">path</span><span class="o">=</span><span class="s2">&quot;./&quot;</span><span class="p">,</span>
-                 <span class="n">key</span> <span class="o">=</span> <span class="s1">&#39;history&#39;</span><span class="p">,</span>
-                 <span class="n">column_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;state&#39;</span><span class="p">,</span><span class="s1">&#39;event&#39;</span><span class="p">,</span><span class="s1">&#39;S1_state&#39;</span><span class="p">,</span><span class="s1">&#39;S2_state&#39;</span><span class="p">],</span> 
-                 <span class="n">index_name</span> <span class="o">=</span> <span class="s1">&#39;binary_index&#39;</span><span class="p">,</span>
+                 <span class="n">path</span><span class="o">=</span><span class="s2">"./"</span><span class="p">,</span>
+                 <span class="n">key</span> <span class="o">=</span> <span class="s1">'history'</span><span class="p">,</span>
+                 <span class="n">column_list</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'state'</span><span class="p">,</span><span class="s1">'event'</span><span class="p">,</span><span class="s1">'S1_state'</span><span class="p">,</span><span class="s1">'S2_state'</span><span class="p">],</span> 
+                 <span class="n">index_name</span> <span class="o">=</span> <span class="s1">'binary_index'</span><span class="p">,</span>
                  <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">stop</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">chunk_size</span> <span class="o">=</span> <span class="mi">500000</span><span class="p">):</span>
@@ -153,7 +153,7 @@
         
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_f_lambda</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">df_gb</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;function to be given as key argument to DataFrameGroupBy.apply()&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""function to be given as key argument to DataFrameGroupBy.apply()"""</span>
         <span class="n">h</span> <span class="o">=</span> <span class="nb">hash</span><span class="p">(</span><span class="nb">tuple</span><span class="p">(</span><span class="n">df_gb</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span><span class="o">.</span><span class="n">ravel</span><span class="p">()))</span><span class="c1">#.to_numpy() recommanded by pandas doc instead of .values</span>
         
         <span class="bp">self</span><span class="o">.</span><span class="n">counts</span><span class="p">[</span><span class="n">h</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
@@ -199,7 +199,7 @@
 <div class="viewcode-block" id="ParseDataFrame.parse_dataf_gb_iter_chunk">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.ParseDataFrame.ParseDataFrame.parse_dataf_gb_iter_chunk">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">parse_dataf_gb_iter_chunk</span><span class="p">(</span><span class="n">dataf</span><span class="p">,</span> <span class="n">index_list</span><span class="p">,</span> <span class="n">cnt</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;a more relevant parser imo but turns out to take more time than than groupby/apply&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""a more relevant parser imo but turns out to take more time than than groupby/apply"""</span>
         <span class="n">file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">filename</span><span class="p">)</span>
         <span class="n">rdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">columns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">column_list</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">Index</span><span class="p">([],</span> <span class="n">name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index_name</span><span class="p">))</span>
 

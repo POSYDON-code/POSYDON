@@ -112,12 +112,12 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.utils.interpolators</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Own interpolator classes.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Own interpolator classes."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Seth Gossage &lt;seth.gossage@northwestern.edu&gt;"</span>
 <span class="p">]</span>
 
 
@@ -129,9 +129,9 @@
 <div class="viewcode-block" id="interp1d">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.interpolators.interp1d">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">interp1d</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolation class for one dimensional interpolation.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the interpolator.</span>
+<span class="w">    </span><span class="sd">"""Interpolation class for one dimensional interpolation."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">'linear'</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the interpolator.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -140,26 +140,26 @@
 <span class="sd">        y : ndarray-like</span>
 <span class="sd">            Y-coordinates of the data to interpolate. Needs to have the same</span>
 <span class="sd">            length as `x`.</span>
-<span class="sd">        kind : str (default: &#39;linear&#39;)</span>
-<span class="sd">            Currently only &#39;linear&#39; is allowed.</span>
-<span class="sd">                - &#39;linear&#39; : uses np.interp</span>
+<span class="sd">        kind : str (default: 'linear')</span>
+<span class="sd">            Currently only 'linear' is allowed.</span>
+<span class="sd">                - 'linear' : uses np.interp</span>
 <span class="sd">        **kwargs : dict (optional)</span>
 <span class="sd">            Dictionary containing extra parameters.</span>
-<span class="sd">                - &#39;left&#39; : float</span>
+<span class="sd">                - 'left' : float</span>
 <span class="sd">                    Y-value to return for evaluations below the data `x`.</span>
-<span class="sd">                - &#39;right&#39; : float</span>
+<span class="sd">                - 'right' : float</span>
 <span class="sd">                    Y-value to return for evaluations above the data `x`.</span>
-<span class="sd">                - &#39;fill_value&#39; : &#39;extrapolate&#39; or tuple of size 1 or 2</span>
-<span class="sd">                    Superseded by &#39;left&#39; or &#39;right&#39;</span>
-<span class="sd">                    - &#39;extrapolate&#39; : use the first and last elements in the</span>
+<span class="sd">                - 'fill_value' : 'extrapolate' or tuple of size 1 or 2</span>
+<span class="sd">                    Superseded by 'left' or 'right'</span>
+<span class="sd">                    - 'extrapolate' : use the first and last elements in the</span>
 <span class="sd">                         data to determine the extrapolation below and above,</span>
 <span class="sd">                         respectively; ignores fixed values for below and above</span>
 <span class="sd">                    - size 1 : use y-value for below and above</span>
 <span class="sd">                    - size 2 : use first y-value for below and second for above</span>
 
-<span class="sd">        &quot;&quot;&quot;</span> 
-        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">]:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kind = </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2"> is not supported&quot;</span><span class="p">)</span>
+<span class="sd">        """</span> 
+        <span class="k">if</span> <span class="n">kind</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">'linear'</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"kind = </span><span class="si">{</span><span class="n">kind</span><span class="si">}</span><span class="s2"> is not supported"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">=</span> <span class="n">kind</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
@@ -178,29 +178,29 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">extrapolate</span> <span class="o">=</span> <span class="kc">False</span>
-        <span class="k">if</span> <span class="s1">&#39;fill_value&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;extrapolate&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="s1">'fill_value'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">]</span> <span class="o">==</span> <span class="s1">'extrapolate'</span><span class="p">:</span>
                 <span class="bp">self</span><span class="o">.</span><span class="n">extrapolate</span> <span class="o">=</span> <span class="kc">True</span>
-            <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
-                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-            <span class="k">elif</span>  <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
-                   <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;fill_value&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
+                <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span>  <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">],</span> <span class="nb">tuple</span><span class="p">)</span> <span class="ow">and</span>
+                   <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">])</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'fill_value'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;fill_value has to be &#39;extrapolate&#39; &quot;</span>
-                                          <span class="s2">&quot;or a tuple with 1 or 2 elements&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s1">&#39;left&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;left&#39;</span><span class="p">]</span>
-        <span class="k">if</span> <span class="s1">&#39;right&#39;</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;right&#39;</span><span class="p">]</span>
+                <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">"fill_value has to be 'extrapolate' "</span>
+                                          <span class="s2">"or a tuple with 1 or 2 elements"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s1">'left'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">below</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'left'</span><span class="p">]</span>
+        <span class="k">if</span> <span class="s1">'right'</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">above</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">'right'</span><span class="p">]</span>
         <span class="c1"># check that the interpolator can be called</span>
         <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">==</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_new</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Use the interpolator.</span>
+<span class="w">        </span><span class="sd">"""Use the interpolator.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -212,10 +212,10 @@
 <span class="sd">        ndarray</span>
 <span class="sd">            Interpolated y-values.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">x_n</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kind</span> <span class="o">==</span> <span class="s1">'linear'</span><span class="p">:</span>
             <span class="n">y_interp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">interp</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x_n</span><span class="p">,</span> <span class="n">xp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">fp</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
                                           <span class="n">left</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">below</span><span class="p">,</span> <span class="n">right</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">above</span><span class="p">))</span>
             <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">extrapolate</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">)):</span>
@@ -233,16 +233,16 @@
                                             <span class="n">x_n</span><span class="p">[</span><span class="n">above_mask</span><span class="p">]</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
             <span class="k">return</span> <span class="n">y_interp</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;kind = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="si">}</span><span class="s2"> is not supported&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"kind = </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">kind</span><span class="si">}</span><span class="s2"> is not supported"</span><span class="p">)</span></div>
 
 
 
 <div class="viewcode-block" id="PchipInterpolator2">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.interpolators.PchipInterpolator2">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">PchipInterpolator2</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Interpolation class.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Interpolation class."""</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">positive</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">derivative</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the interpolator.</span>
+<span class="w">        </span><span class="sd">"""Initialize the interpolator.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -251,10 +251,10 @@
 <span class="sd">        *args, **kwargs : dict (optional)</span>
 <span class="sd">            Arguments passed to original PchipInterpolator init.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
 
-        <span class="c1"># this will set whether or not the __call__ should return the y(x) or y&#39;(x)</span>
+        <span class="c1"># this will set whether or not the __call__ should return the y(x) or y'(x)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span> <span class="o">=</span> <span class="n">derivative</span>
 
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">derivative</span><span class="p">:</span>
@@ -264,13 +264,13 @@
             
         <span class="bp">self</span><span class="o">.</span><span class="n">positive</span> <span class="o">=</span> <span class="n">positive</span>
 
-        <span class="c1"># potential offset (for example, we&#39;ve matched a MESA sim to another</span>
-        <span class="c1"># but need to offset the matched track&#39;s age to fast forward to current</span>
+        <span class="c1"># potential offset (for example, we've matched a MESA sim to another</span>
+        <span class="c1"># but need to offset the matched track's age to fast forward to current</span>
         <span class="c1"># age in the evolution)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="mf">0.0</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Use the interpolator.</span>
+<span class="w">        </span><span class="sd">"""Use the interpolator.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -282,7 +282,7 @@
 <span class="sd">        ndarray-like</span>
 <span class="sd">            Interpolated values.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="c1"># offset x (the offset is 0 unless otherwise set)</span>
         <span class="n">args</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>

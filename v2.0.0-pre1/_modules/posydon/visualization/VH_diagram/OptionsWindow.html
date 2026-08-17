@@ -122,11 +122,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.visualization.VH_diagram.OptionsWindow</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Options  Window handler for the VH diagram.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Options  Window handler for the VH diagram."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Maxime Rambosson &lt;Maxime.Rambosson@etu.unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 <span class="k">try</span><span class="p">:</span>
@@ -134,7 +134,7 @@
                                 <span class="n">QCheckBox</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">)</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">pyqtSignal</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">&#39;PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory&#39;</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="s1">'PyQt5 is not installed. Please run `pip install .[vis]` in the POSYDON base directory'</span><span class="p">)</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.PresenterMode</span><span class="w"> </span><span class="kn">import</span> <span class="n">PresenterMode</span>
 
@@ -142,7 +142,7 @@
 <div class="viewcode-block" id="OptionsWindow">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OptionsWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Window to display available options, emit signal for selected option.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Window to display available options, emit signal for selected option."""</span>
 
     <span class="n">detail_requiered</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
     <span class="n">reduce_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">()</span>
@@ -152,17 +152,17 @@
     <span class="n">distance_representation_required</span> <span class="o">=</span> <span class="n">pyqtSignal</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
 
     <span class="n">_mode_to_text</span> <span class="o">=</span> <span class="p">{</span>
-        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span> <span class="s2">&quot;Detailled view&quot;</span><span class="p">,</span>
-        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span> <span class="s2">&quot;Reduced view&quot;</span><span class="p">,</span>
-        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span> <span class="s2">&quot;Simplified view&quot;</span><span class="p">,</span>
-        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span> <span class="s2">&quot;Diagram view&quot;</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DETAILED</span><span class="p">:</span> <span class="s2">"Detailled view"</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">REDUCED</span><span class="p">:</span> <span class="s2">"Reduced view"</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">SIMPLIFIED</span><span class="p">:</span> <span class="s2">"Simplified view"</span><span class="p">,</span>
+        <span class="n">PresenterMode</span><span class="o">.</span><span class="n">DIAGRAM</span><span class="p">:</span> <span class="s2">"Diagram view"</span><span class="p">,</span>
     <span class="p">}</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize a OptionsWindow instance.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Initialize a OptionsWindow instance."""</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">OptionsWindow</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Visualizer Options&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">"Visualizer Options"</span><span class="p">)</span>
 
         <span class="n">screen_geometry</span> <span class="o">=</span> <span class="n">QApplication</span><span class="o">.</span><span class="n">desktop</span><span class="p">()</span><span class="o">.</span><span class="n">screenGeometry</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">screen_geometry</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">*</span> <span class="mf">0.20</span><span class="p">),</span>
@@ -185,8 +185,8 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_setup_options</span><span class="p">()</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_prepare_additional_option</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare option showed only in special situation.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">&quot;Distance representation&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Prepare option showed only in special situation."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span> <span class="o">=</span> <span class="n">QCheckBox</span><span class="p">(</span><span class="s2">"Distance representation"</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">stateChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span>
             <span class="k">lambda</span> <span class="n">state</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_representation_required</span><span class="o">.</span><span class="n">emit</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
         <span class="p">)</span>
@@ -197,7 +197,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">setVisible</span><span class="p">(</span><span class="n">state</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_setup_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Prepare the different options there callback.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Prepare the different options there callback."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="p">)</span>
 
@@ -238,7 +238,7 @@
 <div class="viewcode-block" id="OptionsWindow.set_distance_representation">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_distance_representation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_distance_representation</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">state</span><span class="p">:</span> <span class="nb">bool</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the distance representation.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set the distance representation."""</span>
         <span class="k">if</span> <span class="n">state</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">_distance_checkbox</span><span class="o">.</span><span class="n">setCheckState</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">Checked</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
@@ -248,7 +248,7 @@
 <div class="viewcode-block" id="OptionsWindow.set_showed_mode">
 <a class="viewcode-back" href="../../../../api_reference/posydon.visualization.VH_diagram.html#posydon.visualization.VH_diagram.OptionsWindow.OptionsWindow.set_showed_mode">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">set_showed_mode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mode</span><span class="p">:</span> <span class="n">PresenterMode</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the showed mode.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Set the showed mode."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_dropdow_options</span><span class="o">.</span><span class="n">setCurrentText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mode_to_text</span><span class="p">[</span><span class="n">mode</span><span class="p">])</span>
 
         <span class="c1"># Active callback without emitting</span>

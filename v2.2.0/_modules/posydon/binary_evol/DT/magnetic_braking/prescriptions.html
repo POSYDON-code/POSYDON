@@ -124,7 +124,7 @@
 <div class="viewcode-block" id="RVJ83_braking">
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.magnetic_braking.html#posydon.binary_evol.DT.magnetic_braking.prescriptions.RVJ83_braking">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">RVJ83_braking</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        Calculates the change in spin of each star due</span>
 <span class="sd">    to magnetic braking, according to:</span>
 
@@ -147,23 +147,23 @@
 <span class="sd">    -------</span>
 <span class="sd">        dOmega_sec : float</span>
 <span class="sd">            The change in rotation rate of the secondary (less evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
 <span class="sd">        dOmega_pri : float</span>
 <span class="sd">            The change in rotation rate of the primary (more evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
 
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
 
     <span class="c1"># Torque from Rappaport, Verbunt, and Joss 1983, ApJ, 275, 713</span>
     <span class="c1"># The torque is eq.36 of Rapport+1983, with γ = 4. Torque units</span>
@@ -204,7 +204,7 @@
 <div class="viewcode-block" id="M15_braking">
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.magnetic_braking.html#posydon.binary_evol.DT.magnetic_braking.prescriptions.M15_braking">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">M15_braking</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        Calculates the change in spin of each star due</span>
 <span class="sd">    to magnetic braking, according to:</span>
 
@@ -230,25 +230,25 @@
 <span class="sd">    -------</span>
 <span class="sd">        dOmega_sec : float</span>
 <span class="sd">            The change in rotation rate of the secondary (less evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
 <span class="sd">        dOmega_pri : float</span>
 <span class="sd">            The change in rotation rate of the primary (more evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
 
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
 
     <span class="c1"># Torque prescription from Matt et al. 2015, ApJ, 799, L23</span>
     <span class="c1"># Constants:</span>
@@ -322,7 +322,7 @@
 <div class="viewcode-block" id="G18_braking">
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.magnetic_braking.html#posydon.binary_evol.DT.magnetic_braking.prescriptions.G18_braking">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">G18_braking</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        Calculates the change in spin of each star due</span>
 <span class="sd">    to magnetic braking, according to:</span>
 
@@ -348,23 +348,23 @@
 <span class="sd">    -------</span>
 <span class="sd">        dOmega_sec : float</span>
 <span class="sd">            The change in rotation rate of the secondary (less evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
 <span class="sd">        dOmega_pri : float</span>
 <span class="sd">            The change in rotation rate of the primary (more evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
 
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
 
     <span class="c1"># Torque prescription from Garraffo et al. 2018, ApJ, 862, 90</span>
     <span class="c1"># a = 0.03</span>
@@ -400,7 +400,7 @@
 <div class="viewcode-block" id="CARB_braking">
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.magnetic_braking.html#posydon.binary_evol.DT.magnetic_braking.prescriptions.CARB_braking">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">CARB_braking</span><span class="p">(</span><span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">        Calculates the change in spin of each star due</span>
 <span class="sd">    to magnetic braking, according to:</span>
 
@@ -423,27 +423,27 @@
 <span class="sd">    -------</span>
 <span class="sd">        dOmega_sec : float</span>
 <span class="sd">            The change in rotation rate of the secondary (less evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
 <span class="sd">        dOmega_pri : float</span>
 <span class="sd">            The change in rotation rate of the primary (more evolved)</span>
-<span class="sd">        star for a time step in step_detached&#39;s solve_ivp(). [rad/yr^2]</span>
+<span class="sd">        star for a time step in step_detached's solve_ivp(). [rad/yr^2]</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
-    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
+    <span class="n">mdot_1</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span>
 
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;R&quot;</span><span class="p">]</span>
-    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;omega&quot;</span><span class="p">]</span>
-    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;inertia&quot;</span><span class="p">]</span>
-    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;conv_env_turnover_time_l_b&quot;</span><span class="p">]</span>
-    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mdot&quot;</span><span class="p">]</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">R2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"R"</span><span class="p">]</span>
+    <span class="n">omega2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"omega"</span><span class="p">]</span>
+    <span class="n">MOI_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"inertia"</span><span class="p">]</span>
+    <span class="n">tau_conv_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"conv_env_turnover_time_l_b"</span><span class="p">]</span>
+    <span class="n">mdot_2</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mdot"</span><span class="p">]</span>
 
     <span class="c1"># Torque prescription from Van &amp; Ivanova 2019, ApJ, 886, L31</span>
     <span class="c1"># Based on files hosted on Zenodo:</span>

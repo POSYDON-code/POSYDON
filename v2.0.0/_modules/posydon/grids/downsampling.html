@@ -110,7 +110,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.grids.downsampling</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for downsampling accross a path in multi-dimensional space.</span>
+<span></span><span class="sd">"""Module for downsampling accross a path in multi-dimensional space.</span>
 
 <span class="sd">Let a d-dimensional parametric curve in of the form:</span>
 
@@ -124,7 +124,7 @@
 <span class="sd">so that the original curve can be reconstructed with minimum error.</span>
 
 <span class="sd">The provided class `TrackDownsampler` performs the downsampling. It requires</span>
-<span class="sd">two input arrays. The first is the &quot;independent&quot; variable, t, which does not</span>
+<span class="sd">two input arrays. The first is the "independent" variable, t, which does not</span>
 <span class="sd">have to be temporal (e.g., spatial), but must be strictly increasing. The 2nd</span>
 <span class="sd">array is the track, in which the different columns correspond to the different</span>
 <span class="sd">dimensions:</span>
@@ -145,11 +145,11 @@
 <span class="sd"> t_new, X_new = TD.downsample(max_err=0.001)</span>
 
 
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -164,7 +164,7 @@
 <div class="viewcode-block" id="rescale_from_0_to_1">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.rescale_from_0_to_1">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">rescale_from_0_to_1</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">return_minmax</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Rescale a matrix so that all dimensions span from 0 to 1.</span>
+<span class="w">    </span><span class="sd">"""Rescale a matrix so that all dimensions span from 0 to 1.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -183,10 +183,10 @@
 <span class="sd">        (float)</span>
 <span class="sd">            Value of the maximum (only returned if return_minmax is True).</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Scaler works for matrices only.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Scaler works for matrices only."</span><span class="p">)</span>
 
     <span class="n">minima</span><span class="p">,</span> <span class="n">maxima</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
@@ -205,10 +205,10 @@
 <div class="viewcode-block" id="TrackDownsampler">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">TrackDownsampler</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class performing downsampling of multi-dimensional paths.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class performing downsampling of multi-dimensional paths."""</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">independent</span><span class="p">,</span> <span class="n">dependent</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get, reduce and rescale data.</span>
+<span class="w">        </span><span class="sd">"""Get, reduce and rescale data.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -219,19 +219,19 @@
 <span class="sd">        verbose : bool (default: False)</span>
 <span class="sd">            If `True`, the objects reports by printing to standard output.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;Initializing downsampler.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">"Initializing downsampler."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="kc">None</span>    <span class="c1"># boolean array inidicating rows to keep</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">iterable</span><span class="p">(</span><span class="n">independent</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`independent` is not iterable.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`independent` is not iterable."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iterable</span><span class="p">(</span><span class="n">independent</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`independent` should be one-dimensional.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`independent` should be one-dimensional."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">independent</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">iterable</span><span class="p">(</span><span class="n">dependent</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`dependent` is not iterable.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`dependent` is not iterable."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dependent</span><span class="p">)</span>
 
@@ -239,25 +239,25 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">iterable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Number of dimensions in `dependent` &gt; 2.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Number of dimensions in `dependent` &gt; 2."</span><span class="p">)</span>
 
         <span class="c1"># ensure `independent` is strictly increasing</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`independent` should be strictly increasing.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`independent` should be strictly increasing."</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">rescale</span><span class="p">()</span>
 
 <div class="viewcode-block" id="TrackDownsampler.say">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler.say">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">say</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Speak to the standard output, only if `.verbose` is True.</span>
+<span class="w">        </span><span class="sd">"""Speak to the standard output, only if `.verbose` is True.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        message : str</span>
 <span class="sd">            The printed text.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
@@ -265,17 +265,17 @@
 <div class="viewcode-block" id="TrackDownsampler.rescale">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler.rescale">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">rescale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rescale the parameter space from 0 to 1.&quot;&quot;&quot;</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;Rescaling data.&quot;</span><span class="p">)</span>
+<span class="w">        </span><span class="sd">"""Rescale the parameter space from 0 to 1."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">"Rescaling data."</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">minima</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxima</span> <span class="o">=</span> <span class="n">rescale_from_0_to_1</span><span class="p">(</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">return_minmax</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">&quot;    done.&quot;</span><span class="p">)</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">say</span><span class="p">(</span><span class="s2">"    done."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="TrackDownsampler.extract_downsample">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler.extract_downsample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">extract_downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scale_back</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract the downsampled array.</span>
+<span class="w">        </span><span class="sd">"""Extract the downsampled array.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -289,7 +289,7 @@
 <span class="sd">            Independent data.</span>
 <span class="sd">        X : ndarray</span>
 <span class="sd">            Dependent data.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keep</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">keep</span><span class="p">,</span> <span class="p">:]</span>
         <span class="k">if</span> <span class="n">scale_back</span><span class="p">:</span>
             <span class="n">t</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">t</span><span class="p">,</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">maxima</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">minima</span><span class="p">))</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">minima</span>
@@ -299,7 +299,7 @@
 <div class="viewcode-block" id="TrackDownsampler.find_downsample">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler.find_downsample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">find_downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_err</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">max_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Find the rows of the data that constitute the &quot;down-sample&quot;.</span>
+<span class="w">        </span><span class="sd">"""Find the rows of the data that constitute the "down-sample".</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -308,10 +308,10 @@
 <span class="sd">        max_interval : float or None (default: None)</span>
 <span class="sd">            Maximum step in the independent variable.</span>
 
-<span class="sd">        Note: if `max_interval` is negative, it&#39;s value is the relative ratio</span>
+<span class="sd">        Note: if `max_interval` is negative, it's value is the relative ratio</span>
 <span class="sd">              between maximum allowed dm and initial-final change.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">t</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
         <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
 
@@ -319,10 +319,10 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
             <span class="k">return</span>
         <span class="k">if</span> <span class="n">max_err</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">max_err</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`max_err` must be a non-negative finite number.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`max_err` must be a non-negative finite number."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">max_err</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
-            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">&quot;`max_err` &gt;= 1.0 is like disabling downsampling.&quot;</span><span class="p">,</span>
-                  <span class="s2">&quot;InappropriateValueWarning&quot;</span><span class="p">)</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="s2">"`max_err` &gt;= 1.0 is like disabling downsampling."</span><span class="p">,</span>
+                  <span class="s2">"InappropriateValueWarning"</span><span class="p">)</span>
 
         <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>  <span class="c1"># initially keep no row</span>
 
@@ -367,7 +367,7 @@
 
         <span class="c1"># keep the first and last point</span>
         <span class="n">keep</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">keep</span><span class="p">[</span><span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">True</span>
-        <span class="c1"># ...and the intermediate ones that can&#39;t be accurately interpolated</span>
+        <span class="c1"># ...and the intermediate ones that can't be accurately interpolated</span>
         <span class="n">DS</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">N</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">tolerance</span><span class="o">=</span><span class="n">max_err</span><span class="p">,</span> <span class="n">max_interval</span><span class="o">=</span><span class="n">max_interval</span><span class="p">)</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">keep</span> <span class="o">=</span> <span class="n">keep</span></div>
@@ -376,7 +376,7 @@
 <div class="viewcode-block" id="TrackDownsampler.downsample">
 <a class="viewcode-back" href="../../../api_reference/posydon.grids.html#posydon.grids.downsampling.TrackDownsampler.downsample">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">downsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_err</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">scale_back</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_interval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Perform the downsampling and return the result.</span>
+<span class="w">        </span><span class="sd">"""Perform the downsampling and return the result.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -395,7 +395,7 @@
 <span class="sd">        X : ndarray</span>
 <span class="sd">            Dependent data.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">find_downsample</span><span class="p">(</span><span class="n">max_err</span><span class="o">=</span><span class="n">max_err</span><span class="p">,</span> <span class="n">max_interval</span><span class="o">=</span><span class="n">max_interval</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">extract_downsample</span><span class="p">(</span><span class="n">scale_back</span><span class="o">=</span><span class="n">scale_back</span><span class="p">)</span></div>
 </div>

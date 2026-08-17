@@ -112,7 +112,7 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.utils.posydonwarning</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;The POSYDON warnings class and subclasses for more detailed warning</span>
+<span></span><span class="sd">"""The POSYDON warnings class and subclasses for more detailed warning</span>
 <span class="sd">handling.</span>
 
 <span class="sd">Mainly the function `Pwarn` should be called to submit a warning, which behaves</span>
@@ -135,17 +135,17 @@
 <span class="sd">caught warnings after it is copy to be returned:</span>
 <span class="sd">    with Catch_POSYDON_Warnings() as cpw:</span>
 <span class="sd">        ...</span>
-<span class="sd">        Pwarn(&quot;Test&quot;, &quot;POSYDONWarning&quot;)</span>
+<span class="sd">        Pwarn("Test", "POSYDONWarning")</span>
 <span class="sd">        ...</span>
 <span class="sd">        print(cpw.get_cache(True))</span>
-<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">"""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Monica Gallegos-Garcia &lt;monicagallegosgarcia@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Camille Liotine &lt;cliotine@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Seth Gossage &lt;seth.gossage@northwestern.edu&gt;&quot;</span>   
+    <span class="s2">"Monica Gallegos-Garcia &lt;monicagallegosgarcia@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Camille Liotine &lt;cliotine@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Matthias Kruckow &lt;Matthias.Kruckow@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Seth Gossage &lt;seth.gossage@northwestern.edu&gt;"</span>   
 <span class="p">]</span>
 
 
@@ -157,10 +157,10 @@
 <div class="viewcode-block" id="nosrc_code_format">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.nosrc_code_format">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">nosrc_code_format</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">,</span> <span class="n">line</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""</span>
 <span class="sd">    This sets the warning format to not include the source code line.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">lineno</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span></div>
+<span class="sd">    """</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">filename</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">lineno</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">category</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span></div>
 
 
 <span class="c1"># Setting the warning format to use the above format function</span>
@@ -170,8 +170,8 @@
 <div class="viewcode-block" id="POSYDONWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.POSYDONWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">POSYDONWarning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;General POSYDON warning class.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""General POSYDON warning class."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -181,113 +181,113 @@
 <div class="viewcode-block" id="ApproximationWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.ApproximationWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ApproximationWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warning that a physical approximation was used during binary evolution.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warning that a physical approximation was used during binary evolution."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="BinaryParsingWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.BinaryParsingWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">BinaryParsingWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to parsing of binaries.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to parsing of binaries."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ClassificationWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.ClassificationWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ClassificationWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to classification during binary evolution.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to classification during binary evolution."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EvolutionWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.EvolutionWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">EvolutionWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warning that something unexpeted occurred during the binary evolution, but</span>
-<span class="sd">    the evolution is able to continue (binary did not fail).&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warning that something unexpeted occurred during the binary evolution, but</span>
+<span class="sd">    the evolution is able to continue (binary did not fail)."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
         
 <div class="viewcode-block" id="InappropriateValueWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.InappropriateValueWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InappropriateValueWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings that a strange value is used.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings that a strange value is used."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="IncompletenessWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.IncompletenessWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">IncompletenessWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings when not all tasks could be done.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings when not all tasks could be done."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="InterpolationWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.InterpolationWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">InterpolationWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to interpolation during binary evolution.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to interpolation during binary evolution."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="MissingFilesWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.MissingFilesWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">MissingFilesWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to missing files.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to missing files."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="OverwriteWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.OverwriteWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OverwriteWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warning that a data will get overwritten.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warning that a data will get overwritten."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="ReplaceValueWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.ReplaceValueWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ReplaceValueWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warning that a value got replaced.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warning that a value got replaced."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="UnsupportedModelWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.UnsupportedModelWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">UnsupportedModelWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to selecting a model that is not supported.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to selecting a model that is not supported."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
         
 <div class="viewcode-block" id="SFHModelWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.SFHModelWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">SFHModelWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to the SFH model.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to the SFH model."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
         
 <div class="viewcode-block" id="ValueWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.ValueWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ValueWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to a ValueError.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to a ValueError."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="StepWarning">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.StepWarning">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">StepWarning</span><span class="p">(</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Warnings related to the SFH model.&quot;&quot;&quot;</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Warnings related to the SFH model."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="o">=</span><span class="s1">''</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">message</span><span class="p">)</span></div>
 
 
@@ -297,7 +297,7 @@
                               <span class="n">POSYDONWarning</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">()}</span>
 
 <span class="k">def</span><span class="w"> </span><span class="nf">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">category</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Inferring the POSYDONWarning class.</span>
+<span class="w">    </span><span class="sd">"""Inferring the POSYDONWarning class.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -310,7 +310,7 @@
 <span class="sd">            A POSYDONWarning class or None if the input is neither a</span>
 <span class="sd">            POSYDONWarning class nor convertable to one (all unknown strings</span>
 <span class="sd">            are converted to the base POSYDONWarning).</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">global</span> <span class="n">_POSYDONWarning_subclasses</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">_POSYDONWarning_subclasses</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
@@ -331,7 +331,7 @@
 <div class="viewcode-block" id="get_stats">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.get_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_stats</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return the statistics of the POSYDON warnings.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Return the statistics of the POSYDON warnings."""</span>
     <span class="k">global</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
     <span class="k">return</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span></div>
 
@@ -339,29 +339,29 @@
 <div class="viewcode-block" id="print_stats">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.print_stats">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">print_stats</span><span class="p">():</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prints the statistics of the POSYDON warnings.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Prints the statistics of the POSYDON warnings."""</span>
     <span class="k">global</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No POSYDON warnings occured.&quot;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"No POSYDON warnings occured."</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There have been POSYDON warnings in the global registry:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"There have been POSYDON warnings in the global registry:</span><span class="se">\n</span><span class="s2">"</span><span class="p">,</span>
               <span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">)</span></div>
 
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;No warning&quot;</span><span class="p">),</span> <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">"No warning"</span><span class="p">),</span> <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
     <span class="c1"># In python warnings, this functionality is spead over two functions. It</span>
     <span class="c1"># compares the characteristics of a warning with the ones in the registry.</span>
     <span class="c1"># We use the warnings class and the code position (filename + line number)</span>
-    <span class="c1"># as characteristics, while python&#39;s standard omits the code filename but</span>
+    <span class="c1"># as characteristics, while python's standard omits the code filename but</span>
     <span class="c1"># therefore adds the full warnings text, which causes different keys for</span>
-    <span class="c1"># &quot;i is negative, i=-1&quot; and &quot;i is negative, i=-3&quot; to be different warnings</span>
+    <span class="c1"># "i is negative, i=-1" and "i is negative, i=-3" to be different warnings</span>
     <span class="c1"># in python, but considered to have the same warning characteristics for</span>
     <span class="c1"># POSYDON.</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Filter a warning.</span>
+<span class="w">    </span><span class="sd">"""Filter a warning.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        warning : dict (default: {message=&quot;No warning&quot;})</span>
+<span class="sd">        warning : dict (default: {message="No warning"})</span>
 <span class="sd">            Dictionary containing all options passed to warnings.warn.</span>
 <span class="sd">        registry : dict or None (default: None)</span>
 <span class="sd">            Warnings registry. If None, use the global one.</span>
@@ -369,25 +369,25 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        warning or None in case it got filtered out.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># Check registry and warning</span>
     <span class="k">if</span> <span class="n">registry</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">global</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span> <span class="c1"># pragma: no cover</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;_POSYDON_WARNINGS_REGISTRY is corrupt and can&#39;t &quot;</span>
-                            <span class="s2">&quot;be used for the registry, hence registry can&#39;t be&quot;</span>
-                            <span class="s2">&quot; None.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"_POSYDON_WARNINGS_REGISTRY is corrupt and can't "</span>
+                            <span class="s2">"be used for the registry, hence registry can't be"</span>
+                            <span class="s2">" None."</span><span class="p">)</span>
         <span class="n">registry</span> <span class="o">=</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
     <span class="k">elif</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">registry</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;registry must be a dictionary or None.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"registry must be a dictionary or None."</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;warning must be a dictionary.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"warning must be a dictionary."</span><span class="p">)</span>
     <span class="c1"># Get stack level</span>
-    <span class="n">stacklevel</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;stacklevel&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">stacklevel</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'stacklevel'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stacklevel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;stacklevel must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"stacklevel must be an integer."</span><span class="p">)</span>
     <span class="c1"># Get category</span>
-    <span class="n">category</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;category&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">category</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'category'</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="ne">Warning</span><span class="p">)):</span>
         <span class="n">category</span> <span class="o">=</span> <span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">type</span><span class="p">):</span>
@@ -398,7 +398,7 @@
         <span class="n">frame</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="n">_getframe</span><span class="p">(</span><span class="n">stacklevel</span><span class="p">)</span>
     <span class="k">except</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">sys</span><span class="o">.</span><span class="vm">__dict__</span>
-        <span class="n">filename</span> <span class="o">=</span> <span class="s2">&quot;sys&quot;</span>
+        <span class="n">filename</span> <span class="o">=</span> <span class="s2">"sys"</span>
         <span class="n">lineno</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_globals</span>
@@ -406,17 +406,17 @@
         <span class="n">lineno</span> <span class="o">=</span> <span class="n">frame</span><span class="o">.</span><span class="n">f_lineno</span>
     <span class="c1"># Get module</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;__name__&#39;</span><span class="p">,</span> <span class="s2">&quot;posydonwarnings&quot;</span><span class="p">)</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="n">g</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'__name__'</span><span class="p">,</span> <span class="s2">"posydonwarnings"</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
-        <span class="n">module</span> <span class="o">=</span> <span class="s2">&quot;posydonwarnings&quot;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="s2">"posydonwarnings"</span>
     <span class="c1"># Set key for registry:</span>
     <span class="c1"># We do not use the warnings text, to allow it to contain detailed</span>
     <span class="c1"># information, while still identifying warnings with same origin</span>
     <span class="n">key</span> <span class="o">=</span> <span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">filename</span><span class="p">,</span> <span class="n">lineno</span><span class="p">)</span>
     <span class="c1"># Get message text</span>
-    <span class="n">text</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    <span class="n">text</span> <span class="o">=</span> <span class="n">warning</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'message'</span><span class="p">,</span> <span class="s2">""</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;message must be a string.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"message must be a string."</span><span class="p">)</span>
     <span class="c1"># Search the filters:</span>
     <span class="c1"># Here we still use the python filters</span>
     <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">warnings</span><span class="o">.</span><span class="n">filters</span><span class="p">:</span>
@@ -427,30 +427,30 @@
             <span class="p">(</span><span class="n">ln</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">lineno</span> <span class="o">==</span> <span class="n">ln</span><span class="p">)):</span>
             <span class="k">break</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">action</span> <span class="o">=</span> <span class="s2">&quot;default&quot;</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="s2">"default"</span>
     <span class="c1"># Apply action</span>
-    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">&quot;ignore&quot;</span><span class="p">:</span>
+    <span class="k">if</span> <span class="n">action</span> <span class="o">==</span> <span class="s2">"ignore"</span><span class="p">:</span>
         <span class="k">return</span> <span class="kc">None</span>
-    <span class="k">elif</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;once&quot;</span><span class="p">]:</span>
+    <span class="k">elif</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"always"</span><span class="p">,</span> <span class="s2">"default"</span><span class="p">,</span> <span class="s2">"module"</span><span class="p">,</span> <span class="s2">"once"</span><span class="p">]:</span>
         <span class="c1"># Compared to standard python not only save a occurence but count them</span>
         <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">registry</span><span class="p">:</span>
             <span class="n">registry</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-            <span class="k">if</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="s2">&quot;module&quot;</span><span class="p">,</span> <span class="s2">&quot;once&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">action</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"default"</span><span class="p">,</span> <span class="s2">"module"</span><span class="p">,</span> <span class="s2">"once"</span><span class="p">]:</span>
                 <span class="k">return</span> <span class="kc">None</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">registry</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">warning</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_issue_warn</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">&quot;No warning&quot;</span><span class="p">),</span> <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Issue a warning.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_issue_warn</span><span class="p">(</span><span class="n">warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">message</span><span class="o">=</span><span class="s2">"No warning"</span><span class="p">),</span> <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Issue a warning.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        warning : dict (default: {message=&quot;No warning&quot;})</span>
+<span class="sd">        warning : dict (default: {message="No warning"})</span>
 <span class="sd">            Dictionary containing all options passed to warnings.warn.</span>
 <span class="sd">        registry : dict or None (default: None)</span>
 <span class="sd">            Warnings registry. If None, use the global one.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">filtered_warning</span> <span class="o">=</span> <span class="n">_apply_POSYDON_filter</span><span class="p">(</span><span class="n">warning</span><span class="p">,</span> <span class="n">registry</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">filtered_warning</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="k">return</span>
@@ -459,10 +459,10 @@
 
 
 <span class="k">class</span><span class="w"> </span><span class="nc">_Caught_POSYDON_Warnings</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Class which stores caught warnings.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Class which stores caught warnings."""</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catch_warnings</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filter_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">registry</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of the object.</span>
+<span class="w">        </span><span class="sd">"""Constructor of the object.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -475,7 +475,7 @@
 <span class="sd">            discarded.</span>
 <span class="sd">        registry : dict or None (default: None)</span>
 <span class="sd">            Warnings registry. If None, use the global one.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">=</span> <span class="n">catch_warnings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
@@ -487,40 +487,40 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">registry</span> <span class="o">=</span> <span class="n">registry</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">catch_warnings</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;catch_warnings must be a boolean.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"catch_warnings must be a boolean."</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">record</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;record must be a boolean.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"record must be a boolean."</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">filter_first</span><span class="p">,</span> <span class="nb">bool</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;filter_first must be a boolean.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"filter_first must be a boolean."</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;registry must be a dictionary.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"registry must be a dictionary."</span><span class="p">)</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the status of the object as a string.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Return the status of the object as a string."""</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">:</span>
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;POSYDON warnings will be caught and recorded.&quot;</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="s2">"POSYDON warnings will be caught and recorded."</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span><span class="p">:</span>
-                    <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot; Filters are applied before recording.&quot;</span>
+                    <span class="n">ret</span> <span class="o">+=</span> <span class="s2">" Filters are applied before recording."</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;POSYDON warnings will be caught and discarded.&quot;</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="s2">"POSYDON warnings will be caught and discarded."</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">=</span> <span class="s2">&quot;POSYDON warnings are shown.&quot;</span>
+            <span class="n">ret</span> <span class="o">=</span> <span class="s2">"POSYDON warnings are shown."</span>
         <span class="n">ncaught</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">ncaught</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
             <span class="k">if</span> <span class="n">ncaught</span><span class="o">==</span><span class="mi">1</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There is 1 warning recorded.&quot;</span>
+                <span class="n">ret</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">There is 1 warning recorded."</span>
             <span class="k">else</span><span class="p">:</span>
-                <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">There are </span><span class="si">{}</span><span class="s2"> warnings recorded.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ncaught</span><span class="p">)</span>
+                <span class="n">ret</span> <span class="o">+=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">There are </span><span class="si">{}</span><span class="s2"> warnings recorded."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">ncaught</span><span class="p">)</span>
         <span class="k">global</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="o">!=</span><span class="n">_POSYDON_WARNINGS_REGISTRY</span><span class="p">:</span>
-            <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot; Currently a private registry is used, it contains:</span><span class="se">\n</span><span class="s2">&quot;</span>
-            <span class="n">ret</span> <span class="o">+=</span> <span class="s2">&quot;</span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">)</span>
+            <span class="n">ret</span> <span class="o">+=</span> <span class="s2">" Currently a private registry is used, it contains:</span><span class="se">\n</span><span class="s2">"</span>
+            <span class="n">ret</span> <span class="o">+=</span> <span class="s2">"</span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">ret</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">new_warning</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">empty_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                  <span class="n">change_settings</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deal with changes and new warnings</span>
+<span class="w">        </span><span class="sd">"""Deal with changes and new warnings</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -533,24 +533,24 @@
 <span class="sd">            attributes get the new values. (Changing the filter_first, while</span>
 <span class="sd">            there are recorded warnings, the statistics may count warnings</span>
 <span class="sd">            twice or not at all.)</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_got_called</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="c1"># Check if there is anything to do</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">empty_cache</span> <span class="ow">and</span> <span class="n">new_warning</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">change_settings</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Nothing to do: either empty_cache has to be True&quot;</span>
-                            <span class="s2">&quot; or new_warning/change_settings needs to be set.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Nothing to do: either empty_cache has to be True"</span>
+                            <span class="s2">" or new_warning/change_settings needs to be set."</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">empty_cache</span><span class="p">:</span>
             <span class="c1"># Clear the cache</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_cache</span><span class="p">()</span>
         <span class="k">if</span> <span class="n">change_settings</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">change_settings</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
-                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;change_settings has to be a dict or None.&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"change_settings has to be a dict or None."</span><span class="p">)</span>
             <span class="c1"># Change attributes</span>
             <span class="k">for</span> <span class="n">attr</span><span class="p">,</span><span class="n">val</span> <span class="ow">in</span> <span class="n">change_settings</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">attr</span><span class="o">==</span><span class="s2">&quot;caught_warnings&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">==</span><span class="s2">"caught_warnings"</span><span class="p">:</span>
                     <span class="c1"># Protect the list of warnings from changes</span>
                     <span class="k">continue</span>
-                <span class="k">if</span> <span class="n">attr</span><span class="o">==</span><span class="s2">&quot;registry&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">attr</span><span class="o">==</span><span class="s2">"registry"</span><span class="p">:</span>
                     <span class="c1"># special treatment of registry</span>
                     <span class="k">if</span> <span class="n">val</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
                         <span class="k">global</span> <span class="n">_POSYDON_WARNINGS_REGISTRY</span>
@@ -562,19 +562,19 @@
                     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span><span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">))):</span>
                         <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">attr</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> has to be a &quot;</span>
-                                        <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">))</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+                        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> has to be a "</span>
+                                        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="w"> </span><span class="n">attr</span><span class="p">))</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> unknown to &quot;</span>
-                                         <span class="s2">&quot;_Caught_POSYDON_Warnings.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> unknown to "</span>
+                                         <span class="s2">"_Caught_POSYDON_Warnings."</span><span class="p">)</span>
             <span class="k">if</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span><span class="o">==</span><span class="kc">False</span><span class="p">)</span> <span class="ow">and</span>
                 <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)):</span>
                 <span class="c1"># If there are recorded warnings issue them and empty the list</span>
                 <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">:</span>
-                    <span class="k">if</span> <span class="s2">&quot;stacklevel&quot;</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
-                        <span class="n">w</span><span class="p">[</span><span class="s2">&quot;stacklevel&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>
+                    <span class="k">if</span> <span class="s2">"stacklevel"</span> <span class="ow">in</span> <span class="n">w</span><span class="p">:</span>
+                        <span class="n">w</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>
                     <span class="k">else</span><span class="p">:</span>
-                        <span class="n">w</span><span class="p">[</span><span class="s2">&quot;stacklevel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+                        <span class="n">w</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
                     <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span><span class="p">:</span>
                         <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="o">**</span><span class="n">w</span><span class="p">)</span>
                     <span class="k">else</span><span class="p">:</span>
@@ -593,37 +593,37 @@
                     <span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">new_warning</span><span class="p">)</span>
             <span class="k">else</span><span class="p">:</span>
                 <span class="c1"># Issue warning</span>
-                <span class="n">new_warning</span><span class="p">[</span><span class="s2">&quot;stacklevel&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>
+                <span class="n">new_warning</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">2</span>
                 <span class="n">_issue_warn</span><span class="p">(</span><span class="n">new_warning</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">)</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Destructor of the object. It will issue still recorded warnings.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Destructor of the object. It will issue still recorded warnings."""</span>
         <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
             <span class="c1"># If there are recorded warnings issue them.</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">=</span> <span class="kc">False</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;There are still recorded warnings:&quot;</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"There are still recorded warnings:"</span><span class="p">,</span> <span class="n">file</span><span class="o">=</span><span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">w</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">:</span>
-                <span class="n">w</span><span class="p">[</span><span class="s2">&quot;stacklevel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+                <span class="n">w</span><span class="p">[</span><span class="s2">"stacklevel"</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
                 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span><span class="p">:</span>
                     <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="o">**</span><span class="n">w</span><span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
                     <span class="n">_issue_warn</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">registry</span><span class="p">)</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">got_called</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Returns, whether the object got called.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Returns, whether the object got called."""</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_got_called</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">has_records</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Checks whether there are records of caught warnings.</span>
+<span class="w">        </span><span class="sd">"""Checks whether there are records of caught warnings.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        True if there are recorded warnings otherwise False.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">get_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">empty_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Get caught warnings.</span>
+<span class="w">        </span><span class="sd">"""Get caught warnings.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -633,14 +633,14 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        List of recorded warnings.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">cache</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">empty_cache</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">reset_cache</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">cache</span>
     
     <span class="k">def</span><span class="w"> </span><span class="nf">reset_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Resets the caught warnings.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Resets the caught warnings."""</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">caught_warnings</span> <span class="o">=</span> <span class="p">[]</span>
 
 <span class="c1"># Here we store all our caught POSYDON warnings</span>
@@ -652,10 +652,10 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">Catch_POSYDON_Warnings</span><span class="p">:</span>
     <span class="c1"># We use our own context manager, which does not overwrite functions.</span>
     <span class="c1"># Instead it can only catch POSYDON warnings issued via the Pwarn function.</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Context manager class to catch POSYDON warnings.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Context manager class to catch POSYDON warnings."""</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">catch_warnings</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">record</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">filter_first</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
                  <span class="n">own_registry</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">use_python_catch</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Constructor of the object.</span>
+<span class="w">        </span><span class="sd">"""Constructor of the object.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -675,7 +675,7 @@
 <span class="sd">            hence it is strongly recommended to be not used (properly written</span>
 <span class="sd">            code will not contain any use case for this option, hence it is</span>
 <span class="sd">            only for backward compatibility.).</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span> <span class="o">=</span> <span class="n">catch_warnings</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">record</span> <span class="o">=</span> <span class="n">record</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span> <span class="o">=</span> <span class="n">filter_first</span>
@@ -690,21 +690,21 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">python_catch</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Enable catching.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Enable catching."""</span>
         <span class="k">global</span> <span class="n">_CAUGHT_POSYDON_WARNINGS</span>
         <span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span>
-                                     <span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">,</span>
-                                     <span class="s1">&#39;record&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">,</span>
-                                     <span class="s1">&#39;filter_first&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span><span class="p">,</span>
-                                     <span class="s1">&#39;_got_called&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                                     <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_registry</span><span class="p">})</span>
+                                     <span class="s1">'catch_warnings'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">,</span>
+                                     <span class="s1">'record'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">record</span><span class="p">,</span>
+                                     <span class="s1">'filter_first'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_first</span><span class="p">,</span>
+                                     <span class="s1">'_got_called'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                                     <span class="s1">'registry'</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">context_registry</span><span class="p">})</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_catch</span><span class="p">,</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">):</span>
             <span class="c1"># enter catch of python as well (should be done last)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">python_catch</span><span class="o">.</span><span class="fm">__enter__</span><span class="p">()</span>
         <span class="k">return</span> <span class="n">_CAUGHT_POSYDON_WARNINGS</span>
     
     <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">exc_traceback</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Disable catching.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Disable catching."""</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">python_catch</span><span class="p">,</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">):</span>
             <span class="c1"># exit catch of python as well (should be done first)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">python_catch</span><span class="o">.</span><span class="fm">__exit__</span><span class="p">()</span>
@@ -714,8 +714,8 @@
         <span class="k">global</span> <span class="n">_CAUGHT_POSYDON_WARNINGS</span>
         <span class="c1"># If the cache is not cleared before, it will issue all recorded</span>
         <span class="c1"># warnings.</span>
-        <span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;catch_warnings&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-                                                  <span class="s1">&#39;registry&#39;</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
+        <span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="n">change_settings</span><span class="o">=</span><span class="p">{</span><span class="s1">'catch_warnings'</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+                                                  <span class="s1">'registry'</span><span class="p">:</span> <span class="kc">None</span><span class="p">})</span>
         <span class="k">return</span> <span class="kc">False</span></div>
 
 
@@ -723,7 +723,7 @@
 <div class="viewcode-block" id="Pwarn">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.Pwarn">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">Pwarn</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Issueing a warning via warnings.warn.</span>
+<span class="w">    </span><span class="sd">"""Issueing a warning via warnings.warn.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -735,19 +735,19 @@
 <span class="sd">            The stack level passed to warnings.warn, defaults to 2.</span>
 <span class="sd">        **kwargs : dict (optional)</span>
 <span class="sd">            Dictionary containing extra options passed to warnings.warn.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">global</span> <span class="n">_CAUGHT_POSYDON_WARNINGS</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;message must be a string.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"message must be a string."</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">stacklevel</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;stacklevel must be an integer.&quot;</span><span class="p">)</span>
+        <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">"stacklevel must be an integer."</span><span class="p">)</span>
     <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="ne">Warning</span><span class="p">)):</span>
         <span class="n">category</span> <span class="o">=</span> <span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">POSYDONWarning</span><span class="p">)):</span>
         <span class="c1"># deal with POSYDON warnings</span>
-        <span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="n">new_warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span><span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
-                                                   <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">category</span><span class="p">,</span>
-                                                   <span class="s2">&quot;stacklevel&quot;</span><span class="p">:</span> <span class="n">stacklevel</span><span class="p">},</span>
+        <span class="n">_CAUGHT_POSYDON_WARNINGS</span><span class="p">(</span><span class="n">new_warning</span><span class="o">=</span><span class="nb">dict</span><span class="p">({</span><span class="s2">"message"</span><span class="p">:</span> <span class="n">message</span><span class="p">,</span>
+                                                   <span class="s2">"category"</span><span class="p">:</span> <span class="n">category</span><span class="p">,</span>
+                                                   <span class="s2">"stacklevel"</span><span class="p">:</span> <span class="n">stacklevel</span><span class="p">},</span>
                                                   <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
     <span class="k">else</span><span class="p">:</span>
         <span class="c1"># deal with python warnings</span>
@@ -757,20 +757,20 @@
 
 <div class="viewcode-block" id="SetPOSYDONWarnings">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.SetPOSYDONWarnings">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">POSYDONWarning</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add the warnings filter for POSYDON warnings.</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">"default"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">POSYDONWarning</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add the warnings filter for POSYDON warnings.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        action : str (default: &quot;default&quot;)</span>
+<span class="sd">        action : str (default: "default")</span>
 <span class="sd">            The behaviour for those warnings. Should be one out of</span>
-<span class="sd">            &quot;default&quot;, &quot;error&quot;, &quot;ignore&quot;, &quot;always&quot;, &quot;module&quot;, or &quot;once&quot;</span>
+<span class="sd">            "default", "error", "ignore", "always", "module", or "once"</span>
 <span class="sd">        category : str or a warnings category class (default: POSYDONWarning)</span>
 <span class="sd">            A string, which will be converted into a POSYDONWarning class.</span>
 <span class="sd">        **kwargs : dict (optional)</span>
 <span class="sd">            Dictionary containing extra options passed to</span>
 <span class="sd">            warnings.filterwarnings.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">category</span> <span class="o">=</span> <span class="n">_get_POSYDONWarning_class</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
     <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">category</span><span class="p">,</span> <span class="n">POSYDONWarning</span><span class="p">):</span>
         <span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
@@ -779,33 +779,33 @@
 <div class="viewcode-block" id="NoPOSYDONWarnings">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.NoPOSYDONWarnings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">NoPOSYDONWarnings</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Switch the warnings filter to ignore for POSYDON warnings.</span>
+<span class="w">    </span><span class="sd">"""Switch the warnings filter to ignore for POSYDON warnings.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        category : str or a warnings category class (default: POSYDONWarning)</span>
 <span class="sd">            A string, which will be converted into a POSYDONWarning class.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;ignore&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span></div>
+<span class="sd">    """</span>
+    <span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="AllPOSYDONWarnings">
 <a class="viewcode-back" href="../../../api_reference/posydon.utils.html#posydon.utils.posydonwarning.AllPOSYDONWarnings">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">AllPOSYDONWarnings</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="n">POSYDONWarning</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Switch the warnings filter to always for POSYDON warnings.</span>
+<span class="w">    </span><span class="sd">"""Switch the warnings filter to always for POSYDON warnings.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        category : str or a warnings category class (default: POSYDONWarning)</span>
 <span class="sd">            A string, which will be converted into a POSYDONWarning class.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">&quot;always&quot;</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span></div>
+<span class="sd">    """</span>
+    <span class="n">SetPOSYDONWarnings</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="s2">"always"</span><span class="p">,</span> <span class="n">category</span><span class="o">=</span><span class="n">category</span><span class="p">)</span></div>
 
 
 
-<span class="c1"># The base class of all warnings is &quot;Warning&quot;, which is derived from Exception</span>
+<span class="c1"># The base class of all warnings is "Warning", which is derived from Exception</span>
 <span class="c1">#</span>
-<span class="c1"># List of Python&#39;s default warnings (sub)classes in alphabetic order</span>
+<span class="c1"># List of Python's default warnings (sub)classes in alphabetic order</span>
 <span class="c1"># BytesWarning: Base category for warnings related to bytes and bytearray.</span>
 <span class="c1"># DeprecationWarning: Base category for warnings about deprecated features when</span>
 <span class="c1">#     those warnings are intended for other Python developers (ignored by</span>

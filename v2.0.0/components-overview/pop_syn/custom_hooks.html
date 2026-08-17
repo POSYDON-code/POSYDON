@@ -131,7 +131,7 @@
 <p>The evolutionary loop is in <code class="docutils literal notranslate"><span class="pre">BinaryStar.evolve</span></code>, and the pseudo code looks like this:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">evolve</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
     <span class="n">pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
-        <span class="k">while</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">&#39;END&#39;</span><span class="p">:</span>
+        <span class="k">while</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">!=</span> <span class="s1">'END'</span><span class="p">:</span>
             <span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
             <span class="o">...</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">evolve</span><span class="p">()</span>
@@ -160,10 +160,10 @@
 <span class="linenos">10</span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.double_CO</span><span class="w"> </span><span class="kn">import</span> <span class="n">DoubleCO</span>
 <span class="linenos">11</span>
 <span class="hll"><span class="linenos">12</span><span class="k">def</span><span class="w"> </span><span class="nf">print_info_before</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
-</span><span class="hll"><span class="linenos">13</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;Step </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s1"> for </span><span class="se">\n</span><span class="s1">before:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="s1">&#39;</span> <span class="p">)</span>
+</span><span class="hll"><span class="linenos">13</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">'Step </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s1"> for </span><span class="se">\n</span><span class="s1">before:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="s1">'</span> <span class="p">)</span>
 </span><span class="linenos">14</span>
 <span class="hll"><span class="linenos">15</span><span class="k">def</span><span class="w"> </span><span class="nf">print_info_after</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
-</span><span class="hll"><span class="linenos">16</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">&#39;after:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="se">\n</span><span class="s1">&#39;</span> <span class="p">)</span>
+</span><span class="hll"><span class="linenos">16</span>    <span class="nb">print</span><span class="p">(</span> <span class="sa">f</span><span class="s1">'after:</span><span class="se">\t</span><span class="si">{</span><span class="n">binary</span><span class="si">}</span><span class="se">\n</span><span class="s1">'</span> <span class="p">)</span>
 </span><span class="linenos">17</span>
 <span class="linenos">18</span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
 <span class="linenos">19</span>      <span class="n">flow</span> <span class="o">=</span> <span class="p">(</span><span class="n">flow_chart</span><span class="p">,</span> <span class="p">{}),</span>
@@ -176,8 +176,8 @@
 <span class="linenos">26</span>      <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">DoubleCO</span><span class="p">,</span> <span class="p">{}),</span>
 <span class="linenos">27</span>      <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">step_end</span><span class="p">,</span> <span class="p">{}),</span>
 <span class="linenos">28</span>      <span class="c1"># put hooks here</span>
-<span class="hll"><span class="linenos">29</span>      <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">&#39;extra_pre_step&#39;</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">),</span>
-</span><span class="hll"><span class="linenos">30</span>                    <span class="p">(</span><span class="s1">&#39;extra_post_step&#39;</span><span class="p">,</span> <span class="n">print_info_after</span><span class="p">)]</span>
+<span class="hll"><span class="linenos">29</span>      <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="s1">'extra_pre_step'</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">),</span>
+</span><span class="hll"><span class="linenos">30</span>                    <span class="p">(</span><span class="s1">'extra_post_step'</span><span class="p">,</span> <span class="n">print_info_after</span><span class="p">)]</span>
 </span><span class="linenos">31</span>  <span class="p">)</span>
 <span class="linenos">32</span>
 <span class="linenos">33</span>  <span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
@@ -241,24 +241,24 @@ after:      BinaryStar(merged, END, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S
 </div>
 <p>The source for <code class="docutils literal notranslate"><span class="pre">StepNamesHooks</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">StepNamesHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Add history column &#39;step_name&#39; to each binary.</span>
+<span class="w">    </span><span class="sd">"""Add history column 'step_name' to each binary.</span>
 
 <span class="sd">    Name of evolutionary step as defined in SimulationProperties.</span>
 
-<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns=[&#39;step_names&#39;])</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns=['step_names'])</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the step name to match history.&quot;&quot;&quot;</span>
-        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;initial_cond&#39;</span><span class="p">]</span>
+<span class="w">        </span><span class="sd">"""Initialize the step name to match history."""</span>
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'initial_cond'</span><span class="p">]</span>
         <span class="k">return</span> <span class="n">binary</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Do not do anything before the step.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Do not do anything before the step."""</span>
         <span class="k">return</span> <span class="n">binary</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Record the step name.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""Record the step name."""</span>
         <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
         <span class="n">len_binary_hist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
         <span class="n">len_step_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
@@ -270,8 +270,8 @@ after:      BinaryStar(merged, END, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S
         <span class="k">return</span> <span class="n">binary</span>
 
     <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Ensure None&#39;s are append to step_names to match rows in history.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;END&#39;</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">&#39;FAILED&#39;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Ensure None's are append to step_names to match rows in history."""</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'END'</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'FAILED'</span><span class="p">:</span>
             <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">))</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">diff</span>
         <span class="k">return</span> <span class="n">binary</span>
@@ -281,7 +281,7 @@ after:      BinaryStar(merged, END, p=nan, S1=(H-rich_Core_H_burning,M=87.20), S
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">sim_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
     <span class="o">...</span>
     <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[(</span><span class="n">TimingHooks</span><span class="p">,</span> <span class="p">{}),(</span><span class="n">StepNamesHooks</span><span class="p">,</span> <span class="p">{}),</span>
-                  <span class="p">(</span><span class="s1">&#39;extra_pre_step&#39;</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">)],</span>
+                  <span class="p">(</span><span class="s1">'extra_pre_step'</span><span class="p">,</span> <span class="n">print_info_before</span><span class="p">)],</span>
     <span class="o">...</span>
 <span class="p">)</span>
 </pre></div>

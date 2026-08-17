@@ -161,7 +161,7 @@ convention above fully describes the evolutionary state of a binary
 star system as far as POSYDON is concerned. This may then be mapped
 to a particular evolution step that dictates how that state is
 evolved. For example, this <code class="docutils literal notranslate"><span class="pre">tuple</span></code> might look like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXAMPLE_STATE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">EXAMPLE_STATE</span> <span class="o">=</span> <span class="p">(</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'detached'</span><span class="p">,</span> <span class="s1">'ZAMS'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>which by default maps to <code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code>. The evolutionary steps that a given
@@ -218,7 +218,7 @@ summary, there are twelve evolutionary steps that POSYDON utilizes. These are:</
 </tbody>
 </table>
 <p>A typical item of a flow chart may then look something like this:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FLOW_ITEM</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">FLOW_ITEM</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'detached'</span><span class="p">,</span> <span class="s1">'ZAMS'</span><span class="p">)</span> <span class="p">:</span> <span class="s1">'step_HMS_HMS'</span><span class="p">}</span>
 </pre></div>
 </div>
 <p>POSYDON builds its own default flow chart to handle evolution with
@@ -247,8 +247,8 @@ directory so we can play around with it:</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">shutil</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON</span>
 
-<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">&quot;posydon/popsyn/population_params_default.ini&quot;</span><span class="p">)</span>
-<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">&#39;./population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">path_to_params</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON</span><span class="p">,</span> <span class="s2">"posydon/popsyn/population_params_default.ini"</span><span class="p">)</span>
+<span class="n">shutil</span><span class="o">.</span><span class="n">copyfile</span><span class="p">(</span><span class="n">path_to_params</span><span class="p">,</span> <span class="s1">'./population_params.ini'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Next, we can load the evolution steps that our simulation will use,
@@ -258,18 +258,18 @@ providing a desired metallicity to evolve our binary with:</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.simulationproperties</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationProperties</span>
 
 <span class="c1"># Load the simulation properties from the default ini file.</span>
-<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">&#39;population_params.ini&#39;</span><span class="p">)</span>
+<span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="s1">'population_params.ini'</span><span class="p">)</span>
 <span class="c1"># manually add the metallicity to each step that requires it</span>
-<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;metallicity&#39;</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
+<span class="n">metallicity</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'metallicity'</span><span class="p">:</span><span class="mi">1</span><span class="p">}</span>
 
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_HMS_HMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_CO_HeMS_RLO&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_detached&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_disrupted&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_merged&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
-<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">&#39;step_initially_single&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_HMS_HMS'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HeMS'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HMS_RLO'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_CO_HeMS_RLO'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_detached'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_disrupted'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_merged'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+<span class="n">sim_kwargs</span><span class="p">[</span><span class="s1">'step_initially_single'</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
 
 <span class="n">sim_prop</span> <span class="o">=</span> <span class="n">SimulationProperties</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
 <span class="c1"># Load the steps and required data</span>
@@ -285,7 +285,7 @@ default POSYDON flow chart by default. You can access it with:</p>
 </div>
 <p>If you print this, you will see the dictionary that is the default
 POSYDON flow chart. Let’s replace this flow chart with our own.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import POSYDON default flow chart (we&#39;re going to modify it)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># import POSYDON default flow chart (we're going to modify it)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.flow_chart</span><span class="w"> </span><span class="kn">import</span> <span class="n">flow_chart</span>
 
 <span class="c1"># create and store a copy of the default flow chart</span>
@@ -310,7 +310,7 @@ evolution that a binary will go through). Normally, this state is
 mapped to <code class="docutils literal notranslate"><span class="pre">step_HMS_HMS</span></code> (as in the <code class="docutils literal notranslate"><span class="pre">EXAMPLE_ITEM</span></code> above),
 which will be evolved using the MESA grids. Let’s set this to map
 to <code class="docutils literal notranslate"><span class="pre">step_detached</span></code> instead:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">custom_mappings</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;H-rich_Core_H_burning&#39;</span><span class="p">,</span><span class="s1">&#39;detached&#39;</span><span class="p">,</span> <span class="s1">&#39;ZAMS&#39;</span><span class="p">)</span> <span class="p">:</span> <span class="s1">&#39;step_detached&#39;</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">custom_mappings</span> <span class="o">=</span> <span class="p">{(</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'H-rich_Core_H_burning'</span><span class="p">,</span><span class="s1">'detached'</span><span class="p">,</span> <span class="s1">'ZAMS'</span><span class="p">)</span> <span class="p">:</span> <span class="s1">'step_detached'</span><span class="p">}</span>
 <span class="n">my_flow</span> <span class="o">=</span> <span class="n">flow_chart</span><span class="p">(</span><span class="n">CHANGE_FLOW_CHART</span><span class="o">=</span><span class="n">custom_mappings</span><span class="p">)</span>
 </pre></div>
 </div>

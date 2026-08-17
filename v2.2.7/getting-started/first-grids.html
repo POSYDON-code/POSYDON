@@ -143,8 +143,8 @@
 <p>You can access our grids of MESA simulations using the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> module (for an overview of this module, see <a class="reference internal" href="../components-overview/post_processing/psygrid.html"><span class="std std-ref">here</span></a>). We will run through some simple commands to orient ourselves with the <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object below.</p>
 <p>To load a MESA grid, first import the module, instantiate a new <code class="docutils literal notranslate"><span class="pre">PSyGrid</span></code> object, and pass the argument <code class="docutils literal notranslate"><span class="pre">filepath</span></code> to open a grid. In this example we load the HMS-HMS grid at solar metallicity:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">posydon.grids.psygrid</span><span class="w"> </span><span class="kn">import</span> <span class="n">PSyGrid</span>
-<span class="n">PATH_TO_POSYDON_DATA</span> <span class="o">=</span> <span class="s1">&#39;/YOUR/POSYDON_DATA/PATH&#39;</span>
-<span class="n">grid_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="si">}</span><span class="s1">/POSYDON_data/HMS-HMS/1e+00_Zsun.h5&#39;</span>
+<span class="n">PATH_TO_POSYDON_DATA</span> <span class="o">=</span> <span class="s1">'/YOUR/POSYDON_DATA/PATH'</span>
+<span class="n">grid_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="si">}</span><span class="s1">/POSYDON_data/HMS-HMS/1e+00_Zsun.h5'</span>
 <span class="n">mygrid</span> <span class="o">=</span> <span class="n">PSyGrid</span><span class="p">(</span><span class="n">filepath</span><span class="o">=</span><span class="n">grid_path</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -175,7 +175,7 @@ initial values of this property for all the MESA runs in this grid.
 Note that these physical properties of the binaries in the grid are different
 from the grid configuration properties listed above and are the actual data outputs of the MESA simulations.</p>
 <p>As an example, you can find the initial mass of the primary star (<code class="docutils literal notranslate"><span class="pre">star_1_mass</span></code>) in one of the grid’s MESA binary star simulations with</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="o">.</span><span class="n">initial_values</span><span class="p">[</span><span class="s1">'star_1_mass'</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
 </pre></div>
 </div>
 <div class="admonition note">
@@ -220,14 +220,14 @@ from the grid configuration properties listed above and are the actual data outp
 <p>Again, you can check for the valid column names of the individual runs with
 <code class="samp docutils literal notranslate"><span class="pre">dtype.names</span></code>, e.g.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">myrun</span> <span class="o">=</span> <span class="n">mygrid</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">myrun</span><span class="p">[</span><span class="s1">&#39;binary_history&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
+<span class="n">myrun</span><span class="p">[</span><span class="s1">'binary_history'</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span>
 </pre></div>
 </div>
 <p>Before, we retrieved the initial mass of star 1 in the binary indexed at ` 2` by
 slicing the list <code class="samp docutils literal notranslate"><span class="pre">mygrid.initial_values</span></code> and the selecting the value at index <cite>2</cite>.
 You can get the same value from the list of initial values associated with a
 single MESA run using the <cite>PSyRunView</cite> object via:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">&#39;initial_values&#39;</span><span class="p">][</span><span class="s1">&#39;star_1_mass&#39;</span><span class="p">]</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">mygrid</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="s1">'initial_values'</span><span class="p">][</span><span class="s1">'star_1_mass'</span><span class="p">]</span>
 </pre></div>
 </div>
 </section>

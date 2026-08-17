@@ -118,8 +118,8 @@
 <a class="viewcode-back" href="../../../../../api_reference/posydon.binary_evol.DT.gravitational_radiation.html#posydon.binary_evol.DT.gravitational_radiation.default_gravrad.default_gravrad">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">default_gravrad</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">False</span><span class="p">):</span>
 
-    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
-    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span>
+    <span class="n">m1</span> <span class="o">=</span> <span class="n">primary</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
+    <span class="n">m2</span> <span class="o">=</span> <span class="n">secondary</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span>
 
     <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">m1</span> <span class="o">*</span> <span class="n">m2</span> <span class="o">/</span> <span class="p">(</span><span class="n">m1</span> <span class="o">+</span> <span class="n">m2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
     
@@ -150,7 +150,7 @@
     <span class="c1"># eq. (36) of Junker et al. 1992, 254, 146</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;da,de_gr = &quot;</span><span class="p">,</span> <span class="n">da_gr</span><span class="p">,</span> <span class="n">de_gr</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"da,de_gr = "</span><span class="p">,</span> <span class="n">da_gr</span><span class="p">,</span> <span class="n">de_gr</span><span class="p">)</span>
 
     <span class="n">da</span> <span class="o">=</span> <span class="n">da_gr</span>
     <span class="n">de</span> <span class="o">=</span> <span class="n">de_gr</span>

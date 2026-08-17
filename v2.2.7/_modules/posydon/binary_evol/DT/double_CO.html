@@ -116,13 +116,13 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.binary_evol.DT.double_CO</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Detached evolution for double compact-object binaries.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Detached evolution for double compact-object binaries."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Zepei Xing &lt;Zepei.Xing@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Devina Misra &lt;devina.misra@unige.ch&gt;&quot;</span><span class="p">,</span>
-    <span class="s2">&quot;Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Zepei Xing &lt;Zepei.Xing@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -144,7 +144,7 @@
 <div class="viewcode-block" id="event">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.event">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">event</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return a helper function to set attributes for solve_ivp events.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Return a helper function to set attributes for solve_ivp events."""</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
         <span class="n">f</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
         <span class="n">f</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
@@ -155,13 +155,13 @@
 <div class="viewcode-block" id="DoubleCO">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DoubleCO</span><span class="p">(</span><span class="n">detached_step</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Evolve a double compact-object binary due to gravitational radiation.</span>
+<span class="w">    </span><span class="sd">"""Evolve a double compact-object binary due to gravitational radiation.</span>
 
 <span class="sd">    The binary will be evolved until the two compact objects come into contact</span>
 <span class="sd">    or until maximum simulation time, based on the quadrupole approximation</span>
 <span class="sd">    of gravitational radiation.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
@@ -179,9 +179,9 @@
 
         <span class="c1">#if self.res.status == -1:</span>
         <span class="c1">#    set_binary_to_failed(binary)</span>
-        <span class="c1">#    raise NumericalError(f&quot;Integration failed for {binary.state} DCO &quot;</span>
-        <span class="c1">#                         f&quot;({binary.star_1.state}, {binary.star_2.state}): &quot;</span>
-        <span class="c1">#                         f&quot;{self.res.message}&quot;)</span>
+        <span class="c1">#    raise NumericalError(f"Integration failed for {binary.state} DCO "</span>
+        <span class="c1">#                         f"({binary.star_1.state}, {binary.star_2.state}): "</span>
+        <span class="c1">#                         f"{self.res.message}")</span>
         <span class="c1"># contact event triggered</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">real_time</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -189,14 +189,14 @@
                 <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">real_time</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">real_time</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
                     <span class="n">binary</span><span class="o">.</span><span class="n">time_history</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">real_time</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;contact&quot;</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;CO_contact&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"contact"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"CO_contact"</span>
         <span class="c1"># max time reached</span>
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span>
             <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">&quot;detached&quot;</span>
-            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">&quot;maxtime&quot;</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"detached"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"maxtime"</span>
 
 <div class="viewcode-block" id="DoubleCO.solve_ODEs">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO.solve_ODEs">[docs]</a>
@@ -214,7 +214,7 @@
             <span class="k">try</span><span class="p">:</span>
                 <span class="n">res</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="p">,</span>
                                 <span class="n">events</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="o">.</span><span class="n">ev_contact</span><span class="p">,</span>
-                                <span class="n">method</span><span class="o">=</span><span class="s2">&quot;BDF&quot;</span><span class="p">,</span>
+                                <span class="n">method</span><span class="o">=</span><span class="s2">"BDF"</span><span class="p">,</span>
                                 <span class="n">t_span</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span><span class="o">-</span><span class="n">t0</span><span class="p">),</span>
                                 <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">a</span><span class="p">,</span> <span class="n">e</span><span class="p">,</span>
                                     <span class="n">secondary</span><span class="o">.</span><span class="n">omega0</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">omega0</span><span class="p">],</span>
@@ -223,7 +223,7 @@
                                 <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
             <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
                 <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
-                <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;SciPy encountered termination edge case while solving GR equations: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"SciPy encountered termination edge case while solving GR equations: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
             <span class="n">time_sol</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t0</span><span class="p">)</span>
             <span class="n">t0</span> <span class="o">+=</span> <span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
@@ -262,7 +262,7 @@
                         <span class="n">appended</span> <span class="o">=</span> <span class="kc">True</span>
                         <span class="k">break</span>
                 <span class="k">if</span> <span class="ow">not</span> <span class="n">appended</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> is out of bounds for the combined solution.&quot;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Time </span><span class="si">{</span><span class="n">t</span><span class="si">}</span><span class="s2"> is out of bounds for the combined solution."</span><span class="p">)</span>
 
             <span class="n">solutions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">solutions</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
@@ -279,19 +279,19 @@
 <div class="viewcode-block" id="DoubleCO.get_time_after_evo">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO.get_time_after_evo">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_time_after_evo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">"""</span>
 <span class="sd">            After detached evolution, this uses the ODESolver result</span>
 <span class="sd">        to determine what the current time is.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        res : ODESolver object</span>
-<span class="sd">            This is the ODESolver object produced by SciPy&#39;s</span>
+<span class="sd">            This is the ODESolver object produced by SciPy's</span>
 <span class="sd">            solve_ivp function that contains calculated values</span>
 <span class="sd">            of the stars evolution through the detached step.</span>
 
 <span class="sd">        binary: BinaryStar object</span>
-<span class="sd">            A binary star object, containing the binary system&#39;s properties.</span>
+<span class="sd">            A binary star object, containing the binary system's properties.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -305,7 +305,7 @@
 <span class="sd">            from solve_ivp, so does not represent the real binary</span>
 <span class="sd">            time. This is corrected later in the __call__ method.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
 
         <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
         <span class="n">real_time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
@@ -390,22 +390,22 @@
 <div class="viewcode-block" id="double_CO_evolution.gravitational_radiation">
 <a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.double_CO_evolution.gravitational_radiation">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">gravitational_radiation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate the change in orbital separation and eccentricity due to</span>
+<span class="w">        </span><span class="sd">"""Calculate the change in orbital separation and eccentricity due to</span>
 <span class="sd">        gravitational wave radiation from two point masses. Calculated as</span>
 <span class="sd">        according to [1].</span>
 
 <span class="sd">            [1] Peters, P. C. (1964). Gravitational Radiation and the</span>
 <span class="sd">                Motion of Two Point Masses. Physical Review, 136(4B),</span>
 <span class="sd">                B1224–B1232</span>
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="n">g</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">standard_cgrav</span>
         <span class="n">c</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">clight</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
         <span class="n">e</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span>
 
-        <span class="n">m1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
-        <span class="n">m2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
+        <span class="n">m1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">primary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
+        <span class="n">m2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">secondary</span><span class="o">.</span><span class="n">latest</span><span class="p">[</span><span class="s2">"mass"</span><span class="p">]</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>
 
         <span class="n">a</span> <span class="o">=</span> <span class="n">a</span> <span class="o">*</span> <span class="mi">100_000</span>
 

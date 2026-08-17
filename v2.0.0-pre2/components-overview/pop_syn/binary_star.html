@@ -352,23 +352,23 @@ These can be requested and will be stored in the output oneline (See the <a clas
 <section id="basic-example">
 <h3>Basic example<a class="headerlink" href="#basic-example" title="Link to this heading"></a></h3>
 <p>The simplest method is to provide the two star objects and <cite>kwargs</cite> of the initial binary parameters.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
-           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kwargs1</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'MS'</span><span class="p">,</span>
+           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">20.0</span><span class="p">,</span>
+           <span class="s1">'metallicity'</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
 
 <span class="n">star_1</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs1</span><span class="p">)</span>
 
-<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;MS&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;mass&#39;</span> <span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
-           <span class="s1">&#39;metallicity&#39;</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
+<span class="n">kwargs2</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'MS'</span><span class="p">,</span>
+           <span class="s1">'mass'</span> <span class="p">:</span> <span class="mf">10.0</span><span class="p">,</span>
+           <span class="s1">'metallicity'</span> <span class="p">:</span> <span class="mf">0.014</span><span class="p">}</span>
 
 <span class="n">star_2</span> <span class="o">=</span> <span class="n">SingleStar</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs2</span><span class="p">)</span>
 
-<span class="n">kwargs3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;state&#39;</span> <span class="p">:</span> <span class="s1">&#39;detached&#39;</span><span class="p">,</span>
-           <span class="s1">&#39;event&#39;</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
-           <span class="s1">&#39;time&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
-           <span class="s1">&#39;orbital_period&#39;</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
-           <span class="s1">&#39;eccentricity&#39;</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>
+<span class="n">kwargs3</span> <span class="o">=</span> <span class="p">{</span><span class="s1">'state'</span> <span class="p">:</span> <span class="s1">'detached'</span><span class="p">,</span>
+           <span class="s1">'event'</span> <span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+           <span class="s1">'time'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">,</span>
+           <span class="s1">'orbital_period'</span> <span class="p">:</span> <span class="mf">3.</span><span class="p">,</span>
+           <span class="s1">'eccentricity'</span> <span class="p">:</span> <span class="mf">0.</span><span class="p">}</span>
 
 
 <span class="n">binary</span> <span class="o">=</span> <span class="n">BinaryStar</span><span class="p">(</span><span class="n">star_1</span><span class="p">,</span> <span class="n">star_2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs3</span><span class="p">)</span>

@@ -782,7 +782,7 @@ classes or extra functions (except for undefined next step errors).</p>
 <dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="posydon.binary_evol.simulationproperties.EvolveHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a></p>
 <p>Add history column ‘step_name’ to each binary.</p>
 <p>Name of evolutionary step as defined in SimulationProperties.</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_names&#39;</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_names'</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>Add any new output columns to the hooks constructor.
@@ -826,7 +826,7 @@ Example for extra binary columns:</p>
 <dd><p>Bases: <a class="reference internal" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="posydon.binary_evol.simulationproperties.EvolveHooks"><code class="xref py py-class docutils literal notranslate"><span class="pre">EvolveHooks</span></code></a></p>
 <p>Add history column ‘step_times’ (time taken by step) to each binary.</p>
 <p class="rubric">Example</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;step_times&#39;</span><span class="p">:</span> <span class="nb">float</span><span class="p">})</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">to_df</span><span class="p">(</span><span class="n">extra_columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'step_times'</span><span class="p">:</span> <span class="nb">float</span><span class="p">})</span>
 </pre></div>
 </div>
 <p>Add any new output columns to the hooks constructor.

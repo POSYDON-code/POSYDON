@@ -110,11 +110,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.interpolation.data_scaling</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module for scaling data before and after interpolation.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Module for scaling data before and after interpolation."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Juanga Serra Perez &lt;jgserra@northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Juanga Serra Perez &lt;jgserra@northwestern.edu&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -124,15 +124,15 @@
 <div class="viewcode-block" id="DataScaler">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.data_scaling.DataScaler">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataScaler</span><span class="p">:</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data Normalization class.</span>
+<span class="w">    </span><span class="sd">"""Data Normalization class.</span>
 
 <span class="sd">    This class provides normalizing tools for float 1D arrays. Features can be</span>
 <span class="sd">    standarized or scaled to a range depending on the method chosen when</span>
 <span class="sd">    calling the fit ot fit_and_transform functions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the data scaler.</span>
+<span class="w">        </span><span class="sd">"""Initialize the data scaler.</span>
 
 <span class="sd">        No parameters are expected. After instantiation use methods `fit` or</span>
 <span class="sd">        `fit_and_transform` first to fit a scaling object to a given vector of</span>
@@ -142,7 +142,7 @@
 <span class="sd">        -------</span>
 <span class="sd">        &gt;&gt;&gt; sc = DataScaler()</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="c1"># These two parameters will only be used when method is (log)_min_max</span>
@@ -151,8 +151,8 @@
 
 <div class="viewcode-block" id="DataScaler.fit">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.data_scaling.DataScaler.fit">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit a transform of 1D numpy array x.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Fit a transform of 1D numpy array x.</span>
 
 <span class="sd">        Computes the parameters that define the transform.</span>
 
@@ -162,16 +162,16 @@
 <span class="sd">            expects a 1D array and finds norm values of columns</span>
 
 <span class="sd">        method : str</span>
-<span class="sd">            Scaling method. Possible values: &#39;min_max&#39;, &#39;max_abs&#39;, &#39;standarize&#39;</span>
-<span class="sd">            and their log versions &#39;log_min_max&#39;, &#39;neg_log_min_max&#39;,</span>
-<span class="sd">            &#39;log_max_abs&#39;, &#39;log_standarize&#39;, &#39;neg_log_standarize&#39;.</span>
+<span class="sd">            Scaling method. Possible values: 'min_max', 'max_abs', 'standarize'</span>
+<span class="sd">            and their log versions 'log_min_max', 'neg_log_min_max',</span>
+<span class="sd">            'log_max_abs', 'log_standarize', 'neg_log_standarize'.</span>
 
 <span class="sd">        lower : float</span>
 <span class="sd">            lower range value of x_t after (log_)min_max scaling</span>
 <span class="sd">        upper : float</span>
 <span class="sd">            upper range value of x_t after (log_)min_max scaling</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="c1"># make sure that we have a 1D NumPy arrays</span>
         <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span>
         <span class="c1"># this is not rechecked in transform/inv_transform,</span>
@@ -181,42 +181,42 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">=</span> <span class="n">method</span>
 
         <span class="c1"># compute scaling parameters associated with each method</span>
-        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;min_max&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">&quot;upper must be greater than lower&quot;</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'min_max'</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">"upper must be greater than lower"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_min_max&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">&quot;upper must be greater than lower&quot;</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'log_min_max'</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">"upper must be greater than lower"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_min_max&#39;</span><span class="p">:</span>
-            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">&quot;upper must be greater than lower&quot;</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_min_max'</span><span class="p">:</span>
+            <span class="k">assert</span> <span class="n">upper</span> <span class="o">&gt;</span> <span class="n">lower</span><span class="p">,</span> <span class="s2">"upper must be greater than lower"</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">=</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">((</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)),</span>
                            <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">((</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'max_abs'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'log_max_abs'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'standarize'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'log_standarize'</span><span class="p">:</span>
             <span class="c1"># log will be computed in transform again</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_standarize&#39;</span><span class="p">:</span>    <span class="c1"># log(-x)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_standarize'</span><span class="p">:</span>    <span class="c1"># log(-x)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'log'</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
-        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;none&#39;</span><span class="p">:</span>  <span class="c1"># no transformation</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">'none'</span><span class="p">:</span>  <span class="c1"># no transformation</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown method `</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">` for data scaler.&quot;</span><span class="p">)</span></div>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Unknown method `</span><span class="si">{</span><span class="n">method</span><span class="si">}</span><span class="s2">` for data scaler."</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="DataScaler.transform">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.data_scaling.DataScaler.transform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform x using the already obtained normalization values.</span>
+<span class="w">        </span><span class="sd">"""Transform x using the already obtained normalization values.</span>
 
 <span class="sd">        `self.fit()`` must be called first.</span>
 <span class="sd">        lower/upper will only be taken into account for (log_)min_max</span>
@@ -233,35 +233,35 @@
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">            transformed version of x</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Make sure that &quot;self.fit&quot; was called first</span>
+<span class="sd">        """</span>
+        <span class="c1"># Make sure that "self.fit" was called first</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span>
-                <span class="s2">&quot;You have to fit a scaling object to a feature vector first&quot;</span><span class="p">)</span>
+                <span class="s2">"You have to fit a scaling object to a feature vector first"</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;min_max&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'min_max'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                    <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_min_max&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_min_max'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                    <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                    <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_min_max&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_min_max'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                    <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
                    <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'max_abs'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="n">x</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_max_abs'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'standarize'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_standarize'</span><span class="p">:</span>
             <span class="c1"># log will be computed in transform again</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_standarize'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log'</span><span class="p">:</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># no transformation</span>
             <span class="n">x_t</span> <span class="o">=</span> <span class="n">x</span>
@@ -271,8 +271,8 @@
 
 <div class="viewcode-block" id="DataScaler.fit_and_transform">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.data_scaling.DataScaler.fit_and_transform">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">fit_and_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit and transform the array x according to the chosen scaling.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_and_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span> <span class="n">lower</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Fit and transform the array x according to the chosen scaling.</span>
 
 <span class="sd">        lower/upper will only be taken into account for (log_)min_max</span>
 <span class="sd">        normalization. In this case, the transformed x will have</span>
@@ -283,8 +283,8 @@
 <span class="sd">        x : numpy.ndarray</span>
 <span class="sd">            expects a 1D array and finds norm values of columns</span>
 <span class="sd">        method : str</span>
-<span class="sd">            scaling method. Possible values: &#39;min_max&#39;, &#39;max_abs&#39;, &#39;standarize&#39;</span>
-<span class="sd">            and the log versions &#39;log_min_max&#39;, &#39;log_max_abs&#39;, &#39;log_standarize&#39;</span>
+<span class="sd">            scaling method. Possible values: 'min_max', 'max_abs', 'standarize'</span>
+<span class="sd">            and the log versions 'log_min_max', 'log_max_abs', 'log_standarize'</span>
 
 <span class="sd">        lower : float</span>
 <span class="sd">            lower range value of x_t after (log_)min_max scaling</span>
@@ -296,7 +296,7 @@
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">            transformed version of x</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
 
@@ -304,7 +304,7 @@
 <div class="viewcode-block" id="DataScaler.inv_transform">
 <a class="viewcode-back" href="../../../api_reference/posydon.interpolation.html#posydon.interpolation.data_scaling.DataScaler.inv_transform">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">inv_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x_t</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Revert the scaling using the stored transform parameters.</span>
+<span class="w">        </span><span class="sd">"""Revert the scaling using the stored transform parameters.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -316,32 +316,32 @@
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">            denormalized x using the stored parameters.</span>
 
-<span class="sd">        &quot;&quot;&quot;</span>
+<span class="sd">        """</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">&quot;Transformation not defined yet. &quot;</span>
-                                 <span class="s2">&quot;Fit a scaling object first.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">AssertionError</span><span class="p">(</span><span class="s2">"Transformation not defined yet. "</span>
+                                 <span class="s2">"Fit a scaling object first."</span><span class="p">)</span>
 
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;min_max&#39;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'min_max'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="p">((</span><span class="n">x_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
                  <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
                  <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_min_max&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_min_max'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="n">x_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
                        <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_min_max&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_min_max'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">**</span> <span class="p">((</span><span class="n">x_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">upper</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lower</span><span class="p">)</span>
                         <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'max_abs'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x_t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_max_abs&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_max_abs'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">x_t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'standarize'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x_t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log_standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log_standarize'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">x_t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;neg_log_standarize&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'neg_log_standarize'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="o">-</span><span class="mi">10</span> <span class="o">**</span> <span class="p">(</span><span class="n">x_t</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;log&#39;</span><span class="p">:</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">method</span> <span class="o">==</span> <span class="s1">'log'</span><span class="p">:</span>
             <span class="n">x</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">**</span> <span class="n">x_t</span>
         <span class="k">else</span><span class="p">:</span>  <span class="c1"># no transformation</span>
             <span class="n">x</span> <span class="o">=</span> <span class="n">x_t</span>

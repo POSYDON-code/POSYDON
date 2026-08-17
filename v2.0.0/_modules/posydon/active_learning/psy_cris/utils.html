@@ -110,11 +110,11 @@
            <div itemprop="articleBody">
              
   <h1>Source code for posydon.active_learning.psy_cris.utils</h1><div class="highlight"><pre>
-<span></span><span class="sd">&quot;&quot;&quot;Module defining helper functions for PSY-CRIS.&quot;&quot;&quot;</span>
+<span></span><span class="sd">"""Module defining helper functions for PSY-CRIS."""</span>
 
 
 <span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s2">&quot;Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;&quot;</span><span class="p">,</span>
+    <span class="s2">"Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;"</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -145,7 +145,7 @@
 <div class="viewcode-block" id="parse_inifile">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.parse_inifile">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">parse_inifile</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse an ini file to run psy-cris method &#39;get_new_query_points&#39;.</span>
+<span class="w">    </span><span class="sd">"""Parse an ini file to run psy-cris method 'get_new_query_points'.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ---------</span>
@@ -157,7 +157,7 @@
 <span class="sd">    all_kwargs_dict : dict</span>
 <span class="sd">        Nested dictionary of parsed inifile kwargs.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">all_kwargs_dict</span> <span class="o">=</span> <span class="p">{}</span>
     <span class="n">confparse</span> <span class="o">=</span> <span class="n">ConfigParser</span><span class="p">()</span>
     <span class="c1"># The following line makes it so keys do not become lowercase by default</span>
@@ -165,19 +165,19 @@
     <span class="n">files_read</span> <span class="o">=</span> <span class="n">confparse</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
     <span class="c1"># Catch silent errors from configparser.read</span>
     <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;No files were read successfully. Given </span><span class="si">{}</span><span class="s2">.&quot;</span><span class="o">.</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"No files were read successfully. Given </span><span class="si">{}</span><span class="s2">."</span><span class="o">.</span>
                          <span class="nb">format</span><span class="p">(</span><span class="n">path</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="nb">print</span><span class="p">(</span><span class="n">files_read</span><span class="p">)</span>
     <span class="c1"># loop through sections</span>
     <span class="k">for</span> <span class="n">sect</span> <span class="ow">in</span> <span class="n">confparse</span><span class="p">:</span>
-        <span class="k">if</span> <span class="n">sect</span> <span class="o">==</span> <span class="s2">&quot;DEFAULT&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">sect</span> <span class="o">==</span> <span class="s2">"DEFAULT"</span><span class="p">:</span>
             <span class="k">continue</span>
         <span class="n">section_dict</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="c1"># loop through variables in each section and evaluate as python code</span>
         <span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">confparse</span><span class="p">[</span><span class="n">sect</span><span class="p">]:</span>
             <span class="n">section_dict</span><span class="p">[</span><span class="n">var</span><span class="p">]</span> <span class="o">=</span> <span class="n">literal_eval</span><span class="p">(</span><span class="n">confparse</span><span class="p">[</span><span class="n">sect</span><span class="p">][</span><span class="n">var</span><span class="p">])</span>
-        <span class="n">all_kwargs_dict</span><span class="p">[</span><span class="n">sect</span> <span class="o">+</span> <span class="s2">&quot;_kwargs&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_dict</span>
+        <span class="n">all_kwargs_dict</span><span class="p">[</span><span class="n">sect</span> <span class="o">+</span> <span class="s2">"_kwargs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">section_dict</span>
     <span class="k">return</span> <span class="n">all_kwargs_dict</span></div>
 
 
@@ -188,7 +188,7 @@
                          <span class="n">Classifier_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">Regressor_kwargs</span><span class="o">=</span><span class="p">{},</span>
                          <span class="n">Sampler_kwargs</span><span class="o">=</span><span class="p">{},</span> <span class="n">Proposal_kwargs</span><span class="o">=</span><span class="p">{},</span>
                          <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run the psy-cris algorithm to propose new query points to be labeled.</span>
+<span class="w">    </span><span class="sd">"""Run the psy-cris algorithm to propose new query points to be labeled.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -204,8 +204,8 @@
 <span class="sd">        Kwargs used for choosing Sampler target distribution and the method</span>
 <span class="sd">        `run_PTMCMC`.</span>
 <span class="sd">    Proposal_kwargs : dict, optional</span>
-<span class="sd">        Kwargs used in the Sampler method &#39;get_proposed_points&#39; and the</span>
-<span class="sd">        Classifier method &#39;get_class_predictions&#39;.</span>
+<span class="sd">        Kwargs used in the Sampler method 'get_proposed_points' and the</span>
+<span class="sd">        Classifier method 'get_class_predictions'.</span>
 
 <span class="sd">    Returns</span>
 <span class="sd">    -------</span>
@@ -215,7 +215,7 @@
 <span class="sd">        For all proposed points, the best prediction from the trained</span>
 <span class="sd">        classifier.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="c1"># TableData</span>
     <span class="n">table_obj</span> <span class="o">=</span> <span class="n">TableData</span><span class="p">(</span><span class="o">**</span><span class="n">TableData_kwargs</span><span class="p">)</span>
 
@@ -240,7 +240,7 @@
         <span class="n">small_cls_prop_points_in_rng</span> <span class="o">=</span> <span class="n">small_cls_prop_points</span><span class="p">[</span>
             <span class="n">prop_points_in_range</span><span class="p">]</span>
 
-        <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pred_classifier_name&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">)</span>
+        <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pred_classifier_name"</span><span class="p">,</span> <span class="s2">"rbf"</span><span class="p">)</span>
         <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
             <span class="n">classifier_name</span><span class="p">,</span> <span class="n">small_cls_prop_points_in_rng</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
@@ -248,7 +248,7 @@
                 <span class="n">pred_class</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">N_new_points</span><span class="p">])</span>
 
     <span class="c1"># Regressor</span>
-    <span class="k">if</span> <span class="n">Regressor_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;do_regression&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">Regressor_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">"do_regression"</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
         <span class="n">regr_obj</span> <span class="o">=</span> <span class="n">Regressor</span><span class="p">(</span><span class="n">table_obj</span><span class="p">)</span>
         <span class="n">regr_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">(</span><span class="o">**</span><span class="n">Regressor_kwargs</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
@@ -257,32 +257,32 @@
     <span class="c1"># Sampler</span>
     <span class="n">sampler_obj</span> <span class="o">=</span> <span class="n">Sampler</span><span class="p">(</span><span class="n">classifier</span><span class="o">=</span><span class="n">cls_obj</span><span class="p">,</span> <span class="n">regressor</span><span class="o">=</span><span class="n">regr_obj</span><span class="p">)</span>
 
-    <span class="n">target_dist_name</span> <span class="o">=</span> <span class="n">Sampler_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_dist&quot;</span><span class="p">,</span> <span class="s2">&quot;TD_classification&quot;</span><span class="p">)</span>
+    <span class="n">target_dist_name</span> <span class="o">=</span> <span class="n">Sampler_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"target_dist"</span><span class="p">,</span> <span class="s2">"TD_classification"</span><span class="p">)</span>
     <span class="n">target_dist_obj</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sampler_obj</span><span class="p">,</span> <span class="n">target_dist_name</span><span class="p">)</span>
-    <span class="n">Sampler_kwargs</span><span class="p">[</span><span class="s1">&#39;target_dist&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dist_obj</span>
+    <span class="n">Sampler_kwargs</span><span class="p">[</span><span class="s1">'target_dist'</span><span class="p">]</span> <span class="o">=</span> <span class="n">target_dist_obj</span>
 
     <span class="n">chain_step_history</span><span class="p">,</span> <span class="n">T_list</span> <span class="o">=</span> <span class="n">sampler_obj</span><span class="o">.</span><span class="n">run_PTMCMC</span><span class="p">(</span><span class="o">**</span><span class="n">Sampler_kwargs</span><span class="p">)</span>
     <span class="n">last_chain_hist</span> <span class="o">=</span> <span class="n">chain_step_history</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">T_list</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span>
 
     <span class="c1"># burn in - default to use entire chain</span>
     <span class="n">where_to_cut</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">last_chain_hist</span><span class="p">)</span>
-                       <span class="o">*</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;cut_fraction&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+                       <span class="o">*</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"cut_fraction"</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
     <span class="n">last_chain_hist</span> <span class="o">=</span> <span class="n">last_chain_hist</span><span class="p">[</span><span class="n">where_to_cut</span><span class="p">:]</span>
 
     <span class="c1"># propose new points</span>
-    <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pred_classifier_name&quot;</span><span class="p">,</span> <span class="s2">&quot;rbf&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">classifier_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Classifier_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;classifier_names&#39;</span><span class="p">):</span>
+    <span class="n">classifier_name</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"pred_classifier_name"</span><span class="p">,</span> <span class="s2">"rbf"</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">classifier_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">Classifier_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'classifier_names'</span><span class="p">):</span>
         <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span>
-            <span class="s2">&quot;Predictions must be with a trained classifier. &#39;</span><span class="si">{0}</span><span class="s2">&#39; was given&quot;</span><span class="o">.</span>
+            <span class="s2">"Predictions must be with a trained classifier. '</span><span class="si">{0}</span><span class="s2">' was given"</span><span class="o">.</span>
             <span class="nb">format</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">))</span>
 
-    <span class="n">do_random_proposal</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;do_random_proposal&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">do_random_proposal</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"do_random_proposal"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">do_random_proposal</span><span class="p">:</span>
         <span class="n">old_points</span> <span class="o">=</span> <span class="n">table_obj</span><span class="o">.</span><span class="n">_input_</span><span class="o">.</span><span class="n">values</span>
         <span class="n">new_points</span> <span class="o">=</span> <span class="n">last_chain_hist</span>
         <span class="n">where_good_bools</span> <span class="o">=</span> <span class="n">check_dist</span><span class="p">(</span><span class="n">old_points</span><span class="p">,</span> <span class="n">new_points</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;do random proposal:&quot;</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;good points in posterior: </span><span class="si">{:.3%}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"do random proposal:"</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"good points in posterior: </span><span class="si">{:.3%}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)))</span>
 
         <span class="n">good_points_in_posterior</span> <span class="o">=</span> <span class="n">new_points</span><span class="p">[</span><span class="n">where_good_bools</span><span class="p">]</span>
@@ -293,7 +293,7 @@
             <span class="n">classifier_name</span><span class="p">,</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">proposed_points</span><span class="p">,</span> <span class="n">pred_class</span>
 
-    <span class="n">kappa</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;kappa&quot;</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="n">Proposal_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"kappa"</span><span class="p">,</span> <span class="mi">150</span><span class="p">)</span>
     <span class="n">proposed_points</span><span class="p">,</span> <span class="n">final_kappa</span> <span class="o">=</span> <span class="n">sampler_obj</span><span class="o">.</span><span class="n">get_proposed_points</span><span class="p">(</span>
         <span class="n">last_chain_hist</span><span class="p">,</span> <span class="n">N_new_points</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="o">**</span><span class="n">Proposal_kwargs</span><span class="p">)</span>
     <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
@@ -314,7 +314,7 @@
 <span class="k">def</span><span class="w"> </span><span class="nf">do_small_class_proposal</span><span class="p">(</span><span class="n">table_data</span><span class="p">,</span> <span class="n">n_neighbors</span><span class="p">,</span> <span class="n">n_new_points</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
                             <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span> <span class="n">neighbor</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                             <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Handle proposals where only one point in class and regression is needed.</span>
+<span class="w">    </span><span class="sd">"""Handle proposals where only one point in class and regression is needed.</span>
 
 <span class="sd">    Handles proposals where only one point exists for a class and regression is</span>
 <span class="sd">    requested. Otherwise the interpolators will fail. Drawn from a gaussian</span>
@@ -337,7 +337,7 @@
 <span class="sd">        Points are distributed as evenly as possible across all 1 value</span>
 <span class="sd">        classes by default.</span>
 <span class="sd">        Returns None in case of no small classes found.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">small_classes_with_index</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">table_data</span><span class="o">.</span><span class="n">_regr_dfs_per_class_</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
         <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">):</span>
@@ -349,7 +349,7 @@
         <span class="k">return</span> <span class="kc">None</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&lt; SMALL CLASS PROPOSAL: </span><span class="si">{}</span><span class="s2"> &gt;&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_small_classes</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"&lt; SMALL CLASS PROPOSAL: </span><span class="si">{}</span><span class="s2"> &gt;"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_small_classes</span><span class="p">))</span>
     <span class="k">if</span> <span class="n">neighbor</span><span class="p">:</span>
         <span class="n">neigh</span> <span class="o">=</span> <span class="n">neighbor</span>
     <span class="k">else</span><span class="p">:</span>
@@ -393,7 +393,7 @@
                         <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">N_starting_points</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                         <span class="n">jitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">length_scale_mult</span><span class="o">=</span><span class="mf">0.33</span><span class="p">,</span>
                         <span class="n">percent_increase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">show_plots</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">all_kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Run cris algorithm iteratively.</span>
+<span class="w">    </span><span class="sd">"""Run cris algorithm iteratively.</span>
 
 <span class="sd">    For a given number of starting and ending points, run the cris algorithm</span>
 <span class="sd">    iteratively in step sizes of new_points_per_iter. After each iteration,</span>
@@ -422,21 +422,21 @@
 <span class="sd">        Dictionary of all_kwargs passed to get_new_query_points defining</span>
 <span class="sd">        how every part of the cris algorithm is implemented.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">t0</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">original_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">all_kwargs</span><span class="p">)</span>  <span class="c1"># !!!</span>
 
     <span class="c1"># analytic classification and regression data set</span>
     <span class="n">my_data</span> <span class="o">=</span> <span class="n">get_regular_grid_df</span><span class="p">(</span><span class="n">N_starting_points</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="n">jitter</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="n">dim</span><span class="p">)</span>
-    <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;my_DataFrame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
+    <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">"TableData_kwargs"</span><span class="p">][</span><span class="s2">"my_DataFrame"</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
     <span class="n">dfs_per_iters</span> <span class="o">=</span> <span class="p">[</span><span class="n">my_data</span><span class="p">]</span>
     <span class="n">preds_per_iter</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span>
 
     <span class="n">N_total</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">N_final_points</span> <span class="o">-</span> <span class="n">N_starting_points</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Sampling </span><span class="si">{}</span><span class="s2"> total points...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N_total</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;DIM: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Sampling </span><span class="si">{}</span><span class="s2"> total points..."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">N_total</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"DIM: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
 
     <span class="n">num_loops</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">N_sampled_points</span> <span class="o">=</span> <span class="mi">0</span>
@@ -456,8 +456,8 @@
                 <span class="n">n</span> <span class="o">=</span> <span class="n">N_total</span> <span class="o">-</span> <span class="n">N_sampled_points</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n\t</span><span class="s2">START ITER </span><span class="si">{0}</span><span class="s2">, init_pos = </span><span class="si">{1}</span><span class="s2">, n = </span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
-                <span class="n">num_loops</span><span class="p">,</span> <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;Sampler_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;init_pos&quot;</span><span class="p">],</span> <span class="n">n</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\n\t</span><span class="s2">START ITER </span><span class="si">{0}</span><span class="s2">, init_pos = </span><span class="si">{1}</span><span class="s2">, n = </span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">num_loops</span><span class="p">,</span> <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">"Sampler_kwargs"</span><span class="p">][</span><span class="s2">"init_pos"</span><span class="p">],</span> <span class="n">n</span><span class="p">))</span>
 
         <span class="n">new_points</span><span class="p">,</span> <span class="n">cls_preds</span> <span class="o">=</span> <span class="n">get_new_query_points</span><span class="p">(</span>
             <span class="n">N_new_points</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">length_scale_mult</span><span class="o">=</span><span class="n">length_scale_mult</span><span class="p">,</span> <span class="o">**</span><span class="n">all_kwargs</span><span class="p">)</span>
@@ -468,23 +468,23 @@
         <span class="n">all_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">original_kwargs</span><span class="p">)</span>  <span class="c1"># !!!!</span>
 
         <span class="c1"># Update dicts</span>
-        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;file_path_list&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;TableData_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;my_DataFrame&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">"TableData_kwargs"</span><span class="p">][</span><span class="s2">"file_path_list"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">"TableData_kwargs"</span><span class="p">][</span><span class="s2">"my_DataFrame"</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_data</span>
         <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">random_init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">2</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
             <span class="n">random_init_pos</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
-        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">&quot;Sampler_kwargs&quot;</span><span class="p">][</span><span class="s2">&quot;init_pos&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_init_pos</span>
+        <span class="n">all_kwargs</span><span class="p">[</span><span class="s2">"Sampler_kwargs"</span><span class="p">][</span><span class="s2">"init_pos"</span><span class="p">]</span> <span class="o">=</span> <span class="n">random_init_pos</span>
 
         <span class="c1"># Check distances</span>
         <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
-            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">&quot;input_1&quot;</span><span class="p">,</span> <span class="s2">&quot;input_2&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">"input_1"</span><span class="p">,</span> <span class="s2">"input_2"</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
         <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">&quot;input_1&quot;</span><span class="p">,</span> <span class="s2">&quot;input_2&quot;</span><span class="p">,</span> <span class="s2">&quot;input_3&quot;</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+            <span class="n">old_points</span> <span class="o">=</span> <span class="n">my_data</span><span class="p">[[</span><span class="s2">"input_1"</span><span class="p">,</span> <span class="s2">"input_2"</span><span class="p">,</span> <span class="s2">"input_3"</span><span class="p">]]</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
         <span class="n">where_good_bools</span> <span class="o">=</span> <span class="n">check_dist</span><span class="p">(</span>
             <span class="n">old_points</span><span class="p">,</span> <span class="n">new_points</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="n">threshold</span><span class="p">)</span>
         <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;We are getting rid of </span><span class="si">{}</span><span class="s2"> points below thresh this iter.&quot;</span><span class="o">.</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"We are getting rid of </span><span class="si">{}</span><span class="s2"> points below thresh this iter."</span><span class="o">.</span>
                   <span class="nb">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
         <span class="n">new_points</span> <span class="o">=</span> <span class="n">new_points</span><span class="p">[</span><span class="n">where_good_bools</span><span class="p">]</span>
 
@@ -513,15 +513,15 @@
         <span class="n">N_sampled_points</span> <span class="o">+=</span> <span class="nb">len</span><span class="p">(</span><span class="n">new_points</span><span class="p">)</span>
         <span class="n">num_loops</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="n">end_of_iter_str</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="se">\t</span><span class="s2">END ITER </span><span class="si">{0}</span><span class="s2"> in </span><span class="si">{1:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="n">end_of_iter_str</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\t</span><span class="s2">END ITER </span><span class="si">{0}</span><span class="s2"> in </span><span class="si">{1:.2f}</span><span class="s2">s"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">num_loops</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">)</span>
-            <span class="nb">print</span><span class="p">(</span><span class="n">end_of_iter_str</span> <span class="o">+</span> <span class="s2">&quot;, N_sampled_points: </span><span class="si">{}</span><span class="se">\n\n</span><span class="s2">&quot;</span><span class="o">.</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">end_of_iter_str</span> <span class="o">+</span> <span class="s2">", N_sampled_points: </span><span class="si">{}</span><span class="se">\n\n</span><span class="s2">"</span><span class="o">.</span>
                   <span class="nb">format</span><span class="p">(</span><span class="n">N_sampled_points</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n\n</span><span class="s2">Done. Sampled </span><span class="si">{0}</span><span class="s2"> points.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n\n</span><span class="s2">Done. Sampled </span><span class="si">{0}</span><span class="s2"> points."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">my_data</span><span class="p">)</span> <span class="o">-</span> <span class="n">N_starting_points</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Total time: </span><span class="si">{:.2f}</span><span class="s2">s&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Total time: </span><span class="si">{:.2f}</span><span class="s2">s"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">t0</span><span class="p">))</span>
 
     <span class="k">return</span> <span class="n">dfs_per_iters</span><span class="p">,</span> <span class="n">preds_per_iter</span></div>
 
@@ -531,18 +531,18 @@
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.plot_proposed_points_2D">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_proposed_points_2D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
                             <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot proposed points in 2-D space.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Plot proposed points in 2-D space."""</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mf">3.5</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">subs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;SAMPLE </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
-    <span class="n">subs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">random_init_pos</span><span class="p">,</span> <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
-              <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                 <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                 <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                 <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">{0}</span><span class="s2"> new points this iter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"SAMPLE </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="o">*</span><span class="n">random_init_pos</span><span class="p">,</span> <span class="s1">'+'</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+              <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"init_pos"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                 <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_2"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"dodgerblue"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"training"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                 <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_2"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                 <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C2"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"proposed"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"</span><span class="si">{0}</span><span class="s2"> new points this iter"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
         <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
@@ -553,31 +553,31 @@
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.plot_proposed_points_3D">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">plot_proposed_points_3D</span><span class="p">(</span><span class="n">where_to_cut</span><span class="p">,</span> <span class="n">num_loops</span><span class="p">,</span> <span class="n">random_init_pos</span><span class="p">,</span>
                             <span class="n">my_data</span><span class="p">,</span> <span class="n">where_good_bools</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot proposed points in 3-D space.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">"""Plot proposed points in 3-D space."""</span>
     <span class="n">fig</span><span class="p">,</span> <span class="n">subs</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;SAMPLE </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"SAMPLE </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">num_loops</span><span class="p">))</span>
     <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">random_init_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">random_init_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
-                 <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_2&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
+                 <span class="s1">'+'</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"init_pos"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_2"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"dodgerblue"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"training"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_2"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C2"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"proposed"</span><span class="p">)</span>
     <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span>
-        <span class="s2">&quot;X - </span><span class="si">{0}</span><span class="s2"> new points this iter&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">)</span>
+        <span class="s2">"X - </span><span class="si">{0}</span><span class="s2"> new points this iter"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_good_bools</span><span class="p">)))</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Y"</span><span class="p">)</span>
 
     <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">random_init_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">random_init_pos</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span>
-                 <span class="s1">&#39;+&#39;</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;red&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;init_pos&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_3&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
-                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;dodgerblue&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;training&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_1&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                    <span class="n">my_data</span><span class="p">[</span><span class="s2">&quot;input_3&quot;</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
-                    <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;C2&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;proposed&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">)</span>
-    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">)</span>
+                 <span class="s1">'+'</span><span class="p">,</span> <span class="n">markeredgewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"init_pos"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_3"</span><span class="p">][</span><span class="mi">0</span><span class="p">:</span><span class="n">where_to_cut</span><span class="p">],</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"dodgerblue"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"training"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">my_data</span><span class="p">[</span><span class="s2">"input_1"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">my_data</span><span class="p">[</span><span class="s2">"input_3"</span><span class="p">][</span><span class="n">where_to_cut</span><span class="p">:],</span>
+                    <span class="n">marker</span><span class="o">=</span><span class="s1">'x'</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C2"</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"proposed"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"X"</span><span class="p">)</span>
+    <span class="n">subs</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">"Z"</span><span class="p">)</span>
 
     <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.22</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
     <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
@@ -587,7 +587,7 @@
 <div class="viewcode-block" id="check_dist">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.check_dist">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">check_dist</span><span class="p">(</span><span class="n">original</span><span class="p">,</span> <span class="n">proposed</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Check euclidean distance between the original and proposed points.</span>
+<span class="w">    </span><span class="sd">"""Check euclidean distance between the original and proposed points.</span>
 
 <span class="sd">    Proposed points a distance &gt;= threshold are accepted.</span>
 
@@ -610,8 +610,8 @@
 <span class="sd">    The purpose of this function is to not propose points that are some</span>
 <span class="sd">    threshold away from already accepted points.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">proposed</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="s1">&#39;euclidean&#39;</span><span class="p">)</span>
+<span class="sd">    """</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">cdist</span><span class="p">(</span><span class="n">proposed</span><span class="p">,</span> <span class="n">original</span><span class="p">,</span> <span class="s1">'euclidean'</span><span class="p">)</span>
     <span class="n">above_thresh</span> <span class="o">=</span> <span class="n">distances</span> <span class="o">&gt;=</span> <span class="n">threshold</span>
     <span class="n">proposed_above_thresh_for_all_original</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">above_thresh</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proposed_above_thresh_for_all_original</span><span class="p">)</span></div>
@@ -621,7 +621,7 @@
 <div class="viewcode-block" id="get_regular_grid_df">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_regular_grid_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_regular_grid_df</span><span class="p">(</span><span class="n">N</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">jitter</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">N_ppa</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce an even grid.</span>
+<span class="w">    </span><span class="sd">"""Produce an even grid.</span>
 
 <span class="sd">    Given N total points, produce an even grid with</span>
 <span class="sd">    approximately the same number of evenly spaced points sampled</span>
@@ -650,10 +650,10 @@
 <span class="sd">        DataFrame of true data drawn from the analytic classification</span>
 <span class="sd">        and regression functions.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">dim</span> <span class="o">!=</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">dim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dimensionality </span><span class="si">{}</span><span class="s2"> not supported.&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Dimensionality </span><span class="si">{}</span><span class="s2"> not supported."</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">dim</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">N_ppa</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="n">root_of_N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">dim</span><span class="p">))</span>
@@ -670,10 +670,10 @@
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
         <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="nb">print</span><span class="p">(</span>
-                <span class="s2">&quot;x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="se">\n</span><span class="s2">x*y:</span><span class="si">{2}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="s2">"x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="se">\n</span><span class="s2">x*y:</span><span class="si">{2}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                     <span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">x_res</span> <span class="o">*</span> <span class="n">y_res</span><span class="p">))</span>
         <span class="k">elif</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="s2">, z_res</span><span class="si">{2}</span><span class="se">\n</span><span class="s2">x*y*z:</span><span class="si">{3}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"x_res: </span><span class="si">{0}</span><span class="s2">, y_res: </span><span class="si">{1}</span><span class="s2">, z_res</span><span class="si">{2}</span><span class="se">\n</span><span class="s2">x*y*z:</span><span class="si">{3}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
                 <span class="n">x_res</span><span class="p">,</span> <span class="n">y_res</span><span class="p">,</span> <span class="n">z_res</span><span class="p">,</span> <span class="n">x_res</span> <span class="o">*</span> <span class="n">y_res</span> <span class="o">*</span> <span class="n">z_res</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">jitter</span><span class="p">:</span>
@@ -687,7 +687,7 @@
         <span class="n">center_point</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;center_point : </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">center_point</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"center_point : </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">center_point</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">center_x</span><span class="p">,</span> <span class="n">center_y</span> <span class="o">=</span> <span class="n">center_point</span><span class="p">[:</span><span class="mi">2</span><span class="p">]</span>
@@ -707,7 +707,7 @@
 <div class="viewcode-block" id="get_random_grid_df">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_random_grid_df">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_random_grid_df</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="n">dim</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Produce a randomly sampled grid.</span>
+<span class="w">    </span><span class="sd">"""Produce a randomly sampled grid.</span>
 
 <span class="sd">    Given N total points, produce a randomly sampled grid drawn</span>
 <span class="sd">    from the analytic data set (2D or 3D).</span>
@@ -724,7 +724,7 @@
 <span class="sd">    random_df : pandas DataFrame</span>
 <span class="sd">        DataFrame of true data drawn from the analytic classification</span>
 <span class="sd">        and regression functions.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
         <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">),</span> <span class="n">high</span><span class="o">=</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">),</span>
                                            <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
@@ -742,9 +742,9 @@
 
 <div class="viewcode-block" id="calc_performance">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.calc_performance">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">calc_performance</span><span class="p">(</span><span class="n">dfs_per_iter</span><span class="p">,</span> <span class="n">cls_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">regr_name</span><span class="o">=</span><span class="s2">&quot;rbf&quot;</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">calc_performance</span><span class="p">(</span><span class="n">dfs_per_iter</span><span class="p">,</span> <span class="n">cls_name</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">regr_name</span><span class="o">=</span><span class="s2">"rbf"</span><span class="p">,</span>
                      <span class="n">resolution</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate accuracy and confusion matrix.</span>
+<span class="w">    </span><span class="sd">"""Calculate accuracy and confusion matrix.</span>
 
 <span class="sd">    Given a list of pandas DataFrames, iterate over them and</span>
 <span class="sd">    calculate the accuracy and confusion matrix for synthetic data sets.</span>
@@ -769,17 +769,17 @@
 <span class="sd">        per iteration of training data.</span>
 <span class="sd">    conf_matrix_per_iter : list</span>
 <span class="sd">        List of confusion matricies per iteration. Calculated</span>
-<span class="sd">        using &#39;get_confusion_matrix&#39;.</span>
+<span class="sd">        using 'get_confusion_matrix'.</span>
 <span class="sd">    regr_acc_per_iter : list</span>
 <span class="sd">        List of regression accuracy terms.</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">acc_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">conf_matrix_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">regr_acc_per_iter</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">df</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">dfs_per_iter</span><span class="p">):</span>
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">df: </span><span class="si">{0}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">df: </span><span class="si">{0}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">j</span><span class="p">))</span>
         <span class="n">N</span> <span class="o">=</span> <span class="n">resolution</span>
         <span class="n">predictions</span><span class="p">,</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="n">all_regr_acc_per_class</span> <span class="o">=</span> \
             <span class="n">get_prediction_diffs</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">classifier_name</span><span class="o">=</span><span class="n">cls_name</span><span class="p">,</span>
@@ -792,7 +792,7 @@
 
         <span class="n">where_preds_match_truth</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
             <span class="n">predictions</span> <span class="o">==</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-        <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
+        <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">([</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">"input"</span> <span class="ow">in</span> <span class="n">val</span><span class="p">])</span>
         <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_preds_match_truth</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="o">**</span><span class="n">dim</span>
         <span class="n">acc_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">accuracy</span><span class="p">)</span>
         <span class="n">regr_acc_per_iter</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_regr_acc_per_class</span><span class="p">)</span>
@@ -802,16 +802,16 @@
 
 <div class="viewcode-block" id="get_prediction_diffs">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_prediction_diffs">[docs]</a>
-<span class="k">def</span><span class="w"> </span><span class="nf">get_prediction_diffs</span><span class="p">(</span><span class="n">training_df</span><span class="p">,</span> <span class="n">classifier_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span>
-                         <span class="n">regressor_name</span><span class="o">=</span><span class="s2">&quot;linear&quot;</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_prediction_diffs</span><span class="p">(</span><span class="n">training_df</span><span class="p">,</span> <span class="n">classifier_name</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span>
+                         <span class="n">regressor_name</span><span class="o">=</span><span class="s2">"linear"</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
                          <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Train classifier and get predictions and actual classification.</span>
+<span class="w">    </span><span class="sd">"""Train classifier and get predictions and actual classification.</span>
 
 <span class="sd">    From a DataFrame of training data, train a classifier and get both</span>
 <span class="sd">    the predictions and actual classification in the classification space</span>
 <span class="sd">    where the analytic function is defined. Also calculate the difference</span>
 <span class="sd">    between the true regression function and that infered from the trainined</span>
-<span class="sd">    regressor. Dimensionality is infered from &#39;training_df&#39;.</span>
+<span class="sd">    regressor. Dimensionality is infered from 'training_df'.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -835,14 +835,14 @@
 <span class="sd">        1D array of the true classification for the corresponding points.</span>
 <span class="sd">    all_regr_acc_per_class : dict</span>
 <span class="sd">        Dict of lists with regression accuracy values per class and combined.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
     <span class="n">og_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
-    <span class="n">input_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">training_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">&quot;input&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+    <span class="n">input_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">training_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">"input"</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
     <span class="n">output_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">val</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">training_df</span><span class="o">.</span><span class="n">columns</span>
-                        <span class="k">if</span> <span class="s2">&quot;output&quot;</span> <span class="ow">in</span> <span class="n">val</span> <span class="ow">or</span> <span class="s2">&quot;class&quot;</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="s2">"output"</span> <span class="ow">in</span> <span class="n">val</span> <span class="ow">or</span> <span class="s2">"class"</span> <span class="ow">in</span> <span class="n">val</span><span class="p">]</span>
     <span class="n">td</span> <span class="o">=</span> <span class="n">TableData</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">input_col_names</span><span class="p">,</span> <span class="n">output_col_names</span><span class="p">,</span>
-                   <span class="s2">&quot;class&quot;</span><span class="p">,</span> <span class="n">my_DataFrame</span><span class="o">=</span><span class="n">training_df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+                   <span class="s2">"class"</span><span class="p">,</span> <span class="n">my_DataFrame</span><span class="o">=</span><span class="n">training_df</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="n">cls_obj</span> <span class="o">=</span> <span class="n">Classifier</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
     <span class="n">cls_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">([</span><span class="n">classifier_name</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -850,9 +850,9 @@
     <span class="n">regr_obj</span> <span class="o">=</span> <span class="n">Regressor</span><span class="p">(</span><span class="n">td</span><span class="p">)</span>
     <span class="n">regr_obj</span><span class="o">.</span><span class="n">train_everything</span><span class="p">([</span><span class="n">regressor_name</span><span class="p">],</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-    <span class="n">timer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;timer&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">timer</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"timer"</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;PSY-CRIS TRAIN: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"PSY-CRIS TRAIN: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_col_names</span><span class="p">)</span>
@@ -873,14 +873,14 @@
         <span class="n">stacked_points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">holder</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
 
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;VSTACK: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"VSTACK: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span>
         <span class="n">classifier_name</span><span class="p">,</span> <span class="n">stacked_points</span><span class="p">,</span> <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;get_class_predictions: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"get_class_predictions: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="c1"># if there are nans, replace the preds with None so they count as</span>
@@ -892,7 +892,7 @@
         <span class="n">where_nan</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">set_where_nan</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;&gt;&gt;&gt; Nans found: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">"&gt;&gt;&gt; Nans found: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)))</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">[</span><span class="n">where_nan</span><span class="p">])</span>
             <span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span> <span class="o">=</span> \
                 <span class="n">cls_obj</span><span class="o">.</span><span class="n">get_class_predictions</span><span class="p">(</span><span class="n">classifier_name</span><span class="p">,</span>
@@ -900,38 +900,38 @@
                                               <span class="n">return_ids</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
             <span class="nb">print</span><span class="p">(</span><span class="n">pred_class</span><span class="p">,</span> <span class="n">max_probs</span><span class="p">,</span> <span class="n">where_not_nan</span><span class="p">)</span>
 
-        <span class="n">new_pred_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;object&#39;</span><span class="p">)</span>
+        <span class="n">new_pred_class</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">stacked_points</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">'object'</span><span class="p">)</span>
         <span class="n">new_pred_class</span><span class="p">[</span><span class="n">where_not_nan</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_class</span>
         <span class="n">new_pred_class</span><span class="p">[</span><span class="n">where_nan</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">where_nan</span><span class="p">)</span>
         <span class="n">pred_class</span> <span class="o">=</span> <span class="n">new_pred_class</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;where_nan &gt; 0: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"where_nan &gt; 0: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="c1"># Regression</span>
     <span class="n">all_regr_preds_per_cls</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">all_regr_locs_per_cls</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="n">all_unique_classes</span><span class="p">,</span> <span class="n">classes_counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span>
-        <span class="n">training_df</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">training_df</span><span class="p">[</span><span class="s2">"class"</span><span class="p">],</span> <span class="n">return_counts</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;CLASSES: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">COUNTS: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"CLASSES: </span><span class="si">{0}</span><span class="se">\n</span><span class="s2">COUNTS: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="n">all_unique_classes</span><span class="p">,</span> <span class="n">classes_counts</span><span class="p">))</span>
     <span class="k">for</span> <span class="bp">cls</span> <span class="ow">in</span> <span class="n">all_unique_classes</span><span class="p">:</span>
         <span class="c1"># We look where the predictions are, not the true class result ....</span>
         <span class="n">loc_where_cls</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_class</span><span class="p">)</span> <span class="o">==</span> <span class="bp">cls</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
         <span class="c1"># Get predictions only for inputs where each class</span>
         <span class="n">regr_preds</span> <span class="o">=</span> <span class="n">regr_obj</span><span class="o">.</span><span class="n">get_predictions</span><span class="p">([</span><span class="n">regressor_name</span><span class="p">],</span> <span class="p">[</span><span class="bp">cls</span><span class="p">],</span>
-                                              <span class="p">[</span><span class="s2">&quot;output_1&quot;</span><span class="p">],</span>
+                                              <span class="p">[</span><span class="s2">"output_1"</span><span class="p">],</span>
                                               <span class="n">stacked_points</span><span class="p">[</span><span class="n">loc_where_cls</span><span class="p">])</span>
         <span class="n">regr_key</span> <span class="o">=</span> <span class="n">regr_obj</span><span class="o">.</span><span class="n">get_regressor_name_to_key</span><span class="p">(</span><span class="n">regressor_name</span><span class="p">)</span>
         <span class="c1"># Save the array of predictions</span>
         <span class="n">all_regr_preds_per_cls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
-            <span class="n">regr_preds</span><span class="p">[</span><span class="n">regr_key</span><span class="p">][</span><span class="bp">cls</span><span class="p">][</span><span class="s2">&quot;output_1&quot;</span><span class="p">])</span>  <span class="c1"># array or None</span>
+            <span class="n">regr_preds</span><span class="p">[</span><span class="n">regr_key</span><span class="p">][</span><span class="bp">cls</span><span class="p">][</span><span class="s2">"output_1"</span><span class="p">])</span>  <span class="c1"># array or None</span>
         <span class="n">all_regr_locs_per_cls</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">stacked_points</span><span class="p">[</span><span class="n">loc_where_cls</span><span class="p">])</span>
 
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Regression vals: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"Regression vals: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="k">if</span> <span class="n">dim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
@@ -957,19 +957,19 @@
             <span class="nb">abs</span><span class="p">(</span><span class="n">this_cls_diffs</span> <span class="o">/</span> <span class="n">this_cls_true_regr_output</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">timer</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;regr diffs: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"regr diffs: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">start_time</span><span class="p">))</span>
     <span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
 
     <span class="n">where_preds_match_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">pred_class</span> <span class="o">==</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
     <span class="n">accuracy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">where_preds_match_true</span><span class="p">)</span> <span class="o">/</span> <span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
     <span class="c1"># error_rate = 1 - accuracy</span>
     <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;N training points: </span><span class="si">{0}</span><span class="s2">, N query points: </span><span class="si">{1}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"N training points: </span><span class="si">{0}</span><span class="s2">, N query points: </span><span class="si">{1}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
             <span class="nb">len</span><span class="p">(</span><span class="n">training_df</span><span class="p">),</span> <span class="n">N</span><span class="o">**</span><span class="p">(</span><span class="n">dim</span><span class="p">)))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;accuracy: </span><span class="si">{}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"accuracy: </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">accuracy</span><span class="p">))</span>
 
     <span class="k">if</span> <span class="n">timer</span> <span class="ow">or</span> <span class="n">verbose</span><span class="p">:</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;TOTAL TIME: </span><span class="si">{:.3f}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">og_start_time</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"TOTAL TIME: </span><span class="si">{:.3f}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="n">og_start_time</span><span class="p">))</span>
 
     <span class="c1"># Calculate regression accuracy values per class</span>
     <span class="n">all_regr_acc_per_class</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
@@ -983,7 +983,7 @@
         <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">all_regr_abs_frac_diffs_per_class</span> <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)])</span>
     <span class="n">acc_vals_total</span> <span class="o">=</span> <span class="n">calc_regression_accuracy</span><span class="p">(</span><span class="n">compressed_all_regr_abs</span><span class="p">)</span>
 
-    <span class="n">all_regr_acc_per_class</span><span class="p">[</span><span class="s2">&quot;combined&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_vals_total</span>
+    <span class="n">all_regr_acc_per_class</span><span class="p">[</span><span class="s2">"combined"</span><span class="p">]</span> <span class="o">=</span> <span class="n">acc_vals_total</span>
 
     <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_class</span><span class="p">),</span> <span class="n">true_class_result</span><span class="p">,</span> <span class="n">all_regr_acc_per_class</span></div>
 
@@ -992,7 +992,7 @@
 <div class="viewcode-block" id="calc_regression_accuracy">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.calc_regression_accuracy">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">calc_regression_accuracy</span><span class="p">(</span><span class="n">all_regr_abs_frac_diffs</span><span class="p">,</span> <span class="n">cdf_cutoff_limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate the the fractional change at which the cdf_cutoff is below.</span>
+<span class="w">    </span><span class="sd">"""Calculate the the fractional change at which the cdf_cutoff is below.</span>
 
 <span class="sd">    For a given distribution of absolute fractional differences: calculate the</span>
 <span class="sd">    the fractional change at which the cdf_cutoff is below.</span>
@@ -1002,7 +1002,7 @@
 <span class="sd">    (What is not being asked: For a frac diff of 10% what fraction of the data</span>
 <span class="sd">    has a frac diff &lt;= that number. )</span>
 
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="k">if</span> <span class="n">cdf_cutoff_limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
         <span class="c1"># 1/2, 1 sigma, 2 sigma, 3 sigma</span>
         <span class="n">cdf_cutoff_limits</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.683</span><span class="p">,</span> <span class="mf">0.954</span><span class="p">,</span> <span class="mf">0.997</span><span class="p">]</span>
@@ -1025,7 +1025,7 @@
 <div class="viewcode-block" id="get_confusion_matrix">
 <a class="viewcode-back" href="../../../../api_reference/posydon.active_learning.psy_cris.html#posydon.active_learning.psy_cris.utils.get_confusion_matrix">[docs]</a>
 <span class="k">def</span><span class="w"> </span><span class="nf">get_confusion_matrix</span><span class="p">(</span><span class="n">preds</span><span class="p">,</span> <span class="n">actual</span><span class="p">,</span> <span class="n">all_classes</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Calculate a confusion matrix given lists of predicted and actual values.</span>
+<span class="w">    </span><span class="sd">"""Calculate a confusion matrix given lists of predicted and actual values.</span>
 
 <span class="sd">    Parameters</span>
 <span class="sd">    ----------</span>
@@ -1044,7 +1044,7 @@
 <span class="sd">    confusion_matrix : ndarray</span>
 <span class="sd">        Rows and columns of confusion matrix in order and number given in</span>
 <span class="sd">        `all_classes`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+<span class="sd">    """</span>
     <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="p">[]</span>
     <span class="k">for</span> <span class="n">pred_class_key</span> <span class="ow">in</span> <span class="n">all_classes</span><span class="p">:</span>
         <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">actual</span> <span class="o">==</span> <span class="n">pred_class_key</span><span class="p">)</span>  <span class="c1"># where all true class</span>

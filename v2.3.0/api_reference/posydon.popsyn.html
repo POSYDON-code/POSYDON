@@ -4314,8 +4314,8 @@ It also includes methods to load and save metadata and ini parameters.</p>
 It also allows for optional verbosity, which, when set to True, enables additional information to be printed in operation of the class.</p>
 <p>The <cite>path_to_ini</cite> should be a valid path to an ini file. If the provided <cite>path_to_ini</cite> does not have a ‘.ini’ extension, a <cite>ValueError</cite> is raised.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">&#39;/path/to/ini/file.ini&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">&#39;/path/to/ini/file.ini&#39;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">'/path/to/ini/file.ini'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sp</span> <span class="o">=</span> <span class="n">PopulationRunner</span><span class="p">(</span><span class="s1">'/path/to/ini/file.ini'</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
 <dl class="py method">
@@ -4814,8 +4814,8 @@ The transient population linked is located at ‘/transients/{transient_name}’
 holds all the transient populations. The specified transient population name should be a valid group name within
 ‘/transients’. If the transient population has associated efficiencies, they will be loaded as well.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s1">&#39;population_data.h5&#39;</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_name</span> <span class="o">=</span> <span class="s1">&#39;BBH&#39;</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">filename</span> <span class="o">=</span> <span class="s1">'population_data.h5'</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_name</span> <span class="o">=</span> <span class="s1">'BBH'</span>
 <span class="gp">&gt;&gt;&gt; </span><span class="n">population</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="n">transient_name</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </pre></div>
 </div>
@@ -4854,8 +4854,8 @@ distribution.</p>
 <p>The calculated weights, along with the corresponding redshifts of the events, are stored in the HDF5 file for further analysis.
 These can be accessed using the Rates class.</p>
 <p class="rubric">Examples</p>
-<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">&#39;filename.h5&#39;</span><span class="p">,</span> <span class="s1">&#39;transient_name&#39;</span><span class="p">)</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">&#39;IllustrisTNG&#39;</span><span class="p">,</span> <span class="n">MODEL_in</span><span class="o">=</span><span class="n">DEFAULT_SFH_MODEL</span><span class="p">)</span>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span> <span class="o">=</span> <span class="n">TransientPopulation</span><span class="p">(</span><span class="s1">'filename.h5'</span><span class="p">,</span> <span class="s1">'transient_name'</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">transient_population</span><span class="o">.</span><span class="n">calculate_cosmic_weights</span><span class="p">(</span><span class="s1">'IllustrisTNG'</span><span class="p">,</span> <span class="n">MODEL_in</span><span class="o">=</span><span class="n">DEFAULT_SFH_MODEL</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>
@@ -5144,7 +5144,7 @@ detector sensitivities are taken from: https://dcc.ligo.org/LIGO-T2000012-v2/pub
 <p>This function requires a wrapper function to be used to create a transient population, because
 of the extra parameters that are needed to be passed to the function (S1_S2).</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span><span class="w"> </span><span class="nf">GRB_selection_wrapper</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
-<span class="gp">... </span>    <span class="k">return</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">&#39;S1&#39;</span><span class="p">)</span>
+<span class="gp">... </span>    <span class="k">return</span> <span class="n">GRB_selection</span><span class="p">(</span><span class="n">history_chunk</span><span class="p">,</span> <span class="n">oneline_chunk</span><span class="p">,</span> <span class="n">formation_channels_chunk</span><span class="p">,</span> <span class="n">S1_S2</span><span class="o">=</span><span class="s1">'S1'</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is an example function for selecting LGRBs and some of their properties.
@@ -5179,7 +5179,7 @@ The output dataframe contains the following columns:
 </dl>
 <p class="rubric">Example</p>
 <div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">GRB_selection_wrapper</span><span class="p">(</span><span class="n">pop</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pop</span><span class="o">.</span><span class="n">oneline</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">pop</span><span class="o">.</span><span class="n">formation_channels</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
-<span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">GRB_selection_wrapper</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;GRB_S1&#39;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pop</span><span class="o">.</span><span class="n">create_transient_population</span><span class="p">(</span><span class="n">GRB_selection_wrapper</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">'GRB_S1'</span><span class="p">)</span>
 </pre></div>
 </div>
 </dd></dl>

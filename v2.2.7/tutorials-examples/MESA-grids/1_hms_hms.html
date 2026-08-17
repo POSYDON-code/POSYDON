@@ -157,9 +157,9 @@
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">urllib.request</span>
 
 <span class="c1"># Download the grid_params.ini file from GitHub</span>
-<span class="n">url</span> <span class="o">=</span> <span class="s2">&quot;https://raw.githubusercontent.com/POSYDON-code/POSYDON/refs/heads/main/grid_params/grid_params.ini&quot;</span>
-<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s1">&#39;./HMS-HMS.ini&#39;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Download completerd&quot;</span><span class="p">)</span>
+<span class="n">url</span> <span class="o">=</span> <span class="s2">"https://raw.githubusercontent.com/POSYDON-code/POSYDON/refs/heads/main/grid_params/grid_params.ini"</span>
+<span class="n">urllib</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">urlretrieve</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="s1">'./HMS-HMS.ini'</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">"Download completerd"</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -191,9 +191,9 @@
 </div>
 <div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
 
-<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;./grid_test.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">'./grid_test.csv'</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">''</span><span class="p">)</span> <span class="k">as</span> <span class="n">file</span><span class="p">:</span>
     <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
-    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;initial_z&#39;</span><span class="p">,</span><span class="s1">&#39;Zbase&#39;</span><span class="p">,</span><span class="s1">&#39;m1&#39;</span><span class="p">,</span><span class="s1">&#39;m2&#39;</span><span class="p">,</span><span class="s1">&#39;initial_period_in_days&#39;</span><span class="p">])</span>
+    <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">'initial_z'</span><span class="p">,</span><span class="s1">'Zbase'</span><span class="p">,</span><span class="s1">'m1'</span><span class="p">,</span><span class="s1">'m2'</span><span class="p">,</span><span class="s1">'initial_period_in_days'</span><span class="p">])</span>
     <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="mf">0.00142</span><span class="p">,</span> <span class="mf">0.00142</span><span class="p">,</span> <span class="mf">30.</span><span class="p">,</span> <span class="mf">21.</span><span class="p">,</span> <span class="mf">10.</span><span class="p">])</span>
 </pre></div>
 </div>
