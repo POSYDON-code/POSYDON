@@ -30,13 +30,21 @@ USER ${NB_UID}
 RUN conda create --name posydon_env python=3.11 -y && \
     conda clean --all -f -y
 
-# Install POSYDON from the posydon conda channel
-RUN conda run -n posydon_env \
-        conda install -c posydon -c conda-forge \
-            posydon \
-            ipykernel \
-            -y && \
-    conda clean --all -f -y
+# Install POSYDON from the posydon conda channel.
+# POSYDON_VERSION is pinned to the released version by the release workflow so
+# the image always matches the release; retries tolerate the Anaconda.org
+# indexing delay after the package is uploaded.
+ARG POSYDON_VERSION=*
+RUN for i in 1 2 3 4 5; do \
+        if conda run -n posydon_env \
+            conda install -c posydon -c conda-forge \
+                "posydon=${POSYDON_VERSION}" ipykernel -y; then \
+            conda clean --all -f -y; \
+            exit 0; \
+        fi; \
+        sleep 30; \
+    done; \
+    exit 1
 
 # Register the posydon_env as a Jupyter kernel so it appears
 # in the JupyterLab launcher and kernel selector as "Python (POSYDON)".

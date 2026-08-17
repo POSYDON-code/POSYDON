@@ -1,0 +1,16 @@
+.git/
+.gitignore
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+build/
+dev-tools/
+docs/
+test_plans/
+plan.md
+bugs.md
+scripts/
