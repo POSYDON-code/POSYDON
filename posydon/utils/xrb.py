@@ -8,8 +8,8 @@ days, ``Msun yr^-1``, and ``erg s^-1``, respectively.
 
 This deliberately small module implements classical Roche-lobe-overflow,
 wind-fed, and Be-XRB prescriptions.  It does not select X-ray binaries from a
-population, apply an instrumental bandpass, or implement GRRMHD, magnetic
-neutron-star, or wind-disc-formation models.
+population, apply an instrumental bandpass, or implement advanced  accretion models
+(e.g. GRRMHD, magnetic neutron-star etc).
 
 Invalid numerical elements are returned as ``numpy.nan`` so that one bad
 population row does not abort a vectorized calculation. Invalid named
@@ -22,6 +22,8 @@ from posydon.utils import constants as const
 
 __authors__ = [
     "Anastasios Fragos <Anastasios.Fragkos@unige.ch>",
+    "Arnaud Aguet <Arnaud.Aguet@etu.unige.ch>",
+    "Devina Misra <devina.misra@ntnu.no>"
 ]
 
 __all__ = [
