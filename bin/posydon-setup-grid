@@ -323,14 +323,15 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
-
                 f.write(b'\n\n')
-
                 f.write(b"""
-        / ! end of star1_controls namelist
+                         / ! end of star1_controls namelist
+                         """)
+            if 'star1_controls_user' not in mesa_inlists or mesa_inlists['star1_controls_user'] is None:
+                mesa_inlists['star1_controls_user'] = []
 
-        """)
-            mesa_inlists['star1_controls_special'] = special_single_star_user_inlist
+            mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
+
         elif system_type == "CO-He_star" and mesa_inlists['single_star_grid']:
             inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
             print("Based on system_type {0} "
@@ -358,18 +359,15 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
-
                 f.write(b'\n\n')
                 f.write(b"""
-        / ! end of star1_controls namelist
-
-        """)
+                         / ! end of star1_controls namelist
+                         """)
                 f.write(b'&star_job\n\n')
                 f.write(b"""
-        / / ! end of star_job namelist
-
-        """)
-            mesa_inlists['star1_controls_special'].append(special_single_star_user_inlist)
+                         / / ! end of star_job namelist
+                         """)
+            mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
 
     # change back to where I was
     os.chdir(where_am_i_now)
