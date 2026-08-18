@@ -541,11 +541,19 @@ class SimulationProperties:
             matcher_needed = matcher_key not in self.track_matchers
             original_step_kwargs = step_kwargs.copy()
             step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
+
+            # these matcher kwargs will trigger retraining the TrackMatcher
+            retrain_triggers = ["grid_Hrich", "grid_strippedHe", "path", "metallicity",
+                                "matching_method", "matching_tolerance", "matching_tolerance_hard",
+                                "list_for_matching_HMS", "list_for_matching_HeStar", 
+                                "list_for_matching_postMS", "list_for_matching_postHeMS"]
+
             if matcher_needed:
-                # create TrackMatcher if needed
+                # Always just create a new TrackMatcher if it does not exist
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
 
             else:
+                retrain = False
                 # subsequently check if any properties need to be updated,
                 # in case reloading for example
                 for k, v in matcher_kwargs.items():
@@ -553,6 +561,11 @@ class SimulationProperties:
                     if k in original_step_kwargs:
                         setattr(self.track_matchers[matcher_key], k, matcher_kwargs[k])
                         self.track_matchers[matcher_key].kwargs[k] = matcher_kwargs[k]
+                        if k in retrain_triggers:
+                            retrain = True
+                if retrain:
+                    updated_kwargs = self.track_matchers[matcher_key].kwargs
+                    self.create_track_matcher(metallicity, step_name, updated_kwargs)
 
             if verbose:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
