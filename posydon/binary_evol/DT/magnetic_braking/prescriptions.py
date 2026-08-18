@@ -372,7 +372,7 @@ def CARB_braking(primary, secondary, verbose = False):
 
     dOmega_mb_pri = (
         (2./3.) * omega1 * mdot_1 * R_alfven_pri**2 / MOI_1
-        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
+        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
     )
 
     return -abs(dOmega_mb_sec), -abs(dOmega_mb_pri)
