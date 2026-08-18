@@ -539,10 +539,18 @@ class SimulationProperties:
         matcher_key = (metallicity, step_name)
         if "track_matcher" in step_func.DEFAULT_KWARGS:
             matcher_needed = matcher_key not in self.track_matchers
+            step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
             if matcher_needed:
                 # create TrackMatcher if needed
-                step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
+
+            else:
+                # subsequently check if any properties need to be updated, 
+                # in case reloading for example
+                for k, v in matcher_kwargs.items():
+                    # only care to update any new kwargs set differently from defaults
+                    if matcher_kwargs[k] != self.track_matchers[matcher_key].DEFAULT_KWARGS[k]:
+                        setattr(self.track_matchers[matcher_key], k, matcher_kwargs[k])
 
             if verbose:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
