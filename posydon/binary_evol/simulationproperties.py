@@ -552,6 +552,7 @@ class SimulationProperties:
                     # only care to update kwargs actually passed via load_step
                     if k in original_step_kwargs:
                         setattr(self.track_matchers[matcher_key], k, matcher_kwargs[k])
+                        self.track_matchers[matcher_key].kwargs[k] = matcher_kwargs[k]
 
             if verbose:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
