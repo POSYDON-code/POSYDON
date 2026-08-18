@@ -547,18 +547,19 @@ class SimulationProperties:
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
 
             else:
+                track_matcher = self.track_matchers[matcher_key]
                 retrain = False
                 # subsequently check if any properties need to be updated,
                 # in case reloading for example
                 for k, v in matcher_kwargs.items():
                     # only care to update kwargs actually passed via load_step
                     if k in original_step_kwargs:
-                        setattr(self.track_matchers[matcher_key], k, matcher_kwargs[k])
-                        self.track_matchers[matcher_key].kwargs[k] = matcher_kwargs[k]
-                        if k in self.track_matchers[matcher_key].TRAINING_TRIGGERS:
+                        setattr(track_matcher, k, matcher_kwargs[k])
+                        track_matcher.kwargs[k] = matcher_kwargs[k]
+                        if k in track_matcher.TRAINING_TRIGGERS:
                             retrain = True
                 if retrain:
-                    updated_kwargs = self.track_matchers[matcher_key].kwargs
+                    updated_kwargs = track_matcher.kwargs
                     self.create_track_matcher(metallicity, step_name, updated_kwargs)
 
             if verbose:
