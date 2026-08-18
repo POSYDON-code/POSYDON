@@ -545,7 +545,7 @@ class SimulationProperties:
             # these matcher kwargs will trigger retraining the TrackMatcher
             retrain_triggers = ["grid_Hrich", "grid_strippedHe", "path", "metallicity",
                                 "matching_method", "matching_tolerance", "matching_tolerance_hard",
-                                "list_for_matching_HMS", "list_for_matching_HeStar", 
+                                "list_for_matching_HMS", "list_for_matching_HeStar",
                                 "list_for_matching_postMS", "list_for_matching_postHeMS"]
 
             if matcher_needed:
