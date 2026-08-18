@@ -266,6 +266,15 @@ class TrackMatcher:
                       "record_matching":False,
                       "verbose_matching":False}
 
+    # If you ever create a TrackMatcher, the first time you do, it will be trained 
+    # using whatever settings exist for these kwargs. If you ever subsequently change
+    # these kwargs for that TrackMatcher, you'd need to retrain it. You can use this 
+    # list to flag the TrackMatcher for retraining.
+    TRAINING_TRIGGERS = ["grid_Hrich", "grid_strippedHe", "path", "metallicity",
+                         "matching_method", "matching_tolerance", "matching_tolerance_hard",
+                         "list_for_matching_HMS", "list_for_matching_HeStar", 
+                         "list_for_matching_postMS", "list_for_matching_postHeMS"]
+
     def __init__(self, **kwargs):
 
         # MESA history column names used as matching metrics
