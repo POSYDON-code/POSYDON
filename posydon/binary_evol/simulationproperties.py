@@ -546,7 +546,7 @@ class SimulationProperties:
                 self.create_track_matcher(metallicity, step_name, matcher_kwargs)
 
             else:
-                # subsequently check if any properties need to be updated, 
+                # subsequently check if any properties need to be updated,
                 # in case reloading for example
                 for k, v in matcher_kwargs.items():
                     # only care to update kwargs actually passed via load_step

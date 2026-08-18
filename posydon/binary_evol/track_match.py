@@ -295,7 +295,7 @@ class TrackMatcher:
             for varname in self.DEFAULT_KWARGS:
                 default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, default_value)
-                
+
             self.kwargs = DEFAULT_KWARGS
 
         self.metallicity = convert_metallicity_to_string(self.metallicity)
