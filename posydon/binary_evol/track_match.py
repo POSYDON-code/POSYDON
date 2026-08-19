@@ -271,7 +271,6 @@ class TrackMatcher:
     # these kwargs for that TrackMatcher, you'd need to retrain it. You can use this
     # list to flag the TrackMatcher for retraining.
     TRAINING_TRIGGERS = ["grid_Hrich", "grid_strippedHe", "path", "metallicity",
-                         "matching_method", "matching_tolerance", "matching_tolerance_hard",
                          "list_for_matching_HMS", "list_for_matching_HeStar",
                          "list_for_matching_postMS", "list_for_matching_postHeMS"]
 

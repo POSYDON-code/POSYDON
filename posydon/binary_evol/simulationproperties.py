@@ -515,6 +515,7 @@ class SimulationProperties:
         for repeated `(metallicity, step_name)` combinations.
         """
         step_func, step_kwargs = step_tup
+        original_step_kwargs = step_kwargs.copy()
 
         # check/assign metallicity for the step
         if "metallicity" in step_func.DEFAULT_KWARGS:
@@ -539,7 +540,6 @@ class SimulationProperties:
         matcher_key = (metallicity, step_name)
         if "track_matcher" in step_func.DEFAULT_KWARGS:
             matcher_needed = matcher_key not in self.track_matchers
-            original_step_kwargs = step_kwargs.copy()
             step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
 
             if matcher_needed:
