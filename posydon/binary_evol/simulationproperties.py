@@ -563,6 +563,11 @@ class SimulationProperties:
                 if retrain:
                     updated_kwargs = track_matcher.kwargs
                     self.create_track_matcher(metallicity, step_name, updated_kwargs)
+            # check for and delete any old TrackMatcher's this step has to save RAM
+            for mk in list(self.track_matchers):
+                this_met, this_stepn = mk
+                if this_met != metallicity and this_stepn == step_name:
+                    del self.track_matchers[mk]
 
             if verbose:
                 kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
