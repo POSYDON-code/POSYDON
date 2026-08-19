@@ -655,7 +655,7 @@ class SimulationProperties:
             if this_met != metallicity and this_stepn == step_name:
                 del self.track_matchers[mk]
                 # delete associated cached grids to save RAM too,
-                # but only if no other TrackMatcher is using this 
+                # but only if no other TrackMatcher is using this
                 # metallicity. Otherwise, grid still needed.
                 other_steps_at_this_met = any(other_met == this_met
                                           for other_met, _ in self.track_matchers)
