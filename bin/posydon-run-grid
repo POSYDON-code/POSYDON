@@ -790,7 +790,7 @@ def run_grid_point(grid, star1_formation, star2_formation,
 ###############################################################################
 # BEGIN MAIN FUNCTION
 ###############################################################################
-if __name__ == '__main__':
+def main():
 
     # check MPI was imported
     if not MPI_IMPORTED:
@@ -998,3 +998,6 @@ if __name__ == '__main__':
             else:
                 while True:
                     do_child_process_logic(comm, grid, args, star1_formation=star1_formation, star2_formation=star2_formation)
+
+if __name__ == '__main__':
+    main()

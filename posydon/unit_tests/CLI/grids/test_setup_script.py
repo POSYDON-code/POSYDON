@@ -803,3 +803,372 @@ class TestConstructCommandLine:
             keep_photos=True,
         )
         assert command.endswith(" --keep_profiles --keep_photos")
+
+
+class TestMainFlow:
+    """Tests for main() covering the full setup-grid flow."""
+
+    @staticmethod
+    def _which_popen(communicate_result):
+        """Build a Popen stand-in returning a fixed communicate() result."""
+
+        class FakePopen:
+            def __init__(self, cmd, **kwargs):
+                self.cmd = cmd
+
+            def communicate(self):
+                return communicate_result
+
+        return FakePopen
+
+    @pytest.fixture
+    def grid_inputs(self, tmp_path):
+        """Create grid.csv, the three column-list files and a dummy extras file."""
+        grid = tmp_path / "grid.csv"
+        grid.write_text("m1,m2\n10.0,8.0\n11.0,9.0\n")
+        star_hist = tmp_path / "star_history_columns.list"
+        star_hist.write_text("star columns\n")
+        binary_hist = tmp_path / "binary_history_columns.list"
+        binary_hist.write_text("binary columns\n")
+        profile_hist = tmp_path / "profile_columns.list"
+        profile_hist.write_text("profile columns\n")
+        extras = tmp_path / "binary_extras.f"
+        extras.write_text("! dummy extras\n")
+        return grid, star_hist, binary_hist, profile_hist, extras
+
+    @staticmethod
+    def _mock_executables_and_inlists(monkeypatch):
+        """Patch make_executables and construct_static_inlist for the happy path."""
+        monkeypatch.setattr(
+            totest,
+            "make_executables",
+            lambda mesa_extras, working_directory: (
+                "/work/binary/binary",
+                "/work/star1/star",
+                "/work/star2/star",
+            ),
+        )
+        monkeypatch.setattr(
+            totest,
+            "construct_static_inlist",
+            lambda mesa_inlists, grid_parameters, working_directory: (
+                "/work/star1/inlist_step0",
+                None,
+                "/work/binary/inlist_project",
+                "/work/binary/inlist1",
+                "/work/binary/inlist2",
+            ),
+        )
+
+    def test_main_mesa_dir_missing(self, monkeypatch):
+        """main raises when MESA_DIR is not defined in the environment."""
+        monkeypatch.delenv("MESA_DIR", raising=False)
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["posydon-setup-grid", "--inifile", "in.ini", "--grid-type", "fixed"],
+        )
+        with pytest.raises(ValueError, match="MESA_DIR must be defined"):
+            totest.main()
+
+    def test_main_which_empty(self, monkeypatch):
+        """Missing posydon-run-grid executable raises ValueError."""
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["posydon-setup-grid", "--inifile", "in.ini", "--grid-type", "fixed"],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"", b"")),
+        )
+        with pytest.raises(
+            ValueError, match="Cannot locate posydon-run-grid executable in your path"
+        ):
+            totest.main()
+
+    def test_main_fixed_shell_happy_path(self, monkeypatch, tmp_path, grid_inputs):
+        """Fixed grid shell submission writes a runnable grid_command.sh."""
+        grid, star_hist, binary_hist, profile_hist, extras = grid_inputs
+        os.chdir(tmp_path)
+        monkeypatch.setenv("MESASDK_ROOT", "/opt/mesasdk")
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["posydon-setup-grid", "--inifile", "in.ini", "--grid-type", "fixed"],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"/usr/bin/posydon-run-grid\n", b"")),
+        )
+        monkeypatch.setattr(
+            totest.configfile,
+            "parse_inifile",
+            lambda inifile: (
+                {"grid": str(grid), "psycris_inifile": "/tmp/psycris.ini"},
+                {
+                    "job_array": False,
+                    "number_of_mpi_tasks": 1,
+                    "number_of_nodes": 1,
+                    "number_of_cpus_per_task": 1,
+                    "work_dir": "",
+                },
+                {
+                    "scenario": None,
+                    "star_history_columns": str(star_hist),
+                    "binary_history_columns": str(binary_hist),
+                    "profile_columns": str(profile_hist),
+                },
+                {"mesa_binary_extras": str(extras)},
+            ),
+        )
+        self._mock_executables_and_inlists(monkeypatch)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+
+        totest.main()
+
+        grid_command = (tmp_path / "grid_command.sh").read_text()
+        assert "#!/bin/bash" in grid_command
+        assert "export OMP_NUM_THREADS=1" in grid_command
+        assert "export MESASDK_ROOT=/opt/mesasdk" in grid_command
+        assert "export MESA_DIR={0}".format(os.environ["MESA_DIR"]) in grid_command
+        assert "compress-mesa ." in grid_command
+        assert 'echo "Done."' in grid_command
+
+        expected_command = (
+            "python /usr/bin/posydon-run-grid --mesa-grid {0}/grid.csv "
+            "--mesa-binary-executable /work/binary/binary "
+            "--mesa-star1-executable /work/star1/star "
+            "--mesa-star2-executable /work/star2/star "
+            "--mesa-binary-inlist-project /work/binary/inlist_project "
+            "--mesa-binary-inlist1 /work/binary/inlist1 "
+            "--mesa-binary-inlist2 /work/binary/inlist2 "
+            "--mesa-star1-inlist-project /work/star1/inlist_step0 "
+            "--mesa-star2-inlist-project None "
+            "--mesa-star-history-columns {0}/column_lists/history_columns.list "
+            "--mesa-binary-history-columns {0}/column_lists/binary_history_columns.list "
+            "--mesa-profile-columns {0}/column_lists/profile_columns.list "
+            "--output-directory {0} --grid-type fixed "
+            "--psycris-inifile /tmp/psycris.ini"
+        ).format(tmp_path)
+        assert expected_command in grid_command
+        assert system_calls == ["chmod 755 grid_command.sh"]
+        assert (
+            tmp_path / "column_lists" / "history_columns.list"
+        ).read_text() == "star columns\n"
+
+    def test_main_fixed_shell_job_array(self, monkeypatch, tmp_path, grid_inputs):
+        """Fixed grid shell submission with a job array loops over grid rows."""
+        grid, star_hist, binary_hist, profile_hist, extras = grid_inputs
+        os.chdir(tmp_path)
+        monkeypatch.setenv("MESASDK_ROOT", "/opt/mesasdk")
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["posydon-setup-grid", "--inifile", "in.ini", "--grid-type", "fixed"],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"/usr/bin/posydon-run-grid\n", b"")),
+        )
+        monkeypatch.setattr(
+            totest.configfile,
+            "parse_inifile",
+            lambda inifile: (
+                {"grid": str(grid)},
+                {"job_array": True, "number_of_cpus_per_task": 1, "work_dir": ""},
+                {
+                    "scenario": None,
+                    "star_history_columns": str(star_hist),
+                    "binary_history_columns": str(binary_hist),
+                    "profile_columns": str(profile_hist),
+                },
+                {"mesa_binary_extras": str(extras)},
+            ),
+        )
+        self._mock_executables_and_inlists(monkeypatch)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+
+        totest.main()
+
+        grid_command = (tmp_path / "grid_command.sh").read_text()
+        assert "--grid-point-index $SLURM_ARRAY_TASK_ID" in grid_command
+        assert "for SLURM_ARRAY_TASK_ID in 0 1 ; do" in grid_command
+        assert " ; done" in grid_command
+        assert system_calls == ["chmod 755 grid_command.sh"]
+
+    def test_main_fixed_slurm_job_array_scripts(
+        self, monkeypatch, tmp_path, grid_inputs
+    ):
+        """Slurm job array submission writes submit, cleanup and run scripts."""
+        grid, star_hist, binary_hist, profile_hist, extras = grid_inputs
+        os.chdir(tmp_path)
+        monkeypatch.setenv("MESASDK_ROOT", "/opt/mesasdk")
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "posydon-setup-grid",
+                "--inifile",
+                "in.ini",
+                "--grid-type",
+                "fixed",
+                "--submission-type",
+                "slurm",
+            ],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"/usr/bin/posydon-run-grid\n", b"")),
+        )
+        monkeypatch.setattr(
+            totest.configfile,
+            "parse_inifile",
+            lambda inifile: (
+                {"grid": str(grid)},
+                {
+                    "job_array": True,
+                    "account": "myaccount",
+                    "partition": "main",
+                    "number_of_cpus_per_task": 2,
+                    "walltime": "01:00:00",
+                    "email": "a@b.c",
+                },
+                {
+                    "scenario": None,
+                    "star_history_columns": str(star_hist),
+                    "binary_history_columns": str(binary_hist),
+                    "profile_columns": str(profile_hist),
+                },
+                {"mesa_binary_extras": str(extras)},
+            ),
+        )
+        self._mock_executables_and_inlists(monkeypatch)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+
+        totest.main()
+
+        assert (tmp_path / "job_array_grid_submit.slurm").is_file()
+        assert (tmp_path / "cleanup.slurm").is_file()
+        assert (tmp_path / "run_grid.sh").is_file()
+        assert not (tmp_path / "mpi_grid_submit.slurm").exists()
+
+        submit = (tmp_path / "job_array_grid_submit.slurm").read_text()
+        assert "#SBATCH --array=0-1" in submit
+        assert "#SBATCH --account=myaccount" in submit
+        assert "#SBATCH --partition=main" in submit
+        assert "#SBATCH --cpus-per-task 2" in submit
+        assert '#SBATCH --job-name="mesa_grid_\\${SLURM_ARRAY_TASK_ID}"' in submit
+        assert "export OMP_NUM_THREADS=2" in submit
+        assert "--grid-point-index $SLURM_ARRAY_TASK_ID" in submit
+
+        run_grid = (tmp_path / "run_grid.sh").read_text()
+        assert "ID_GRID=$(sbatch --parsable job_array_grid_submit.slurm)" in run_grid
+        assert "compress-mesa ." in (tmp_path / "cleanup.slurm").read_text()
+        assert system_calls == ["chmod 755 run_grid.sh"]
+
+    def test_main_fixed_slurm_mpi_scripts(self, monkeypatch, tmp_path, grid_inputs):
+        """Slurm MPI submission writes MPI submit, cleanup and run scripts."""
+        grid, star_hist, binary_hist, profile_hist, extras = grid_inputs
+        os.chdir(tmp_path)
+        monkeypatch.setenv("MESASDK_ROOT", "/opt/mesasdk")
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "posydon-setup-grid",
+                "--inifile",
+                "in.ini",
+                "--grid-type",
+                "fixed",
+                "--submission-type",
+                "slurm",
+            ],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"/usr/bin/posydon-run-grid\n", b"")),
+        )
+        monkeypatch.setattr(
+            totest.configfile,
+            "parse_inifile",
+            lambda inifile: (
+                {"grid": str(grid), "psycris_inifile": "/tmp/psycris.ini"},
+                {
+                    "job_array": False,
+                    "number_of_mpi_tasks": 2,
+                    "number_of_nodes": 2,
+                    "number_of_cpus_per_task": 4,
+                    "account": "acct",
+                    "partition": "part",
+                    "walltime": "02:00:00",
+                    "email": "x@y.z",
+                },
+                {
+                    "scenario": None,
+                    "star_history_columns": str(star_hist),
+                    "binary_history_columns": str(binary_hist),
+                    "profile_columns": str(profile_hist),
+                },
+                {"mesa_binary_extras": str(extras)},
+            ),
+        )
+        self._mock_executables_and_inlists(monkeypatch)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+
+        totest.main()
+
+        assert (tmp_path / "mpi_grid_submit.slurm").is_file()
+        assert (tmp_path / "cleanup.slurm").is_file()
+        assert (tmp_path / "run_grid.sh").is_file()
+        assert not (tmp_path / "job_array_grid_submit.slurm").exists()
+
+        mpi_submit = (tmp_path / "mpi_grid_submit.slurm").read_text()
+        assert "#SBATCH -N 2" in mpi_submit
+        assert "#SBATCH --ntasks-per-node 2" in mpi_submit
+        assert "#SBATCH --cpus-per-task 4" in mpi_submit
+        assert "--job_end $SLURM_JOB_END_TIME" in mpi_submit
+        assert "--output-directory" in mpi_submit
+        assert system_calls == ["chmod 755 run_grid.sh"]
+
+    def test_main_psycris_missing_dynamic(self, monkeypatch, tmp_path):
+        """Dynamic grid without a psycris inifile raises ValueError."""
+        grid = tmp_path / "grid.csv"
+        grid.write_text("m1,m2\n10.0,8.0\n")
+        os.chdir(tmp_path)
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            ["posydon-setup-grid", "--inifile", "in.ini", "--grid-type", "dynamic"],
+        )
+        monkeypatch.setattr(
+            totest.subprocess,
+            "Popen",
+            self._which_popen((b"/usr/bin/posydon-run-grid\n", b"")),
+        )
+        monkeypatch.setattr(
+            totest.configfile,
+            "parse_inifile",
+            lambda inifile: (
+                {"grid": str(grid)},
+                {
+                    "job_array": False,
+                    "number_of_mpi_tasks": 1,
+                    "number_of_nodes": 1,
+                    "number_of_cpus_per_task": 1,
+                },
+                {"scenario": None},
+                {},
+            ),
+        )
+        with pytest.raises(ValueError, match="Please add psycris inifile"):
+            totest.main()

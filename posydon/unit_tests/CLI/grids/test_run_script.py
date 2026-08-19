@@ -524,3 +524,40 @@ class TestGetNextGridPoint:
             match=r"Bad output columns given: \['period_days'\]\nMust be in:",
         ):
             totest.get_next_grid_point("/path/psycris.ini", grid, n_new_points=1)
+
+
+class TestMainFlow:
+    """Tests for main()."""
+
+    def test_main_mpi_not_imported(self, monkeypatch):
+        """main raises ImportError when mpi4py was not imported."""
+        monkeypatch.setattr(totest, "MPI_IMPORTED", False)
+        monkeypatch.setattr(sys, "argv", ["posydon-run-grid"])
+        with pytest.raises(ImportError, match="MPI module mpi4py not installed"):
+            totest.main()
+
+    def test_main_unrecognized_grid_format(self, monkeypatch):
+        """main raises ValueError when the grid format is not recognized."""
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(
+            sys,
+            "argv",
+            [
+                "posydon-run-grid",
+                "--mesa-grid", "/path/to/grid.unknown",
+                "--grid-type", "fixed",
+                "--output-directory", "/out",
+                "--temporary-directory", "/tmp",
+                "--mesa-binary-executable", "/exe/binary",
+                "--mesa-binary-inlist-project", "/inlist/project",
+                "--mesa-binary-inlist1", "/inlist/1",
+                "--mesa-binary-inlist2", "/inlist/2",
+                "--mesa-star1-inlist-project", "/inlist/star1",
+                "--mesa-star2-inlist-project", "/inlist/star2",
+                "--mesa-star-history-columns", "/cols/history",
+                "--mesa-binary-history-columns", "/cols/binary_history",
+                "--mesa-profile-columns", "/cols/profile",
+            ],
+        )
+        with pytest.raises(ValueError, match="Grid format not recognized"):
+            totest.main()

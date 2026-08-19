@@ -979,7 +979,7 @@ def construct_command_line(number_of_mpi_processes, path_to_grid,
 ###############################################################################
 # BEGIN MAIN FUNCTION
 ###############################################################################
-if __name__ == '__main__':
+def main():
 
     # READ COMMANDLINE ARGUMENTS
     ###########################################################################
@@ -1249,3 +1249,6 @@ if __name__ == '__main__':
             f.write('echo \"cleanup.slurm submitted as \"${ID_cleanup}\n')
         # make the runfile script executable
         os.system("chmod 755 run_grid.sh")
+
+if __name__ == '__main__':
+    main()
