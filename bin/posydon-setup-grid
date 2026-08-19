@@ -345,8 +345,12 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             # Find the user single star controls
             single_star_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
             print("These are the user inlists used in the single star grid: {0}".format(single_star_scenario))
-            mesa_inlists['star1_controls_user'] = single_star_scenario
-            mesa_inlists['star1_job_user'] = single_star_scenario
+            if 'star1_controls_user' not in mesa_inlists or mesa_inlists['star1_controls_user'] is None:
+                mesa_inlists['star1_controls_user'] = []
+            if 'star1_job_user' not in mesa_inlists or mesa_inlists['star1_job_user'] is None:
+                mesa_inlists['star1_job_user'] = []
+            mesa_inlists['star1_controls_user'].append(single_star_scenario)
+            mesa_inlists['star1_job_user'].append(single_star_scenario)
             print("You want a single star He grid, "
                   "this means that we need to make the inlist that will be used to evolve the system "
                   "and make sure we layer on the line "
