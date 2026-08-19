@@ -504,9 +504,9 @@ class SimulationProperties:
         Returns
         -------
         tuple
-            The step tuple containing the step function and the updated 
-            ``step_kwargs`` dictionary. This new step_kwargs contains a 
-            validated ``metallicity`` entry and potentially a 
+            The step tuple containing the step function and the updated
+            ``step_kwargs`` dictionary. This new step_kwargs contains a
+            validated ``metallicity`` entry and potentially a
             ``track_matcher`` object.
 
         Notes
@@ -544,9 +544,9 @@ class SimulationProperties:
             # each metallicity/step combo could require
             # a unique TrackMatcher, so check for that
             step_kwargs = self._check_track_matcher(metallicity,
-                                                    step_name, 
+                                                    step_name,
                                                     step_kwargs,
-                                                    original_step_kwargs, 
+                                                    original_step_kwargs,
                                                     verbose)
 
         if "RNG" in step_func.DEFAULT_KWARGS:
@@ -561,11 +561,11 @@ class SimulationProperties:
 
         A unique TrackMatcher is maintained for each ``(metallicity, step_name)``
         combination. If a TrackMatcher for the requested combination does not
-        already exist in this SimulationProperties, one is created using the 
-        supplied matcher-specific keyword arguments. If one already exists, 
-        its explicitly supplied properties are compared against the existing 
-        values and updated when necessary. If an updated property is one of the 
-        TrackMatcher's training triggers, the TrackMatcher is recreated so that 
+        already exist in this SimulationProperties, one is created using the
+        supplied matcher-specific keyword arguments. If one already exists,
+        its explicitly supplied properties are compared against the existing
+        values and updated when necessary. If an updated property is one of the
+        TrackMatcher's training triggers, the TrackMatcher is recreated so that
         it is retrained with the new settings.
 
         TrackMatcher-specific keyword arguments are separated from the remaining
@@ -595,7 +595,7 @@ class SimulationProperties:
             separated from this dictionary and the resulting TrackMatcher instance
             is added under the ``"track_matcher"`` key.
         original_step_kwargs : dict
-            Copy of the keyword arguments originally supplied to the evolution step 
+            Copy of the keyword arguments originally supplied to the evolution step
             before defaults or other values were added. Only properties explicitly
             present in this dictionary are considered when determining whether an
             existing TrackMatcher needs to be updated.
