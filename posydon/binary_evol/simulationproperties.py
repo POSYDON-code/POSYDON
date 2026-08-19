@@ -578,8 +578,8 @@ class SimulationProperties:
         limits the number of simultaneously stored TrackMatcher objects and
         reduces memory usage.
 
-        Note that in multi-metallicity runs, each metallicity is assigned to a 
-        unique BinaryPopulation, each of which has its own unique 
+        Note that in multi-metallicity runs, each metallicity is assigned to a
+        unique BinaryPopulation, each of which has its own unique
         SimulationProperties at that given metallicity..
 
         Parameters
