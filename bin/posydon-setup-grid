@@ -327,9 +327,12 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                 f.write(b"""
                          / ! end of star1_controls namelist
                          """)
+
+            # check if star1_controls_user exists already from .ini, if not, create it
             if 'star1_controls_user' not in mesa_inlists or mesa_inlists['star1_controls_user'] is None:
                 mesa_inlists['star1_controls_user'] = []
 
+            # always include this special inlist for single stars
             mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
 
         elif system_type == "CO-He_star" and mesa_inlists['single_star_grid']:
@@ -345,10 +348,13 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             # Find the user single star controls
             single_star_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
             print("These are the user inlists used in the single star grid: {0}".format(single_star_scenario))
+
+            # check if star1_controls_user, star1_job_user exists already from .ini, if not create it
             if 'star1_controls_user' not in mesa_inlists or mesa_inlists['star1_controls_user'] is None:
                 mesa_inlists['star1_controls_user'] = []
             if 'star1_job_user' not in mesa_inlists or mesa_inlists['star1_job_user'] is None:
                 mesa_inlists['star1_job_user'] = []
+            # extend always with star formation settings for single He star
             mesa_inlists['star1_controls_user'].extend(single_star_scenario)
             mesa_inlists['star1_job_user'].extend(single_star_scenario)
             print("You want a single star He grid, "
@@ -371,7 +377,10 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                 f.write(b"""
                          / / ! end of star_job namelist
                          """)
+
+            # always include this special inlist for single stars
             mesa_inlists['star1_controls_user'].append(special_single_star_user_inlist)
+            mesa_inlists['star1_job_user'].append(special_single_star_user_inlist)
 
     # change back to where I was
     os.chdir(where_am_i_now)
