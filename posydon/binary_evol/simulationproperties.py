@@ -503,9 +503,11 @@ class SimulationProperties:
 
         Returns
         -------
-        dict
-            The updated ``step_kwargs`` dictionary, containing a validated
-            ``metallicity`` entry and potentially a ``track_matcher`` object.
+        tuple
+            The step tuple containing the step function and the updated 
+            ``step_kwargs`` dictionary. This new step_kwargs contains a 
+            validated ``metallicity`` entry and potentially a 
+            ``track_matcher`` object.
 
         Notes
         -----
@@ -515,6 +517,9 @@ class SimulationProperties:
         for repeated `(metallicity, step_name)` combinations.
         """
         step_func, step_kwargs = step_tup
+        # copy these to track what was originally passed before adding defaults
+        # in case we need to update a TrackMatcher for a step, this method only
+        # cares about updating what it is told to, not everything.
         original_step_kwargs = step_kwargs.copy()
 
         # check/assign metallicity for the step
@@ -535,49 +540,125 @@ class SimulationProperties:
         if step_name in step_grid_map:
             step_kwargs['grid_path'] = step_grid_map[step_name]
 
-        # each metallicity/step combo could require
-        # a unique TrackMatcher, so check for that
-        matcher_key = (metallicity, step_name)
         if "track_matcher" in step_func.DEFAULT_KWARGS:
-            matcher_needed = matcher_key not in self.track_matchers
-            step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
-
-            if matcher_needed:
-                # Always just create a new TrackMatcher if it does not exist
-                self.create_track_matcher(metallicity, step_name, matcher_kwargs)
-
-            else:
-                track_matcher = self.track_matchers[matcher_key]
-                retrain = False
-                # subsequently check if any properties need to be updated,
-                # in case reloading for example
-                for k, v in matcher_kwargs.items():
-                    # only care to update kwargs actually passed via load_step
-                    if k in original_step_kwargs:
-                        do_update = track_matcher.kwargs[k] != original_step_kwargs[k]
-                        if do_update:
-                            setattr(track_matcher, k, matcher_kwargs[k])
-                            track_matcher.kwargs[k] = matcher_kwargs[k]
-                            if k in track_matcher.TRAINING_TRIGGERS:
-                                retrain = True
-                if retrain:
-                    updated_kwargs = track_matcher.kwargs
-                    self.create_track_matcher(metallicity, step_name, updated_kwargs)
-            # check for and delete any old TrackMatcher's this step has to save RAM
-            for mk in list(self.track_matchers):
-                this_met, this_stepn = mk
-                if this_met != metallicity and this_stepn == step_name:
-                    del self.track_matchers[mk]
-
-            if verbose:
-                kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
-                print(f"matcher_kwargs: \n" + "\n".join(kw_list))
-            step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
+            # each metallicity/step combo could require
+            # a unique TrackMatcher, so check for that
+            step_kwargs = self._check_track_matcher(metallicity,
+                                                    step_name, 
+                                                    step_kwargs,
+                                                    original_step_kwargs, 
+                                                    verbose)
 
         if "RNG" in step_func.DEFAULT_KWARGS:
             step_kwargs['RNG'] = RNG
 
-        return step_tup
+        return (step_func, step_kwargs)
+
+    def _check_track_matcher(self, metallicity, step_name, step_kwargs,
+                            original_step_kwargs, verbose=False):
+        """
+        Validate, create, update, and assign the TrackMatcher for an evolution step.
+
+        A unique TrackMatcher is maintained for each ``(metallicity, step_name)``
+        combination. If a TrackMatcher for the requested combination does not
+        already exist in this SimulationProperties, one is created using the 
+        supplied matcher-specific keyword arguments. If one already exists, 
+        its explicitly supplied properties are compared against the existing 
+        values and updated when necessary. If an updated property is one of the 
+        TrackMatcher's training triggers, the TrackMatcher is recreated so that 
+        it is retrained with the new settings.
+
+        TrackMatcher-specific keyword arguments are separated from the remaining
+        step keyword arguments using ``TrackMatcher.separate_kwargs``. The
+        resulting TrackMatcher instance is then added to ``step_kwargs`` under
+        the ``"track_matcher"`` key.
+
+        TrackMatchers for other metallicities associated with the same step are
+        removed after the requested matcher has been created or retrieved. This
+        limits the number of simultaneously stored TrackMatcher objects and
+        reduces memory usage.
+
+        Parameters
+        ----------
+        metallicity : float
+            Stellar metallicity associated with the evolutionary step. This value
+            is used together with ``step_name`` to identify the required
+            TrackMatcher.
+        step_name : str
+            Name of the evolutionary step for which the TrackMatcher is required.
+        step_kwargs : dict
+            Keyword arguments for the step. TrackMatcher-specific arguments are
+            separated from this dictionary and the resulting TrackMatcher instance
+            is added under the ``"track_matcher"`` key.
+        original_step_kwargs : dict
+            Copy of the keyword arguments originally supplied to the evolution step 
+            before defaults or other values were added. Only properties explicitly
+            present in this dictionary are considered when determining whether an
+            existing TrackMatcher needs to be updated.
+        verbose : bool, optional
+            If True, print the TrackMatcher keyword arguments used for the current
+            step.
+
+        Returns
+        -------
+        dict
+            The updated step keyword arguments containing the TrackMatcher-specific
+            arguments removed and the appropriate TrackMatcher instance assigned
+            to the ``"track_matcher"`` key.
+
+        Notes
+        -----
+        - TrackMatcher objects are stored in ``self.track_matchers`` using
+        ``(metallicity, step_name)`` as the key.
+        - GRIDInterpolator objects required by the TrackMatcher are created and
+        cached by ``create_track_matcher``.
+        - Existing TrackMatchers are reused when their explicitly supplied
+        configuration has not changed.
+        - If a training-triggering TrackMatcher property changes, the existing
+        matcher is recreated using the updated configuration.
+        - TrackMatchers for other metallicities but the same ``step_name`` are
+        deleted to conserve memory.
+        """
+
+        matcher_key = (metallicity, step_name)
+        matcher_needed = matcher_key not in self.track_matchers
+        step_kwargs, matcher_kwargs = TrackMatcher.separate_kwargs(step_kwargs)
+
+        if matcher_needed:
+            # Always just create a new TrackMatcher if it does not exist
+            self.create_track_matcher(metallicity, step_name, matcher_kwargs)
+
+        else:
+            track_matcher = self.track_matchers[matcher_key]
+            retrain = False
+            # subsequently check if any properties need to be updated,
+            # in case reloading for example
+            for k, v in matcher_kwargs.items():
+                # only care to update kwargs actually passed via load_step
+                if k in original_step_kwargs:
+                    do_update = track_matcher.kwargs[k] != original_step_kwargs[k]
+                    if do_update:
+                        setattr(track_matcher, k, matcher_kwargs[k])
+                        track_matcher.kwargs[k] = matcher_kwargs[k]
+                        if k in track_matcher.TRAINING_TRIGGERS:
+                            retrain = True
+            if retrain:
+                updated_kwargs = track_matcher.kwargs
+                self.create_track_matcher(metallicity, step_name, updated_kwargs)
+        # check for and delete any old TrackMatcher's this step has to save RAM
+        for mk in list(self.track_matchers):
+            this_met, this_stepn = mk
+            if this_met != metallicity and this_stepn == step_name:
+                del self.track_matchers[mk]
+
+
+        if verbose:
+            kw_list = [f"\t{key}: {val}" for key, val in matcher_kwargs.items()]
+            print(f"matcher_kwargs: \n" + "\n".join(kw_list))
+        # reference ths TrackMatcher in this step's kwargs
+        step_kwargs['track_matcher'] = self.track_matchers[matcher_key]
+
+        return step_kwargs
 
     def create_track_matcher(self, metallicity, step_name, matcher_kwargs):
         """
