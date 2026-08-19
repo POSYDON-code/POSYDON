@@ -1,0 +1,526 @@
+"""Unit tests locking the current behavior of bin/posydon-run-grid."""
+
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>",
+]
+
+import importlib.machinery
+import importlib.util
+import os
+import sys
+from pathlib import Path
+from types import SimpleNamespace
+
+import numpy as np
+import pandas
+import pytest
+
+REPO_ROOT = Path(__file__).resolve().parents[4]
+
+
+def _load_script(name, path):
+    # The bin scripts have no .py extension, so spec_from_file_location returns
+    # None; use an explicit SourceFileLoader instead.
+    loader = importlib.machinery.SourceFileLoader(name, str(path))
+    spec = importlib.util.spec_from_loader(name, loader)
+    mod = importlib.util.module_from_spec(spec)
+    loader.exec_module(mod)
+    return mod
+
+
+totest = _load_script("run_grid_script", REPO_ROOT / "bin" / "posydon-run-grid")
+
+
+@pytest.fixture(autouse=True)
+def _env(tmp_path, monkeypatch):
+    """Provide HOME/MESA_DIR and restore cwd after every test."""
+    monkeypatch.setenv("HOME", str(tmp_path))
+    monkeypatch.setenv("MESA_DIR", str(tmp_path / "mesa"))
+    original = os.getcwd()
+    yield
+    os.chdir(original)
+
+
+def _make_args(tmp_path, **overrides):
+    """Build an argparse-like namespace with the fields the helpers read."""
+    args = SimpleNamespace(
+        temporary_directory=str(tmp_path / "temp"),
+        output_directory=str(tmp_path / "output"),
+        grid_point_index=None,
+        grid_type="fixed",
+        mesa_star_history_columns=str(tmp_path / "history_columns.list"),
+        mesa_binary_history_columns=str(tmp_path / "binary_history_columns.list"),
+        mesa_profile_columns=str(tmp_path / "profile_columns.list"),
+    )
+    for key, value in overrides.items():
+        setattr(args, key, value)
+    return args
+
+
+class TestIdGenerator:
+    """Tests for id_generator()."""
+
+    def test_length(self):
+        """id_generator returns a string of the requested length."""
+        assert len(totest.id_generator()) == 10
+        assert len(totest.id_generator(size=5)) == 5
+
+    def test_charset(self):
+        """id_generator only uses the configured alphanumeric charset."""
+        value = totest.id_generator()
+        assert all(c.isalnum() for c in value)
+
+
+class TestCreateWorkingDirectory:
+    """Tests for create_working_directory()."""
+
+    def test_directory_name_formatting(self, tmp_path):
+        """Non-log params use .4f, log params use .4e formatting."""
+        os.makedirs(tmp_path / "temp")
+        os.makedirs(tmp_path / "output")
+        hist = tmp_path / "history_columns.list"
+        hist.write_text("history")
+        bhist = tmp_path / "binary_history_columns.list"
+        bhist.write_text("bhistory")
+        prof = tmp_path / "profile_columns.list"
+        prof.write_text("profile")
+        args = _make_args(tmp_path)
+
+        grid_param_dict = {
+            "initial_z": 0.0142,
+            "m1": 10.0,
+            "initial_period_in_days": 3.5,
+        }
+        work_dir, final_dir = totest.create_working_directory(grid_param_dict, args)
+
+        name = "m1_10.0000_initial_z_1.4200e-02_initial_period_in_days_3.5000e+00"
+        assert work_dir == os.path.join(args.temporary_directory, name)
+        assert final_dir == os.path.join(args.output_directory, name)
+        assert os.path.isdir(work_dir)
+        assert os.path.isfile(os.path.join(work_dir, "history_columns.list"))
+        assert os.path.isfile(os.path.join(work_dir, "binary_history_columns.list"))
+        assert os.path.isfile(os.path.join(work_dir, "profile_columns.list"))
+
+    def test_parentheses_dropped_from_name(self, tmp_path):
+        """Parentheses in parameter names are dropped from the directory name."""
+        os.makedirs(tmp_path / "temp")
+        os.makedirs(tmp_path / "output")
+        hist = tmp_path / "history_columns.list"
+        hist.write_text("h")
+        bhist = tmp_path / "binary_history_columns.list"
+        bhist.write_text("b")
+        prof = tmp_path / "profile_columns.list"
+        prof.write_text("p")
+        args = _make_args(tmp_path)
+
+        work_dir, _ = totest.create_working_directory({"m1(msun)": 5.0}, args)
+        assert "m1msun_5.0000_" in os.path.basename(work_dir)
+
+    def test_grid_point_index_suffix(self, tmp_path):
+        """grid_point_index appends _grid_index_{idx} to the name."""
+        os.makedirs(tmp_path / "temp")
+        os.makedirs(tmp_path / "output")
+        hist = tmp_path / "history_columns.list"
+        hist.write_text("h")
+        bhist = tmp_path / "binary_history_columns.list"
+        bhist.write_text("b")
+        prof = tmp_path / "profile_columns.list"
+        prof.write_text("p")
+        args = _make_args(tmp_path, grid_point_index=7)
+
+        work_dir, _ = totest.create_working_directory({"m1": 10.0}, args)
+        assert work_dir.endswith("_grid_index_7")
+
+    def test_dynamic_appends_random_id(self, tmp_path, monkeypatch):
+        """Dynamic grids append a random id generated by id_generator."""
+        os.makedirs(tmp_path / "temp")
+        os.makedirs(tmp_path / "output")
+        hist = tmp_path / "history_columns.list"
+        hist.write_text("h")
+        bhist = tmp_path / "binary_history_columns.list"
+        bhist.write_text("b")
+        prof = tmp_path / "profile_columns.list"
+        prof.write_text("p")
+        monkeypatch.setattr(totest, "id_generator", lambda: "ABC123XYZ")
+        args = _make_args(tmp_path, grid_type="dynamic")
+
+        work_dir, _ = totest.create_working_directory({"m1": 10.0}, args)
+        assert work_dir.endswith("_ABC123XYZ")
+
+    def test_existing_work_dir_is_removed(self, tmp_path, capsys):
+        """An existing work dir is warned about and removed."""
+        os.makedirs(tmp_path / "temp")
+        os.makedirs(tmp_path / "output")
+        hist = tmp_path / "history_columns.list"
+        hist.write_text("h")
+        bhist = tmp_path / "binary_history_columns.list"
+        bhist.write_text("b")
+        prof = tmp_path / "profile_columns.list"
+        prof.write_text("p")
+        args = _make_args(tmp_path)
+
+        existing = tmp_path / "temp" / "m1_10.0000_"
+        existing.mkdir()
+        (existing / "old.dat").write_text("data")
+
+        work_dir, _ = totest.create_working_directory({"m1": 10.0}, args)
+        assert work_dir == str(existing)
+        assert not (existing / "old.dat").exists()
+
+
+class TestCreateBinaryInlists:
+    """Tests for create_binary_inlists()."""
+
+    def test_file_contents_and_fortran_formatting(self, tmp_path):
+        """Grid-point inlists format floats with d-notation, bools, and ints."""
+        work_dir = tmp_path
+        binary_controls = {"mass_transfer_alpha": 0.5}
+        binary_job = {"evolve_both_stars": True, "some_flag": False, "num_steps": 2.0}
+        star1_binary_controls = {"m1": 10.0}
+        star1_binary_job = {}
+        star2_binary_controls = {}
+        star2_binary_job = {"saved_model_name": "initial.mod"}
+
+        totest.create_binary_inlists(
+            binary_controls,
+            binary_job,
+            star1_binary_controls,
+            star1_binary_job,
+            star2_binary_controls,
+            star2_binary_job,
+            str(work_dir),
+            "/path/to/inlist_project",
+        )
+
+        inlist = (work_dir / "inlist").read_text()
+        assert (
+            "extra_binary_controls_inlist1_name = '/path/to/inlist_project'" in inlist
+        )
+        assert "extra_binary_job_inlist1_name = '/path/to/inlist_project'" in inlist
+
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert "&binary_controls\n" in points
+        assert "\tmass_transfer_alpha = 5.0000000000d-01" in points
+        assert "&binary_job\n" in points
+        assert "\tevolve_both_stars = .true." in points
+        assert "\tsome_flag = .false." in points
+        assert "\tnum_steps = 2" in points
+
+        star1 = (work_dir / "inlist_grid_star1_binary_controls").read_text()
+        assert "&controls\n" in star1
+        assert "\tm1 = 10" in star1
+
+        # empty dicts must not produce files
+        assert not (work_dir / "inlist_grid_star2_binary_controls").exists()
+        assert not (work_dir / "inlist_grid_star1_binary_job").exists()
+
+        star2 = (work_dir / "inlist_grid_star2_binary_job").read_text()
+        assert "&star_job\n" in star2
+        assert "saved_model_name = initial.mod" in star2
+
+
+class TestCreateStarFormation:
+    """Tests for create_star_formation()."""
+
+    def test_with_initial_z_and_new_Z(self, tmp_path):
+        """initial_mass, initial_z, Zbase, and new_Z lines are written."""
+        work_dir = tmp_path
+        totest.create_star_formation(
+            10.0, str(work_dir), "/path/inlist", initial_z=0.0142, new_Z=True
+        )
+
+        inlist = (work_dir / "inlist").read_text()
+        assert "extra_controls_inlist1_name = '/path/inlist'" in inlist
+        assert "extra_star_job_inlist1_name = '/path/inlist'" in inlist
+
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert "&controls\n" in points
+        assert "initial_mass = 1.0000000000d+01" in points
+        assert "initial_z = 1.4200000000d-02" in points
+        assert "Zbase = 1.4200000000d-02" in points
+        assert "&star_job\n" in points
+        assert "new_Z = 1.4200000000d-02" in points
+
+    def test_without_initial_z(self, tmp_path):
+        """Without initial_z no Zbase/new_Z lines are written."""
+        work_dir = tmp_path
+        totest.create_star_formation(10.0, str(work_dir), "/path/inlist")
+
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert "initial_mass = 1.0000000000d+01" in points
+        assert "initial_z" not in points
+        assert "Zbase" not in points
+        assert "new_Z" not in points
+
+
+class TestMoveMesaOutput:
+    """Tests for move_mesa_output()."""
+
+    def test_move(self, tmp_path):
+        """Default behavior moves work_dir into final_dir."""
+        work = tmp_path / "work"
+        work.mkdir()
+        (work / "out.txt").write_text("done")
+        final = tmp_path / "final"
+
+        totest.move_mesa_output(str(work), str(final))
+        assert not work.exists()
+        assert (final / "out.txt").read_text() == "done"
+
+    def test_copy(self, tmp_path):
+        """copyinstead=True leaves work_dir in place and copies it."""
+        work = tmp_path / "work"
+        work.mkdir()
+        (work / "out.txt").write_text("done")
+        final = tmp_path / "final"
+
+        totest.move_mesa_output(str(work), str(final), copyinstead=True)
+        assert work.exists()
+        assert (final / "out.txt").read_text() == "done"
+
+    def test_overwrite_existing_final(self, tmp_path, capsys):
+        """An existing final_dir is removed before moving."""
+        work = tmp_path / "work"
+        work.mkdir()
+        (work / "out.txt").write_text("new")
+        final = tmp_path / "final"
+        final.mkdir()
+        (final / "old.txt").write_text("old")
+
+        totest.move_mesa_output(str(work), str(final))
+        assert not work.exists()
+        assert (final / "out.txt").read_text() == "new"
+        assert not (final / "old.txt").exists()
+
+    def test_equal_dirs_is_noop(self, tmp_path):
+        """Moving to the same directory does nothing."""
+        work = tmp_path / "work"
+        work.mkdir()
+        (work / "out.txt").write_text("done")
+        totest.move_mesa_output(str(work), str(work))
+        assert (work / "out.txt").read_text() == "done"
+
+
+class TestRunMesa:
+    """Tests for run_mesa()."""
+
+    def _build_work_dir(self, tmp_path):
+        work = tmp_path / "work"
+        work.mkdir()
+        (work / "LOGS").mkdir()
+        (work / "LOGS" / "profile1.data").write_text("p")
+        (work / "LOGS1").mkdir()
+        (work / "LOGS1" / "profile2.data").write_text("p")
+        (work / "LOGS2").mkdir()
+        (work / "LOGS2" / "profile3.data").write_text("p")
+        (work / ".mesa_temp_cache").mkdir()
+        (work / "photos1").write_text("photo")
+        return work
+
+    def test_parent_process_cleans_up(self, tmp_path, monkeypatch):
+        """Parent process runs MESA and removes profiles/photos/cache."""
+        work = self._build_work_dir(tmp_path)
+        final = tmp_path / "final"
+
+        monkeypatch.setattr(totest.os, "fork", lambda: 1)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+        killed = []
+        monkeypatch.setattr(totest.os, "kill", lambda pid, sig: killed.append(pid))
+
+        totest.run_mesa("/path/mesa_binary", str(work), str(final))
+
+        assert system_calls[0] == "/path/mesa_binary &> {0}".format(
+            os.path.join(work, "out.txt")
+        )
+        assert "rm LOGS/profile*" in system_calls
+        assert "rm LOGS1/profile*" in system_calls
+        assert "rm LOGS2/profile*" in system_calls
+        assert "rm -rf .mesa_temp_cache" in system_calls
+        assert "rm -rf photos*" in system_calls
+        assert killed == [1]
+        # output moved to final_dir
+        assert os.path.isdir(os.path.join(final, "LOGS"))
+        assert not work.exists()
+
+    def test_keep_profiles_and_photos(self, tmp_path, monkeypatch):
+        """keep_profiles/keep_photos skip the corresponding removals."""
+        work = self._build_work_dir(tmp_path)
+        final = tmp_path / "final"
+
+        monkeypatch.setattr(totest.os, "fork", lambda: 1)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+        monkeypatch.setattr(totest.os, "kill", lambda pid, sig: None)
+
+        totest.run_mesa(
+            "/path/mesa_binary",
+            str(work),
+            str(final),
+            keep_profiles=True,
+            keep_photos=True,
+        )
+
+        assert not any("rm LOGS" in call for call in system_calls)
+        assert not any("rm -rf photos*" in call for call in system_calls)
+        assert "rm -rf .mesa_temp_cache" in system_calls
+
+    def test_child_process_sleeps_then_copies(self, tmp_path, monkeypatch):
+        """Child process waits then copies output before exiting."""
+        work = self._build_work_dir(tmp_path)
+        final = tmp_path / "final"
+
+        monkeypatch.setattr(totest.os, "fork", lambda: 0)
+        monkeypatch.setattr(totest.time, "time", lambda: 5)
+        sleeps = []
+        monkeypatch.setattr(totest.time, "sleep", sleeps.append)
+
+        with pytest.raises(SystemExit):
+            totest.run_mesa(
+                "/path/mesa_binary", str(work), str(final), job_end=10, job_before_end=2
+            )
+
+        assert sleeps == [3]
+        # copyinstead leaves the work dir in place
+        assert work.exists()
+        assert os.path.isdir(os.path.join(final, "LOGS"))
+
+
+class TestConvertInputColsToMesaCols:
+    """Tests for convert_input_cols_to_mesa_cols()."""
+
+    def test_column_renames(self):
+        """Convenience columns are derived from the standard names."""
+        grid = pandas.DataFrame(
+            {
+                "initial_period_days": [3.0, 4.0],
+                "initial_star_1_mass": [10.0, 12.0],
+                "initial_star_2_mass": [8.0, 9.0],
+            }
+        )
+        out = totest.convert_input_cols_to_mesa_cols(grid)
+        assert list(out["initial_period_in_days"]) == [3.0, 4.0]
+        assert list(out["m1"]) == [10.0, 12.0]
+        assert list(out["m2"]) == [8.0, 9.0]
+
+    def test_log_p_and_q_derivations(self):
+        """log_p maps to 10**log_p and q*m1 maps to m2."""
+        grid = pandas.DataFrame(
+            {
+                "log_p": [0.5],
+                "initial_star_1_mass": [10.0],
+                "q": [0.8],
+            }
+        )
+        out = totest.convert_input_cols_to_mesa_cols(grid)
+        assert out["initial_period_in_days"].iloc[0] == pytest.approx(10**0.5)
+        assert out["m2"].iloc[0] == pytest.approx(8.0)
+
+
+class TestExtractMesaResults:
+    """Tests for extract_mesa_results()."""
+
+    def test_success_returns_dataframe(self, tmp_path, monkeypatch):
+        """A successful PSyGrid extraction returns the resulting DataFrame."""
+        os.chdir(tmp_path)
+
+        class FakeGrid:
+            def create(self, *args, **kwargs):
+                return self
+
+            def load(self, path):
+                return self
+
+            def get_pandas_initial_final(self):
+                return pandas.DataFrame({"m1": [10.0]})
+
+            def close(self):
+                return None
+
+        monkeypatch.setattr(totest, "PSyGrid", lambda: FakeGrid())
+        df = totest.extract_mesa_results(str(tmp_path / "final"))
+        assert not df.empty
+        assert list(df["m1"]) == [10.0]
+
+    def test_failure_returns_empty_dataframe(self, tmp_path, monkeypatch):
+        """Any exception during extraction yields an empty DataFrame."""
+        os.chdir(tmp_path)
+
+        class BrokenGrid:
+            def create(self, *args, **kwargs):
+                raise RuntimeError("boom")
+
+        monkeypatch.setattr(totest, "PSyGrid", lambda: BrokenGrid())
+        df = totest.extract_mesa_results(str(tmp_path / "final"))
+        assert df.empty
+
+
+class TestGetNextGridPoint:
+    """Tests for get_next_grid_point()."""
+
+    @pytest.fixture
+    def mesa_kwargs(self):
+        return {
+            "TableData_kwargs": {
+                "input_cols": ["m1", "m2"],
+                "output_cols": ["period_days"],
+                "class_col_name": "class",
+            },
+            "posydon_dynamic_sampling_kwargs": {
+                "in_scaling": ["log", "log"],
+                "out_scaling": ["log"],
+            },
+        }
+
+    @pytest.fixture
+    def mock_psy_cris(self, monkeypatch, mesa_kwargs):
+        monkeypatch.setattr(
+            "posydon.active_learning.psy_cris.utils.parse_inifile",
+            lambda path: mesa_kwargs,
+        )
+        monkeypatch.setattr(
+            "posydon.active_learning.psy_cris.utils.get_new_query_points",
+            lambda N_new_points, **kwargs: (np.array([[10.5, 8.5]]), np.array([1])),
+        )
+
+        class FakeScaler:
+            def fit_and_transform(self, data, method=None):
+                return data
+
+            def inv_transform(self, data):
+                return data
+
+        monkeypatch.setattr("posydon.interpolation.data_scaling.DataScaler", FakeScaler)
+
+    def test_returns_query_points(self, mock_psy_cris, mesa_kwargs):
+        """A valid grid returns the inv-transformed query points and classes."""
+        grid = pandas.DataFrame(
+            {
+                "m1": [10.0, 11.0],
+                "m2": [8.0, 9.0],
+                "period_days": [1.0, 2.0],
+            }
+        )
+        query_points, classes = totest.get_next_grid_point(
+            "/path/psycris.ini", grid, n_new_points=1
+        )
+        assert np.array_equal(query_points, np.array([[10.5, 8.5]]))
+        assert np.array_equal(classes, np.array([1]))
+
+    def test_bad_input_columns(self, mock_psy_cris, mesa_kwargs):
+        """Missing input columns raise ValueError mentioning the bad columns."""
+        grid = pandas.DataFrame({"m1": [10.0], "period_days": [1.0]})
+        with pytest.raises(
+            ValueError,
+            match=r"Bad input columns given: \['m1', 'm2'\],\nMust be in:",
+        ):
+            totest.get_next_grid_point("/path/psycris.ini", grid, n_new_points=1)
+
+    def test_bad_output_columns(self, mock_psy_cris, mesa_kwargs):
+        """Missing output columns raise ValueError mentioning the bad columns."""
+        grid = pandas.DataFrame({"m1": [10.0], "m2": [8.0]})
+        with pytest.raises(
+            ValueError,
+            match=r"Bad output columns given: \['period_days'\]\nMust be in:",
+        ):
+            totest.get_next_grid_point("/path/psycris.ini", grid, n_new_points=1)
