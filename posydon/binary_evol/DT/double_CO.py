@@ -119,6 +119,7 @@ class _SBrentqDenseOutput:
         return result
 
 
+
 class DoubleCO(detached_step):
     """Evolve a double compact-object binary due to gravitational radiation.
 
