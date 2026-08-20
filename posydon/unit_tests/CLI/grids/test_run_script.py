@@ -4,31 +4,18 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
 
-import importlib.machinery
-import importlib.util
 import os
 import sys
-from pathlib import Path
 from types import SimpleNamespace
 
 import numpy as np
 import pandas
 import pytest
 
-REPO_ROOT = Path(__file__).resolve().parents[4]
+from posydon.CLI.grids import run
+from posydon.utils.posydonwarning import OverwriteWarning
 
-
-def _load_script(name, path):
-    # The bin scripts have no .py extension, so spec_from_file_location returns
-    # None; use an explicit SourceFileLoader instead.
-    loader = importlib.machinery.SourceFileLoader(name, str(path))
-    spec = importlib.util.spec_from_loader(name, loader)
-    mod = importlib.util.module_from_spec(spec)
-    loader.exec_module(mod)
-    return mod
-
-
-totest = _load_script("run_grid_script", REPO_ROOT / "bin" / "posydon-run-grid")
+totest = run
 
 
 @pytest.fixture(autouse=True)
@@ -55,6 +42,42 @@ def _make_args(tmp_path, **overrides):
     for key, value in overrides.items():
         setattr(args, key, value)
     return args
+
+
+def _make_main_args(tmp_path, **overrides):
+    """Build an argparse-like namespace with all fields main() reads."""
+    args = _make_args(
+        tmp_path,
+        mesa_grid=str(tmp_path / "grid.csv"),
+        grid_type="fixed",
+        grid_point_index=0,
+        mesa_binary_executable="/exe/binary",
+        mesa_star1_executable="/exe/star1",
+        mesa_star2_executable="/exe/star2",
+        mesa_binary_inlist_project="/inlist/project",
+        mesa_binary_inlist1="/inlist/1",
+        mesa_binary_inlist2="/inlist/2",
+        mesa_star1_inlist_project=["/inlist/star1"],
+        mesa_star2_inlist_project=["/inlist/star2"],
+        psycris_inifile="/path/psycris.ini",
+        keep_profiles=False,
+        keep_photos=False,
+        job_end=1000,
+        job_before_end=300,
+    )
+    for key, value in overrides.items():
+        setattr(args, key, value)
+    return args
+
+
+def _fake_clean_inlist(path):
+    """Return a fixed-grid inlist structure used by most main() tests."""
+    return {
+        "&binary_controls": {"m1": None, "mdot_scheme": None},
+        "&binary_job": {},
+        "&controls": {"m2": None},
+        "&star_job": {},
+    }
 
 
 class TestIdGenerator:
@@ -218,6 +241,102 @@ class TestCreateBinaryInlists:
         assert "&star_job\n" in star2
         assert "saved_model_name = initial.mod" in star2
 
+    def test_all_value_types_and_overwrite_warning(self, tmp_path):
+        """Every value type is formatted in all six sections and existing
+        files are warned about and replaced."""
+        work_dir = tmp_path
+        for name in [
+            "inlist",
+            "inlist_grid_points",
+            "inlist_grid_star1_binary_controls",
+            "inlist_grid_star2_binary_controls",
+            "inlist_grid_star1_binary_job",
+            "inlist_grid_star2_binary_job",
+        ]:
+            (work_dir / name).write_text("old")
+
+        values = {
+            "float_non_int": 0.5,
+            "float_int": 2.0,
+            "true_flag": True,
+            "false_flag": False,
+            "str_value": "initial.mod",
+            "int_value": 7,
+        }
+
+        with pytest.warns(OverwriteWarning):
+            totest.create_binary_inlists(
+                values, values, values, values, values, values,
+                str(work_dir), "/path/to/inlist_project",
+            )
+
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert "\tfloat_non_int = 5.0000000000d-01" in points
+        assert "\tfloat_int = 2" in points
+        assert "\ttrue_flag = .true." in points
+        assert "\tfalse_flag = .false." in points
+        assert "str_value = initial.mod" in points
+        assert "int_value = 7" in points
+
+        for name in [
+            "inlist_grid_star1_binary_controls",
+            "inlist_grid_star2_binary_controls",
+            "inlist_grid_star1_binary_job",
+            "inlist_grid_star2_binary_job",
+        ]:
+            content = (work_dir / name).read_text()
+            assert "\tfloat_non_int = 5.0000000000d-01" in content
+            assert "\tfloat_int = 2" in content
+            assert "\ttrue_flag = .true." in content
+            assert "\tfalse_flag = .false." in content
+            assert "str_value = initial.mod" in content
+            assert "int_value = 7" in content
+
+    def test_star2_controls_and_star1_job_without_preexisting(self, tmp_path):
+        """star2 controls and star1 job sections are written when the target
+        files do not already exist."""
+        work_dir = tmp_path
+        totest.create_binary_inlists(
+            {},
+            {},
+            {},
+            {"star1_job_flag": True},
+            {"star2_control": 0.5},
+            {},
+            str(work_dir),
+            "/path/to/inlist_project",
+        )
+
+        star1 = (work_dir / "inlist_grid_star1_binary_job").read_text()
+        assert "&star_job\n" in star1
+        assert "\tstar1_job_flag = .true." in star1
+
+        star2 = (work_dir / "inlist_grid_star2_binary_controls").read_text()
+        assert "&controls\n" in star2
+        assert "\tstar2_control = 5.0000000000d-01" in star2
+
+    def test_all_empty_dicts_writes_only_inlist(self, tmp_path):
+        """Empty dicts skip all grid-point sections and write no per-star files."""
+        work_dir = tmp_path
+        totest.create_binary_inlists(
+            {}, {}, {}, {}, {}, {}, str(work_dir), "/path/to/inlist_project"
+        )
+
+        inlist = (work_dir / "inlist").read_text()
+        assert "&binary_controls\n" in inlist
+        assert "&binary_job\n" in inlist
+
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert points.strip() == ""
+
+        for name in [
+            "inlist_grid_star1_binary_controls",
+            "inlist_grid_star2_binary_controls",
+            "inlist_grid_star1_binary_job",
+            "inlist_grid_star2_binary_job",
+        ]:
+            assert not (work_dir / name).exists()
+
 
 class TestCreateStarFormation:
     """Tests for create_star_formation()."""
@@ -251,6 +370,23 @@ class TestCreateStarFormation:
         assert "initial_z" not in points
         assert "Zbase" not in points
         assert "new_Z" not in points
+
+    def test_existing_inlists_warned_and_overwritten(self, tmp_path):
+        """Existing inlist files are warned about and replaced."""
+        work_dir = tmp_path
+        (work_dir / "inlist").write_text("old")
+        (work_dir / "inlist_grid_points").write_text("old")
+
+        with pytest.warns(OverwriteWarning):
+            totest.create_star_formation(
+                10.0, str(work_dir), "/path/inlist", initial_z=0.0142, new_Z=True
+            )
+
+        inlist = (work_dir / "inlist").read_text()
+        assert "extra_controls_inlist1_name = '/path/inlist'" in inlist
+        points = (work_dir / "inlist_grid_points").read_text()
+        assert "initial_mass = 1.0000000000d+01" in points
+        assert "new_Z = 1.4200000000d-02" in points
 
 
 class TestMoveMesaOutput:
@@ -385,6 +521,67 @@ class TestRunMesa:
         assert work.exists()
         assert os.path.isdir(os.path.join(final, "LOGS"))
 
+    def test_equal_dirs_does_not_fork(self, tmp_path, monkeypatch):
+        """When work_dir equals final_dir no fork happens and nothing is killed."""
+        work = tmp_path / "work"
+        work.mkdir()
+
+        fork_calls = []
+        monkeypatch.setattr(totest.os, "fork", lambda: fork_calls.append(1) or 999)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+        killed = []
+        monkeypatch.setattr(totest.os, "kill", lambda pid, sig: killed.append(pid))
+
+        totest.run_mesa("/path/mesa_binary", str(work), str(work))
+
+        assert fork_calls == []
+        assert system_calls == [
+            "/path/mesa_binary &> {0}".format(os.path.join(work, "out.txt")),
+            "rm -rf photos*",
+        ]
+        assert killed == []
+
+    def test_child_waits_minimum_when_past_job_end(self, tmp_path, monkeypatch):
+        """A child with a job_end already in the past waits the minimum 60s."""
+        work = tmp_path / "work"
+        work.mkdir()
+        final = tmp_path / "final"
+
+        monkeypatch.setattr(totest.os, "fork", lambda: 0)
+        monkeypatch.setattr(totest.time, "time", lambda: 100)
+        sleeps = []
+        monkeypatch.setattr(totest.time, "sleep", sleeps.append)
+
+        with pytest.raises(SystemExit):
+            totest.run_mesa(
+                "/path/mesa_binary",
+                str(work),
+                str(final),
+                job_end=50,
+                job_before_end=300,
+            )
+
+        assert sleeps == [60]
+
+    def test_negative_fork_result_skips_both_paths(self, tmp_path, monkeypatch):
+        """A negative fork result (an error) skips parent and child logic."""
+        work = tmp_path / "work"
+        work.mkdir()
+        final = tmp_path / "final"
+        final.mkdir()
+
+        monkeypatch.setattr(totest.os, "fork", lambda: -1)
+        system_calls = []
+        monkeypatch.setattr(totest.os, "system", system_calls.append)
+        killed = []
+        monkeypatch.setattr(totest.os, "kill", lambda pid, sig: killed.append(pid))
+
+        totest.run_mesa("/path/mesa_binary", str(work), str(final))
+
+        assert system_calls == []
+        assert killed == []
+
 
 class TestConvertInputColsToMesaCols:
     """Tests for convert_input_cols_to_mesa_cols()."""
@@ -415,6 +612,13 @@ class TestConvertInputColsToMesaCols:
         out = totest.convert_input_cols_to_mesa_cols(grid)
         assert out["initial_period_in_days"].iloc[0] == pytest.approx(10**0.5)
         assert out["m2"].iloc[0] == pytest.approx(8.0)
+
+    def test_without_initial_star_1_mass(self):
+        """m2 is still derived when only initial_star_2_mass is present."""
+        grid = pandas.DataFrame({"initial_star_2_mass": [8.0], "q": [0.8]})
+        out = totest.convert_input_cols_to_mesa_cols(grid)
+        assert "m1" not in out.columns
+        assert list(out["m2"]) == [8.0]
 
 
 class TestExtractMesaResults:
@@ -525,6 +729,41 @@ class TestGetNextGridPoint:
         ):
             totest.get_next_grid_point("/path/psycris.ini", grid, n_new_points=1)
 
+    def test_class_output_column_skipped(self, mock_psy_cris, mesa_kwargs, monkeypatch):
+        """The class column is excluded from output scaling."""
+        mesa_kwargs["TableData_kwargs"]["output_cols"] = ["period_days", "class"]
+
+        class FakeScaler:
+            transformed = []
+
+            def fit_and_transform(self, data, method=None):
+                FakeScaler.transformed.append(np.asarray(data).tolist())
+                return data
+
+            def inv_transform(self, data):
+                return data
+
+        monkeypatch.setattr(
+            "posydon.interpolation.data_scaling.DataScaler", FakeScaler
+        )
+
+        grid = pandas.DataFrame(
+            {
+                "m1": [10.0, 11.0],
+                "m2": [8.0, 9.0],
+                "period_days": [1.0, 2.0],
+                "class": [0, 1],
+            }
+        )
+        query_points, classes = totest.get_next_grid_point(
+            "/path/psycris.ini", grid, n_new_points=1
+        )
+
+        assert [0, 1] not in FakeScaler.transformed
+        assert [1.0, 2.0] in FakeScaler.transformed
+        assert np.array_equal(query_points, np.array([[10.5, 8.5]]))
+        assert np.array_equal(classes, np.array([1]))
+
 
 class TestMainFlow:
     """Tests for main()."""
@@ -560,4 +799,819 @@ class TestMainFlow:
             ],
         )
         with pytest.raises(ValueError, match="Grid format not recognized"):
+            totest.main()
+
+
+class TestParseCommandline:
+    """Tests for parse_commandline()."""
+
+    def _argv(self, grid_type="fixed", extra=None):
+        argv = [
+            "posydon-run-grid",
+            "--mesa-grid", "/path/grid.csv",
+            "--grid-type", grid_type,
+            "--output-directory", "/out",
+            "--mesa-binary-executable", "/exe/binary",
+            "--mesa-binary-inlist-project", "/inlist/project",
+            "--mesa-binary-inlist1", "/inlist/1",
+            "--mesa-binary-inlist2", "/inlist/2",
+            "--mesa-star1-inlist-project", "/inlist/star1",
+            "--mesa-star2-inlist-project", "/inlist/star2",
+            "--mesa-star-history-columns", "/cols/history",
+            "--mesa-binary-history-columns", "/cols/binary_history",
+            "--mesa-profile-columns", "/cols/profile",
+        ]
+        if extra:
+            argv.extend(extra)
+        return argv
+
+    def test_valid_fixed(self, monkeypatch):
+        """A valid fixed-grid invocation returns the parsed arguments."""
+        monkeypatch.setattr(sys, "argv", self._argv())
+        args = totest.parse_commandline()
+        assert args.grid_type == "fixed"
+        assert args.grid_point_index is None
+        assert args.Niter == 200
+        assert args.job_before_end == 300
+
+    def test_valid_dynamic(self, monkeypatch):
+        """A valid dynamic-grid invocation requires a psycris inifile."""
+        monkeypatch.setattr(
+            sys, "argv", self._argv("dynamic", ["--psycris-inifile", "/path/ini"])
+        )
+        args = totest.parse_commandline()
+        assert args.grid_type == "dynamic"
+        assert args.psycris_inifile == "/path/ini"
+
+    def test_invalid_grid_type(self, monkeypatch):
+        """An unknown grid type makes argparse exit."""
+        monkeypatch.setattr(sys, "argv", self._argv("unknown"))
+        with pytest.raises(SystemExit):
+            totest.parse_commandline()
+
+    def test_dynamic_without_psycris_inifile(self, monkeypatch):
+        """A dynamic grid without --psycris-inifile makes argparse exit."""
+        monkeypatch.setattr(sys, "argv", self._argv("dynamic"))
+        with pytest.raises(SystemExit):
+            totest.parse_commandline()
+
+
+class TestDoRootProcessLogic:
+    """Tests for do_root_process_logic()."""
+
+    def _setup(self, tmp_path, monkeypatch):
+        monkeypatch.setattr(totest, "size", 2, raising=False)
+        sent = []
+        received = []
+
+        class FakeReq:
+            def wait(self):
+                return None
+
+        class FakeComm:
+            def isend(self, obj, dest):
+                sent.append((obj, dest))
+                return FakeReq()
+
+            def recv(self, source, tag, status):
+                received.append((source, tag))
+                return pandas.DataFrame(
+                    {
+                        "initial_star_1_mass": [11.0],
+                        "initial_star_2_mass": [9.0],
+                        "initial_period_days": [4.0],
+                    }
+                )
+
+        comm = FakeComm()
+
+        class FakeStatus:
+            def Get_source(self):
+                return 1
+
+        class FakeMPI:
+            ANY_SOURCE = "ANY_SOURCE"
+            ANY_TAG = "ANY_TAG"
+
+            @staticmethod
+            def Status():
+                return FakeStatus()
+
+        monkeypatch.setattr(totest, "MPI", FakeMPI, raising=False)
+        monkeypatch.setattr(
+            "posydon.active_learning.psy_cris.utils.parse_inifile",
+            lambda path: {"TableData_kwargs": {"input_cols": ["m1", "m2"]}},
+        )
+        sampled = []
+        monkeypatch.setattr(
+            totest,
+            "get_next_grid_point",
+            lambda *a, **k: sampled.append(k)
+            or (np.array([[10.5, 8.5]]), np.array([1])),
+        )
+        grid = pandas.DataFrame(
+            {
+                "initial_star_1_mass": [10.0],
+                "initial_star_2_mass": [8.0],
+                "initial_period_days": [3.0],
+            }
+        )
+        return comm, grid, sent, received, sampled
+
+    def test_root_loop(self, tmp_path, monkeypatch):
+        """Root sends points, receives a result, saves it, and samples again."""
+        (tmp_path / "output").mkdir()
+        args = _make_args(tmp_path, psycris_inifile="/path/ini", Niter=1)
+        comm, grid, sent, received, sampled = self._setup(tmp_path, monkeypatch)
+        grid.append = lambda other, sort=False: pandas.concat([grid, other], sort=sort)
+
+        totest.do_root_process_logic(
+            comm, grid, args, [], [], [], [], [], []
+        )
+
+        assert len(received) == 1
+        assert len(sent) == 2
+        assert len(sampled) == 2
+        results = tmp_path / "output" / "grid_results.csv"
+        assert results.exists()
+        content = results.read_text()
+        assert "initial_star_1_mass" in content
+        assert "initial_star_2_mass" in content
+
+    def test_root_overwrites_existing_results(self, tmp_path, monkeypatch):
+        """An existing grid_results.csv is warned about and replaced."""
+        output = tmp_path / "output"
+        output.mkdir()
+        (output / "grid_results.csv").write_text("old")
+        args = _make_args(tmp_path, psycris_inifile="/path/ini", Niter=1)
+        comm, grid, sent, received, sampled = self._setup(tmp_path, monkeypatch)
+        grid.append = lambda other, sort=False: pandas.concat([grid, other], sort=sort)
+
+        with pytest.warns(OverwriteWarning):
+            totest.do_root_process_logic(
+                comm, grid, args, [], [], [], [], [], []
+            )
+
+        content = (output / "grid_results.csv").read_text()
+        assert "old" not in content
+        assert "initial_star_1_mass" in content
+
+    def test_root_result_without_optional_columns(self, tmp_path, monkeypatch):
+        """Root skips q/log_p derivation when the result lacks those columns."""
+        (tmp_path / "output").mkdir()
+        args = _make_args(tmp_path, psycris_inifile="/path/ini", Niter=1)
+        monkeypatch.setattr(totest, "size", 2, raising=False)
+        sent = []
+
+        class FakeReq:
+            def wait(self):
+                return None
+
+        class FakeComm:
+            def isend(self, obj, dest):
+                sent.append((obj, dest))
+                return FakeReq()
+
+            def recv(self, source, tag, status):
+                return pandas.DataFrame({"initial_star_1_mass": [11.0]})
+
+        comm = FakeComm()
+
+        class FakeStatus:
+            def Get_source(self):
+                return 1
+
+        class FakeMPI:
+            ANY_SOURCE = "ANY_SOURCE"
+            ANY_TAG = "ANY_TAG"
+
+            @staticmethod
+            def Status():
+                return FakeStatus()
+
+        monkeypatch.setattr(totest, "MPI", FakeMPI, raising=False)
+        monkeypatch.setattr(
+            "posydon.active_learning.psy_cris.utils.parse_inifile",
+            lambda path: {"TableData_kwargs": {"input_cols": ["m1"]}},
+        )
+        sampled = []
+        monkeypatch.setattr(
+            totest,
+            "get_next_grid_point",
+            lambda *a, **k: sampled.append(k)
+            or (np.array([[10.5]]), np.array([1])),
+        )
+        grid = pandas.DataFrame({"initial_star_1_mass": [10.0]})
+        grid.append = lambda other, sort=False: pandas.concat([grid, other], sort=sort)
+
+        totest.do_root_process_logic(
+            comm, grid, args, [], [], [], [], [], []
+        )
+
+        assert len(sent) == 2
+        results = tmp_path / "output" / "grid_results.csv"
+        assert results.exists()
+
+    def test_root_append_failure_raises(self, tmp_path, monkeypatch):
+        """A failed grid append raises the version-mismatch ValueError."""
+        (tmp_path / "output").mkdir()
+        args = _make_args(tmp_path, psycris_inifile="/path/ini", Niter=1)
+        comm, grid, sent, received, sampled = self._setup(tmp_path, monkeypatch)
+
+        with pytest.raises(
+            ValueError, match="version of POSYDON used to make the fixed grid"
+        ):
+            totest.do_root_process_logic(
+                comm, grid, args, [], [], [], [], [], []
+            )
+
+
+class TestDoChildProcessLogic:
+    """Tests for do_child_process_logic()."""
+
+    def test_receives_runs_and_sends_result(self, tmp_path, monkeypatch, capsys):
+        """Child receives a grid dict, runs the point, and sends the result back."""
+        monkeypatch.setattr(totest, "grid_params_binary_controls", ["mdot_scheme"], raising=False)
+        monkeypatch.setattr(totest, "grid_params_binary_job", [], raising=False)
+        monkeypatch.setattr(totest, "grid_params_star1_binary_controls", [], raising=False)
+        monkeypatch.setattr(totest, "grid_params_star1_binary_job", [], raising=False)
+        monkeypatch.setattr(totest, "grid_params_star2_binary_controls", [], raising=False)
+        monkeypatch.setattr(totest, "grid_params_star2_binary_job", [], raising=False)
+        monkeypatch.setattr(totest, "rank", 1, raising=False)
+
+        grid_dict = {"mdot_scheme": 0.5, "m1": 10.0}
+        sent = []
+
+        class FakeReq:
+            def wait(self):
+                return grid_dict
+
+        class FakeComm:
+            def irecv(self, source):
+                return FakeReq()
+
+            def send(self, obj, dest):
+                sent.append((obj, dest))
+
+        result = pandas.DataFrame({"m1": [10.0]})
+        monkeypatch.setattr(totest, "run_grid_point", lambda *a, **k: result)
+        args = _make_args(tmp_path)
+
+        totest.do_child_process_logic(
+            FakeComm(), pandas.DataFrame({"x": [1]}), args,
+            star1_formation=True, star2_formation=False,
+        )
+
+        assert sent == [(result, 0)]
+        out = capsys.readouterr().out
+        assert "Process 1 is running with mdot_scheme : 0.5000" in out
+        assert "Job completed: From process 1" in out
+
+
+class TestRunGridPoint:
+    """Tests for run_grid_point()."""
+
+    def test_star_formation_steps_and_binary(self, tmp_path, monkeypatch):
+        """Both star-formation loops run in order, then the binary."""
+        calls = []
+        monkeypatch.setattr(
+            totest, "create_working_directory",
+            lambda *a, **k: ("/tmp/work", "/tmp/final"),
+        )
+        monkeypatch.setattr(
+            totest, "create_star_formation",
+            lambda *a, **k: calls.append(("create_star_formation", a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "run_mesa",
+            lambda *a, **k: calls.append(("run_mesa", a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "create_binary_inlists",
+            lambda *a, **k: calls.append(("create_binary_inlists", a, k)),
+        )
+        result = pandas.DataFrame({"m1": [10.0]})
+        monkeypatch.setattr(totest, "extract_mesa_results", lambda final_dir: result)
+
+        args = _make_main_args(
+            tmp_path,
+            mesa_star1_inlist_project=["step0", "step1"],
+            mesa_star2_inlist_project=["step2"],
+            keep_profiles=True,
+            keep_photos=False,
+            job_end=500,
+            job_before_end=50,
+        )
+        grid_param_dict = {"m1": 10.0, "m2": 8.0, "initial_z": 0.0142}
+        binary_controls = {"mdot_scheme": 0.5}
+        binary_job = {}
+        s1c, s1j, s2c, s2j = {}, {}, {}, {}
+
+        out = totest.run_grid_point(
+            pandas.DataFrame({"x": [1]}), True, True, grid_param_dict,
+            binary_controls, binary_job, s1c, s1j, s2c, s2j, args,
+        )
+
+        names = [c[0] for c in calls]
+        assert names == [
+            "create_star_formation", "run_mesa",
+            "create_star_formation", "run_mesa",
+            "create_star_formation", "run_mesa",
+            "create_binary_inlists", "run_mesa",
+        ]
+        assert calls[0][1] == (10.0, "/tmp/work", "step0")
+        assert calls[1][2] == {
+            "keep_work_dir": True,
+            "outfile_name": "out_star1_formation_step0.txt",
+        }
+        assert calls[2][1] == (10.0, "/tmp/work", "step1", 0.0142, True)
+        assert calls[3][2]["outfile_name"] == "out_star1_formation_step1.txt"
+        assert calls[4][1] == (8.0, "/tmp/work", "step2")
+        assert calls[5][2]["outfile_name"] == "out_star2_formation_step0.txt"
+        assert calls[6][1][:6] == (binary_controls, binary_job, s1c, s1j, s2c, s2j)
+        assert calls[6][1][6:] == ("/tmp/work", "/inlist/project")
+        assert calls[7][1] == ("/exe/binary", "/tmp/work", "/tmp/final")
+        assert calls[7][2] == {
+            "keep_profiles": True,
+            "keep_photos": False,
+            "job_end": 500,
+            "job_before_end": 50,
+        }
+        assert out is result
+
+    def test_no_formation_skips_star_loops(self, tmp_path, monkeypatch):
+        """With both formations disabled only the binary is run."""
+        calls = []
+        monkeypatch.setattr(
+            totest, "create_working_directory",
+            lambda *a, **k: ("/tmp/work", "/tmp/final"),
+        )
+        monkeypatch.setattr(
+            totest, "create_star_formation",
+            lambda *a, **k: calls.append("create_star_formation"),
+        )
+        monkeypatch.setattr(
+            totest, "run_mesa",
+            lambda *a, **k: calls.append("run_mesa"),
+        )
+        monkeypatch.setattr(
+            totest, "create_binary_inlists",
+            lambda *a, **k: calls.append("create_binary_inlists"),
+        )
+        monkeypatch.setattr(
+            totest, "extract_mesa_results", lambda final_dir: pandas.DataFrame()
+        )
+        args = _make_main_args(tmp_path)
+
+        out = totest.run_grid_point(
+            pandas.DataFrame({"x": [1]}), False, False, {"m1": 10.0},
+            {}, {}, {}, {}, {}, {}, args,
+        )
+
+        assert calls == ["create_binary_inlists", "run_mesa"]
+        assert out.empty
+
+    def test_three_step_star1_and_two_step_star2(self, tmp_path, monkeypatch):
+        """Star1 formation indexes beyond 1 and star2 index 1 are handled."""
+        calls = []
+        monkeypatch.setattr(
+            totest, "create_working_directory",
+            lambda *a, **k: ("/tmp/work", "/tmp/final"),
+        )
+        monkeypatch.setattr(
+            totest, "create_star_formation",
+            lambda *a, **k: calls.append(("create_star_formation", a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "run_mesa",
+            lambda *a, **k: calls.append(("run_mesa", a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "create_binary_inlists",
+            lambda *a, **k: calls.append(("create_binary_inlists", a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "extract_mesa_results", lambda final_dir: pandas.DataFrame()
+        )
+
+        args = _make_main_args(
+            tmp_path,
+            mesa_star1_inlist_project=["s0", "s1", "s2"],
+            mesa_star2_inlist_project=["s0", "s1", "s2"],
+        )
+        grid_param_dict = {"m1": 10.0, "m2": 8.0, "initial_z": 0.0142}
+
+        totest.run_grid_point(
+            pandas.DataFrame({"x": [1]}), True, True, grid_param_dict,
+            {}, {}, {}, {}, {}, {}, args,
+        )
+
+        sf = [c for c in calls if c[0] == "create_star_formation"]
+        assert sf[0][1] == (10.0, "/tmp/work", "s0")
+        assert sf[1][1] == (10.0, "/tmp/work", "s1", 0.0142, True)
+        assert sf[2][1] == (8.0, "/tmp/work", "s0")
+        assert sf[3][1] == (8.0, "/tmp/work", "s1", 0.0142, True)
+        assert len(sf) == 4
+        rm = [c for c in calls if c[0] == "run_mesa"]
+        assert len(rm) == 7
+        assert rm[2][2]["outfile_name"] == "out_star1_formation_step2.txt"
+        assert rm[5][2]["outfile_name"] == "out_star2_formation_step2.txt"
+        assert "outfile_name" not in rm[6][2]
+
+
+class TestMain:
+    """Tests for main() beyond the error paths in TestMainFlow."""
+
+    def test_main_fixed_pass(self, tmp_path, monkeypatch, capsys):
+        """A fixed grid without a grid-point index only prints the parameters."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame({"initial_mass": [10.0]}).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_point_index=None,
+            mesa_star1_inlist_project=["None"],
+            mesa_star2_inlist_project=["None"],
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+        run_calls = []
+        monkeypatch.setattr(
+            totest, "run_grid_point",
+            lambda *a, **k: run_calls.append(a) or pandas.DataFrame(),
+        )
+
+        totest.main()
+
+        assert run_calls == []
+        out = capsys.readouterr().out
+        assert "Grid parameters that effect binary_controls:" in out
+        assert "Grid parameters that effect star2_binary_job:" in out
+
+    def test_main_fixed_grid_point_writes_and_appends(self, tmp_path, monkeypatch):
+        """A fixed grid-point index runs the point and writes/extends results."""
+        grid_path = tmp_path / "grid.csv"
+        row = {
+            "initial_mass": 10.0,
+            "initial_z": 0.0142,
+            "m1": 10.0,
+            "m2": 8.0,
+            "initial_star_1_mass": 10.0,
+            "initial_star_2_mass": 8.0,
+            "initial_period_days": 3.0,
+            "initial_period_in_days": 3.0,
+            "mdot_scheme": "Kolb",
+        }
+        pandas.DataFrame([row]).to_csv(grid_path, index=False)
+        args = _make_main_args(tmp_path, mesa_grid=str(grid_path))
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+        results = [
+            pandas.DataFrame({"m1": [10.0], "log_p": [0.5]}),
+            pandas.DataFrame({"m1": [11.0], "log_p": [0.6]}),
+        ]
+        run_calls = []
+        monkeypatch.setattr(
+            totest, "run_grid_point",
+            lambda *a, **k: run_calls.append(a) or results.pop(0),
+        )
+        (tmp_path / "output").mkdir()
+
+        totest.main()
+        totest.main()
+
+        assert len(run_calls) == 2
+        csv = tmp_path / "output" / "grid_results.csv"
+        assert csv.exists()
+        lines = csv.read_text().strip().splitlines()
+        assert len(lines) == 3
+        assert "10.0" in lines[1]
+        assert "11.0" in lines[2]
+
+    def test_main_fixed_empty_mesa_result(self, tmp_path, monkeypatch):
+        """An empty mesa result writes no grid_results.csv."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame(
+            [{"m1": 10.0, "m2": 8.0, "mdot_scheme": "Kolb"}]
+        ).to_csv(grid_path, index=False)
+        args = _make_main_args(tmp_path, mesa_grid=str(grid_path))
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+        monkeypatch.setattr(totest, "run_grid_point", lambda *a, **k: pandas.DataFrame())
+        (tmp_path / "output").mkdir()
+
+        totest.main()
+
+        assert not (tmp_path / "output" / "grid_results.csv").exists()
+
+    def test_main_h5_grid(self, tmp_path, monkeypatch):
+        """An .h5 grid is loaded through PSyGrid."""
+        args = _make_main_args(tmp_path, mesa_grid="/path/grid.h5", grid_point_index=None)
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+
+        class FakePSyGrid:
+            def __init__(self):
+                self.loaded = None
+
+            def load(self, path):
+                self.loaded = path
+                return self
+
+            def get_pandas_initial_final(self):
+                return pandas.DataFrame({"m1": [10.0]})
+
+            def close(self):
+                return None
+
+        grid = FakePSyGrid()
+        monkeypatch.setattr(totest, "PSyGrid", lambda: grid)
+
+        totest.main()
+
+        assert grid.loaded == "/path/grid.h5"
+
+    def test_main_single_star_grid(self, tmp_path, monkeypatch, capsys):
+        """A single-star grid runs its formation steps and exits."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame(
+            [{"initial_mass": 10.0, "initial_z": 0.0142}]
+        ).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_point_index=0,
+            mesa_star1_inlist_project=["step0", "step1"],
+            mesa_star2_executable=None,
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(
+            totest.utils,
+            "clean_inlist_file",
+            lambda path: {
+                "&binary_controls": {"m1": None},
+                "&binary_job": {},
+                "&controls": {"initial_mass": None, "initial_z": None},
+                "&star_job": {},
+            },
+        )
+        monkeypatch.setattr(
+            totest, "create_working_directory",
+            lambda *a, **k: ("/tmp/work", "/tmp/final"),
+        )
+        formation_calls = []
+        run_calls = []
+        monkeypatch.setattr(
+            totest, "create_star_formation",
+            lambda *a, **k: formation_calls.append((a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "run_mesa",
+            lambda *a, **k: run_calls.append((a, k)),
+        )
+
+        with pytest.raises(SystemExit):
+            totest.main()
+
+        assert formation_calls[0][0] == (10.0, "/tmp/work", "step0")
+        assert formation_calls[1][0] == (10.0, "/tmp/work", "step1", 0.0142, False)
+        assert run_calls[0][1]["keep_work_dir"] is True
+        assert run_calls[1][1]["keep_work_dir"] is False
+        assert run_calls[0][1]["outfile_name"] == "out_star1_formation_step0.txt"
+        assert run_calls[1][1]["outfile_name"] == "out_star1_formation_step1.txt"
+        out = capsys.readouterr().out
+        assert "You are running a single star grid" in out
+
+    def test_main_single_star_three_steps(self, tmp_path, monkeypatch, capsys):
+        """A three-step single-star grid hits the index==1 formation branch."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame(
+            [{"initial_mass": 10.0, "initial_z": 0.0142}]
+        ).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_point_index=0,
+            mesa_star1_inlist_project=["step0", "step1", "step2"],
+            mesa_star2_executable=None,
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(
+            totest.utils,
+            "clean_inlist_file",
+            lambda path: {
+                "&binary_controls": {"m1": None},
+                "&binary_job": {},
+                "&controls": {"initial_mass": None, "initial_z": None},
+                "&star_job": {},
+            },
+        )
+        monkeypatch.setattr(
+            totest, "create_working_directory",
+            lambda *a, **k: ("/tmp/work", "/tmp/final"),
+        )
+        formation_calls = []
+        run_calls = []
+        monkeypatch.setattr(
+            totest, "create_star_formation",
+            lambda *a, **k: formation_calls.append((a, k)),
+        )
+        monkeypatch.setattr(
+            totest, "run_mesa",
+            lambda *a, **k: run_calls.append((a, k)),
+        )
+
+        with pytest.raises(SystemExit):
+            totest.main()
+
+        assert formation_calls[0][0] == (10.0, "/tmp/work", "step0")
+        assert formation_calls[1][0] == (10.0, "/tmp/work", "step1", 0.0142, True)
+        assert formation_calls[2][0] == (10.0, "/tmp/work", "step2", 0.0142, False)
+        assert run_calls[1][1]["keep_work_dir"] is True
+        assert run_calls[2][1]["keep_work_dir"] is False
+
+    def test_main_unknown_grid_type_prints_and_returns(self, tmp_path, monkeypatch, capsys):
+        """A grid type other than fixed/dynamic prints and returns without running."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame({"initial_mass": [10.0]}).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_type="other",
+            grid_point_index=None,
+            mesa_star1_inlist_project=["None"],
+            mesa_star2_inlist_project=["None"],
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+
+        totest.main()
+
+        out = capsys.readouterr().out
+        assert "Grid parameters that effect binary_controls:" in out
+
+    def test_main_dynamic_root(self, tmp_path, monkeypatch, capsys):
+        """The dynamic root process prints parameters and starts the root logic."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame([{"m1": 10.0, "initial_star_1_mass": 10.0}]).to_csv(
+            grid_path, index=False
+        )
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_type="dynamic",
+            grid_point_index=None,
+            mesa_star1_inlist_project=["None"],
+            mesa_star2_inlist_project=["None"],
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+        monkeypatch.setattr(
+            totest,
+            "parse_inifile",
+            lambda path: {
+                "posydon_dynamic_sampling_kwargs": {"mesa_column_names": ["m1"]}
+            },
+        )
+
+        class FakeMPI:
+            ANY_SOURCE = "ANY_SOURCE"
+            ANY_TAG = "ANY_TAG"
+
+            class COMM_WORLD:
+                @staticmethod
+                def Get_size():
+                    return 2
+
+                @staticmethod
+                def Get_rank():
+                    return 0
+
+            @staticmethod
+            def Get_processor_name():
+                return "node"
+
+        monkeypatch.setattr(totest, "MPI", FakeMPI, raising=False)
+        root_calls = []
+        monkeypatch.setattr(totest, "do_root_process_logic", lambda *a: root_calls.append(a))
+
+        totest.main()
+
+        assert len(root_calls) == 1
+        call = root_calls[0]
+        assert call[0] is FakeMPI.COMM_WORLD
+        assert call[2] is args
+        assert call[3] == ["m1"]
+        assert all(part == [] for part in call[4:])
+        out = capsys.readouterr().out
+        for msg in [
+            "binary_controls",
+            "binary_job",
+            "star1_binary_controls",
+            "star1_binary_job",
+            "star2_binary_controls",
+            "star2_binary_job",
+        ]:
+            assert "Grid parameters that effect {0}:".format(msg) in out
+
+    def test_main_dynamic_child(self, tmp_path, monkeypatch):
+        """The dynamic child loops on do_child_process_logic until exit."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame([{"m1": 10.0}]).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path,
+            mesa_grid=str(grid_path),
+            grid_type="dynamic",
+            grid_point_index=None,
+            mesa_star1_inlist_project=["None"],
+            mesa_star2_inlist_project=["None"],
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+        monkeypatch.setattr(totest.utils, "clean_inlist_file", _fake_clean_inlist)
+        monkeypatch.setattr(
+            totest,
+            "parse_inifile",
+            lambda path: {
+                "posydon_dynamic_sampling_kwargs": {"mesa_column_names": ["m1"]}
+            },
+        )
+
+        class FakeMPI:
+            ANY_SOURCE = "ANY_SOURCE"
+            ANY_TAG = "ANY_TAG"
+
+            class COMM_WORLD:
+                @staticmethod
+                def Get_size():
+                    return 2
+
+                @staticmethod
+                def Get_rank():
+                    return 1
+
+            @staticmethod
+            def Get_processor_name():
+                return "node"
+
+        monkeypatch.setattr(totest, "MPI", FakeMPI, raising=False)
+        child_calls = []
+
+        def fake_child(*a, **k):
+            child_calls.append((a, k))
+            raise SystemExit(0)
+
+        monkeypatch.setattr(totest, "do_child_process_logic", fake_child)
+
+        with pytest.raises(SystemExit):
+            totest.main()
+
+        assert len(child_calls) == 1
+        assert child_calls[0][1] == {
+            "star1_formation": False,
+            "star2_formation": False,
+        }
+
+    def test_main_dynamic_grid_point_index_error(self, tmp_path, monkeypatch):
+        """Requesting a specific point with multiple MPI tasks raises ValueError."""
+        grid_path = tmp_path / "grid.csv"
+        pandas.DataFrame([{"m1": 10.0}]).to_csv(grid_path, index=False)
+        args = _make_main_args(
+            tmp_path, mesa_grid=str(grid_path), grid_type="dynamic", grid_point_index=0
+        )
+        monkeypatch.setattr(totest, "MPI_IMPORTED", True)
+        monkeypatch.setattr(totest, "parse_commandline", lambda: args)
+
+        class FakeMPI:
+            ANY_SOURCE = "ANY_SOURCE"
+            ANY_TAG = "ANY_TAG"
+
+            class COMM_WORLD:
+                @staticmethod
+                def Get_size():
+                    return 2
+
+                @staticmethod
+                def Get_rank():
+                    return 1
+
+            @staticmethod
+            def Get_processor_name():
+                return "node"
+
+        monkeypatch.setattr(totest, "MPI", FakeMPI, raising=False)
+
+        with pytest.raises(
+            ValueError,
+            match="You can not have multiple MPI tasks and request to run a "
+            "specific grid point.Please make sure you cal with mpirun -np 1.",
+        ):
             totest.main()
