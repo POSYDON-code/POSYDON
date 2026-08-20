@@ -29,23 +29,28 @@ USER ${NB_UID}
 # Version of POSYDON to install (release tag without the leading "v"),
 # passed at build time by the CI workflow. Pinning guarantees the image
 # contains the exact release version even if a newer one exists on the channel.
-ARG POSYDON_VERSION
+# When not set (e.g. local builds), the latest version on the channel is used.
+ARG POSYDON_VERSION=""
 
 # Create a dedicated conda environment for POSYDON
 RUN conda create --name posydon_env python=3.11 -y && \
     conda clean --all -f -y
 
-# Install POSYDON from the posydon conda channel
+# Install POSYDON from the posydon conda channel.
+# When POSYDON_VERSION is set (CI), pin to that exact version;
+# otherwise install the latest available (local builds).
 RUN conda run -n posydon_env \
         conda install -c posydon -c conda-forge \
-            posydon==${POSYDON_VERSION} \
+            $(if [ -n "${POSYDON_VERSION}" ]; then echo "posydon==${POSYDON_VERSION}"; else echo "posydon"; fi) \
             ipykernel \
             -y && \
     conda clean --all -f -y
 
 # Fail the build if the installed version does not match the requested release
-RUN conda run -n posydon_env \
-        python -c "import posydon; assert posydon.__version__ == '${POSYDON_VERSION}', f'installed posydon {posydon.__version__} != requested {POSYDON_VERSION}'"
+RUN if [ -n "${POSYDON_VERSION}" ]; then \
+        conda run -n posydon_env \
+            python -c "import posydon; assert posydon.__version__ == '${POSYDON_VERSION}', f'installed posydon {posydon.__version__} != requested {POSYDON_VERSION}'"; \
+    fi
 
 # Register the posydon_env as a Jupyter kernel so it appears
 # in the JupyterLab launcher and kernel selector as "Python (POSYDON)".

@@ -38,7 +38,11 @@ jobs:
 
       - name: Set POSYDON_VERSION
         id: version
-        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+        run: |
+          # Derive version the same way conda/meta.yaml does: take the
+          # release tag and strip the leading "v".
+          echo "GIT_DESCRIBE_TAG=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
+          echo "POSYDON_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -67,6 +71,6 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          build-args: POSYDON_VERSION=${{ steps.version.outputs.version }}
+          build-args: POSYDON_VERSION=${{ steps.version.outputs.POSYDON_VERSION }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
