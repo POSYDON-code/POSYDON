@@ -1,0 +1,173 @@
+#!/usr/bin/env python
+"""POSYDON grid command line tool.
+
+Subcommands:
+    setup   setup a grid run
+    run     run a grid
+"""
+
+import argparse
+import os
+import sys
+import time
+
+from posydon.CLI.grids import run
+from posydon.CLI.grids import setup
+
+
+def build_parser() -> argparse.ArgumentParser:
+    """Build the argument parser for the posydon-grid CLI.
+
+    Returns:
+        The configured argument parser.
+    """
+    parser = argparse.ArgumentParser(
+        prog='posydon-grid',
+        description='POSYDON grid command line tool')
+    subparsers = parser.add_subparsers(title='subcommands', dest='command')
+
+    setup_parser = subparsers.add_parser('setup', help='setup a grid run')
+    setup_parser.add_argument("--inifile",
+                              help="Name of ini file of params",
+                              required=True)
+    setup_parser.add_argument("--grid-type",
+                              help="Either you are supplying a grid "
+                              "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
+                              "grid and want to sample new points to run MESA on (dynamic).",
+                              required=True, choices=['fixed', 'dynamic'])
+    setup_parser.add_argument("--run-directory",
+                              help="Path where executable will be made and MESA "
+                              "simulation output will be placed", default=os.getcwd())
+    setup_parser.add_argument("--submission-type",
+                              help="Options include creating a shell script or a slurm script",
+                              default='shell', choices=['shell', 'slurm'])
+    setup_parser.add_argument("-n", "--nproc",
+                              help="number of processors", type=int, default=1)
+    setup_parser.add_argument("-v", "--verbose", action="store_true", default=False,
+                              help="Run in Verbose Mode")
+    setup_parser.set_defaults(func=_dispatch_setup)
+
+    run_parser = subparsers.add_parser('run', help='run a grid')
+    run_parser.add_argument("--mesa-grid",
+                            help="Grid of mesa points with values already known,"
+                            "or new grid values to run MESA on",
+                            required=True)
+    run_parser.add_argument("--grid-type",
+                            help="Either you are supplying a grid "
+                            "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
+                            "grid and want to sampling new points to run MESA on (dynamic).",
+                            required=True, choices=['fixed', 'dynamic'])
+    run_parser.add_argument("--output-directory",
+                            help="This is where the result of the MESA simulatio  will go",
+                            required=True)
+    run_parser.add_argument("--temporary-directory",
+                            help="This is where your MESA simulations will run", default=os.getcwd())
+    run_parser.add_argument("--grid-point-index",
+                            help="Override grid point slection by "
+                            "explictly saying which grid point you want."
+                            "This must be run with mpirun -np 1!!",
+                            type=int)
+    run_parser.add_argument("--psycris-inifile",
+                            help="Path to the psycris inifile. ")
+    run_parser.add_argument("--Niter",
+                            help="Number of iterations of binaries "
+                            "to try, will check ever Nstep for convergence",
+                            type=int, default=200)
+    run_parser.add_argument("--mesa-binary-executable",
+                            help="MESA binary executable to be used for this grid",
+                            required=True)
+    run_parser.add_argument("--mesa-star1-executable",
+                            help="optionally use star executable to form star1")
+    run_parser.add_argument("--mesa-star2-executable",
+                            help="optionally use star executable to form star2")
+    run_parser.add_argument("--mesa-binary-inlist-project",
+                            help="This is the shared inlist_project that will be used by "
+                            "every MESA run for this grid. inlist_project has both binary_job and binary_controls in it",
+                            required=True)
+    run_parser.add_argument("--mesa-binary-inlist1",
+                            help="This is the shared inlist1 that will be used by "
+                            "every MESA run for this grid. inlist1 has both star_job and controls in it that determine "
+                            "the properties of the first object",
+                            required=True)
+    run_parser.add_argument("--mesa-binary-inlist2",
+                            help="This is the shared inlist2 that will be used by "
+                            "every MESA run for this grid. inlist2 has both star_job and controls in it that determine "
+                            "the properties of the second object",
+                            required=True)
+    run_parser.add_argument("--mesa-star1-inlist-project",
+                            help="optionally use specific inlist(s) to form star1",
+                            nargs='+')
+    run_parser.add_argument("--mesa-star2-inlist-project",
+                            help="optionally use specific inlist(s) to form star2",
+                            nargs='+')
+    run_parser.add_argument("--mesa-star-history-columns",
+                            help="This is the path to the star_history_columns.list file you want to use for this grid",
+                            required=True)
+    run_parser.add_argument("--mesa-binary-history-columns",
+                            help="This is the path to the binary_history_columns.list file you want to use for this grid",
+                            required=True)
+    run_parser.add_argument("--mesa-profile-columns",
+                            help="This is the path to the profile_columns.list file you want to use for this grid",
+                            required=True)
+    run_parser.add_argument("--verbose", action="store_true", default=False,
+                            help="Run in Verbose Mode")
+    run_parser.add_argument("--keep_profiles", action="store_true", default=False,
+                            help="Do not delete profiles at run completion")
+    run_parser.add_argument("--keep_photos", action="store_true", default=False,
+                            help="Do not delete photos at run completion")
+    now = int(time.time())
+    run_parser.add_argument("--job_end", type=int, default=now+60*60*24*365,
+                            help="End time of the job (in seconds)")
+    run_parser.add_argument("--job_before_end", type=int, default=300,
+                            help="Time span till end of job (in seconds)")
+    run_parser.set_defaults(func=_dispatch_run)
+
+    return parser
+
+
+def parse_commandline(argv=None) -> argparse.Namespace:
+    """Parse the arguments given on the command-line.
+
+    Args:
+        argv: Optional argument list; defaults to sys.argv[1:].
+
+    Returns:
+        The parsed command-line arguments.
+    """
+    return build_parser().parse_args(argv)
+
+
+def _dispatch_setup(args: argparse.Namespace) -> None:
+    """Run the setup subcommand with the original setup arguments.
+
+    Args:
+        args: The parsed command-line arguments (unused; the module
+            re-parses the original argv).
+    """
+    del sys.argv[1]
+    setup.main()
+
+
+def _dispatch_run(args: argparse.Namespace) -> None:
+    """Run the run subcommand with the original run arguments.
+
+    Args:
+        args: The parsed command-line arguments (unused; the module
+            re-parses the original argv).
+    """
+    del sys.argv[1]
+    run.main()
+
+
+def main() -> None:
+    """Entry point for the posydon-grid CLI."""
+    parser = build_parser()
+    if len(sys.argv) < 2:
+        parser.print_help()
+        sys.exit(1)
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == '__main__':  # pragma: no cover
+    main()
