@@ -1,0 +1,533 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.DT.double_CO &mdash; posydon 2.3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../../_static/documentation_options.js?v=67b02a41"></script>
+      <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../../index.html">
+            
+              <img src="../../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.DT.double_CO</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.DT.double_CO</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Detached evolution for double compact-object binaries.</span>
+<span class="sd">"""</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Zepei Xing &lt;Zepei.Xing@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Devina Misra &lt;devina.misra@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">brentq</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_detached</span><span class="w"> </span><span class="kn">import</span> <span class="n">detached_evolution</span><span class="p">,</span> <span class="n">detached_step</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">CO_radius</span><span class="p">,</span>
+    <span class="n">orbital_period_from_separation</span><span class="p">,</span>
+    <span class="n">set_binary_to_failed</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalError</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_event</span><span class="p">(</span><span class="n">terminal</span><span class="p">,</span> <span class="n">direction</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Return a decorator that sets solve_ivp event attributes."""</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">dec</span><span class="p">(</span><span class="n">f</span><span class="p">):</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">terminal</span> <span class="o">=</span> <span class="n">terminal</span>
+        <span class="n">f</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">direction</span>
+        <span class="k">return</span> <span class="n">f</span>
+    <span class="k">return</span> <span class="n">dec</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_SBrentqDenseOutput</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Dense output for the s = -ln(alpha) formulation of the Peters equations.</span>
+
+<span class="sd">    Inverts the monotone tau(s) mapping via ``brentq`` root-finding on the</span>
+<span class="sd">    native ODE dense output, then converts back to physical variables</span>
+<span class="sd">    [separation_Rsun, eccentricity, ω_sec, ω_pri].</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sol : OdeSolution</span>
+<span class="sd">        Dense output from solve_ivp in s-space.</span>
+<span class="sd">    a0_Rsun : float</span>
+<span class="sd">        Initial separation [Rsun].</span>
+<span class="sd">    t_scale : float</span>
+<span class="sd">        Characteristic GW timescale [yr].</span>
+<span class="sd">    t0_phys : float</span>
+<span class="sd">        Physical time at integration start [yr].</span>
+<span class="sd">    s_lo : float</span>
+<span class="sd">        Lower bound of s integration range.</span>
+<span class="sd">    s_hi : float</span>
+<span class="sd">        Upper bound of s integration range.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sol</span><span class="p">,</span> <span class="n">a0_Rsun</span><span class="p">,</span> <span class="n">t_scale</span><span class="p">,</span> <span class="n">t0_phys</span><span class="p">,</span> <span class="n">s_lo</span><span class="p">,</span> <span class="n">s_hi</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="n">sol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a0_Rsun</span> <span class="o">=</span> <span class="n">a0_Rsun</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_scale</span> <span class="o">=</span> <span class="n">t_scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t0_phys</span> <span class="o">=</span> <span class="n">t0_phys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_lo</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_lo</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_hi</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">s_hi</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">t_phys</span><span class="p">):</span>
+        <span class="n">t_phys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">t_phys</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+        <span class="c1"># convert physical time to dimensionless time</span>
+        <span class="n">tau_target</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_phys</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t0_phys</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_scale</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="mi">4</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">tau_target</span><span class="p">)))</span>
+        <span class="c1"># tau range to be covered by root-finding,</span>
+        <span class="c1"># tau(s_lo) and tau(s_hi)</span>
+        <span class="n">tau_lo</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s_lo</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">tau_hi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s_hi</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1"># An absolute tolerance for floating-point comparisons</span>
+        <span class="c1"># based on machine floating-point precision, scaled</span>
+        <span class="c1"># to |tau_hi|, |tau_lo|, or 1.0, whichever is largest.</span>
+        <span class="c1"># (At least 1.0 scale so the tolerance does not become</span>
+        <span class="c1">#  unreasonably small.)</span>
+        <span class="n">tau_scale</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tau_lo</span><span class="p">),</span> <span class="nb">abs</span><span class="p">(</span><span class="n">tau_hi</span><span class="p">))</span>
+        <span class="c1"># Treat endpoint residuals smaller than eps as zero to guard</span>
+        <span class="c1"># against floating-point roundoff near the integration endpoints.</span>
+        <span class="n">tol</span> <span class="o">=</span> <span class="mf">1e4</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="n">tol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span> <span class="o">*</span> <span class="n">tau_scale</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">tau</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">tau_target</span><span class="p">):</span>
+
+            <span class="c1"># function values at integration boundaries</span>
+            <span class="n">fa</span> <span class="o">=</span> <span class="n">tau_lo</span> <span class="o">-</span> <span class="n">tau</span>
+            <span class="n">fb</span> <span class="o">=</span> <span class="n">tau_hi</span> <span class="o">-</span> <span class="n">tau</span>
+
+            <span class="c1"># check lower endpoint</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fa</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">eps</span><span class="p">:</span>
+                <span class="n">s_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_lo</span>
+            <span class="c1"># check upper endpoint</span>
+            <span class="k">elif</span> <span class="nb">abs</span><span class="p">(</span><span class="n">fb</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">eps</span><span class="p">:</span>
+                <span class="n">s_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s_hi</span>
+            <span class="k">elif</span> <span class="n">fa</span> <span class="o">*</span> <span class="n">fb</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Requested tau=</span><span class="si">{</span><span class="n">tau</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2"> outside interval "</span>
+                                 <span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">tau_lo</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">tau_hi</span><span class="si">:</span><span class="s2">.17e</span><span class="si">}</span><span class="s2">]."</span><span class="p">)</span>
+            <span class="c1"># else root find for a solution</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">s_star</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span>
+                    <span class="k">lambda</span> <span class="n">s</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">s</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tau</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">s_lo</span><span class="p">,</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">s_hi</span><span class="p">,</span>
+                    <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span>
+                    <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">)</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sol</span><span class="p">(</span><span class="n">s_star</span><span class="p">)</span>          <span class="c1"># [l, tau, omega_sec, omega_pri]</span>
+            <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s_star</span><span class="p">)</span>
+            <span class="n">result</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a0_Rsun</span>   <span class="c1"># separation (Rsun)</span>
+            <span class="n">result</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">raw</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>          <span class="c1"># eccentricity = exp(l)</span>
+            <span class="n">result</span><span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>                  <span class="c1"># omega_sec</span>
+            <span class="n">result</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">raw</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>                  <span class="c1"># omega_pri</span>
+
+        <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">result</span>
+
+
+
+<div class="viewcode-block" id="DoubleCO">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DoubleCO</span><span class="p">(</span><span class="n">detached_step</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Evolve a double compact-object binary due to gravitational radiation.</span>
+
+<span class="sd">    The binary will be evolved until the two compact objects come into contact</span>
+<span class="sd">    or until maximum simulation time, based on the quadrupole approximation</span>
+<span class="sd">    of gravitational radiation.  The integration is performed in dimensionless</span>
+<span class="sd">    variables to guarantee numerical stability.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="c1"># Use the DCO-specific evolution object (disables tides, winds, etc.)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evo</span> <span class="o">=</span> <span class="n">double_CO_evolution</span><span class="p">(</span><span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">evo_kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__call__</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+
+        <span class="n">binary</span><span class="o">.</span><span class="n">V_sys</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">V_sys_history</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="mf">0.0</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"contact"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"CO_contact"</span>
+
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">time</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">state</span> <span class="o">=</span> <span class="s2">"detached"</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">=</span> <span class="s2">"maxtime"</span>
+
+<div class="viewcode-block" id="DoubleCO.solve_ODEs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.DoubleCO.solve_ODEs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve_ODEs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">primary</span><span class="p">,</span> <span class="n">secondary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Solve the Peters (1964) GW inspiral.</span>
+
+<span class="sd">        We do two transformations to the standard Peters equations:</span>
+<span class="sd">        1. We remove the dimensionality by using the dimensionless separation \alpha = a/a0 and</span>
+<span class="sd">           dimensionless time \tau = t / t0, where a0 is the initial separation</span>
+<span class="sd">           and t0 is the characteristic GW timescale.</span>
+<span class="sd">        2. We then substitute s = -ln(\alpha) to eliminate the singularity in the Peters equations,</span>
+<span class="sd">           which removes the alpha^-3 and alpha^-4 prefactors that cause numerical issues for tight binaries.</span>
+<span class="sd">        """</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">max_time</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">properties</span><span class="o">.</span><span class="n">max_simulation_time</span>
+        <span class="n">t0_phys</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">time</span>                                     <span class="c1"># [yr]</span>
+
+        <span class="c1"># --- physical scales ------------------------------------------------</span>
+        <span class="n">a0_Rsun</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">separation</span>                               <span class="c1"># [Rsun]</span>
+        <span class="n">a0_km</span> <span class="o">=</span> <span class="n">a0_Rsun</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mf">1e5</span>                    <span class="c1"># [km]</span>
+        <span class="n">e0</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">eccentricity</span>
+        <span class="n">a0_cgs</span> <span class="o">=</span> <span class="n">a0_km</span> <span class="o">*</span> <span class="mf">1e5</span>                                      <span class="c1"># [cm]</span>
+
+        <span class="n">m1_cgs</span> <span class="o">=</span> <span class="n">primary</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>                     <span class="c1"># [g]</span>
+        <span class="n">m2_cgs</span> <span class="o">=</span> <span class="n">secondary</span><span class="o">.</span><span class="n">mass</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">msol</span>                   <span class="c1"># [g]</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">standard_cgrav</span>                               <span class="c1"># [cm^3 g^-1 s^02]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">clight</span>                                       <span class="c1"># [cm s^-1]</span>
+
+        <span class="c1"># Characteristic circular inspiral timescale t0 = a0^4 / (beta) [yr],</span>
+        <span class="c1"># where beta = (64/5) * G^3 * m1 * m2 * M / c^5.</span>
+        <span class="n">t_scale</span> <span class="o">=</span> <span class="p">((</span><span class="mf">5.0</span> <span class="o">/</span> <span class="mf">64.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">c</span><span class="o">**</span><span class="mi">5</span> <span class="o">*</span> <span class="n">a0_cgs</span><span class="o">**</span><span class="mi">4</span>
+                   <span class="o">/</span> <span class="p">(</span><span class="n">G</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="n">m1_cgs</span> <span class="o">+</span> <span class="n">m2_cgs</span><span class="p">)</span> <span class="o">*</span> <span class="n">m1_cgs</span> <span class="o">*</span> <span class="n">m2_cgs</span><span class="p">)</span>
+                   <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">secyer</span><span class="p">)</span>
+
+        <span class="c1"># dimensionless contact threshold  \alpha_contact = (r1 + r2) / a0</span>
+        <span class="n">r1_km</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_radius</span><span class="p">(</span><span class="n">primary</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+                 <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mf">1e5</span><span class="p">)</span>                           <span class="c1"># [km]</span>
+        <span class="n">r2_km</span> <span class="o">=</span> <span class="p">(</span><span class="n">CO_radius</span><span class="p">(</span><span class="n">secondary</span><span class="o">.</span><span class="n">mass</span><span class="p">,</span> <span class="n">secondary</span><span class="o">.</span><span class="n">state</span><span class="p">)</span>
+                 <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">Rsun</span> <span class="o">/</span> <span class="mf">1e5</span><span class="p">)</span>                           <span class="c1"># [km]</span>
+
+        <span class="c1"># Unitless separation at contact.</span>
+        <span class="n">alpha_contact</span> <span class="o">=</span> <span class="p">(</span><span class="n">r1_km</span> <span class="o">+</span> <span class="n">r2_km</span><span class="p">)</span> <span class="o">/</span> <span class="n">a0_km</span>
+
+        <span class="c1"># dimensionless max-time limit</span>
+        <span class="n">tau_max</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">max_time</span> <span class="o">-</span> <span class="n">t0_phys</span><span class="p">)</span> <span class="o">/</span> <span class="n">t_scale</span>
+
+        <span class="n">s_contact</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">alpha_contact</span><span class="p">)</span>
+
+        <span class="c1"># --- max-time event: tau reaches tau_max before contact ---------------</span>
+        <span class="nd">@_event</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">ev_maxtime</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">tau_max</span>
+
+        <span class="c1"># --- integrate -------------------------------------------------------</span>
+        <span class="c1"># State vector: [l, tau, secondary.omega, primary.omega]</span>
+        <span class="c1">#   where l = ln(e) and tau = t/t0</span>
+        <span class="c1"># Independent variable: s = −ln(a/a0), from 0 to s_contact</span>
+        <span class="n">l0</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">e0</span><span class="p">)</span> <span class="k">if</span> <span class="n">e0</span> <span class="o">&gt;</span> <span class="mi">0</span>
+              <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">tiny</span><span class="p">))</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evo</span><span class="p">,</span>
+                            <span class="n">events</span><span class="o">=</span><span class="n">ev_maxtime</span><span class="p">,</span>
+                            <span class="n">method</span><span class="o">=</span><span class="s2">"RK45"</span><span class="p">,</span>
+                            <span class="n">t_span</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">s_contact</span><span class="p">),</span>
+                            <span class="n">y0</span><span class="o">=</span><span class="p">[</span><span class="n">l0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span>
+                                <span class="n">secondary</span><span class="o">.</span><span class="n">omega0</span><span class="p">,</span> <span class="n">primary</span><span class="o">.</span><span class="n">omega0</span><span class="p">],</span>
+                            <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                            <span class="n">atol</span><span class="o">=</span><span class="mf">1e-10</span><span class="p">,</span>
+                            <span class="n">dense_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="n">set_binary_to_failed</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">NumericalError</span><span class="p">(</span>
+                <span class="s2">"SciPy encountered an error while solving "</span>
+                <span class="sa">f</span><span class="s2">"GR equations (s-formulation): </span><span class="si">{</span><span class="n">exc</span><span class="si">}</span><span class="s2">"</span>
+            <span class="p">)</span>
+
+        <span class="c1"># --- map solution back to physical units ----------------------------</span>
+        <span class="n">s_vals</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">alpha_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s_vals</span><span class="p">)</span>
+        <span class="n">l_vals</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">ecc_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">l_vals</span><span class="p">)</span>
+        <span class="n">tau_vals</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Wrap dense output to convert from ln-space back to physical variables</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">sol</span> <span class="o">=</span> <span class="n">_SBrentqDenseOutput</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">sol</span><span class="p">,</span> <span class="n">a0_Rsun</span><span class="p">,</span> <span class="n">t_scale</span><span class="p">,</span> <span class="n">t0_phys</span><span class="p">,</span>
+                                      <span class="n">s_vals</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">s_vals</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+        <span class="c1"># Map solver status to the convention expected by __call__:</span>
+        <span class="c1">#   status  0 -&gt; reached s_contact -&gt; contact  -&gt; report as 1</span>
+        <span class="c1">#   status  1 -&gt; maxtime event     -&gt; no merge -&gt; report as 0</span>
+        <span class="c1">#   status −1 -&gt; solver failure                -&gt; keep as −1</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">1</span>   <span class="c1"># contact</span>
+        <span class="k">elif</span> <span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="mi">0</span>   <span class="c1"># maxtime</span>
+
+        <span class="c1"># Rearrange state vector in ln-space</span>
+        <span class="c1"># from [l, tau, secondary.omega, primary.omega]</span>
+        <span class="c1"># to   [sep_Rsun, ecc, secondary.omega, primary.omega]</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_vals</span> <span class="o">*</span> <span class="n">a0_Rsun</span>                            <span class="c1"># sep (Rsun)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_vals</span>                                        <span class="c1"># ecc</span>
+
+        <span class="n">res</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">tau_vals</span> <span class="o">*</span> <span class="n">t_scale</span> <span class="o">+</span> <span class="n">t0_phys</span>                       <span class="c1"># tau -&gt; yr</span>
+
+        <span class="c1"># Convert events from s-space to physical units</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">s_ev</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">alpha_ev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">s_ev</span><span class="p">)</span>
+                <span class="n">l_ev</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">y_events</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">ecc_ev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">l_ev</span><span class="p">)</span>
+                <span class="n">tau_ev</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">y_events</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">y_events</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha_ev</span> <span class="o">*</span> <span class="n">a0_Rsun</span>         <span class="c1"># sep (Rsun)</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">y_events</span><span class="p">[</span><span class="n">i</span><span class="p">][:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ecc_ev</span>                     <span class="c1"># ecc</span>
+                <span class="n">res</span><span class="o">.</span><span class="n">t_events</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">tau_ev</span> <span class="o">*</span> <span class="n">t_scale</span> <span class="o">+</span> <span class="n">t0_phys</span>       <span class="c1"># yr</span>
+
+        <span class="k">return</span> <span class="n">res</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="double_CO_evolution">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.double_CO_evolution">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">double_CO_evolution</span><span class="p">(</span><span class="n">detached_evolution</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Evolution object for double compact-object binaries.</span>
+
+<span class="sd">    Only gravitational radiation is active; tides, winds, and magnetic</span>
+<span class="sd">    braking are disabled.  The actual ODE right-hand side is defined as a</span>
+<span class="sd">    dimensionless local function inside ``DoubleCO.solve_ODEs``; this class</span>
+<span class="sd">    exists so that the ``detached_step`` pipeline (track matching, property</span>
+<span class="sd">    updates) has a valid ``evo`` object.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_magnetic_braking</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_tides</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_wind_loss</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_stellar_evolution_and_spin_from_winds</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Differential equation describing the orbital evolution of a double</span>
+<span class="sd">        compact object binary.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : float</span>
+<span class="sd">            Independent variable, s = -ln(a/a0).</span>
+<span class="sd">        y : array_like</span>
+<span class="sd">            State vector at s, [l, tau, secondary.omega, primary.omega],</span>
+<span class="sd">            where l = ln(e) and tau = t / t0.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">do_gravitational_radiation</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">rhs</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_g</span><span class="p">(</span><span class="n">e2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Peters (1964) f(e): denominator function for the da/dt equation.</span>
+
+<span class="sd">        Defined as f(e) = 1 + (73/24)e^2 + (37/96)e^4 in Peters (1964), Eq. 5.11.</span>
+<span class="sd">        Named _g here to match the GW-integration convention.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">73.0</span> <span class="o">/</span> <span class="mf">24.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span> <span class="o">+</span> <span class="p">(</span><span class="mf">37.0</span> <span class="o">/</span> <span class="mf">96.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span> <span class="o">*</span> <span class="n">e2</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_f</span><span class="p">(</span><span class="n">e2</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Peters (1964) g(e): numerator function for the de/dt equation.</span>
+
+<span class="sd">        Defined as g(e) = 1 + (121/304)e^2 in Peters (1964), Eq. 5.13.</span>
+<span class="sd">        Named _f here to match the GW-integration convention.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="mf">121.0</span> <span class="o">/</span> <span class="mf">304.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">e2</span>
+
+<div class="viewcode-block" id="double_CO_evolution.rhs">
+<a class="viewcode-back" href="../../../../api_reference/posydon.binary_evol.DT.html#posydon.binary_evol.DT.double_CO.double_CO_evolution.rhs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">rhs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Right-hand side of the ODE system in ln-space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        s : float</span>
+<span class="sd">            Independent variable, s = -ln(a/a0).</span>
+<span class="sd">        y : array_like</span>
+<span class="sd">            State vector at s, [l, tau, secondary.omega, primary.omega],</span>
+<span class="sd">            where l = ln(e).</span>
+<span class="sd">        """</span>
+        <span class="n">l</span> <span class="o">=</span> <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="n">e2</span> <span class="o">=</span> <span class="n">e</span> <span class="o">*</span> <span class="n">e</span>
+
+        <span class="k">if</span> <span class="n">e2</span> <span class="o">&gt;=</span> <span class="mf">1.0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+        <span class="n">one_minus_e2</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">e2</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_g</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+        <span class="n">F</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_f</span><span class="p">(</span><span class="n">e2</span><span class="p">)</span>
+
+        <span class="n">dl_ds</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mf">19.0</span> <span class="o">/</span> <span class="mf">12.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">one_minus_e2</span> <span class="o">*</span> <span class="n">F</span> <span class="o">/</span> <span class="n">G</span>
+        <span class="n">dtau_ds</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">s</span><span class="p">)</span> <span class="o">*</span> <span class="n">one_minus_e2</span><span class="o">**</span><span class="mf">3.5</span> <span class="o">/</span> <span class="n">G</span>
+
+        <span class="c1"># primary.omega0 and secondary.omega0 are constant for DCO (no tides / MB)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">dl_ds</span><span class="p">,</span> <span class="n">dtau_ds</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.3.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.3.1/index.html">2.3</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

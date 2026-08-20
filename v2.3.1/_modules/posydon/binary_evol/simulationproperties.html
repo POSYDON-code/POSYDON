@@ -1,0 +1,1227 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>posydon.binary_evol.simulationproperties &mdash; posydon 2.3.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=67b02a41"></script>
+      <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html">
+            
+              <img src="../../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Introduction</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Getting Started</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials and Examples</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">In-Depth Components Overview</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Releases and Datasets</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Support and Contact</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">posydon.binary_evol.simulationproperties</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for posydon.binary_evol.simulationproperties</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""Simulation properties for the population class.</span>
+
+<span class="sd">This class contains the simulation properties, e.g. flow, steps and `max_time`.</span>
+<span class="sd">"""</span>
+
+
+<span class="n">__authors__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Kyle Akira Rocha &lt;kylerocha2024@u.northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Konstantinos Kovlakas &lt;Konstantinos.Kovlakas@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Jeffrey Andrews &lt;jeffrey.andrews@northwestern.edu&gt;"</span><span class="p">,</span>
+    <span class="s2">"Simone Bavera &lt;Simone.Bavera@unige.ch&gt;"</span><span class="p">,</span>
+    <span class="s2">"Nam Tran &lt;tranhn03@gmail.com&gt;"</span><span class="p">,</span>
+    <span class="s2">"Seth Gossage &lt;seth.gossage@northwestern.edu&gt;"</span>
+<span class="p">]</span>
+
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.track_match</span><span class="w"> </span><span class="kn">import</span> <span class="n">TrackMatcher</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">PATH_TO_POSYDON_DATA</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.interpolation.interpolation</span><span class="w"> </span><span class="kn">import</span> <span class="n">GRIDInterpolator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.popsyn.io</span><span class="w"> </span><span class="kn">import</span> <span class="n">simprop_kwargs_from_ini</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.common_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">convert_metallicity_to_string</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">age_of_universe</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonerror</span><span class="w"> </span><span class="kn">import</span> <span class="n">GridError</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">posydon.utils.posydonwarning</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pwarn</span>
+
+
+<div class="viewcode-block" id="NullStep">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.NullStep">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NullStep</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""An evolution step that does nothing but is used to initialize."""</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SimulationProperties</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Class describing the properties of a population synthesis simulation."""</span>
+
+    <span class="c1"># each value in this dict represents the expected path for the respective grid.</span>
+    <span class="c1"># A user may specify their own full path to a custom grid in the [grid_paths]</span>
+    <span class="c1"># section of their .ini file. I.e., HMS-HMS_path = 'path/to/my_own_grid/' to</span>
+    <span class="c1"># override these defaults.</span>
+    <span class="n">default_grid_paths</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"single_HMS_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"single_HMS"</span><span class="p">),</span>
+                          <span class="s2">"single_HeMS_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"single_HeMS"</span><span class="p">),</span>
+                          <span class="s2">"HMS_HMS_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"HMS-HMS"</span><span class="p">),</span>
+                          <span class="s2">"CO_HMS_RLO_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"CO-HMS_RLO"</span><span class="p">),</span>
+                          <span class="s2">"CO_HeMS_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"CO-HeMS"</span><span class="p">),</span>
+                          <span class="s2">"CO_HeMS_RLO_path"</span><span class="p">:</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">PATH_TO_POSYDON_DATA</span><span class="p">,</span> <span class="s2">"CO-HeMS_RLO"</span><span class="p">)}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flow</span><span class="o">=</span><span class="p">({},</span> <span class="p">{}),</span>
+                       <span class="n">step_HMS_HMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_CO_HeMS</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_CO_HMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_CO_HeMS_RLO</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_detached</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_disrupted</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_merged</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_initially_single</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_dco</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_SN</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_CE</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">step_end</span> <span class="o">=</span> <span class="p">(</span><span class="n">NullStep</span><span class="p">(),</span> <span class="p">{}),</span>
+                       <span class="n">extra_hooks</span> <span class="o">=</span> <span class="p">[],</span>
+                       <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+<span class="w">        </span><span class="sd">"""Construct the simulation properties object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        flow_chart : dict</span>
+<span class="sd">            A POSYDON flow_chart dictionary.</span>
+
+<span class="sd">        step_HMS_HMS : tuple</span>
+<span class="sd">            A tuple whose first element is a MesaGridStep class handling</span>
+<span class="sd">            HMS-HMS evolution, like MS_MS_step. The second element is a</span>
+<span class="sd">            dictionary of kwargs for that step.</span>
+
+<span class="sd">        step_CO_HeMS : tuple</span>
+<span class="sd">            A tuple whose first element is a MesaGridStep class handling</span>
+<span class="sd">            CO-HeMS evolution, like CO_HeMS_step. The second element is a</span>
+<span class="sd">            dictionary of kwargs for that step.</span>
+
+<span class="sd">        step_CO_HMS_RLO : tuple</span>
+<span class="sd">            A tuple whose first element is a MesaGridStep class handling</span>
+<span class="sd">            CO-HMS-RLO evolution, like CO_HMS_RLO_step. The second element is a</span>
+<span class="sd">            dictionary of kwargs for that step.</span>
+
+<span class="sd">        step_CO_HeMS_RLO : tuple</span>
+<span class="sd">            A tuple whose first element is a MesaGridStep class handling</span>
+<span class="sd">            CO-HeMS-RLO evolution, like CO_HeMS_RLO_step. The second element is a</span>
+<span class="sd">            dictionary of kwargs for that step.</span>
+
+<span class="sd">        step_detached : tuple</span>
+<span class="sd">            A tuple whose first element is a detached_step class handling detached</span>
+<span class="sd">            evolution. The second element is a dictionary of kwargs for that step.</span>
+
+<span class="sd">        step_disrupted : tuple</span>
+<span class="sd">            A tuple whose first element is a DisruptedStep class handling</span>
+<span class="sd">            disrupted evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_merged : tuple</span>
+<span class="sd">            A tuple whose first element is a MergedStep class handling</span>
+<span class="sd">            merged evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_initially_single : tuple</span>
+<span class="sd">            A tuple whose first element is a InitiallySingleStep class handling</span>
+<span class="sd">            initially single evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_dco : tuple</span>
+<span class="sd">            A tuple whose first element is a DoubleCO class handling</span>
+<span class="sd">            double CO evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_SN : tuple</span>
+<span class="sd">            A tuple whose first element is a StepSN class handling</span>
+<span class="sd">            supernova evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_CE : tuple</span>
+<span class="sd">            A tuple whose first element is a StepCEE class handling</span>
+<span class="sd">            common envelope evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        step_end : tuple</span>
+<span class="sd">            A tuple whose first element is a step_end class handling</span>
+<span class="sd">            the end of evolution. The second element is a dictionary of kwargs for</span>
+<span class="sd">            that step.</span>
+
+<span class="sd">        extra_hooks : list of tuples</span>
+<span class="sd">            Each tuple contains a hooks class and kwargs or the extra step name</span>
+<span class="sd">            (e.g., 'extra_pre_evolve', 'extra_pre_step', 'extra_post_step',</span>
+<span class="sd">            'extra_post_evolve') and the corresponding function.</span>
+<span class="sd">        """</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span> <span class="o">=</span> <span class="n">kwargs</span>
+        <span class="n">verbose</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'verbose'</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># gather kwargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"flow"</span><span class="p">]</span> <span class="o">=</span> <span class="n">flow</span>
+
+        <span class="n">step_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"step_HMS_HMS"</span><span class="p">:</span> <span class="n">step_HMS_HMS</span><span class="p">,</span>
+                       <span class="s2">"step_CO_HeMS"</span><span class="p">:</span> <span class="n">step_CO_HeMS</span><span class="p">,</span>
+                       <span class="s2">"step_CO_HMS_RLO"</span><span class="p">:</span> <span class="n">step_CO_HMS_RLO</span><span class="p">,</span>
+                       <span class="s2">"step_CO_HeMS_RLO"</span><span class="p">:</span> <span class="n">step_CO_HeMS_RLO</span><span class="p">,</span>
+                       <span class="s2">"step_detached"</span><span class="p">:</span> <span class="n">step_detached</span><span class="p">,</span>
+                       <span class="s2">"step_disrupted"</span><span class="p">:</span> <span class="n">step_disrupted</span><span class="p">,</span>
+                       <span class="s2">"step_merged"</span><span class="p">:</span> <span class="n">step_merged</span><span class="p">,</span>
+                       <span class="s2">"step_initially_single"</span><span class="p">:</span> <span class="n">step_initially_single</span><span class="p">,</span>
+                       <span class="s2">"step_dco"</span><span class="p">:</span> <span class="n">step_dco</span><span class="p">,</span>
+                       <span class="s2">"step_SN"</span><span class="p">:</span> <span class="n">step_SN</span><span class="p">,</span>
+                       <span class="s2">"step_CE"</span><span class="p">:</span> <span class="n">step_CE</span><span class="p">,</span>
+                       <span class="s2">"step_end"</span><span class="p">:</span> <span class="n">step_end</span><span class="p">}</span>
+
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">step_tuple</span> <span class="ow">in</span> <span class="n">step_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">step_class</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">step_tuple</span>
+            <span class="k">if</span> <span class="n">verbose</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_class</span><span class="p">,</span> <span class="n">NullStep</span><span class="p">):</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Step </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> not provided, skipping it."</span><span class="p">,</span>
+                                <span class="s2">"StepWarning"</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_tuple</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="s2">"extra_hooks"</span><span class="p">]</span> <span class="o">=</span> <span class="n">extra_hooks</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">default_hooks</span> <span class="o">=</span> <span class="n">EvolveHooks</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">default_hooks</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'extra_hooks'</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">type</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+                    <span class="bp">cls</span><span class="p">,</span> <span class="n">params</span> <span class="o">=</span> <span class="n">item</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">params</span><span class="p">))</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">str</span><span class="p">):</span>
+                    <span class="c1"># setting extra_pre/post_step/evolve methods</span>
+                    <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">"`extra_hooks` must be list of tuples with either "</span>
+                    <span class="s2">"(i) a class deriving from EvolveHooks and a kwargs dict, "</span>
+                    <span class="s2">"or (ii) the name of the extra function and the callable."</span><span class="p">)</span>
+
+        <span class="c1"># Limits on simulation</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'max_simulation_time'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_simulation_time</span> <span class="o">=</span> <span class="n">age_of_universe</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'end_events'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_events</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'end_states'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">end_states</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># for debugging purposes</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'max_n_steps_per_binary'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">max_n_steps_per_binary</span> <span class="o">=</span> <span class="mi">100</span>
+
+        <span class="c1"># Set functions for evolution</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_step_names</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">## list of strings of all evolutionary steps</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="s2">"step"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>   <span class="c1"># skip loading steps</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="s2">"step"</span> <span class="ow">in</span> <span class="n">key</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">all_step_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_loaded</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">preload_imports</span><span class="p">()</span>
+
+        <span class="c1"># To hold TrackMatcher objects per step, if needed.</span>
+        <span class="c1"># maybe get rid of this</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">for</span> <span class="n">grid_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_path</span><span class="p">(</span><span class="n">grid_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">grid_name</span><span class="p">])</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grid_name</span><span class="si">}</span><span class="s2"> is not set in the kwargs passed to SimulationProperties. "</span>
+                      <span class="sa">f</span><span class="s2">"Falling back to the default: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">[</span><span class="n">grid_name</span><span class="p">]</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
+                      <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">set_path</span><span class="p">(</span><span class="n">grid_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">[</span><span class="n">grid_name</span><span class="p">])</span>
+
+        <span class="c1"># These hold GRIDInterpolator objects</span>
+        <span class="c1"># and associated grid names for ea. metallicity</span>
+        <span class="c1"># (intended keys are metallicities):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="SimulationProperties.set_path">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.set_path">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_path</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_name</span><span class="p">,</span> <span class="n">path_str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Set and normalize a grid path attribute that points to one of the</span>
+<span class="sd">        MESA grids needed for binary evolution. By default, these are the</span>
+<span class="sd">        grids inside of the directory name held in $PATH_TO_POSYDON_DATA.</span>
+
+<span class="sd">        For example, for the step_HMS_HMS, the grid would be</span>
+
+<span class="sd">            $PATH_TO_POSYDON_DATA/HMS-HMS/&lt;metallicity&gt;_Zsun.h5</span>
+
+<span class="sd">        by default. The grid HDF5 file names themselves are expected to</span>
+<span class="sd">        follow formats like so: 1e+00_Zsun.h5, 1e-04_Zsun.h5, etc.</span>
+
+<span class="sd">        If ``path_str`` is ``None``, a default path is assigned based on</span>
+<span class="sd">        ``path_name`` using ``self.default_grid_paths``. If ``path_name`` is not</span>
+<span class="sd">        recognized, a ``GridError`` is raised listing the valid options.</span>
+
+<span class="sd">        The resulting path is converted to an absolute path before being stored</span>
+<span class="sd">        as an attribute of the instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path_name : str</span>
+<span class="sd">            Name of the grid path attribute to set. Must be a key in</span>
+<span class="sd">            ``self.default_grid_paths`` if ``path_str`` is ``None``.</span>
+
+<span class="sd">        path_str : str or None</span>
+<span class="sd">            Path to assign. If ``None``, a default path corresponding to</span>
+<span class="sd">            ``path_name`` is used.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        GridError</span>
+<span class="sd">            If ``path_name`` is not recognized and no default path can be assigned.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The path is not validated for existence here; only normalization to an</span>
+<span class="sd">        absolute path is performed.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># construct path to *_Zsun.h5 files if not specified</span>
+        <span class="k">if</span> <span class="n">path_str</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">path_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">:</span>
+                <span class="n">path_str</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">[</span><span class="n">path_name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">valid_names</span> <span class="o">=</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> = &lt;your-path-or-None&gt;"</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">default_grid_paths</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="n">GridError</span><span class="p">(</span><span class="sa">f</span><span class="s1">'Trying to assign a grid path for "</span><span class="si">{</span><span class="n">path_name</span><span class="si">}</span><span class="s1">".</span><span class="se">\n</span><span class="s1">'</span>
+                                <span class="s2">"This is an unrecognized path name. Please check "</span>
+                                <span class="s2">"the [grid_paths] section of your .ini file.</span><span class="se">\n\n</span><span class="s2">"</span>
+                                <span class="s2">"Valid path variable names are:</span><span class="se">\n</span><span class="s2">"</span>
+                                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">valid_names</span><span class="si">}</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="n">path_str</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">path_str</span><span class="p">)</span>
+
+        <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_name</span><span class="p">,</span> <span class="n">path_str</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.preload_imports">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.preload_imports">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">preload_imports</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">            Preload the imports of detached_step and MesaGridStep to avoid</span>
+<span class="sd">        importing them when they are needed when `close()` is called. In</span>
+<span class="sd">        particular, detached_step imports sklearn, which in turn utilizes</span>
+<span class="sd">        loky, which invokes its own register.at_exit call. If this happens</span>
+<span class="sd">        during the `close()` call, which is invoked at shutdown, a</span>
+<span class="sd">        failure occurs, hence the need for something like this.</span>
+<span class="sd">        """</span>
+
+        <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.CE.step_CEE</span><span class="w"> </span><span class="kn">import</span> <span class="n">StepCEE</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.DT.step_detached</span><span class="w"> </span><span class="kn">import</span> <span class="n">detached_step</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">posydon.binary_evol.MESA.step_mesa</span><span class="w"> </span><span class="kn">import</span> <span class="n">MesaGridStep</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_detached_step</span> <span class="o">=</span> <span class="n">detached_step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_step_CE</span> <span class="o">=</span> <span class="n">StepCEE</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_MesaGridStep</span> <span class="o">=</span> <span class="n">MesaGridStep</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.from_ini">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.from_ini">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_ini</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">,</span> <span class="n">metallicity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">load_steps</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">RNG</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(),</span>
+                 <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">override_sim_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Create a SimulationProperties instance from an inifile.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str</span>
+<span class="sd">            Path to an inifile to load in.</span>
+
+<span class="sd">        metallicity : float</span>
+<span class="sd">            A metallicity (Z) may be provided to automatically assign</span>
+<span class="sd">            to steps as they are loaded. Should be one of e.g., 2.0, 1.0,</span>
+<span class="sd">            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to</span>
+<span class="sd">            metallicities available in your POSYDON_DATA grids.</span>
+
+<span class="sd">        load_steps : bool</span>
+<span class="sd">            Whether or not evolution steps should be automatically loaded.</span>
+
+<span class="sd">        RNG : numpy.random.Generator, optional</span>
+<span class="sd">            Random number generator used for any stochastic components of</span>
+<span class="sd">            the simulation. Defaults to a new NumPy Generator instance</span>
+<span class="sd">            created via ``np.random.default_rng()``.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Print useful info.</span>
+
+<span class="sd">        **override_sim_kwargs</span>
+<span class="sd">            Additional keyword arguments that override values specified</span>
+<span class="sd">            in the .ini file when constructing the SimulationProperties</span>
+<span class="sd">            instance.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        SimulationProperties</span>
+<span class="sd">            A new instance of SimulationProperties.</span>
+<span class="sd">        """</span>
+
+        <span class="n">sim_kwargs</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+
+        <span class="n">sim_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">,</span> <span class="o">**</span><span class="n">override_sim_kwargs</span><span class="p">}</span>
+
+        <span class="n">new_instance</span> <span class="o">=</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">sim_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">load_steps</span><span class="p">:</span>
+            <span class="c1"># Load the steps and required data</span>
+            <span class="n">new_instance</span><span class="o">.</span><span class="n">load_steps</span><span class="p">(</span><span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span>
+                                    <span class="n">RNG</span><span class="o">=</span><span class="n">RNG</span><span class="p">,</span>
+                                    <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">new_instance</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.load_steps">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.load_steps">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metallicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">RNG</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(),</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Instantiate all step classes and set as instance attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metallicity : float</span>
+<span class="sd">            A metallicity (Z) may be provided to automatically assign</span>
+<span class="sd">            to steps as they are loaded. Should be one of e.g., 2.0, 1.0,</span>
+<span class="sd">            4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to</span>
+<span class="sd">            metallicities available in your POSYDON_DATA grids.</span>
+
+<span class="sd">        verbose : bool</span>
+<span class="sd">            Print extra information.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># for every other step, give it a metallicity and load each step</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                <span class="n">step_kwargs</span> <span class="o">=</span> <span class="n">tup</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">metallicity</span> <span class="o">=</span> <span class="n">step_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'metallicity'</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">load_a_step</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">tup</span><span class="p">,</span> <span class="n">metallicity</span><span class="o">=</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">RNG</span><span class="o">=</span><span class="n">RNG</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">steps_loaded</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"All steps loaded successfully."</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Not all steps were loaded successfully. Check warnings for details."</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.load_a_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.load_a_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_a_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_tup</span><span class="o">=</span><span class="p">(</span><span class="n">NullStep</span><span class="p">,</span> <span class="p">{}),</span> <span class="n">metallicity</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">RNG</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">(),</span> <span class="n">from_ini</span><span class="o">=</span><span class="s1">''</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Instantiate and attach a simulation step to this object.</span>
+
+<span class="sd">        This method creates an instance of a step class and assigns it as an</span>
+<span class="sd">        attribute of SimulationProperties using ``step_name`` as the attribute</span>
+<span class="sd">        name. Step keyword arguments may be provided directly via ``step_tup``</span>
+<span class="sd">        or loaded from an `.ini` configuration file. Before instantiation,</span>
+<span class="sd">        step arguments are validated and augmented (e.g., assigning metallicity</span>
+<span class="sd">        and creating a TrackMatcher if required).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Name of the evolution step. The created step instance will be</span>
+<span class="sd">            attached to the object as ``self.&lt;step_name&gt;``. See</span>
+<span class="sd">            ``SimulationProperties.__init__`` for the standard set of steps.</span>
+
+<span class="sd">        step_tup : tuple, optional</span>
+<span class="sd">            Tuple of the form ``(step_class, kwargs_dict)`` where:</span>
+
+<span class="sd">            - ``step_class`` is the class representing the step.</span>
+<span class="sd">            - ``kwargs_dict`` is a dictionary of keyword arguments used to</span>
+<span class="sd">            initialize the step.</span>
+
+<span class="sd">            Default is ``(NullStep, {})``.</span>
+
+<span class="sd">        metallicity : float, optional</span>
+<span class="sd">            Metallicity (Z) to assign to the step if required and not already</span>
+<span class="sd">            specified in the step keyword arguments. Default supported values</span>
+<span class="sd">            are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.</span>
+
+<span class="sd">        from_ini : str, optional</span>
+<span class="sd">            Path to an `.ini` file containing step configuration. If provided</span>
+<span class="sd">            and the file exists, the step class and keyword arguments for</span>
+<span class="sd">            ``step_name`` are loaded from this file and override ``step_tup``.</span>
+
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            If True, print detailed information about step loading and the</span>
+<span class="sd">            keyword arguments used to instantiate the step.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - Step keyword arguments are processed by ``self.check_step`` before</span>
+<span class="sd">        instantiation. This may assign a metallicity and/or attach a</span>
+<span class="sd">        ``TrackMatcher`` if required for the step.</span>
+<span class="sd">        - The instantiated step is stored as an attribute of SimulationProperties.</span>
+<span class="sd">        - After loading, ``self.steps_loaded`` is updated to indicate whether</span>
+<span class="sd">        all configured steps have been successfully attached.</span>
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loading </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">..."</span><span class="p">)</span>
+
+        <span class="c1"># grab kwargs from ini file for given step</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isfile</span><span class="p">(</span><span class="n">from_ini</span><span class="p">):</span>
+            <span class="n">step_tup</span> <span class="o">=</span> <span class="n">simprop_kwargs_from_ini</span><span class="p">(</span><span class="n">from_ini</span><span class="p">,</span> <span class="n">only</span><span class="o">=</span><span class="n">step_name</span><span class="p">)[</span><span class="n">step_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">step_name</span> <span class="o">!=</span> <span class="s2">"flow"</span><span class="p">:</span>
+            <span class="c1"># check to make sure the step has a...</span>
+            <span class="c1"># 1) metallicity assigned (if needed)</span>
+            <span class="c1"># 2) TrackMatcher assigned (if needed)</span>
+            <span class="n">step_tup</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_step</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">RNG</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span>
+                                       <span class="n">step_tup</span><span class="p">,</span> <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="n">step_func</span><span class="p">,</span> <span class="n">step_kwargs</span> <span class="o">=</span> <span class="n">step_tup</span>
+
+        <span class="c1"># Try to load the step</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_func</span><span class="p">(</span><span class="o">**</span><span class="n">step_kwargs</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Class: </span><span class="si">{</span><span class="n">step_func</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">step_kwargs</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"step_kwargs: "</span><span class="p">)</span>
+                    <span class="n">kw_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">step_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kw_list</span><span class="p">))</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> loaded successfully.</span><span class="se">\n</span><span class="s2">"</span><span class="p">)</span>
+
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Error loading </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="s2">"StepWarning"</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Loading </span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> without arguments."</span><span class="p">)</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_func</span><span class="p">())</span>
+
+        <span class="c1"># check if all steps have been loaded</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">steps_loaded</span> <span class="o">=</span> <span class="nb">all</span><span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">tup</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tup</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.check_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.check_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">,</span> <span class="n">RNG</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_tup</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate and update configuration for an evolution step.</span>
+
+<span class="sd">        This method ensures that a valid metallicity is assigned to the step</span>
+<span class="sd">        (unless the step is excluded from metallicity handling) and that a</span>
+<span class="sd">        corresponding TrackMatcher exists if the step requires track matching.</span>
+<span class="sd">        If a TrackMatcher for the `(metallicity, step_name)` combination does</span>
+<span class="sd">        not yet exist, it is created and stored.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metallicity : float or None</span>
+<span class="sd">            Default metallicity value to use for the step if not explicitly</span>
+<span class="sd">            provided in ``step_kwargs``.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Name of the pipeline step being checked.</span>
+<span class="sd">        step_kwargs : dict</span>
+<span class="sd">            Keyword arguments for the step. This dictionary may be modified</span>
+<span class="sd">            in-place to include validated metallicity and/or a TrackMatcher</span>
+<span class="sd">            instance.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            If True, print the keyword arguments used to construct the</span>
+<span class="sd">            TrackMatcher.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            The step tuple containing the step function and the updated</span>
+<span class="sd">            ``step_kwargs`` dictionary. This new step_kwargs contains a</span>
+<span class="sd">            validated ``metallicity`` entry and potentially a</span>
+<span class="sd">            ``track_matcher`` object.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - If metallicity is not provided for a step that requires it, a warning</span>
+<span class="sd">        is issued and a default value of ``Z = 1.0`` (solar metallicity) is used.</span>
+<span class="sd">        - TrackMatcher objects are stored in ``self.track_matchers`` and reused</span>
+<span class="sd">        for repeated `(metallicity, step_name)` combinations.</span>
+<span class="sd">        """</span>
+        <span class="n">step_func</span><span class="p">,</span> <span class="n">step_kwargs</span> <span class="o">=</span> <span class="n">step_tup</span>
+        <span class="c1"># copy these to track what was originally passed before adding defaults</span>
+        <span class="c1"># in case we need to update a TrackMatcher for a step, this method only</span>
+        <span class="c1"># cares about updating what it is told to, not everything.</span>
+        <span class="n">original_step_kwargs</span> <span class="o">=</span> <span class="n">step_kwargs</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># check/assign metallicity for the step</span>
+        <span class="k">if</span> <span class="s2">"metallicity"</span> <span class="ow">in</span> <span class="n">step_func</span><span class="o">.</span><span class="n">DEFAULT_KWARGS</span><span class="p">:</span>
+            <span class="n">metallicity</span> <span class="o">=</span> <span class="n">step_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'metallicity'</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">metallicity</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">Pwarn</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">step_name</span><span class="si">}</span><span class="s2"> not assigned a metallicity. "</span>
+                    <span class="s2">"Defaulting to Z = Zsun (solar)."</span><span class="p">,</span>
+                    <span class="s2">"ReplaceValueWarning"</span><span class="p">)</span>
+                <span class="n">metallicity</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="n">step_kwargs</span><span class="p">[</span><span class="s1">'metallicity'</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+
+        <span class="c1"># These steps need these grids:</span>
+        <span class="n">step_grid_map</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"step_HMS_HMS"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">HMS_HMS_path</span><span class="p">,</span>
+                         <span class="s2">"step_CO_HMS_RLO"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">CO_HMS_RLO_path</span><span class="p">,</span>
+                         <span class="s2">"step_CO_HeMS"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">CO_HeMS_path</span><span class="p">,</span>
+                         <span class="s2">"step_CO_HeMS_RLO"</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">CO_HeMS_RLO_path</span><span class="p">}</span>
+        <span class="k">if</span> <span class="n">step_name</span> <span class="ow">in</span> <span class="n">step_grid_map</span><span class="p">:</span>
+            <span class="n">step_kwargs</span><span class="p">[</span><span class="s1">'grid_path'</span><span class="p">]</span> <span class="o">=</span> <span class="n">step_grid_map</span><span class="p">[</span><span class="n">step_name</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="s2">"track_matcher"</span> <span class="ow">in</span> <span class="n">step_func</span><span class="o">.</span><span class="n">DEFAULT_KWARGS</span><span class="p">:</span>
+            <span class="c1"># each metallicity/step combo could require</span>
+            <span class="c1"># a unique TrackMatcher, so check for that</span>
+            <span class="n">step_kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_check_track_matcher</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span>
+                                                    <span class="n">step_name</span><span class="p">,</span>
+                                                    <span class="n">step_kwargs</span><span class="p">,</span>
+                                                    <span class="n">original_step_kwargs</span><span class="p">,</span>
+                                                    <span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="s2">"RNG"</span> <span class="ow">in</span> <span class="n">step_func</span><span class="o">.</span><span class="n">DEFAULT_KWARGS</span><span class="p">:</span>
+            <span class="n">step_kwargs</span><span class="p">[</span><span class="s1">'RNG'</span><span class="p">]</span> <span class="o">=</span> <span class="n">RNG</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">step_func</span><span class="p">,</span> <span class="n">step_kwargs</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_track_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">step_kwargs</span><span class="p">,</span>
+                            <span class="n">original_step_kwargs</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validate, create, update, and assign the TrackMatcher for an evolution step.</span>
+
+<span class="sd">        A unique TrackMatcher is maintained for each ``(metallicity, step_name)``</span>
+<span class="sd">        combination. If a TrackMatcher for the requested combination does not</span>
+<span class="sd">        already exist in this SimulationProperties, one is created using the</span>
+<span class="sd">        supplied matcher-specific keyword arguments. If one already exists,</span>
+<span class="sd">        its explicitly supplied properties are compared against the existing</span>
+<span class="sd">        values and updated when necessary. If an updated property is one of the</span>
+<span class="sd">        TrackMatcher's training triggers, the TrackMatcher is recreated so that</span>
+<span class="sd">        it is retrained with the new settings.</span>
+
+<span class="sd">        TrackMatcher-specific keyword arguments are separated from the remaining</span>
+<span class="sd">        step keyword arguments using ``TrackMatcher.separate_kwargs``. The</span>
+<span class="sd">        resulting TrackMatcher instance is then added to ``step_kwargs`` under</span>
+<span class="sd">        the ``"track_matcher"`` key.</span>
+
+<span class="sd">        TrackMatchers for other metallicities associated with the same step are</span>
+<span class="sd">        removed after the requested matcher has been created or retrieved. This</span>
+<span class="sd">        limits the number of simultaneously stored TrackMatcher objects and</span>
+<span class="sd">        reduces memory usage.</span>
+
+<span class="sd">        Note that in multi-metallicity runs, each metallicity is assigned to a</span>
+<span class="sd">        unique BinaryPopulation, each of which has its own unique</span>
+<span class="sd">        SimulationProperties at that given metallicity..</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metallicity : float</span>
+<span class="sd">            Stellar metallicity associated with the evolutionary step. This value</span>
+<span class="sd">            is used together with ``step_name`` to identify the required</span>
+<span class="sd">            TrackMatcher.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Name of the evolutionary step for which the TrackMatcher is required.</span>
+<span class="sd">        step_kwargs : dict</span>
+<span class="sd">            Keyword arguments for the step. TrackMatcher-specific arguments are</span>
+<span class="sd">            separated from this dictionary and the resulting TrackMatcher instance</span>
+<span class="sd">            is added under the ``"track_matcher"`` key.</span>
+<span class="sd">        original_step_kwargs : dict</span>
+<span class="sd">            Copy of the keyword arguments originally supplied to the evolution step</span>
+<span class="sd">            before defaults or other values were added. Only properties explicitly</span>
+<span class="sd">            present in this dictionary are considered when determining whether an</span>
+<span class="sd">            existing TrackMatcher needs to be updated.</span>
+<span class="sd">        verbose : bool, optional</span>
+<span class="sd">            If True, print the TrackMatcher keyword arguments used for the current</span>
+<span class="sd">            step.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The updated step keyword arguments containing the TrackMatcher-specific</span>
+<span class="sd">            arguments removed and the appropriate TrackMatcher instance assigned</span>
+<span class="sd">            to the ``"track_matcher"`` key.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - TrackMatcher objects are stored in ``self.track_matchers`` using</span>
+<span class="sd">        ``(metallicity, step_name)`` as the key.</span>
+<span class="sd">        - GRIDInterpolator objects required by the TrackMatcher are created and</span>
+<span class="sd">        cached by ``create_track_matcher``.</span>
+<span class="sd">        - Existing TrackMatchers are reused when their explicitly supplied</span>
+<span class="sd">        configuration has not changed.</span>
+<span class="sd">        - If a training-triggering TrackMatcher property changes, the existing</span>
+<span class="sd">        matcher is recreated using the updated configuration.</span>
+<span class="sd">        - TrackMatchers for other metallicities but the same ``step_name`` are</span>
+<span class="sd">        deleted to conserve memory.</span>
+<span class="sd">        """</span>
+
+        <span class="n">matcher_key</span> <span class="o">=</span> <span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="n">matcher_needed</span> <span class="o">=</span> <span class="n">matcher_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span>
+        <span class="n">step_kwargs</span><span class="p">,</span> <span class="n">matcher_kwargs</span> <span class="o">=</span> <span class="n">TrackMatcher</span><span class="o">.</span><span class="n">separate_kwargs</span><span class="p">(</span><span class="n">step_kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">matcher_needed</span><span class="p">:</span>
+            <span class="c1"># Always just create a new TrackMatcher if it does not exist</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">create_track_matcher</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">matcher_kwargs</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">track_matcher</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">[</span><span class="n">matcher_key</span><span class="p">]</span>
+            <span class="n">retrain</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="c1"># subsequently check if any properties need to be updated,</span>
+            <span class="c1"># in case reloading for example</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">matcher_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="c1"># only care to update kwargs actually passed via load_step</span>
+                <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">original_step_kwargs</span><span class="p">:</span>
+                    <span class="n">do_update</span> <span class="o">=</span> <span class="n">track_matcher</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="n">original_step_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="k">if</span> <span class="n">do_update</span><span class="p">:</span>
+                        <span class="nb">setattr</span><span class="p">(</span><span class="n">track_matcher</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">matcher_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                        <span class="n">track_matcher</span><span class="o">.</span><span class="n">kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">matcher_kwargs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                        <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">track_matcher</span><span class="o">.</span><span class="n">TRAINING_TRIGGERS</span><span class="p">:</span>
+                            <span class="n">retrain</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="n">retrain</span><span class="p">:</span>
+                <span class="n">updated_kwargs</span> <span class="o">=</span> <span class="n">track_matcher</span><span class="o">.</span><span class="n">kwargs</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_track_matcher</span><span class="p">(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">updated_kwargs</span><span class="p">)</span>
+        <span class="c1"># check for and delete any old TrackMatcher's this step has to save RAM</span>
+        <span class="k">for</span> <span class="n">mk</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">):</span>
+            <span class="n">this_met</span><span class="p">,</span> <span class="n">this_stepn</span> <span class="o">=</span> <span class="n">mk</span>
+            <span class="k">if</span> <span class="n">this_met</span> <span class="o">!=</span> <span class="n">metallicity</span> <span class="ow">and</span> <span class="n">this_stepn</span> <span class="o">==</span> <span class="n">step_name</span><span class="p">:</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">[</span><span class="n">mk</span><span class="p">]</span>
+                <span class="c1"># delete associated cached grids to save RAM too,</span>
+                <span class="c1"># but only if no other TrackMatcher is using this</span>
+                <span class="c1"># metallicity. Otherwise, grid still needed.</span>
+                <span class="n">other_steps_at_this_met</span> <span class="o">=</span> <span class="nb">any</span><span class="p">(</span><span class="n">other_met</span> <span class="o">==</span> <span class="n">this_met</span>
+                                          <span class="k">for</span> <span class="n">other_met</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">other_steps_at_this_met</span><span class="p">:</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">[</span><span class="n">this_met</span><span class="p">]</span>
+                    <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">[</span><span class="n">this_met</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="n">kw_list</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"</span><span class="se">\t</span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">val</span><span class="si">}</span><span class="s2">"</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">matcher_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()]</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"matcher_kwargs: </span><span class="se">\n</span><span class="s2">"</span> <span class="o">+</span> <span class="s2">"</span><span class="se">\n</span><span class="s2">"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">kw_list</span><span class="p">))</span>
+        <span class="c1"># reference ths TrackMatcher in this step's kwargs</span>
+        <span class="n">step_kwargs</span><span class="p">[</span><span class="s1">'track_matcher'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">[</span><span class="n">matcher_key</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">step_kwargs</span>
+
+<div class="viewcode-block" id="SimulationProperties.create_track_matcher">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.create_track_matcher">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">create_track_matcher</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">,</span> <span class="n">matcher_kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create and store a TrackMatcher for a given metallicity and step.</span>
+
+<span class="sd">        This method ensures that the required stellar evolution grids</span>
+<span class="sd">        (H-rich and stripped-He) are loaded for the specified metallicity.</span>
+<span class="sd">        If the corresponding GRIDInterpolator objects do not yet exist,</span>
+<span class="sd">        they are created and cached. The interpolators are then passed to</span>
+<span class="sd">        a TrackMatcher instance, which is stored internally.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metallicity : float</span>
+<span class="sd">            Stellar metallicity used to select the appropriate grid files.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            Identifier for the evolutionary step associated with this</span>
+<span class="sd">            TrackMatcher.</span>
+<span class="sd">        matcher_kwargs : dict</span>
+<span class="sd">            Keyword arguments used to initialize the TrackMatcher. This</span>
+<span class="sd">            dictionary will be updated in-place with the following keys:</span>
+<span class="sd">            'grid_Hrich' and 'grid_strippedHe'.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - GRIDInterpolator objects are created only once per metallicity</span>
+<span class="sd">        and reused for subsequent TrackMatcher creations.</span>
+<span class="sd">        - The created TrackMatcher is stored in ``self.track_matchers``</span>
+<span class="sd">        using the key ``(metallicity, step_name)``.</span>
+<span class="sd">        """</span>
+
+        <span class="n">z_str</span> <span class="o">=</span> <span class="n">convert_metallicity_to_string</span><span class="p">(</span><span class="n">metallicity</span><span class="p">)</span>
+        <span class="c1"># set up GRIDInterpolator objects (for HMS and HeMS)</span>
+        <span class="c1"># (only if one hasn't been created already for a given metallicity)</span>
+        <span class="k">if</span> <span class="n">metallicity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">:</span>
+            <span class="n">grid_path_Hrich</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_HMS_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">z_str</span><span class="si">}</span><span class="s2">_Zsun.h5"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span> <span class="o">=</span> <span class="n">GRIDInterpolator</span><span class="p">(</span><span class="n">grid_path_Hrich</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metallicity</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">:</span>
+            <span class="n">grid_path_strippedHe</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">single_HeMS_path</span><span class="p">,</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">z_str</span><span class="si">}</span><span class="s2">_Zsun.h5"</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span> <span class="o">=</span> <span class="n">GRIDInterpolator</span><span class="p">(</span><span class="n">grid_path_strippedHe</span><span class="p">)</span>
+
+        <span class="c1"># Create TrackMatcher object as needed, passing GRIDInterpolator references</span>
+        <span class="n">matcher_kwargs</span><span class="p">[</span><span class="s1">'grid_Hrich'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span>
+        <span class="n">matcher_kwargs</span><span class="p">[</span><span class="s1">'grid_strippedHe'</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">track_matchers</span><span class="p">[(</span><span class="n">metallicity</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)]</span> <span class="o">=</span> <span class="n">TrackMatcher</span><span class="p">(</span><span class="o">**</span><span class="n">matcher_kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.close">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Close hdf5 files before exiting."""</span>
+
+        <span class="n">all_step_funcs</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span> <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span>
+                          <span class="bp">self</span><span class="o">.</span><span class="vm">__dict__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="s1">'step_'</span> <span class="ow">in</span> <span class="n">key</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">step_func</span> <span class="ow">in</span> <span class="n">all_step_funcs</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">step_func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MesaGridStep</span><span class="p">):</span>
+                <span class="n">step_func</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">metallicity</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grids_Hrich</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">metallicity</span> <span class="ow">in</span>  <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">grids_strippedHe</span><span class="p">[</span><span class="n">metallicity</span><span class="p">]</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Functions called before a binary evolves.</span>
+
+<span class="sd">        Uses all extra hooks classes or extra functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'extra_pre_evolve'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_pre_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.pre_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Prepare for step.</span>
+
+<span class="sd">        The method is called before every evolution step; uses all extra hooks</span>
+<span class="sd">        classes or extra functions (except for undefined next step errors).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            The name of the step about to be called (as defined in the flow).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'extra_pre_step'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_pre_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Finalize step.</span>
+
+<span class="sd">        The method is called after every evolution step; uses all extra hooks</span>
+<span class="sd">        classes or extra functions (except for undefined next step errors).</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary before evolution starts.</span>
+<span class="sd">        step_name : str</span>
+<span class="sd">            The name of the step about to be called (as defined in the flow).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        """</span>
+        <span class="c1">## do not call extra step hooks if history_verbose=False</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">binary</span><span class="o">.</span><span class="n">history_verbose</span> <span class="ow">and</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s2">"redirect"</span> <span class="ow">in</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">binary</span>
+
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'extra_post_step'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_post_step</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="SimulationProperties.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.SimulationProperties.post_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Finalize the evolution of the binary.</span>
+
+<span class="sd">        The method is called after a binary exits the evolution loop.</span>
+<span class="sd">        Uses all extra hooks classes or extra functions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+<span class="sd">            The binary after evolution is ended.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        binary : instance of &lt;class, BinaryStar&gt;</span>
+
+<span class="sd">        """</span>
+        <span class="k">for</span> <span class="n">hooks</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_hooks_classes</span><span class="p">:</span>
+            <span class="n">hooks</span><span class="o">.</span><span class="n">post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">'extra_post_evolve'</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">extra_post_evolve</span><span class="p">(</span><span class="n">binary</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="EvolveHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">EvolveHooks</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Base class for hooking into binary evolution."""</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Add any new output columns to the hooks constructor.</span>
+<span class="sd">        Example for extra binary columns:</span>
+<span class="sd">            self.extra_binary_col_names = ["column_name_1", "column_name_2"]</span>
+<span class="sd">        Example for extra star columns:</span>
+<span class="sd">            self.extra_star_col_names = ["column_name_1", "column_name_2"]</span>
+<span class="sd">        """</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="EvolveHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Perform actions before a binary evolves."""</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.pre_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Perform actions before every evolution step."""</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Perform acctions after every evolution step."""</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="EvolveHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.EvolveHooks.post_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Perform actions after a binary exits the evolution loop."""</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="TimingHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">TimingHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add history column 'step_times' (time taken by step) to each binary.</span>
+
+<span class="sd">    Example</span>
+<span class="sd">    -------</span>
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns={'step_times': float})</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_binary_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"step_times"</span><span class="p">]</span>
+
+<div class="viewcode-block" id="TimingHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the step time to match history."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">'step_times'</span><span class="p">):</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.pre_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Record the wall time before taking the step."""</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">step_start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.post_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Record the duration of the step."""</span>
+
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">step_start_time</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">):</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">):</span>
+            <span class="n">last_items</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">last_items</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):]</span>
+
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="TimingHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.TimingHooks.post_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Add None's to step_times to match history rows."""</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'END'</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'FAILED'</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_times</span><span class="p">))</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_times</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">diff</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="StepNamesHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">StepNamesHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Add history column 'step_name' to each binary.</span>
+
+<span class="sd">    Name of evolutionary step as defined in SimulationProperties.</span>
+
+<span class="sd">    &gt;&gt;&gt; pop.to_df(extra_columns={'step_names': str})</span>
+<span class="sd">    """</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_binary_col_names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"step_names"</span><span class="p">]</span>
+
+<div class="viewcode-block" id="StepNamesHooks.pre_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Initialize the step name to match history."""</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">binary</span><span class="p">,</span> <span class="s1">'step_names'</span><span class="p">):</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'initial_cond'</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.pre_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Do not do anything before the step."""</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.post_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Record the step name."""</span>
+
+        <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">step_name</span><span class="p">)</span>
+        <span class="n">len_binary_hist</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span>
+        <span class="n">len_step_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">)</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">len_binary_hist</span> <span class="o">-</span> <span class="n">len_step_names</span>
+
+        <span class="k">if</span> <span class="n">len_binary_hist</span> <span class="o">&gt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">len_binary_hist</span> <span class="o">&lt;</span> <span class="n">len_step_names</span><span class="p">:</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">=</span> <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">len_binary_hist</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):]</span>
+
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="StepNamesHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.StepNamesHooks.post_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Ensure None's are append to step_names to match rows in history."""</span>
+        <span class="k">if</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'END'</span> <span class="ow">or</span> <span class="n">binary</span><span class="o">.</span><span class="n">event</span> <span class="o">==</span> <span class="s1">'FAILED'</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">event_history</span><span class="p">)</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">step_names</span><span class="p">))</span>
+            <span class="n">binary</span><span class="o">.</span><span class="n">step_names</span> <span class="o">+=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">diff</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="PrintStepInfoHooks">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PrintStepInfoHooks</span><span class="p">(</span><span class="n">EvolveHooks</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Simple example for adding extra print info."""</span>
+
+<div class="viewcode-block" id="PrintStepInfoHooks.pre_step">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.pre_step">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pre_step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">,</span> <span class="n">step_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Print the step name for each binary, before taking it."""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">step_name</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+
+
+<div class="viewcode-block" id="PrintStepInfoHooks.post_evolve">
+<a class="viewcode-back" href="../../../api_reference/posydon.binary_evol.html#posydon.binary_evol.simulationproperties.PrintStepInfoHooks.post_evolve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">post_evolve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">binary</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Report at the end of the evolution of each binary."""</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">"End evol for binary </span><span class="si">{}</span><span class="s2">"</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">binary</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="n">end</span><span class="o">=</span><span class="s1">'</span><span class="se">\n</span><span class="s1">'</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">binary</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.3.1
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.3.1/index.html">2.3</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

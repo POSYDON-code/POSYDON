@@ -1,0 +1,25 @@
+posydon.binary\_evol.SN
+=======================
+
+.. automodule:: posydon.binary_evol.SN
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.binary\_evol.SN.profile\_collapse
+-----------------------------------------
+
+.. automodule:: posydon.binary_evol.SN.profile_collapse
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.binary\_evol.SN.step\_SN
+--------------------------------
+
+.. automodule:: posydon.binary_evol.SN.step_SN
+   :members:
+   :show-inheritance:
+   :undoc-members:

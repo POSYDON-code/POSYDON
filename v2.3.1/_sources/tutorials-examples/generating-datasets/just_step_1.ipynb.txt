@@ -1,0 +1,522 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Processing MESA grids with the POSYDON pipeline API"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you haven't done it already, export the environemnt variables."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 1,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "env: PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/\n",
+      "env: PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/\n"
+     ]
+    }
+   ],
+   "source": [
+    "%env PATH_TO_POSYDON=/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/\n",
+    "%env PATH_TO_POSYDON_DATA=/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Configurating the Initialisation File for the Pipeline"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let's copy the pipeline ini file template for the UNIGE HPC cluster."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 2,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "'./pipeline.ini'"
+      ]
+     },
+     "execution_count": 2,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import os\n",
+    "import shutil\n",
+    "from posydon.config import PATH_TO_POSYDON\n",
+    "\n",
+    "path_to_ini = os.path.join(PATH_TO_POSYDON, 'grid_params/pipeline_yggdrasil.ini')\n",
+    "shutil.copyfile(path_to_ini, './pipeline.ini')"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We now edit the pipeline ini file to point to the MESA grid directory `test_grid/` containing a set of 100 MESA models of the HMS-HMS grid at 0.1Zsun for the mass ratio q=0.7, see the running MESa grid getting started tutorial.\n",
+    "\n",
+    "In order for the pipeline to be able to process the data we need to follow the following directory naming convention:\n",
+    "`/HMS-HMS/1e-01_Zsun/test_grid/`.\n",
+    "\n",
+    "Here we just want to run the first step of the pipeline, in order to create the h5 files containing the MESA models. Hence, after setting up the HPC account options and `PATH_TO_GRIDS` the value"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 9,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "['HMS-HMS']"
+      ]
+     },
+     "execution_count": 9,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from posydon.config import PATH_TO_POSYDON_DATA\n",
+    "\n",
+    "PATH_TO_GRIDS = os.path.join(PATH_TO_POSYDON_DATA, 'POSYDON_data/tutorials/processing-pipeline')\n",
+    "os.listdir(PATH_TO_GRIDS)"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We set:\n",
+    "```ini\n",
+    "    CREATE_GRID_SLICES = True\n",
+    "    COMBINE_GRID_SLICES = False\n",
+    "    CALCULATE_EXTRA_VALUES = False\n",
+    "    TRAIN_INTERPOLATORS = False\n",
+    "    EXPORT_DATASET = False\n",
+    "    RERUN = False\n",
+    "```\n",
+    "\n",
+    "And edit the `[step_1]` section of the file to\n",
+    "```ini\n",
+    "    GRID_TYPES = ['HMS-HMS']\n",
+    "    METALLICITIES = [['1e-01_Zsun']]\n",
+    "    GRID_SLICES = [['test_grid']]\n",
+    "    COMPRESSIONS = [['LITE', 'ORIGINAL']]\n",
+    "    DROP_MISSING_FILES = True\n",
+    "    STOP_BEFORE_CARBON_DEPLETION = 1\n",
+    "    CREATE_PLOTS = []\n",
+    "    DO_CHECKS = []\n",
+    "```\n",
+    "\n",
+    "Also remember to set\n",
+    "```ini\n",
+    "    CREATE_PLOTS = []\n",
+    "    DO_CHECKS = []\n",
+    "```\n",
+    "for all other steps, otherwise the pipeline will try to create plots and do checks on the data, which is not possible since we are not running the full pipeline."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Setting-up and Running the Post Processing Pipeline"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We are now rady to setup the grid pipeline with the `posydon-setup-pipeline` command, as follows:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 12,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "/home/bavera/.conda/envs/posydon_env/bin/posydon-setup-pipeline:4: DeprecationWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html\n",
+      "  __import__('pkg_resources').require('posydon==1.0.0+194.g3953a14')\n",
+      "\n",
+      "+++++++++++++++++++ACCOUNT+++++++++++++++++++ \n",
+      "{ 'ACCOUNT': 'meynet',\n",
+      "  'EMAIL': 'simone.bavera@unige.ch',\n",
+      "  'MAILTYPE': 'ALL',\n",
+      "  'PARTITION': 'private-astro-cpu',\n",
+      "  'WALLTIME': '24:00:00'}\n",
+      "\n",
+      "++++++++++++++++++++SETUP++++++++++++++++++++\n",
+      "{ 'CALCULATE_EXTRA_VALUES': False,\n",
+      "  'COMBINE_GRID_SLICES': False,\n",
+      "  'CREATE_GRID_SLICES': True,\n",
+      "  'EXPORT_DATASET': False,\n",
+      "  'PATH': '.',\n",
+      "  'PATH_TO_GRIDS': '/srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/',\n",
+      "  'RERUN': False,\n",
+      "  'TRAIN_INTERPOLATORS': False,\n",
+      "  'VERBOSE': True,\n",
+      "  'VERSION': ''}\n",
+      "\n",
+      "\n",
+      "-------------CREATE_GRID_SLICES--------------  step_1 : True \n",
+      "{ 'COMPRESSIONS': [['LITE', 'ORIGINAL']],\n",
+      "  'CREATE_PLOTS': [],\n",
+      "  'DO_CHECKS': [],\n",
+      "  'DROP_MISSING_FILES': True,\n",
+      "  'GRID_SLICES': [['test_grid']],\n",
+      "  'GRID_TYPES': ['HMS-HMS'],\n",
+      "  'METALLICITIES': [['1e-01_Zsun']],\n",
+      "  'STOP_BEFORE_CARBON_DEPLETION': 1}\n",
+      "\n",
+      "\n",
+      "-------------COMBINE_GRID_SLICES-------------  step_2 :False \n",
+      "\n",
+      "\n",
+      "-----------CALCULATE_EXTRA_VALUES------------  step_3 :False \n",
+      "\n",
+      "\n",
+      "-------------TRAIN_INTERPOLATORS-------------  step_4 :False \n",
+      "\n",
+      "\n",
+      "---------------EXPORT_DATASET----------------  step_F :False \n",
+      "\n",
+      "\n",
+      "--------------------RERUN--------------------  rerun  :False \n"
+     ]
+    }
+   ],
+   "source": [
+    "!posydon-setup-pipeline pipeline.ini"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "logs\t      processing.ipynb\tstep_1.csv    step_2_plots.csv\n",
+      "pipeline.ini  run_pipeline.sh\tstep_1.slurm  step_2_plots.slurm\n"
+     ]
+    }
+   ],
+   "source": [
+    "!ls"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let's sumit the job to the cluster with the `run_pipeline` command:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 14,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "step_1.slurm submitted as 28467595\n"
+     ]
+    }
+   ],
+   "source": [
+    "!./run_pipeline.sh"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 16,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "             JOBID PARTITION     NAME     USER ST       TIME  NODES NODELIST(REASON)\n",
+      "        28467595_1 private-a psygrid1   bavera  R       0:12      1 cpu144\n",
+      "        28467595_0 private-a psygrid1   bavera  R       0:12      1 cpu144\n"
+     ]
+    }
+   ],
+   "source": [
+    "!squeue -u bavera -j 28467595"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "We are not generating a LITE and and ORIGINAL version of the grid. You can inspect the output of the pipeline in the working directory `./logs/`."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 22,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "Processing /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_32.5279_m2_22.7695_initial_z_1.4200e-03_initial_period_in_days_4.5574e+01_grid_index_45\n",
+      "Processing /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.1574e+00_grid_index_32\n",
+      "Processing /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_3.9376e+00_grid_index_73\n",
+      "Processing /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_8.5770_m2_6.0039_initial_z_1.4200e-03_initial_period_in_days_1.1574e+00_grid_index_12\n",
+      "100%|██████████| 100/100 [02:06<00:00,  1.27s/it]\n",
+      "Storing initial/final values and metadata to HDF5...\n",
+      "/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/posydon/grids/psygrid.py:654: UserWarning: Ignored MESA run because of missing binary history in: /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_70\n",
+      "\n",
+      "/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/posydon/grids/psygrid.py:654: UserWarning: Ignored MESA run because of missing binary history in: /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_123.3602_m2_86.3521_initial_z_1.4200e-03_initial_period_in_days_3.4021e-01_grid_index_71\n",
+      "\n",
+      "/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/posydon/grids/psygrid.py:654: UserWarning: Ignored MESA run because of missing binary history in: /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_300.0000_m2_210.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_90\n",
+      "\n",
+      "/srv/beegfs/scratch/shares/astro/posydon/simone/documentation/POSYDON/posydon/grids/psygrid.py:654: UserWarning: Ignored MESA run because of missing binary history in: /srv/beegfs/scratch/shares/astro/posydon/POSYDON_GRIDS_v2/POSYDON_data/230914/POSYDON_data/tutorials/processing-pipeline/HMS-HMS/1e-01_Zsun/test_grid/Zbase_0.0014_m1_20.8585_m2_14.6009_initial_z_1.4200e-03_initial_period_in_days_1.0000e-01_grid_index_30\n",
+      "\n",
+      "Loading HDF5 grid...\n",
+      "\tLoading initial/final values...\n",
+      "\tAcquiring paths to MESA directories...\n",
+      "\tGetting configuration metadata...\n",
+      "\tEnumerating runs and checking integrity of grid...\n",
+      "\tDone.\n"
+     ]
+    }
+   ],
+   "source": [
+    "!tail -n 20 ./logs/step_1/grid_slice_0.out"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Great, the processing happened successuflly. Let's load the grid."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Exploring the PSyGrid Object and Exporting Failed Simulation to Be Re-Run"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 24,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "from posydon.grids.psygrid import PSyGrid\n",
+    "\n",
+    "path_to_lite_grid = os.path.join(PATH_TO_GRIDS, 'HMS-HMS/1e-01_Zsun/LITE/test_grid.h5')\n",
+    "grid = PSyGrid(path_to_lite_grid)\n",
+    "grid.load()"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Here is how to access the grid data, please refer to the PSyGrid documentation for more details."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 34,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array(['initial_MT', 'no_MT', 'not_converged', 'stable_MT', 'unstable_MT'],\n",
+       "      dtype='<U70')"
+      ]
+     },
+     "execution_count": 34,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# initial final values\n",
+    "# grid.initial_values\n",
+    "# grid.final_values\n",
+    "\n",
+    "# track 0 values \n",
+    "# grid[0].history1\n",
+    "# grid[0].history2\n",
+    "# grid[0].binary_history\n",
+    "\n",
+    "# list name of columns\n",
+    "# grid.final_values.dtype.names\n",
+    "\n",
+    "# show unique interpolation classes\n",
+    "import numpy as np\n",
+    "np.unique(grid.final_values['interpolation_class'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "As you can see we have `not_coverged` models, which are not suitable for population synthesis. They can be exported to be resimulated with a different set of parameters and reprocessed with the pipleline. See the PSyGrid documentation for more details."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 43,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "Counter({'stable_MT': 37,\n",
+       "         'no_MT': 21,\n",
+       "         'initial_MT': 19,\n",
+       "         'unstable_MT': 12,\n",
+       "         'not_converged': 11})"
+      ]
+     },
+     "execution_count": 43,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from collections import Counter\n",
+    "Counter(grid.final_values['interpolation_class'])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let's export the models to be rerun, and apply a different set of paramter, e.g. let's limit the max opacity to 0.5 (`opacity_max = 0.5` in `inlist`). The `rerun` method allows to export a `grid.csv` file with points having a given termination_flag_1 or a given index."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 45,
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "array([ 7, 19, 28, 35, 49, 63, 64, 70, 72, 77, 86])"
+      ]
+     },
+     "execution_count": 45,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "ids = np.squeeze(np.argwhere(grid.final_values['interpolation_class'] == 'not_converged'))\n",
+    "ids"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 46,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "grid.rerun(runs_to_rerun=ids, new_mesa_flag={'opacity_max' : 0.5})"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 47,
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "m1,m2,initial_period_in_days,initial_z,Zbase,opacity_max\n",
+      "20.8584585754,14.6009210028,0.3402066919,0.00142,0.00142,0.5\n",
+      "79.1045989347,55.3732192543,13.3958849241,0.00142,0.00142,0.5\n",
+      "8.577008953,6.0039062671,45.5736969568,0.00142,0.00142,0.5\n",
+      "8.577008953,6.0039062671,13.3958849241,0.00142,0.00142,0.5\n",
+      "5.5,3.85,13.3958849241,0.00142,0.00142,0.5\n",
+      "13.3754695598,9.3628286919,45.5736969568,0.00142,0.00142,0.5\n",
+      "79.1045989347,55.3732192543,45.5736969568,0.00142,0.00142,0.5\n",
+      "5.5,3.85,3.937572435,0.00142,0.00142,0.5\n",
+      "50.725759589,35.5080317123,0.3402066919,0.00142,0.00142,0.5\n",
+      "79.1045989347,55.3732192543,155.0447668126,0.00142,0.00142,0.5\n",
+      "32.5278519901,22.7694963931,0.3402066919,0.00142,0.00142,0.5\n"
+     ]
+    }
+   ],
+   "source": [
+    "!head -n 20 ./grid.csv"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Congratulation, you have exported the grid to a csv file to be rerun! If you do not know how to run a MESA grid with POSYDON, follow the tutorial to run it.\n",
+    "\n",
+    "For production grids the processing pipeline allows to export preset configurations of `params.ini` and `grid.csv` already cofigured to extract the subsample of models to be rerun and the correct MESA inlist commit. See the advanced tutorial for an example."
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon_env",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.5"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 2
+}
