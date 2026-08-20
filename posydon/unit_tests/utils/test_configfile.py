@@ -24,7 +24,7 @@ from pytest import fixture, raises
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'ConfigFile', 'VariableKey', '__authors__',\
+        elements = {'ConfigFile', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'ast', 'configparser', 'copy', 'json', 'np', 'operator',\
@@ -49,9 +49,6 @@ class TestElements:
 
     def test_instance_parse_inifile(self):
         assert isroutine(totest.parse_inifile)
-
-    def test_instance_VariableKey(self):
-        assert isclass(totest.VariableKey)
 
 
 class TestFunctions:
@@ -310,7 +307,3 @@ class TestConfigFile:
     def test_len(self, ConfigFile_filled, test_entries):
         assert isroutine(ConfigFile_filled.__len__)
         assert len(ConfigFile_filled) == len(test_entries)
-
-
-#class TestVariableKey:
-#    # test the VariableKey class: looks to be not used as long as using python3
