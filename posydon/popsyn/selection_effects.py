@@ -1,5 +1,5 @@
 """
-Simple utility for generating detection weights
+Simple utility for generating detection weights.
 
 Uses grid of detection probabilities to estimate detection probabilities
 
@@ -18,7 +18,7 @@ from sklearn.neighbors import KNeighborsRegressor
 
 class KNNmodel():
     """
-    K-nearest neighbor model that instantiates based on detection probability grid
+    K-nearest neighbor model that instantiates based on detection probability grid.
 
     When instantiating, must supply path to the grid, and key that represents
     GW network and sensitivity.
@@ -28,9 +28,10 @@ class KNNmodel():
         """
         Instantiates KNNmodel class and trains the KNN.
 
+        Parameters
+        ----------
         grid_path : string
             Path to grid of detection probabilities.
-
         sensitivity_key : string
             GW detector sensitivity and network configuration you want to use,
                 see arXiv:1304.0670v3
@@ -41,7 +42,6 @@ class KNNmodel():
                     'O4high_H1L1V1' : aligo_O4high.txt, aligo_O4high.txt, avirgo_O4high_NEW.txt
                     'design_H1L1V1' : AplusDesign.txt, AplusDesign.txt, avirgo_O5high_NEW.txt
                 detection probabilities are calculated using the IMRPhenomXHM approximant with a network SNR threshold of 10
-
         verbose : boolean
             Adds verbosity.
         """
@@ -87,10 +87,12 @@ class KNNmodel():
     def predict_pdet(self, data, verbose=False):
         """
         Gives relative weight to each system in `data` based on its proximity to the points on the grid.
-        Each system in `data` should have a primary mass `m1`, mass ratio `q`, redshift `z`, and effective spin `chieff`
-        This function will determine detection probabilities using nearest neighbor algorithm in [log(m1), q, log(z), chieff] space
-        Need to specify bounds (based on the trained grid) so that the grid and data get normalized properly
+        Each system in `data` should have a primary mass `m1`, mass ratio `q`, redshift `z`, and effective spin `chieff`.
+        This function will determine detection probabilities using nearest neighbor algorithm in [log(m1), q, log(z), chieff] space.
+        Need to specify bounds (based on the trained grid) so that the grid and data get normalized properly.
 
+        Parameters
+        ----------
         data : Pandas dataframe
             Data you wish to predict detection probabilities for.
             Required series in the dataframe:
@@ -98,9 +100,13 @@ class KNNmodel():
                 'q' : mass ratio (secondary mass/primary mass)
                 'z' : redshift of merger
                 'chieff' : effective inspiral spin
-
         verbose : boolean
             Adds verbosity.
+
+        Returns
+        -------
+        ndarray
+            Detection probabilities for each system in `data`.
         """
         start = time.time()
         if verbose:
@@ -131,7 +137,25 @@ class KNNmodel():
     @staticmethod
     def normalize(x, xmin, xmax, a=0, b=1):
         """
-        normalizes data on range [a,b]
+        Normalize data on range [a, b].
+
+        Parameters
+        ----------
+        x : array_like
+            The data to normalize.
+        xmin : float
+            The minimum value of the range used for normalization.
+        xmax : float
+            The maximum value of the range used for normalization.
+        a : float
+            The lower bound of the target range (default is 0).
+        b : float
+            The upper bound of the target range (default is 1).
+
+        Returns
+        -------
+        ndarray
+            The normalized data on the range [a, b].
         """
         data_norm = (b-a)*(x-xmin) / (xmax-xmin) + a
         return data_norm

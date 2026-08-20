@@ -111,9 +111,6 @@ class plot2D(object):
             Each termination flag is associated with a marker shape, size,
             color and label (cf. `MARKERS_COLORS_LEGENDS` in
             `plot_defaults.py`).
-        DEFAULT_LABELS : dict
-            Each varaible is associated to an axis label. (cf. `DEFAULT_LABELS`
-            in `plot_defaults.py`).
         max_cols : int
             Defines the maximum number of columns of subplots. Default: 3
         legend_pos : SubplotSpec (int or tuple)
@@ -721,7 +718,15 @@ class plot2D(object):
         self.initial_values = new_initial_values
 
     def add_properties_to_final_values(self, termination_flag=None):
-        """Add extra initial values."""
+        """Add extra properties to the final values.
+
+        Parameters
+        ----------
+        termination_flag : str
+            Termination flag to add, e.g. 'combined_TF12', 'debug' or
+            'interpolation_class_errors'.
+
+        """
         old_initial_values = copy.copy(self.initial_values)
         old_final_values = copy.copy(self.final_values)
         if termination_flag == "combined_TF12":
@@ -1206,7 +1211,7 @@ class plot2D(object):
 
         Parameters
         ----------
-        scatters : object
+        scatter : object
             matplotlib scatter object.
         ax : object
             matplotlib figure axes.
@@ -1262,6 +1267,8 @@ class plot2D(object):
         axs : array of axes
             matplotlib figure axes. Its dimensions should be stored in
             self.n_cols and self.n_rows.
+        l_ax : matplotlib.axes.Axes
+            Axes object used for the legend and colorbar.
         legend_idxs : list of indices
             Tells where to place the legend instead of a plot.
 

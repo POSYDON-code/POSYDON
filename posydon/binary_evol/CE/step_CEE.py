@@ -146,7 +146,14 @@ class StepCEE(object):
 
 
     def __init__(self, **kwargs):
-        """Initialize a StepCEE instance."""
+        """Initialize a StepCEE instance.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments to set as instance attributes. Each key must
+            be one of the valid parameter names in DEFAULT_KWARGS.
+        """
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
@@ -230,7 +237,6 @@ class StepCEE(object):
 
         If lambda_CE is calculated from donor's profile, we also pass a more
         accurate calculation of the donor core mass for the purposes of CEE.
-
 
         Parameters
         ----------
@@ -570,12 +576,19 @@ class StepCEE(object):
             Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
             Core radius of the donor after the fast CE phase (in Rsun)
+        donor_type : string
+            String dictating whether the donor has a 'He_core' or 'CO_core'
         comp_star : SingleStar object
             The companion star
         mc2_i : float
             Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
             Core radius of the companion after the fast CE phase (in Rsun)
+        comp_type : string
+            String dictating whether the companion has a 'He_core', 'CO_core',
+            or 'not_giant_companion' (e.g. a compact object or MS star).
+        double_CE : bool
+            In case we have a double CE situation.
         separation_postCEE : float
             Binary's separation after the fast CE phase (in cm)
         verbose : bool
@@ -687,12 +700,19 @@ class StepCEE(object):
             Core mass of the donor after the fast CE phase (in Msun)
         rc1_i : float
             Core radius of the donor after the fast CE phase (in Rsun)
+        donor_type : string
+            String dictating whether the donor has a 'He_core' or 'CO_core'
         comp_star : SingleStar object
             The companion star
         mc2_i : float
             Core mass of the companion after the fast CE phase (in Msun)
         rc2_i : float
             Core radius of the companion after the fast CE phase (in Rsun)
+        comp_type : string
+            String dictating whether the companion has a 'He_core', 'CO_core',
+            or 'not_giant_companion' (e.g. a compact object or MS star).
+        double_CE : bool
+            In case we have a double CE situation.
         separation_postCEE : float
             Binary's separation after the fast CE phase (in cm)
         verbose : bool
@@ -1191,7 +1211,7 @@ class StepCEE(object):
                                                separation_i, alpha_CE, radius1,
                                                radius2,
                                                double_CE, verbose=False):
-        """ Calculate the amount of mass lost during a stellar merger in a CEE
+        """Calculate the amount of mass lost during a stellar merger in a CEE.
 
         From the stellar profiles the mass ejected until merger is calculated.
         Note that this function only returns non-zero mass-loss values if a
@@ -1403,11 +1423,12 @@ class StepCEE(object):
         return
 
     def adjust_secondary_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
-        """
-        Check and adjust the radius of the companion star if the star overfills its Roche
-        lobe due to inflated radius from short accretion prior to CE.
-        If so, the star's evolutionary track is adjusted
-        and the radius is re-matched to a corresponding single-star track.
+        """Check and adjust the radius of the companion star.
+
+        The radius of the companion star is adjusted if the star overfills
+        its Roche lobe due to an inflated radius from short accretion prior
+        to CE. If so, the star's evolutionary track is adjusted and the
+        radius is re-matched to a corresponding single-star track.
 
         Parameters
         ----------
