@@ -69,11 +69,6 @@ In this tutorial, you will learn how to change the assumption of star-formation 
 
     one_met_pop_syn
 
-X-ray binaries: computing the X-ray luminosity function 🩻
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-TODO: bring v1 tutorial to v2 leveraging the SyntheticPopulation class
-
 
 Evolving Single Binaries 🐞
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -107,17 +102,5 @@ Dive deeper into POSYDON's visualization capabilities. This tutorial explores th
 
     Van den Heuvel Diagrams <VHD>
 
-
-Deep Dive: Behind the Scenes Customizations
--------------------------------------------
-
-Dive into the nitty-gritty of POSYDON's inner workings. Customize, extend, and tweak the system to fit your unique requirements:
-
-Customizing the Population Synthesis Class 🛠️
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-   - Understand the foundational class driving our binary-star population synthesis. Learn to modify and adapt it to your needs.
-   - 🔗 [Delve into class customizations](link-to-customization-notebook1)
-
-(Add other in-depth customization tutorials here...)
 
 Remember, mastering POSYDON is a journey, not a destination. As you progress through these tutorials, you'll uncover layers of capabilities and functionalities. Keep exploring and happy simulating!
