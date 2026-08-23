@@ -52,7 +52,7 @@ single consistent set of numbers:
 What you download      Approximate size
 ===================== =================
 Full DR2 dataset       ~ 110 GB
-Each DR2 metallicity   ~ 14 GB
+Each DR2 metallicity   ~ 12 GB
 DR1 dataset            ~ 40 GB
 ===================== =================
 
