@@ -1,0 +1,268 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Population Reweighting &mdash; posydon 2.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5048a02b"></script>
+      <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Star Formation History" href="star_formation_history.html" />
+    <link rel="prev" title="Synthetic Populations" href="synthetic_population.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html">
+            
+              <img src="../../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">How-to (Getting Started)</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/grid-types.html">Grid Types</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../explanations/data-releases.html">Data Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../population-synthesis.html">Population Synthesis</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="binary_population.html">The Binary Population Object</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html">Synthetic Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synthetic_population.html#the-structure-of-generated-population-files">The Structure of Generated Population Files</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Population Reweighting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="star_formation_history.html">Star Formation History</a></li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../population-synthesis.html">Population Synthesis</a></li>
+      <li class="breadcrumb-item active">Population Reweighting</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/components-overview/pop_syn/reweighting.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="population-reweighting">
+<span id="id1"></span><h1>Population Reweighting<a class="headerlink" href="#population-reweighting" title="Link to this heading"></a></h1>
+<p>POSYDON allows you to reweight your populations after they have been evolved,
+based on the initial conditions of the binaries and single stars. This is a
+form of importance sampling: the weights are obtained from the ratio of the
+PDF of the target population to the PDF of the simulated population, evaluated
+at the initial conditions of each model.</p>
+<p>The reweighting step is performed on a <code class="docutils literal notranslate"><span class="pre">TransientPopulation</span></code> object with the
+<code class="docutils literal notranslate"><span class="pre">get_model_weights</span></code> method. The implementation expects the following initial
+properties to be available in the population data:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">S1_mass_i</span></code>: initial primary mass</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">S2_mass_i</span></code>: initial secondary mass</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">orbital_period_i</span></code>: initial orbital period</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">state_i</span></code>: initial state, which is used to distinguish binaries from
+initially single stars</p></li>
+</ul>
+<section id="supported-initial-condition-distributions">
+<h2>Supported initial-condition distributions<a class="headerlink" href="#supported-initial-condition-distributions" title="Link to this heading"></a></h2>
+<p>The reweighting implementation in <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.norm_pop</span></code> currently supports
+several distribution families. The table below summarizes the main options.</p>
+<table class="docutils align-default" id="id2">
+<caption><span class="caption-text">Supported reweighting distributions</span><a class="headerlink" href="#id2" title="Link to this table"></a></caption>
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 25.0%" />
+<col style="width: 25.0%" />
+<col style="width: 30.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Initial condition</p></th>
+<th class="head"><p>Supported schemes</p></th>
+<th class="head"><p>Required parameters</p></th>
+<th class="head"><p>Notes</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Primary mass</p></td>
+<td><p>Any IMF class available in <code class="docutils literal notranslate"><span class="pre">posydon.popsyn.IMFs</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">primary_mass_scheme</span></code>, <code class="docutils literal notranslate"><span class="pre">primary_mass_min</span></code>, <code class="docutils literal notranslate"><span class="pre">primary_mass_max</span></code></p></td>
+<td><p>The scheme name is resolved dynamically from the IMF module. If it is not
+recognized, a flat distribution is used and a warning is emitted.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Mass ratio</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">flat_mass_ratio</span></code>, <code class="docutils literal notranslate"><span class="pre">power_law_mass_ratio</span></code></p></td>
+<td><p>For <code class="docutils literal notranslate"><span class="pre">flat_mass_ratio</span></code>: <code class="docutils literal notranslate"><span class="pre">secondary_mass_scheme</span></code> plus
+<code class="docutils literal notranslate"><span class="pre">secondary_mass_min</span></code> and <code class="docutils literal notranslate"><span class="pre">secondary_mass_max</span></code> (or explicit
+<code class="docutils literal notranslate"><span class="pre">q_min</span></code>/<code class="docutils literal notranslate"><span class="pre">q_max</span></code>). For <code class="docutils literal notranslate"><span class="pre">power_law_mass_ratio</span></code>: <code class="docutils literal notranslate"><span class="pre">mass_ratio_slope</span></code>
+and optional <code class="docutils literal notranslate"><span class="pre">q_min</span></code>/<code class="docutils literal notranslate"><span class="pre">q_max</span></code>.</p></td>
+<td><p>The flat mass-ratio distribution can be defined either from the allowed
+secondary-mass range or from explicit mass-ratio bounds.</p></td>
+</tr>
+<tr class="row-even"><td><p>Orbital period</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">period</span></code> with <code class="docutils literal notranslate"><span class="pre">Sana+12_period_extended</span></code> or <code class="docutils literal notranslate"><span class="pre">power_law</span></code>; or
+<code class="docutils literal notranslate"><span class="pre">separation</span></code> with <code class="docutils literal notranslate"><span class="pre">log_uniform</span></code></p></td>
+<td><p>For <code class="docutils literal notranslate"><span class="pre">period</span></code>: <code class="docutils literal notranslate"><span class="pre">orbital_period_min</span></code> and <code class="docutils literal notranslate"><span class="pre">orbital_period_max</span></code>. For
+<code class="docutils literal notranslate"><span class="pre">Sana+12_period_extended</span></code> no additional parameters are needed. For
+<code class="docutils literal notranslate"><span class="pre">power_law</span></code>: <code class="docutils literal notranslate"><span class="pre">power_law_slope</span></code>. For <code class="docutils literal notranslate"><span class="pre">separation</span></code>:
+<code class="docutils literal notranslate"><span class="pre">orbital_separation_min</span></code> and <code class="docutils literal notranslate"><span class="pre">orbital_separation_max</span></code>.</p></td>
+<td><p>Periods are interpreted in days. Separation-based inputs are converted
+internally to periods using the orbital-separation relation.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Binary fraction</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">const</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">binary_fraction_scheme</span></code>, <code class="docutils literal notranslate"><span class="pre">binary_fraction_const</span></code></p></td>
+<td><p>This is currently implemented as a constant binary fraction and is used
+to distinguish single-star and binary PDFs.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="how-the-weights-are-computed">
+<h2>How the weights are computed<a class="headerlink" href="#how-the-weights-are-computed" title="Link to this heading"></a></h2>
+<p>The method evaluates the target PDF and the simulation PDF at the initial
+conditions of each system and computes</p>
+<p><code class="docutils literal notranslate"><span class="pre">weights</span> <span class="pre">=</span> <span class="pre">(PDF_target</span> <span class="pre">/</span> <span class="pre">PDF_sim)</span> <span class="pre">*</span> <span class="pre">(mean_mass_sim</span> <span class="pre">/</span> <span class="pre">mean_mass_pop)</span> <span class="pre">*</span> <span class="pre">(1</span> <span class="pre">/</span> <span class="pre">M_sim)</span></code></p>
+<p>where <code class="docutils literal notranslate"><span class="pre">M_sim</span></code> is the total simulated mass, <code class="docutils literal notranslate"><span class="pre">mean_mass_sim</span></code> is the mean mass
+of the simulated population, and <code class="docutils literal notranslate"><span class="pre">mean_mass_pop</span></code> is the mean mass of the
+requested target population.</p>
+<p>In practice, this means that the reweighted population is only meaningful when
+the target and simulation populations share the same support for the sampled
+initial-condition distributions. If the target distribution extends beyond the
+range covered by the simulation, you might miss systems!</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="synthetic_population.html" class="btn btn-neutral float-left" title="Synthetic Populations" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="star_formation_history.html" class="btn btn-neutral float-right" title="Star Formation History" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.3.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.3.2/index.html">2.3</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

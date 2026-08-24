@@ -1,0 +1,258 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Releases &mdash; posydon 2.3.2 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=03e43079" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=9430f4b5" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5048a02b"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+      <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Processing Pipeline" href="../components-overview/processing-pipeline.html" />
+    <link rel="prev" title="Grid Types" href="grid-types.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html">
+            
+              <img src="../_static/posydon_logo.png" class="logo" alt="Logo"/>
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">How-to (Getting Started)</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/prerequisites.html">Prerequisites</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/installation-guide.html">Installation Guide</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-grids.html">Quick Start: Examining the MESA Grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../getting-started/first-population.html">Quick Start: Your First Population</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Tutorials</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/population-synthesis/binary-pop-syn.html">Binary-Star Population Synthesis with POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/generating-datasets/generating-datasets.html">Crafting the Core Datasets for POSYDON</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorials-examples/MESA-grids/running-grids.html">Architecting MESA Simulation Grids with POSYDON</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">POSYDON school material</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON-2025-School-Labs">POSYDON School 2025</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Explanation</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="grid-types.html">Grid Types</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Data Releases</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/processing-pipeline.html">Processing Pipeline</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/machine-learning-components.html">Machine Learning Components</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/stellar-binary-simulation.html">Stellar &amp; Binary-star Simulation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/population-synthesis.html">Population Synthesis</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">API Reference</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../components-overview/mesa-grids.html">MESA Grids API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/posydon.html">posydon</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../api_reference/bin.html">executables</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Additional Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../introduction-acknowledgements/intro.html">Introduction, Objectives, and Scope</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://posydon.org/team.html">Collaborative Team</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://ui.adsabs.harvard.edu/public-libraries/ZZsD9bzLTzWnLV3hwyJxbA">Publications</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/releases">Releases</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://zenodo.org/communities/posydon/">Datasets</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contact-support/contact-information.html">Contact Information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/installation-issues.html">Common Installation Issues</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../troubleshooting-faqs/code-questions.html">Code Usage Questions</a></li>
+<li class="toctree-l1"><a class="reference external" href="https://github.com/POSYDON-code/POSYDON/issues/new/choose">Report an Issue</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../contributing/how-to-contribute.html">How To Contribute</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">posydon</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Data Releases</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/explanations/data-releases.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-releases">
+<span id="id1"></span><h1>Data Releases<a class="headerlink" href="#data-releases" title="Link to this heading"></a></h1>
+<p>POSYDON shares the precomputed (down-sampled) MESA simulation grids, together with their
+post-processed products (interpolators and classifiers), so that you can run
+population synthesis without having to run MESA yourself. These shared datasets
+are called data releases.</p>
+<section id="data-release-1-dr1">
+<h2>Data Release 1 (DR1)<a class="headerlink" href="#data-release-1-dr1" title="Link to this heading"></a></h2>
+<p>DR1 was the first published dataset accompanying POSYDON v1. It contains a
+fixed grid of binary-system MESA simulations. Precise storage and content
+details of DR1 are described in the original POSYDON paper, <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F/abstract">Fragos et
+al. (2023)</a>.</p>
+<p>Because the code evolved substantially between v1 and v2, DR1 is not the default
+data used by current POSYDON versions. The default download is DR2.</p>
+</section>
+<section id="data-release-2-dr2-default">
+<h2>Data Release 2 (DR2, default)<a class="headerlink" href="#data-release-2-dr2-default" title="Link to this heading"></a></h2>
+<p>DR2 accompanies POSYDON v2 and is the default dataset used by the code. It
+contains fixed grids of single- and binary-star MESA simulations processed
+through the POSYDON <a class="reference internal" href="../components-overview/processing-pipeline.html#processing-pipeline"><span class="std std-ref">processing pipeline</span></a>, together
+with the trained interpolators and classifiers used for population synthesis.</p>
+<section id="metallicities">
+<h3>Metallicities<a class="headerlink" href="#metallicities" title="Link to this heading"></a></h3>
+<p>Unlike DR1, DR2 contains simulations over <strong>eight different metallicities</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="mf">1e-04</span><span class="n">_Zsun</span>  <span class="mf">1e-03</span><span class="n">_Zsun</span>  <span class="o">...</span>  <span class="p">(</span><span class="n">solar</span> <span class="n">Zsun</span> <span class="ow">and</span> <span class="n">above</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>so that populations can be constructed over a wide range of star formation
+environments. Each metallicity is a separate download, which is convenient if
+you only need a subset (e.g. only the solar-metallicity grid to follow the
+<em>Getting Started</em> examples).</p>
+</section>
+<section id="storage-requirements">
+<h3>Storage requirements<a class="headerlink" href="#storage-requirements" title="Link to this heading"></a></h3>
+<p>The amount of disk space you need depends on the subset you download. The table
+below gives the canonical figures used throughout these documentation, with a
+single consistent set of numbers:</p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>What you download</p></th>
+<th class="head"><p>Approximate size</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Full DR2 dataset</p></td>
+<td><p>~ 110 GB</p></td>
+</tr>
+<tr class="row-odd"><td><p>Each DR2 metallicity</p></td>
+<td><p>~ 12 GB</p></td>
+</tr>
+<tr class="row-even"><td><p>DR1 dataset</p></td>
+<td><p>~ 40 GB</p></td>
+</tr>
+</tbody>
+</table>
+<p>The exact footprint also depends on how many run types (<code class="docutils literal notranslate"><span class="pre">HMS-HMS</span></code>, <code class="docutils literal notranslate"><span class="pre">He-He</span></code>,
+and so on; see <a class="reference internal" href="grid-types.html#grid-types"><span class="std std-ref">Grid Types</span></a>) and metallicities you include.</p>
+</section>
+</section>
+<section id="how-to-download">
+<h2>How to download<a class="headerlink" href="#how-to-download" title="Link to this heading"></a></h2>
+<p>The simplest way to obtain the data is with the <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code>
+command-line tool. For example, to download just the solar-metallicity DR2
+data used by the quick-start guides:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>DR2_1Zsun
+</pre></div>
+</div>
+<p>And to download the full DR2 dataset:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>get-posydon-data<span class="w"> </span>DR2
+</pre></div>
+</div>
+<p>See the <code class="docutils literal notranslate"><span class="pre">get-posydon-data</span></code> reference page (<code class="docutils literal notranslate"><span class="pre">api_reference/get_posydon_data.rst</span></code>)
+for the full list of options.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="grid-types.html#grid-types"><span class="std std-ref">Grid Types</span></a> for what a grid contains and how DR2 is organized.</p></li>
+<li><p><a class="reference internal" href="../getting-started/installation-guide.html#installation-guide"><span class="std std-ref">Installation Guide</span></a> for how data is located on disk (the
+<code class="docutils literal notranslate"><span class="pre">PATH_TO_POSYDON_DATA</span></code> variable).</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="grid-types.html" class="btn btn-neutral float-left" title="Grid Types" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../components-overview/processing-pipeline.html" class="btn btn-neutral float-right" title="Processing Pipeline" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Tassos Fragos.</p>
+  </div>
+
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      Version: 2.3.2
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions">
+        
+        <dl>
+            <dt> v2</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.0.6/index.html">2.0</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.1.7/index.html">2.1</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
+            
+            <dd><a href="https://posydon.org/POSYDON/v2.3.2/index.html">2.3</a></dd>
+            
+        </dl>
+        
+        <dl>
+            <dt> v1</dt>
+            
+            <dd><a href="https://posydon.org/POSYDON/v1.0.5/index.html">1.0</a></dd>
+            
+        </dl>
+        
+    </div>
+  </div><script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
