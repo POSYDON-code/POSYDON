@@ -1,0 +1,341 @@
+name: Baseline Validation (Comment Triggered)
+
+on:
+  issue_comment:
+    types: [created]
+
+# Only one validation run per PR at a time; a new trigger comment supersedes
+# an in-flight run for the same PR.
+concurrency:
+  group: baseline-validation-${{ github.event.issue.number }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+env:
+  # Marker used to find/update the single "sticky" comment on the PR.
+  STICKY_MARKER: "<!-- posydon-baseline-validation -->"
+
+jobs:
+  check-trigger:
+    # Only run if the comment is on a PR and contains the trigger command
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/run-baseline-check')
+    runs-on: self-hosted
+    outputs:
+      should_run: ${{ steps.check.outputs.should_run }}
+      pr_number: ${{ steps.get-pr.outputs.pr_number }}
+      pr_branch: ${{ steps.get-pr.outputs.pr_branch }}
+      pr_sha: ${{ steps.get-pr.outputs.pr_sha }}
+      base_branch: ${{ steps.get-pr.outputs.base_branch }}
+      base_sha: ${{ steps.get-pr.outputs.base_sha }}
+
+    steps:
+      - name: Check if user has permission
+        id: check
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              username: context.payload.comment.user.login
+            });
+
+            const hasPermission = ['admin', 'write'].includes(permission.permission);
+            core.setOutput('should_run', hasPermission);
+
+            if (!hasPermission) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: `❌ @${context.payload.comment.user.login} does not have permission to trigger baseline validation.`
+              });
+            }
+
+      - name: React to comment
+        if: steps.check.outputs.should_run == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            await github.rest.reactions.createForIssueComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: context.payload.comment.id,
+              content: 'rocket'
+            });
+
+      - name: Get PR details
+        id: get-pr
+        if: steps.check.outputs.should_run == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { data: pr } = await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            });
+
+            core.setOutput('pr_number', pr.number);
+            core.setOutput('pr_branch', pr.head.ref);
+            core.setOutput('pr_sha', pr.head.sha);
+            core.setOutput('base_branch', pr.base.ref);
+            core.setOutput('base_sha', pr.base.sha);
+
+      - name: Post or update sticky "running" comment
+        if: steps.check.outputs.should_run == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const marker = process.env.STICKY_MARKER;
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `${marker}\n## 🔬 Baseline Validation Results\n\n🚀 Running (triggered by @${context.payload.comment.user.login}) — [view run](${runUrl})...\n`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body
+              });
+            }
+
+  validate-baseline:
+    needs: check-trigger
+    if: needs.check-trigger.outputs.should_run == 'true'
+    runs-on: self-hosted
+
+    steps:
+      # Single checkout of the PR head. dev-tools/*.sh clone the base and PR
+      # branches themselves from GitHub, so both the baseline generation and
+      # the candidate evolution run out of this one checkout's dev-tools
+      # directory. This also means both steps use the *same* binaries_suite.py
+      # test definitions (from the PR), and the baseline ends up in the same
+      # dev-tools/script_data/baselines/ tree that validate_binaries.sh reads
+      # from, instead of two disconnected checkouts.
+      - name: Checkout PR branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.check-trigger.outputs.pr_sha }}
+
+      - name: Compute safe branch names
+        id: vars
+        run: |
+          base_branch="${{ needs.check-trigger.outputs.base_branch }}"
+          echo "safe_base_branch=${base_branch//\//_}" >> "$GITHUB_OUTPUT"
+
+      - name: Cache baseline for base branch
+        id: baseline-cache
+        uses: actions/cache@v4
+        with:
+          path: dev-tools/script_data/baselines/${{ steps.vars.outputs.safe_base_branch }}
+          key: baseline-${{ steps.vars.outputs.safe_base_branch }}-${{ needs.check-trigger.outputs.base_sha }}
+
+      - name: Generate baseline from base branch
+        id: generate-baseline
+        if: steps.baseline-cache.outputs.cache-hit != 'true'
+        continue-on-error: true
+        working-directory: dev-tools
+        env:
+          PATH_TO_POSYDON_DATA: /data
+        run: |
+          echo "Generating baseline from branch: ${{ needs.check-trigger.outputs.base_branch }}"
+          ./generate_baseline.sh "${{ needs.check-trigger.outputs.base_branch }}" "${{ needs.check-trigger.outputs.base_sha }}"
+
+      - name: Skip baseline generation (cache hit)
+        if: steps.baseline-cache.outputs.cache-hit == 'true'
+        run: echo "Using cached baseline for ${{ needs.check-trigger.outputs.base_branch }}@${{ needs.check-trigger.outputs.base_sha }}"
+
+      - name: Run validation on PR branch
+        id: validate
+        continue-on-error: true
+        working-directory: dev-tools
+        env:
+          PATH_TO_POSYDON_DATA: /data
+        run: |
+          echo "Validating PR branch: ${{ needs.check-trigger.outputs.pr_branch }}"
+          ./validate_binaries.sh "${{ needs.check-trigger.outputs.pr_branch }}" "${{ needs.check-trigger.outputs.base_branch }}"
+
+      - name: Collect results
+        id: collect-results
+        if: always()
+        run: |
+          SAFE_BASE_BRANCH="${{ steps.vars.outputs.safe_base_branch }}"
+          SAFE_PR_BRANCH="${{ needs.check-trigger.outputs.pr_branch }}"
+          SAFE_PR_BRANCH="${SAFE_PR_BRANCH//\//_}"
+
+          OUTPUT_DIR="${GITHUB_WORKSPACE}/dev-tools/script_data/output/binary_star_tests/${SAFE_PR_BRANCH}"
+          LOG_DIR="${GITHUB_WORKSPACE}/dev-tools/script_data/logs/${SAFE_PR_BRANCH}"
+
+          mkdir -p artifacts
+
+          if [ -f "${OUTPUT_DIR}/comparison_summary.txt" ]; then
+            cp "${OUTPUT_DIR}/comparison_summary.txt" artifacts/
+            echo "summary_exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "⚠️ No comparison summary found" > artifacts/comparison_summary.txt
+            echo "summary_exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -d "${OUTPUT_DIR}" ]; then
+            find "${OUTPUT_DIR}" -name "comparison_*.txt" -not -name "comparison_summary.txt" -exec cp {} artifacts/ \;
+            ls artifacts/comparison_*.txt > /dev/null 2>&1 && echo "comparisons_exist=true" >> "$GITHUB_OUTPUT" || echo "comparisons_exist=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "comparisons_exist=false" >> "$GITHUB_OUTPUT"
+          fi
+
+          if [ -d "${LOG_DIR}" ]; then
+            tar -czf artifacts/logs.tar.gz -C "${LOG_DIR}" . 2>/dev/null || true
+            [ -f artifacts/logs.tar.gz ] && echo "logs_exist=true" >> "$GITHUB_OUTPUT" || echo "logs_exist=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "logs_exist=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-validation-results-pr${{ needs.check-trigger.outputs.pr_number }}-${{ github.run_id }}
+          path: artifacts/
+          retention-days: 30
+
+      - name: Update sticky comment with results
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            const marker = process.env.STICKY_MARKER;
+
+            const baselineStatus = '${{ steps.baseline-cache.outputs.cache-hit == 'true' && 'skipped (cached)' || steps.generate-baseline.outcome }}';
+            const validationStatus = '${{ steps.validate.outcome }}';
+            const summaryExists = '${{ steps.collect-results.outputs.summary_exists }}' === 'true';
+            const comparisonsExist = '${{ steps.collect-results.outputs.comparisons_exist }}' === 'true';
+            const logsExist = '${{ steps.collect-results.outputs.logs_exist }}' === 'true';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            let comment = `${marker}\n`;
+            comment += '## 🔬 Baseline Validation Results\n\n';
+            comment += `**Base Branch:** \`${{ needs.check-trigger.outputs.base_branch }}\` (\`${{ needs.check-trigger.outputs.base_sha }}\`)\n`;
+            comment += `**PR Branch:** \`${{ needs.check-trigger.outputs.pr_branch }}\` (\`${{ needs.check-trigger.outputs.pr_sha }}\`)\n`;
+            comment += `**Triggered by:** @${{ github.event.comment.user.login }}\n\n`;
+
+            comment += '### Step 1: Baseline Generation\n';
+            if (baselineStatus === 'success') {
+              comment += '✅ Baseline generated successfully\n\n';
+            } else if (baselineStatus === 'skipped (cached)') {
+              comment += 'ℹ️ Reused cached baseline (base branch commit unchanged)\n\n';
+            } else {
+              comment += '❌ Baseline generation failed\n\n';
+            }
+
+            comment += '### Step 2: Binary Validation\n';
+            if (validationStatus === 'success') {
+              comment += '✅ Validation completed successfully — no differences found\n\n';
+            } else if (validationStatus === 'failure') {
+              comment += '⚠️ Validation completed with differences (see below) — this is informational and does not block merging\n\n';
+            } else {
+              comment += '❌ Validation step failed to run\n\n';
+            }
+
+            comment += '### 📊 Comparison Summary\n';
+            if (summaryExists) {
+              try {
+                const summary = fs.readFileSync(path.join('artifacts', 'comparison_summary.txt'), 'utf8');
+                comment += '```\n' + summary + '\n```\n\n';
+              } catch (error) {
+                comment += '⚠️ Could not read summary file\n\n';
+              }
+            } else {
+              comment += '⚠️ No comparison summary available\n\n';
+            }
+
+            if (comparisonsExist) {
+              comment += '<details>\n<summary>📋 Detailed Comparisons per Metallicity</summary>\n\n';
+              const artifactsDir = 'artifacts';
+              const files = fs.readdirSync(artifactsDir);
+              const comparisonFiles = files.filter(f => f.startsWith('comparison_') && f !== 'comparison_summary.txt');
+
+              for (const file of comparisonFiles.sort()) {
+                const metallicity = file.replace('comparison_', '').replace('.txt', '');
+                comment += `\n#### ${metallicity}\n`;
+                comment += '```\n';
+                try {
+                  const content = fs.readFileSync(path.join(artifactsDir, file), 'utf8');
+                  if (content.length > 5000) {
+                    comment += content.substring(0, 5000) + '\n... (truncated, see artifacts)\n';
+                  } else {
+                    comment += content + '\n';
+                  }
+                } catch (error) {
+                  comment += `Error reading file: ${error.message}\n`;
+                }
+                comment += '```\n';
+              }
+              comment += '\n</details>\n\n';
+            }
+
+            comment += '### 📦 Artifacts\n';
+            comment += `Full results (summary, per-metallicity comparisons${logsExist ? ', logs' : ''}) are attached to the [workflow run](${runUrl}#artifacts).\n\n`;
+
+            comment += '---\n';
+            comment += `*Last updated by workflow run [#${{ github.run_id }}](${runUrl}). Comment on this PR with \`/run-baseline-check\` to re-run.*\n`;
+
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: ${{ needs.check-trigger.outputs.pr_number }}
+            });
+            const existing = comments.find(c => c.body && c.body.includes(marker));
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: ${{ needs.check-trigger.outputs.pr_number }},
+                body: comment
+              });
+            }
+
+      # Differences found by the validation suite are informational only
+      # (reported in the PR comment) and never fail this job/required check.
+      # Only an infrastructure failure (baseline generation or the validation
+      # script erroring out before producing a report) fails the job.
+      - name: Set final status
+        if: always()
+        run: |
+          if [ "${{ steps.baseline-cache.outputs.cache-hit }}" != "true" ] && [ "${{ steps.generate-baseline.outcome }}" == "failure" ]; then
+            echo "Baseline generation failed"
+            exit 1
+          fi
+          if [ "${{ steps.validate.outcome }}" != "success" ] && [ "${{ steps.validate.outcome }}" != "failure" ]; then
+            echo "Validation step errored (not a diff failure)"
+            exit 1
+          fi
+          echo "Workflow completed"
