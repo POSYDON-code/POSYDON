@@ -7,6 +7,8 @@ __authors__ = [
 ]
 
 import numpy as np
+import sys
+
 
 eps = 1.0e-32
 
@@ -28,7 +30,7 @@ OUT_SCALING_OPTIONS = [
 
 class Transformer:
 
-    def __init__(self, data, scaling):
+    def __init__(self, data, scaling, keys):
         """
             If a dimension contains negative values we assume that it is in log space and unlog it. 
             This is an assumption that we know doesn't hold since things like rates can be negative, but it
@@ -36,8 +38,11 @@ class Transformer:
         """
         data = data.copy()
 
-        self.logged = (data < 0.0).any(axis = 0)
+        self.keys = np.array(keys)
+        self.logged = np.array(["log" in k or "lg" in k for k in keys])
         data[:, self.logged] = 10**data[:, self.logged]
+
+        self.negative = (data < 0).any(axis = 0)
 
         computations = [
             lambda data: [0, 1],
@@ -47,10 +52,24 @@ class Transformer:
             lambda data: [np.log10(data + eps).mean(axis = 0), np.log10(data + eps).std(axis = 0)],
         ]
         compute = dict(zip(IN_SCALING_OPTIONS, computations)) # this line assumes that all other options are a subset of IN_SCALING_OPTION
+        og = scaling[:]
 
+        # if there's any in the data which are less than 0, it cannot be logged and a linear scaling is applied instead
+        if self.negative.any() and type(scaling) != list and "log" in scaling:
+            list_scaling = np.array([scaling] * len(self.keys))
+            list_scaling[self.negative] = scaling.replace("log_", "")
+            scaling = list_scaling
+        elif self.negative.any() and type(scaling) == list or type(scaling) == np.ndarray:
+            for i, s in enumerate(scaling):
+                if self.negative[i] and "log" in s:
+                    scaling[i] = scaling[i].replace("log_", "")
 
-        if type(scaling) == list:
+        self.scaling = scaling
+
+        if type(scaling) == list or type(scaling) == np.ndarray:
             self.log = ["log" in s for s in scaling]
+
+
             self.shift = np.array([compute[s](data[:, i])[0] for i, s in enumerate(scaling)])
             self.scale = np.array([compute[s](data[:, i])[1] for i, s in enumerate(scaling)])
         else:
@@ -65,12 +84,17 @@ class Transformer:
             data[:, self.logged] = 10**data[:, self.logged]
 
 
-        if type(self.log) == bool:
+        if type(self.log) == bool and self.log:
             data = np.log10(data + eps)
-        else:
+
+
+        elif type(self.log) == list:
             for i, l in enumerate(self.log):
+
                 if l:
                     data[:, i] = np.log10(data[:, i] + eps)
+        
+        
 
         data = (data - self.shift) / (self.scale + eps)
 
@@ -83,13 +107,15 @@ class Transformer:
 
         data = (data * (self.scale + eps)) + self.shift
 
-        if type(self.log) == bool:
+        if type(self.log) == bool and self.log:
             non_logged = ~self.logged
+
             if non_logged.any() and data.shape[1] == self.logged.shape[0]:
                 data[:, non_logged] = 10**data[:, non_logged] - eps
+
             elif data.shape[1] != self.logged.shape[0]:
                 data = 10**data - eps  # fallback: no column info available
-        else:
+        elif type(self.log) == list:
             for i, l in enumerate(self.log):
                 if l:
                     data[:, i] = 10**data[:, i] - eps

@@ -30,6 +30,7 @@ from sklearn.neighbors import KNeighborsClassifier
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import balanced_accuracy_score
 
+from tqdm import tqdm
 import sys
 import time
 
@@ -62,11 +63,10 @@ class IFInterpolator:
         elif load:
             print("Constructed in Loading Mode")
         else:
-
             self.in_keys = in_keys
 
             self.out_key_dict = out_keys
-            self.continuous_out_keys = sum(list(out_keys.values()), []) # keys to be interpolated which correspond to numerical quantities
+            self.continuous_out_keys = sum([k for k in list(out_keys.values()) if k is not None], []) # keys to be interpolated which correspond to numerical quantities
             self.discrete_out_keys = list(out_keys.keys()) # keys to be interpolated which correspond to discrete quantities
             self.constraints = find_constraints_to_apply(self.continuous_out_keys)
 
@@ -78,7 +78,6 @@ class IFInterpolator:
 
             self.training_grid = self.preprocess_grid(grids[0], training_grid = True)
             self.validation_grid = self.preprocess_grid(grids[1])
-
             self.triangulate(self.training_grid)
             # =============== usage statistics variables ============
             self.outside_convex_hull = dict(zip(self.discrete_out_keys, [0] * len(self.discrete_out_keys)))
@@ -116,17 +115,20 @@ class IFInterpolator:
         """ method used to find optimal hyperparamters for classification (k) and which normalization
         schemes work best for interpolation
         """
+
         self.is_training = True
+
         self.classifiers = dict(# Finding classification hyperparameters
             zip(
                 self.discrete_out_keys,
-                [self.find_hyperparameters(key) for key in self.discrete_out_keys]
+                [self.find_hyperparameters(key) for key in tqdm(self.discrete_out_keys)]
             )
         )
+        non_empty_out_keys = [k for k, v in self.out_key_dict.items() if len(v) > 0]
         self.out_scalers = dict(# Finding interpolation normalization schemes
             zip(
-                self.discrete_out_keys,
-                [self.optimize_normalization(key) for key in self.discrete_out_keys]
+                non_empty_out_keys,
+                [self.optimize_normalization(key) for key in tqdm(non_empty_out_keys)]
             )
         )
         self.is_training = False
@@ -237,7 +239,7 @@ class IFInterpolator:
 
         return interpolated, meta_data
 
-    def evaluate(self, initial_values, sn_model = "S1_SN_MODEL_v2_01_SN_type"):
+    def evaluate(self, initial_values, sn_model = "SN_MODEL_v2_01"):
         """ The main method of the class used to classify and interpolate
 
             Parameters
@@ -260,10 +262,18 @@ class IFInterpolator:
             
         """
 
+        if type(initial_values) != np.ndarray:
+            initial_values = np.array([
+                [initial_values.star_1.mass, initial_values.star_2.mass, initial_values.orbital_period]
+            ])
+
         if self.classifiers is None:
             sys.exit("Please find classifier hyperparameters before using interpolator")
         elif (initial_values <= 0).any():
             sys.exit("Starting stellar masses and orbital period must be greater than zero")
+
+
+        sn_model = f"S1_{sn_model}_CO_interpolation_class"
         
         interpolation_class_ind = self.discrete_out_keys.index("interpolation_class")
 
@@ -365,7 +375,7 @@ class IFInterpolator:
 
             training_initial_values = self.training_grid["initial_values"]
 
-            transform = Transformer(training_initial_values, scaling)
+            transform = Transformer(training_initial_values, scaling, self.in_keys)
             training_initial_values = transform.normalize(training_initial_values)
 
             validation_classifier.fit(
@@ -394,7 +404,7 @@ class IFInterpolator:
 
         scaling = IN_SCALING_OPTIONS[k_star[1]]
 
-        transform = Transformer(training_initial_values, scaling)
+        transform = Transformer(training_initial_values, scaling, self.in_keys)
         training_initial_values = transform.normalize(training_initial_values) # taking care of normalization
 
         classifier.fit(
@@ -482,15 +492,26 @@ class IFInterpolator:
 
             klass_inds = np.where(self.validation_grid["final_classes"][key] == klass)[0]
 
+
             training_final_values = self.training_grid["final_values"][key][self.training_grid["class_inds"][key][klass]]
+
+            if klass_inds.shape[0] == 0:
+                Pwarn(f"There were no classes for {key}")
+                 # setting error as 0.0 since all scalings will be the same
+                return [0.0] * len(self.out_key_dict[key]), Transformer(training_final_values, scaling, self.out_key_dict[key])
             
-            self.__normalization_utils = {"transform": Transformer(training_final_values, scaling), "key": key}
+            self.__normalization_utils = {"transform": Transformer(training_final_values, scaling, self.out_key_dict[key]), "key": key}
             interpolated, classes, _ = self.evaluate(self.validation_grid["initial_values"][klass_inds])
             classes = classes[np.where(classes[:, 0] != "initial_MT")[0]]
             predicted_klass_inds = np.where((classes[:, 0] == klass) | (classes[:, 1] == klass))[0]
-
+            
             # needs to be fixed to include any arbitrary SN model but this will do for now
             ground_truth = self.validation_grid["final_values"][key]
+
+            if predicted_klass_inds.shape[0] == 0:
+                Pwarn(f"There were no predicted classes for {key}")
+                 # setting error as 0.0 since all scalings will be the same
+                return [0.0] * len(self.out_key_dict[key]), Transformer(training_final_values, scaling, self.out_key_dict[key])
 
             # some interpolated and ground truth values will be NaN, e.g., for keys describing CE phenomnea are NaN if no CE is present, need to filter these NaNs out
             nans_mask = ~(np.isnan(interpolated[predicted_klass_inds]).any(axis = 1) + np.isnan(ground_truth[klass_inds][predicted_klass_inds]).any(axis = 1))
@@ -504,7 +525,7 @@ class IFInterpolator:
 
             error_mean = np.median(errors, axis = 0) if len(errors) > 0 else [np.inf] * len(self.out_key_dict[key])
 
-            return error_mean, Transformer(training_final_values, scaling)
+            return error_mean, Transformer(training_final_values, scaling, self.out_key_dict[key])
 
         eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs) # finding normalization
         opt = eval_matrix.argmin(axis = 1)
@@ -513,7 +534,7 @@ class IFInterpolator:
         for l, kl in zip(labels, opt):
             scalings = [OUT_SCALING_OPTIONS[quant] for quant in kl]
             training_final_values = self.training_grid["final_values"][key][self.training_grid["class_inds"][key][l]]
-            transformers.append(Transformer(training_final_values, scalings))
+            transformers.append(Transformer(training_final_values, scalings, self.out_key_dict[key]))
 
         return {
             "transform": dict(zip(labels, transformers)),
@@ -541,12 +562,18 @@ class IFInterpolator:
                 important to IF interpolation
         """
 
-        final_values = grid.final_values.to_df()[self.continuous_out_keys].to_numpy()
+        final_values_df = grid.final_values.to_df()
+        
+        for k in self.continuous_out_keys:
+            if k not in final_values_df.columns:
+                print(k)
+
+        final_values = final_values_df[self.continuous_out_keys].to_numpy()
 
         valid_inds = np.where(
-            (grid.final_values.to_df()["interpolation_class"] != "not_converged") &
-            (grid.final_values.to_df()["interpolation_class"] != "ignored_no_RLO") &
-            (grid.final_values.to_df()["interpolation_class"] != "ignored_no_binary_history")
+            (final_values_df["interpolation_class"] != "not_converged") &
+            (final_values_df["interpolation_class"] != "ignored_no_RLO") &
+            (final_values_df["interpolation_class"] != "ignored_no_binary_history")
         )[0]
 
         initial_values = grid.initial_values.to_df()[self.in_keys].to_numpy()[valid_inds]
@@ -566,17 +593,17 @@ class IFInterpolator:
         class_inds = {}
 
         for key in self.discrete_out_keys:
-            class_labels = np.unique(grid.final_values.to_df()[key].to_numpy()[valid_inds])
+            class_labels = np.unique(final_values_df[key].to_numpy()[valid_inds])
             class_inds[key] = dict(zip(
                 class_labels, 
-                [np.where(grid.final_values.to_df()[key].to_numpy()[valid_inds] == label)[0] for label in class_labels]
+                [np.where(final_values_df[key].to_numpy()[valid_inds] == label)[0] for label in class_labels]
             ))
 
         return {
             "initial_values": 10**initial_values,
             "normalized_initial_values": (initial_values - self.iv_min) / (self.iv_max - self.iv_min),
             "final_values": dict(zip(self.out_key_dict.keys(), [grid.final_values.to_df()[keys].to_numpy()[valid_inds] for keys in self.out_key_dict.values()])), # np.array(grid.final_values[self.continuous_out_keys][valid_inds].tolist()),
-            "final_classes": dict(zip(self.discrete_out_keys, grid.final_values.to_df()[self.discrete_out_keys].to_numpy()[valid_inds].T)),
+            "final_classes": dict(zip(self.discrete_out_keys, final_values_df[self.discrete_out_keys].to_numpy()[valid_inds].T)),
             "class_inds": class_inds,
         }
     
