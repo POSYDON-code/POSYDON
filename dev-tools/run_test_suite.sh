@@ -56,6 +56,7 @@ mkdir -p ${LOG_DIR} ${BINARY_OUTPUT_DIR}
 echo "🔧 Initializing conda"
 CONDA_SH=""
 for candidate in \
+    "$HOME/miniconda/etc/profile.d/conda.sh" \
     "$HOME/miniconda3/etc/profile.d/conda.sh" \
     "$HOME/anaconda3/etc/profile.d/conda.sh" \
     "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"; do
