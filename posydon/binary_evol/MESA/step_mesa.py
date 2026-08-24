@@ -123,6 +123,76 @@ POSYDON_TO_MESA = {
 }
 
 
+def _collect_sn_model_values(sn_row, star_idx):
+    """Build the star.SN_MODEL_* dict from a SN dataset row (short names).
+
+    Parameters
+    ----------
+    sn_row : dict or None
+        Output of PSyRunView.get_SN_data() — keys like 'S1_CO_type'.
+    star_idx : int
+        1 or 2.
+
+    Returns
+    -------
+    dict or None
+    """
+    if sn_row is None:
+        return None
+    prefix = f'S{star_idx}_'
+    co_type = sn_row.get(f'{prefix}CO_type', 'None')
+    if str(co_type) == 'None':
+        return None
+    return {
+        'state':           co_type,
+        'SN_type':         sn_row[f'{prefix}SN_type'],
+        'f_fb':            sn_row[f'{prefix}f_fb'],
+        'mass':            sn_row[f'{prefix}mass'],
+        'spin':            sn_row[f'{prefix}spin'],
+        'm_disk_accreted': sn_row[f'{prefix}m_disk_accreted'],
+        'm_disk_radiated': sn_row[f'{prefix}m_disk_radiated'],
+        'M4':              sn_row[f'{prefix}M4'],
+        'mu4':             sn_row[f'{prefix}mu4'],
+        'h1_mass_ej':      sn_row[f'{prefix}h1_mass_ej'],
+        'he4_mass_ej':     sn_row[f'{prefix}he4_mass_ej'],
+    }
+
+
+def _collect_sn_model_values(sn_row, star_idx):
+    """Build the star.SN_MODEL_* dict from a SN dataset row (short names).
+
+    Parameters
+    ----------
+    sn_row : dict or None
+        Output of PSyRunView.get_SN_data() — keys like 'S1_CO_type'.
+    star_idx : int
+        1 or 2.
+
+    Returns
+    -------
+    dict or None
+    """
+    if sn_row is None:
+        return None
+    prefix = f'S{star_idx}_'
+    co_type = sn_row.get(f'{prefix}CO_type', 'None')
+    if str(co_type) == 'None':
+        return None
+    return {
+        'state':           co_type,
+        'SN_type':         sn_row[f'{prefix}SN_type'],
+        'f_fb':            sn_row[f'{prefix}f_fb'],
+        'mass':            sn_row[f'{prefix}mass'],
+        'spin':            sn_row[f'{prefix}spin'],
+        'm_disk_accreted': sn_row[f'{prefix}m_disk_accreted'],
+        'm_disk_radiated': sn_row[f'{prefix}m_disk_radiated'],
+        'M4':              sn_row[f'{prefix}M4'],
+        'mu4':             sn_row[f'{prefix}mu4'],
+        'h1_mass_ej':      sn_row[f'{prefix}h1_mass_ej'],
+        'he4_mass_ej':     sn_row[f'{prefix}he4_mass_ej'],
+    }
+
+
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
 
@@ -270,7 +340,9 @@ class MesaGridStep:
         # Check if interpolation files exist
         if not (os.path.exists(self.grid_name.replace('%d','0')) or
                 os.path.exists(self.grid_name.replace('_%d',''))):
-            print("DOWNLOADING")
+            Pwarn(f"While loading interpolators, unable to find {self.grid_name}."
+                   "Attempting to download the data from Zenodo.",
+                   "MissingFilesWarning")
             data_download()
 
         if self.verbose:
@@ -841,27 +913,14 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]:
+            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]::
+                sn_row = cb.get_SN_data(SN_MODEL_NAME)
                 for i, star in enumerate(stars):
-                    col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
-                    if ((not stars_CO[i])
-                        and (cb.final_values[col_name] != 'None')):
-                        values = {}
-                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
-                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
-                            if key == "state":
-                                state = cb.final_values[col_name]
-                                values[key] = state
-                            elif key == "SN_type":
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = cb.final_values[col_name]
-                            else:
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = cb.final_values[col_name]
-                        setattr(star, SN_MODEL_NAME, values)
+                    if not stars_CO[i]:
+                        values = _collect_sn_model_values(sn_row, i + 1)
                     else:
-                        setattr(star, SN_MODEL_NAME, None)
+                        values = None
+                    setattr(star, SN_MODEL_NAME, values)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""

@@ -70,6 +70,7 @@ instance/
 # Sphinx documentation
 docs/_build/
 docs/_tmp/
+docs/_source/_build/
 docs/_source/api_reference
 docs/checkautodoc
 *.h5

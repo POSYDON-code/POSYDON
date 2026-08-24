@@ -19,6 +19,15 @@ from posydon.utils.interpolators import interp1d
 from .data_scaling import DataScaler
 
 
+def _extract_model_name(key):
+    """Extract SN_MODEL_NAME from a full column key.
+
+    E.g. 'S1_SN_MODEL_v2_01_CO_type' → 'SN_MODEL_v2_01'.
+    """
+    rest = key[3:]  # strip 'S1_' or 'S2_'
+    return next(name for name in SN_MODELS if rest.startswith(name + '_'))
+
+
 class psyTrackInterp:
     """Perform track interpolation for POSYDON."""
 
@@ -531,7 +540,14 @@ class GRIDInterpolator():
             for key in self.keys:
                 self.grid_data[m][key] = data[self.translate[key]]
             for key in self.final_keys:
-                self.grid_final_values[m][key] = final_value[key]
+                if 'SN_MODEL' in key:
+                    model_name = _extract_model_name(key)
+                    short_key = '_'.join(key.split(f'_{model_name}_'))
+                    sn_row = grid[idx].get_SN_data(model_name)
+                    self.grid_final_values[m][key] = (
+                        sn_row[short_key] if sn_row is not None else np.nan)
+                else:
+                    self.grid_final_values[m][key] = final_value[key]
             for key in self.profile_keys:
                 self.grid_profile[m][key] = profile[key]
 

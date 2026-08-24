@@ -258,22 +258,8 @@ def parse_inifile(inifile):
                                              _eval(node.right))
             elif isinstance(node, ast.List):
                 return [_eval(x) for x in node.elts]
-            elif isinstance(node, ast.Name): # pragma: no cover
-                result = VariableKey(item=node)
-                constants_lookup = {
-                    'True': True,
-                    'False': False,
-                    'None': None,
-                }
-                value = constants_lookup.get(result.name, result,)
-                if type(value) == VariableKey:
-                    # return regular string
-                    return value.name
-                else:
-                    # return special string like True or False
-                    return value
             elif isinstance(node, ast.NameConstant):
-                # None, True, False are nameconstants in python3 but names in 2
+                # return True, False, or None
                 return node.value
             else:
                 raise Exception('Unsupported type {}'.format(node))
@@ -311,25 +297,3 @@ def parse_inifile(inifile):
     slurm = dictionary['slurm']
 
     return run_parameters, slurm, mesa_inlists, mesa_extras
-
-
-class VariableKey(object): # pragma: no cover
-    """A dictionary key which is a variable.
-
-    @ivar item: The variable AST object.
-    """
-
-    def __init__(self, item):
-        """Construct the object by giving a `name` to it."""
-        self.name = item.id
-
-    def __eq__(self, compare):
-        """Equality if the names are the same."""
-        return (
-            compare.__class__ == self.__class__
-            and compare.name == self.name
-        )
-
-    def __hash__(self):
-        """Allow hashing using the name of the variable."""
-        return hash(self.name)

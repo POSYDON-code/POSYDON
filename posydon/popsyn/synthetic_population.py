@@ -915,7 +915,8 @@ class PopulationIO:
                 try:
                     tmp_df[c] = [self.ini_params[c]]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
             store.put("ini_parameters", tmp_df)
 
     def _load_ini_params(self, filename):
@@ -937,7 +938,8 @@ class PopulationIO:
                 try:
                     self.ini_params[c] = tmp_df[c][0]
                 except KeyError:
-                    print("Missing ini parameter:", c)
+                    if self.verbose:
+                        print("Missing ini parameter:", c)
 
 
 
@@ -1900,6 +1902,7 @@ class TransientPopulation(Population):
             The model weights of the transient population and have units of Msun^-1.
         """
         if population_parameters is None:
+            # TODO: have a centralised location for the default population parameters?
             population_parameters = {'number_of_binaries': 1000000,
                                     'binary_fraction_scheme':'const',
                                     'binary_fraction_const':0.7,
@@ -1967,13 +1970,39 @@ class TransientPopulation(Population):
             model_weights[model_weights_identifier] = (
                 model_weights.index.to_series().map(weight_mapping).fillna(model_weights[model_weights_identifier]))
 
+        base_path = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier
         with pd.HDFStore(self.filename, mode="a") as store:
-            if '/transients/' + self.transient_name + '/weights/' + model_weights_identifier in store.keys():
+            if '/' + base_path in store.keys():
                 Pwarn("Model weights already exist! Overwriting them!", "OverwriteWarning")
-                del store['transients/' + self.transient_name + '/weights/' + model_weights_identifier]
+                del store[base_path]
+                if '/' + base_path + '_population_parameters' in store.keys():
+                    del store[base_path + '_population_parameters']
 
-            store.put('transients/' + self.transient_name + '/weights/' + model_weights_identifier, model_weights)
+            store.put(base_path, model_weights)
+            tmp_df = pd.DataFrame()
+            for k, v in population_parameters.items():
+                tmp_df[k] = [v]
+            store.put(base_path + '_population_parameters', tmp_df)
+
         return model_weights
+
+    def model_weight_parameters(self, model_weights_identifier):
+        """Retrieve the population parameters used to calculate model weights.
+
+        Parameters
+        ----------
+        model_weights_identifier : str
+            Identifier for the model weights.
+
+        Returns
+        -------
+        dict
+            The population parameters used when calculating the model weights.
+        """
+        key = 'transients/' + self.transient_name + '/weights/' + model_weights_identifier + '_population_parameters'
+        with pd.HDFStore(self.filename, mode="r") as store:
+            tmp_df = store[key]
+            return {c: tmp_df[c].iloc[0] for c in tmp_df.columns}
 
     def model_weights(self, model_weights_identifier=None):
         """Retrieve the model weights of the transient population.
@@ -1994,7 +2023,9 @@ class TransientPopulation(Population):
 
         if model_weights_identifier is None:
             with pd.HDFStore(self.filename, mode="r") as store:
-                keys = [k.split('/')[-1] for k in store.keys() if k.startswith('/transients/' + self.transient_name + '/weights/')]
+                keys = [k.split('/')[-1] for k in store.keys()
+                        if k.startswith('/transients/' + self.transient_name + '/weights/')
+                        and not k.endswith('_population_parameters')]
                 model_weights = pd.concat([store['transients/' + self.transient_name + '/weights/' + key] for key in keys], axis=1)
         else:
             with pd.HDFStore(self.filename, mode="r") as store:
@@ -2251,7 +2282,7 @@ class TransientPopulation(Population):
         model_weights = self.model_weights(model_weights_identifier).to_numpy().flatten()
 
         if metallicity is None:
-            time = self.select(columns=["time"]).values
+            time = self.select(columns=["time"]).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Create histogram with model weights
@@ -2263,7 +2294,7 @@ class TransientPopulation(Population):
                 raise ValueError("The metallicity is not present in the population!")
 
             time_df = self.select(columns=['metallicity', 'time'])
-            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).values
+            time = time_df[time_df['metallicity'] == metallicity].drop(columns=['metallicity']).to_numpy().flatten()
             time = time * 1e6  # yr
 
             # Get weights for the specific metallicity

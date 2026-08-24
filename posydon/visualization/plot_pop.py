@@ -4,6 +4,7 @@ __authors__ = [
     ]
 
 import os
+import shutil
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -14,9 +15,20 @@ from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.grids.psygrid import PSyGrid
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.constants import Zsun
+from posydon.utils.posydonwarning import Pwarn
 from posydon.visualization.plot_defaults import DEFAULT_LABELS
 
-plt.style.use(os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle"))
+style_path = os.path.join(PATH_TO_POSYDON, "posydon/visualization/posydon.mplstyle")
+if shutil.which('latex'):
+    plt.style.use(style_path)
+else:
+    Pwarn(
+        "LaTeX not found; using matplotlib mathtext for math rendering. "
+        "Install texlive-latex-base for LaTeX formatting.", "MissingFilesWarning"
+    )
+    rc_params = mpl.rc_params_from_file(style_path, use_default_template=False)
+    rc_params['text.usetex'] = False
+    plt.rcParams.update(rc_params)
 
 cm = mpl.colormaps.get_cmap('tab20')
 COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i] for i in range(len(cm.colors)) if i%2==1]
@@ -250,7 +262,10 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
             PLOT_PROPERTIES['title'] += f'\n {channel}'
 
         # change the file name for the plot
-        PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
+        if save_fig:
+            PLOT_PROPERTIES['fname'] = tmp_fname % bin_center
+        else:
+            PLOT_PROPERTIES['fname'] = None
 
         # change size of the figure for properties
         if prop is not None:

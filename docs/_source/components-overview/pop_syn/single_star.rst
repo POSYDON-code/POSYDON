@@ -32,7 +32,7 @@ The star properties are defined as follows
   * - ``state``
     - The state of the star, see state options.
   * - ``metallicity``
-    - Fractional metal content (Z) of the star.
+    - Ratio to solar metallicity (Z/Z_sun, e.g., 1.0 for solar metallicity).
   * - ``mass``
     - Stellar mass in M_sun.
   * - ``log_R``
