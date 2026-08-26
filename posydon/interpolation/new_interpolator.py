@@ -11,6 +11,7 @@ import numpy as np
 import os
 import pickle
 from datetime import date
+import warnings
 
 from scipy.spatial import Delaunay
 # POSYDON
@@ -24,6 +25,7 @@ from posydon.interpolation.preprocessing import (
 from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
+from posydon.utils.gridutils import _get_grid_column, _get_grid_columns
 
 # ML Imports
 from sklearn.neighbors import KNeighborsClassifier
@@ -121,14 +123,14 @@ class IFInterpolator:
         self.classifiers = dict(# Finding classification hyperparameters
             zip(
                 self.discrete_out_keys,
-                [self.find_hyperparameters(key) for key in tqdm(self.discrete_out_keys)]
+                [self.find_hyperparameters(key) for key in tqdm(self.discrete_out_keys, desc = "Finding Classification Hyperparameters")]
             )
         )
         non_empty_out_keys = [k for k, v in self.out_key_dict.items() if len(v) > 0]
         self.out_scalers = dict(# Finding interpolation normalization schemes
             zip(
                 non_empty_out_keys,
-                [self.optimize_normalization(key) for key in tqdm(non_empty_out_keys)]
+                [self.optimize_normalization(key) for key in tqdm(non_empty_out_keys, desc = "Finding Interpolation Hyperparameters")]
             )
         )
         self.is_training = False
@@ -389,7 +391,7 @@ class IFInterpolator:
 
             bacc = balanced_accuracy_score(
                 self.validation_grid["final_classes"][klass],
-                predicted_classes                
+                predicted_classes
             )
 
             return bacc, transform
@@ -562,21 +564,16 @@ class IFInterpolator:
                 important to IF interpolation
         """
 
-        final_values_df = grid.final_values.to_df()
-        
-        for k in self.continuous_out_keys:
-            if k not in final_values_df.columns:
-                print(k)
-
-        final_values = final_values_df[self.continuous_out_keys].to_numpy()
+        interpolation_class = _get_grid_column(grid, "interpolation_class")
+        final_values = _get_grid_columns(grid, self.continuous_out_keys)
 
         valid_inds = np.where(
-            (final_values_df["interpolation_class"] != "not_converged") &
-            (final_values_df["interpolation_class"] != "ignored_no_RLO") &
-            (final_values_df["interpolation_class"] != "ignored_no_binary_history")
+            (interpolation_class != "not_converged") &
+            (interpolation_class != "ignored_no_RLO") &
+            (interpolation_class != "ignored_no_binary_history")
         )[0]
 
-        initial_values = grid.initial_values.to_df()[self.in_keys].to_numpy()[valid_inds]
+        initial_values = np.array(grid.initial_values[self.in_keys].tolist())[valid_inds]
         # determining if should interp in q
         if training_grid:
             self.interp_in_q = False
@@ -593,17 +590,18 @@ class IFInterpolator:
         class_inds = {}
 
         for key in self.discrete_out_keys:
-            class_labels = np.unique(final_values_df[key].to_numpy()[valid_inds])
+            class_labels = np.unique(_get_grid_column(grid, key)[valid_inds])
             class_inds[key] = dict(zip(
                 class_labels, 
-                [np.where(final_values_df[key].to_numpy()[valid_inds] == label)[0] for label in class_labels]
+                [np.where(_get_grid_column(grid, key)[valid_inds] == label)[0] for label in class_labels]
             ))
+
 
         return {
             "initial_values": 10**initial_values,
             "normalized_initial_values": (initial_values - self.iv_min) / (self.iv_max - self.iv_min),
-            "final_values": dict(zip(self.out_key_dict.keys(), [grid.final_values.to_df()[keys].to_numpy()[valid_inds] for keys in self.out_key_dict.values()])), # np.array(grid.final_values[self.continuous_out_keys][valid_inds].tolist()),
-            "final_classes": dict(zip(self.discrete_out_keys, final_values_df[self.discrete_out_keys].to_numpy()[valid_inds].T)),
+            "final_values": dict(zip(self.out_key_dict.keys(), [_get_grid_columns(grid, keys)[valid_inds] if len(keys) > 0 else [] for keys in self.out_key_dict.values()])), # np.array(grid.final_values[self.continuous_out_keys][valid_inds].tolist()),
+            "final_classes": dict(zip(self.discrete_out_keys, _get_grid_columns(grid, self.discrete_out_keys)[valid_inds].T)),
             "class_inds": class_inds,
         }
     
@@ -633,7 +631,7 @@ class IFInterpolator:
                 class_inds = grid_dict["class_inds"][label_name][klass]
                 
                 if class_inds.shape[0] < 5:
-                    print(f"too few training samples for {klass}")
+                    print(f"too few training samples for {klass} | labelname {label_name}")
                     class_triangulations[klass] = "1NN"
                 else:
 
@@ -641,7 +639,7 @@ class IFInterpolator:
                         normalized_initial_values = grid_dict["normalized_initial_values"]
                         class_triangulations[klass] = Delaunay(normalized_initial_values[class_inds])
                     except:
-                        print(f"Geometry wrong for {klass}, using 1NN")
+                        print(f"geometry wrong for {klass}, using 1NN | labelname {label_name}")
                         class_triangulations[klass] = "1NN"
 
             triangulations[label_name] = class_triangulations

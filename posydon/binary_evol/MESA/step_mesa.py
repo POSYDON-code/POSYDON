@@ -913,7 +913,7 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]::
+            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]:
                 sn_row = cb.get_SN_data(SN_MODEL_NAME)
                 for i, star in enumerate(stars):
                     if not stars_CO[i]:

@@ -23,6 +23,34 @@ __authors__ = [
 ]
 
 
+def _get_grid_columns(grid, keys):
+    """Return a matrix column array sourced from final_values or SN_MODELS datasets.
+
+    SN model columns (e.g. 'S1_SN_MODEL_v2_01_CO_type') are stored with
+    stripped short names ('S1_CO_type') inside per-model SN datasets.
+    This helper transparently routes to the correct source.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+    keys : 
+        Full column name (e.g. 'S1_SN_MODEL_v2_01_CO_type').
+
+    Returns
+    -------
+    np.ndarray
+    """
+    columns = []
+
+    for key in keys:
+        columns.append(
+            _get_grid_column(grid, key)
+        )
+
+    columns = np.array(columns).T
+
+    return columns
+
 def _get_grid_column(grid, key):
     """Return a column array sourced from final_values or SN_MODELS datasets.
 
