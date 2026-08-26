@@ -298,7 +298,8 @@ class MesaGridStep:
                                                       self.interpolation_filename)
 
             temporary_interpolator_path = "/home/prs5019/b1119/prs5019/interpolation_rewrite/interpolators"
-            grid_name, metallicity = self.grid_name.split("/")[-2], self.grid_name.split("/")[-1].split(".")[0]
+
+            grid_name, metallicity = self.grid_name.split("/")[-2], self.grid_name.split("/")[-1].replace(".h5", "")
             self.interpolation_filename = os.path.join(temporary_interpolator_path, grid_name, metallicity, "interp.pkl")
             # ========= TEMPORARY ============
 
