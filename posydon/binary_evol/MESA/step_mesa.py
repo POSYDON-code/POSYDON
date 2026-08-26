@@ -22,7 +22,7 @@ import pandas as pd
 from posydon.binary_evol.binarystar import BINARYPROPERTIES, BinaryStar
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import SN_MODELS
+from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL_NAME
 from posydon.interpolation.new_interpolator import IFInterpolator
 from posydon.interpolation.interpolation import psyTrackInterp
 from posydon.utils import common_functions as cf
@@ -286,23 +286,10 @@ class MesaGridStep:
             # Set the interpolation path
             if self.interpolation_path is None:
                 self.interpolation_path = os.path.join(self.grid_path,
-                    'interpolators/%s' % self.interpolation_method)
+                    'interpolators/%s' % os.path.basename(self.grid_name).replace('.h5', ''))
 
-            # ========= TEMPORARY ============
-            # Set the interpolation filename
-            if self.interpolation_filename is None:
-                self.interpolation_filename = os.path.join(self.interpolation_path,
-                    os.path.basename(self.grid_name).replace('h5', 'pkl'))
-            else:
-                self.interpolation_filename = os.path.join(self.interpolation_path,
-                                                      self.interpolation_filename)
-
-            temporary_interpolator_path = "/home/prs5019/b1119/prs5019/interpolation_rewrite/interpolators"
-
-            grid_name, metallicity = self.grid_name.split("/")[-2], self.grid_name.split("/")[-1].replace(".h5", "")
-            self.interpolation_filename = os.path.join(temporary_interpolator_path, grid_name, metallicity, "interp.pkl")
-            # ========= TEMPORARY ============
-
+            self.interpolation_filename = os.path.join(self.interpolation_path,
+                "interp.pkl")
             self.load_Interp(self.interpolation_filename)
 
             if (not (hasattr(self, '_psyTrackInterp')
@@ -914,14 +901,14 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]:
-                sn_row = cb.get_SN_data(SN_MODEL_NAME)
-                for i, star in enumerate(stars):
-                    if not stars_CO[i]:
-                        values = _collect_sn_model_values(sn_row, i + 1)
-                    else:
-                        values = None
-                    setattr(star, SN_MODEL_NAME, values)
+            SN_MODEL_NAME = get_SN_MODEL_NAME(vars(binary.properties.step_SN))
+            sn_row = cb.get_SN_data(SN_MODEL_NAME)
+            for i, star in enumerate(stars):
+                if not stars_CO[i]:
+                    values = _collect_sn_model_values(sn_row, i + 1)
+                else:
+                    values = None
+                setattr(star, SN_MODEL_NAME, values)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -1073,31 +1060,32 @@ class MesaGridStep:
         # update interpolated core collapse quantites
         if interpolation_class != 'unstable_MT':
 
-            for SN_MODEL_NAME in ["SN_MODEL_v2_01"]:
-                for i, star in enumerate(stars):
-                    col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
-                    if (not stars_CO[i] and self.classes[col_name] != 'None'):
-                        values = {}
-                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
-                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
-                            if key == "state":
-                                state = self.classes[col_name]
-                                values[key] = state
-                            elif key == "SN_type":
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = self.classes[col_name]
-                            elif f'S{i+1}_{SN_MODEL_NAME}_{key}' in fv:
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = fv[col_name]
-                            else:
-                                Pwarn(f"S{i+1}_{SN_MODEL_NAME}_{key} not "
-                                      "found in fv", "UnsupportedModelWarning")
-                                values = None
-                                break
-                        setattr(star, SN_MODEL_NAME, values)
-                    else:
-                        setattr(star, SN_MODEL_NAME, None)
+            SN_MODEL_NAME = get_SN_MODEL_NAME(vars(binary.properties.step_SN))
+
+            for i, star in enumerate(stars):
+                col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
+                if (not stars_CO[i] and self.classes[col_name] != 'None'):
+                    values = {}
+                    for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                'mu4', 'h1_mass_ej', 'he4_mass_ej']:
+                        if key == "state":
+                            state = self.classes[col_name]
+                            values[key] = state
+                        elif key == "SN_type":
+                            col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                            values[key] = self.classes[col_name]
+                        elif f'S{i+1}_{SN_MODEL_NAME}_{key}' in fv:
+                            col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                            values[key] = fv[col_name]
+                        else:
+                            Pwarn(f"S{i+1}_{SN_MODEL_NAME}_{key} not "
+                                    "found in fv", "UnsupportedModelWarning")
+                            values = None
+                            break
+                    setattr(star, SN_MODEL_NAME, values)
+                else:
+                    setattr(star, SN_MODEL_NAME, None)
 
     # STOPPING METHODS
 
