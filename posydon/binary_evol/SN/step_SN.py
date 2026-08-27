@@ -52,6 +52,7 @@ from posydon.binary_evol.singlestar import (
     STARPROPERTIES,
     convert_star_to_massless_remnant,
 )
+from posydon.binary_evol.SN.maltsev_MCO import Maltsev25_MCO_corecollapse
 from posydon.binary_evol.SN.profile_collapse import (
     do_core_collapse_BH,
     get_ejecta_element_mass_at_collapse,
@@ -257,7 +258,11 @@ class StepSN(object):
         "mean_kick_ECSN": None,
         # other
         "RNG": None,
-        "verbose": False
+        "verbose": False,
+        # Maltsev+25-MCO-rapid engine parameters
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": 'A',
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
@@ -304,6 +309,7 @@ class StepSN(object):
         self.Patton20_engines = "Patton&Sukhbold20-engine"
         self.Couch20_engines = "Couch+20-engine"
         self.Maltsev25_engines = "Maltsev+25-engine"
+        self.Maltsev25_MCO_rapid = "Maltsev+25-MCO-rapid"
 
 
 
@@ -315,7 +321,8 @@ class StepSN(object):
             self.Sukhbold16_engines,
             self.Patton20_engines,
             self.Couch20_engines,
-            self.Maltsev25_engines
+            self.Maltsev25_engines,
+            self.Maltsev25_MCO_rapid
         ]
 
         if self.mechanism in self.mechanisms:
@@ -426,6 +433,15 @@ class StepSN(object):
                 self.sc_interpolator.fit(CO_core_params_sc, sc_target)
                 if self.verbose:
                     print('Done')
+
+            elif self.mechanism == self.Maltsev25_MCO_rapid:
+                # M_CO + Z + MT-class recipe of Maltsev+25 (no external data files)
+                self.Maltsev25_MCO_engine = Maltsev25_MCO_corecollapse(
+                    RNG=self.RNG,
+                    NS_mass=self.Maltsev25_MCO_NS_mass,
+                    fallback_fraction=self.Maltsev25_MCO_fallback_fraction,
+                    fallback_model=self.Maltsev25_MCO_fallback_model,
+                    verbose=self.verbose)
         else:
             raise ValueError("Invalid core-collapse mechanism given.")
 
@@ -439,6 +455,82 @@ class StepSN(object):
         """Reset the properties of the star that is not being collapsed."""
         star.lg_mdot = None
         star.lg_system_mdot = None
+
+    @staticmethod
+    def _mt_letter_to_class(letter):
+        """Map a TF2 MT-case letter to the Maltsev+25 MT class."""
+        if letter == 'A':
+            return 'Case A'
+        if letter in ('B', 'BA', 'BB'):
+            return 'Case B'
+        if letter == 'C':
+            return 'Case C'
+        # 'nonburning' and other exotic cases are treated as single
+        return 'single'
+
+    def _resolve_mt_class(self, binary, star, star_index):
+        """Resolve the Maltsev+25 MT class of the collapsing star.
+
+        The MT class determines which set of ``M_CO`` boundaries is used by the
+        Maltsev+25-MCO recipe. It is read from the grid ``termination_flag_2``
+        (exposed on the binary as ``cumulative_mt_case_*``), restricting attention
+        to the episodes in which the collapsing star itself was the donor. The
+        earliest such episode is taken (follows the paper's prescription to use
+        the first MT episode for BC/AB systems). Stars that were never RLOF
+        donors (genuinely single, accretors, or wind/self-stripped stars) are
+        mapped to 'single'.
+
+        Parameters
+        ----------
+        binary : BinaryStar or None
+            The binary being evolved (``None`` in the single-star path).
+        star : Star
+            The collapsing star (used only for potential future state checks).
+        star_index : int
+            Index (1 or 2) of the collapsing star within the binary.
+
+        Returns
+        -------
+        str
+            One of 'single', 'Case A', 'Case B', 'Case C'.
+
+        """
+        if binary is None:
+            return 'single'
+
+        # Locate the raw TF2 string (termination_flag_2) among the grid-specific
+        # attributes set by the MESA step.
+        tf2 = None
+        for attr in dir(binary):
+            if attr.startswith('cumulative_mt_case_'):
+                val = getattr(binary, attr, None)
+                if val is not None:
+                    tf2 = val
+                    break
+        if tf2 is None:
+            return 'single'
+
+        # Parse cumulative cases, keeping only those where this star is the donor.
+        donor_cases = []
+        for token in tf2.replace('?', '').split('/'):
+            if not token.startswith('case_'):
+                continue
+            letter = token[len('case_'):]
+            if letter and letter[-1] in ('1', '2'):
+                donor = letter[-1]
+                cls_letter = letter[:-1]
+            else:
+                continue
+            if donor == str(star_index):
+                donor_cases.append(cls_letter)
+
+        if not donor_cases:
+            # The collapsing star was not an RLOF donor: accretor, single, or
+            # wind/self-stripped -> treat as single for the recipe.
+            return 'single'
+
+        # Take the earliest donor episode (the string preserves chronology).
+        return self._mt_letter_to_class(donor_cases[0])
 
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
@@ -460,6 +552,8 @@ class StepSN(object):
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
             # collapse star
+            binary.star_1.mt_class = self._resolve_mt_class(
+                binary, binary.star_1, 1)
             model_err = self.collapse_star(star=binary.star_1)
             if model_err is not None:
                 set_binary_to_failed(binary)
@@ -470,6 +564,8 @@ class StepSN(object):
 
         elif binary.event == "CC2":
             # collapse star
+            binary.star_2.mt_class = self._resolve_mt_class(
+                binary, binary.star_2, 2)
             model_err = self.collapse_star(star=binary.star_2)
             if model_err is not None:
                 set_binary_to_failed(binary)
@@ -820,7 +916,8 @@ class StepSN(object):
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
                                     self.Couch20_engines,
-                                    self.Maltsev25_engines]:
+                                    self.Maltsev25_engines,
+                                    self.Maltsev25_MCO_rapid]:
                 # The final remnant mass and and state
                 # is computed by the selected mechanism
 
@@ -1440,6 +1537,22 @@ class StepSN(object):
             else:
                 m_rembar, f_fb, state = self.Maltsev25_corecollapse(star,
                                                 self.engine,
+                                                self.conserve_hydrogen_envelope)
+
+        elif self.mechanism == self.Maltsev25_MCO_rapid:
+            if star.SN_type == "ECSN":
+                if self.ECSN == 'Podsiadlowski+04':
+                    m_proto = 1.38
+                else:
+                    m_proto = m_core
+                f_fb = 0.0
+                m_fb = 0.0
+                m_rembar = m_proto + m_fb
+                state = 'NS'
+            else:
+                m_rembar, f_fb, state = self.Maltsev25_MCO_engine(
+                                                star,
+                                                getattr(star, 'mt_class', 'single'),
                                                 self.conserve_hydrogen_envelope)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
