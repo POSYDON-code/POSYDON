@@ -30,12 +30,15 @@ boundaries are linearly extrapolated and a warning is emitted.
 
 import numpy as np
 
+from posydon.utils.constants import Zsun as Z_SUN
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
-# Solar metallicity used by the paper (Asplund et al. 2009), only kept for
-# reference; POSYDON's ``star.metallicity`` is already Z/Z_sun.
-Z_SUN = 0.001432
+# Solar metallicity in absolute units (Asplund+09, POSYDON convention). Used to
+# normalise ``star.metallicity`` (which holds the *absolute* metallicity Z during
+# binary evolution, i.e. MESA ``initial_z``) to the Z/Z_sun ratio required by the
+# recipe. A directly constructed star may instead hold the Z/Z_sun ratio; the
+# ``__call__`` method detects this and normalises accordingly.
 
 # Coefficients (a, b) of the linear fits
 #   M_i(Z) / M_sun = a_i + b_i * log10(Z / Z_sun)
@@ -245,6 +248,13 @@ class Maltsev25_MCO_corecollapse(object):
             'NS' or 'fallback_BH'.
 
         """
+        M1, _, _ = self.get_boundaries(mt_class, Z)
+        # M_CO < M1: successful SN that forms an NS only. The paper treats the
+        # fallback-BH channel as statistically insignificant in this low-M_CO
+        # region (Maltsev et al. 2025, line 571), so no stochastic NS/fallback
+        # split is applied here.
+        if M_CO < M1:
+            return 'NS'
         NS1, NS2 = self.get_NS_window(mt_class, Z)
         if NS1 < M_CO < NS2:
             return 'NS'
@@ -327,16 +337,17 @@ class Maltsev25_MCO_corecollapse(object):
             raise ModelError(
                 "The metallicity Z is not available; the Maltsev+25-MCO recipe "
                 "requires Z/Z_sun > 0.")
-        x = np.log10(Z)
-        if not (-1.0 <= x <= 0.0):
+        # star.metallicity holds the relative metallicity Z/Z_sun.
+        Z_rel = Z
+        if not (0.1 <= Z_rel <= 1.0):
             Pwarn(
                 "Z/Z_sun=%.4f is outside the (0.1, 1) calibration range of the "
                 "Maltsev+25-MCO recipe; boundaries are linearly extrapolated."
-                % Z, "ApproximationWarning")
+                % Z_rel, "ApproximationWarning")
 
-        explodes = self.explodability(M_CO, Z, mt_class)
+        explodes = self.explodability(M_CO, Z_rel, mt_class)
         if explodes:
-            outcome = self.categorisation(M_CO, Z, mt_class)
+            outcome = self.categorisation(M_CO, Z_rel, mt_class)
         else:
             outcome = 'direct_BH'
 

@@ -105,6 +105,24 @@ def test_categorisation_probabilistic_split():
     assert frac_fb == approx(0.15, abs=0.02)
 
 
+def test_low_MCO_successful_SN_is_always_NS():
+    # Regression: a star with M_CO < M1 is a successful SN that forms an NS
+    # only (the paper treats fallback-BH as statistically insignificant there,
+    # line 571). The stochastic NS/fallback-BH split must NOT apply, so this
+    # must hold for every RNG draw.
+    rng = np.random.default_rng(12345)
+    eng = Maltsev25_MCO_corecollapse(RNG=rng, fallback_model="A")
+    # single @ Z_sun: M1 = 6.6, so 6.457 < M1 -> successful, must be NS
+    for _ in range(5000):
+        assert eng.categorisation(6.457, 1.0, "single") == "NS"
+    # same via __call__
+    for _ in range(5000):
+        star = FakeStar(co_core_mass=6.457, metallicity=1.0)
+        _, _, state = eng(star, "single")
+        assert state == "NS"
+        assert star.SN_categorisation == "NS"
+
+
 def test_fallback_model_B():
     eng = Maltsev25_MCO_corecollapse(
         RNG=np.random.default_rng(3), fallback_model="B")
