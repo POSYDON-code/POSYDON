@@ -34,6 +34,14 @@ class FakeBinary:
             self.cumulative_mt_case_detached = tf2
 
 
+class FakeBinaryTF2:
+    """Stand-in exposing termination_flag_2 directly (grid-loaded binary)."""
+
+    def __init__(self, tf2=None):
+        if tf2 is not None:
+            self.termination_flag_2 = tf2
+
+
 @fixture
 def engine():
     return Maltsev25_MCO_corecollapse(RNG=np.random.default_rng(2025))
@@ -227,3 +235,18 @@ def test_resolve_mt_class_merged_Be_Bl():
     assert s._resolve_mt_class(FakeBinary("case_BB1"), None, 1) == "Case B"
     # Case C donor
     assert s._resolve_mt_class(FakeBinary("case_C1"), None, 1) == "Case C"
+
+
+def test_resolve_mt_class_from_termination_flag_2():
+    # Regression: when evolving from a pre-computed grid, cumulative_mt_case_*
+    # is None and the MT history is only available as binary.termination_flag_2
+    # (set by BinaryStar.from_run). _resolve_mt_class must read that fallback.
+    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
+    assert s._resolve_mt_class(FakeBinaryTF2("case_B2/A1"), None, 1) == "Case A"
+    assert s._resolve_mt_class(FakeBinaryTF2("case_B2/A1"), None, 2) == "Case B"
+    # bytes-encoded flag (as stored in HDF5) must be handled
+    assert s._resolve_mt_class(
+        FakeBinaryTF2(b"case_A1/B1"), None, 1) == "Case A"
+    # no RLOF -> single
+    assert s._resolve_mt_class(
+        FakeBinaryTF2("no_RLOF"), None, 1) == "single"

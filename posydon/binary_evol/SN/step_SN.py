@@ -472,13 +472,15 @@ class StepSN(object):
         """Resolve the Maltsev+25 MT class of the collapsing star.
 
         The MT class determines which set of ``M_CO`` boundaries is used by the
-        Maltsev+25-MCO recipe. It is read from the grid ``termination_flag_2``
-        (exposed on the binary as ``cumulative_mt_case_*``), restricting attention
-        to the episodes in which the collapsing star itself was the donor. The
-        earliest such episode is taken (follows the paper's prescription to use
-        the first MT episode for BC/AB systems). Stars that were never RLOF
-        donors (genuinely single, accretors, or wind/self-stripped stars) are
-        mapped to 'single'.
+        Maltsev+25-MCO recipe. It is read from the grid ``termination_flag_2``,
+        which is exposed on the binary either as ``cumulative_mt_case_*`` (during
+        live MESA evolution) or as ``termination_flag_2`` (when the binary is
+        loaded from a pre-computed grid via ``BinaryStar.from_run``), restricting
+        attention to the episodes in which the collapsing star itself was the
+        donor. The earliest such episode is taken (follows the paper's
+        prescription to use the first MT episode for BC/AB systems). Stars that
+        were never RLOF donors (genuinely single, accretors, or
+        wind/self-stripped stars) are mapped to 'single'.
 
         Parameters
         ----------
@@ -498,6 +500,8 @@ class StepSN(object):
         if binary is None:
             return 'single'
 
+        print(binary.mass_transfer_case)
+        print(binary.mass_transfer_case_history)
         # Locate the raw TF2 string (termination_flag_2) among the grid-specific
         # attributes set by the MESA step.
         tf2 = None
