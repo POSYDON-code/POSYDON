@@ -205,6 +205,21 @@ def test_resolve_mt_class_from_TF2():
     assert s._resolve_mt_class(None, None, 1) == "single"
 
 
+def test_resolve_mt_class_later_donor_episode():
+    # Regression: POSYDON's TF2 only prefixes the FIRST MT episode with
+    # "case_"; later episodes are bare. A collapsing star whose donor episode
+    # is not the first token must still be recognised.
+    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
+    # star 2 donates first (case B), then star 1 donates (case A).
+    # Collapsing star 1 must resolve to Case A (its earliest donor episode),
+    # not 'single'.
+    assert s._resolve_mt_class(FakeBinary("case_B2/A1"), None, 1) == "Case A"
+    # Collapsing star 2 must resolve to Case B.
+    assert s._resolve_mt_class(FakeBinary("case_B2/A1"), None, 2) == "Case B"
+    # Multiple episodes for the same star: "case_A1/B1/A1" -> earliest Case A
+    assert s._resolve_mt_class(FakeBinary("case_A1/B1/A1"), None, 1) == "Case A"
+
+
 def test_resolve_mt_class_merged_Be_Bl():
     s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     # stripped-He donors (BA/BB) map to Case B

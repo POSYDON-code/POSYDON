@@ -510,16 +510,22 @@ class StepSN(object):
         if tf2 is None:
             return 'single'
 
-        # Parse cumulative cases, keeping only those where this star is the donor.
+        # Parse cumulative cases. POSYDON's cumulative_mass_transfer_string only
+        # prefixes the FIRST MT episode with "case_"; subsequent episodes are
+        # separated by "/" without the prefix (e.g. "case_A1/B1/A2"). Keep only
+        # the episodes where this star is the donor and record the case letter;
+        # the donor star is encoded as the final '1'/'2' of each token.
         donor_cases = []
         for token in tf2.replace('?', '').split('/'):
-            if not token.startswith('case_'):
+            if token.startswith('case_'):
+                token = token[len('case_'):]
+            if not token:
                 continue
-            letter = token[len('case_'):]
-            if letter and letter[-1] in ('1', '2'):
-                donor = letter[-1]
-                cls_letter = letter[:-1]
+            if token[-1] in ('1', '2'):
+                donor = token[-1]
+                cls_letter = token[:-1]
             else:
+                # e.g. "no_RLO" or an unrecognised token
                 continue
             if donor == str(star_index):
                 donor_cases.append(cls_letter)
