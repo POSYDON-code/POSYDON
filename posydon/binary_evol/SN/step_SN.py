@@ -53,7 +53,6 @@ from posydon.binary_evol.singlestar import (
     convert_star_to_massless_remnant,
 )
 from posydon.binary_evol.SN.maltsev_MCO import (
-    MT_CLASSES,
     Maltsev25_MCO_corecollapse,
 )
 from posydon.binary_evol.SN.profile_collapse import (
@@ -459,55 +458,6 @@ class StepSN(object):
         star.lg_mdot = None
         star.lg_system_mdot = None
 
-    def _resolve_mt_class(self, binary, star, star_index):
-        """Resolve the Maltsev+25 MT class of the collapsing star.
-
-        The MT class determines which set of ``M_CO`` boundaries is used by the
-        Maltsev+25-MCO recipe. It is the Maltsev+25 class of the first
-        mass-transfer episode of the binary, whichever star was the donor
-        (``star.mt_class``, resolved from the binary's ``first_mt_case`` during
-        step_MESA). Each grid run overwrites it, so the most recent grid wins.
-        Values that are not a valid MT class (e.g. no MT interaction occurred,
-        or an interpolator without a ``first_mt_case`` key) normalize to
-        'single'.
-
-        Parameters
-        ----------
-        binary : BinaryStar or None
-            The binary being evolved (``None`` in the single-star path).
-        star : Star
-            The collapsing star.
-        star_index : int
-            Index (1 or 2) of the collapsing star within the binary. Deprecated
-            parameter kept for the call signature; the recipe no longer depends
-            on which star collapses.
-
-        Returns
-        -------
-        str
-            One of 'single', 'case_A', 'case_B', 'case_C'.
-
-        """
-        if star is None:
-            return 'single'
-        mt_class = getattr(star, 'mt_class', None)
-        if mt_class is not None and mt_class not in MT_CLASSES:
-            # no valid class stored (e.g. 'no_RLOF', 'initial_RLOF', 'None')
-            return 'single'
-        if mt_class is None:
-            # fall back to the binary's first_mt_case (e.g. binary loaded from
-            # a grid run that did not run step_MESA itself)
-            if binary is None:
-                return 'single'
-            mt_class = getattr(binary, 'first_mt_case', None)
-            grid_type = getattr(binary, 'grid_type', None)
-            if grid_type is not None:
-                mt_class = getattr(binary, f'first_mt_case_{grid_type}',
-                                   mt_class)
-            if mt_class not in MT_CLASSES:
-                mt_class = 'single'
-        return mt_class
-
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
 
@@ -528,9 +478,6 @@ class StepSN(object):
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
             # collapse star
-            if self.mechanism == self.Maltsev25_MCO_rapid:
-                binary.star_1.mt_class = self._resolve_mt_class(
-                    binary, binary.star_1, 1)
             model_err = self.collapse_star(star=binary.star_1)
             if model_err is not None:
                 set_binary_to_failed(binary)
@@ -541,9 +488,6 @@ class StepSN(object):
 
         elif binary.event == "CC2":
             # collapse star
-            if self.mechanism == self.Maltsev25_MCO_rapid:
-                binary.star_2.mt_class = self._resolve_mt_class(
-                    binary, binary.star_2, 2)
             model_err = self.collapse_star(star=binary.star_2)
             if model_err is not None:
                 set_binary_to_failed(binary)
@@ -1530,8 +1474,7 @@ class StepSN(object):
             else:
                 m_rembar, f_fb, state = self.Maltsev25_MCO_engine(
                                                 star,
-                                                getattr(star, 'mt_class', 'single'),
-                                                self.conserve_hydrogen_envelope)
+                                                conserve_hydrogen_envelope=self.conserve_hydrogen_envelope)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
