@@ -127,6 +127,42 @@ class Maltsev25_MCO_corecollapse(object):
         return self.NS_mass
 
     # ------------------------------------------------------------------
+    # MT-class resolution
+    # ------------------------------------------------------------------
+    def _resolve_mt_class(self, star, default='single'):
+        """Return the Maltsev+25 MT class of the collapsing star.
+
+        The MT class determines which set of ``M_CO`` boundaries is used by
+        the recipe. The MT class is determined from the first mass-transfer
+        episode of the binary.
+        Since each grid (step_MESA) overwrites the class, the most recent grid
+        wins. Values that are not a valid MT class (e.g. no MT interaction
+        occurred, or an interpolator without a ``first_mt_case`` key) fall
+        back to the ``default`` class.
+
+        Parameters
+        ----------
+        star : object or None
+            The collapsing star (``None`` in degenerate cases).
+        default : str
+            MT class to fall back to when ``star`` carries no valid class.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
+
+        Returns
+        -------
+        str
+            One of 'single', 'case_A', 'case_B', 'case_C'.
+
+        """
+        if star is None:
+            return default
+        mt_class = getattr(star, 'mt_class', default)
+        if mt_class not in MT_CLASSES:
+            # nothing valid stored (e.g. 'no_RLOF', 'initial_RLOF', 'None')
+            return default
+        return mt_class
+
+    # ------------------------------------------------------------------
     # Boundary / window accessors
     # ------------------------------------------------------------------
     def get_boundaries(self, mt_class, Z):
@@ -299,9 +335,12 @@ class Maltsev25_MCO_corecollapse(object):
         ----------
         star : object
             Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
-            and ``metallicity`` (Z/Z_sun).
+            and ``metallicity`` (Z/Z_sun). Its ``mt_class`` attribute (set by
+            step_MESA) is used as the MT-history class; ``mt_class`` is kept
+            only as a fallback for stars without one.
         mt_class : str
-            MT-history class: 'single', 'case_A', 'case_B' or 'case_C'.
+            MT-history class used when ``star.mt_class`` is missing or not a
+            valid class: 'single', 'case_A', 'case_B' or 'case_C'.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.
@@ -316,26 +355,32 @@ class Maltsev25_MCO_corecollapse(object):
             'NS' or 'BH'.
 
         """
-        M_CO = star.co_core_mass
-        if M_CO is None or (isinstance(M_CO, float) and np.isnan(M_CO)):
-            raise ModelError(
-                "The CO core mass (M_CO) is not available; the Maltsev+25-MCO "
-                "recipe cannot be applied.")
 
+        # get the MT class of the collapsing star
+        mt_class = self._resolve_mt_class(star, mt_class)
+
+        # main properties for prescription
+        M_CO = star.co_core_mass
         Z = star.metallicity
+
+        # step 1: determine whether the star explodes
         explodes = self.explodability(M_CO, Z, mt_class)
 
+        # step 2: determine the outcome of the explosion
         if explodes:
             outcome = self.categorisation(M_CO, Z, mt_class)
         else:
             outcome = 'direct_BH'
 
+        # step 3: compute the remnant mass and fallback fraction
         m_rembar, f_fb = self.remnant_mass_and_fallback(
             outcome, star, conserve_hydrogen_envelope)
 
+        # clean up the outcome state
         state = 'BH' if outcome.endswith('BH') else 'NS'
 
-        # preserve the separated categorisation for inspection
+        # preserve the separated categorisation
+        # for example for successful or failed SN determination
         star.SN_categorisation = outcome
 
         return m_rembar, f_fb, state
