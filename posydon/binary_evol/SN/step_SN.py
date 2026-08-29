@@ -456,91 +456,39 @@ class StepSN(object):
         star.lg_mdot = None
         star.lg_system_mdot = None
 
-    @staticmethod
-    def _mt_letter_to_class(letter):
-        """Map a TF2 MT-case letter to the Maltsev+25 MT class."""
-        if letter == 'A':
-            return 'Case A'
-        if letter in ('B', 'BA', 'BB'):
-            return 'Case B'
-        if letter == 'C':
-            return 'Case C'
-        # 'nonburning' and other exotic cases are treated as single
-        return 'single'
-
     def _resolve_mt_class(self, binary, star, star_index):
         """Resolve the Maltsev+25 MT class of the collapsing star.
 
         The MT class determines which set of ``M_CO`` boundaries is used by the
-        Maltsev+25-MCO recipe. It is read from the grid ``termination_flag_2``,
-        which is exposed on the binary either as ``cumulative_mt_case_*`` (during
-        live MESA evolution) or as ``termination_flag_2`` (when the binary is
-        loaded from a pre-computed grid via ``BinaryStar.from_run``), restricting
-        attention to the episodes in which the collapsing star itself was the
-        donor. The earliest such episode is taken (follows the paper's
-        prescription to use the first MT episode for BC/AB systems). Stars that
-        were never RLOF donors (genuinely single, accretors, or
-        wind/self-stripped stars) are mapped to 'single'.
+        Maltsev+25-MCO recipe. For nearest-neighbour runs the class is already
+        stored on the star by the last step_MESA grid run
+        (``star.mt_class``, resolved from the grid's ``cumulative_mt_case``).
+        Because each grid run overwrites it, the most recent grid wins. In
+        interpolation runs the cumulative history is not available and the
+        class is never set, so the star is classified as 'single'.
 
         Parameters
         ----------
         binary : BinaryStar or None
             The binary being evolved (``None`` in the single-star path).
         star : Star
-            The collapsing star (used only for potential future state checks).
+            The collapsing star.
         star_index : int
             Index (1 or 2) of the collapsing star within the binary.
 
         Returns
         -------
         str
-            One of 'single', 'Case A', 'Case B', 'Case C'.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
 
         """
-        if binary is None:
+        if star is None:
             return 'single'
-
-        print(binary.mass_transfer_case)
-        print(binary.mass_transfer_case_history)
-        # Locate the raw TF2 string (termination_flag_2) among the grid-specific
-        # attributes set by the MESA step.
-        tf2 = None
-        for attr in dir(binary):
-            if attr.startswith('cumulative_mt_case_'):
-                val = getattr(binary, attr, None)
-                if val is not None:
-                    tf2 = val
-                    break
-        if tf2 is None:
+        mt_class = getattr(star, 'mt_class', None)
+        print(mt_class)
+        if mt_class is None:
             return 'single'
-
-        # Parse cumulative cases. POSYDON's cumulative_mass_transfer_string only
-        # prefixes the FIRST MT episode with "case_"; subsequent episodes are
-        # separated by "/" without the prefix (e.g. "case_A1/B1/A2"). Keep only
-        # the episodes where this star is the donor and record the case letter;
-        # the donor star is encoded as the final '1'/'2' of each token.
-        donor_cases = []
-        for token in tf2.replace('?', '').split('/'):
-            if token.startswith('case_'):
-                token = token[len('case_'):]
-            if not token:
-                continue
-            if token[-1] in ('1', '2'):
-                donor = token[-1]
-                cls_letter = token[:-1]
-            else:
-                # e.g. "no_RLO" or an unrecognised token
-                continue
-            if donor == str(star_index):
-                donor_cases.append(cls_letter)
-
-        if not donor_cases:
-            # The collapsing star was not an RLOF donor: accretor, single, or
-            # wind/self-stripped -> treat as single for the recipe.
-            return 'single'
-
-        # Take the earliest donor episode (the string preserves chronology).
-        return self._mt_letter_to_class(donor_cases[0])
+        return mt_class
 
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
@@ -562,8 +510,9 @@ class StepSN(object):
         # CC1 and CC2 respectively.
         if binary.event == "CC1":
             # collapse star
-            binary.star_1.mt_class = self._resolve_mt_class(
-                binary, binary.star_1, 1)
+            if self.mechanism == self.Maltsev25_MCO_rapid:
+                binary.star_1.mt_class = self._resolve_mt_class(
+                    binary, binary.star_1, 1)
             model_err = self.collapse_star(star=binary.star_1)
             if model_err is not None:
                 set_binary_to_failed(binary)
@@ -574,8 +523,9 @@ class StepSN(object):
 
         elif binary.event == "CC2":
             # collapse star
-            binary.star_2.mt_class = self._resolve_mt_class(
-                binary, binary.star_2, 2)
+            if self.mechanism == self.Maltsev25_MCO_rapid:
+                binary.star_2.mt_class = self._resolve_mt_class(
+                    binary, binary.star_2, 2)
             model_err = self.collapse_star(star=binary.star_2)
             if model_err is not None:
                 set_binary_to_failed(binary)

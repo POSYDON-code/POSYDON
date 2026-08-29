@@ -4,8 +4,8 @@ This module implements the rapid binary-population-synthesis (BPS) CCSN recipe
 of Maltsev et al. 2025 (arXiv:2503.23856, Sects. 3.2.1-3.2.3, Eq. 11). The
 recipe predicts the *compact-object type* (NS, fallback BH or direct-collapse
 BH) from the carbon-oxygen core mass ``M_CO``, the metallicity ``Z`` and the
-mass-transfer (MT) history class of the progenitor (single / Case A / Case B
-[Be+Bl merged] / Case C).
+mass-transfer (MT) history class of the progenitor (single / case_A / case_B
+[Be+Bl merged] / case_C).
 
 Crucially, the recipe **separates** two distinct questions:
 
@@ -46,9 +46,9 @@ from posydon.utils.posydonwarning import Pwarn
 # paper). Index 0 -> M1, 1 -> M2, 2 -> M3.
 _BOUNDARIES = {
     'single': [(6.6, 0.5), (7.2, 0.6), (13.0, 0.1)],
-    'Case A': [(7.4, 0.5), (8.4, 1.0), (15.4, 1.7)],
-    'Case B': [(7.7, 0.7), (8.3, 0.4), (15.2, 1.2)],
-    'Case C': [(6.6, 0.3), (7.1, 0.0), (13.2, 0.9)],
+    'case_A': [(7.4, 0.5), (8.4, 1.0), (15.4, 1.7)],
+    'case_B': [(7.7, 0.7), (8.3, 0.4), (15.2, 1.2)],
+    'case_C': [(6.6, 0.3), (7.1, 0.0), (13.2, 0.9)],
 }
 
 # Coefficients (a, b) of the linear fits
@@ -57,9 +57,9 @@ _BOUNDARIES = {
 # (Tables 5 & 6 of the paper). Index 0 -> NS1, 1 -> NS2.
 _NS_WINDOW = {
     'single': [(9.0, 1.6), (10.2, -0.8)],
-    'Case A': [(11.1, 0.7), (12.1, 1.0)],
-    'Case B': [(9.9, 0.6), (10.3, 0.0)],
-    'Case C': [(9.6, 0.7), (10.7, 1.2)],
+    'case_A': [(11.1, 0.7), (12.1, 1.0)],
+    'case_B': [(9.9, 0.6), (10.3, 0.0)],
+    'case_C': [(9.6, 0.7), (10.7, 1.2)],
 }
 
 # Valid MT classes recognised by the recipe.
@@ -150,7 +150,7 @@ class Maltsev25_MCO_corecollapse(object):
         Parameters
         ----------
         mt_class : str
-            One of 'single', 'Case A', 'Case B', 'Case C'.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
         Z : float
             Metallicity ``Z/Z_sun`` of the progenitor.
 
@@ -172,7 +172,7 @@ class Maltsev25_MCO_corecollapse(object):
         Parameters
         ----------
         mt_class : str
-            One of 'single', 'Case A', 'Case B', 'Case C'.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
         Z : float
             Metallicity ``Z/Z_sun`` of the progenitor.
 
@@ -201,7 +201,7 @@ class Maltsev25_MCO_corecollapse(object):
         Z : float
             Metallicity ``Z/Z_sun``.
         mt_class : str
-            One of 'single', 'Case A', 'Case B', 'Case C'.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
 
         Returns
         -------
@@ -240,7 +240,7 @@ class Maltsev25_MCO_corecollapse(object):
         Z : float
             Metallicity ``Z/Z_sun``.
         mt_class : str
-            One of 'single', 'Case A', 'Case B', 'Case C'.
+            One of 'single', 'case_A', 'case_B', 'case_C'.
 
         Returns
         -------
@@ -311,7 +311,7 @@ class Maltsev25_MCO_corecollapse(object):
             Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
             and ``metallicity`` (Z/Z_sun).
         mt_class : str
-            MT-history class: 'single', 'Case A', 'Case B' or 'Case C'.
+            MT-history class: 'single', 'case_A', 'case_B' or 'case_C'.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.

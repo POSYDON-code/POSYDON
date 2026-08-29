@@ -348,7 +348,6 @@ class MesaGridStep:
 
         elif self.interpolation_method in self.supported_interp_methods:
             self.final_values, self.classes = self._Interp.evaluate(self.binary)
-
             max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
             raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
@@ -742,6 +741,12 @@ class MesaGridStep:
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
+        # Resolve the Maltsev+25 MT class for each star while we know the grid
+        # and star orientation. Each nearest-neighbour grid run overwrites the
+        # class, so the most recent grid wins.
+        for k, star in enumerate(stars, start=1):
+            star.mt_class = cf.mt_class_from_cumulative(cumulative_mt_case, k)
+
         if self.save_initial_conditions:
             # history N is how much to look back in the history
             # here N=1 as we only appended back the first entry
@@ -958,6 +963,7 @@ class MesaGridStep:
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
         #TODO: add classifier for tf2
+        print(self.classes)
         #setattr(self.binary, f'cumulative_mt_case', self.classes['termination_flags_2'])
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)

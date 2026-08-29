@@ -1749,6 +1749,62 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
+def mt_class_from_cumulative(cumulative_mt_case, star_index):
+    """Resolve the Maltsev+25 MT class from a cumulative MT-case string.
+
+    The MT class determines which set of ``M_CO`` boundaries is used by the
+    Maltsev+25-MCO recipe. It is read from a cumulative MT-history string such
+    as ``cumulative_mt_case_{grid_type}`` (set by the nearest-neighbour MESA
+    steps), restricting attention to the episodes in which the star of interest
+    itself was the donor. The earliest such episode is taken, following the
+    paper's prescription to use the first MT episode for BC/AB systems.
+
+    Parameters
+    ----------
+    cumulative_mt_case : str or None
+        The cumulative MT-history string, e.g. 'case_A1/B1/A2' or 'no_RLOF'.
+    star_index : int
+        Index (1 or 2) of the star (donor) to resolve the class for.
+
+    Returns
+    -------
+    str
+        One of 'single', 'case_A', 'case_B', 'case_C'.
+
+    """
+    # Map a cumulative MT-case letter to the Maltsev+25 MT class.
+    def _letter_to_class(letter):
+        if letter == 'A':
+            return 'case_A'
+        if letter in ('B', 'BA', 'BB'):
+            return 'case_B'
+        if letter == 'C':
+            return 'case_C'
+        # 'nonburning' and other exotic cases are treated as single
+        return 'single'
+
+    donor_cases = []
+    for token in str(cumulative_mt_case).replace('?', '').split('/'):
+        if token.startswith('case_'):
+            token = token[len('case_'):]
+        if not token:
+            continue
+        if token[-1] in ('1', '2'):
+            donor = token[-1]
+            cls_letter = token[:-1]
+        else:
+            # e.g. "no_RLO" or an unrecognised token
+            continue
+        if donor == str(star_index):
+            donor_cases.append(cls_letter)
+
+    if not donor_cases:
+        return 'single'
+
+    # Take the earliest donor episode (the string preserves chronology).
+    return _letter_to_class(donor_cases[0])
+
+
 def get_i_He_depl(history):
     """Get the index of He depletion in the history
 

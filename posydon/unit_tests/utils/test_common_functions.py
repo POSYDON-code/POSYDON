@@ -110,7 +110,8 @@ class TestElements:
                     'inspiral_timescale_from_orbital_period',\
                     'inspiral_timescale_from_separation', 'interp1d',\
                     'inverse_sampler', 'is_number',\
-                    'linear_interpolation_between_two_cells', 'newton', 'np',\
+                    'linear_interpolation_between_two_cells',\
+                    'mt_class_from_cumulative', 'newton', 'np',\
                     'orbital_period_from_separation',\
                     'orbital_separation_from_period', 'os', 'pd',\
                     'period_change_stable_MT', 'period_evol_wind_loss',\
@@ -1618,6 +1619,38 @@ class TestFunctions:
                                                      10+totest.MT_CASE_A],\
                                                     shift_cases=True) ==\
                'case_A1/B1/A2/B1/B2'
+
+    def test_mt_class_from_cumulative(self):
+        # missing arguments
+        with raises(TypeError, match="missing 2 required positional "\
+                                     +"arguments: 'cumulative_mt_case' and "\
+                                     +"'star_index'"):
+            totest.mt_class_from_cumulative()
+        with raises(TypeError, match="missing 1 required positional "\
+                                     +"argument: 'star_index'"):
+            totest.mt_class_from_cumulative(None)
+        # letters map to the corresponding class for the donating star
+        assert totest.mt_class_from_cumulative("case_A1", 1) == "case_A"
+        assert totest.mt_class_from_cumulative("case_B1", 1) == "case_B"
+        assert totest.mt_class_from_cumulative("case_BA1", 1) == "case_B"
+        assert totest.mt_class_from_cumulative("case_BB1", 1) == "case_B"
+        assert totest.mt_class_from_cumulative("case_C1", 1) == "case_C"
+        # non-RLO / unrecognised tokens map to 'single' for donor and accretor
+        assert totest.mt_class_from_cumulative("no_RLO", 1) == "single"
+        assert totest.mt_class_from_cumulative(None, 1) == "single"
+        assert totest.mt_class_from_cumulative("?", 1) == "single"
+        # an episode in which the star is not the donor is ignored
+        assert totest.mt_class_from_cumulative("case_A2", 1) == "single"
+        assert totest.mt_class_from_cumulative("case_A2", 2) == "case_A"
+        assert totest.mt_class_from_cumulative("case_A2/B2", 1) == "single"
+        assert totest.mt_class_from_cumulative("case_A2/B2", 2) == "case_A"
+        # earliest donor episode of the star wins
+        assert totest.mt_class_from_cumulative("case_A1/B1/A1", 1) == "case_A"
+        assert totest.mt_class_from_cumulative("case_B2/A1", 1) == "case_A"
+        assert totest.mt_class_from_cumulative("case_B2/A1", 2) == "case_B"
+        # undetermined MT is ignored
+        assert totest.mt_class_from_cumulative("?case_A1", 1) == "case_A"
+        assert totest.mt_class_from_cumulative("?no_RLO", 1) == "single"
 
     def test_get_i_He_depl(self):
         # missing argument

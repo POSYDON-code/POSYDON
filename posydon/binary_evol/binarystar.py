@@ -1093,17 +1093,6 @@ class BinaryStar:
             binary.star_1.profile = run.final_profile1
             binary.star_2.profile = run.final_profile2
 
-        # Expose termination_flag_2 so SN recipes (e.g. Maltsev+25-MCO) can
-        # resolve the MT class of the collapsing star. The cumulative_mt_case_*
-        # attribute is only populated during live MESA evolution (step_mesa),
-        # so it is None here; the grid stores the same information in the
-        # termination_flag_2 column.
-        if 'termination_flag_2' in run.final_values.dtype.names:
-            tf2 = run.final_values['termination_flag_2']
-            if isinstance(tf2, bytes):
-                tf2 = tf2.decode()
-            binary.termination_flag_2 = tf2
-
         return binary
 
     def initial_condition_message(self, ini_params=None):
