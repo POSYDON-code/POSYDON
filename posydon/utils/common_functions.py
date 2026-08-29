@@ -1751,13 +1751,10 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
 
 def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
                              retain_flag_if_no_mt=False):
-    """Resolve the Maltsev+25 MT class from a cumulative MT-case string.
+    """Resolve the first MT class from a cumulative MT-case string.
 
-    The MT class determines which set of ``M_CO`` boundaries is used by the
-    Maltsev+25-MCO recipe. It is read from a cumulative MT-history string such
-    as ``cumulative_mt_case_{grid_type}`` (set by the nearest-neighbour MESA
-    steps). The earliest qualifying episode is taken, following the paper's
-    prescription to use the first MT episode for BC/AB systems.
+    Takes the cumulative_mt_case from a grid and returns the first MT class.
+
 
     Parameters
     ----------
@@ -1780,7 +1777,7 @@ def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
         original ``cumulative_mt_case``.
 
     """
-    # Map a cumulative MT-case letter to the Maltsev+25 MT class.
+
     def _letter_to_class(letter):
         if letter == 'A':
             return 'case_A'
@@ -1788,7 +1785,7 @@ def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
             return 'case_B'
         if letter == 'C':
             return 'case_C'
-        # 'nonburning' and other exotic cases are treated as single
+        # 'other' and other exotic cases are treated as single
         return 'single'
 
     if isinstance(cumulative_mt_case, bytes):
@@ -1814,7 +1811,7 @@ def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
             return cumulative_mt_case
         return 'single'
 
-    # Take the earliest qualifying episode (the string preserves chronology).
+    # Take the first MT episode
     return _letter_to_class(donor_cases[0])
 
 
