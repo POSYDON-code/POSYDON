@@ -742,8 +742,7 @@ class MesaGridStep:
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
         # first mass transfer episode (whichever star is the donor)
         setattr(self.binary, f'first_mt_case_{self.grid_type}',
-                cf.mt_class_from_cumulative(cumulative_mt_case,
-                                            retain_flag_if_no_mt=True))
+                cf.mt_class_from_cumulative(cumulative_mt_case))
 
         # Resolve the Maltsev+25 MT class for each star while we know the grid.
         # The class of the first mass-transfer episode (whichever star is the
@@ -751,7 +750,7 @@ class MesaGridStep:
         # overwrites the class, so the most recent grid wins.
         for star in stars:
             star.mt_class = cf.mt_class_from_cumulative(
-                cumulative_mt_case, retain_flag_if_no_mt=True)
+                cumulative_mt_case)
 
         if self.save_initial_conditions:
             # history N is how much to look back in the history
@@ -968,8 +967,10 @@ class MesaGridStep:
         mt_history = self.classes['mt_history'] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
-        # first mass transfer case, predicted by the interpolation classifier
-        # (`.get` keeps this safe for interpolators trained without the key)
+        #TODO: add classifier for tf2
+        #setattr(self.binary, f'cumulative_mt_case', self.classes['termination_flags_2'])
+
+        # first mass transfer case
         first_mt_case = self.classes.get('first_mt_case')
         setattr(self.binary, f'first_mt_case_{self.grid_type}', first_mt_case)
         for star in [self.binary.star_1, self.binary.star_2]:

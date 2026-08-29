@@ -1363,8 +1363,7 @@ class PSyGrid:
         if binary_grid:
             for i in range(len(self.final_values)):
                 self.final_values[i]["first_mt_case"] = mt_class_from_cumulative(
-                    self.final_values[i]["termination_flag_2"],
-                    retain_flag_if_no_mt=True)
+                    self.final_values[i]["termination_flag_2"])
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,

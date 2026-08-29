@@ -40,7 +40,7 @@ def backfill_first_mt_case(grid_path):
         raise ValueError(f"{grid_path}: no 'termination_flag_2' column found")
 
     values = np.asarray([
-        mt_class_from_cumulative(tf2, retain_flag_if_no_mt=True)
+        mt_class_from_cumulative(tf2)
         for tf2 in grid.final_values["termination_flag_2"]
     ])
     grid.add_column("first_mt_case", values)

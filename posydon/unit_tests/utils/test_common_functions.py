@@ -1621,23 +1621,23 @@ class TestFunctions:
                'case_A1/B1/A2/B1/B2'
 
     def test_mt_class_from_cumulative(self):
-        # no arguments: first episode overall, nobody donates -> 'single'
-        assert totest.mt_class_from_cumulative() == "single"
-        assert totest.mt_class_from_cumulative(None) == "single"
+        # no arguments: first episode overall, nobody donates -> None
+        assert totest.mt_class_from_cumulative() is None
+        assert totest.mt_class_from_cumulative(None) is None
         # letters map to the corresponding class for the donating star
         assert totest.mt_class_from_cumulative("case_A1", 1) == "case_A"
         assert totest.mt_class_from_cumulative("case_B1", 1) == "case_B"
         assert totest.mt_class_from_cumulative("case_BA1", 1) == "case_B"
         assert totest.mt_class_from_cumulative("case_BB1", 1) == "case_B"
         assert totest.mt_class_from_cumulative("case_C1", 1) == "case_C"
-        # non-RLO / unrecognised tokens map to 'single' for donor and accretor
-        assert totest.mt_class_from_cumulative("no_RLO", 1) == "single"
-        assert totest.mt_class_from_cumulative(None, 1) == "single"
-        assert totest.mt_class_from_cumulative("?", 1) == "single"
+        # non-RLO / unrecognised tokens keep the original flag verbatim
+        assert totest.mt_class_from_cumulative("no_RLO", 1) == "no_RLO"
+        assert totest.mt_class_from_cumulative(None, 1) is None
+        assert totest.mt_class_from_cumulative("?", 1) == "?"
         # an episode in which the star is not the donor is ignored
-        assert totest.mt_class_from_cumulative("case_A2", 1) == "single"
+        assert totest.mt_class_from_cumulative("case_A2", 1) == "case_A2"
         assert totest.mt_class_from_cumulative("case_A2", 2) == "case_A"
-        assert totest.mt_class_from_cumulative("case_A2/B2", 1) == "single"
+        assert totest.mt_class_from_cumulative("case_A2/B2", 1) == "case_A2/B2"
         assert totest.mt_class_from_cumulative("case_A2/B2", 2) == "case_A"
         # earliest donor episode of the star wins
         assert totest.mt_class_from_cumulative("case_A1/B1/A1", 1) == "case_A"
@@ -1645,7 +1645,7 @@ class TestFunctions:
         assert totest.mt_class_from_cumulative("case_B2/A1", 2) == "case_B"
         # undetermined MT is ignored
         assert totest.mt_class_from_cumulative("?case_A1", 1) == "case_A"
-        assert totest.mt_class_from_cumulative("?no_RLO", 1) == "single"
+        assert totest.mt_class_from_cumulative("?no_RLO", 1) == "?no_RLO"
         # star_index=None takes the first episode overall (either donor)
         assert totest.mt_class_from_cumulative("case_A2/B1") == "case_A"
         assert totest.mt_class_from_cumulative("case_B2/A1") == "case_B"
@@ -1653,25 +1653,19 @@ class TestFunctions:
         assert totest.mt_class_from_cumulative("case_BB2/C1") == "case_B"
         # unmapped letters map to 'single'
         assert totest.mt_class_from_cumulative("case_BC1") == "single"
-        # retain_flag_if_no_mt returns the original flag when no episode maps
+        # the original flag is returned when no episode maps
+        assert totest.mt_class_from_cumulative("no_RLOF") == "no_RLOF"
+        assert totest.mt_class_from_cumulative("initial_RLOF") == "initial_RLOF"
+        assert totest.mt_class_from_cumulative("not_converged") == \
+            "not_converged"
         assert totest.mt_class_from_cumulative(
-            "no_RLOF", retain_flag_if_no_mt=True) == "no_RLOF"
-        assert totest.mt_class_from_cumulative(
-            "initial_RLOF", retain_flag_if_no_mt=True) == "initial_RLOF"
-        assert totest.mt_class_from_cumulative(
-            "not_converged", retain_flag_if_no_mt=True) == "not_converged"
-        assert totest.mt_class_from_cumulative(
-            "?contact_during_MS", retain_flag_if_no_mt=True) == \
-            "?contact_during_MS"
-        assert totest.mt_class_from_cumulative(
-            None, retain_flag_if_no_mt=True) is None
-        # retains the flag also for a specific star without donor episodes
-        assert totest.mt_class_from_cumulative(
-            "case_A2", 1, retain_flag_if_no_mt=True) == "case_A2"
+            "?contact_during_MS") == "?contact_during_MS"
+        assert totest.mt_class_from_cumulative(None) is None
+        # the flag is retained also for a specific star without donor episodes
+        assert totest.mt_class_from_cumulative("case_A2", 1) == "case_A2"
         # bytes input is decoded
         assert totest.mt_class_from_cumulative(b"case_A1") == "case_A"
-        assert totest.mt_class_from_cumulative(
-            b"no_RLOF", retain_flag_if_no_mt=True) == "no_RLOF"
+        assert totest.mt_class_from_cumulative(b"no_RLOF") == "no_RLOF"
 
     def test_get_i_He_depl(self):
         # missing argument

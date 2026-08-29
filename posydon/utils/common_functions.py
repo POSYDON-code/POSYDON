@@ -1749,8 +1749,7 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
-def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
-                             retain_flag_if_no_mt=False):
+def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
     """Resolve the first MT class from a cumulative MT-case string.
 
     Takes the cumulative_mt_case from a grid and returns the first MT class.
@@ -1764,17 +1763,13 @@ def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
         Index (1 or 2) of the star (donor) to resolve the class for.
         If None, episodes of either star are considered and the first
         episode overall (whichever star is the donor) is used.
-    retain_flag_if_no_mt : bool (default: False)
-        If True, the original flag string is returned (verbatim) when no
-        qualifying MT episode is found, e.g. 'no_RLOF', 'initial_RLOF',
-        'not_converged' or 'None'. Otherwise 'single' is returned.
 
     Returns
     -------
     str or None
-        One of 'single', 'case_A', 'case_B', 'case_C', or (when
-        ``retain_flag_if_no_mt`` is set and no episode qualifies) the
-        original ``cumulative_mt_case``.
+        One of 'single', 'case_A', 'case_B', 'case_C'; when no qualifying
+        MT episode is found, the original ``cumulative_mt_case`` is returned
+        verbatim, e.g. 'no_RLOF', 'initial_RLOF', 'not_converged' or None.
 
     """
 
@@ -1807,9 +1802,7 @@ def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
             donor_cases.append(cls_letter)
 
     if not donor_cases:
-        if retain_flag_if_no_mt:
-            return cumulative_mt_case
-        return 'single'
+        return cumulative_mt_case
 
     # Take the first MT episode
     return _letter_to_class(donor_cases[0])

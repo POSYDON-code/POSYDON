@@ -223,12 +223,12 @@ def test_resolve_mt_class_first_episode_overall():
     binary = SimpleNamespace(first_mt_case="case_B", grid_type="HMS_HMS")
 
     # jump to the first episode overall, regardless of the collapsing star
-    star.mt_class = mt_class_from_cumulative("case_A1/B2", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_A1/B2")
     assert star.mt_class == "case_A"
     assert s._resolve_mt_class(binary, star, 1) == "case_A"
     assert s._resolve_mt_class(binary, star, 2) == "case_A"
     # ...even when the collapsing star was not the first donor
-    star.mt_class = mt_class_from_cumulative("case_B2/A1", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_B2/A1")
     assert star.mt_class == "case_B"
     assert s._resolve_mt_class(binary, star, 2) == "case_B"
     # a valid star.mt_class takes precedence over the binary fallback
@@ -251,15 +251,15 @@ def test_resolve_mt_class_latest_grid_wins():
     s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     # HMS_HMS grid first (case A donation)...
-    star.mt_class = mt_class_from_cumulative("case_A1/B1", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_A1/B1")
     assert star.mt_class == "case_A"
     # ...then a later CO_HMS_RLO grid overwrites with its own class. The class
     # is the first episode overall, so the second grid's case_B wins.
-    star.mt_class = mt_class_from_cumulative("case_B2/A1", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_B2/A1")
     assert star.mt_class == "case_B"
-    star.mt_class = mt_class_from_cumulative("case_B1", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_B1")
     assert star.mt_class == "case_B"
     # the latest grid always wins, even if it reports no RLO at all
-    star.mt_class = mt_class_from_cumulative("case_B1", retain_flag_if_no_mt=True)
-    star.mt_class = mt_class_from_cumulative("no_RLO", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("case_B1")
+    star.mt_class = mt_class_from_cumulative("no_RLO")
     assert s._resolve_mt_class(None, star, 1) == "single"
