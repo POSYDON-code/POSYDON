@@ -176,7 +176,8 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu"
+    "Seth Gossage <seth.gossage@northwestern.edu",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 

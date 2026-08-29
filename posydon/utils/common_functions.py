@@ -14,6 +14,7 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 

@@ -31,6 +31,10 @@ import numpy as np
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
+__authors__ = [
+    "Max Briel <max.briel@gmail.com>",
+]
+
 #   M_i(Z) / M_sun = a_i + b_i * log10(Z / Z_sun)
 # for the three direct-collapse boundaries M1, M2, M3 (Tables 3 & 4 of the
 # paper). Index 0 -> M1, 1 -> M2, 2 -> M3.

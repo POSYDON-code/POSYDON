@@ -24,7 +24,7 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Seth Gossage <seth.gossage@northwestern.edu>",
-    "Max Briel <max.briel@gmail.com>"
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
