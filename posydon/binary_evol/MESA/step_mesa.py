@@ -740,17 +740,15 @@ class MesaGridStep:
         setattr(self.binary, f'interp_class_{self.grid_type}', interpolation_class)
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
-        # first mass transfer episode (whichever star is the donor)
-        setattr(self.binary, f'first_mt_case_{self.grid_type}',
-                cf.mt_class_from_cumulative(cumulative_mt_case))
 
-        # Resolve the Maltsev+25 MT class for each star while we know the grid.
-        # The class of the first mass-transfer episode (whichever star is the
-        # donor) is used, matching the ``first_mt_case`` column. Each grid run
-        # overwrites the class, so the most recent grid wins.
+        # TODO: we can also add first_mt_case directly from the grid.
+        # add mt_class to the star
+        # first mass transfer episode (whichever star is the donor)
+        first_mt_case = cf.mt_class_from_cumulative(cumulative_mt_case)
+        setattr(self.binary, f'first_mt_case_{self.grid_type}',
+                first_mt_case)
         for star in stars:
-            star.mt_class = cf.mt_class_from_cumulative(
-                cumulative_mt_case)
+            star.mt_class = first_mt_case
 
         if self.save_initial_conditions:
             # history N is how much to look back in the history
@@ -975,6 +973,7 @@ class MesaGridStep:
         setattr(self.binary, f'first_mt_case_{self.grid_type}', first_mt_case)
         for star in [self.binary.star_1, self.binary.star_2]:
             star.mt_class = first_mt_case
+
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,
