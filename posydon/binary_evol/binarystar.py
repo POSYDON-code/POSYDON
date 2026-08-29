@@ -167,8 +167,7 @@ class BinaryStar:
         self.companion_2_exists = True
         self.non_existent_companion = 0
 
-        # Maltsev+25 MT class, resolved from the first mass-transfer episode
-        # during step_MESA (None until then)
+        # First mass transfer case
         self.star_1.mt_class = getattr(self.star_1, "mt_class", None)
         self.star_2.mt_class = getattr(self.star_2, "mt_class", None)
 
