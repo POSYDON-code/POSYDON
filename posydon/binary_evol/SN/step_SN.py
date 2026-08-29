@@ -52,7 +52,10 @@ from posydon.binary_evol.singlestar import (
     STARPROPERTIES,
     convert_star_to_massless_remnant,
 )
-from posydon.binary_evol.SN.maltsev_MCO import Maltsev25_MCO_corecollapse
+from posydon.binary_evol.SN.maltsev_MCO import (
+    MT_CLASSES,
+    Maltsev25_MCO_corecollapse,
+)
 from posydon.binary_evol.SN.profile_collapse import (
     do_core_collapse_BH,
     get_ejecta_element_mass_at_collapse,
@@ -460,12 +463,13 @@ class StepSN(object):
         """Resolve the Maltsev+25 MT class of the collapsing star.
 
         The MT class determines which set of ``M_CO`` boundaries is used by the
-        Maltsev+25-MCO recipe. For nearest-neighbour runs the class is already
-        stored on the star by the last step_MESA grid run
-        (``star.mt_class``, resolved from the grid's ``cumulative_mt_case``).
-        Because each grid run overwrites it, the most recent grid wins. In
-        interpolation runs the cumulative history is not available and the
-        class is never set, so the star is classified as 'single'.
+        Maltsev+25-MCO recipe. It is the Maltsev+25 class of the first
+        mass-transfer episode of the binary, whichever star was the donor
+        (``star.mt_class``, resolved from the binary's ``first_mt_case`` during
+        step_MESA). Each grid run overwrites it, so the most recent grid wins.
+        Values that are not a valid MT class (e.g. no MT interaction occurred,
+        or an interpolator without a ``first_mt_case`` key) normalize to
+        'single'.
 
         Parameters
         ----------
@@ -474,7 +478,9 @@ class StepSN(object):
         star : Star
             The collapsing star.
         star_index : int
-            Index (1 or 2) of the collapsing star within the binary.
+            Index (1 or 2) of the collapsing star within the binary. Deprecated
+            parameter kept for the call signature; the recipe no longer depends
+            on which star collapses.
 
         Returns
         -------
@@ -485,9 +491,21 @@ class StepSN(object):
         if star is None:
             return 'single'
         mt_class = getattr(star, 'mt_class', None)
-        print(mt_class)
-        if mt_class is None:
+        if mt_class is not None and mt_class not in MT_CLASSES:
+            # no valid class stored (e.g. 'no_RLOF', 'initial_RLOF', 'None')
             return 'single'
+        if mt_class is None:
+            # fall back to the binary's first_mt_case (e.g. binary loaded from
+            # a grid run that did not run step_MESA itself)
+            if binary is None:
+                return 'single'
+            mt_class = getattr(binary, 'first_mt_case', None)
+            grid_type = getattr(binary, 'grid_type', None)
+            if grid_type is not None:
+                mt_class = getattr(binary, f'first_mt_case_{grid_type}',
+                                   mt_class)
+            if mt_class not in MT_CLASSES:
+                mt_class = 'single'
         return mt_class
 
     def __call__(self, binary):

@@ -1749,27 +1749,35 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
-def mt_class_from_cumulative(cumulative_mt_case, star_index):
+def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None,
+                             retain_flag_if_no_mt=False):
     """Resolve the Maltsev+25 MT class from a cumulative MT-case string.
 
     The MT class determines which set of ``M_CO`` boundaries is used by the
     Maltsev+25-MCO recipe. It is read from a cumulative MT-history string such
     as ``cumulative_mt_case_{grid_type}`` (set by the nearest-neighbour MESA
-    steps), restricting attention to the episodes in which the star of interest
-    itself was the donor. The earliest such episode is taken, following the
-    paper's prescription to use the first MT episode for BC/AB systems.
+    steps). The earliest qualifying episode is taken, following the paper's
+    prescription to use the first MT episode for BC/AB systems.
 
     Parameters
     ----------
-    cumulative_mt_case : str or None
+    cumulative_mt_case : str, bytes or None
         The cumulative MT-history string, e.g. 'case_A1/B1/A2' or 'no_RLOF'.
-    star_index : int
+    star_index : int or None
         Index (1 or 2) of the star (donor) to resolve the class for.
+        If None, episodes of either star are considered and the first
+        episode overall (whichever star is the donor) is used.
+    retain_flag_if_no_mt : bool (default: False)
+        If True, the original flag string is returned (verbatim) when no
+        qualifying MT episode is found, e.g. 'no_RLOF', 'initial_RLOF',
+        'not_converged' or 'None'. Otherwise 'single' is returned.
 
     Returns
     -------
-    str
-        One of 'single', 'case_A', 'case_B', 'case_C'.
+    str or None
+        One of 'single', 'case_A', 'case_B', 'case_C', or (when
+        ``retain_flag_if_no_mt`` is set and no episode qualifies) the
+        original ``cumulative_mt_case``.
 
     """
     # Map a cumulative MT-case letter to the Maltsev+25 MT class.
@@ -1783,6 +1791,9 @@ def mt_class_from_cumulative(cumulative_mt_case, star_index):
         # 'nonburning' and other exotic cases are treated as single
         return 'single'
 
+    if isinstance(cumulative_mt_case, bytes):
+        cumulative_mt_case = cumulative_mt_case.decode('utf-8')
+
     donor_cases = []
     for token in str(cumulative_mt_case).replace('?', '').split('/'):
         if token.startswith('case_'):
@@ -1793,15 +1804,17 @@ def mt_class_from_cumulative(cumulative_mt_case, star_index):
             donor = token[-1]
             cls_letter = token[:-1]
         else:
-            # e.g. "no_RLO" or an unrecognised token
+            # e.g. "no_RLOF" or an unrecognised token
             continue
-        if donor == str(star_index):
+        if star_index is None or donor == str(star_index):
             donor_cases.append(cls_letter)
 
     if not donor_cases:
+        if retain_flag_if_no_mt:
+            return cumulative_mt_case
         return 'single'
 
-    # Take the earliest donor episode (the string preserves chronology).
+    # Take the earliest qualifying episode (the string preserves chronology).
     return _letter_to_class(donor_cases[0])
 
 

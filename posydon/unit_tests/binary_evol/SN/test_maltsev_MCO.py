@@ -184,8 +184,9 @@ def test_missing_MCO_raises():
 
 
 def test_resolve_mt_class_reads_star_mt_class():
-    # The MT class is resolved from the grid's cumulative MT case and stored on
-    # the star during step_MESA; the SN step returns it as-is.
+    # The MT class of the first mass-transfer episode (whichever star is the
+    # donor) is stored on the star during step_MESA; the SN step returns it
+    # as-is.
     s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     star.mt_class = "case_B"
@@ -195,33 +196,70 @@ def test_resolve_mt_class_reads_star_mt_class():
 
 
 def test_resolve_mt_class_defaults_to_single():
-    # Interpolation runs never fill in star.mt_class (the cumulative MT history
-    # is unavailable), so the recipe falls back to 'single' rather than a
-    # guessed class.
+    # No class is stored on the star (e.g. single-star path, or an
+    # interpolation trained without first_mt_case), or the stored value is not
+    # a valid MT class (e.g. the verbatim termination flag token 'no_RLOF'),
+    # so the recipe falls back to 'single' rather than a guessed class.
     s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     assert not hasattr(star, "mt_class")
     assert s._resolve_mt_class(None, star, 1) == "single"
     # no collapsing star (single-star path) -> single
     assert s._resolve_mt_class(None, None, 1) == "single"
+    # invalid / retained-verbatim flags normalize to 'single'
+    for mt_class in ["no_RLOF", "initial_RLOF", "not_converged", "None"]:
+        star.mt_class = mt_class
+        assert s._resolve_mt_class(None, star, 1) == "single"
+
+
+def test_resolve_mt_class_first_episode_overall():
+    # The recipe uses the class of the first mass-transfer episode, whichever
+    # star was the donor. A binary loaded from a grid run (no step_MESA since)
+    # falls back to its first_mt_case attribute.
+    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
+    from posydon.utils.common_functions import mt_class_from_cumulative
+    star = FakeStar(co_core_mass=2.0, metallicity=1.0)
+    from types import SimpleNamespace
+    binary = SimpleNamespace(first_mt_case="case_B", grid_type="HMS_HMS")
+
+    # jump to the first episode overall, regardless of the collapsing star
+    star.mt_class = mt_class_from_cumulative("case_A1/B2", retain_flag_if_no_mt=True)
+    assert star.mt_class == "case_A"
+    assert s._resolve_mt_class(binary, star, 1) == "case_A"
+    assert s._resolve_mt_class(binary, star, 2) == "case_A"
+    # ...even when the collapsing star was not the first donor
+    star.mt_class = mt_class_from_cumulative("case_B2/A1", retain_flag_if_no_mt=True)
+    assert star.mt_class == "case_B"
+    assert s._resolve_mt_class(binary, star, 2) == "case_B"
+    # a valid star.mt_class takes precedence over the binary fallback
+    star.mt_class = "case_C"
+    binary.first_mt_case = "case_B"
+    assert s._resolve_mt_class(binary, star, 1) == "case_C"
+    # no class on the star: fall back to the binary's first_mt_case
+    delattr(star, "mt_class")
+    assert s._resolve_mt_class(binary, star, 1) == "case_B"
+    # an unset binary first_mt_case also falls back to 'single'
+    delattr(binary, "first_mt_case")
+    assert s._resolve_mt_class(binary, star, 1) == "single"
 
 
 def test_resolve_mt_class_latest_grid_wins():
     # Each step_MESA run overwrites star.mt_class with the class resolved from
-    # that grid's cumulative MT case, so the most recent grid wins (e.g. a
+    # that grid's first_mt_case, so the most recent grid wins (e.g. a
     # CO_HMS_RLO / CO_HeMS run takes precedence over the earlier HMS_HMS one).
     from posydon.utils.common_functions import mt_class_from_cumulative
     s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    # HMS_HMS grid first (star 1 donates, case A)...
-    star.mt_class = mt_class_from_cumulative("case_A1/B1", 1)
+    # HMS_HMS grid first (case A donation)...
+    star.mt_class = mt_class_from_cumulative("case_A1/B1", retain_flag_if_no_mt=True)
     assert star.mt_class == "case_A"
-    # ...then a later CO_HMS_RLO grid overwrites with its own class.
-    star.mt_class = mt_class_from_cumulative("case_B2/A1", 1)
-    assert star.mt_class == "case_A"
-    star.mt_class = mt_class_from_cumulative("case_B1", 1)
+    # ...then a later CO_HMS_RLO grid overwrites with its own class. The class
+    # is the first episode overall, so the second grid's case_B wins.
+    star.mt_class = mt_class_from_cumulative("case_B2/A1", retain_flag_if_no_mt=True)
     assert star.mt_class == "case_B"
-    # the latest grid always wins, even if it reports no RLO for this star
-    star.mt_class = mt_class_from_cumulative("case_B1", 1)
-    star.mt_class = mt_class_from_cumulative("no_RLO", 1)
+    star.mt_class = mt_class_from_cumulative("case_B1", retain_flag_if_no_mt=True)
+    assert star.mt_class == "case_B"
+    # the latest grid always wins, even if it reports no RLO at all
+    star.mt_class = mt_class_from_cumulative("case_B1", retain_flag_if_no_mt=True)
+    star.mt_class = mt_class_from_cumulative("no_RLO", retain_flag_if_no_mt=True)
     assert s._resolve_mt_class(None, star, 1) == "single"

@@ -217,6 +217,7 @@ from posydon.utils.common_functions import (
     get_i_He_depl,
     infer_star_state,
     initialize_empty_array,
+    mt_class_from_cumulative,
     orbital_separation_from_period,
 )
 from posydon.utils.configfile import ConfigFile
@@ -682,7 +683,8 @@ class PSyGrid:
         dtype_final_values = (
             [(col, 'f8') for col in all_history_columns]
             + [(col, H5_UNICODE_DTYPE) for col in termination_flag_columns]
-            + ([("interpolation_class", H5_UNICODE_DTYPE)]
+            + ([("interpolation_class", H5_UNICODE_DTYPE),
+                ("first_mt_case", H5_UNICODE_DTYPE)]
                if binary_grid else [])
             + extra_final_values_cols
         )
@@ -1355,6 +1357,15 @@ class PSyGrid:
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
 
+        # first mass transfer case (whichever episode is the first one) read
+        # from the final termination_flag_2, so that fixes applied above (e.g.
+        # the initial RLO fix) are already reflected in the column.
+        if binary_grid:
+            for i in range(len(self.final_values)):
+                self.final_values[i]["first_mt_case"] = mt_class_from_cumulative(
+                    self.final_values[i]["termination_flag_2"],
+                    retain_flag_if_no_mt=True)
+
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,
                             **compression_args)
@@ -1427,6 +1438,7 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
+                dtype[0].startswith("first_mt") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
@@ -1493,6 +1505,7 @@ class PSyGrid:
         new_dtype = {}
         for dtype in final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
+                dtype[0].startswith("first_mt") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))

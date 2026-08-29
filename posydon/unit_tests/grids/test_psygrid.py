@@ -84,7 +84,8 @@ class TestElements:
                     'infer_interpolation_class', 'infer_star_state',\
                     'initial_values_from_dirname', 'initialize_empty_array',\
                     'join_grids', 'join_lists', 'json', 'keep_after_RLO',\
-                    'keep_till_central_abundance_He_C', 'np',\
+                    'keep_till_central_abundance_He_C', 'mt_class_from_cumulative',\
+                    'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
                     'read_initial_values', 'scrub', 'rfn', 'tqdm'}
@@ -1232,7 +1233,8 @@ class TestPSyGrid:
         BINARY_INITIAL_KEYS = BINARY_KEYS + ["X", "Y", "Z"]
         SINGLE_FINAL_KEYS = SINGLE_KEYS\
                             + totest.TERMINATION_FLAG_COLUMNS_SINGLE
-        BINARY_FINAL_KEYS = BINARY_KEYS + totest.TERMINATION_FLAG_COLUMNS
+        BINARY_FINAL_KEYS = BINARY_KEYS + totest.TERMINATION_FLAG_COLUMNS\
+                            + ["first_mt_case"]
         def mock_get_nearest_known_initial_RLO(mass1, mass2,\
                                                known_initial_RLO):
             # mocked nearest initial RLO system
@@ -1317,6 +1319,21 @@ class TestPSyGrid:
                                     totest.h5py.File(PSyGrid.filepath, "w"))
         check_len(PSyGrid, N_MESA_runs)
         check_keys(PSyGrid, BINARY_INITIAL_KEYS, BINARY_FINAL_KEYS)
+        # first_mt_case is derived from the final termination_flag_2
+        assert isinstance(PSyGrid.final_values["first_mt_case"][0], str)
+        for i in range(len(PSyGrid.final_values)):
+            tf2 = PSyGrid.final_values[i]["termination_flag_2"]
+            assert PSyGrid.final_values[i]["first_mt_case"] == \
+                totest.mt_class_from_cumulative(tf2, retain_flag_if_no_mt=True)
+        # round-trips back from the stored file as unicode
+        grid_loaded = totest.PSyGrid()
+        grid_loaded.load(PSyGrid.filepath, lazy=False)
+        assert "first_mt_case" in grid_loaded.final_values.dtype.names
+        assert type(grid_loaded.final_values["first_mt_case"][0]) == np.str_
+        for i in range(len(grid_loaded.final_values)):
+            assert grid_loaded.final_values[i]["first_mt_case"] == \
+                PSyGrid.final_values[i]["first_mt_case"]
+        grid_loaded.close()
         # examples: v1 run
         self.reset_grid(PSyGrid)
         with warns(MissingFilesWarning, match="Ignored MESA run because of "\
