@@ -1357,9 +1357,7 @@ class PSyGrid:
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
 
-        # first mass transfer case (whichever episode is the first one) read
-        # from the final termination_flag_2, so that fixes applied above (e.g.
-        # the initial RLO fix) are already reflected in the column.
+        # first mass transfer case
         if binary_grid:
             for i in range(len(self.final_values)):
                 self.final_values[i]["first_mt_case"] = mt_class_from_cumulative(
