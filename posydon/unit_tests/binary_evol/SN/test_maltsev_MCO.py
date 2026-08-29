@@ -5,14 +5,13 @@ __authors__ = [
 ]
 
 import numpy as np
-from pytest import approx, fixture, raises, warns
+from pytest import approx, fixture, raises
 
 from posydon.binary_evol.SN.maltsev_MCO import (
     MT_CLASSES,
     Maltsev25_MCO_corecollapse,
 )
 from posydon.binary_evol.SN.step_SN import StepSN
-from posydon.utils.posydonwarning import ApproximationWarning
 
 
 class FakeStar:
@@ -169,10 +168,12 @@ def test_custom_NS_mass_model():
     assert m_rem == approx(2.0)
 
 
-def test_out_of_range_Z_warns(engine):
+def test_out_of_range_Z_extrapolates(engine):
+    # Z/Z_sun > 1 is outside the calibrated range (0.1, 1); the boundaries
+    # are linearly extrapolated, so the engine completes without warning.
     star = FakeStar(co_core_mass=5.0, metallicity=2.0)  # > Z_sun
-    with warns(ApproximationWarning):
-        engine(star, "single")
+    m_rem, f_fb, state = engine(star, "single")
+    assert state in ("NS", "BH")
 
 
 def test_missing_MCO_raises():
