@@ -8,7 +8,6 @@ import numpy as np
 from pytest import approx, fixture, raises
 
 from posydon.binary_evol.SN.maltsev_MCO import (
-    MT_CLASSES,
     Maltsev25_MCO_corecollapse,
 )
 from posydon.binary_evol.SN.step_SN import StepSN
@@ -184,72 +183,56 @@ def test_missing_MCO_raises():
         eng(star, "single")
 
 
-def test_resolve_mt_class_reads_star_mt_class():
+def test_resolve_mt_class_reads_star_mt_class(engine):
     # The MT class of the first mass-transfer episode (whichever star is the
-    # donor) is stored on the star during step_MESA; the SN step returns it
+    # donor) is stored on the star during step_MESA; the engine returns it
     # as-is.
-    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     star.mt_class = "case_B"
-    assert s._resolve_mt_class(None, star, 1) == "case_B"
+    assert engine._resolve_mt_class(star) == "case_B"
     star.mt_class = "case_A"
-    assert s._resolve_mt_class(None, star, 2) == "case_A"
+    assert engine._resolve_mt_class(star) == "case_A"
 
 
-def test_resolve_mt_class_defaults_to_single():
+def test_resolve_mt_class_defaults_to_single(engine):
     # No class is stored on the star (e.g. single-star path, or an
     # interpolation trained without first_mt_case), or the stored value is not
     # a valid MT class (e.g. the verbatim termination flag token 'no_RLOF'),
     # so the recipe falls back to 'single' rather than a guessed class.
-    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     assert not hasattr(star, "mt_class")
-    assert s._resolve_mt_class(None, star, 1) == "single"
+    assert engine._resolve_mt_class(star) == "single"
     # no collapsing star (single-star path) -> single
-    assert s._resolve_mt_class(None, None, 1) == "single"
+    assert engine._resolve_mt_class(None) == "single"
     # invalid / retained-verbatim flags normalize to 'single'
     for mt_class in ["no_RLOF", "initial_RLOF", "not_converged", "None"]:
         star.mt_class = mt_class
-        assert s._resolve_mt_class(None, star, 1) == "single"
+        assert engine._resolve_mt_class(star) == "single"
+    # an explicit fallback class is honoured when no valid class is stored
+    assert engine._resolve_mt_class(star, "case_C") == "case_C"
 
 
-def test_resolve_mt_class_first_episode_overall():
+def test_resolve_mt_class_first_episode_overall(engine):
     # The recipe uses the class of the first mass-transfer episode, whichever
-    # star was the donor. A binary loaded from a grid run (no step_MESA since)
-    # falls back to its first_mt_case attribute.
-    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
+    # star was the donor. step_MESA stores that class on both stars, so either
+    # collapsing star resolves to the same class.
     from posydon.utils.common_functions import mt_class_from_cumulative
-    star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    from types import SimpleNamespace
-    binary = SimpleNamespace(first_mt_case="case_B", grid_type="HMS_HMS")
-
-    # jump to the first episode overall, regardless of the collapsing star
-    star.mt_class = mt_class_from_cumulative("case_A1/B2")
-    assert star.mt_class == "case_A"
-    assert s._resolve_mt_class(binary, star, 1) == "case_A"
-    assert s._resolve_mt_class(binary, star, 2) == "case_A"
+    star_1 = FakeStar(co_core_mass=2.0, metallicity=1.0)
+    star_2 = FakeStar(co_core_mass=2.0, metallicity=1.0)
+    star_1.mt_class = star_2.mt_class = mt_class_from_cumulative("case_A1/B2")
+    assert star_1.mt_class == "case_A"
+    assert engine._resolve_mt_class(star_1) == "case_A"
+    assert engine._resolve_mt_class(star_2) == "case_A"
     # ...even when the collapsing star was not the first donor
-    star.mt_class = mt_class_from_cumulative("case_B2/A1")
-    assert star.mt_class == "case_B"
-    assert s._resolve_mt_class(binary, star, 2) == "case_B"
-    # a valid star.mt_class takes precedence over the binary fallback
-    star.mt_class = "case_C"
-    binary.first_mt_case = "case_B"
-    assert s._resolve_mt_class(binary, star, 1) == "case_C"
-    # no class on the star: fall back to the binary's first_mt_case
-    delattr(star, "mt_class")
-    assert s._resolve_mt_class(binary, star, 1) == "case_B"
-    # an unset binary first_mt_case also falls back to 'single'
-    delattr(binary, "first_mt_case")
-    assert s._resolve_mt_class(binary, star, 1) == "single"
+    star_1.mt_class = star_2.mt_class = mt_class_from_cumulative("case_B2/A1")
+    assert engine._resolve_mt_class(star_2) == "case_B"
 
 
-def test_resolve_mt_class_latest_grid_wins():
+def test_resolve_mt_class_latest_grid_wins(engine):
     # Each step_MESA run overwrites star.mt_class with the class resolved from
     # that grid's first_mt_case, so the most recent grid wins (e.g. a
     # CO_HMS_RLO / CO_HeMS run takes precedence over the earlier HMS_HMS one).
     from posydon.utils.common_functions import mt_class_from_cumulative
-    s = StepSN(mechanism="Maltsev+25-MCO-rapid", verbose=False)
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     # HMS_HMS grid first (case A donation)...
     star.mt_class = mt_class_from_cumulative("case_A1/B1")
@@ -257,10 +240,26 @@ def test_resolve_mt_class_latest_grid_wins():
     # ...then a later CO_HMS_RLO grid overwrites with its own class. The class
     # is the first episode overall, so the second grid's case_B wins.
     star.mt_class = mt_class_from_cumulative("case_B2/A1")
-    assert star.mt_class == "case_B"
-    star.mt_class = mt_class_from_cumulative("case_B1")
-    assert star.mt_class == "case_B"
+    assert engine._resolve_mt_class(star) == "case_B"
     # the latest grid always wins, even if it reports no RLO at all
-    star.mt_class = mt_class_from_cumulative("case_B1")
     star.mt_class = mt_class_from_cumulative("no_RLO")
-    assert s._resolve_mt_class(None, star, 1) == "single"
+    assert star.mt_class == "no_RLO"
+    assert engine._resolve_mt_class(star) == "single"
+
+
+def test_call_auto_resolves_star_mt_class(engine):
+    # M_CO = 7.0 sits in the 'single' direct-collapse window (M1-M2 = 6.6-7.2)
+    # but below the case_A M1 = 7.4, so the star's MT class (set by step_MESA)
+    # fully determines the outcome.
+    star = FakeStar(co_core_mass=7.0, metallicity=1.0)
+    star.mt_class = "case_A"
+    _, _, state = engine(star, conserve_hydrogen_envelope=False)
+    assert state == "NS"
+    # an invalid/verbatim stored class falls back to 'single' boundaries
+    star.mt_class = "no_RLOF"
+    _, _, state = engine(star, conserve_hydrogen_envelope=False)
+    assert state == "BH"
+    # without a stored class the explicit argument is the fallback
+    delattr(star, "mt_class")
+    _, _, state = engine(star, "case_A", conserve_hydrogen_envelope=False)
+    assert state == "NS"
