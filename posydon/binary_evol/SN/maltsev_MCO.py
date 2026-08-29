@@ -29,7 +29,6 @@ boundaries are linearly extrapolated.
 import numpy as np
 
 from posydon.utils.posydonerror import ModelError
-from posydon.utils.posydonwarning import Pwarn
 
 __authors__ = [
     "Max Briel <max.briel@gmail.com>",
@@ -169,6 +168,13 @@ class Maltsev25_MCO_corecollapse(object):
     # ------------------------------------------------------------------
     # Boundary / window accessors
     # ------------------------------------------------------------------
+    def _require_finite_M_CO(self, M_CO):
+        """Raise ``ModelError`` if the CO core mass cannot feed the recipe."""
+        if M_CO is None or not np.isfinite(M_CO):
+            raise ModelError(
+                "Maltsev+25 MCO prescription requires a finite CO core mass; "
+                "got co_core_mass = %s." % M_CO)
+
     def get_boundaries(self, mt_class, Z):
         """Return the three M_CO direct-collapse boundaries for ``mt_class``.
 
@@ -188,6 +194,10 @@ class Maltsev25_MCO_corecollapse(object):
         if mt_class not in _BOUNDARIES:
             raise ValueError(
                 "mt_class must be one of %s, got '%s'." % (MT_CLASSES, mt_class))
+        if Z is None or not np.isfinite(Z) or Z <= 0.0:
+            raise ModelError(
+                "Maltsev+25 MCO boundaries require a positive, finite "
+                "Z/Z_sun; got Z = %s." % Z)
         x = np.log10(Z)
         return tuple(a + b * x for (a, b) in _BOUNDARIES[mt_class])
 
@@ -210,6 +220,10 @@ class Maltsev25_MCO_corecollapse(object):
         if mt_class not in _NS_WINDOW:
             raise ValueError(
                 "mt_class must be one of %s, got '%s'." % (MT_CLASSES, mt_class))
+        if Z is None or not np.isfinite(Z) or Z <= 0.0:
+            raise ModelError(
+                "Maltsev+25 MCO boundaries require a positive, finite "
+                "Z/Z_sun; got Z = %s." % Z)
         x = np.log10(Z)
         return tuple(a + b * x for (a, b) in _NS_WINDOW[mt_class])
 
@@ -235,6 +249,7 @@ class Maltsev25_MCO_corecollapse(object):
             collapses directly to a BH (failed SN).
 
         """
+        self._require_finite_M_CO(M_CO)
         M1, M2, M3 = self.get_boundaries(mt_class, Z)
         if M_CO < M1:
             return True
@@ -273,6 +288,7 @@ class Maltsev25_MCO_corecollapse(object):
             'NS' or 'fallback_BH'.
 
         """
+        self._require_finite_M_CO(M_CO)
         M1, _, _ = self.get_boundaries(mt_class, Z)
         # M_CO < M1: successful SN that forms an NS only.
         if M_CO < M1:
@@ -340,11 +356,11 @@ class Maltsev25_MCO_corecollapse(object):
         star : object
             Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
             and ``metallicity`` (Z/Z_sun). Its ``mt_class`` attribute (set by
-            step_MESA) is used as the MT-history class; ``mt_class`` is kept
-            only as a fallback for stars without one.
+            step_MESA) is used as the MT-history class when valid.
         mt_class : str
-            MT-history class used when ``star.mt_class`` is missing or not a
-            valid class: 'single', 'case_A', 'case_B' or 'case_C'.
+            Fallback MT-history class, used only when ``star.mt_class`` is
+            missing or not a valid class: 'single', 'case_A', 'case_B' or
+            'case_C'. When ``star.mt_class`` is valid it takes precedence.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.

@@ -11,6 +11,7 @@ __authors__ = [
     "Nam Tran <tranhn03@gmail.com>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
