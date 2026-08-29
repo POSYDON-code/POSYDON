@@ -437,7 +437,8 @@ class StepSN(object):
                     print('Done')
 
             elif self.mechanism == self.Maltsev25_MCO_rapid:
-                # M_CO + Z + MT-class recipe of Maltsev+25 (no external data files)
+                # M_CO + Z + MT-class recipe of Maltsev+25
+                # initialise as the engine
                 self.Maltsev25_MCO_engine = Maltsev25_MCO_corecollapse(
                     RNG=self.RNG,
                     NS_mass=self.Maltsev25_MCO_NS_mass,
