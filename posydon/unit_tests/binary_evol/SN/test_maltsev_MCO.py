@@ -1,7 +1,7 @@
 """Unit tests for the Maltsev+25 M_CO (rapid) supernova prescription."""
 
 __authors__ = [
-    "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 import numpy as np
