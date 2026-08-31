@@ -68,8 +68,35 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def event(terminal, direction=0):
-    """Return a helper function to set attributes for solve_ivp events."""
+    """Return a helper function to set attributes for solve_ivp events.
+
+    Parameters
+    ----------
+    terminal : bool
+        The value to set for the event function's ``terminal`` attribute.
+
+    direction : int, optional
+        The value to set for the event function's ``direction`` attribute.
+
+    Returns
+    -------
+    callable
+        A decorator that sets the terminal and direction attributes on an
+        event function.
+    """
     def dec(f):
+        """Set the terminal and direction attributes on an event function.
+
+        Parameters
+        ----------
+        f : callable
+            The event function on which to set the attributes.
+
+        Returns
+        -------
+        callable
+            The event function with the attributes set.
+        """
         f.terminal = terminal
         f.direction = direction
         return f
@@ -178,7 +205,14 @@ class detached_step:
 
     def __init__(self, **kwargs):
 
-        """Initialize the step. See class documentation for details."""
+        """Initialize the step. See class documentation for details.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments used to initialize the step. Valid keys
+            correspond to the entries of ``DEFAULT_KWARGS``.
+        """
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
@@ -471,10 +505,10 @@ class detached_step:
 
     def solve_ODEs(self, binary, primary, secondary):
         """
-            Utilizes SciPy's solve_ivp() method to solve a set of
-        differential equations that describe the orbital evolution
-        (separation and eccentricity) and stellar rotation rate
-        evolution during step_detached.
+        Utilizes SciPy's solve_ivp() method to solve a set of differential equations.
+        These equations describe the orbital evolution (separation and
+        eccentricity) and the stellar rotation rate evolution during the
+        detached step.
 
         Parameters
         ----------
@@ -527,16 +561,10 @@ class detached_step:
 
     def get_time_after_evo(self, binary):
         """
-            After detached evolution, this uses the ODESolver result
-        to determine what the current time is.
+        After detached evolution, this uses the ODESolver result to determine the current time.
 
         Parameters
         ----------
-        res : ODESolver object
-            This is the ODESolver object produced by SciPy's
-            solve_ivp function that contains calculated values
-            of the stars evolution through the detached step.
-
         binary: BinaryStar object
             A binary star object, containing the binary system's properties.
 
@@ -569,10 +597,7 @@ class detached_step:
     def update_after_evo(self, t, binary, primary, secondary):
 
         """
-            Update star and binary properties and interpolators with
-        ODESolver result from detached evolution. This update gives
-        the binary/stars their appropriate values, according to the
-        interpolation after detached evolution.
+        Update star and binary properties and interpolators with the ODESolver result from detached evolution.
 
         Parameters
         ----------
@@ -732,10 +757,7 @@ class detached_step:
     def update_co_stars(self, t, primary, secondary):
 
         """
-            Update compact object properties after detached
-        evolution. The properties are updated here using the
-        CO star properties from the last step. Often, these
-        values are null.
+        Update compact object properties after detached evolution.
 
         Parameters
         ----------
@@ -879,6 +901,40 @@ class detached_evolution:
                     do_stellar_evolution_and_spin_from_winds=True,
                     do_gravitational_radiation=True,
                     verbose=False):
+        """Initialize the detached evolution ODE system.
+
+        Parameters
+        ----------
+        primary : SingleStar, optional
+            Primary star of the binary (typically the more evolved star).
+
+        secondary : SingleStar, optional
+            Secondary star of the binary.
+
+        do_wind_loss : bool, optional
+            If True, include orbital evolution due to stellar wind mass loss.
+
+        do_tides : bool, optional
+            If True, include tidal interactions affecting orbital separation,
+            eccentricity, and stellar spin.
+
+        do_magnetic_braking : bool, optional
+            If True, include stellar spin evolution due to magnetic braking.
+
+        magnetic_braking_mode : str, optional
+            The magnetic braking prescription to use. Defaults to "RVJ83".
+
+        do_stellar_evolution_and_spin_from_winds : bool, optional
+            If True, include spin evolution caused by stellar structural
+            evolution and angular momentum loss from winds.
+
+        do_gravitational_radiation : bool, optional
+            If True, include orbital evolution from gravitational wave
+            emission.
+
+        verbose : bool, optional
+            If True, print diagnostic information during the integration.
+        """
 
         self.verbose = verbose
 
@@ -906,9 +962,9 @@ class detached_evolution:
     @event(True, 1)
     def ev_rlo1(self, t, y):
         """
-            Difference between radius and Roche lobe at a given time. Used
-        to check if there is RLOF mass transfer during the detached binary
-        evolution interpolation. Calculated for the secondary.
+        Difference between radius and Roche lobe at a given time.
+        Used to check if there is RLOF mass transfer during the detached
+        binary evolution interpolation. Calculated for the secondary.
 
         Parameters
         ----------
@@ -918,14 +974,6 @@ class detached_evolution:
         y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
-
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
 
         Returns
         -------
@@ -954,9 +1002,9 @@ class detached_evolution:
     @event(True, 1)
     def ev_rlo2(self, t, y):
         """
-            Difference between radius and Roche lobe at a given time. Used
-        to check if there is RLOF mass transfer during the detached binary
-        evolution interpolation. Calculated for the primary.
+        Difference between radius and Roche lobe at a given time.
+        Used to check if there is RLOF mass transfer during the detached
+        binary evolution interpolation. Calculated for the primary.
 
         Parameters
         ----------
@@ -966,14 +1014,6 @@ class detached_evolution:
         y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
-
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
 
         Returns
         -------
@@ -1000,9 +1040,9 @@ class detached_evolution:
     @event(True, 1)
     def ev_rel_rlo1(self, t, y):
         """
-            Relative difference between radius and Roche lobe. Used to
-        check if there is RLOF mass transfer during the detached binary
-        evolution interpolation. Calculated for the secondary.
+        Relative difference between radius and Roche lobe.
+        Used to check if there is RLOF mass transfer during the detached
+        binary evolution interpolation. Calculated for the secondary.
 
         Parameters
         ----------
@@ -1012,14 +1052,6 @@ class detached_evolution:
         y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
-
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
 
         Returns
         -------
@@ -1045,9 +1077,9 @@ class detached_evolution:
     @event(True, 1)
     def ev_rel_rlo2(self, t, y):
         """
-            Relative difference between radius and Roche lobe. Used to
-        check if there is RLOF mass transfer during the detached binary
-        evolution interpolation. Calculated for the primary.
+        Relative difference between radius and Roche lobe.
+        Used to check if there is RLOF mass transfer during the detached
+        binary evolution interpolation. Calculated for the primary.
 
         Parameters
         ----------
@@ -1057,14 +1089,6 @@ class detached_evolution:
         y : tuple(float)
             [separation, eccentricity] at that time. Separation should be
             in solar radii.
-
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
 
         Returns
         -------
@@ -1088,17 +1112,52 @@ class detached_evolution:
     # detects if the max age in track of secondary is reached
     @event(True, -1)
     def ev_max_time1(self, t, y):
+        """Detect when the maximum age of the secondary's track is reached.
+
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years.
+
+        y : list
+            The current state vector [separation, eccentricity,
+            omega_secondary, omega_primary].
+
+        Returns
+        -------
+        float
+            The difference between the secondary's maximum track age and the
+            current time.
+        """
         return self.secondary.t_max - t + self.secondary.t_offset
 
     # detects if the max age in track of primary is reached
     @event(True, -1)
     def ev_max_time2(self, t, y):
+        """Detect when the maximum age of the primary's track is reached.
+
+        Parameters
+        ----------
+        t : float
+            Time of the evolution, in years.
+
+        y : list
+            The current state vector [separation, eccentricity,
+            omega_secondary, omega_primary].
+
+        Returns
+        -------
+        float
+            The difference between the primary's maximum track age and the
+            current time.
+        """
         return self.primary.t_max - t + self.primary.t_offset
 
     def set_stars(self, primary, secondary, t0=0.0):
-        """Sets memory references for primary and secondary star associated with
-        this evolution. It is expected that primary/secondary have interp1d
-        objects already, as required for detached evolution.
+        """Sets memory references for primary and secondary star associated with this evolution.
+
+        It is expected that primary/secondary have interp1d objects already,
+        as required for detached evolution.
 
         Parameters
         ----------
@@ -1143,11 +1202,11 @@ class detached_evolution:
 
         Parameters
         ----------
-            t : float
-                The current time of integration during solve_ivp().
+        t : float
+            The current time of integration during solve_ivp().
 
-            y : list
-                The current set of solutions for orbital separation [Rsol],
+        y : list
+            The current set of solutions for orbital separation [Rsol],
             orbital eccentricity, spin of the secondary star [rad/yr], and
             spin of the primary star [rad/yr].
         """
@@ -1291,6 +1350,7 @@ class detached_evolution:
         return result
 
     def spin_from_winds(self):
+        """Update the stellar spins due to wind mass loss."""
 
         dOmega_sec_winds, dOmega_pri_winds = default_spin_from_winds(self.a,
                                                                         self.e,
@@ -1308,6 +1368,7 @@ class detached_evolution:
         self.dOmega_pri += dOmega_pri_winds
 
     def sep_from_winds(self):
+        """Update the orbital separation due to wind mass loss."""
 
         da_winds = default_sep_from_winds(self.a, self.e,
                                             self.primary, self.secondary,
@@ -1320,6 +1381,7 @@ class detached_evolution:
         self.da += da_winds
 
     def tides(self):
+        """Update the orbital separation, eccentricity, and stellar spins due to tidal forces."""
 
         da_tides, de_tides, dOmega_sec_tides, dOmega_pri_tides = default_tides(self.a,
                                                                                 self.e,
@@ -1342,6 +1404,7 @@ class detached_evolution:
         self.dOmega_pri += dOmega_pri_tides
 
     def gravitational_radiation(self):
+        """Update the orbital separation and eccentricity due to gravitational wave radiation."""
 
         da_gr, de_gr = default_gravrad(self.a, self.e,
                                         self.primary, self.secondary,
@@ -1358,6 +1421,7 @@ class detached_evolution:
         self.de += de_gr
 
     def magnetic_braking(self):
+        """Update the stellar spins due to magnetic braking."""
         # domega_mb / dt = torque_mb / I is calculated below.
         # All results are in units of [yr^-2], i.e., the amount of change
         # in Omega over 1 year.
