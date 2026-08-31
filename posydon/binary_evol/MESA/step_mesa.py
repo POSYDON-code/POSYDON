@@ -302,7 +302,7 @@ class MesaGridStep:
             Pwarn(f"While loading interpolators, unable to find {self.grid_name}."
                    "Attempting to download the data from Zenodo.",
                    "MissingFilesWarning")
-            data_download()
+            data_download(confirm=True)
 
         if self.verbose:
             print("loading psyTrackInterp: {}".format(self.grid_name))
@@ -321,7 +321,7 @@ class MesaGridStep:
             Pwarn(f"While loading interpolators, unable to find {filename}."
                    "Attempting to download the data from Zenodo.",
                    "MissingFilesWarning")
-            data_download()
+            data_download(confirm=True)
 
         # Load interpolator
         self._Interp = IFInterpolator()

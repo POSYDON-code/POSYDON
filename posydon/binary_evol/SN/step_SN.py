@@ -373,7 +373,7 @@ class StepSN(object):
                         Pwarn(f"While loading auxiliary data, unable to find {filename}."
                                "Attempting to download the data from Zenodo.",
                                "MissingFilesWarning")
-                        data_download(set_name='auxiliary')
+                        data_download(set_name='auxiliary', confirm=True)
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -2621,7 +2621,7 @@ class Sukhbold16_corecollapse(object):
                 Pwarn(f"While loading auxiliary data, unable to find {filename}."
                        "Attempting to download the data from Zenodo.",
                        "MissingFilesWarning")
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True)
 
             Engine_data = read_csv(filename)
 
@@ -2817,7 +2817,7 @@ class Couch20_corecollapse(object):
                 Pwarn(f"While loading auxiliary data, unable to find {filename}."
                        "Attempting to download the data from Zenodo.",
                        "MissingFilesWarning")
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True)
 
             Couch_data_file = open(filename)
             Couch_data = json.load(Couch_data_file)
