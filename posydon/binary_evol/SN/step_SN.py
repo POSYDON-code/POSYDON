@@ -179,6 +179,13 @@ class StepSN(object):
         kick velocities from compact-object formed by electron-capture
         supernova.
 
+    kick_M_CO_boundary : double or None
+        CO core mass boundary (M_sun) for natal kicks. If not None,
+        collapsing stars with a pre-supernova CO core mass >= this value
+        receive no natal kick, while stars with a lower CO core mass are
+        kicked following the kick_prescription as usual. If None (default),
+        all collapsing stars are kicked as usual.
+
     max_NS_mass : double
         Maximum neutron-star mass.
 
@@ -258,6 +265,7 @@ class StepSN(object):
         "mean_kick_CCSN_BH": None,
         "sigma_kick_ECSN": 20.0,
         "mean_kick_ECSN": None,
+        "kick_M_CO_boundary": None,
         # other
         "RNG": None,
         "verbose": False,
@@ -2140,8 +2148,17 @@ class StepSN(object):
         The "log_normal" precription draws kicks from a log-normal distribution,
         based on Disberg P., Mandel I., 2025, arXiv e-prints, p. arXiv:2505.22102v1
 
+        If kick_M_CO_boundary is not None, collapsing stars with a
+        pre-supernova CO core mass >= kick_M_CO_boundary receive no natal
+        kick, while stars below the boundary are kicked as usual.
 
         """
+        # no kick above the M_CO boundary (direct collapse)
+        if self.kick_M_CO_boundary is not None:
+            m_CO = star.co_core_mass_history[-1]
+            if m_CO >= self.kick_M_CO_boundary:
+                return 0.0
+
         if sigma is None:
             Vkick = 0.0
         else:
