@@ -436,17 +436,19 @@ class StepSN(object):
                 if self.verbose:
                     print('Done')
 
-            elif self.mechanism == self.Maltsev25_MCO_rapid:
-                # M_CO + Z + MT-class recipe of Maltsev+25
-                # initialise as the engine
-                self.Maltsev25_MCO_engine = Maltsev25_MCO_corecollapse(
-                    RNG=self.RNG,
-                    NS_mass=self.Maltsev25_MCO_NS_mass,
-                    fallback_fraction=self.Maltsev25_MCO_fallback_fraction,
-                    fallback_model=self.Maltsev25_MCO_fallback_model,
-                    verbose=self.verbose)
         else:
             raise ValueError("Invalid core-collapse mechanism given.")
+
+
+        # For the Maltsev+25 prescriptions, we have to load in the rapid
+        # prescription for both the MCO and the engine prescriptions.
+        if self.mechanism in (self.Maltsev25_MCO_rapid, self.Maltsev25_engines):
+            self.Maltsev25_MCO_engine = Maltsev25_MCO_corecollapse(
+                RNG=self.RNG,
+                NS_mass=self.Maltsev25_MCO_NS_mass,
+                fallback_fraction=self.Maltsev25_MCO_fallback_fraction,
+                fallback_model=self.Maltsev25_MCO_fallback_model,
+                verbose=self.verbose)
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
@@ -2503,18 +2505,11 @@ class StepSN(object):
                 f_fb = 0.0
                 state = 'NS'
 
-            # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
-            # However, since this outcome depends on the mass-transfer (MT) history, we handle it
-            # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
-            # with fallback = 1 at this stage.
+            # The Patton models stop at M_CO = 10 Msun, so we fallback to the
+            # Maltsev+25-rapid prescription for CO core masses above 10 Msun.
             elif CO_core_mass >= 10.0:
-                # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
-                else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
+                m_rem, f_fb, state = self.Maltsev25_MCO_engine(
+                    star, conserve_hydrogen_envelope=conserve_hydrogen_envelope)
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)
