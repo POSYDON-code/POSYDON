@@ -34,9 +34,9 @@ Willcox et al. 2025 (arXiv:2510.07573, Sec. 3.1.1):
   boundaries; the boundary values at ``Z/Z_sun = 0.1`` and ``Z/Z_sun = 1``
   are held constant outside the calibrated range.
 * ``'balanced'`` -- linear extrapolation in ``log10(Z)`` down to
-  ``Z/Z_sun = 1/50`` (~ 0.02, inspired by I Zwicky 18), then
-  nearest-neighbour below that floor.  Above ``Z/Z_sun = 1`` the behaviour
-  is the same as the optimistic mode (linear extrapolation).
+  ``Z/Z_sun = 1/50`` (~ 0.02), then nearest-neighbour below that floor.
+  Above ``Z/Z_sun = 1`` the behaviour is the same as the pessimistic mode
+  (nearest-neighbour at the upper calibration boundary).
 
 """
 
@@ -75,7 +75,7 @@ MT_CLASSES = tuple(_BOUNDARIES.keys())
 EXTRAPOLATION_MODES = ('optimistic', 'balanced', 'pessimistic')
 
 # Lower metallicity floor for the 'balanced' extrapolation mode
-# (Z/Z_sun = 1/50 ~ 0.02, inspired by I Zwicky 18).
+# (Z/Z_sun = 1/50 ~ 0.02).
 Z_BALANCED_FLOOR = 1.0 / 50.0
 
 # Calibration boundaries of the Maltsev+25 recipe (Z/Z_sun).
@@ -173,12 +173,7 @@ class Maltsev25_MCO_corecollapse(object):
 
         The MT class determines which set of ``M_CO`` boundaries is used by
         the recipe, derived from the **first** mass-transfer episode of the
-        binary (never a later one). This follows Maltsev+25, Appendix A.5.1:
-        for repeated episodes the first episode is sufficient -- Case A/B
-        pre-SN properties are similar, and for Case BC donors the first
-        (Case B) episode is preferred because Case C progenitors are closer
-        to single stars, so the Case B critical values capture the binary
-        interaction effects more adequately.
+        binary (never a later one). This follows Maltsev+25, Appendix A.5.1.
         Since each grid (step_MESA) overwrites the class, the most recent grid
         wins. Values that are not a valid MT class (e.g. no MT interaction
         occurred, or an interpolator without a ``first_mt_case`` key) fall
@@ -244,15 +239,19 @@ class Maltsev25_MCO_corecollapse(object):
             if self.extrapolation_mode == 'optimistic':
                 # linear continuation all the way down
                 return a + b * np.log10(Z)
-            # clamp threshold for 'balanced' (floor) or 'pessimistic' (lower
-            # calibration boundary).
             if self.extrapolation_mode == 'balanced':
+                # linear down to the floor, then clamp below it
                 return a + b * np.log10(max(Z, Z_BALANCED_FLOOR))
             # pessimistic: nearest-neighbour at the lower calibration boundary
             return a + b * np.log10(Z_CALIBRATION_LOW)
 
-        # Z > Z_CALIBRATION_HIGH : linear extrapolation in all modes
-        return a + b * np.log10(Z)
+        # Z > Z_CALIBRATION_HIGH
+        if self.extrapolation_mode == 'optimistic':
+            # linear continuation all the way up
+            return a + b * np.log10(Z)
+        # balanced & pessimistic: nearest-neighbour at the upper calibration
+        # boundary
+        return a + b * np.log10(Z_CALIBRATION_HIGH)
 
     def get_boundaries(self, mt_class, Z):
         """Return the three M_CO direct-collapse boundaries for ``mt_class``.

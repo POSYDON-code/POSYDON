@@ -329,17 +329,27 @@ def test_pessimistic_clamps_at_lower_calibration_boundary():
         assert eng.get_NS_window("single", Z) == approx(NS_ref)
 
 
-def test_above_zsun_is_linear_in_all_modes():
-    # Above Z/Z_sun = 1 the extrapolation is linear in all modes (per
-    # Willcox+25 the high-metallicity extrapolation does not influence BBH
-    # formation significantly, so no clamping is applied there).
-    for mode in ("optimistic", "balanced", "pessimistic"):
+def test_above_zsun_extrapolation():
+    # Only the optimistic mode continues the linear extrapolation above
+    # Z/Z_sun = 1; balanced and pessimistic clamp to the Z=1 values
+    # (nearest-neighbour at the upper calibration boundary).
+    ref = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(0), extrapolation_mode="optimistic")
+    M_solar = ref.get_boundaries("single", 1.0)
+    NS_solar = ref.get_NS_window("single", 1.0)
+    for mode in ("balanced", "pessimistic"):
         eng = _make_engine(mode)
-        Z = 2.0
-        M1, M2, M3 = eng.get_boundaries("single", Z)
-        assert M1 == approx(6.6 + 0.5 * np.log10(Z))
-        assert M2 == approx(7.2 + 0.6 * np.log10(Z))
-        assert M3 == approx(13.0 + 0.1 * np.log10(Z))
+        for Z in (1.5, 3.0, 10.0):
+            assert eng.get_boundaries("single", Z) == approx(M_solar)
+            assert eng.get_NS_window("single", Z) == approx(NS_solar)
+
+    # optimistic continues linearly
+    eng = _make_engine("optimistic")
+    Z = 2.0
+    M1, M2, M3 = eng.get_boundaries("single", Z)
+    assert M1 == approx(6.6 + 0.5 * np.log10(Z))
+    assert M2 == approx(7.2 + 0.6 * np.log10(Z))
+    assert M3 == approx(13.0 + 0.1 * np.log10(Z))
 
 
 def test_balanced_linear_above_floor_and_clamps_below():
@@ -363,11 +373,9 @@ def test_balanced_linear_above_floor_and_clamps_below():
     assert eng.get_NS_window("single", 0.02) == approx(NS_floor)
     for Z in (0.01, 0.001):
         assert eng.get_NS_window("single", Z) == approx(NS_floor)
-    # linear above Z=1.0 (like optimistic)
-    Z = 2.0
-    assert eng.get_boundaries("single", Z) == approx(
-        (6.6 + 0.5 * np.log10(Z), 7.2 + 0.6 * np.log10(Z),
-         13.0 + 0.1 * np.log10(Z)))
+    # clamps (nearest-neighbour) above Z=1.0 (like pessimistic)
+    M_solar = (6.6, 7.2, 13.0)
+    assert eng.get_boundaries("single", 2.0) == approx(M_solar)
 
 
 def test_balanced_floor_matches_objective():
