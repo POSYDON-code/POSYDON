@@ -62,8 +62,37 @@ class TestValues:
                   'conserve_hydrogen_PPI', 'max_neutrino_mass_loss',\
                   'max_NS_mass', 'use_interp_values', 'use_profiles',\
                   'use_core_masses', 'allow_spin_None',\
-                  'approx_at_he_depletion']:
+                  'approx_at_he_depletion', 'Maltsev25_MCO_extrapolation_mode']:
             assert k in totest.DEFAULT_SN_MODEL.keys()
+
+    def test_default_Maltsev_extrapolation_mode_balanced(self):
+        assert totest.DEFAULT_SN_MODEL['Maltsev25_MCO_extrapolation_mode'] ==\
+               "balanced"
+
+    def test_rapid_balanced_models(self):
+        rapid_balanced = [n for n in totest.SN_MODELS
+                          if totest.SN_MODELS[n].get('mechanism') ==
+                          "Maltsev+25-MCO-rapid" and
+                          totest.SN_MODELS[n].get(
+                              'Maltsev25_MCO_extrapolation_mode') == "balanced"]
+        assert len(rapid_balanced) == 4
+        for n in rapid_balanced:
+            model = totest.get_SN_MODEL(n)
+            assert model['mechanism'] == "Maltsev+25-MCO-rapid"
+            assert model['Maltsev25_MCO_extrapolation_mode'] == "balanced"
+            # round-trip back to the model name
+            assert totest.get_SN_MODEL_NAME(model) == n
+
+    def test_balanced_does_not_match_optimistic(self):
+        n = "SN_MODEL_v2_29"
+        m = totest.get_SN_MODEL(n)
+        # flipping the extrapolation mode to optimistic must no longer match
+        # the balanced model
+        m2 = dict(m)
+        m2['Maltsev25_MCO_extrapolation_mode'] = "optimistic"
+        # must not match the balanced rapid model; could match another model
+        # or be None, but not n
+        assert totest.get_SN_MODEL_NAME(m2) != n
 
     def test_value_SN_MODELS(self):
         assert len(totest.SN_MODELS) > 0
