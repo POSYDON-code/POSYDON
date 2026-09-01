@@ -1473,7 +1473,7 @@ class StepCEE(object):
             # It will get left as Match2 and fail to trigger subsequent
             # merger logic
             binary.event = prior_event
-            
+
             if comp_star.interp1d:
                 rc2_i = comp_star.interp1d(t_i)["R"]
             else:
