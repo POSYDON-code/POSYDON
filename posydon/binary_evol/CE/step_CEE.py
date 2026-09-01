@@ -1463,12 +1463,14 @@ class StepCEE(object):
                 match_primary = False
                 match_secondary = True
 
+            # store event prior to matching, incase record_matching = True, so that
+            # we can reset it below.
             prior_event = binary.event
             _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
                                                            match_primary=match_primary,
                                                            match_secondary=match_secondary)
 
-            # Reset the binary.event to oCE2.
+            # Reset the binary.event to prior event, e.g., oCE2.
             # Otherwise, after matching, if record_match is True,
             # It will get left as Match2 and fail to trigger subsequent
             # merger logic
