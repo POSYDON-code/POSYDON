@@ -230,12 +230,13 @@ def data_download(set_name='DR2', MD5_check=True, confirm=False, verbose=False):
         raise KeyError(f"The dataset '{set_name}' is not defined.")
 
     # Ask for confirmation before downloading.
-    print(f"About to download POSYDON data set '{set_name}' from Zenodo.")
-    response = input("Continue? [y/N] ").strip().lower()
-
-    if response not in ('y', 'yes'): # pragma: no cover
-        print("Download cancelled.")
-        return
+    if confirm: # pragma: no cover
+        print(f"About to download POSYDON data set '{set_name}' from Zenodo.")
+        response = input("Continue? [y/N] ").strip().lower()
+    
+        if response not in ('y', 'yes'): 
+            print("Download cancelled.")
+            return
 
     for dataset in datasets:
         download_one_dataset(
