@@ -25,7 +25,7 @@ import sys
 import numpy as np
 
 from posydon.grids.psygrid import PSyGrid
-from posydon.utils.common_functions import mt_class_from_cumulative
+from posydon.utils.common_functions import first_mt_class_from_cumulative
 
 
 def backfill_first_mt_case(grid_path):
@@ -40,7 +40,7 @@ def backfill_first_mt_case(grid_path):
         raise ValueError(f"{grid_path}: no 'termination_flag_2' column found")
 
     values = np.asarray([
-        mt_class_from_cumulative(tf2)
+        first_mt_class_from_cumulative(tf2)
         for tf2 in grid.final_values["termination_flag_2"]
     ])
     grid.add_column("first_mt_case", values)
