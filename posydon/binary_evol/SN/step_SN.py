@@ -1839,7 +1839,7 @@ class Sukhbold16_corecollapse(object):
     f_fb : double
         Fallback mass of the compact object in M_sun.
     state : string
-        Finall state of the stellar remnant after the supernova.
+        Final state of the stellar remnant after the supernova.
 
     References
     ----------
