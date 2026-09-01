@@ -921,8 +921,10 @@ class StepCEE(object):
             print("separation_postCEE in Rsun", separation_postCEE/const.Rsun)
 
         if ((not double_CE) and (comp_star.state not in STAR_STATES_CO)):
-            rc2_i = self.adjust_secondary_radius(comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE)
-
+            rc2_i = self.adjust_companion_radius(comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE)
+            # reevaluate companion star's properties after potential matching
+            m2_i = comp_star.mass
+            radius2 = 10**comp_star.log_R
 
         # Calculate the post-CE binary properties
         if (common_envelope_option_after_succ_CEE
@@ -1402,7 +1404,7 @@ class StepCEE(object):
 
         return
 
-    def adjust_secondary_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
+    def adjust_companion_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
         """
         Check and adjust the radius of the companion star if the star overfills its Roche
         lobe due to inflated radius from short accretion prior to CE.
@@ -1453,13 +1455,27 @@ class StepCEE(object):
                 print("Adjusting the companion's radius by matching to single star.")
             t_i = binary.time
 
+            # determine which star is considered the companion for matching
+            if comp_star == binary.star_1:
+                match_primary = True
+                match_secondary = False
+            elif comp_star == binary.star_2:
+                match_primary = False
+                match_secondary = True
 
-            match_primary = False
-            match_secondary = True
-
+            # store event prior to matching, incase record_matching = True, so that
+            # we can reset it below.
+            prior_event = binary.event
             _, _, only_CO = self.track_matcher.do_matching(binary, step_name="step_CE",
                                                            match_primary=match_primary,
                                                            match_secondary=match_secondary)
+
+            # Reset the binary.event to prior event, e.g., oCE2.
+            # Otherwise, after matching, if record_match is True,
+            # It will get left as Match2 and fail to trigger subsequent
+            # merger logic
+            binary.event = prior_event
+
             if comp_star.interp1d:
                 rc2_i = comp_star.interp1d(t_i)["R"]
             else:
