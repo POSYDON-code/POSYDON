@@ -233,8 +233,8 @@ def data_download(set_name='DR2', MD5_check=True, confirm=False, verbose=False):
     if confirm: # pragma: no cover
         print(f"About to download POSYDON data set '{set_name}' from Zenodo.")
         response = input("Continue? [y/N] ").strip().lower()
-    
-        if response not in ('y', 'yes'): 
+
+        if response not in ('y', 'yes'):
             print("Download cancelled.")
             return
 
