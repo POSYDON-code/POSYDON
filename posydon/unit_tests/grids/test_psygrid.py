@@ -84,7 +84,7 @@ class TestElements:
                     'infer_interpolation_class', 'infer_star_state',\
                     'initial_values_from_dirname', 'initialize_empty_array',\
                     'join_grids', 'join_lists', 'json', 'keep_after_RLO',\
-                    'keep_till_central_abundance_He_C', 'mt_class_from_cumulative',\
+                    'keep_till_central_abundance_He_C', 'first_mt_class_from_cumulative',\
                     'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
@@ -1324,7 +1324,7 @@ class TestPSyGrid:
         for i in range(len(PSyGrid.final_values)):
             tf2 = PSyGrid.final_values[i]["termination_flag_2"]
             assert PSyGrid.final_values[i]["first_mt_case"] == \
-                totest.mt_class_from_cumulative(tf2)
+                totest.first_mt_class_from_cumulative(tf2)
         # round-trips back from the stored file as unicode
         grid_loaded = totest.PSyGrid()
         grid_loaded.load(PSyGrid.filepath, lazy=False)

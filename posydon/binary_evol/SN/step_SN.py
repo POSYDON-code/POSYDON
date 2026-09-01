@@ -273,6 +273,7 @@ class StepSN(object):
         "Maltsev25_MCO_NS_mass": 1.4,
         "Maltsev25_MCO_fallback_fraction": 0.99,
         "Maltsev25_MCO_fallback_model": 'A',
+        "Maltsev25_MCO_extrapolation_mode": 'optimistic',
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
@@ -456,6 +457,7 @@ class StepSN(object):
                 NS_mass=self.Maltsev25_MCO_NS_mass,
                 fallback_fraction=self.Maltsev25_MCO_fallback_fraction,
                 fallback_model=self.Maltsev25_MCO_fallback_model,
+                extrapolation_mode=self.Maltsev25_MCO_extrapolation_mode,
                 verbose=self.verbose)
 
     def __repr__(self):

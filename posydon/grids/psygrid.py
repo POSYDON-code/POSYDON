@@ -215,10 +215,10 @@ from posydon.grids.termination_flags import (
 )
 from posydon.utils.common_functions import (
     check_state_of_star_history_array,
+    first_mt_class_from_cumulative,
     get_i_He_depl,
     infer_star_state,
     initialize_empty_array,
-    mt_class_from_cumulative,
     orbital_separation_from_period,
 )
 from posydon.utils.configfile import ConfigFile
@@ -1361,7 +1361,7 @@ class PSyGrid:
         # first mass transfer case
         if binary_grid:
             for i in range(len(self.final_values)):
-                self.final_values[i]["first_mt_case"] = mt_class_from_cumulative(
+                self.final_values[i]["first_mt_case"] = first_mt_class_from_cumulative(
                     self.final_values[i]["termination_flag_2"])
 
         # Store the full table of initial_values

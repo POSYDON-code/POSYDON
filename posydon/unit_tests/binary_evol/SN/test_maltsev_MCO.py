@@ -188,9 +188,9 @@ def test_resolve_mt_class_reads_star_mt_class(engine):
     # donor) is stored on the star during step_MESA; the engine returns it
     # as-is.
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    star.mt_class = "case_B"
+    star.first_mt_class = "case_B"
     assert engine._resolve_mt_class(star) == "case_B"
-    star.mt_class = "case_A"
+    star.first_mt_class = "case_A"
     assert engine._resolve_mt_class(star) == "case_A"
 
 
@@ -200,13 +200,13 @@ def test_resolve_mt_class_defaults_to_single(engine):
     # a valid MT class (e.g. the verbatim termination flag token 'no_RLOF'),
     # so the recipe falls back to 'single' rather than a guessed class.
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    assert not hasattr(star, "mt_class")
+    assert not hasattr(star, "first_mt_class")
     assert engine._resolve_mt_class(star) == "single"
     # no collapsing star (single-star path) -> single
     assert engine._resolve_mt_class(None) == "single"
     # invalid / retained-verbatim flags normalize to 'single'
     for mt_class in ["no_RLOF", "initial_RLOF", "not_converged", "None"]:
-        star.mt_class = mt_class
+        star.first_mt_class = mt_class
         assert engine._resolve_mt_class(star) == "single"
     # an explicit fallback class is honoured when no valid class is stored
     assert engine._resolve_mt_class(star, "case_C") == "case_C"
@@ -216,34 +216,35 @@ def test_resolve_mt_class_first_episode_overall(engine):
     # The recipe uses the class of the first mass-transfer episode, whichever
     # star was the donor. step_MESA stores that class on both stars, so either
     # collapsing star resolves to the same class.
-    from posydon.utils.common_functions import mt_class_from_cumulative
+    from posydon.utils.common_functions import first_mt_class_from_cumulative
     star_1 = FakeStar(co_core_mass=2.0, metallicity=1.0)
     star_2 = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    star_1.mt_class = star_2.mt_class = mt_class_from_cumulative("case_A1/B2")
-    assert star_1.mt_class == "case_A"
+    star_1.first_mt_class = star_2.first_mt_class = first_mt_class_from_cumulative("case_A1/B2")
+    assert star_1.first_mt_class == "case_A"
     assert engine._resolve_mt_class(star_1) == "case_A"
     assert engine._resolve_mt_class(star_2) == "case_A"
     # ...even when the collapsing star was not the first donor
-    star_1.mt_class = star_2.mt_class = mt_class_from_cumulative("case_B2/A1")
+    star_1.first_mt_class = star_2.first_mt_class = first_mt_class_from_cumulative("case_B2/A1")
     assert engine._resolve_mt_class(star_2) == "case_B"
 
 
 def test_resolve_mt_class_latest_grid_wins(engine):
-    # Each step_MESA run overwrites star.mt_class with the class resolved from
-    # that grid's first_mt_case, so the most recent grid wins (e.g. a
-    # CO_HMS_RLO / CO_HeMS run takes precedence over the earlier HMS_HMS one).
-    from posydon.utils.common_functions import mt_class_from_cumulative
+    # Each step_MESA run overwrites star.first_mt_class with the class
+    # resolved from that grid's first_mt_case, so the most recent grid wins
+    # (e.g. a CO_HMS_RLO / CO_HeMS run takes precedence over the earlier
+    # HMS_HMS one).
+    from posydon.utils.common_functions import first_mt_class_from_cumulative
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     # HMS_HMS grid first (case A donation)...
-    star.mt_class = mt_class_from_cumulative("case_A1/B1")
-    assert star.mt_class == "case_A"
+    star.first_mt_class = first_mt_class_from_cumulative("case_A1/B1")
+    assert star.first_mt_class == "case_A"
     # ...then a later CO_HMS_RLO grid overwrites with its own class. The class
     # is the first episode overall, so the second grid's case_B wins.
-    star.mt_class = mt_class_from_cumulative("case_B2/A1")
+    star.first_mt_class = first_mt_class_from_cumulative("case_B2/A1")
     assert engine._resolve_mt_class(star) == "case_B"
     # the latest grid always wins, even if it reports no RLO at all
-    star.mt_class = mt_class_from_cumulative("no_RLO")
-    assert star.mt_class == "no_RLO"
+    star.first_mt_class = first_mt_class_from_cumulative("no_RLO")
+    assert star.first_mt_class == "no_RLO"
     assert engine._resolve_mt_class(star) == "single"
 
 
@@ -252,14 +253,133 @@ def test_call_auto_resolves_star_mt_class(engine):
     # but below the case_A M1 = 7.4, so the star's MT class (set by step_MESA)
     # fully determines the outcome.
     star = FakeStar(co_core_mass=7.0, metallicity=1.0)
-    star.mt_class = "case_A"
+    star.first_mt_class = "case_A"
     _, _, state = engine(star, conserve_hydrogen_envelope=False)
     assert state == "NS"
     # an invalid/verbatim stored class falls back to 'single' boundaries
-    star.mt_class = "no_RLOF"
+    star.first_mt_class = "no_RLOF"
     _, _, state = engine(star, conserve_hydrogen_envelope=False)
     assert state == "BH"
     # without a stored class the explicit argument is the fallback
-    delattr(star, "mt_class")
+    delattr(star, "first_mt_class")
     _, _, state = engine(star, "case_A", conserve_hydrogen_envelope=False)
     assert state == "NS"
+
+
+# ----------------------------------------------------------------------
+# Extrapolation modes (Willcox+25, arXiv:2510.07573, Sec. 3.1.1)
+# ----------------------------------------------------------------------
+
+def _make_engine(mode):
+    return Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(2025), extrapolation_mode=mode)
+
+
+def test_default_extrapolation_mode_is_optimistic():
+    eng = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(0))
+    assert eng.extrapolation_mode == "optimistic"
+
+
+def test_invalid_extrapolation_mode_raises():
+    from pytest import raises
+    with raises(ValueError):
+        Maltsev25_MCO_corecollapse(
+            RNG=np.random.default_rng(0), extrapolation_mode="bogus")
+
+
+def test_extrapolation_in_calibration_range_is_identical(engine):
+    # Within [0.1, 1] all modes agree with the straight linear fit.
+    for mode in ("optimistic", "balanced", "pessimistic"):
+        eng = _make_engine(mode)
+        for Z in (0.1, 0.3, 0.6, 1.0):
+            assert eng.get_boundaries("single", Z) == \
+                approx(engine.get_boundaries("single", Z))
+            assert eng.get_NS_window("single", Z) == \
+                approx(engine.get_NS_window("single", Z))
+
+
+def test_optimistic_extrapolates_linearly_low_Z():
+    # single: M1 = 6.6 + 0.5*log10(Z). Optimistic continues this trend to
+    # arbitrarily low Z.
+    eng = _make_engine("optimistic")
+    for Z in (0.05, 0.01, 0.001):
+        M1, M2, M3 = eng.get_boundaries("single", Z)
+        assert M1 == approx(6.6 + 0.5 * np.log10(Z))
+        assert M3 == approx(13.0 + 0.1 * np.log10(Z))
+
+
+def test_optimistic_above_Zsun_is_linear():
+    eng = _make_engine("optimistic")
+    Z = 2.0
+    M1, M2, M3 = eng.get_boundaries("single", Z)
+    assert M1 == approx(6.6 + 0.5 * np.log10(Z))
+
+
+def test_pessimistic_clamps_at_lower_calibration_boundary():
+    # Pessimistic holds the Z=0.1 values constant below Z=0.1.
+    eng = _make_engine("pessimistic")
+    ref = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(0), extrapolation_mode="optimistic")
+    M_ref = ref.get_boundaries("single", 0.1)
+    for Z in (0.05, 0.01, 0.001):
+        assert eng.get_boundaries("single", Z) == approx(M_ref)
+    NS_ref = ref.get_NS_window("single", 0.1)
+    for Z in (0.05, 0.01, 0.001):
+        assert eng.get_NS_window("single", Z) == approx(NS_ref)
+
+
+def test_above_zsun_extrapolation():
+    # Only the optimistic mode continues the linear extrapolation above
+    # Z/Z_sun = 1; balanced and pessimistic clamp to the Z=1 values
+    # (nearest-neighbour at the upper calibration boundary).
+    ref = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(0), extrapolation_mode="optimistic")
+    M_solar = ref.get_boundaries("single", 1.0)
+    NS_solar = ref.get_NS_window("single", 1.0)
+    for mode in ("balanced", "pessimistic"):
+        eng = _make_engine(mode)
+        for Z in (1.5, 3.0, 10.0):
+            assert eng.get_boundaries("single", Z) == approx(M_solar)
+            assert eng.get_NS_window("single", Z) == approx(NS_solar)
+
+    # optimistic continues linearly
+    eng = _make_engine("optimistic")
+    Z = 2.0
+    M1, M2, M3 = eng.get_boundaries("single", Z)
+    assert M1 == approx(6.6 + 0.5 * np.log10(Z))
+    assert M2 == approx(7.2 + 0.6 * np.log10(Z))
+    assert M3 == approx(13.0 + 0.1 * np.log10(Z))
+
+
+def test_balanced_linear_above_floor_and_clamps_below():
+    # Balanced: linear extrapolation down to Z=0.02, then nearest-neighbour
+    # clamp below that; linear extrapolation above Z=1.0.
+    eng = _make_engine("balanced")
+    # exactly at the floor the value equals the straight fit at Z=0.02
+    M_floor = (6.6 + 0.5 * np.log10(0.02),
+               7.2 + 0.6 * np.log10(0.02),
+               13.0 + 0.1 * np.log10(0.02))
+    assert eng.get_boundaries("single", 0.02) == approx(M_floor)
+    # still linear between the floor and 0.1
+    for Z in (0.05,):
+        M1, M2, M3 = eng.get_boundaries("single", Z)
+        assert M1 == approx(6.6 + 0.5 * np.log10(Z))
+    # clamped below the floor
+    for Z in (0.01, 0.005, 0.001):
+        assert eng.get_boundaries("single", Z) == approx(M_floor)
+    # NS window clamps as well below the floor
+    NS_floor = (9.0 + 1.6 * np.log10(0.02), 10.2 - 0.8 * np.log10(0.02))
+    assert eng.get_NS_window("single", 0.02) == approx(NS_floor)
+    for Z in (0.01, 0.001):
+        assert eng.get_NS_window("single", Z) == approx(NS_floor)
+    # clamps (nearest-neighbour) above Z=1.0 (like pessimistic)
+    M_solar = (6.6, 7.2, 13.0)
+    assert eng.get_boundaries("single", 2.0) == approx(M_solar)
+
+
+def test_balanced_floor_matches_objective():
+    # The balanced floor is 1/50 in Z/Z_sun (I Zwicky 18).
+    from posydon.binary_evol.SN.maltsev_MCO import Z_BALANCED_FLOOR
+    assert Z_BALANCED_FLOOR == approx(1.0 / 50.0)
+    assert Z_BALANCED_FLOOR == approx(0.02)

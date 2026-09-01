@@ -1750,7 +1750,7 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
-def mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
+def first_mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
     """Resolve the first MT class from a cumulative MT-case string.
 
     Takes the cumulative_mt_case from a grid and returns the first MT class.

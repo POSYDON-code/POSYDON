@@ -168,8 +168,8 @@ class BinaryStar:
         self.non_existent_companion = 0
 
         # First mass transfer case
-        self.star_1.mt_class = getattr(self.star_1, "mt_class", None)
-        self.star_2.mt_class = getattr(self.star_2, "mt_class", None)
+        self.star_1.first_mt_class = getattr(self.star_1, "first_mt_class", None)
+        self.star_2.first_mt_class = getattr(self.star_2, "first_mt_class", None)
 
         # Set the initial binary properties
         for item in BINARYPROPERTIES:

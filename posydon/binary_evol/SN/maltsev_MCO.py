@@ -4,7 +4,9 @@ This module implements the rapid binary-population-synthesis (BPS) CCSN recipe
 of Maltsev et al. 2025 (arXiv:2503.23856, Sects. 3.2.1-3.2.3, Eq. 11). The
 recipe predicts the *compact-object type* (NS, fallback BH or direct-collapse
 BH) from the carbon-oxygen core mass ``M_CO``, the metallicity ``Z`` and the
-mass-transfer (MT) history class of the progenitor.
+mass-transfer (MT) history class of the progenitor. The class is taken from
+the **first** mass-transfer episode (Maltsev+25, Appendix A.5.1); see
+:meth:`Maltsev25_MCO_corecollapse._resolve_mt_class`.
 Crucially, the recipe **separates** two distinct questions:
 
 1. *Explodability* (does the star explode?): a deterministic decision based on
@@ -19,10 +21,22 @@ The recipe only returns the type; remnant *masses* are not part of
 it. The class default therefore contains a NS mass scheme (see the
 ``NS_mass_model`` argument of :meth:`__init__`).
 
-Note
-----
-The recipe is calibrated for ``Z/Z_sun in (0.1, 1)``. Outside this range the
-boundaries are linearly extrapolated.
+Extrapolation modes
+-------------------
+The recipe is calibrated for ``Z/Z_sun in (0.1, 1)``.  Outside this range the
+boundaries must be extrapolated.  Three schemes are available, following
+Willcox et al. 2025 (arXiv:2510.07573, Sec. 3.1.1):
+
+* ``'optimistic'`` (default) -- linear extrapolation in ``log10(Z)`` extending
+  the trend between the calibration boundaries, continued to arbitrary low/high
+  ``Z``.
+* ``'pessimistic'`` -- nearest-neighbour (clamp) at both calibration
+  boundaries; the boundary values at ``Z/Z_sun = 0.1`` and ``Z/Z_sun = 1``
+  are held constant outside the calibrated range.
+* ``'balanced'`` -- linear extrapolation in ``log10(Z)`` down to
+  ``Z/Z_sun = 1/50`` (~ 0.02), then nearest-neighbour below that floor.
+  Above ``Z/Z_sun = 1`` the behaviour is the same as the pessimistic mode
+  (nearest-neighbour at the upper calibration boundary).
 
 """
 
@@ -57,6 +71,17 @@ _NS_WINDOW = {
 # Valid MT classes recognised by the recipe.
 MT_CLASSES = tuple(_BOUNDARIES.keys())
 
+# Valid extrapolation modes.
+EXTRAPOLATION_MODES = ('optimistic', 'balanced', 'pessimistic')
+
+# Lower metallicity floor for the 'balanced' extrapolation mode
+# (Z/Z_sun = 1/50 ~ 0.02).
+Z_BALANCED_FLOOR = 1.0 / 50.0
+
+# Calibration boundaries of the Maltsev+25 recipe (Z/Z_sun).
+Z_CALIBRATION_LOW = 0.1
+Z_CALIBRATION_HIGH = 1.0
+
 # Default probabilities of forming a fallback BH (instead of an NS) for a
 # successful SN that lies outside the guaranteed-NS sub-window.
 _FALLBACK_PROB = {
@@ -88,6 +113,10 @@ class Maltsev25_MCO_corecollapse(object):
     fallback_model : {'A', 'B'}
         Stochastic model for the NS/fallback-BH split outside the guaranteed-NS
         window. 'A' uses a 15% fallback probability, 'B' a uniform 10%.
+    extrapolation_mode : {'optimistic', 'balanced', 'pessimistic'}
+        How to extrapolate the ``M_CO`` boundaries outside the calibrated
+        metallicity range ``Z/Z_sun in [0.1, 1]``.  See the module docstring
+        for details.  Default ``'optimistic'``.
     verbose : bool
         Verbosity flag.
 
@@ -95,6 +124,7 @@ class Maltsev25_MCO_corecollapse(object):
 
     def __init__(self, RNG=None, NS_mass_model=None, NS_mass=1.4,
                  fallback_fraction=0.99, fallback_model='A',
+                 extrapolation_mode='optimistic',
                  verbose=False):
         """Initialize a Maltsev25_MCO_corecollapse instance."""
         if RNG is None:
@@ -120,6 +150,12 @@ class Maltsev25_MCO_corecollapse(object):
                 "fallback_model must be one of %s." % list(_FALLBACK_PROB))
         self.fallback_model = fallback_model
 
+        if extrapolation_mode not in EXTRAPOLATION_MODES:
+            raise ValueError(
+                "extrapolation_mode must be one of %s, got '%s'."
+                % (EXTRAPOLATION_MODES, extrapolation_mode))
+        self.extrapolation_mode = extrapolation_mode
+
         self.verbose = verbose
 
     # ------------------------------------------------------------------
@@ -136,8 +172,8 @@ class Maltsev25_MCO_corecollapse(object):
         """Return the Maltsev+25 MT class of the collapsing star.
 
         The MT class determines which set of ``M_CO`` boundaries is used by
-        the recipe. The MT class is determined from the first mass-transfer
-        episode of the binary.
+        the recipe, derived from the **first** mass-transfer episode of the
+        binary (never a later one). This follows Maltsev+25, Appendix A.5.1.
         Since each grid (step_MESA) overwrites the class, the most recent grid
         wins. Values that are not a valid MT class (e.g. no MT interaction
         occurred, or an interpolator without a ``first_mt_case`` key) fall
@@ -159,7 +195,7 @@ class Maltsev25_MCO_corecollapse(object):
         """
         if star is None:
             return default
-        mt_class = getattr(star, 'mt_class', default)
+        mt_class = getattr(star, 'first_mt_class', default)
         if mt_class not in MT_CLASSES:
             # nothing valid stored (e.g. 'no_RLOF', 'initial_RLOF', 'None')
             return default
@@ -174,6 +210,48 @@ class Maltsev25_MCO_corecollapse(object):
             raise ModelError(
                 "Maltsev+25 MCO prescription requires a finite CO core mass; "
                 "got co_core_mass = %s." % M_CO)
+
+    def _eval_boundary(self, a, b, Z):
+        """Evaluate a single linear boundary ``a + b*log10(Z)`` with the
+        configured extrapolation mode.
+
+        See the module docstring (Extrapolation modes) for the behaviour of
+        each mode outside the calibrated ``Z/Z_sun in [0.1, 1]`` range.
+
+        Parameters
+        ----------
+        a, b : float
+            Intercept and slope of the linear boundary fit.
+        Z : float
+            Metallicity ``Z/Z_sun``.
+
+        Returns
+        -------
+        float
+            The boundary value in Msun at ``Z``.
+
+        """
+        # Within the calibrated range the value is always the straight fit.
+        if Z_CALIBRATION_LOW <= Z <= Z_CALIBRATION_HIGH:
+            return a + b * np.log10(Z)
+
+        if Z < Z_CALIBRATION_LOW:
+            if self.extrapolation_mode == 'optimistic':
+                # linear continuation all the way down
+                return a + b * np.log10(Z)
+            if self.extrapolation_mode == 'balanced':
+                # linear down to the floor, then clamp below it
+                return a + b * np.log10(max(Z, Z_BALANCED_FLOOR))
+            # pessimistic: nearest-neighbour at the lower calibration boundary
+            return a + b * np.log10(Z_CALIBRATION_LOW)
+
+        # Z > Z_CALIBRATION_HIGH
+        if self.extrapolation_mode == 'optimistic':
+            # linear continuation all the way up
+            return a + b * np.log10(Z)
+        # balanced & pessimistic: nearest-neighbour at the upper calibration
+        # boundary
+        return a + b * np.log10(Z_CALIBRATION_HIGH)
 
     def get_boundaries(self, mt_class, Z):
         """Return the three M_CO direct-collapse boundaries for ``mt_class``.
@@ -198,8 +276,8 @@ class Maltsev25_MCO_corecollapse(object):
             raise ModelError(
                 "Maltsev+25 MCO boundaries require a positive, finite "
                 "Z/Z_sun; got Z = %s." % Z)
-        x = np.log10(Z)
-        return tuple(a + b * x for (a, b) in _BOUNDARIES[mt_class])
+        return tuple(self._eval_boundary(a, b, Z)
+                     for (a, b) in _BOUNDARIES[mt_class])
 
     def get_NS_window(self, mt_class, Z):
         """Return the guaranteed-NS sub-window (NS1, NS2) for ``mt_class``.
@@ -224,8 +302,8 @@ class Maltsev25_MCO_corecollapse(object):
             raise ModelError(
                 "Maltsev+25 MCO boundaries require a positive, finite "
                 "Z/Z_sun; got Z = %s." % Z)
-        x = np.log10(Z)
-        return tuple(a + b * x for (a, b) in _NS_WINDOW[mt_class])
+        return tuple(self._eval_boundary(a, b, Z)
+                     for (a, b) in _NS_WINDOW[mt_class])
 
     # ------------------------------------------------------------------
     # 1) Explodability (deterministic)
@@ -355,12 +433,12 @@ class Maltsev25_MCO_corecollapse(object):
         ----------
         star : object
             Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
-            and ``metallicity`` (Z/Z_sun). Its ``mt_class`` attribute (set by
+            and ``metallicity`` (Z/Z_sun). Its ``first_mt_class`` attribute (set by
             step_MESA) is used as the MT-history class when valid.
         mt_class : str
-            Fallback MT-history class, used only when ``star.mt_class`` is
+            Fallback MT-history class, used only when ``star.first_mt_class`` is
             missing or not a valid class: 'single', 'case_A', 'case_B' or
-            'case_C'. When ``star.mt_class`` is valid it takes precedence.
+            'case_C'. When ``star.first_mt_class`` is valid it takes precedence.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.
