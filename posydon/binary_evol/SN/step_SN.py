@@ -151,6 +151,11 @@ class StepSN(object):
         'one' : 1.
         'NS_one_minus_fallback_BH_one': 1 for BH, (1-f_fb) for NS
 
+    no_kick_direct_collapse : bool
+        If True, ignore the kick for BHs formed by direct collapse
+        (fallback fraction f_fb = 1). Only affects the CCSN/PPISN/PISN
+        branch of the orbital kick, where the remnant state is 'BH'.
+
     ECSN : str
         Prescription to determine the production of an electron-capture
         supernova.
@@ -255,6 +260,7 @@ class StepSN(object):
         "mean_kick_CCSN_BH": None,
         "sigma_kick_ECSN": 20.0,
         "mean_kick_ECSN": None,
+        "no_kick_direct_collapse": False,
         # other
         "RNG": None,
         "verbose": False
@@ -1574,6 +1580,12 @@ class StepSN(object):
                         mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
+                    # no kick for BHs formed by direct collapse
+                    if (self.no_kick_direct_collapse
+                            and binary.star_1.state == 'BH'
+                            and binary.star_1.f_fb == 1.0):
+                        sigma = None
+                        mean = None
                     # Kick for core-collapse SN
                     Vkick = self.generate_kick(
                         star=binary.star_1, sigma=sigma, mean=mean
@@ -1678,6 +1690,12 @@ class StepSN(object):
                         mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
+                    # no kick for BHs formed by direct collapse
+                    if (self.no_kick_direct_collapse
+                            and binary.star_2.state == 'BH'
+                            and binary.star_2.f_fb == 1.0):
+                        sigma = None
+                        mean = None
                     # Kick for core-collapse SN
                     Vkick = self.generate_kick(star=binary.star_2,
                                                sigma=sigma,
