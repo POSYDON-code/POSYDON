@@ -1584,12 +1584,12 @@ class StepSN(object):
                     if (self.no_kick_direct_collapse
                             and binary.star_1.state == 'BH'
                             and binary.star_1.f_fb == 1.0):
-                        sigma = None
-                        mean = None
-                    # Kick for core-collapse SN
-                    Vkick = self.generate_kick(
-                        star=binary.star_1, sigma=sigma, mean=mean
-                    )
+                        Vkick = 0.0
+                    else:
+                        # Kick for core-collapse SN
+                        Vkick = self.generate_kick(
+                            star=binary.star_1, sigma=sigma, mean=mean
+                        )
                 elif binary.star_1.SN_type == "WD":
                     # Kick for white dwarfs (allways f_fb = 1 => Vkick = 0)
                     Vkick = 0.0
@@ -1694,12 +1694,12 @@ class StepSN(object):
                     if (self.no_kick_direct_collapse
                             and binary.star_2.state == 'BH'
                             and binary.star_2.f_fb == 1.0):
-                        sigma = None
-                        mean = None
-                    # Kick for core-collapse SN
-                    Vkick = self.generate_kick(star=binary.star_2,
-                                               sigma=sigma,
-                                               mean=mean)
+                        Vkick = 0.0
+                    else:
+                        # Kick for core-collapse SN
+                        Vkick = self.generate_kick(star=binary.star_2,
+                                                   sigma=sigma,
+                                                   mean=mean)
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
