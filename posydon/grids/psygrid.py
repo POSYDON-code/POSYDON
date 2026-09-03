@@ -215,7 +215,6 @@ from posydon.grids.termination_flags import (
 )
 from posydon.utils.common_functions import (
     check_state_of_star_history_array,
-    first_mt_class_from_cumulative,
     get_i_He_depl,
     infer_star_state,
     initialize_empty_array,
@@ -684,8 +683,7 @@ class PSyGrid:
         dtype_final_values = (
             [(col, 'f8') for col in all_history_columns]
             + [(col, H5_UNICODE_DTYPE) for col in termination_flag_columns]
-            + ([("interpolation_class", H5_UNICODE_DTYPE),
-                ("first_mt_case", H5_UNICODE_DTYPE)]
+            + ([("interpolation_class", H5_UNICODE_DTYPE)]
                if binary_grid else [])
             + extra_final_values_cols
         )
@@ -1357,12 +1355,6 @@ class PSyGrid:
         #replace old initial/final value array
         self.initial_values = np.copy(new_initial_values)
         self.final_values = np.copy(new_final_values)
-
-        # first mass transfer case
-        if binary_grid:
-            for i in range(len(self.final_values)):
-                self.final_values[i]["first_mt_case"] = first_mt_class_from_cumulative(
-                    self.final_values[i]["termination_flag_2"])
 
         # Store the full table of initial_values
         hdf5.create_dataset("/grid/initial_values", data=self.initial_values,
