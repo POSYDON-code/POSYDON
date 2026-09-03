@@ -41,6 +41,9 @@ POSYDON supports the following core-collapse mechanisms:
    * - **Maltsev+25-engine**
      - ``M16``
      - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
+   * - **Maltsev+25-MCO-rapid**
+     - ``None``
+     - Maltsev et al. (2025) rapid BPS prescription based on the CO core mass and metallicity (arXiv:2503.23856). Supports the ``optimistic``, ``balanced`` and ``pessimistic`` extrapolation modes via ``Maltsev25_MCO_extrapolation_mode`` (default ``balanced``).
    * - **Couch+20-engine**
      - ``"1.0", "1.2", "1.23", "1.25", "1.27", "1.3", "1.4"``
      - Simulations of turbulence-aided neutrino-driven core-collapse supernovae from Couch et al. (2020)
@@ -312,6 +315,30 @@ The following table lists all pre-defined supernova models and their key charact
    * - SN_MODEL_v2_28
      - Maltsev+25-engine
      - M16
+     - Yes
+     - 0.0
+
+   * - SN_MODEL_v2_29
+     - Maltsev+25-MCO-rapid
+     - ``None`` (balanced)
+     - No
+     - -20.0
+
+   * - SN_MODEL_v2_30
+     - Maltsev+25-MCO-rapid
+     - ``None`` (balanced)
+     - Yes
+     - -20.0
+
+   * - SN_MODEL_v2_31
+     - Maltsev+25-MCO-rapid
+     - ``None`` (balanced)
+     - No
+     - 0.0
+
+   * - SN_MODEL_v2_32
+     - Maltsev+25-MCO-rapid
+     - ``None`` (balanced)
      - Yes
      - 0.0
 

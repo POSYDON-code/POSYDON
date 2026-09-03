@@ -11,6 +11,7 @@ __authors__ = [
     "Nam Tran <tranhn03@gmail.com>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
@@ -348,7 +349,6 @@ class MesaGridStep:
 
         elif self.interpolation_method in self.supported_interp_methods:
             self.final_values, self.classes = self._Interp.evaluate(self.binary)
-
             max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
             raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
@@ -742,6 +742,15 @@ class MesaGridStep:
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
+        # TODO: we can also add first_mt_case directly from the grid.
+        # add first_mt_class to the star
+        # first mass transfer episode (whichever star is the donor)
+        first_mt_case = cf.first_mt_class_from_cumulative(cumulative_mt_case)
+        setattr(self.binary, f'first_mt_case_{self.grid_type}',
+                first_mt_case)
+        for star in stars:
+            star.first_mt_class = first_mt_case
+
         if self.save_initial_conditions:
             # history N is how much to look back in the history
             # here N=1 as we only appended back the first entry
@@ -959,6 +968,13 @@ class MesaGridStep:
 
         #TODO: add classifier for tf2
         #setattr(self.binary, f'cumulative_mt_case', self.classes['termination_flags_2'])
+
+        # first mass transfer case
+        first_mt_case = self.classes.get('first_mt_case')
+        setattr(self.binary, f'first_mt_case_{self.grid_type}', first_mt_case)
+        for star in [self.binary.star_1, self.binary.star_2]:
+            star.first_mt_class = first_mt_case
+
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,

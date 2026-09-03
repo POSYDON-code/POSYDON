@@ -176,7 +176,8 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu"
+    "Seth Gossage <seth.gossage@northwestern.edu",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
@@ -1427,6 +1428,7 @@ class PSyGrid:
         new_dtype = []
         for dtype in self.final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
+                dtype[0].startswith("first_mt") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
@@ -1493,6 +1495,7 @@ class PSyGrid:
         new_dtype = {}
         for dtype in final_values.dtype.descr:
             if (dtype[0].startswith("termination_flag") or
+                dtype[0].startswith("first_mt") or
                 (dtype[0] == "mt_history") or ("_type" in dtype[0]) or
                 ("_state" in dtype[0]) or ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("S", "U"))

@@ -14,6 +14,7 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
@@ -1747,6 +1748,65 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     return cumulative_mass_transfer_string(
         cumulative_mass_transfer_numeric(corrected_MT_cases)
     )
+
+
+def first_mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
+    """Resolve the first MT class from a cumulative MT-case string.
+
+    Takes the cumulative_mt_case from a grid and returns the first MT class.
+
+
+    Parameters
+    ----------
+    cumulative_mt_case : str, bytes or None
+        The cumulative MT-history string, e.g. 'case_A1/B1/A2' or 'no_RLOF'.
+    star_index : int or None
+        Index (1 or 2) of the star (donor) to resolve the class for.
+        If None, episodes of either star are considered and the first
+        episode overall (whichever star is the donor) is used.
+
+    Returns
+    -------
+    str or None
+        One of 'single', 'case_A', 'case_B', 'case_C'; when no qualifying
+        MT episode is found, the original ``cumulative_mt_case`` is returned
+        verbatim, e.g. 'no_RLOF', 'initial_RLOF', 'not_converged' or None.
+
+    """
+
+    def _letter_to_class(letter):
+        if letter == 'A':
+            return 'case_A'
+        if letter in ('B', 'BA', 'BB'):
+            return 'case_B'
+        if letter == 'C':
+            return 'case_C'
+        # 'other' and other exotic cases are treated as single
+        return 'single'
+
+    if isinstance(cumulative_mt_case, bytes):
+        cumulative_mt_case = cumulative_mt_case.decode('utf-8')
+
+    donor_cases = []
+    for token in str(cumulative_mt_case).replace('?', '').split('/'):
+        if token.startswith('case_'):
+            token = token[len('case_'):]
+        if not token:
+            continue
+        if token[-1] in ('1', '2'):
+            donor = token[-1]
+            cls_letter = token[:-1]
+        else:
+            # e.g. "no_RLOF" or an unrecognised token
+            continue
+        if star_index is None or donor == str(star_index):
+            donor_cases.append(cls_letter)
+
+    if not donor_cases:
+        return cumulative_mt_case
+
+    # Take the first MT episode
+    return _letter_to_class(donor_cases[0])
 
 
 def get_i_He_depl(history):

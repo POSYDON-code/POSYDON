@@ -84,7 +84,8 @@ class TestElements:
                     'infer_interpolation_class', 'infer_star_state',\
                     'initial_values_from_dirname', 'initialize_empty_array',\
                     'join_grids', 'join_lists', 'json', 'keep_after_RLO',\
-                    'keep_till_central_abundance_He_C', 'np',\
+                    'keep_till_central_abundance_He_C',\
+                    'np',\
                     'orbital_separation_from_period', 'os', 'pd', 'plot1D',\
                     'plot2D', 'read_EEP_data_file', 'read_MESA_data_file',\
                     'read_initial_values', 'scrub', 'rfn', 'tqdm'}
