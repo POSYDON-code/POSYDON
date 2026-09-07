@@ -1447,7 +1447,7 @@ class StepCEE(object):
             elif comp_star.state in STAR_STATES_HE_RICH:
                 comp_star.htrack = False
             else:
-                raise ValueError("state = %s of donor of CEE not recognized"
+                raise ValueError("state = %s of companion of CEE not recognized"
                            % comp_star.state)
             if self.verbose:
                 print(f"The binary overfilled its RL due to the companion's inflated radius \n"
