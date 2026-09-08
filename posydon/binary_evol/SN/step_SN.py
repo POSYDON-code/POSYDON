@@ -60,7 +60,11 @@ from posydon.binary_evol.SN.profile_collapse import (
     get_ejecta_element_mass_at_collapse,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL, get_SN_MODEL_NAME
+from posydon.grids.SN_MODELS import (
+    DEFAULT_MALTSEV_SN_MODEL,
+    DEFAULT_SN_MODEL,
+    get_SN_MODEL_NAME,
+)
 from posydon.utils.common_functions import (
     CO_radius,
     calculate_Patton20_values_at_He_depl,
@@ -261,14 +265,13 @@ class StepSN(object):
         # other
         "RNG": None,
         "verbose": False,
-        # Maltsev+25-MCO-rapid engine parameters
-        "Maltsev25_MCO_NS_mass": 1.4,
-        "Maltsev25_MCO_fallback_fraction": 0.99,
-        "Maltsev25_MCO_fallback_model": 'A',
-        "Maltsev25_MCO_extrapolation_mode": 'balanced',
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+    # the Maltsev+25 mechanisms are defined by extra parameters. They are not
+    # part of DEFAULT_SN_MODEL (see posydon.grids.SN_MODELS), but step_SN needs
+    # a value for them whichever mechanism is selected.
+    DEFAULT_KWARGS.update(DEFAULT_MALTSEV_SN_MODEL)
 
 
     def __init__(self, **kwargs):

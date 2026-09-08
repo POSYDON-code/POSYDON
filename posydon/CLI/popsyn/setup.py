@@ -11,7 +11,11 @@ from posydon.CLI.io import (
     create_python_scripts,
     create_slurm_scripts,
 )
-from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
+from posydon.grids.SN_MODELS import (
+    DEFAULT_SN_MODEL,
+    get_SN_MODEL_NAME,
+    missing_SN_MODEL_parameters,
+)
 from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
@@ -38,6 +42,20 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     # always allow the use of non-interpolation values
     if step_SN_MODEL['use_interp_values'] == False:
         return True
+
+    # Some mechanisms are defined by extra parameters, which have no default
+    # and therefore have to be set in the ini file for the supernova model to
+    # be identifiable. Report them separately, because otherwise the model
+    # matching below only reports that nothing matched.
+    missing = missing_SN_MODEL_parameters(step_SN_MODEL)
+    if len(missing) > 0:
+        mechanism = step_SN_MODEL.get('mechanism',
+                                      DEFAULT_SN_MODEL['mechanism'])
+        Pwarn(f"The mechanism '{mechanism}' requires {missing} to be set in "
+              "the [step_SN] section of the ini file.",
+              "IncompletenessWarning")
+        return False
+
     # step_SN MODEL check
     SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(step_SN_MODEL)
 
