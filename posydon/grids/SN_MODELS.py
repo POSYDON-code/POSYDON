@@ -6,7 +6,10 @@ specified parameters in the set of models. Each model is a dictionary
 containing the properties of the model used by step_SN. The functions
 `get_SN_MODEL` provides the supernova model with all parameters and
 `get_SN_MODEL_NAME` findes the matching model to a given set of supernova
-parameters of the step_SN.
+parameters of the step_SN. Some mechanisms are defined by additional
+parameters, which have no default and have to be set by every model using
+them; `get_SN_MODEL_parameters` gives the parameters defining a model for a
+given mechanism.
 """
 
 __authors__ = [
@@ -36,6 +39,24 @@ DEFAULT_SN_MODEL = {
     "use_core_masses": True,
     "allow_spin_None" : False,
     "approx_at_he_depletion": False,
+    }
+
+# The Maltsev+25 core-collapse mechanisms need extra parameters, which no other
+# prescription uses. They are deliberately kept out of DEFAULT_SN_MODEL: every
+# parameter of the default model has to be present in every supernova model and
+# in every ini file (see `get_SN_MODEL_NAME`), so putting them there would force
+# all other prescriptions to carry parameters they ignore. Instead they are
+# required only for the mechanisms listed in `MALTSEV_MECHANISMS`.
+MALTSEV_MECHANISMS = (
+    "Maltsev+25-engine",
+    "Maltsev+25-MCO-rapid",
+    )
+
+DEFAULT_MALTSEV_SN_MODEL = {
+    "Maltsev25_MCO_NS_mass": 1.4,
+    "Maltsev25_MCO_fallback_fraction": 0.99,
+    "Maltsev25_MCO_fallback_model": "A",
+    "Maltsev25_MCO_extrapolation_mode": "balanced",
     }
 
 # pre-defined supernova models values not changed to the default model are put
@@ -463,6 +484,11 @@ SN_MODELS = {
         "use_interp_values": False,
 #        "use_profiles": True,
         "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
     },
@@ -482,6 +508,11 @@ SN_MODELS = {
         "use_interp_values": False,
 #        "use_profiles": True,
         "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
     },
@@ -499,6 +530,11 @@ SN_MODELS = {
         "use_interp_values": False,
 #        "use_profiles": True,
         "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
     },
@@ -516,10 +552,173 @@ SN_MODELS = {
         "use_interp_values": False,
 #        "use_profiles": True,
         "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
+#        "allow_spin_None" : False,
+#        "approx_at_he_depletion": False,
+    },
+    "SN_MODEL_v2_29": {
+        "mechanism": "Maltsev+25-MCO-rapid",
+#        "engine": "",
+#        "PISN": "Hendriks+23",
+#        "PISN_CO_shift": 0.0,
+        "PPI_extra_mass_loss": -20.0,
+#        "ECSN": "Tauris+15",
+#        "conserve_hydrogen_envelope" : True,
+#        "conserve_hydrogen_PPI" : False,
+#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
+        "use_interp_values": False,
+#        "use_profiles": True,
+        "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
+#        "allow_spin_None" : False,
+#        "approx_at_he_depletion": False,
+    },
+    "SN_MODEL_v2_30": {
+        "mechanism": "Maltsev+25-MCO-rapid",
+#        "engine": "",
+#        "PISN": "Hendriks+23",
+#        "PISN_CO_shift": 0.0,
+        "PPI_extra_mass_loss": -20.0,
+#        "ECSN": "Tauris+15",
+        "conserve_hydrogen_envelope" : True,
+#        "conserve_hydrogen_PPI" : False,
+#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
+        "use_interp_values": False,
+#        "use_profiles": True,
+        "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
+#        "allow_spin_None" : False,
+#        "approx_at_he_depletion": False,
+    },
+    "SN_MODEL_v2_31": {
+        "mechanism": "Maltsev+25-MCO-rapid",
+#        "engine": "",
+#        "PISN": "Hendriks+23",
+#        "PISN_CO_shift": 0.0,
+        "PPI_extra_mass_loss": 0.0,
+#        "ECSN": "Tauris+15",
+#        "conserve_hydrogen_envelope" : True,
+#        "conserve_hydrogen_PPI" : False,
+#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
+        "use_interp_values": False,
+#        "use_profiles": True,
+        "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
+#        "allow_spin_None" : False,
+#        "approx_at_he_depletion": False,
+    },
+    "SN_MODEL_v2_32": {
+        "mechanism": "Maltsev+25-MCO-rapid",
+#        "engine": "",
+#        "PISN": "Hendriks+23",
+#        "PISN_CO_shift": 0.0,
+        "PPI_extra_mass_loss": 0.0,
+#        "ECSN": "Tauris+15",
+        "conserve_hydrogen_envelope" : True,
+#        "conserve_hydrogen_PPI" : False,
+#        "max_neutrino_mass_loss": NEUTRINO_MASS_LOSS_UPPER_LIMIT,
+#        "max_NS_mass": STATE_NS_STARMASS_UPPER_LIMIT,
+        "use_interp_values": False,
+#        "use_profiles": True,
+        "use_core_masses": False,
+        # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
+        "Maltsev25_MCO_NS_mass": 1.4,
+        "Maltsev25_MCO_fallback_fraction": 0.99,
+        "Maltsev25_MCO_fallback_model": "A",
+        "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
     },
 }
+
+def get_SN_MODEL_parameters(mechanism):
+    """Get the parameters defining a supernova model for a given mechanism.
+
+    Most parameters are shared by all core-collapse prescriptions and have a
+    default in `DEFAULT_SN_MODEL`. The Maltsev+25 mechanisms need additional
+    parameters, which are required instead of defaulted, so that a supernova
+    model (and hence a post-processed grid column) always records the
+    assumptions it was computed with.
+
+    Parameters
+    ----------
+    mechanism : str
+        Name of the core-collapse mechanism, e.g. 'Fryer+12-delayed'.
+
+    Returns
+    -------
+    list of str
+        Names of the parameters defining a supernova model that uses
+        `mechanism`: the keys of `DEFAULT_SN_MODEL`, extended with the keys of
+        `DEFAULT_MALTSEV_SN_MODEL` for the mechanisms in `MALTSEV_MECHANISMS`.
+
+    """
+    parameters = list(DEFAULT_SN_MODEL.keys())
+    if mechanism in MALTSEV_MECHANISMS:
+        parameters += list(DEFAULT_MALTSEV_SN_MODEL.keys())
+    return parameters
+
+def missing_SN_MODEL_parameters(SN_MODEL):
+    """Get the required parameters that are absent from a supernova model.
+
+    Only the mechanism-dependent parameters are reported. Parameters covered by
+    `DEFAULT_SN_MODEL` may be left out of `SN_MODEL`, because they are filled
+    with their default value.
+
+    Parameters
+    ----------
+    SN_MODEL : dict
+        Dictionary with the properties of a supernova model.
+
+    Returns
+    -------
+    list of str
+        Names of the required parameters missing from `SN_MODEL`, empty if
+        none are missing.
+
+    """
+    mechanism = SN_MODEL.get("mechanism", DEFAULT_SN_MODEL["mechanism"])
+    if mechanism not in MALTSEV_MECHANISMS:
+        # every remaining parameter has a default
+        return []
+    return [key for key in DEFAULT_MALTSEV_SN_MODEL if key not in SN_MODEL]
+
+def check_SN_MODELS():
+    """Check that each pre-defined supernova model sets its required parameters.
+
+    Raises
+    ------
+    ValueError
+        If a model in `SN_MODELS` uses a mechanism that requires extra
+        parameters without setting all of them.
+
+    """
+    for SN_MODEL_NAME, SN_MODEL in SN_MODELS.items():
+        missing = missing_SN_MODEL_parameters(SN_MODEL)
+        if len(missing) > 0:
+            raise ValueError(
+                f"{SN_MODEL_NAME} uses the mechanism "
+                f"'{SN_MODEL['mechanism']}', which requires "
+                f"{missing} to be set explicitly in the model.")
 
 def get_SN_MODEL(name):
     """Get predefined supernova model with all properties.
@@ -534,7 +733,9 @@ def get_SN_MODEL(name):
     SN_MODEL : dict
         Dictionary with the properties of the supernova model. If the given
         name does not exist in the pre-defined models, the default supernova
-        model is returned.
+        model is returned. For a mechanism with mechanism-specific parameters
+        (see `get_SN_MODEL_parameters`) those are taken from the model itself,
+        where they are required.
 
     """
     if name in SN_MODELS:
@@ -560,11 +761,16 @@ def get_SN_MODEL_NAME(input_SN_MODEL, verbose=False):
         Name of the model in SN_MODELS that matches input_SN_MODEL.
 
     """
+    defaults = {**DEFAULT_SN_MODEL, **DEFAULT_MALTSEV_SN_MODEL}
     SN_MODEL_NAME_SEL = None
     for SN_MODEL_NAME, SN_MODEL in SN_MODELS.items():
         tmp = SN_MODEL_NAME
-        for key in DEFAULT_SN_MODEL.keys():
-            val = SN_MODEL.get(key, DEFAULT_SN_MODEL[key])
+        # the parameters to compare depend on the mechanism of the model: the
+        # Maltsev+25 mechanisms are defined by extra parameters, which the
+        # other prescriptions neither use nor have to provide
+        mechanism = SN_MODEL.get("mechanism", DEFAULT_SN_MODEL["mechanism"])
+        for key in get_SN_MODEL_parameters(mechanism):
+            val = SN_MODEL.get(key, defaults[key])
             if "use_" in key or key=="ECSN":
                 # escape values, which are allowed to differ
                 continue
@@ -584,3 +790,7 @@ def get_SN_MODEL_NAME(input_SN_MODEL, verbose=False):
             SN_MODEL_NAME_SEL = tmp
 
     return SN_MODEL_NAME_SEL
+
+
+# fail early if a pre-defined model does not set its required parameters
+check_SN_MODELS()

@@ -110,7 +110,8 @@ class TestElements:
                     'inspiral_timescale_from_orbital_period',\
                     'inspiral_timescale_from_separation', 'interp1d',\
                     'inverse_sampler', 'is_number',\
-                    'linear_interpolation_between_two_cells', 'newton', 'np',\
+                    'linear_interpolation_between_two_cells',\
+                    'first_mt_class_from_cumulative', 'newton', 'np',\
                     'orbital_period_from_separation',\
                     'orbital_separation_from_period', 'os', 'pd',\
                     'period_change_stable_MT', 'period_evol_wind_loss',\
@@ -1618,6 +1619,53 @@ class TestFunctions:
                                                      10+totest.MT_CASE_A],\
                                                     shift_cases=True) ==\
                'case_A1/B1/A2/B1/B2'
+
+    def test_first_mt_class_from_cumulative(self):
+        # no arguments: first episode overall, nobody donates -> None
+        assert totest.first_mt_class_from_cumulative() is None
+        assert totest.first_mt_class_from_cumulative(None) is None
+        # letters map to the corresponding class for the donating star
+        assert totest.first_mt_class_from_cumulative("case_A1", 1) == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_B1", 1) == "case_B"
+        assert totest.first_mt_class_from_cumulative("case_BA1", 1) == "case_B"
+        assert totest.first_mt_class_from_cumulative("case_BB1", 1) == "case_B"
+        assert totest.first_mt_class_from_cumulative("case_C1", 1) == "case_C"
+        # non-RLO / unrecognised tokens keep the original flag verbatim
+        assert totest.first_mt_class_from_cumulative("no_RLO", 1) == "no_RLO"
+        assert totest.first_mt_class_from_cumulative(None, 1) is None
+        assert totest.first_mt_class_from_cumulative("?", 1) == "?"
+        # an episode in which the star is not the donor is ignored
+        assert totest.first_mt_class_from_cumulative("case_A2", 1) == "case_A2"
+        assert totest.first_mt_class_from_cumulative("case_A2", 2) == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_A2/B2", 1) == "case_A2/B2"
+        assert totest.first_mt_class_from_cumulative("case_A2/B2", 2) == "case_A"
+        # earliest donor episode of the star wins
+        assert totest.first_mt_class_from_cumulative("case_A1/B1/A1", 1) == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_B2/A1", 1) == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_B2/A1", 2) == "case_B"
+        # undetermined MT is ignored
+        assert totest.first_mt_class_from_cumulative("?case_A1", 1) == "case_A"
+        assert totest.first_mt_class_from_cumulative("?no_RLO", 1) == "?no_RLO"
+        # star_index=None takes the first episode overall (either donor)
+        assert totest.first_mt_class_from_cumulative("case_A2/B1") == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_B2/A1") == "case_B"
+        assert totest.first_mt_class_from_cumulative("case_A1/B1/A2") == "case_A"
+        assert totest.first_mt_class_from_cumulative("case_BB2/C1") == "case_B"
+        # unmapped letters map to 'single'
+        assert totest.first_mt_class_from_cumulative("case_BC1") == "single"
+        # the original flag is returned when no episode maps
+        assert totest.first_mt_class_from_cumulative("no_RLOF") == "no_RLOF"
+        assert totest.first_mt_class_from_cumulative("initial_RLOF") == "initial_RLOF"
+        assert totest.first_mt_class_from_cumulative("not_converged") == \
+            "not_converged"
+        assert totest.first_mt_class_from_cumulative(
+            "?contact_during_MS") == "?contact_during_MS"
+        assert totest.first_mt_class_from_cumulative(None) is None
+        # the flag is retained also for a specific star without donor episodes
+        assert totest.first_mt_class_from_cumulative("case_A2", 1) == "case_A2"
+        # bytes input is decoded
+        assert totest.first_mt_class_from_cumulative(b"case_A1") == "case_A"
+        assert totest.first_mt_class_from_cumulative(b"no_RLOF") == "no_RLOF"
 
     def test_get_i_He_depl(self):
         # missing argument

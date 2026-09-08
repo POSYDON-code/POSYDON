@@ -24,7 +24,7 @@ __authors__ = [
     "Devina Misra <devina.misra@unige.ch>",
     "Scott Coughlin <scottcoughlin2014@u.northwestern.edu>",
     "Seth Gossage <seth.gossage@northwestern.edu>",
-    "Max Briel <max.briel@gmail.com>"
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
@@ -167,6 +167,10 @@ class BinaryStar:
         self.companion_2_exists = True
         self.non_existent_companion = 0
 
+        # First mass transfer case
+        self.star_1.first_mt_class = getattr(self.star_1, "first_mt_class", None)
+        self.star_2.first_mt_class = getattr(self.star_2, "first_mt_class", None)
+
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
             if item == 'V_sys':
@@ -224,6 +228,8 @@ class BinaryStar:
                 setattr(self, f'mt_history_{grid_type}', None)
             if not hasattr(self, f'cumulative_mt_case_{grid_type}'):
                 setattr(self, f'cumulative_mt_case_{grid_type}', None)
+            if not hasattr(self, f'first_mt_case_{grid_type}'):
+                setattr(self, f'first_mt_case_{grid_type}', None)
 
         # SimulationProperties object - parameters & parameterizations
         if isinstance(properties, SimulationProperties):
@@ -1063,6 +1069,13 @@ class BinaryStar:
                     attr = colname
                     final_value = run.final_values[colname]
                     setattr(binary, attr, final_value)
+
+        # first mass transfer case (whichever episode is the first one)
+        if "first_mt_case" in run.final_values.dtype.names:
+            first_mt_case = run.final_values["first_mt_case"]
+            if isinstance(first_mt_case, bytes):
+                first_mt_case = first_mt_case.decode("utf-8")
+            setattr(binary, "first_mt_case", first_mt_case)
 
         # update eccentricity
         binary.eccentricity = 0.0
