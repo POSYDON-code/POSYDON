@@ -598,7 +598,7 @@ class IllustrisTNG(SFHBase):
         self.redshifts = np.flip(illustris_data["redshifts"])
 
         self.Z = illustris_data["mets"] #metallicities
-        self.M = np.flip(illustris_data["M"], axis=0)  # star-forming mass per metallicity per redshift, Msun
+        self.M = np.flip(illustris_data["M"], axis=0)  # star-forming mass, Msun
 
     def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
