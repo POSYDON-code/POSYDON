@@ -594,7 +594,7 @@ class IllustrisTNG(SFHBase):
         # the SFR is stored as SFR/Box, need to convert it to SFR/Mpc^3
         BoxSFR = np.flip(illustris_data["BoxSFR"]) #CSFRD/Box
         Lbox = illustris_data["Lbox"]/illustris_data["h"]  #Lbox for TNG100-1 = 75/h Mpc, h=0.6774
-        self.CSFRD_data = BoxSFR / Lbox**3 
+        self.CSFRD_data = BoxSFR / Lbox**3
         self.redshifts = np.flip(illustris_data["redshifts"])
 
         self.Z = illustris_data["mets"] #metallicities
