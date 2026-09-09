@@ -12,6 +12,36 @@ import copy
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 
+def compress_labels(str_arr):
+    str_arr = str_arr.copy()
+    labels = np.unique(str_arr)
+
+    int_to_str = dict(zip(np.arange(labels.shape[0]), labels))
+
+    for k, v in int_to_str.items():
+        label_inds = np.where(str_arr == v)[0]
+        str_arr[label_inds] = k
+
+    int_arr = np.array(str_arr, dtype = np.int8)
+    return int_arr, int_to_str
+
+def decompress_labels(int_arr, int_to_str):
+    int_arr = int_arr.copy()
+    str_arr = np.array(int_arr, dtype = "<U70")
+
+    for k, v in int_to_str.items():
+        label_inds = np.where(int_arr == k)[0]
+        str_arr[label_inds] = v
+
+    return str_arr
+
+def compress_all_labels(arr_dict):
+    for key, val in arr_dict.items():
+        arr_dict[key] = compress_labels(val)
+
+def decompress_all_labels(arr_dict):
+    for key, val in arr_dict.items():
+        arr_dict[key] = decompress_labels(*val)
 
 class interp1d:
     """Interpolation class for one dimensional interpolation."""

@@ -209,7 +209,9 @@ class MesaGridStep:
                       'stop_value': None,
                       'stop_interpolate': True,
                       'RNG': np.random.default_rng(),
-                      'verbose': False}
+                      'verbose': False,
+                      'SN_MODEL': None
+                      }
 
     def __init__(self, **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
@@ -277,6 +279,7 @@ class MesaGridStep:
             self.load_psyTrackInterp()
 
         self.grid_name = self.grid_name.replace('_%d', '')
+        self.sn_model = kwargs["SN_MODEL"]
 
         # Check interpolation method provided
         self.supported_interp_methods = ['linear_kNN', 'linear3c_kNN',
@@ -305,6 +308,7 @@ class MesaGridStep:
         self.flush_history = False
         self.flush_entries = None
         self._find_boundaries()
+
 
     def _find_boundaries(self):
         """Infer the grid boundaries (min/max of masses and orbital period)."""
@@ -351,7 +355,11 @@ class MesaGridStep:
 
         # Load interpolator
         self._Interp = IFInterpolator(load = True)
-        self._Interp = self._Interp.load(filename=filename)
+        self._Interp = self._Interp.load(
+            filename=filename,
+            sn_model = self.sn_model,
+            nearest_neighbor_mode = self.interpolation_method == "1NN_1NN"
+        )
 
     def close(self):
         """Close the inteprolator."""
@@ -376,7 +384,10 @@ class MesaGridStep:
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes, _ = self._Interp.evaluate(self.binary)
+            self.final_values, self.classes, _ = self._Interp.evaluate(
+                self.binary, 
+                sn_model = get_SN_MODEL_NAME(vars(self.binary.properties.step_SN))
+            )
 
             self.final_values = dict(zip(self._Interp.continuous_out_keys, self.final_values[0]))
             
@@ -1322,6 +1333,7 @@ class MesaGridStep:
         v_t = (t - t_before) * slope + v_before
 
         return v_t
+
 
 
 class MS_MS_step(MesaGridStep):

@@ -26,6 +26,7 @@ from posydon.utils.posydonwarning import Pwarn
 from posydon.interpolation.constraints import (
     find_constraints_to_apply, sanitize_interpolated_quantities)
 from posydon.utils.gridutils import _get_grid_column, _get_grid_columns
+from posydon.utils.interpolators import compress_all_labels, decompress_all_labels
 
 # ML Imports
 from sklearn.neighbors import KNeighborsClassifier
@@ -44,7 +45,7 @@ class IFInterpolator:
     be gained by referencing section 3 of 2411.02376, is required to understand the documentation
     """
 
-    def __init__(self, grids = None, in_keys = None, out_keys = None, max_k = None, load = False):
+    def __init__(self, grids = None, in_keys = None, out_keys = None, max_k = None, load = False, nearest_neighbor_mode = False):
         """ Class constructor
 
             Parameters
@@ -87,6 +88,7 @@ class IFInterpolator:
 
             # variable to control whether or not we are debugging
             self.debug_mode = False
+            self.nearest_neighbor_mode = False
 
     def stats(self, _print = False):
         """ Returns statistics regarding the number of samples that were interpolated with their initial condition outside
@@ -173,7 +175,7 @@ class IFInterpolator:
             
             simplex = -1 if triangulation == "1NN" else triangulation.find_simplex(iv)            
 
-            if simplex == -1:
+            if simplex == -1 or self.nearest_neighbor_mode:
                 interpolated.extend(
                     self.get_nearest_neighbor(iv, key)
                 )
@@ -724,27 +726,64 @@ class IFInterpolator:
         return np.array([sanitized[key] for key in keys])
 
     def save(self, filename):
-            """
-            Saves the IFInterpolator instance to a pickle file.
-            
-            Parameters
-            ----------
-            filename : str
-                Path or filename where the object should be saved (e.g., 'interpolator.pkl').
-            """
-            try:
-                with open(filename, 'wb') as f:
-                    pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
-                print(f"Successfully saved interpolator to {filename}")
-            except Exception as e:
-                print(f"Error saving interpolator: {e}")
+        """
+        Saves the IFInterpolator instance to a pickle file.
+        
+        Parameters
+        ----------
+        filename : str
+            Path or filename where the object should be saved (e.g., 'interpolator.pkl').
+        """
+        triangulations = self.training_grid.pop("triangulations", None)
 
-    def load(self, filename):
+        compress_all_labels(self.training_grid["final_classes"])
+
+        if hasattr(self, "old_discrete_out_keys"):
+            self.discrete_out_keys = old_discrete_out_keys
+
+        try:
+            with open(filename, 'wb') as f:
+                pickle.dump(self, f, protocol=pickle.HIGHEST_PROTOCOL)
+            print(f"Successfully saved interpolator to {filename}")
+        except Exception as e:
+            print(f"Error saving interpolator: {e}")
+        finally:
+            # Restore triangulations so the active in-memory object remains usable
+            if triangulations is not None:
+                self.training_grid["triangulations"] = triangulations
+
+    def load(
+        self, 
+        filename, 
+        sn_model = "SN_MODEL_v2_01", 
+        nearest_neighbor_mode = False):
         """
         Loads an IFInterpolator instance from a pickle file.
         """
         with open(filename, 'rb') as f:
-            return pickle.load(f)
+            obj = pickle.load(f)
+
+        decompress_all_labels(obj.training_grid["final_classes"])
+
+        # keeping only specified triangulations
+
+        obj.old_discrete_out_keys = obj.discrete_out_keys.copy()
+        new_discrete_out_keys = []
+
+        triangulation_keys = ["interpolation_class", "mt_history"]
+
+        for k in obj.discrete_out_keys:
+            if sn_model in k or k in triangulation_keys:
+                new_discrete_out_keys.append(k)
+
+        obj.discrete_out_keys = new_discrete_out_keys
+        obj.nearest_neighbor_mode = nearest_neighbor_mode
+
+        # Rebuild triangulations in memory after loading
+        if hasattr(obj, "training_grid") and obj.training_grid is not None:
+            obj.triangulate(obj.training_grid)
+
+        return obj
 
 
         
