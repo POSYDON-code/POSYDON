@@ -589,12 +589,16 @@ class IllustrisTNG(SFHBase):
         super().__init__(SFH_MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
+
         # the data is stored in reverse order high to low redshift
-        self.CSFRD_data = np.flip(illustris_data["SFR"])
+        # the SFR is stored as SFR/Box, need to convert it to SFR/Mpc^3
+        BoxSFR = np.flip(illustris_data["BoxSFR"]) #CSFRD/Box
+        Lbox = illustris_data["Lbox"]/illustris_data["h"]  #Lbox for TNG100-1 = 75/h Mpc, h=0.6774
+        self.CSFRD_data = BoxSFR / Lbox**3 
         self.redshifts = np.flip(illustris_data["redshifts"])
 
-        self.Z = illustris_data["mets"]
-        self.M = np.flip(illustris_data["M"], axis=0)  # Msun
+        self.Z = illustris_data["mets"] #metallicities
+        self.M = np.flip(illustris_data["M"], axis=0)  # star-forming mass per metallicity per redshift, Msun
 
     def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
@@ -606,7 +610,7 @@ class IllustrisTNG(SFHBase):
         """
         if verbose:
             print("Loading IllustrisTNG data...")
-        return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
+        return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG100-1.npz"))
 
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
