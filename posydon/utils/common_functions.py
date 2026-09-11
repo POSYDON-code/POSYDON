@@ -584,10 +584,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         np.asanyarray([*donor.log_L_history, donor.log_L], dtype=float)[idx])
     Teff = stefan_boltzmann_law(10**L, radius)
 
-    beta = np.empty_like(sep)
-
+    f_m = np.empty_like(sep)
+    
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
+        beta = np.empty_like(sep)
         # For H-rich...
         # O-type stars
         beta[m > 120.0] = 7.0
@@ -613,11 +614,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     elif scheme == 'Kudritzki+2000':
         for i in range(len(m)):
             if Teff[i] >= 21000:
-                f_m = 2.65
+                f_m[i] = 2.65
             elif Teff[i] <= 10000:
-                f_m = 1.0
+                f_m[i] = 1.0
             else:
-                f_m = 1.4
+                f_m[i] = 1.4
 
     v_esc = np.sqrt(2 * G * m * Msun / (radius * Rsun))     # m/s
     v_wind = v_esc * f_m                                    # m/s
