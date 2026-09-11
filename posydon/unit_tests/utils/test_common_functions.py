@@ -13,6 +13,7 @@ np = totest.np
 os = totest.os
 
 from inspect import isclass, isroutine
+import re
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
@@ -725,10 +726,10 @@ class TestFunctions:
         binary.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
         binary.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
         binary.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
-        with raises(ValueError, match="Invalid Bondi-Hoyle wind scheme: . "
+        with raises(ValueError, match=re.escape("Invalid Bondi-Hoyle wind scheme: . "
                          "Available options are"
                          "'Hurley+2002' or "
-                         "'Kudritzki+2000'."):
+                         "'Kudritzki+2000'.")):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
         rng = MockRNG()
