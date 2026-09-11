@@ -639,8 +639,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         else:
             pass
 
-    n = np.sqrt((G * (m_acc + m) * Msun) / ((radius * Rsun)**3))
+    # mean motion
+    n = np.sqrt((G * (m_acc + m) * Msun) / ((sep * Rsun)**3))
+    # random orbital period draws
     t0 = RNG.random(len(sep)) * 2 * np.pi / n
+    # solve Kepler's equation for eccentric anomaly E
     E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
                np.ones_like(sep) * np.pi / 2,
                maxiter=100)
