@@ -725,9 +725,10 @@ class TestFunctions:
         binary.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
         binary.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
         binary.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
-        with raises(UnboundLocalError, match="cannot access local variable "\
-                                             +"'f_m' where it is not "\
-                                             +"associated with a value"):
+        with raises(ValueError, match="Invalid Bondi-Hoyle wind scheme: ''. "
+                         "Available options are"
+                         "'Hurley+2002' or "
+                         "'Kudritzki+2000'."):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
         rng = MockRNG()
