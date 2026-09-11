@@ -588,12 +588,17 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
-        # For H-rich stars
-        beta[np.logical_and(he_core_mass, radius > 900.0)] = 0.125
+        # For H-rich...
+        # O-type stars
         beta[m > 120.0] = 7.0
+        # A and F-type stars (and lower masses)
         beta[m < 1.4] = 0.5
+        # in between (B-type stars)
         cond = np.logical_and(m >= 1.4, m <= 120.0)
         beta[cond] = 0.5 + (m[cond] - 1.4) / (120.0 - 1.4) * (6.5)
+        # Giants, as defined in Hurley+2002 surrounding eq. 9
+        # (make sure to apply this last, so it is applied to all giants)
+        beta[np.logical_and(he_core_mass, radius > 900.0)] = 0.125
 
         # For He-rich stars
         beta[np.logical_and(surface_h1 <= 0.01, m > 120.0)] = 7.0
