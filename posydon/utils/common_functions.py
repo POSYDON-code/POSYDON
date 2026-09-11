@@ -621,7 +621,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
                 f_m[i] = 1.4
 
     else:
-        raise ValueError("Invalid Bondi-Hoyle wind scheme. Available options are"
+        raise ValueError(f"Invalid Bondi-Hoyle wind scheme: {scheme}. "
+                         "Available options are"
                          "'Hurley+2002' or "
                          "'Kudritzki+2000'.")
 
