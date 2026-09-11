@@ -585,7 +585,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     Teff = stefan_boltzmann_law(10**L, radius)
 
     f_m = np.empty_like(sep)
-    
+
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
         beta = np.empty_like(sep)
