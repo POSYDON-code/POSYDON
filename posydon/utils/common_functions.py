@@ -620,6 +620,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
             else:
                 f_m[i] = 1.4
 
+    else:
+        raise ValueError("Invalid Bondi-Hoyle wind scheme. Available options are"
+                         "'Hurley+2002' or "
+                         "'Kudritzki+2000'.")
+
     v_esc = np.sqrt(2 * G * m * Msun / (radius * Rsun))     # m/s
     v_wind = v_esc * f_m                                    # m/s
 
