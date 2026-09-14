@@ -39,9 +39,9 @@ __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@northwestern.edu>",
 ]
 
-import numpy as np
 import sys
 
+import numpy as np
 
 eps = 1.0e-32
 
@@ -65,7 +65,7 @@ class Transformer:
 
     def __init__(self, data, scaling, keys):
         """
-            If a dimension contains negative values we assume that it is in log space and unlog it. 
+            If a dimension contains negative values we assume that it is in log space and unlog it.
             This is an assumption that we know doesn't hold since things like rates can be negative, but it
             simplifies the preprocessing code for now.
         """
@@ -126,8 +126,8 @@ class Transformer:
 
                 if l:
                     data[:, i] = np.log10(data[:, i] + eps)
-        
-        
+
+
 
         data = (data - self.shift) / (self.scale + eps)
 
@@ -168,19 +168,19 @@ def find_normalization_evaluation_matrix(eval_fnc, kwarg_fnc, kwargs):
 
     normalization_eval_matrix = []
     normalization_stat_matrix = []
-    
+
     for row in kwargs["input_matrix"]:
         eval_row = []
         stat_row = []
 
         for col in row:
-            
+
             acc, stat = eval_fnc(**kwarg_fnc(**{"item": col, "kwargs": kwargs}))
             eval_row.append(
                 acc
             )
             stat_row.append(stat)
-        
+
         normalization_eval_matrix.append(eval_row)
         normalization_stat_matrix.append(stat_row)
 

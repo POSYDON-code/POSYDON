@@ -33,7 +33,7 @@ def _get_grid_columns(grid, keys):
     Parameters
     ----------
     grid : PSyGrid
-    keys : 
+    keys :
         Full column name (e.g. 'S1_SN_MODEL_v2_01_CO_type').
 
     Returns

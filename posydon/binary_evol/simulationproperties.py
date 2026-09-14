@@ -19,9 +19,9 @@ import time
 
 import numpy as np
 
-from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL_NAME
 from posydon.binary_evol.track_match import TrackMatcher
 from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL_NAME
 from posydon.interpolation.interpolation import GRIDInterpolator
 from posydon.popsyn.io import simprop_kwargs_from_ini
 from posydon.utils.common_functions import convert_metallicity_to_string
@@ -163,7 +163,7 @@ class SimulationProperties:
                                 "StepWarning")
 
             self.kwargs[key] = step_tuple
-        
+
         self.sn_model = get_SN_MODEL_NAME(self.kwargs["step_SN"][1])
         self.kwargs["extra_hooks"] = extra_hooks
 
@@ -465,7 +465,7 @@ class SimulationProperties:
             step_name == "step_CO_HeMS_RLO"
         ):
             step_kwargs["SN_MODEL"] = self.sn_model
-    
+
         # Try to load the step
         try:
             setattr(self, step_name, step_func(**step_kwargs))
