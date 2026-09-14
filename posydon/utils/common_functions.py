@@ -507,7 +507,8 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                RNG=np.random.default_rng(), scheme='Hurley+2002'):
+                RNG=np.random.default_rng(), scheme='Hurley+2002',
+                orbit_averaged=False):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -552,9 +553,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     """
     alpha = 1.5
+    # NOTE: Units are in SI for calculations below
     G = const.standard_cgrav * 1e-3     # 6.67428e-11 m3 kg-1 s-2
     Msun = const.Msun * 1e-3            # 1.988547e30  kg
     Rsun = const.Rsun * 1e-2            # 6.9566e8 m
+    clight = const.clight * 0.01        # 2.99792458e8 m s-1
 
     sep = np.atleast_1d(
         np.asanyarray([*binary.separation_history, binary.separation],
@@ -580,9 +583,9 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     surface_h1 = np.atleast_1d(
         np.asanyarray([*donor.surface_h1_history, donor.surface_h1],
                       dtype=float)[idx])
-    L = np.atleast_1d(
+    log_L = np.atleast_1d(
         np.asanyarray([*donor.log_L_history, donor.log_L], dtype=float)[idx])
-    Teff = stefan_boltzmann_law(10**L, radius)
+    Teff = stefan_boltzmann_law(10**log_L, radius)
 
     f_m = np.empty_like(sep)
 
@@ -660,7 +663,14 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     v_rel = np.sqrt(v**2 + v_wind**2 + 2 * v * v_wind * k)                # m/s
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
-    mdot_acc = alpha * ((G * m_acc * Msun)**2
+    if orbit_averaged:
+        mdot_acc = alpha / (2 * np.sqrt(1 - ecc**2))
+        mdot_acc *= ( (G * m_acc * Msun) / (sep * Rsun * v_wind**2) )**2
+        mdot_acc *= ( 1 + (G * (m_acc + m) * Msun) / (sep * Rsun * v_wind**2) )**(-3/2)
+        mdot_acc *= 10**lg_mdot 
+    # instantaneous calculation randomly sampled around orbit
+    else:
+        mdot_acc = alpha * ((G * m_acc * Msun)**2
                         / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
 
     # eq. 10 in Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C.,
@@ -671,7 +681,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         q = m / m_acc
         rdisk_div_risco = (
             (2/3) * (eta / (1 + q)) ** 2
-            * (v / (const.clight * 0.01)) ** (-2)
+            * (v / clight) ** (-2)
             * (1 + (v_wind / v) ** 2) ** (-4) * gamma ** (-1))
         for i in range(len(rdisk_div_risco)):
             if rdisk_div_risco[i] <= 1:         # No disk formed
