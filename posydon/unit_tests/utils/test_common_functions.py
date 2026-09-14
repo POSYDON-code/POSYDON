@@ -12,8 +12,8 @@ import posydon.utils.common_functions as totest
 np = totest.np
 os = totest.os
 
-from inspect import isclass, isroutine
 import re
+from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
