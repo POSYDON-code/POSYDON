@@ -735,6 +735,9 @@ class TestFunctions:
         rng = MockRNG()
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                approx(3.92668160462e-17, abs=6e-29)
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng, \
+                                  orbit_averaged=True) ==\
+               approx(3.92668160462e-17, abs=6e-29)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
                                   RNG=rng, scheme='Kudritzki+2000') ==\
                approx(3.92668160462e-17, abs=6e-29)
