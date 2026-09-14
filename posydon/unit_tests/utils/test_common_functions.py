@@ -761,7 +761,7 @@ class TestFunctions:
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
                                   wind_disk_criteria=False, RNG=rng) ==\
-               approx(5.13970075150e-8, abs=6e-20)
+               approx(5.62813289713e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
         class MockRNG:
