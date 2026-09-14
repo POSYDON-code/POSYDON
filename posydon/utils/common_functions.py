@@ -660,7 +660,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
     v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
-    v_rel = np.sqrt(v**2 + v_wind**2 + 2 * v * v_wind * k)                # m/s
+    v_rel = np.sqrt(v**2 + v_wind**2 - 2 * v * v_wind * k)                # m/s
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     if orbit_averaged:
