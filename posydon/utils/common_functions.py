@@ -667,7 +667,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         mdot_acc = alpha / (2 * np.sqrt(1 - ecc**2))
         mdot_acc *= ( (G * m_acc * Msun) / (sep * Rsun * v_wind**2) )**2
         mdot_acc *= ( 1 + (G * (m_acc + m) * Msun) / (sep * Rsun * v_wind**2) )**(-3/2)
-        mdot_acc *= 10**lg_mdot 
+        mdot_acc *= 10**lg_mdot
     # instantaneous calculation randomly sampled around orbit
     else:
         mdot_acc = alpha * ((G * m_acc * Msun)**2
