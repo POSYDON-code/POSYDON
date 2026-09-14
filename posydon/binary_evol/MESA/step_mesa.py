@@ -22,9 +22,9 @@ import pandas as pd
 from posydon.binary_evol.binarystar import BINARYPROPERTIES, BinaryStar
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.interpolation.IF_interpolation import IFInterpolator
+from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL_NAME
 from posydon.interpolation.interpolation import psyTrackInterp
+from posydon.interpolation.new_interpolator import IFInterpolator
 from posydon.utils import common_functions as cf
 from posydon.utils.common_functions import (
     CO_radius,
@@ -158,6 +158,41 @@ def _collect_sn_model_values(sn_row, star_idx):
     }
 
 
+def _collect_sn_model_values(sn_row, star_idx):
+    """Build the star.SN_MODEL_* dict from a SN dataset row (short names).
+
+    Parameters
+    ----------
+    sn_row : dict or None
+        Output of PSyRunView.get_SN_data() — keys like 'S1_CO_type'.
+    star_idx : int
+        1 or 2.
+
+    Returns
+    -------
+    dict or None
+    """
+    if sn_row is None:
+        return None
+    prefix = f'S{star_idx}_'
+    co_type = sn_row.get(f'{prefix}CO_type', 'None')
+    if str(co_type) == 'None':
+        return None
+    return {
+        'state':           co_type,
+        'SN_type':         sn_row[f'{prefix}SN_type'],
+        'f_fb':            sn_row[f'{prefix}f_fb'],
+        'mass':            sn_row[f'{prefix}mass'],
+        'spin':            sn_row[f'{prefix}spin'],
+        'm_disk_accreted': sn_row[f'{prefix}m_disk_accreted'],
+        'm_disk_radiated': sn_row[f'{prefix}m_disk_radiated'],
+        'M4':              sn_row[f'{prefix}M4'],
+        'mu4':             sn_row[f'{prefix}mu4'],
+        'h1_mass_ej':      sn_row[f'{prefix}h1_mass_ej'],
+        'he4_mass_ej':     sn_row[f'{prefix}he4_mass_ej'],
+    }
+
+
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
 
@@ -174,7 +209,9 @@ class MesaGridStep:
                       'stop_value': None,
                       'stop_interpolate': True,
                       'RNG': np.random.default_rng(),
-                      'verbose': False}
+                      'verbose': False,
+                      'SN_MODEL': None
+                      }
 
     def __init__(self, **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
@@ -242,6 +279,7 @@ class MesaGridStep:
             self.load_psyTrackInterp()
 
         self.grid_name = self.grid_name.replace('_%d', '')
+        self.sn_model = kwargs["SN_MODEL"]
 
         # Check interpolation method provided
         self.supported_interp_methods = ['linear_kNN', 'linear3c_kNN',
@@ -251,16 +289,10 @@ class MesaGridStep:
             # Set the interpolation path
             if self.interpolation_path is None:
                 self.interpolation_path = os.path.join(self.grid_path,
-                    'interpolators/%s' % self.interpolation_method)
+                    'interpolators/%s' % os.path.basename(self.grid_name).replace('.h5', ''))
 
-            # Set the interpolation filename
-            if self.interpolation_filename is None:
-                self.interpolation_filename = os.path.join(self.interpolation_path,
-                    os.path.basename(self.grid_name).replace('h5', 'pkl'))
-            else:
-                self.interpolation_filename = os.path.join(self.interpolation_path,
-                                                      self.interpolation_filename)
-
+            self.interpolation_filename = os.path.join(self.interpolation_path,
+                "interp.pkl")
             self.load_Interp(self.interpolation_filename)
 
             if (not (hasattr(self, '_psyTrackInterp')
@@ -276,6 +308,7 @@ class MesaGridStep:
         self.flush_history = False
         self.flush_entries = None
         self._find_boundaries()
+
 
     def _find_boundaries(self):
         """Infer the grid boundaries (min/max of masses and orbital period)."""
@@ -321,8 +354,12 @@ class MesaGridStep:
             data_download()
 
         # Load interpolator
-        self._Interp = IFInterpolator()
-        self._Interp.load(filename=filename)
+        self._Interp = IFInterpolator(load = True)
+        self._Interp = self._Interp.load(
+            filename=filename,
+            sn_model = self.sn_model,
+            nearest_neighbor_mode = self.interpolation_method == "1NN_1NN"
+        )
 
     def close(self):
         """Close the inteprolator."""
@@ -347,9 +384,17 @@ class MesaGridStep:
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes = self._Interp.evaluate(self.binary)
+            self.final_values, self.classes, _ = self._Interp.evaluate(
+                self.binary,
+                sn_model = get_SN_MODEL_NAME(vars(self.binary.properties.step_SN))
+            )
 
-            max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
+            self.final_values = dict(zip(self._Interp.continuous_out_keys, self.final_values[0]))
+
+            self.classes = dict(zip(self._Interp.discrete_out_keys, self.classes[0]))
+            max_MESA_sim_time = self.final_values[
+                POSYDON_TO_MESA['binary']['time']
+            ]
         else:
             raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
 
@@ -867,14 +912,14 @@ class MesaGridStep:
 
         # update nearest neighbor core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for SN_MODEL_NAME in SN_MODELS.keys():
-                sn_row = cb.get_SN_data(SN_MODEL_NAME)
-                for i, star in enumerate(stars):
-                    if not stars_CO[i]:
-                        values = _collect_sn_model_values(sn_row, i + 1)
-                    else:
-                        values = None
-                    setattr(star, SN_MODEL_NAME, values)
+            SN_MODEL_NAME = get_SN_MODEL_NAME(vars(binary.properties.step_SN))
+            sn_row = cb.get_SN_data(SN_MODEL_NAME)
+            for i, star in enumerate(stars):
+                if not stars_CO[i]:
+                    values = _collect_sn_model_values(sn_row, i + 1)
+                else:
+                    values = None
+                setattr(star, SN_MODEL_NAME, values)
 
     def initial_final_interpolation(self, star_1_CO=False, star_2_CO=False):
         """Update the binary through initial-final interpolation."""
@@ -1025,31 +1070,33 @@ class MesaGridStep:
 
         # update interpolated core collapse quantites
         if interpolation_class != 'unstable_MT':
-            for SN_MODEL_NAME in SN_MODELS.keys():
-                for i, star in enumerate(stars):
-                    col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
-                    if (not stars_CO[i] and self.classes[col_name] != 'None'):
-                        values = {}
-                        for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
-                                    'm_disk_accreted', 'm_disk_radiated', 'M4',
-                                    'mu4', 'h1_mass_ej', 'he4_mass_ej']:
-                            if key == "state":
-                                state = self.classes[col_name]
-                                values[key] = state
-                            elif key == "SN_type":
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = self.classes[col_name]
-                            elif f'S{i+1}_{SN_MODEL_NAME}_{key}' in fv:
-                                col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
-                                values[key] = fv[col_name]
-                            else:
-                                Pwarn(f"S{i+1}_{SN_MODEL_NAME}_{key} not "
-                                      "found in fv", "UnsupportedModelWarning")
-                                values = None
-                                break
-                        setattr(star, SN_MODEL_NAME, values)
-                    else:
-                        setattr(star, SN_MODEL_NAME, None)
+
+            SN_MODEL_NAME = get_SN_MODEL_NAME(vars(binary.properties.step_SN))
+
+            for i, star in enumerate(stars):
+                col_name = f'S{i+1}_{SN_MODEL_NAME}_CO_type'
+                if (not stars_CO[i] and self.classes[col_name] != 'None'):
+                    values = {}
+                    for key in ['state', 'SN_type', 'f_fb', 'mass', 'spin',
+                                'm_disk_accreted', 'm_disk_radiated', 'M4',
+                                'mu4', 'h1_mass_ej', 'he4_mass_ej']:
+                        if key == "state":
+                            state = self.classes[col_name]
+                            values[key] = state
+                        elif key == "SN_type":
+                            col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                            values[key] = self.classes[col_name]
+                        elif f'S{i+1}_{SN_MODEL_NAME}_{key}' in fv:
+                            col_name = f'S{i+1}_{SN_MODEL_NAME}_{key}'
+                            values[key] = fv[col_name]
+                        else:
+                            Pwarn(f"S{i+1}_{SN_MODEL_NAME}_{key} not "
+                                    "found in fv", "UnsupportedModelWarning")
+                            values = None
+                            break
+                    setattr(star, SN_MODEL_NAME, values)
+                else:
+                    setattr(star, SN_MODEL_NAME, None)
 
     # STOPPING METHODS
 
@@ -1286,6 +1333,7 @@ class MesaGridStep:
         v_t = (t - t_before) * slope + v_before
 
         return v_t
+
 
 
 class MS_MS_step(MesaGridStep):
