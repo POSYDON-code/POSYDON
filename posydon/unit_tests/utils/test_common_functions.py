@@ -12,6 +12,7 @@ import posydon.utils.common_functions as totest
 np = totest.np
 os = totest.os
 
+import re
 from inspect import isclass, isroutine
 
 # import other needed code for the tests, which is not already imported in the
@@ -725,13 +726,17 @@ class TestFunctions:
         binary.star_2.log_R = -0.5         #donor's radius is 10^{-0.5}Rsun
         binary.star_2.surface_h1 = 0.7     #donor's X_surf=0.7
         binary.star_2.log_L = 0.3          #donor's lum. is 10^{0.3}Lsun
-        with raises(UnboundLocalError, match="cannot access local variable "\
-                                             +"'f_m' where it is not "\
-                                             +"associated with a value"):
+        with raises(ValueError, match=re.escape("Invalid Bondi-Hoyle wind scheme: . "
+                         "Available options are"
+                         "'Hurley+2002' or "
+                         "'Kudritzki+2000'.")):
             # undefined scheme
             totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
         rng = MockRNG()
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+               approx(3.92668160462e-17, abs=6e-29)
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng, \
+                                  orbit_averaged=True) ==\
                approx(3.92668160462e-17, abs=6e-29)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
                                   RNG=rng, scheme='Kudritzki+2000') ==\
@@ -756,7 +761,7 @@ class TestFunctions:
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
                                   wind_disk_criteria=False, RNG=rng) ==\
-               approx(5.13970075150e-8, abs=6e-20)
+               approx(5.62813289713e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):
         class MockRNG:
