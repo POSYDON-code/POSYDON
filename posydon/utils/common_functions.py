@@ -575,7 +575,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         np.asanyarray([*donor.lg_wind_mdot_history, donor.lg_wind_mdot],
                       dtype=float)[idx])
     he_core_mass = np.atleast_1d(
-        np.asanyarray([*donor.he_core_radius_history, donor.he_core_radius],
+        np.asanyarray([*donor.he_core_mass_history, donor.he_core_mass],
                       dtype=float)[idx])
     log_R = np.atleast_1d(
         np.asanyarray([*donor.log_R_history, donor.log_R], dtype=float)[idx])
