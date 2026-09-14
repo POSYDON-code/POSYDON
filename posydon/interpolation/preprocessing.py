@@ -1,5 +1,38 @@
 """
 Module implementing preprocessing for IF Interpolation
+
+This module provides the normalization utilities used by ``IFInterpolator``
+during both training and inference. It centers on two pieces:
+
+1. **``Transformer``**: a reusable normalizer/denormalizer for a matrix of
+   input or output quantities. Given a scaling scheme — one of ``"none"``,
+   ``"min-max"``, ``"standard"``, ``"log_min-max"``, or ``"log_standard"``
+   (see ``IN_SCALING_OPTIONS`` / ``OUT_SCALING_OPTIONS``) — a ``Transformer``
+   computes the shift/scale statistics needed to normalize data into that
+   space and back again via ``normalize`` and ``unnormalize``. A single
+   scaling string can be supplied for all columns, or a list/array of
+   per-column scalings. Columns whose names contain ``"log"`` or ``"lg"``
+   are assumed to already be stored in log space and are un-logged before
+   any further scaling is applied; columns containing negative values are
+   assumed to be unsuitable for log scaling and are silently downgraded
+   from a ``"log_*"`` scheme to its non-log counterpart, since a negative
+   quantity (e.g. a rate) cannot be logged safely.
+
+2. **``find_normalization_evaluation_matrix``**: a small grid-search
+   helper used by ``IFInterpolator`` during training. Given an evaluation
+   function, an argument-building function, and a 2D ``input_matrix`` of
+   parameter combinations to try (e.g. every pairing of neighbor count
+   ``k`` with each input scaling option, or every pairing of class label
+   with each output scaling option), it evaluates every cell and returns
+   two matrices of the same shape: one of scores (e.g. balanced accuracy
+   or interpolation error) and one of the fitted objects (e.g. classifiers
+   or ``Transformer`` instances) produced along the way. ``IFInterpolator``
+   uses the resulting score matrix to pick the best-performing combination
+   for each classifier and interpolation target.
+
+Together these let ``IFInterpolator`` automatically search over
+normalization schemes rather than requiring them to be hand-tuned per
+quantity.
 """
 
 __authors__ = [

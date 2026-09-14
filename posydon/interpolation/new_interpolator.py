@@ -1,6 +1,49 @@
 """
 Module implementing initial-final (IF) interpolation.
 
+This module provides ``IFInterpolator``, POSYDON's tool for rapidly
+predicting the outcome of a binary's evolution from its initial conditions
+without having to run the full MESA/POSYDON simulation. Given a starting
+primary mass, secondary mass, and orbital period, the interpolator:
+
+1. **Classifies** the binary into a discrete outcome for each configured
+   classification scheme (e.g. its mass-transfer type via
+   ``interpolation_class``, and the compact-object type produced by a given
+   supernova engine) using k-nearest-neighbors classifiers trained on a
+   regularly-sampled grid of simulated binaries.
+2. **Interpolates** the continuous final-value quantities associated with
+   the predicted class (e.g. final masses, spins, orbital period) using
+   barycentric interpolation over the Delaunay triangulation of the
+   training grid restricted to that class. Binaries whose initial
+   conditions fall outside the convex hull of their predicted class (or
+   whose class has too few training points to triangulate) fall back to
+   nearest-neighbor interpolation instead.
+
+A single ``IFInterpolator`` instance can be trained from scratch on a pair
+of ``PSyGrid`` objects (a training grid and a validation grid), which
+automatically selects the best number of neighbors and normalization
+scheme for each classifier and interpolant against the validation grid, or
+loaded from a pretrained ``pkl`` file. Once trained or loaded, the
+interpolator can be queried with a ``BinaryStar`` instance or a batch of
+initial conditions via its ``evaluate`` method, and can be persisted to
+disk with ``save``.
+
+Familiarity with the overall system, which can be gained by referencing
+section 3 of 2411.02376, is recommended to understand the classification
+and interpolation scheme implemented here in detail.
+
+Typical usage:
+
+    # training
+    interp = IFInterpolator(grids=[training_grid, validation_grid],
+                             in_keys=["star_1_mass", "star_2_mass", "period_days"],
+                             out_keys=out_keys, max_k=20)
+    interp.train()
+    interp.save("model.pkl")
+
+    # loading and evaluating
+    interp = IFInterpolator(load=True).load(filename="model.pkl")
+    interpolated_values, classes, meta_data = interp.evaluate(binary)
 """
 
 __authors__ = [
