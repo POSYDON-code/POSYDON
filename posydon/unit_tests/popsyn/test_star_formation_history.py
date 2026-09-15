@@ -429,10 +429,12 @@ class TestIllustrisTNG:
         num_metallicities = 5
 
         mock_data = {
-            "SFR": np.linspace(0.1, 1.0, num_redshifts)[::-1],  # SFR decreases with redshift
+            "BoxSFR": np.linspace(1e5, 1e6, num_redshifts)[::-1],  # SFR decreases with redshift
             "redshifts": np.linspace(0.0, 9.0, num_redshifts)[::-1],  # Redshifts from 0 to 9
             "mets": np.logspace(-4, -1, num_metallicities),  # Metallicities from 1e-4 to 1e-1
-            "M": np.ones((num_redshifts, num_metallicities))  # Equal mass in all bins for simplicity
+            "M": np.ones((num_redshifts, num_metallicities)),  # Equal mass in all bins for simplicity
+            "Lbox": 75, #Side length of IllustrisTNG box, in Mpc/h
+            "h": 0.6774 #Dimensionless Hubble constant
         }
 
         # Add some variation to mass distribution for testing mean_metallicity
@@ -442,6 +444,8 @@ class TestIllustrisTNG:
             mock_data["M"][i] = np.linspace(1.0, scale, num_metallicities)
 
         mock_data["M"] = np.flip(mock_data["M"], axis=0)  # Reverse the mass array
+        Lbox = mock_data["Lbox"]/mock_data["h"] #Side length of IllustrisTNG box in Mpc
+        mock_data["SFR"] = mock_data["BoxSFR"]/Lbox**3 #Rescale SFR to units of SFR/Mpc^3 instead of SFR/box
         return mock_data
 
     @pytest.fixture
@@ -945,10 +949,12 @@ class TestGetSFHModel:
         def mock_get_data(self, verbose=False):
             # Return minimal mock data structure
             return {
-                "SFR": np.array([0.1, 0.2, 0.3]),
+                "BoxSFR": np.array([1e5, 2e5, 3e5]),
                 "redshifts": np.array([0.0, 1.0, 2.0]),
                 "mets": np.array([0.001, 0.01, 0.02]),
-                "M": np.ones((3, 3))
+                "M": np.ones((3, 3)),
+                "Lbox":75,
+                "h":0.6774
             }
 
         # Patch the data loading method
