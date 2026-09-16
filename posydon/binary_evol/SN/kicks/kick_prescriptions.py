@@ -1,6 +1,7 @@
 import numpy as np
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 
+# DAVID (2026.09.15): make sure that WDs have 0 kicks.
 
 def orbital_kick(binary,verbose):
     """Do the orbital kick.

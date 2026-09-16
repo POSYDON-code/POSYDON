@@ -78,8 +78,10 @@ from posydon.utils.limits_thresholds import (
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
-import kicks
-
+from posydon.binary_evol.SN.explodability.ECSN_prescriptions import ECSN_check
+from posydon.binary_evol.SN.kicks.kick_prescriptions import KICK_PRESCRIPTIONS
+from posydon.binary_evol.SN.CO_mass.CO_mass_prescriptions import CO_MASS_CRITERIA
+from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import EXPLODABILITY_CRITERIA
 
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
@@ -283,43 +285,23 @@ class StepSN(object):
             for varname in self.DEFAULT_KWARGS:
                 setattr(self, varname, self.DEFAULT_KWARGS[varname])
 
-        # backward compatibility for kick
-        if (self.kick_normalisation == 'asym_ej'
-            or self.kick_normalisation == 'linear'):
-            Pwarn("kick_normalisation 'asym_ej' and 'linear' are "
-                "deprecated, use kick_prescription instead. Setting "
-                "kick normalization to unity.",
-                "DeprecationWarning")
-            self.kick_prescription = self.kick_normalisation
-            self.kick_normalisation = 'one'
+        # # backward compatibility for kick
+        # if (self.kick_normalisation == 'asym_ej'
+        #     or self.kick_normalisation == 'linear'):
+        #     Pwarn("kick_normalisation 'asym_ej' and 'linear' are "
+        #         "deprecated, use kick_prescription instead. Setting "
+        #         "kick normalization to unity.",
+        #         "DeprecationWarning")
+        #     self.kick_prescription = self.kick_normalisation
+        #     self.kick_normalisation = 'one'
 
-        if self.max_neutrino_mass_loss is None:
-            self.max_neutrino_mass_loss = 0
+        # if self.max_neutrino_mass_loss is None:
+        #     self.max_neutrino_mass_loss = 0
 
-        # Initializing core collapse
-
-        # Available mechanisms for core-collapse supernova
-        self.Fryer12_rapid = "Fryer+12-rapid"
-        self.Fryer12_delayed = "Fryer+12-delayed"
-        self.direct_collapse = "direct"
-        self.direct_collapse_hecore = "direct_he_core"
-        self.Sukhbold16_engines = "Sukhbold+16-engine"
-        self.Patton20_engines = "Patton&Sukhbold20-engine"
-        self.Couch20_engines = "Couch+20-engine"
-        self.Maltsev25_engines = "Maltsev+25-engine"
-
-
-
-        self.mechanisms = [
-            self.Fryer12_rapid,
-            self.Fryer12_delayed,
-            self.direct_collapse,
-            self.direct_collapse_hecore,
-            self.Sukhbold16_engines,
-            self.Patton20_engines,
-            self.Couch20_engines,
-            self.Maltsev25_engines
-        ]
+        self.ECSN_check = ECSN_check(self.ECSN)
+        self.explod_criterion = EXPLODABILITY_CRITERIA[self.explod_mechanism]
+        self.remnant_mass = CO_MASS_CRITERIA[self.remnant_mass_criterion]
+        self.kick = CO_MASS_CRITERIA[self.kick_prescription]
 
         if self.mechanism in self.mechanisms:
 
@@ -570,407 +552,405 @@ class StepSN(object):
         state = star.state
         # after this function is called certain quantities shouldn't be None
         # type objects anymore
+        # DAVID: This feels kind of clumsy, shouldn't those be defined as np.nan whenever they don't have values? What's the difference between them being nans or nones??
         for key in ['m_disk_accreted', 'm_disk_radiated']:
             if getattr(star, key) is None:
                 setattr(star, key, np.nan)
 
-        # Verifies if the star is in state state where it can
-        # explode
-        if state in STAR_STATES_CC:
-
-            SN_type = ""
-            # if no profile is avaiable but interpolation quantities are,
-            # use those, else continue with or without profile.
-            if self.use_interp_values:
-                # find SN_MODEL_NAME corresponding to class variable
-                SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(vars(self),
-                                                      verbose=self.verbose)
-
-                # check if selected model is supported
-                if SN_MODEL_NAME_SEL is None:
-                    raise ValueError('Your model assumptions are not'
-                                     'supported!')
-                elif getattr(star, SN_MODEL_NAME_SEL) is None:
-                    # NOTE: this option is needed to do the collapse
-                    # for stars evolved with the step_detached or
-                    # step_disrupted.
-                    # allow to continue with the collapse with profile
-                    # or core masses
-                    Pwarn(f'{SN_MODEL_NAME_SEL}: The collapsed star was not '
-                          'interpolated! If use_profiles or use_core_masses '
-                          'is set to True, continue with the collapse.',
-                          "InterpolationWarning")
-                else:
-                    SN_MODEL_properties = getattr(star, SN_MODEL_NAME_SEL)
-
-                    SN_type = self.check_SN_type(m_core=star.co_core_mass,
-                                                 m_He_core=star.he_core_mass,
-                                                 m_star=star.mass)[3]
-                    if self.use_profiles and star.profile is not None:
-                        alternative = "Instead use profiles."
-                    elif self.use_core_masses:
-                        alternative = "Instead use core masses."
-                    elif self.allow_spin_None:
-                        alternative = "Instead use core mass without spin."
-                    else:
-                        alternative = ""
-
-                    if SN_MODEL_properties['SN_type'] == "ECSN":
-                        # overwrite ECSN in SN MODEL
-                        SN_MODEL_properties['SN_type'] = SN_type
-                        Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
-                              "ReplaceValueWarning")
-
-                    if SN_type == "ECSN":
-                        # do not use interpolated values for ECSN range instead
-                        # behave like use_core_masses=True
-                        pass
-                    ## star's SN_type mismatches one from the model
-                    elif SN_type != SN_MODEL_properties['SN_type']:
-                        Pwarn(f"The SN_type does not match the star: {SN_type}"
-                              f"!={SN_MODEL_properties['SN_type']}."
-                              +alternative, "ApproximationWarning")
-                    ## Check if SN_type mismatches the CO_type in the model
-                    elif not check_SN_CO_match(SN_MODEL_properties['SN_type'],
-                                               SN_MODEL_properties['state']):
-                        Pwarn(f"{SN_MODEL_NAME_SEL}: The SN_type does not "
-                              "match the predicted CO."+alternative,
-                              "ApproximationWarning")
-                    ## Check if there is no interpolated remnant mass
-                    elif pd.isna(SN_MODEL_properties['mass']):
-                        Pwarn(f"There is no interpolated remnant mass."
-                              +alternative, "ApproximationWarning")
-                    ## Otherwise interpolated values can be used for this SN
-                    else:
-                        for key, value in SN_MODEL_properties.items():
-                            setattr(star, key, value)
-
-                        if star.state == 'WD':
-                            for key in STARPROPERTIES:
-                                if key in ["he_core_mass"]:
-                                    setattr(star, key, star.mass)
-                                elif key in ["co_core_mass"]:
-                                    if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
-                                        setattr(star, key, star.mass)
-                                    else:
-                                        setattr(star, key, 0.)
-                                elif key not in ["state", "mass", "spin",
-                                                "m_disk_accreted",
-                                                "m_disk_radiated", "center_h1",
-                                                "center_he4", "center_c12",
-                                                "center_n14", "center_o16"]:
-                                    setattr(star, key, None)
-
-                        else:
-                            for key in STARPROPERTIES:
-                                if key not in ["state", "mass", "spin",
-                                            "m_disk_accreted",
-                                            "m_disk_radiated"]:
-                                    setattr(star, key, None)
-
-                        # No remnant if a PISN happens
-                        if star.SN_type == 'PISN':
-                            convert_star_to_massless_remnant(star=star)
-                            # the mass is set to None
-                            # but an orbital kick is still applied.
-                            # Since the mass is set to None, this will lead to
-                            # a disruption
-                            # TODO: make it skip the kick caluclation
-
-                        if getattr(star, 'SN_type') != 'PISN':
-                            star.log_R = np.log10(CO_radius(star.mass, star.state))
-                        return
-
-            # Verifies the selection of core-collapse mechnism to perform
-            # the collapse
-            if self.mechanism in [
-                self.Fryer12_rapid,
-                self.Fryer12_delayed,
-                self.direct_collapse,
-                self.direct_collapse_hecore,
-            ]:
-                # m_core = star.co_core_mass
-
-                # this flag checks if a profile is available
-                profile = star.profile
-
-                # computes the baryonic remnant mass from the
-                # PISN and PPISN prescription if the star will
-                # experience such event
-                m_PISN = self.PISN_prescription(star)
-
-                # the baryonic remnant mass is computed in terms
-                # of the core mass.
-                m_rembar, star.f_fb, _ = self.compute_m_rembar(star, m_PISN)
-
-                # check if a white dwarf has been born
-                if star.SN_type == "WD":
-                    star.mass = m_rembar
-                    star.state = "WD"
-                    star.spin = 0.
-                    star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    for key in STARPROPERTIES:
-                        if key in ["he_core_mass"]:
-                            setattr(star, key, star.mass)
-                        elif key in ["co_core_mass"]:
-                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
-                                setattr(star, key, star.mass)
-                            else:
-                                setattr(star, key, 0.)
-                        elif key not in ["state", "mass", "spin",
-                                         "m_disk_accreted", "m_disk_radiated",
-                                         "center_h1", "center_he4",
-                                         "center_c12", "center_n14",
-                                         "center_o16"]:
-                            setattr(star, key, None)
-                    return
-
-                # check if the star was disrupted by the PISN
-                if pd.isna(m_rembar):
-                    convert_star_to_massless_remnant(star=star)
-                    return
-
-                # Computing the gravitational mass of the remnant
-                # as in Lattimer & Yahil, 1989
-                m_grav = (20.0 / 3.0) * (np.sqrt(1.0 + 0.3 * m_rembar) - 1.0)
-                if (m_rembar - m_grav) > self.max_neutrino_mass_loss:
-                    m_grav = m_rembar - self.max_neutrino_mass_loss
-
-                # If the profile of the star is available then
-                # it will be collapsed to get the information
-                # on the compact object spin
-                if self.use_profiles and profile is not None:
-                    delta_M = m_rembar - m_grav
-                    if delta_M > self.max_neutrino_mass_loss:
-                        delta_M = self.max_neutrino_mass_loss
-                    if m_grav >= self.max_NS_mass:
-                        mass_direct_collapse = self.max_NS_mass + delta_M
-                        final_BH = do_core_collapse_BH(
-                            star=star, mass_collapsing=m_rembar,
-                            mass_central_BH=mass_direct_collapse,
-                            neutrino_mass_loss=delta_M,
-                            max_neutrino_mass_loss=self.max_neutrino_mass_loss,
-                            verbose=self.verbose
-                        )
-                        # set post-collapse properties/information to store
-                        for i in final_BH.keys():
-                            setattr(star, i, final_BH[i])
-
-                        # set specific properties manually
-                        star.mass = final_BH['M_BH_total']
-                        star.spin = final_BH['a_BH_total']
-                        star.m_disk_accreted = final_BH['m_disk_accreted']
-                        star.m_disk_radiated = final_BH['m_disk_radiated']
-                        star.state = "BH"
-                    else:
-                        star.mass = m_grav
-                        star.spin = 0.
-                        star.m_disk_accreted = 0.
-                        star.m_disk_radiated = 0.
-                        star.state = 'NS'
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
-
-                elif self.use_core_masses or SN_type == "ECSN":
-                    # If the profile is not available the star spin
-                    # is used to get the compact object spin
-                    star.mass = m_grav
-                    if m_grav >= self.max_NS_mass:
-                        if SN_type == "ECSN":
-                            Pwarn("An ECSN should not form a black hole: "
-                                  f"m_grav={m_grav}.",
-                                  "InappropriateValueWarning")
-                        # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
-                        # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
-
-                        # assume the spin value is the AM of the star
-                        # convert to CGS units
-                        G = const.standard_cgrav
-                        c = const.clight
-                        Mo = const.Msun
-                        star.spin = (10**star.log_total_angular_momentum * c
-                                     / (G * (m_grav * Mo) ** 2))
-                        if star.spin > 1.0:
-                            if self.verbose:
-                                print("The spin exceeds 1, capping it to 1...")
-                            star.spin = 1.0
-                        star.m_disk_accreted = 0.0
-                        star.m_disk_radiated = 0.0
-                        star.state = "BH"
-                    else:
-                        star.spin = 0.0
-                        star.m_disk_accreted = 0.0
-                        star.m_disk_radiated = 0.0
-                        star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        np.nan, np.nan
-
-                elif self.allow_spin_None:
-                    # If the profile is not available and spin can stay
-                    # undetermined
-                    star.mass = m_grav
-                    star.spin = None
-                    star.m_disk_accreted = 0.0
-                    star.m_disk_radiated = 0.0
-                    if m_grav >= self.max_NS_mass:
-                        star.state = "BH"
-                    else:
-                        star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        np.nan, np.nan
-
-                else:
-                    # This leads to a failed binary
-                    for key in STARPROPERTIES:
-                        setattr(star, key, None)
-                    return "FAILED core collapse!"
-
-            elif self.mechanism in [
-                self.Sukhbold16_engines,
-                self.Patton20_engines,
-                self.Couch20_engines,
-                self.Maltsev25_engines
-            ]:
-                # The final remnant mass and and state
-                # is computed by the selected mechanism
-
-                # PISN and PPISN prescription
-                m_PISN = self.PISN_prescription(star)
-
-                m_rembar, star.f_fb, state = self.compute_m_rembar(star,
-                                                                   m_PISN)
-                star.state = state
-
-                # check if a white dwarf has been born
-                if star.SN_type == "WD":
-                    star.mass = m_rembar
-                    star.state = "WD"
-                    star.spin = 0.
-                    star.log_R = np.log10(CO_radius(star.mass, star.state))
-                    for key in STARPROPERTIES:
-                        if key in ["he_core_mass"]:
-                            setattr(star, key, star.mass)
-                        elif key in ["co_core_mass"]:
-                            if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
-                                setattr(star, key, star.mass)
-                            else:
-                                setattr(star, key, 0.)
-                        elif key not in ["state", "mass", "spin",
-                                         "m_disk_accreted", "m_disk_radiated",
-                                         "center_h1", "center_he4",
-                                         "center_c12", "center_n14",
-                                         "center_o16"]:
-                            setattr(star, key, None)
-                    return
-
-                # check if the star was disrupted by the PISN
-                if pd.isna(m_rembar):
-                    convert_star_to_massless_remnant(star=star)
-                    return
-
-                # Computing the gravitational mass of the remnant
-                # as in Lattimer & Yahil, 1989
-                m_grav = (20.0 / 3.0) * (np.sqrt(1.0 + 0.3 * m_rembar) - 1.0)
-                if (m_rembar - m_grav) > self.max_neutrino_mass_loss:
-                    m_grav = m_rembar - self.max_neutrino_mass_loss
-
-                # this flag checks if a profile is available
-                profile = star.profile
-
-                if self.use_profiles and profile is not None:
-                    delta_M = m_rembar - m_grav
-                    if delta_M > self.max_neutrino_mass_loss:
-                        delta_M = self.max_neutrino_mass_loss
-                    if m_grav >= self.max_NS_mass and star.state == "BH":
-                        mass_direct_collapse = self.max_NS_mass + delta_M
-                        final_BH = do_core_collapse_BH(
-                            star=star, mass_collapsing=m_rembar,
-                            mass_central_BH=mass_direct_collapse,
-                            neutrino_mass_loss=delta_M,
-                            max_neutrino_mass_loss=self.max_neutrino_mass_loss,
-                            verbose=self.verbose
-                        )
-                        # set post-collapse properties/information to store
-                        for i in final_BH.keys():
-                            setattr(star, i, final_BH[i])
-                        # set specific properties manually
-                        star.mass = final_BH['M_BH_total']
-                        star.spin = final_BH['a_BH_total']
-
-                        if m_grav != star.mass and self.verbose:
-                            print("The star formed a disk during the collapse "
-                                  "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
-                                  "M_sun.")
-
-                    elif star.state == "NS":
-                        star.mass = m_grav
-                        star.m_disk_accreted = 0.0
-                        star.m_disk_radiated = 0.0
-                        star.spin = 0.0
-                    else:
-                        # This leads to a failed binary
-                        for key in STARPROPERTIES:
-                            setattr(star, key, None)
-                        return f"FAILED core collapse! (Invalid core state: {state})"
-
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
-
-                elif self.use_core_masses or SN_type == "ECSN":
-                    star.mass = m_grav
-                    if m_grav >= self.max_NS_mass:
-                        if SN_type == "ECSN":
-                            Pwarn("An ECSN should not form a black hole: "
-                                  f"m_grav={m_grav}.",
-                                  "InappropriateValueWarning")
-                        # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
-                        # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
-
-                        # assume the spin value is the AM of the star
-                        # convert to CGS units
-                        G = const.standard_cgrav
-                        c = const.clight
-                        Mo = const.Msun
-                        star.spin = (10**star.log_total_angular_momentum * c
-                                     / (G * (m_grav * Mo) ** 2))
-                        if star.spin > 1.0:
-                            if self.verbose:
-                                print("The spin exceed 1, capping it to 1...")
-                            star.spin = 1.0
-                        star.m_disk_accreted = 0.0
-                        star.m_disk_radiated = 0.0
-                        star.state = "BH"
-                    else:
-                        star.spin = 0.0
-                        star.m_disk_accreted = 0.0
-                        star.m_disk_radiated = 0.0
-                        star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        np.nan, np.nan
-
-                elif self.allow_spin_None:
-                    # If the profile is not available and spin can stay
-                    # undetermined
-                    star.mass = m_grav
-                    star.spin = None
-                    star.m_disk_accreted = 0.0
-                    star.m_disk_radiated = 0.0
-                    if m_grav >= self.max_NS_mass:
-                        star.state = "BH"
-                    else:
-                        star.state = "NS"
-                    star.h1_mass_ej, star.he4_mass_ej = \
-                        np.nan, np.nan
-
-                else:
-                    # This leads to a failed binary
-                    for key in STARPROPERTIES:
-                        setattr(star, key, None)
-                    return "FAILED core collapse!"
-
-        else:
-            # This leads to a failed binary
+        # Verifies if the star is in state state where it can explode
+        if state not in STAR_STATES_CC:
             return f"The star cannot collapse: star state {state}."
+
+        SN_type = ""
+        # if no profile is avaiable but interpolation quantities are,
+        # use those, else continue with or without profile.
+        if self.use_interp_values:
+            # find SN_MODEL_NAME corresponding to class variable
+            SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(vars(self),
+                                                    verbose=self.verbose)
+
+            # check if selected model is supported
+            if SN_MODEL_NAME_SEL is None:
+                raise ValueError('Your model assumptions are not'
+                                    'supported!')
+            elif getattr(star, SN_MODEL_NAME_SEL) is None:
+                # NOTE: this option is needed to do the collapse
+                # for stars evolved with the step_detached or
+                # step_disrupted.
+                # allow to continue with the collapse with profile
+                # or core masses
+                Pwarn(f'{SN_MODEL_NAME_SEL}: The collapsed star was not '
+                        'interpolated! If use_profiles or use_core_masses '
+                        'is set to True, continue with the collapse.',
+                        "InterpolationWarning")
+            else:
+                SN_MODEL_properties = getattr(star, SN_MODEL_NAME_SEL)
+
+                SN_type = self.check_SN_type(m_core=star.co_core_mass,
+                                                m_He_core=star.he_core_mass,
+                                                m_star=star.mass)[3]
+                if self.use_profiles and star.profile is not None:
+                    alternative = "Instead use profiles."
+                elif self.use_core_masses:
+                    alternative = "Instead use core masses."
+                elif self.allow_spin_None:
+                    alternative = "Instead use core mass without spin."
+                else:
+                    alternative = ""
+
+                if SN_MODEL_properties['SN_type'] == "ECSN":
+                    # overwrite ECSN in SN MODEL
+                    SN_MODEL_properties['SN_type'] = SN_type
+                    Pwarn(f"ECSN in SN_MODEL replaced by {SN_type}",
+                            "ReplaceValueWarning")
+
+                if SN_type == "ECSN":
+                    # do not use interpolated values for ECSN range instead
+                    # behave like use_core_masses=True
+                    pass
+                ## star's SN_type mismatches one from the model
+                elif SN_type != SN_MODEL_properties['SN_type']:
+                    Pwarn(f"The SN_type does not match the star: {SN_type}"
+                            f"!={SN_MODEL_properties['SN_type']}."
+                            +alternative, "ApproximationWarning")
+                ## Check if SN_type mismatches the CO_type in the model
+                elif not check_SN_CO_match(SN_MODEL_properties['SN_type'],
+                                            SN_MODEL_properties['state']):
+                    Pwarn(f"{SN_MODEL_NAME_SEL}: The SN_type does not "
+                            "match the predicted CO."+alternative,
+                            "ApproximationWarning")
+                ## Check if there is no interpolated remnant mass
+                elif pd.isna(SN_MODEL_properties['mass']):
+                    Pwarn(f"There is no interpolated remnant mass."
+                            +alternative, "ApproximationWarning")
+                ## Otherwise interpolated values can be used for this SN
+                else:
+                    for key, value in SN_MODEL_properties.items():
+                        setattr(star, key, value)
+
+                    if star.state == 'WD':
+                        for key in STARPROPERTIES:
+                            if key in ["he_core_mass"]:
+                                setattr(star, key, star.mass)
+                            elif key in ["co_core_mass"]:
+                                if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
+                                    setattr(star, key, star.mass)
+                                else:
+                                    setattr(star, key, 0.)
+                            elif key not in ["state", "mass", "spin",
+                                            "m_disk_accreted",
+                                            "m_disk_radiated", "center_h1",
+                                            "center_he4", "center_c12",
+                                            "center_n14", "center_o16"]:
+                                setattr(star, key, None)
+
+                    else:
+                        for key in STARPROPERTIES:
+                            if key not in ["state", "mass", "spin",
+                                        "m_disk_accreted",
+                                        "m_disk_radiated"]:
+                                setattr(star, key, None)
+
+                    # No remnant if a PISN happens
+                    if star.SN_type == 'PISN':
+                        convert_star_to_massless_remnant(star=star)
+                        # the mass is set to None
+                        # but an orbital kick is still applied.
+                        # Since the mass is set to None, this will lead to
+                        # a disruption
+                        # TODO: make it skip the kick caluclation
+
+                    if getattr(star, 'SN_type') != 'PISN':
+                        star.log_R = np.log10(CO_radius(star.mass, star.state))
+                    return
+
+        # Verifies the selection of core-collapse mechnism to perform
+        # the collapse
+        if self.mechanism in [
+            self.Fryer12_rapid,
+            self.Fryer12_delayed,
+            self.direct_collapse,
+            self.direct_collapse_hecore,
+        ]:
+            # m_core = star.co_core_mass
+
+            # this flag checks if a profile is available
+            profile = star.profile
+
+            # computes the baryonic remnant mass from the
+            # PISN and PPISN prescription if the star will
+            # experience such event
+            m_PISN = self.PISN_prescription(star)
+
+            # the baryonic remnant mass is computed in terms
+            # of the core mass.
+            m_rembar, star.f_fb, _ = self.compute_m_rembar(star, m_PISN)
+
+            # check if a white dwarf has been born
+            if star.SN_type == "WD":
+                star.mass = m_rembar
+                star.state = "WD"
+                star.spin = 0.
+                star.log_R = np.log10(CO_radius(star.mass, star.state))
+                for key in STARPROPERTIES:
+                    if key in ["he_core_mass"]:
+                        setattr(star, key, star.mass)
+                    elif key in ["co_core_mass"]:
+                        if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
+                            setattr(star, key, star.mass)
+                        else:
+                            setattr(star, key, 0.)
+                    elif key not in ["state", "mass", "spin",
+                                        "m_disk_accreted", "m_disk_radiated",
+                                        "center_h1", "center_he4",
+                                        "center_c12", "center_n14",
+                                        "center_o16"]:
+                        setattr(star, key, None)
+                return
+
+            # check if the star was disrupted by the PISN
+            if pd.isna(m_rembar):
+                convert_star_to_massless_remnant(star=star)
+                return
+
+            # Computing the gravitational mass of the remnant
+            # as in Lattimer & Yahil, 1989
+            m_grav = (20.0 / 3.0) * (np.sqrt(1.0 + 0.3 * m_rembar) - 1.0)
+            if (m_rembar - m_grav) > self.max_neutrino_mass_loss:
+                m_grav = m_rembar - self.max_neutrino_mass_loss
+
+            # If the profile of the star is available then
+            # it will be collapsed to get the information
+            # on the compact object spin
+            if self.use_profiles and profile is not None:
+                delta_M = m_rembar - m_grav
+                if delta_M > self.max_neutrino_mass_loss:
+                    delta_M = self.max_neutrino_mass_loss
+                if m_grav >= self.max_NS_mass:
+                    mass_direct_collapse = self.max_NS_mass + delta_M
+                    final_BH = do_core_collapse_BH(
+                        star=star, mass_collapsing=m_rembar,
+                        mass_central_BH=mass_direct_collapse,
+                        neutrino_mass_loss=delta_M,
+                        max_neutrino_mass_loss=self.max_neutrino_mass_loss,
+                        verbose=self.verbose
+                    )
+                    # set post-collapse properties/information to store
+                    for i in final_BH.keys():
+                        setattr(star, i, final_BH[i])
+
+                    # set specific properties manually
+                    star.mass = final_BH['M_BH_total']
+                    star.spin = final_BH['a_BH_total']
+                    star.m_disk_accreted = final_BH['m_disk_accreted']
+                    star.m_disk_radiated = final_BH['m_disk_radiated']
+                    star.state = "BH"
+                else:
+                    star.mass = m_grav
+                    star.spin = 0.
+                    star.m_disk_accreted = 0.
+                    star.m_disk_radiated = 0.
+                    star.state = 'NS'
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
+
+            elif self.use_core_masses or SN_type == "ECSN":
+                # If the profile is not available the star spin
+                # is used to get the compact object spin
+                star.mass = m_grav
+                if m_grav >= self.max_NS_mass:
+                    if SN_type == "ECSN":
+                        Pwarn("An ECSN should not form a black hole: "
+                                f"m_grav={m_grav}.",
+                                "InappropriateValueWarning")
+                    # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
+                    # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
+
+                    # assume the spin value is the AM of the star
+                    # convert to CGS units
+                    G = const.standard_cgrav
+                    c = const.clight
+                    Mo = const.Msun
+                    star.spin = (10**star.log_total_angular_momentum * c
+                                    / (G * (m_grav * Mo) ** 2))
+                    if star.spin > 1.0:
+                        if self.verbose:
+                            print("The spin exceeds 1, capping it to 1...")
+                        star.spin = 1.0
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    star.state = "BH"
+                else:
+                    star.spin = 0.0
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    star.state = "NS"
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    np.nan, np.nan
+
+            elif self.allow_spin_None:
+                # If the profile is not available and spin can stay
+                # undetermined
+                star.mass = m_grav
+                star.spin = None
+                star.m_disk_accreted = 0.0
+                star.m_disk_radiated = 0.0
+                if m_grav >= self.max_NS_mass:
+                    star.state = "BH"
+                else:
+                    star.state = "NS"
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    np.nan, np.nan
+
+            else:
+                # This leads to a failed binary
+                for key in STARPROPERTIES:
+                    setattr(star, key, None)
+                return "FAILED core collapse!"
+
+        elif self.mechanism in [
+            self.Sukhbold16_engines,
+            self.Patton20_engines,
+            self.Couch20_engines,
+            self.Maltsev25_engines
+        ]:
+            # The final remnant mass and and state
+            # is computed by the selected mechanism
+
+            # PISN and PPISN prescription
+            m_PISN = self.PISN_prescription(star)
+
+            m_rembar, star.f_fb, state = self.compute_m_rembar(star,
+                                                                m_PISN)
+            star.state = state
+
+            # check if a white dwarf has been born
+            if star.SN_type == "WD":
+                star.mass = m_rembar
+                star.state = "WD"
+                star.spin = 0.
+                star.log_R = np.log10(CO_radius(star.mass, star.state))
+                for key in STARPROPERTIES:
+                    if key in ["he_core_mass"]:
+                        setattr(star, key, star.mass)
+                    elif key in ["co_core_mass"]:
+                        if star.center_he4 < THRESHOLD_CENTRAL_ABUNDANCE:
+                            setattr(star, key, star.mass)
+                        else:
+                            setattr(star, key, 0.)
+                    elif key not in ["state", "mass", "spin",
+                                        "m_disk_accreted", "m_disk_radiated",
+                                        "center_h1", "center_he4",
+                                        "center_c12", "center_n14",
+                                        "center_o16"]:
+                        setattr(star, key, None)
+                return
+
+            # check if the star was disrupted by the PISN
+            if pd.isna(m_rembar):
+                convert_star_to_massless_remnant(star=star)
+                return
+
+            # Computing the gravitational mass of the remnant
+            # as in Lattimer & Yahil, 1989
+            m_grav = (20.0 / 3.0) * (np.sqrt(1.0 + 0.3 * m_rembar) - 1.0)
+            if (m_rembar - m_grav) > self.max_neutrino_mass_loss:
+                m_grav = m_rembar - self.max_neutrino_mass_loss
+
+            # this flag checks if a profile is available
+            profile = star.profile
+
+            if self.use_profiles and profile is not None:
+                delta_M = m_rembar - m_grav
+                if delta_M > self.max_neutrino_mass_loss:
+                    delta_M = self.max_neutrino_mass_loss
+                if m_grav >= self.max_NS_mass and star.state == "BH":
+                    mass_direct_collapse = self.max_NS_mass + delta_M
+                    final_BH = do_core_collapse_BH(
+                        star=star, mass_collapsing=m_rembar,
+                        mass_central_BH=mass_direct_collapse,
+                        neutrino_mass_loss=delta_M,
+                        max_neutrino_mass_loss=self.max_neutrino_mass_loss,
+                        verbose=self.verbose
+                    )
+                    # set post-collapse properties/information to store
+                    for i in final_BH.keys():
+                        setattr(star, i, final_BH[i])
+                    # set specific properties manually
+                    star.mass = final_BH['M_BH_total']
+                    star.spin = final_BH['a_BH_total']
+
+                    if m_grav != star.mass and self.verbose:
+                        print("The star formed a disk during the collapse "
+                                "and lost", round(final_BH['M_BH_total'] - m_rembar, 2),
+                                "M_sun.")
+
+                elif star.state == "NS":
+                    star.mass = m_grav
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    star.spin = 0.0
+                else:
+                    # This leads to a failed binary
+                    for key in STARPROPERTIES:
+                        setattr(star, key, None)
+                    return f"FAILED core collapse! (Invalid core state: {state})"
+
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    get_ejecta_element_mass_at_collapse(star,star.mass,verbose=self.verbose)
+
+            elif self.use_core_masses or SN_type == "ECSN":
+                star.mass = m_grav
+                if m_grav >= self.max_NS_mass:
+                    if SN_type == "ECSN":
+                        Pwarn("An ECSN should not form a black hole: "
+                                f"m_grav={m_grav}.",
+                                "InappropriateValueWarning")
+                    # see Eq. 14, Fryer, C. L., Belczynski, K., Wiktorowicz,
+                    # G., Dominik, M., Kalogera, V., & Holz, D. E. (2012), ApJ, 749(1), 91.
+
+                    # assume the spin value is the AM of the star
+                    # convert to CGS units
+                    G = const.standard_cgrav
+                    c = const.clight
+                    Mo = const.Msun
+                    star.spin = (10**star.log_total_angular_momentum * c
+                                    / (G * (m_grav * Mo) ** 2))
+                    if star.spin > 1.0:
+                        if self.verbose:
+                            print("The spin exceed 1, capping it to 1...")
+                        star.spin = 1.0
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    star.state = "BH"
+                else:
+                    star.spin = 0.0
+                    star.m_disk_accreted = 0.0
+                    star.m_disk_radiated = 0.0
+                    star.state = "NS"
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    np.nan, np.nan
+
+            elif self.allow_spin_None:
+                # If the profile is not available and spin can stay
+                # undetermined
+                star.mass = m_grav
+                star.spin = None
+                star.m_disk_accreted = 0.0
+                star.m_disk_radiated = 0.0
+                if m_grav >= self.max_NS_mass:
+                    star.state = "BH"
+                else:
+                    star.state = "NS"
+                star.h1_mass_ej, star.he4_mass_ej = \
+                    np.nan, np.nan
+
+            else:
+                # This leads to a failed binary
+                for key in STARPROPERTIES:
+                    setattr(star, key, None)
+                return "FAILED core collapse!"
+
 
         star.metallicity = star.metallicity_history[-1]
 
@@ -984,276 +964,6 @@ class StepSN(object):
 
         return
 
-    def PISN_prescription(self, star):
-        """Compute baryonic remnant mass for the PPISN and PISN prescription.
-
-        Parameters
-        ----------
-        star : object
-            Star object containing the star properties.
-
-        Returns
-        -------
-        m_PISN : double
-            Maximum stellar mass in M_sun after the PPISN/PISN prescription.
-
-        """
-        if self.PISN is None:
-            return
-
-        else:
-            # perform the PISN prescription in terms of the
-            # He core mass at pre-supernova
-            m_He_core = star.he_core_mass
-            m_CO_core = star.co_core_mass
-            m_star = star.mass
-            if self.PISN == "Marchant+19":
-                if m_He_core >= 31.99 and m_He_core <= 61.10:
-                    # this is the 8th-order polynomial fit of table 1
-                    # value, see COSMIC paper (Breivik et al. 2020)
-                    polyfit = (
-                        - 6.29429263e5
-                        + 1.15957797e5 * m_He_core
-                        - 9.28332577e3 * m_He_core ** 2.0
-                        + 4.21856189e2 * m_He_core ** 3.0
-                        - 1.19019565e1 * m_He_core ** 4.0
-                        + 2.13499267e-1 * m_He_core ** 5.0
-                        - 2.37814255e-3 * m_He_core ** 6.0
-                        + 1.50408118e-5 * m_He_core ** 7.0
-                        - 4.13587235e-8 * m_He_core ** 8.0
-                    )
-                    m_PISN = polyfit
-
-                elif m_He_core > 61.10 and m_He_core < 124.12:
-                    # in Breivik et al. (2020) they qoute the CO core mass
-                    # range as 54.48<M_CO-core/Msun<113.29 here, but this
-                    # might cause gaps, when switching between core masses,
-                    # hence take the He-core masses from table 1 of Marchant
-                    # et al. (2019)
-                    m_PISN = np.nan
-
-                else:
-                    # above the PISN gap we assume direct collapse of the
-                    if self.conserve_hydrogen_envelope:
-                        m_PISN = m_star
-                    else:
-                        m_PISN = m_He_core
-
-            elif self.PISN == 'Hendriks+23':
-                # Hendriks et al. 2023 PISN prescription
-                # 10.1093/mnras/stad2857
-                # Shifting PPI and PISN gap
-                # works by removing delta_M_PPI from the star
-                # and then applying any remnant mass prescription
-
-                delta_M_CO_shift = self.PISN_CO_shift if self.PISN_CO_shift is not None else 0.0
-                delta_M_PPI_extra_ML = self.PPI_extra_mass_loss if self.PPI_extra_mass_loss is not None else 0.0
-
-                m_CO_core_PISN_min = 38 + delta_M_CO_shift
-                m_CO_core_PISN_max = 114 + delta_M_CO_shift
-
-                if ((m_CO_core >= m_CO_core_PISN_min)
-                    and m_CO_core <= m_CO_core_PISN_max):
-
-                    # delta_PPI -> -inf if Z -> 0
-                    # limit mass loss to Z = 1e-4 for Z below it.
-                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
-                    if star.metallicity < 1e-4:
-                        Z = 1e-4
-                    else:
-                        Z = star.metallicity
-                    # Hendriks et al. 2023 Equation 6
-                    # 10.1093/mnras/stad2857
-                    delta_M_PPI = (
-                        (0.0006 * np.log10(Z * const.Zsun) + 0.0054)
-                        * (m_CO_core - delta_M_CO_shift - 34.8)**3
-                        - 0.0013 * (m_CO_core - delta_M_CO_shift - 34.8)**2
-                        + delta_M_PPI_extra_ML
-                    )
-                    if self.verbose:
-                        print(f"delta_M_PPI: {delta_M_PPI} Msun")
-                else:
-                    delta_M_PPI = 0.0
-
-                if delta_M_PPI <= 0.0:
-                    # no PPI -> use CCSN prescription
-                    if self.conserve_hydrogen_envelope:
-                        m_PISN = m_star
-                    else:
-                        m_PISN = m_He_core
-                else:
-                    # PPI occurs
-                    if self.conserve_hydrogen_PPI:
-                        m_PISN = m_star - delta_M_PPI
-                    else:
-                        m_PISN = m_He_core - delta_M_PPI
-
-                    if m_PISN < 0.0:
-                        m_PISN = np.nan
-                    else:
-                        PISN_star = copy.deepcopy(star)
-                        PISN_star.mass = m_PISN
-                        if PISN_star.he_core_mass > m_PISN:
-                            PISN_star.he_core_mass = m_PISN
-                        if PISN_star.co_core_mass > m_PISN:
-                            PISN_star.co_core_mass = m_PISN
-                        m_rembar, _, _ = self.compute_m_rembar(PISN_star, m_PISN)
-
-                        if m_rembar < 10:
-                            m_PISN = np.nan
-                        else:
-                            m_PISN = m_rembar
-
-            elif is_number(self.PISN) and m_He_core > self.PISN:
-                m_PISN = self.PISN
-
-            elif is_number(self.PISN) and 0.0 < m_He_core <= self.PISN:
-                m_PISN = None
-
-            else:
-                raise ValueError("This choice {} of PISN is not available!".format(self.PISN))
-
-        if self.verbose:
-            if m_PISN is None:
-                print("")
-                print("The star did NOT lose any mass because of "
-                      "PPIN or PISN.")
-            elif not pd.isna(m_PISN):
-                print("")
-                print(
-                    "The star with initial mass {:2.2f}".format(m_He_core),
-                    "M_sun went through the PISN routine and lost",
-                    "{:2.2f} M_sun.".format(m_He_core - m_PISN),
-                    "The new m_rembar mass that will collapse to form a ",
-                    "CO object is {:2.2f} M_sun.".format(m_PISN))
-            else:
-                print("The star was disrupted by the PISN prescription!")
-
-        return m_PISN
-
-    def check_SN_type(self, m_core, m_He_core, m_star):
-        """Get the remnant mass, fallback frac., state & SN type of the SN."""
-        if self.ECSN == "Tauris+15":
-            # Label the supernova type as in Tauris et al. (2015),
-            # considering their definition of metal core quivalent
-            # to the mass of the CO core the the star object at pre-SN
-            min_M_CO_ECSN = 1.37  # Msun from Takahashi et al. (2013)
-            max_M_CO_ECSN = 1.43  # Msun from Tauris et al. (2015)
-
-            if m_core < min_M_CO_ECSN:
-                # The birth of a white dwarf is assumed
-                SN_type = "WD"
-
-                if m_core > 0.:
-                    # co_core_mass, note there will be no kick
-                    m_rembar = m_core
-                elif m_He_core > 0.:
-                    m_rembar = m_He_core
-                else:
-                    # this is catching H-rich_non_burning stars
-                    if m_star < 0.5:
-                        m_rembar = m_star
-                        if ((m_core < 0.)or(m_He_core < 0.)):
-                            Pwarn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                        else:
-                            Pwarn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                    else:
-                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
-                f_fb = 1.0  # no SN the no kick is assumed
-                state = "WD"
-
-                return m_rembar, f_fb, state, SN_type
-
-            elif (m_core >= min_M_CO_ECSN) and (m_core <= max_M_CO_ECSN):
-                SN_type = "ECSN"
-            elif m_core > max_M_CO_ECSN:
-                SN_type = "CCSN"
-            else:
-                raise ValueError(
-                    "The SN step was applied for an on object outside the "
-                    "domain of electron-capture SN and Fe core-collapse SN."
-                )
-
-        elif self.ECSN == 'Podsiadlowski+04':
-            # Limits on He core mass progenitors of ECSN, default on cosmic
-            min_M_He_ECSN = 1.4  # Msun from Podsiadlowski+2004
-            max_M_He_ECSN = 2.5  # Msun from Podsiadlowski+2004
-
-            if m_He_core < min_M_He_ECSN:
-                # The birth of a white dwarf is assumed
-                SN_type = "WD"
-
-                if m_core > 0.:
-                    # co_core_mass, note there will be no kick
-                    m_rembar = m_core
-                elif m_He_core > 0.:
-                    m_rembar = m_He_core
-                else:
-                    # this is catching H-rich_non_burning stars
-                    if m_star < 0.5:
-                        m_rembar = m_star
-                        if ((m_core < 0.)or(m_He_core < 0.)):
-                            Pwarn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                        else:
-                            Pwarn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                    else:
-                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
-                f_fb = 1.0  # no SN the no kick is assumed
-                state = "WD"
-
-                return m_rembar, f_fb, state, SN_type
-
-            elif (m_He_core >= min_M_He_ECSN) and (m_He_core <= max_M_He_ECSN):
-                SN_type = "ECSN"
-            elif m_He_core > max_M_He_ECSN:
-                SN_type = "CCSN"
-            else:
-                raise ValueError(
-                    "The SN step was applied for an on object outside the "
-                    "domain of electron-capture SN and Fe core-collapse SN."
-                )
-
-        elif self.ECSN is None:
-            # Here we consider that any CO core mass less that min_M_CO_ECSN
-            # will produce a white dwarf
-            min_M_CO_ECSN = 1.37  # Msun from Takahashi et al. (2013)
-            if m_core < min_M_CO_ECSN:
-                # The birth of a white dwarf is assumed
-                SN_type = "WD"
-
-                if m_core > 0.:
-                    # co_core_mass, note there will be no kick
-                    m_rembar = m_core
-                elif m_He_core > 0.:
-                    m_rembar = m_He_core
-                else:
-                    # this is catching H-rich_non_burning stars
-                    if m_star < 0.5:
-                        m_rembar = m_star
-                        if ((m_core < 0.)or(m_He_core < 0.)):
-                            Pwarn('Invalid co/He core masses! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                        else:
-                            Pwarn('co/He core masses are zero! '
-                                          'Setting m_WD=m_star!', "ApproximationWarning")
-                    else:
-                        raise ModelError('Invalid co/He core masses! Cannot complete SN.')
-                f_fb = 1.0  # no SN the no kick is assumed
-                state = "WD"
-
-                return m_rembar, f_fb, state, SN_type
-
-            else:
-                SN_type = "CCSN"
-
-        else:
-            raise ValueError("The given ECSN prescription is not available.")
-
-        return None, None, None, SN_type
 
     def compute_m_rembar(self, star, m_PISN):
         """Compute supernova remnant barionic mass.
