@@ -165,14 +165,16 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
 
     # Compare original MD5 with freshly calculated
     if MD5_check:
+        if verbose:
+            print("Download complete, performing MD5 check.")
+
         try:
+            md5 = hashlib.md5()
             with open(filepath, "rb") as file_to_check:
-                # read contents of the file
-                data = file_to_check.read()
-
-            # pipe contents of the file through
-            md5_returned = hashlib.md5(data).hexdigest()
-
+                # Read and check contents of file in chunks to avoid memory errors
+                for chunk in iter(lambda: file_to_check.read(8*1024*1024), b""):
+                    md5.update(chunk)
+            md5_returned = md5.hexdigest()
             if original_md5 == md5_returned:
                 if verbose:
                     print("MD5 verified.")
