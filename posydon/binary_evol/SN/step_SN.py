@@ -78,10 +78,6 @@ from posydon.utils.limits_thresholds import (
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
-from posydon.binary_evol.SN.explodability.ECSN_prescriptions import ECSN_check
-from posydon.binary_evol.SN.kicks.kick_prescriptions import KICK_PRESCRIPTIONS
-from posydon.binary_evol.SN.CO_mass.CO_mass_prescriptions import CO_MASS_CRITERIA
-from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import EXPLODABILITY_CRITERIA
 
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
@@ -91,6 +87,117 @@ path_to_Patton_datasets = os.path.join(PATH_TO_POSYDON_DATA,
 
 path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
+####################################################################################################
+from abc import ABC, abstractmethod
+from posydon.binary_evol.SN.explodability.ECSN_prescriptions import Prescription_ECSN
+from posydon.binary_evol.SN.kicks.kick_prescriptions import Prescription_kick
+from posydon.binary_evol.SN.CO_mass.CO_mass_prescriptions import Prescription_CO_mass
+from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import ExplodabilityCCSN
+####################################################################################################
+
+class stepSN(object):
+    """Initialize a StepSN instance."""
+    # read kwargs to initialize the class
+    DEFAULT_KWARGS = {
+        # kick physics
+        "kick": True,
+        "kick_normalisation": 'one_over_mass',
+        "kick_prescription": 'maxwellian',
+        "sigma_kick_CCSN_NS": 265.0,
+        "mean_kick_CCSN_NS": None,
+        "sigma_kick_CCSN_BH": 265.0,
+        "mean_kick_CCSN_BH": None,
+        "sigma_kick_ECSN": 20.0,
+        "mean_kick_ECSN": None,
+        # other
+        "RNG": None,
+        "verbose": False
+    }
+    # add core collapse physics
+    DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+    def __init__(self,**kwargs):
+        if kwargs:
+            for key in kwargs:
+                if key not in self.DEFAULT_KWARGS:
+                    raise ValueError(key + " is not a valid parameter name!")
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, kwargs.get(varname, self.DEFAULT_KWARGS[varname]))
+            self.RNG = kwargs.get("RNG")
+            if self.RNG is None:
+                self.RNG = np.random.default_rng()
+
+        else:
+            for varname in self.DEFAULT_KWARGS:
+                setattr(self, varname, self.DEFAULT_KWARGS[varname])
+    self._is_ECSN = 
+    self._is_PISN
+    self._is_CCSN
+    self._get_remnant_mass
+    self._get_kick
+    def __call__(self,binary):
+        if binary.event=="CC1":
+            dying_star = binary.star_1
+            companion = binary.star_2
+        elif binary.event=="CC2":
+            dying_star = binary.star_2
+            companion = binary.star_1
+        else:
+            raise ValueError("Invalid call of step_SN: "
+                             "Called during binary event {event}".format(event=binary.event)
+                             "Step _SNshould only be called if binary event is CC1 or CC2")
+
+        ECSN_output = self._is_ECSN(dying_star)
+        if not isinstance(ECSN_output,type(None)):
+            m_rembar, f_fb, state = ECSN_output
+        else:
+            PISN_output = self._is_PISN(dying_star)
+            if not isinstance(PISN_output,type(None)):
+                m_rembar, f_fb, state = PISN_output
+            else:
+                state = self._is_CCSN(dying_star)
+                m_rembar, f_fb = self._get_remnant_mass(dying_star,state)
+        Vkick = self._get_kick(dying_star,m_rembar,f_fb)
+
+
+    # @abstractmethod
+    # def _is_ECSN(self,star):
+    #     pass
+
+    # @abstractmethod
+    # def _is_PISN(self,star):
+    #     pass
+
+    # @abstractmethod
+    # def _is_CCSN(self,star):
+    #     pass
+
+    # @abstractmethod
+    # def _get_remnant_mass(self,star):
+    #     pass
+
+    # @abstractmethod
+    # def _get_kick(self,star):
+    #     pass
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 class StepSN(object):
     """The supernova step in POSYDON.
