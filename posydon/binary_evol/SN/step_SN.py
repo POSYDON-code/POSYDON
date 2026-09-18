@@ -268,9 +268,8 @@ class StepSN(object):
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
-    # the Maltsev+25 mechanisms are defined by extra parameters. They are not
-    # part of DEFAULT_SN_MODEL (see posydon.grids.SN_MODELS), but step_SN needs
-    # a value for them whichever mechanism is selected.
+    # Maltsev+25 extras: not in DEFAULT_SN_MODEL, but step_SN needs a value
+    # for them whichever mechanism is selected
     DEFAULT_KWARGS.update(DEFAULT_MALTSEV_SN_MODEL)
 
 

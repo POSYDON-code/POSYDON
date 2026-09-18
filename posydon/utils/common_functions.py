@@ -1750,40 +1750,38 @@ def cumulative_mass_transfer_flag(MT_cases, shift_cases=False):
     )
 
 
-def first_mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
-    """Resolve the first MT class from a cumulative MT-case string.
+def first_mt_case_from_cumulative(cumulative_mt_case=None, star_index=None):
+    """Get the MT case of the first mass-transfer episode.
 
-    Takes the cumulative_mt_case from a grid and returns the first MT class.
+    A cumulative MT-case string lists every episode of a run, e.g.
+    'case_A1/B1/A2', with the MT case (see `MT_CASE_TO_STR`) followed by the
+    donor index. This returns the first episode's case on its own, e.g.
+    'case_A', as recorded by the grid and not tied to any prescription.
 
+    Keeping only the first episode follows Maltsev+25, Appendix A.5.1. The
+    result is stored as the `first_mt_case` column of a grid, as
+    `binary.first_mt_case_<grid_type>` and as `star.first_mt_case` (see
+    `posydon.binary_evol.MESA.step_mesa`); a prescription maps it onto its own
+    classification (see e.g. `posydon.binary_evol.SN.maltsev_MCO`).
 
     Parameters
     ----------
     cumulative_mt_case : str, bytes or None
         The cumulative MT-history string, e.g. 'case_A1/B1/A2' or 'no_RLOF'.
     star_index : int or None
-        Index (1 or 2) of the star (donor) to resolve the class for.
+        Index (1 or 2) of the star (donor) to resolve the case for.
         If None, episodes of either star are considered and the first
         episode overall (whichever star is the donor) is used.
 
     Returns
     -------
     str or None
-        One of 'single', 'case_A', 'case_B', 'case_C'; when no qualifying
-        MT episode is found, the original ``cumulative_mt_case`` is returned
-        verbatim, e.g. 'no_RLOF', 'initial_RLOF', 'not_converged' or None.
+        The MT case of the first episode, e.g. 'case_A', 'case_B', 'case_BB'
+        or 'case_C'; when no qualifying MT episode is found, the original
+        ``cumulative_mt_case`` is returned verbatim, e.g. 'no_RLOF',
+        'initial_RLOF', 'not_converged' or None.
 
     """
-
-    def _letter_to_class(letter):
-        if letter == 'A':
-            return 'case_A'
-        if letter in ('B', 'BA', 'BB'):
-            return 'case_B'
-        if letter == 'C':
-            return 'case_C'
-        # 'other' and other exotic cases are treated as single
-        return 'single'
-
     if isinstance(cumulative_mt_case, bytes):
         cumulative_mt_case = cumulative_mt_case.decode('utf-8')
 
@@ -1795,18 +1793,18 @@ def first_mt_class_from_cumulative(cumulative_mt_case=None, star_index=None):
             continue
         if token[-1] in ('1', '2'):
             donor = token[-1]
-            cls_letter = token[:-1]
+            mt_case = token[:-1]
         else:
             # e.g. "no_RLOF" or an unrecognised token
             continue
         if star_index is None or donor == str(star_index):
-            donor_cases.append(cls_letter)
+            donor_cases.append(mt_case)
 
     if not donor_cases:
         return cumulative_mt_case
 
     # Take the first MT episode
-    return _letter_to_class(donor_cases[0])
+    return 'case_' + donor_cases[0]
 
 
 def get_i_He_depl(history):

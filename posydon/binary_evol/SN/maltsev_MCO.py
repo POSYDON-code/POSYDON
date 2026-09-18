@@ -4,9 +4,10 @@ This module implements the rapid binary-population-synthesis (BPS) CCSN recipe
 of Maltsev et al. 2025 (arXiv:2503.23856, Sects. 3.2.1-3.2.3, Eq. 11). The
 recipe predicts the *compact-object type* (NS, fallback BH or direct-collapse
 BH) from the carbon-oxygen core mass ``M_CO``, the metallicity ``Z`` and the
-mass-transfer (MT) history class of the progenitor. The class is taken from
-the **first** mass-transfer episode (Maltsev+25, Appendix A.5.1); see
-:meth:`Maltsev25_MCO_corecollapse._resolve_mt_class`.
+mass-transfer (MT) history class of the progenitor. The class is mapped from
+the MT case of the **first** mass-transfer episode (Maltsev+25, Appendix
+A.5.1), which the grids record as ``first_mt_case``; see ``_MT_CASE_TO_CLASS``
+and :meth:`Maltsev25_MCO_corecollapse._resolve_mt_class`.
 Crucially, the recipe **separates** two distinct questions:
 
 1. *Explodability* (does the star explode?): a deterministic decision based on
@@ -70,6 +71,19 @@ _NS_WINDOW = {
 
 # Valid MT classes recognised by the recipe.
 MT_CLASSES = tuple(_BOUNDARIES.keys())
+
+# Grid MT case of the first episode -> MT class the recipe is calibrated on.
+# 'BA'/'BB'/'BC' are MT from an already stripped He star -> Case B. Cases
+# absent here fall back to the ``default`` of `_resolve_mt_class`.
+_MT_CASE_TO_CLASS = {
+    'single': 'single',
+    'case_A': 'case_A',
+    'case_B': 'case_B',
+    'case_BA': 'case_B',
+    'case_BB': 'case_B',
+    'case_BC': 'case_B',
+    'case_C': 'case_C',
+}
 
 # Valid extrapolation modes.
 EXTRAPOLATION_MODES = ('optimistic', 'balanced', 'pessimistic')
@@ -171,21 +185,19 @@ class Maltsev25_MCO_corecollapse(object):
     def _resolve_mt_class(self, star, default='single'):
         """Return the Maltsev+25 MT class of the collapsing star.
 
-        The MT class determines which set of ``M_CO`` boundaries is used by
-        the recipe, derived from the **first** mass-transfer episode of the
-        binary (never a later one). This follows Maltsev+25, Appendix A.5.1.
-        Since each grid (step_MESA) overwrites the class, the most recent grid
-        wins. Values that are not a valid MT class (e.g. no MT interaction
-        occurred, or an interpolator without a ``first_mt_case`` key) fall
-        back to the ``default`` class.
+        Maps ``star.first_mt_case`` (set by step_MESA, and the case of the
+        first MT episode only, following Maltsev+25, Appendix A.5.1) onto the
+        MT class selecting the ``M_CO`` boundaries. This is the only place the
+        grid's prescription-agnostic MT case becomes a Maltsev+25 class. Note
+        that each step_MESA overwrites the case, so the last grid wins.
 
         Parameters
         ----------
         star : object or None
             The collapsing star (``None`` in degenerate cases).
         default : str
-            MT class to fall back to when ``star`` carries no valid class.
-            One of 'single', 'case_A', 'case_B', 'case_C'.
+            MT class to fall back to when ``star`` carries no case the recipe
+            distinguishes. One of 'single', 'case_A', 'case_B', 'case_C'.
 
         Returns
         -------
@@ -195,11 +207,10 @@ class Maltsev25_MCO_corecollapse(object):
         """
         if star is None:
             return default
-        mt_class = getattr(star, 'first_mt_class', default)
-        if mt_class not in MT_CLASSES:
-            # nothing valid stored (e.g. 'no_RLOF', 'initial_RLOF', 'None')
-            return default
-        return mt_class
+        mt_case = getattr(star, 'first_mt_case', None)
+        if isinstance(mt_case, bytes):
+            mt_case = mt_case.decode('utf-8')
+        return _MT_CASE_TO_CLASS.get(mt_case, default)
 
     # ------------------------------------------------------------------
     # Boundary / window accessors
@@ -433,12 +444,13 @@ class Maltsev25_MCO_corecollapse(object):
         ----------
         star : object
             Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
-            and ``metallicity`` (Z/Z_sun). Its ``first_mt_class`` attribute (set by
-            step_MESA) is used as the MT-history class when valid.
+            and ``metallicity`` (Z/Z_sun). Its ``first_mt_case`` attribute (set
+            by step_MESA) is mapped onto the MT-history class of the recipe.
         mt_class : str
-            Fallback MT-history class, used only when ``star.first_mt_class`` is
-            missing or not a valid class: 'single', 'case_A', 'case_B' or
-            'case_C'. When ``star.first_mt_class`` is valid it takes precedence.
+            Fallback MT-history class, used only when ``star.first_mt_case`` is
+            missing or holds a case the recipe does not distinguish: 'single',
+            'case_A', 'case_B' or 'case_C'. A case the recipe does
+            distinguish takes precedence.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.

@@ -167,9 +167,9 @@ class BinaryStar:
         self.companion_2_exists = True
         self.non_existent_companion = 0
 
-        # First mass transfer case
-        self.star_1.first_mt_class = getattr(self.star_1, "first_mt_class", None)
-        self.star_2.first_mt_class = getattr(self.star_2, "first_mt_class", None)
+        # MT case of the first MT episode (see step_mesa)
+        self.star_1.first_mt_case = getattr(self.star_1, "first_mt_case", None)
+        self.star_2.first_mt_case = getattr(self.star_2, "first_mt_case", None)
 
         # Set the initial binary properties
         for item in BINARYPROPERTIES:
@@ -1070,7 +1070,7 @@ class BinaryStar:
                     final_value = run.final_values[colname]
                     setattr(binary, attr, final_value)
 
-        # first mass transfer case (whichever episode is the first one)
+        # MT case of the first MT episode of the run
         if "first_mt_case" in run.final_values.dtype.names:
             first_mt_case = run.final_values["first_mt_case"]
             if isinstance(first_mt_case, bytes):

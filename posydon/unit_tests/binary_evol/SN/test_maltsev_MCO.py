@@ -184,84 +184,100 @@ def test_missing_MCO_raises():
 
 
 def test_resolve_mt_class_reads_star_mt_class(engine):
-    # The MT class of the first mass-transfer episode (whichever star is the
-    # donor) is stored on the star during step_MESA; the engine returns it
-    # as-is.
+    # step_MESA stores the first MT episode's case on the star; the recipe
+    # maps it onto its own classification
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    star.first_mt_class = "case_B"
+    star.first_mt_case = "case_B"
     assert engine._resolve_mt_class(star) == "case_B"
-    star.first_mt_class = "case_A"
+    star.first_mt_case = "case_A"
     assert engine._resolve_mt_class(star) == "case_A"
 
 
 def test_resolve_mt_class_defaults_to_single(engine):
-    # No class is stored on the star (e.g. single-star path, or an
-    # interpolation trained without first_mt_case), or the stored value is not
-    # a valid MT class (e.g. the verbatim termination flag token 'no_RLOF'),
-    # so the recipe falls back to 'single' rather than a guessed class.
+    # No case stored (single-star path, or an interpolator without
+    # first_mt_case), or one the recipe does not distinguish -> 'single'
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    assert not hasattr(star, "first_mt_class")
+    assert not hasattr(star, "first_mt_case")
     assert engine._resolve_mt_class(star) == "single"
     # no collapsing star (single-star path) -> single
     assert engine._resolve_mt_class(None) == "single"
-    # invalid / retained-verbatim flags normalize to 'single'
-    for mt_class in ["no_RLOF", "initial_RLOF", "not_converged", "None"]:
-        star.first_mt_class = mt_class
+    # verbatim termination flags -> 'single'
+    for mt_case in ["no_RLOF", "initial_RLOF", "not_converged", "None"]:
+        star.first_mt_case = mt_case
         assert engine._resolve_mt_class(star) == "single"
-    # an explicit fallback class is honoured when no valid class is stored
+    # an explicit fallback is honoured when no usable case is stored
     assert engine._resolve_mt_class(star, "case_C") == "case_C"
 
 
+def test_resolve_mt_class_maps_grid_case(engine):
+    # the only place the finer grid vocabulary is collapsed onto the four
+    # calibrated classes
+    star = FakeStar(co_core_mass=2.0, metallicity=1.0)
+    for mt_case, expected in [("case_A", "case_A"),
+                              ("case_B", "case_B"),
+                              # MT from an already stripped He star -> case B
+                              ("case_BA", "case_B"),
+                              ("case_BB", "case_B"),
+                              ("case_BC", "case_B"),
+                              ("case_C", "case_C"),
+                              ("single", "single")]:
+        star.first_mt_case = mt_case
+        assert engine._resolve_mt_class(star) == expected
+    # cases the recipe does not distinguish fall back to the default
+    for mt_case in ["case_nonburning", "case_undetermined_MT"]:
+        star.first_mt_case = mt_case
+        assert engine._resolve_mt_class(star) == "single"
+    # an HDF5 grid hands back bytes
+    star.first_mt_case = b"case_BB"
+    assert engine._resolve_mt_class(star) == "case_B"
+
+
 def test_resolve_mt_class_first_episode_overall(engine):
-    # The recipe uses the class of the first mass-transfer episode, whichever
-    # star was the donor. step_MESA stores that class on both stars, so either
-    # collapsing star resolves to the same class.
-    from posydon.utils.common_functions import first_mt_class_from_cumulative
+    # step_MESA stores the first episode's case on both stars, whichever was
+    # the donor, so either collapsing star resolves to the same class
+    from posydon.utils.common_functions import first_mt_case_from_cumulative
     star_1 = FakeStar(co_core_mass=2.0, metallicity=1.0)
     star_2 = FakeStar(co_core_mass=2.0, metallicity=1.0)
-    star_1.first_mt_class = star_2.first_mt_class = first_mt_class_from_cumulative("case_A1/B2")
-    assert star_1.first_mt_class == "case_A"
+    star_1.first_mt_case = star_2.first_mt_case = first_mt_case_from_cumulative("case_A1/B2")
+    assert star_1.first_mt_case == "case_A"
     assert engine._resolve_mt_class(star_1) == "case_A"
     assert engine._resolve_mt_class(star_2) == "case_A"
     # ...even when the collapsing star was not the first donor
-    star_1.first_mt_class = star_2.first_mt_class = first_mt_class_from_cumulative("case_B2/A1")
+    star_1.first_mt_case = star_2.first_mt_case = first_mt_case_from_cumulative("case_B2/A1")
     assert engine._resolve_mt_class(star_2) == "case_B"
 
 
 def test_resolve_mt_class_latest_grid_wins(engine):
-    # Each step_MESA run overwrites star.first_mt_class with the class
-    # resolved from that grid's first_mt_case, so the most recent grid wins
-    # (e.g. a CO_HMS_RLO / CO_HeMS run takes precedence over the earlier
-    # HMS_HMS one).
-    from posydon.utils.common_functions import first_mt_class_from_cumulative
+    # each step_MESA overwrites the case from its own cumulative MT case, so
+    # a later CO_HMS_RLO / CO_HeMS run takes precedence over HMS_HMS
+    from posydon.utils.common_functions import first_mt_case_from_cumulative
     star = FakeStar(co_core_mass=2.0, metallicity=1.0)
     # HMS_HMS grid first (case A donation)...
-    star.first_mt_class = first_mt_class_from_cumulative("case_A1/B1")
-    assert star.first_mt_class == "case_A"
-    # ...then a later CO_HMS_RLO grid overwrites with its own class. The class
-    # is the first episode overall, so the second grid's case_B wins.
-    star.first_mt_class = first_mt_class_from_cumulative("case_B2/A1")
+    star.first_mt_case = first_mt_case_from_cumulative("case_A1/B1")
+    assert star.first_mt_case == "case_A"
+    # ...then a later grid overwrites with its own first episode
+    star.first_mt_case = first_mt_case_from_cumulative("case_B2/A1")
     assert engine._resolve_mt_class(star) == "case_B"
     # the latest grid always wins, even if it reports no RLO at all
-    star.first_mt_class = first_mt_class_from_cumulative("no_RLO")
-    assert star.first_mt_class == "no_RLO"
+    star.first_mt_case = first_mt_case_from_cumulative("no_RLO")
+    assert star.first_mt_case == "no_RLO"
     assert engine._resolve_mt_class(star) == "single"
 
 
 def test_call_auto_resolves_star_mt_class(engine):
     # M_CO = 7.0 sits in the 'single' direct-collapse window (M1-M2 = 6.6-7.2)
-    # but below the case_A M1 = 7.4, so the star's MT class (set by step_MESA)
+    # but below the case_A M1 = 7.4, so the star's MT case (set by step_MESA)
     # fully determines the outcome.
     star = FakeStar(co_core_mass=7.0, metallicity=1.0)
-    star.first_mt_class = "case_A"
+    star.first_mt_case = "case_A"
     _, _, state = engine(star, conserve_hydrogen_envelope=False)
     assert state == "NS"
-    # an invalid/verbatim stored class falls back to 'single' boundaries
-    star.first_mt_class = "no_RLOF"
+    # a case the recipe does not distinguish falls back to 'single' boundaries
+    star.first_mt_case = "no_RLOF"
     _, _, state = engine(star, conserve_hydrogen_envelope=False)
     assert state == "BH"
-    # without a stored class the explicit argument is the fallback
-    delattr(star, "first_mt_class")
+    # without a stored case the explicit argument is the fallback
+    delattr(star, "first_mt_case")
     _, _, state = engine(star, "case_A", conserve_hydrogen_envelope=False)
     assert state == "NS"
 

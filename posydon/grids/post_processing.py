@@ -17,7 +17,7 @@ from posydon.utils.common_functions import (
     CEE_parameters_from_core_abundance_thresholds,
     calculate_Patton20_values_at_He_depl,
     check_state_of_star,
-    first_mt_class_from_cumulative,
+    first_mt_case_from_cumulative,
 )
 from posydon.utils.posydonwarning import Catch_POSYDON_Warnings, Pwarn
 from posydon.visualization.combine_TF import TF1_POOL_STABLE, combine_TF12
@@ -475,9 +475,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
             combined_TF12 = combine_TF12([IC], [TF2])
             mt_history = DEFAULT_MARKERS_COLORS_LEGENDS['combined_TF12'][combined_TF12[0]][3]
             EXTRA_COLUMNS['mt_history'].append(mt_history)
-            # first mass transfer case (whichever episode is the first one)
+            # MT case of the first MT episode of the run
             EXTRA_COLUMNS['first_mt_case'].append(
-                first_mt_class_from_cumulative(TF2))
+                first_mt_case_from_cumulative(TF2))
 
         # check dataset completeness
         n_control = len(EXTRA_COLUMNS['S1_state'])

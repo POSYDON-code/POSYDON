@@ -88,9 +88,8 @@ class TestValues:
             assert k in totest.DEFAULT_SN_MODEL.keys()
 
     def test_Maltsev_parameters_not_in_DEFAULT_SN_MODEL(self):
-        # A parameter in DEFAULT_SN_MODEL has to be present in every supernova
-        # model and in every ini file for get_SN_MODEL_NAME to find a match, so
-        # the mechanism-specific Maltsev+25 parameters must stay out of it.
+        # a DEFAULT_SN_MODEL parameter must be present in every model and ini
+        # file to match, so the Maltsev+25 extras must stay out of it
         for k in totest.DEFAULT_MALTSEV_SN_MODEL.keys():
             assert k not in totest.DEFAULT_SN_MODEL.keys()
 
@@ -168,17 +167,15 @@ class TestValues:
             del totest.SN_MODELS['SN_MODEL_unit_test']
 
     def test_model_matching_without_Maltsev_parameters(self):
-        # An ini file for a non-Maltsev mechanism does not carry the Maltsev
-        # parameters. It still has to match a model, otherwise the population
-        # synthesis setup rejects every existing ini file.
+        # a non-Maltsev ini carries no Maltsev parameters, but must still
+        # match a model, or the popsyn setup rejects every existing ini file
         input_SN_MODEL = totest.DEFAULT_SN_MODEL.copy()
         for k in totest.DEFAULT_MALTSEV_SN_MODEL.keys():
             assert k not in input_SN_MODEL
         assert totest.get_SN_MODEL_NAME(input_SN_MODEL) is not None
 
     def test_model_matching_needs_Maltsev_parameters(self):
-        # A Maltsev model, on the other hand, is only identified when all of
-        # its parameters are given.
+        # a Maltsev model is only identified with all of its parameters given
         n = "SN_MODEL_v2_29"
         model = totest.get_SN_MODEL(n)
         assert totest.get_SN_MODEL_NAME(model) == n

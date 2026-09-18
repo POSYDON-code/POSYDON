@@ -47,7 +47,7 @@ class TestElements:
                     'assign_core_collapse_quantities_none',\
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
-                    'first_mt_class_from_cumulative',\
+                    'first_mt_case_from_cumulative',\
                     'post_process_grid', 'print_CC_quantities', 'tqdm',\
                     'get_SN_MODEL', 'H5_REC_STR_DTYPE', 'h5py',\
                     'recfunctions'}
@@ -674,7 +674,7 @@ class TestFunctions:
     def test_add_post_processed_quantities_first_mt_case(self, grid_path):
         """first_mt_case is written as a string column into final_values."""
         from posydon.utils.common_functions import (
-            first_mt_class_from_cumulative,
+            first_mt_case_from_cumulative,
         )
 
         grid = PSyGrid()
@@ -683,7 +683,7 @@ class TestFunctions:
 
         # Mirror the value post_process_grid derives from termination_flag_2.
         first_mt = [
-            first_mt_class_from_cumulative(tf2)
+            first_mt_case_from_cumulative(tf2)
             for tf2 in grid.final_values["termination_flag_2"]
         ]
         EXTRA_COLUMNS = {"first_mt_case": first_mt}

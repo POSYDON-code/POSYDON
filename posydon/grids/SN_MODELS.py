@@ -41,12 +41,9 @@ DEFAULT_SN_MODEL = {
     "approx_at_he_depletion": False,
     }
 
-# The Maltsev+25 core-collapse mechanisms need extra parameters, which no other
-# prescription uses. They are deliberately kept out of DEFAULT_SN_MODEL: every
-# parameter of the default model has to be present in every supernova model and
-# in every ini file (see `get_SN_MODEL_NAME`), so putting them there would force
-# all other prescriptions to carry parameters they ignore. Instead they are
-# required only for the mechanisms listed in `MALTSEV_MECHANISMS`.
+# Extra parameters used only by the Maltsev+25 mechanisms. Kept out of
+# DEFAULT_SN_MODEL, whose parameters every model and ini file must provide
+# (see `get_SN_MODEL_NAME`); required for `MALTSEV_MECHANISMS` instead.
 MALTSEV_MECHANISMS = (
     "Maltsev+25-engine",
     "Maltsev+25-MCO-rapid",

@@ -43,10 +43,8 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     if step_SN_MODEL['use_interp_values'] == False:
         return True
 
-    # Some mechanisms are defined by extra parameters, which have no default
-    # and therefore have to be set in the ini file for the supernova model to
-    # be identifiable. Report them separately, because otherwise the model
-    # matching below only reports that nothing matched.
+    # Report mechanism-specific parameters missing from the ini separately;
+    # the matching below would only say that nothing matched.
     missing = missing_SN_MODEL_parameters(step_SN_MODEL)
     if len(missing) > 0:
         mechanism = step_SN_MODEL.get('mechanism',

@@ -2686,6 +2686,7 @@ def join_grids(input_paths, output_path,
         new_final_dtype = []
         for dtype in final_dtype.descr:
             if (dtype[0].startswith("termination_flag") or
+                dtype[0].startswith("first_mt") or
                 ("SN_type" in dtype[0]) or ("_state" in dtype[0]) or
                 ("_class" in dtype[0])):
                 dtype = (dtype[0], H5_REC_STR_DTYPE.replace("U", "S"))
