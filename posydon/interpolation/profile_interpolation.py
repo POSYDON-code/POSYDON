@@ -1,5 +1,4 @@
-"""Module for performing initial-final profile interpolation
-"""
+"""Module for performing initial-final profile interpolation."""
 
 __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
@@ -29,17 +28,25 @@ from tensorflow.keras import backend, layers, losses, models, optimizers, utils
 
 
 class CompileData:
+    """Extracts profile data from MESA grid files and saves it to a file."""
 
     def __init__(self, train_path, test_path, hms_s2=False,
                  profile_names=['radius','logRho', 'x_mass_fraction_H',
                                 'y_mass_fraction_He','z_mass_fraction_metals',
                                 'omega','energy']):
-        """Extracts profile data from '.h5' grid files and saves to file.
-        Args:
-            train_path (str) : path/name of '.h5' file for training data.
-            test_path (str) : path/name of '.h5' file for testing data.
-            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
-            profile_names (array-like) : list of profile quantities to extract.
+        """Extract profile data from '.h5' grid files and save to file.
+
+        Parameters
+        ----------
+        train_path : str
+            Path/name of '.h5' file for training data.
+        test_path : str
+            Path/name of '.h5' file for testing data.
+        hms_s2 : bool, optional
+            Option to get profiles of star 2 in HMS-HMS grid
+            (default is False).
+        profile_names : array-like, optional
+            List of profile quantities to extract.
         """
         self.names = profile_names
 
@@ -89,16 +96,24 @@ class CompileData:
                   "IncompletenessWarning")
 
     def scrape(self,grid,ind,hms_s2):
-        """Extracts profile data from one MESA run.
-        Args:
-            grid (obj) : PSyGrid object.
-            ind (int) : index of run to be scraped.
-            hms_s2 (Boolean) : option to get profiles of star 2 in HMS-HMS grid
-        Returns:
-            scalars (array-like) : dictionary containing initial
-                                   m1, m2, p, mass transfer class,
-                                   final star_state, final total_mass.
-            profiles (array-like) : all N specified profiles, shape (N,200).
+        """Extract profile data from one MESA run.
+
+        Parameters
+        ----------
+        grid : PSyGrid object
+            PSyGrid object.
+        ind : int
+            Index of run to be scraped.
+        hms_s2 : bool
+            Option to get profiles of star 2 in HMS-HMS grid.
+
+        Returns
+        -------
+        scalars : array-like
+            Dictionary containing initial m1, m2, p, mass transfer class,
+            final star_state, final total_mass.
+        profiles : array-like
+            All N specified profiles, shape (N, 200).
         """
         # open individual run as a DataFrame
 
@@ -152,8 +167,11 @@ class CompileData:
 
     def save(self, filename):
         """Save extracted profile data.
-        Args:
-            filename (str) : path/name of '.pkl' file where the data will be saved.
+
+        Parameters
+        ----------
+        filename : str
+            Path/name of '.pkl' file where the data will be saved.
         """
         SAVE_ATTRS = self.__dict__
         DONT_SAVE = []
@@ -164,12 +182,16 @@ class CompileData:
 
 
 class ProfileInterpolator:
+    """Trains models and predicts final profiles of binaries."""
 
     def __init__(self,seed_value=None):
-        """Interfaces with other classes, trains models and predicts profiles.
-        Args:
-            seed_value (None or int) : random seed to ensure consistent results
-                                       default value for Teng+24 is 1234
+        """Initialize the profile interpolator.
+
+        Parameters
+        ----------
+        seed_value : None or int, optional
+            Random seed to ensure consistent results. The default value
+            for Teng+24 is 1234.
         """
         if seed_value is not None:
             os.environ['PYTHONHASHSEED']=str(seed_value)
@@ -180,9 +202,14 @@ class ProfileInterpolator:
 
     def load_profiles(self,filename,valid_split=0.2):
         """Load and process extracted profile data.
-        Args:
-            filename (str) : path/name of '.pkl' file to be loaded.
-            valid_split (float) : percentage of training data used for validation set
+
+        Parameters
+        ----------
+        filename : str
+            Path/name of '.pkl' file to be loaded.
+        valid_split : float, optional
+            Percentage of training data used for validation set
+            (default is 0.2).
         """
         with open(filename, 'rb') as f:
             myattrs = pd.read_pickle(f)
@@ -216,28 +243,54 @@ class ProfileInterpolator:
     def train(self,IF_interpolator,train_density=True,train_comp=True,density_epochs=1000,
               density_patience=200,comp_bounds_epochs=500,comp_bounds_patience=50,loss_history=False,
               hms_s2=False,depth=12,width=256,depthn=12,widthn=256,learning_rate=0.0001):
-        """Trains models for density, H mass fraction, and He mass fraction profile models.
-        Args:
-            IF_interpolator (str) : path to '.pkl' file for IF interpolator.
-            train_density (Boolean) : option to train Density model
-            train_comp (Boolean) : option to train Composition model
-            density_epochs (int) : number of epochs used to train density profile model
-            density_patience (int) : patience parameter for NN callback in density profile model
-            comp_bounds_epochs (int) : number of epochs used to train composition profiles model
-            comp_bounds_patience (int) : patience parameter for NN callback in composition profiles model
-            loss_history (Boolean) : option to return training and validation loss histories
-            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
-            depth (int) : depth of neural network for principal component weights
-            width (int) : width of neural network for principal component weights
-            depthn (int) : depth of neural network for normalizing value
-            widthn (int) : width of neural network for normalizing value
-            learning_rate (float) : learning rate for neural network training
-        Returns:
-            self.dens.loss_history (array-like) : training and validation loss history for density profiles.
-                                                  Returned first if both models are trained.
-            self.comp.loss_history (array-like) : training and validation loss history for composition profiles
-                                                  Returned second if both models are trained.
+        """Train models for density, H mass fraction, and He mass fraction profiles.
 
+        Parameters
+        ----------
+        IF_interpolator : str
+            Path to '.pkl' file for IF interpolator.
+        train_density : bool, optional
+            Option to train Density model (default is True).
+        train_comp : bool, optional
+            Option to train Composition model (default is True).
+        density_epochs : int, optional
+            Number of epochs used to train density profile model
+            (default is 1000).
+        density_patience : int, optional
+            Patience parameter for NN callback in density profile model
+            (default is 200).
+        comp_bounds_epochs : int, optional
+            Number of epochs used to train composition profiles model
+            (default is 500).
+        comp_bounds_patience : int, optional
+            Patience parameter for NN callback in composition profiles model
+            (default is 50).
+        loss_history : bool, optional
+            Option to return training and validation loss histories
+            (default is False).
+        hms_s2 : bool, optional
+            Option to do profiles of star 2 in HMS-HMS grid (default is False).
+        depth : int, optional
+            Depth of neural network for principal component weights
+            (default is 12).
+        width : int, optional
+            Width of neural network for principal component weights
+            (default is 256).
+        depthn : int, optional
+            Depth of neural network for normalizing value (default is 12).
+        widthn : int, optional
+            Width of neural network for normalizing value (default is 256).
+        learning_rate : float, optional
+            Learning rate for neural network training (default is 1e-4).
+
+        Returns
+        -------
+        self.dens.loss_history : array-like
+            Training and validation loss history for density profiles.
+            Returned first if both models are trained.
+        self.comp.loss_history : array-like
+            Training and validation loss history for composition profiles.
+            Returned second if both models are trained.
         """
         self.train_comp=train_comp
         self.train_density=train_density
@@ -281,20 +334,27 @@ class ProfileInterpolator:
                 return
 
     def predict(self,inputs):
-        """Predict density, H mass fraction, and He mass fraction profiles from inputs.
-        Args:
-            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
-            density (Boolean) : option to train Density model
-            comp (Boolean) : option to train Composition model
-        Returns:
-            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
-                                       Returned first.
-            density_profiles (array-like) : log-scale density profile coordinates.
-                                            Returned second if density model is trained.
-            h_profiles (array-like) : H mass fraction profile coordinates.
-                                      Returned after mass_coords (and density_profiles) if composition model is trained.
-            he_profiles (array-like) : He mass fraction profile coordinates.
-                                       Returned after h_profiles if composition model is trained.
+        """Predict density, H mass fraction, and He mass fraction profiles.
+
+        Parameters
+        ----------
+        inputs : array-like
+            Positive linear-space initial conditions of N binaries to
+            predict, shape (N, 3).
+
+        Returns
+        -------
+        mass_coords : array-like
+            Linear-scale mass enclosed profile coordinates. Returned first.
+        density_profiles : array-like
+            Log-scale density profile coordinates. Returned second if the
+            density model is trained.
+        h_profiles : array-like
+            H mass fraction profile coordinates. Returned after mass_coords
+            (and density_profiles) if the composition model is trained.
+        he_profiles : array-like
+            He mass fraction profile coordinates. Returned after h_profiles
+            if the composition model is trained.
         """
         if self.train_density==True:
             mass_coords, density_profiles = self.dens.predict(inputs)
@@ -312,9 +372,12 @@ class ProfileInterpolator:
             return
 
     def save(self, filename):
-        """Save complete profiles interpolation model.
-        Args:
-            filename (str) : path/name of '.pkl' file where the model will be saved.
+        """Save the complete profiles interpolation model.
+
+        Parameters
+        ----------
+        filename : str
+            Path/name of '.pkl' file where the model will be saved.
         """
         SAVE_ATTRS = self.__dict__
         DONT_SAVE = []
@@ -325,9 +388,12 @@ class ProfileInterpolator:
             pickle.dump(myattrs, f)
 
     def load(self, filename):
-        """Load interpolation model, which can be used for predictions.
-        Args:
-            filename (str) : path/name of '.pkl' file to be loaded.
+        """Load an interpolation model, which can be used for predictions.
+
+        Parameters
+        ----------
+        filename : str
+            Path/name of '.pkl' file to be loaded.
         """
         with open(filename, 'rb') as f:
             myattrs = pickle.load(f)
@@ -335,14 +401,32 @@ class ProfileInterpolator:
                 setattr(self, key, myattrs[key])
 
     def mono_decrease(self,profiles):
-        """Enforce monotonicity in profiles such as density that must monotonically decrease
-        Args:
-            profiles (array-like) : N profiles to be post-processed for monotonicity
-        Returns:
-            profiles_mono (array-like) : post-processed profiles
+        """Enforce monotonicity in profiles that must monotonically decrease.
+
+        Parameters
+        ----------
+        profiles : array-like
+            N profiles to be post-processed for monotonicity.
+
+        Returns
+        -------
+        profiles_mono : array-like
+            Post-processed profiles.
         """
 
         def mono_renorm(arr):
+            """Renormalize a single profile to enforce monotonic decrease.
+
+            Parameters
+            ----------
+            arr : array-like
+                A single profile to be renormalized.
+
+            Returns
+            -------
+            array-like
+                The renormalized profile.
+            """
             arr_copy = arr.copy()
             # starting from surface, force dropping points up
             for i in range(1,len(arr_copy)):
@@ -361,25 +445,44 @@ class ProfileInterpolator:
 
 
 class Density:
+    """Creates and trains the density profile model."""
 
     def __init__(self,initial,profiles,mt,valid_initial,
                  valid_profiles,valid_mt,IF_interpolator,n_comp=8, hms_s2=False,
                  depth=12,width=256,depthn=12,widthn=256):
-        """Creates and trains density profile model.
-        Args:
-            initial (array-like) : log-space initial conditions for training data.
-            profiles (array-like) : final density profiles for training data.
-            mt (array-like) : mass transfer classes corresponding to training set binaries.
-            valid_initial (array-like) : log-space initial conditions for validation data.
-            valid_profiles (array-like) : final density profiles for validation data.
-            valid_mt (array-like): mass transfer classes corresponding to validation set binaries.
-            IF_interpolator (string) : path to .pkl file for IF interpolator for central density, final mass values
-            n_comp (int) : number of PCA components.
-            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
-            depth (int) : depth of neural network for principal component weights
-            width (int) : width of neural network for principal component weights
-            depthn (int) : depth of neural network for normalizing value
-            widthn (int) : width of neural network for normalizing value
+        """Create and train the density profile model.
+
+        Parameters
+        ----------
+        initial : array-like
+            Log-space initial conditions for training data.
+        profiles : array-like
+            Final density profiles for training data.
+        mt : array-like
+            Mass transfer classes corresponding to training set binaries.
+        valid_initial : array-like
+            Log-space initial conditions for validation data.
+        valid_profiles : array-like
+            Final density profiles for validation data.
+        valid_mt : array-like
+            Mass transfer classes corresponding to validation set binaries.
+        IF_interpolator : str
+            Path to '.pkl' file for IF interpolator for central density and
+            final mass values.
+        n_comp : int, optional
+            Number of PCA components (default is 8).
+        hms_s2 : bool, optional
+            Option to do profiles of star 2 in HMS-HMS grid (default is False).
+        depth : int, optional
+            Depth of neural network for principal component weights
+            (default is 12).
+        width : int, optional
+            Width of neural network for principal component weights
+            (default is 256).
+        depthn : int, optional
+            Depth of neural network for normalizing value (default is 12).
+        widthn : int, optional
+            Width of neural network for normalizing value (default is 256).
         """
         self.n_comp = n_comp
         self.hms_s2 = hms_s2
@@ -427,12 +530,19 @@ class Density:
         self.interp = self.model_IF.interpolators[0]
 
     def train(self,loss=losses.MeanSquaredError(),prof_epochs=1000,prof_patience=200,learning_rate=0.0001):
-        """Trains NN models.
-        Args:
-            loss (object) : loss function for training.
-            prof_epochs (int) : number of epochs used to train neural network
-            prof_patience (int) : patience parameter for callback in neural network
-            learning_rate (float) : learning rate for neural network training
+        """Train the neural network models.
+
+        Parameters
+        ----------
+        loss : object, optional
+            Loss function for training (default is MeanSquaredError).
+        prof_epochs : int, optional
+            Number of epochs used to train neural network (default is 1000).
+        prof_patience : int, optional
+            Patience parameter for callback in neural network
+            (default is 200).
+        learning_rate : float, optional
+            Learning rate for neural network training (default is 1e-4).
         """
         print("training on PCA weights...")
 
@@ -460,12 +570,20 @@ class Density:
         print("done training")
 
     def predict(self,inputs):
-        """Predicts profile for n sets of given inputs, in array of shape (n,3).
-        Args:
-            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
-        Returns:
-            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
-            density_profiles (array_like) : log-scale density profile coordinates.
+        """Predict the density profile for n sets of given inputs.
+
+        Parameters
+        ----------
+        inputs : array-like
+            Positive linear-space initial conditions of N binaries to
+            predict, shape (N, 3).
+
+        Returns
+        -------
+        mass_coords : array-like
+            Linear-scale mass enclosed profile coordinates.
+        density_profiles : array_like
+            Log-scale density profile coordinates.
         """
         pred_profiles = np.zeros([len(inputs),200])
 
@@ -507,28 +625,47 @@ class Density:
 
 
 class Composition:
+    """Creates and trains the H and He mass fraction profile models."""
 
     def __init__(self,initial,h_profiles,he_profiles,star_state,
                  valid_initial,valid_h_profiles,valid_he_profiles,valid_star_state,
                  IF_interpolator, training_epochs=500, training_patience=50,hms_s2=False,
                  depth=12, width=256, learning_rate=0.0001):
-        """Creates and trains H mass fraction and He mass fraction profiles model.
-        Args:
-            initial (array-like) : log-space initial conditions for training data.
-            h_profiles (array-like) : final H mass fraction profiles for training data.
-            he_profiles (array-like) : final He mass fraction profiles for training data.
-            star_state (array-like) : final star 1 state for training data.
-            valid_initial (array-like) : log-space initial conditions for validation data.
-            valid_h_profiles (array-like) : final H mass fraction profiles for validation data.
-            valid_he_profiles (array-like) : final He mass fraction profiles for validation data.
-            valid_star_state (array-like) : final star 1 state for testing data.
-            IF_interpolator (string) : path to .pkl file for IF interpolator
-            training_epochs (int) : number of epochs used to train neural networks
-            training_patience (int) : patience parameter for callback in neural networks
-            hms_s2 (Boolean) : option to do profiles of star 2 in HMS-HMS grid
-            depth (int) : depth of neural network
-            width (int) : width of neural network
-            learning_rate (float) : learning rate for neural network training
+        """Create and train the H and He mass fraction profile models.
+
+        Parameters
+        ----------
+        initial : array-like
+            Log-space initial conditions for training data.
+        h_profiles : array-like
+            Final H mass fraction profiles for training data.
+        he_profiles : array-like
+            Final He mass fraction profiles for training data.
+        star_state : array-like
+            Final star 1 state for training data.
+        valid_initial : array-like
+            Log-space initial conditions for validation data.
+        valid_h_profiles : array-like
+            Final H mass fraction profiles for validation data.
+        valid_he_profiles : array-like
+            Final He mass fraction profiles for validation data.
+        valid_star_state : array-like
+            Final star 1 state for validation data.
+        IF_interpolator : str
+            Path to '.pkl' file for IF interpolator.
+        training_epochs : int, optional
+            Number of epochs used to train neural networks (default is 500).
+        training_patience : int, optional
+            Patience parameter for callback in neural networks
+            (default is 50).
+        hms_s2 : bool, optional
+            Option to do profiles of star 2 in HMS-HMS grid (default is False).
+        depth : int, optional
+            Depth of neural network (default is 12).
+        width : int, optional
+            Width of neural network (default is 256).
+        learning_rate : float, optional
+            Learning rate for neural network training (default is 1e-4).
         """
         self.hms_s2 = hms_s2
 
@@ -587,21 +724,47 @@ class Composition:
                                                                   learning_rate=learning_rate)
 
     def learn_bounds(self,training_epochs,training_patience,depth,width,learning_rate):
-        """Creates and trains NNs to predict boundary points for each star 1 state.
-        Args:
-            training_epochs (int) : number of epochs used to train neural networks
-            training_patience (int) : patience parameter for callback in neural networks
-            depth (int) : depth of neural network
-            width (int) : width of neural network
-            learning_rate (float) : learning rate for neural network training
-        Returns:
-            b_models (array-like) : dictionary containing boundary models.
-            loss_history (array-like) : training and validation loss histories
+        """Create and train NNs to predict boundary points for each star state.
+
+        Parameters
+        ----------
+        training_epochs : int
+            Number of epochs used to train neural networks.
+        training_patience : int
+            Patience parameter for callback in neural networks.
+        depth : int
+            Depth of neural network.
+        width : int
+            Width of neural network.
+        learning_rate : float
+            Learning rate for neural network training.
+
+        Returns
+        -------
+        b_models : array-like
+            Dictionary containing boundary models.
+        loss_history : array-like
+            Training and validation loss histories.
         """
         b_models = {}
         loss_history = {}
 
         def calc_bevel_bounds(profs):
+            """Calculate the boundaries of the 'bevel' shape in each profile.
+
+            Parameters
+            ----------
+            profs : array-like
+                Profiles for which to calculate the boundary points.
+
+            Returns
+            -------
+            bounds : array-like
+                Normalized first and last points in each profile with large
+                increases.
+            nonflat : array-like
+                Indices of profiles with the correct "non-flat" shape.
+            """
             # calculate first and last points in each profile with large increases
             # i.e. boundaries of 'bevel' shape
             nonflat=[] # ensures that training data only has the correct "non-flat" shape
@@ -715,17 +878,29 @@ class Composition:
         return b_models, loss_history
 
     def predict_single(self,initial,center_H,surface_H,center_He,surface_He,star_state):
-        """Predict a profile for a single binary
-        Args:
-            initial (array-like) : initial position of binary
-            center_H (float) : center H mass fraction
-            surface_H (float) : surface H mass fraction
-            center_He (float) : center He mass fraction
-            surface_He (float) : surface He mass fraction
-            star_state (str) : final star state
-        Returns:
-            H (array-like) : predicted H mass fraction profile
-            He (array-like) : predicted He mass fraction profile
+        """Predict a profile for a single binary.
+
+        Parameters
+        ----------
+        initial : array-like
+            Initial position of binary.
+        center_H : float
+            Center H mass fraction.
+        surface_H : float
+            Surface H mass fraction.
+        center_He : float
+            Center He mass fraction.
+        surface_He : float
+            Surface He mass fraction.
+        star_state : str
+            Final star state.
+
+        Returns
+        -------
+        H : array-like
+            Predicted H mass fraction profile.
+        He : array-like
+            Predicted He mass fraction profile.
         """
         if "stripped_He" in star_state:
             H = np.zeros(200) # stripped Helium stars have no Hydrogen
@@ -811,13 +986,22 @@ class Composition:
         return H, He
 
     def predict(self,inputs):
-        """Predict H mass fraction profiles from inputs.
-        Args:
-            inputs (array-like) : positive linear-space initial conditions of N binaries to predict, shape (N,3).
-        Returns:
-            mass_coords (array-like) : linear-scale mass enclosed profile coordinates.
-            h_profiles (array_like) : H mass fraction profile coordinates.
-            he_profiles (array_like) : He mass fraction profile coordinates.
+        """Predict H and He mass fraction profiles from inputs.
+
+        Parameters
+        ----------
+        inputs : array-like
+            Positive linear-space initial conditions of N binaries to
+            predict, shape (N, 3).
+
+        Returns
+        -------
+        mass_coords : array-like
+            Linear-scale mass enclosed profile coordinates.
+        h_profiles : array_like
+            H mass fraction profile coordinates.
+        he_profiles : array_like
+            He mass fraction profile coordinates.
         """
         # IF interpolate H mass fraction values at center, surface; final star state
         center_h_vals = self.interp.test_interpolator(inputs)[:,self.c_h_ind]

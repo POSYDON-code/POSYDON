@@ -25,7 +25,19 @@ class EEP:
     """Convert a MESA history file to Equivalent Evolutionary Phase track."""
 
     def __init__(self, filename, EEP_NAMES=ZAMShi, EEP_INTERVAL=100):
-        """Load an MESA history file and construct the EEP instance."""
+        """Load a MESA history file and construct the EEP instance.
+
+        Parameters
+        ----------
+        filename : str
+            Path to the MESA history file, optionally gzip-compressed.
+        EEP_NAMES : list of str, optional
+            Names of the Equivalent Evolutionary Phases to identify
+            (default is `ZAMShi`).
+        EEP_INTERVAL : int, optional
+            Number of secondary EEPs placed between consecutive primary
+            EEPs (default is 100).
+        """
         self.filename = filename.strip()
         try:
             if self.filename.endswith(".gz"):
@@ -118,6 +130,27 @@ class EEP:
 
     # the following function definitions are for primary EEP determinations
     def _PreMS(self, tr, Dfrac=0.01, guess=0):
+        """Find the pre-main-sequence point of the track.
+
+        The pre-main-sequence is identified as the first point where the
+        central deuterium abundance has dropped below `Dfrac` of its
+        initial value.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        Dfrac : float, optional
+            Fraction of the initial central deuterium abundance that marks
+            the end of the pre-main-sequence phase (default is 0.01).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the pre-main-sequence point, or -1 if not found.
+        """
         PreMS = -1
         for i in range(len(tr)):
             if tr['center_h2'][i] < Dfrac*tr['center_h2'][0]:
@@ -126,6 +159,27 @@ class EEP:
         return PreMS
 
     def _ZAMS(self, tr, dXc=0.001, guess=0):
+        """Find the zero-age main sequence point of the track.
+
+        The ZAMS is identified as the first point where the central
+        hydrogen abundance differs from its initial value by more than
+        `dXc`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        dXc : float, optional
+            Minimum central hydrogen abundance change from the initial
+            value that marks the ZAMS (default is 0.001).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the ZAMS point, or -1 if not found.
+        """
         ZAMS = -1
         for i in range(len(tr)):
             if abs(tr['center_h1'][i]-tr['center_h1'][0]) > dXc:
@@ -134,6 +188,26 @@ class EEP:
         return ZAMS
 
     def _IAMS(self, tr, Xc=0.1, guess=0):
+        """Find the intermediate-age main sequence point of the track.
+
+        The IAMS is identified as the first point where the central
+        hydrogen abundance has dropped below `Xc`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        Xc : float, optional
+            Central hydrogen abundance threshold for the IAMS
+            (default is 0.1).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the IAMS point, or -1 if not found.
+        """
         IAMS = -1
         for i in range(len(tr)):
             if tr['center_h1'][i] < Xc:
@@ -142,6 +216,26 @@ class EEP:
         return IAMS
 
     def _TAMS(self, tr, Xc=0.00001, guess=0):
+        """Find the terminal-age main sequence point of the track.
+
+        The TAMS is identified as the first point where the central
+        hydrogen abundance has dropped below `Xc`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        Xc : float, optional
+            Central hydrogen abundance threshold for the TAMS
+            (default is 0.00001).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the TAMS point, or -1 if not found.
+        """
         TAMS = -1
         for i in range(len(tr)):
             if tr['center_h1'][i] < Xc:
@@ -150,6 +244,24 @@ class EEP:
         return TAMS
 
     def _TRGB(self, tr, guess=0):
+        """Find the tip of the red giant branch point of the track.
+
+        The TRGB is identified from the models after the central helium
+        abundance exceeds a threshold, as the model of maximum
+        helium-burning luminosity and minimum central temperature.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the TRGB point, or -1 if not found.
+        """
         Yc_min = tr['center_he4'][guess] - 0.01
         L_He_max = -99.
         Tc_min = 99.
@@ -167,6 +279,24 @@ class EEP:
         return max(TRGB, min(TRGB1, TRGB2))
 
     def _ZACHEB(self, tr, guess=0):
+        """Find the zero-age core helium burning point of the track.
+
+        The ZACHEB is identified as the model of maximum helium-burning
+        luminosity followed by the model of minimum central temperature,
+        for models with central helium abundance above a threshold.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the ZACHEB point, or -1 if not found.
+        """
         ZACHEB = -1
         Yc_min = max(0.9, tr['center_he4'][guess] - 0.03)
         L_He_max = -99.
@@ -184,6 +314,26 @@ class EEP:
         return ZACHEB
 
     def _TACHEB(self, tr, Yc_min=0.001, guess=0):
+        """Find the terminal-age core helium burning point of the track.
+
+        The TACHEB is identified as the first point where the central
+        helium abundance has dropped below `Yc_min`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        Yc_min : float, optional
+            Central helium abundance threshold for the TACHEB
+            (default is 0.001).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the TACHEB point, or -1 if not found.
+        """
         TACHEB = -1
         for i in range(guess, len(tr)):
             if tr['center_he4'][i] < Yc_min:
@@ -192,6 +342,24 @@ class EEP:
         return TACHEB
 
     def _TPAGB(self, tr, guess=0):
+        """Find the tip of the asymptotic giant branch point of the track.
+
+        The TPAGB is identified as the first point where the central
+        helium abundance is depleted and the helium shell mass is below
+        a threshold.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the TPAGB point, or -1 if not found.
+        """
         TPAGB = -1
         He_shell_min = 0.1
         Yc_min = 1.0e-6
@@ -203,6 +371,24 @@ class EEP:
         return TPAGB
 
     def _PAGB(self, tr, guess=0):
+        """Find the post-asymptotic giant branch point of the track.
+
+        For tracks with a decreasing central temperature, the PAGB is
+        identified as the first point where the carbon core mass fraction
+        exceeds a threshold.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the PAGB point, or -1 if not found.
+        """
         PAGB = -1
         core_mass_frac_min = 0.8
         Tc_now = tr['log_center_T'][guess]
@@ -219,6 +405,26 @@ class EEP:
         return PAGB
 
     def _WDCS(self, tr, gamma=10., guess=0):
+        """Find the white dwarf cooling sequence point of the track.
+
+        The WDCS is identified as the first point where the central
+        degeneracy parameter exceeds `gamma`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        gamma : float, optional
+            Central degeneracy parameter threshold for the WDCS
+            (default is 10.0).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the WDCS point, or -1 if not found.
+        """
         WDCS = -1
         for i in range(guess, len(tr)):
             if tr['center_gamma'][i] > gamma:
@@ -227,6 +433,27 @@ class EEP:
         return WDCS
 
     def _CBurn(self, tr, XC12=0.1, guess=0):
+        """Find the carbon burning point of the track.
+
+        The carbon burning point is identified as the first point where
+        the central hydrogen and helium abundances are depleted and the
+        central carbon abundance has dropped below `XC12`.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+        XC12 : float, optional
+            Central carbon abundance threshold for carbon burning
+            (default is 0.1).
+        guess : int, optional
+            Index from which to start the search (default is 0).
+
+        Returns
+        -------
+        int
+            Index of the carbon burning point, or -1 if not found.
+        """
         CBURN = -1
         XY_min = 1.0E-6
         for i in range(guess, len(tr)):
@@ -243,6 +470,23 @@ class EEP:
     # use the H-R and age information only.
     # other terms can be added, must be "monotonic increasing"
     def _metric_function(self, tr):
+        """Compute the distance metric along the evolutionary track.
+
+        The metric is the cumulative sum of weighted squared differences
+        of effective temperature, luminosity, age and central density
+        between consecutive models, and is used to assign the secondary
+        EEPs.
+
+        Parameters
+        ----------
+        tr : numpy structured array
+            The MESA history data.
+
+        Returns
+        -------
+        numpy.ndarray
+            The cumulative distance metric along the track.
+        """
         term1 = tr['log_Teff']
         term2 = tr['log_L']
         term3 = np.log10(tr['star_age'])

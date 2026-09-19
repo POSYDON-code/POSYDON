@@ -371,7 +371,6 @@ def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
     - step_dco : DoubleCO in posydon/binary_evol/double_CO.py
     - step_end
 
-
     Parameters
     ----------
     FLOW_CHART : dict
@@ -401,9 +400,10 @@ def flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
 
 
 def initial_eccentricity_flow_chart(FLOW_CHART=None, CHANGE_FLOW_CHART=None):
-    """Modify POSYDON's default flow to:
-        ZAMS binaries -> detached
-        oRLO1/oRLO2 -> HMS-HMS RLO grid
+    """Modify POSYDON's default flow.
+
+    ZAMS binaries -> detached
+    oRLO1/oRLO2 -> HMS-HMS RLO grid
 
     Parameters
     ----------

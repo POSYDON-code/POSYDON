@@ -1,3 +1,5 @@
+"""Configuration helpers for environment paths in POSYDON."""
+
 import os
 
 from dotenv import load_dotenv
@@ -5,7 +7,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 def ensure_path(name):
-    """Get the 'PATH_*' variable set in the environment
+    """Get the 'PATH_*' variable set in the environment.
 
     Parameters
     ----------

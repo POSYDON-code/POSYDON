@@ -139,7 +139,23 @@ TF2_POOL_BB = [
 #    ]
 
 def combine_TF12(IC, TF2, verbose=False):
-    """Get the combination of interpolation classion and termination flag 2."""
+    """Get the combination of interpolation class and termination flag 2.
+
+    Parameters
+    ----------
+    IC : numpy.ndarray
+        Array of interpolation classes.
+    TF2 : numpy.ndarray
+        Array of termination flag 2 values.
+    verbose : bool
+        If True, print information about unknown combinations.
+
+    Returns
+    -------
+    numpy.ndarray
+        Array of the combined termination flags 1 and 2.
+
+    """
     N = len(IC)
     TF12 = np.array(['unknown']*N, dtype='U25')
 

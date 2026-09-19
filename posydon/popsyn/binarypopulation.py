@@ -118,10 +118,10 @@ class BinaryPopulation:
 
         Parameters
         ----------
-        number_of_binaries : int
-            Size of the population
-        population_properties : SimulationProperties
-            Instance of simulationproperties holding steps.
+        **kwargs : dict
+            Population settings, including ``number_of_binaries`` (int,
+            size of the population) and ``population_properties``
+            (SimulationProperties, instance holding the evolution steps).
         """
         # Set population kwargs - first set defaults, then add updates
         self.kwargs = default_kwargs.copy()
@@ -207,6 +207,8 @@ class BinaryPopulation:
 
         Parameters
         ----------
+        cls : class
+            The BinaryPopulation class used to construct the new instance.
         path : str
             Path to an inifile to load in.
 
@@ -242,16 +244,14 @@ class BinaryPopulation:
 
         Parameters
         ----------
-        indices : list, optional
-            Custom binary indices to use. Default is range(number_of_binaries).
-            If running with MPI, indices are split between processes if given.
-        breakdown_to_df : bool, False
-            Breakdown a binary after evolution, converting to dataframe and
-            removing the binary instance from memory.
-        tqdm : bool, False
-            Show tqdm progress bar during evolution.
-        optimize_ram : bool, False
-            If True, dump binary data during evolve to save RAM.
+        **kwargs : dict
+            Keyword arguments for the evolution. Recognized keys include
+            ``indices`` (list, optional, custom binary indices to evolve,
+            defaulting to range(number_of_binaries)), ``breakdown_to_df``
+            (bool, optional, convert each binary to a DataFrame after
+            evolution and remove it from memory), ``tqdm`` (bool, optional,
+            show a tqdm progress bar during evolution) and ``optimize_ram``
+            (bool, optional, dump binary data during evolution to save RAM).
 
         Returns
         -------
@@ -293,7 +293,15 @@ class BinaryPopulation:
 
     def _safe_evolve(self, **kwargs): # pragma: no cover
         # needs more complex test than unit test
-        """Evolve binaries in a population, catching warnings/exceptions."""
+        """Evolve binaries in a population, catching warnings/exceptions.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments for the evolution, including ``indices``,
+            ``tqdm``, ``breakdown_to_df``, ``optimize_ram``, ``ram_per_cpu``,
+            ``dump_rate``, ``temp_directory`` and ``from_hdf``.
+        """
         if not self.population_properties.steps_loaded:
             # Enforce the same metallicity for all grid steps
             for step_name, tup in self.population_properties.kwargs.items():
@@ -490,7 +498,16 @@ class BinaryPopulation:
 
     def save(self, save_path, **kwargs): # pragma: no cover
         # dependent on full evolution
-        """Save BinaryPopulation to hdf file."""
+        """Save BinaryPopulation to an hdf file.
+
+        Parameters
+        ----------
+        save_path : str
+            Path to the output hdf file.
+        **kwargs : dict
+            Additional keyword arguments passed to ``PopulationManager.save``
+            or ``combine_saved_files``.
+        """
         optimize_ram = self.kwargs['optimize_ram']
         temp_directory = self.kwargs['temp_directory']
 
@@ -532,7 +549,10 @@ class BinaryPopulation:
             Absolute path to the file to be saved.
         file_names : list
             List of absolute paths to the temporary files.
-
+        **kwargs : dict
+            Additional keyword arguments for the pandas HDFStore, e.g.
+            ``mode`` (str, default 'w'), ``complib`` (str, default 'zlib')
+            and ``complevel`` (int, default 9).
         """
 
         history_cols = pd.read_hdf(file_names[0], key='history').columns
@@ -652,7 +672,17 @@ class PopulationManager:
     """Manage a population of binaries."""
 
     def __init__(self, file_name=None, **kwargs):
-        """Initialize a PopulationManager instance."""
+        """Initialize a PopulationManager instance.
+
+        Parameters
+        ----------
+        file_name : str, optional
+            Path to an hdf file of a saved population used to read binaries
+            from disk.
+        **kwargs : dict
+            Additional keyword arguments, passed to the binary generator and
+            used to configure the population sampling.
+        """
         self.kwargs = kwargs.copy()
         self.binaries = []
         self.indices = []
@@ -674,7 +704,13 @@ class PopulationManager:
             self.store_file = file_name
 
     def append(self, binary):
-        """Add a binary instance internaly."""
+        """Add a binary instance internally.
+
+        Parameters
+        ----------
+        binary : BinaryStar or list of BinaryStar or numpy.ndarray
+            Binary instance or list of binary instances to add.
+        """
         if isinstance(binary, (list, np.ndarray)):
             self.indices.append([b.index for b in binary])
             self.binaries.extend(list(binary))
@@ -685,7 +721,13 @@ class PopulationManager:
             raise ValueError('Must be BinaryStar or list of BinaryStars')
 
     def remove(self, binary):
-        """Remove a binary instance."""
+        """Remove a binary instance.
+
+        Parameters
+        ----------
+        binary : BinaryStar or list of BinaryStar or numpy.ndarray
+            Binary instance or list of binary instances to remove.
+        """
         if isinstance(binary, (list, np.ndarray)):
             for b in binary:
                 self.binaries.remove(b)
@@ -704,11 +746,18 @@ class PopulationManager:
         self.oneline_dfs = []
 
     def breakdown_to_df(self, binary, **kwargs):
-        """Breakdown to a pandas DataFrame.
+        """Breakdown a binary to a pandas DataFrame.
 
-        Breakdown a binary into more convenient data type, store it, and
+        Breakdown a binary into a more convenient data type, store it, and
         remove the BinaryStar instance from self.
 
+        Parameters
+        ----------
+        binary : BinaryStar
+            Binary instance to break down.
+        **kwargs : dict
+            Additional keyword arguments passed to the binary's ``to_df`` and
+            ``to_oneline_df`` methods.
         """
 
         kwargs = {**self.kwargs, **kwargs}
@@ -725,7 +774,21 @@ class PopulationManager:
                   format(str(binary), err))
 
     def to_df(self, selection_function=None, **kwargs):
-        """Convert all binaries to dataframe."""
+        """Convert all binaries to a DataFrame.
+
+        Parameters
+        ----------
+        selection_function : callable, optional
+            If given, only binaries for which it returns True are converted.
+        **kwargs : dict
+            Additional keyword arguments passed to the binaries' ``to_df``
+            method.
+
+        Returns
+        -------
+        pandas.DataFrame or None
+            The combined DataFrame, or None if there are no binaries.
+        """
 
         kwargs = {**self.kwargs, **kwargs}
 
@@ -748,7 +811,21 @@ class PopulationManager:
             return pd.concat(holder, axis=0, ignore_index=False)
 
     def to_oneline_df(self, selection_function=None, **kwargs):
-        """Convert all binaries to oneline dataframe."""
+        """Convert all binaries to an oneline DataFrame.
+
+        Parameters
+        ----------
+        selection_function : callable, optional
+            If given, only binaries for which it returns True are converted.
+        **kwargs : dict
+            Additional keyword arguments passed to the binaries'
+            ``to_oneline_df`` method.
+
+        Returns
+        -------
+        pandas.DataFrame or None
+            The combined oneline DataFrame, or None if there are no binaries.
+        """
 
         kwargs = {**self.kwargs, **kwargs}
 
@@ -781,9 +858,19 @@ class PopulationManager:
                 return failed_dfs
 
     def generate(self, **kwargs):
-        """Generate a binary by drawing from the binary_generator.
+        """Generate a binary by drawing from the binary generator.
 
         This can be a callable or a generator.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Additional keyword arguments passed to ``draw_initial_binary``.
+
+        Returns
+        -------
+        BinaryStar
+            The generated binary instance.
         """
         binary = self.binary_generator.draw_initial_binary(**kwargs)
         self.append(binary)
@@ -868,15 +955,12 @@ class PopulationManager:
         Parameters
         ----------
         fname : str
-            Name of hdf file saved.
-        mode : {'a', 'w', 'r', 'r+'}, default 'a'
-            See pandas HDFStore docs
-        complib : {'zlib', 'lzo', 'bzip2', 'blosc'}, default 'zlib'
-            Compression library. See HDFStore docs
-        complevel : int, 0-9, default 9
-            Level of compression. See HDFStore docs
-        kwargs : dict
-            Arguments for `BinaryStar` methods `to_df` and `to_oneline_df`.
+            Name of the hdf file to save.
+        **kwargs : dict
+            Additional keyword arguments, including ``mode`` (str, default
+            'w'), ``complib`` (str, default 'zlib') and ``complevel`` (int,
+            default 9) for the pandas HDFStore, as well as arguments for the
+            ``to_df`` and ``to_oneline_df`` methods.
 
         Returns
         -------
@@ -986,7 +1070,18 @@ class BinaryGenerator:
 
     def __init__(self, sampler=generate_independent_samples,
                  RNG=None, **kwargs):
-        """Initialize the BinaryGenerator instance."""
+        """Initialize the BinaryGenerator instance.
+
+        Parameters
+        ----------
+        sampler : callable, optional
+            Function used to draw initial binary samples.
+        RNG : numpy.random.Generator, optional
+            Random number generator. If None, a new generator is created.
+        **kwargs : dict
+            Additional keyword arguments, e.g. ``star_formation`` and
+            ``metallicity``.
+        """
         self._num_gen = 0
         if RNG is None:
             self.RNG = np.random.default_rng()
@@ -1013,7 +1108,21 @@ class BinaryGenerator:
         return RNG
 
     def get_binary_by_iter(self, n=1, **kwargs):
-        """Get the nth binary as if n calls were made to draw_intial_binary."""
+        """Get the nth binary as if n calls were made to draw_initial_binary.
+
+        Parameters
+        ----------
+        n : int, optional
+            The index of the binary to get.
+        **kwargs : dict
+            Additional keyword arguments passed to the sampler and
+            ``draw_initial_binary``.
+
+        Returns
+        -------
+        BinaryStar
+            The n-th binary.
+        """
         RNG = self.get_original_rng()
         original_num_gen = self._num_gen
         if n != 0:  # draw n-1 samples with new original RNG
@@ -1024,7 +1133,21 @@ class BinaryGenerator:
         return binary
 
     def draw_initial_samples(self, orbital_scheme='separation', **kwargs):
-        """Generate all random variables."""
+        """Generate all random variables.
+
+        Parameters
+        ----------
+        orbital_scheme : str, optional
+            Scheme used to draw the orbital variables, either 'separation' or
+            'period'.
+        **kwargs : dict
+            Additional keyword arguments passed to the sampler.
+
+        Returns
+        -------
+        dict
+            Dictionary of sampled binary initial conditions.
+        """
         if not ('RNG' in kwargs.keys()):
             kwargs['RNG'] = self.RNG
         # a, e, M_1, M_2, P
@@ -1086,13 +1209,15 @@ class BinaryGenerator:
 
         Parameters
         ----------
-        index : int
-            Sets binary index. Defaults to number of generated binaries.
+        **kwargs : dict
+            Additional keyword arguments, including ``index`` (int, optional,
+            sets the binary index; defaults to the number of generated
+            binaries).
 
         Returns
         -------
-        binary : BinaryStar
-
+        BinaryStar
+            The generated binary instance.
         """
         sampler_kwargs = kwargs.copy()
         sampler_kwargs['number_of_binaries'] = 1

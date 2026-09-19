@@ -128,7 +128,23 @@ class RunReader:
             print("Reading run in {}".format(self.path))
 
         def joined_exists(folder, filename, allow_gzip=True):
-            """Return the joined path of `folder` and `filename`, if exists."""
+            """Return the joined path of `folder` and `filename`, if exists.
+
+            Parameters
+            ----------
+            folder : str
+                The folder path.
+            filename : str
+                The file name within `folder`.
+            allow_gzip : bool (default: True)
+                If True, also check for the gzipped version of the file.
+
+            Returns
+            -------
+            str or None
+                The full path if the file exists, otherwise None.
+
+            """
             fullpath = os.path.join(folder, filename)
             fullpath_gz = fullpath + ".gz"
             if os.path.exists(fullpath):
@@ -190,6 +206,19 @@ class RunReader:
     def report(self):
         """Report what data or metadata were found."""
         def isfound(var):
+            """Return "Yes" if `var` is not None, otherwise "No".
+
+            Parameters
+            ----------
+            var : object
+                The variable to check.
+
+            Returns
+            -------
+            str
+                "Yes" if `var` is not None, else "No".
+
+            """
             return "Yes" if var is not None else "No"
 
         print("-" * 80)

@@ -1,4 +1,4 @@
-"""Collection of all POSYDON datasets on Zenodo
+"""Collection of all POSYDON datasets on Zenodo.
 
 Each publication on Zenodo should have and entry in 'ZENODO_COLLECTION' with
     - 'data' : str or None
@@ -15,7 +15,6 @@ Each publication on Zenodo should have and entry in 'ZENODO_COLLECTION' with
 Individual datasets can be combined to a complete set as input for the POSYDON
 code. The complete sets are collected as lists of individual sets, which get
 layered in definition order.
-
 """
 
 __authors__ = [

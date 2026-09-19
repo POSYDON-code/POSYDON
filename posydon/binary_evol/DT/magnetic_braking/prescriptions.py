@@ -1,38 +1,36 @@
+"""Prescriptions for the magnetic braking of binary stars."""
+
 import numpy as np
 
 import posydon.utils.constants as const
 
 
 def RVJ83_braking(primary, secondary, verbose = False):
-    """
-        Calculates the change in spin of each star due
-    to magnetic braking, according to:
+    """Calculate the change in spin of each star due to magnetic braking.
+
+    According to:
 
         Rappaport, S., Joss, P. C., & Verbunt, F. 1983, ApJ, 275, 713
 
     Parameters
     ----------
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        verbose : bool
-            True if we want to print stuff.
+    primary : SingleStar object
+        A single star object, representing the primary (more evolved) star in
+        the binary and containing its properties.
+    secondary : SingleStar object
+        A single star object, representing the secondary (less evolved) star
+        in the binary and containing its properties.
+    verbose : bool
+        True if we want to print stuff.
 
     Returns
     -------
-        dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
-        dOmega_pri : float
-            The change in rotation rate of the primary (more evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
+    dOmega_sec : float
+        The change in rotation rate of the secondary (less evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
+    dOmega_pri : float
+        The change in rotation rate of the primary (more evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
     """
 
     m1 = primary.latest["mass"]
@@ -81,38 +79,34 @@ def RVJ83_braking(primary, secondary, verbose = False):
     return dOmega_mb_sec, dOmega_mb_pri
 
 def M15_braking(primary, secondary, verbose = False):
-    """
-        Calculates the change in spin of each star due
-    to magnetic braking, according to:
+    """Calculate the change in spin of each star due to magnetic braking.
+
+    According to:
 
         Matt et al. 2015, ApJ, 799, L23
 
-        Free parameters calibrated to match the Solar rotation
-    rate by Gossage et al. 2021, ApJ, 912, 65.
+    The free parameters are calibrated to match the Solar rotation rate by
+    Gossage et al. 2021, ApJ, 912, 65.
 
     Parameters
     ----------
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        verbose : bool
-            True if we want to print stuff.
+    primary : SingleStar object
+        A single star object, representing the primary (more evolved) star in
+        the binary and containing its properties.
+    secondary : SingleStar object
+        A single star object, representing the secondary (less evolved) star
+        in the binary and containing its properties.
+    verbose : bool
+        True if we want to print stuff.
 
     Returns
     -------
-        dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
-        dOmega_pri : float
-            The change in rotation rate of the primary (more evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
+    dOmega_sec : float
+        The change in rotation rate of the secondary (less evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
+    dOmega_pri : float
+        The change in rotation rate of the primary (more evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
     """
 
     m1 = primary.latest["mass"]
@@ -196,38 +190,34 @@ def M15_braking(primary, secondary, verbose = False):
     return dOmega_mb_sec, dOmega_mb_pri
 
 def G18_braking(primary, secondary, verbose = False):
-    """
-        Calculates the change in spin of each star due
-    to magnetic braking, according to:
+    """Calculate the change in spin of each star due to magnetic braking.
+
+    According to:
 
         Garraffo et al. 2018, ApJ, 862, 90
 
-        Free parameters calibrated to match the Solar rotation
-    rate by Gossage et al. 2021, ApJ, 912, 65.
+    The free parameters are calibrated to match the Solar rotation rate by
+    Gossage et al. 2021, ApJ, 912, 65.
 
     Parameters
     ----------
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        verbose : bool
-            True if we want to print stuff.
+    primary : SingleStar object
+        A single star object, representing the primary (more evolved) star in
+        the binary and containing its properties.
+    secondary : SingleStar object
+        A single star object, representing the secondary (less evolved) star
+        in the binary and containing its properties.
+    verbose : bool
+        True if we want to print stuff.
 
     Returns
     -------
-        dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
-        dOmega_pri : float
-            The change in rotation rate of the primary (more evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
+    dOmega_sec : float
+        The change in rotation rate of the secondary (less evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
+    dOmega_pri : float
+        The change in rotation rate of the primary (more evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
     """
 
     m1 = primary.latest["mass"]
@@ -271,35 +261,31 @@ def G18_braking(primary, secondary, verbose = False):
     return dOmega_mb_sec, dOmega_mb_pri
 
 def CARB_braking(primary, secondary, verbose = False):
-    """
-        Calculates the change in spin of each star due
-    to magnetic braking, according to:
+    """Calculate the change in spin of each star due to magnetic braking.
+
+    According to:
 
         Van & Ivanova 2019, ApJ, 886, L31
 
     Parameters
     ----------
-        primary : SingleStar object
-            A single star object, representing the primary (more evolved) star
-            in the binary and containing its properties.
-
-        secondary : SingleStar object
-            A single star object, representing the secondary (less evolved) star
-            in the binary and containing its properties.
-
-        verbose : bool
-            True if we want to print stuff.
+    primary : SingleStar object
+        A single star object, representing the primary (more evolved) star in
+        the binary and containing its properties.
+    secondary : SingleStar object
+        A single star object, representing the secondary (less evolved) star
+        in the binary and containing its properties.
+    verbose : bool
+        True if we want to print stuff.
 
     Returns
     -------
-        dOmega_sec : float
-            The change in rotation rate of the secondary (less evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
-        dOmega_pri : float
-            The change in rotation rate of the primary (more evolved)
-        star for a time step in step_detached's solve_ivp(). [rad/yr^2]
-
+    dOmega_sec : float
+        The change in rotation rate of the secondary (less evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
+    dOmega_pri : float
+        The change in rotation rate of the primary (more evolved) star for a
+        time step in step_detached's solve_ivp(). [rad/yr^2]
     """
 
     m1 = primary.latest["mass"]

@@ -26,7 +26,6 @@ time    x_1(t_2)    x_2(t_2)    ...     x_d(t_2)
   |         .           .       ...         .
   V     x_1(t_N)    x_2(t_N)    ...     x_d(t_N)
 
-
  Usage example
  -------------
  TD = TrackDownsample(t, X)
@@ -181,8 +180,10 @@ class TrackDownsampler:
         max_interval : float or None (default: None)
             Maximum step in the independent variable.
 
-        Note: if `max_interval` is negative, it's value is the relative ratio
-              between maximum allowed dm and initial-final change.
+        Notes
+        -----
+        If `max_interval` is negative, its value is the relative ratio between
+        the maximum allowed dm and the initial-final change.
 
         """
         t, X = self.t, self.X
@@ -200,6 +201,20 @@ class TrackDownsampler:
         keep = np.zeros_like(t, dtype=bool)  # initially keep no row
 
         def DS(i, j, tolerance, max_interval=None):
+            """Recursively mark the indices to keep between two endpoints.
+
+            Parameters
+            ----------
+            i : int
+                Index of the left endpoint.
+            j : int
+                Index of the right endpoint.
+            tolerance : float
+                Maximum allowed error.
+            max_interval : float or None (default: None)
+                Maximum step in the independent variable.
+
+            """
             if j <= i + 1:
                 return
             X_i, X_j = X[i, :], X[j, :]    # points at the ends

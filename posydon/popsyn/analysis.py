@@ -31,7 +31,19 @@ def report_columns(path):
 
 
 def _decide_chunksize(n_binaries):
-    """Decide the HDF5 chunk size when searching for n_binaries."""
+    """Decide the HDF5 chunk size when searching for n_binaries.
+
+    Parameters
+    ----------
+    n_binaries : int or None
+        The number of binaries to search for, or None to select all.
+
+    Returns
+    -------
+    int
+        The chunk size to use when reading the HDF5 file.
+
+    """
     if n_binaries is None:
         return CHUNKSIZE
     return min(CHUNKSIZE, max(CHUNKSIZE_SMALL, n_binaries // 10))
@@ -101,6 +113,8 @@ def get_subsets(path, find_n=None, select_oneline=None, select_history=None,
         If None, all columns will be returned. If a string, only those columns
         with name containing this string will be returned. An array of strings
         can be used for multiple such patterns.
+    verbose : bool
+        Whether to print information about the subset selection.
 
     Returns
     -------
@@ -109,7 +123,16 @@ def get_subsets(path, find_n=None, select_oneline=None, select_history=None,
 
     """
     def say(*args, **kwargs):
-        """Print only if verbose is True."""
+        """Print only if verbose is True.
+
+        Parameters
+        ----------
+        *args :
+            The positional arguments to print.
+        **kwargs :
+            The keyword arguments to pass to the print function.
+
+        """
         if verbose:
             print(*args, **kwargs)
 

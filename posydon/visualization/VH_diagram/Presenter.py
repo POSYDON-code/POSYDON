@@ -22,7 +22,19 @@ from .SimulationModel import SimulationModel
 
 
 def to_megayears(nb):
-    """Convert yr to Myr."""
+    """Convert years to megayears.
+
+    Parameters
+    ----------
+    nb : float
+        Number of years to convert.
+
+    Returns
+    -------
+    float
+        Number of megayears.
+
+    """
     return nb / 1000000
 
 
@@ -72,7 +84,19 @@ def to_simplified_data(row):
 
 
 def file_exist(filename):
-    """Check if file exists."""
+    """Check if a file exists.
+
+    Parameters
+    ----------
+    filename : str
+        Path of the file to check.
+
+    Returns
+    -------
+    bool
+        True if the file exists, False otherwise.
+
+    """
     return os.path.exists(filename)
 
 
@@ -227,7 +251,16 @@ class SimplifiedInfo:
     """
 
     def __init__(self, state_before=None, state_after=None):
-        """Initialize a SimplifiedInfo instance."""
+        """Initialize a SimplifiedInfo instance.
+
+        Parameters
+        ----------
+        state_before : any value
+            Value for the older state.
+        state_after : any value
+            Value for the younger state.
+
+        """
         self.state_before = state_before
         self.state_after = state_after
 
@@ -330,7 +363,16 @@ class Presenter:
     }
 
     def __init__(self, filename, path="./"):
-        """Initialize a Presenter instance."""
+        """Initialize a Presenter instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the file containing the data.
+        path : str
+            Path where the file is located.
+
+        """
         self._model = SimulationModel(filename=filename, path=path)
         self._model.load_csv()
 
@@ -398,7 +440,16 @@ class Presenter:
         self._current_index = index
 
     def present(self, index, mode=PresenterMode.DETAILED):
-        """Preset the binary."""
+        """Present the binary.
+
+        Parameters
+        ----------
+        index : int
+            Binary index to present.
+        mode : PresenterMode
+            Mode used to display the binary.
+
+        """
         self._present_mode = mode
         self._visualizer.options().set_showed_mode(self._present_mode)
 
@@ -454,22 +505,34 @@ class Presenter:
         self._visualizer().get_column(self._state_id).set_title("STATE")
 
     def _set_visualisation_detailed(self):
+        """Set the detailed visualisation mode."""
         self._present_mode = PresenterMode.DETAILED
         self._update_visualisation()
 
     def _set_visualisation_reduced(self):
+        """Set the reduced visualisation mode."""
         self._present_mode = PresenterMode.REDUCED
         self._update_visualisation()
 
     def _set_visualisation_simplified(self):
+        """Set the simplified visualisation mode."""
         self._present_mode = PresenterMode.SIMPLIFIED
         self._update_visualisation()
 
     def _set_visualisation_diagram(self):
+        """Set the diagram visualisation mode."""
         self._present_mode = PresenterMode.DIAGRAM
         self._update_visualisation()
 
     def _set_distance_representation(self, state):
+        """Set the distance representation.
+
+        Parameters
+        ----------
+        state : bool
+            Whether to display the distance representation.
+
+        """
         self._distance_representation = state
         self._update_visualisation()
 

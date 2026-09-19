@@ -1,3 +1,6 @@
+"""Visualization tools for population synthesis data."""
+
+
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
@@ -35,7 +38,7 @@ COLORS = [cm.colors[i] for i in range(len(cm.colors)) if i%2==0] + [cm.colors[i]
 
 
 def plot_perley16_rate_density(ax=None):
-    '''Plot the GRB rate density from Perley et al. (2016)
+    """Plot the GRB rate density from Perley et al. (2016).
 
     plot the long gamma-ray burst rate density from Perley et al. (2016)
     if ax is None, it plotted on the latest axis, otherwise it is added to the given axis
@@ -44,7 +47,7 @@ def plot_perley16_rate_density(ax=None):
     ----------
     ax : matplotlib.axes.Axes (optional)
         Axes object to plot the data on
-    '''
+    """
     # Perley et al. (2016)
 
     z_P16 = np.array([0.3,0.75,1.35,1.75,2.3,3.1,4,5.2,7.])
@@ -63,6 +66,19 @@ def plot_perley16_rate_density(ax=None):
                     label=r'$\mathcal{R}_\mathrm{LGRB}(E_\mathrm{iso}^{45-450\,\mathrm{keV}} > 10^{51} \, \mathrm{erg})$ SHOALS survey')
 
 def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
+    """Plot the intrinsic merger rate density as a function of redshift.
+
+    Parameters
+    ----------
+    intrinsic_rates : pandas.DataFrame
+        DataFrame containing the intrinsic merger rate density as a function
+        of redshift.
+    channels : bool
+        If True, also plot the individual formation channels.
+    **kwargs : dict
+        Additional keyword arguments, e.g. 'ylim', 'xlim', 'path' and 'show'.
+
+    """
     plt.figure()
 
     plt.plot(intrinsic_rates.index, intrinsic_rates['total'], label='total', color='black')
@@ -85,6 +101,23 @@ def plot_rate_density(intrinsic_rates, channels=False, **kwargs):
         plt.show()
 
 def plot_merger_efficiency(met, merger_efficiency, show=True, path=None, channels=False):
+    """Plot the event efficiency as a function of metallicity.
+
+    Parameters
+    ----------
+    met : numpy.ndarray
+        Array of metallicities.
+    merger_efficiency : pandas.DataFrame
+        DataFrame containing the merger efficiency, with a 'total' column
+        and optional columns for the individual formation channels.
+    show : bool
+        If True, the figure is shown.
+    path : str
+        Path where the figure should be saved.
+    channels : bool
+        If True, also plot the individual formation channels.
+
+    """
     title = r'Event efficiency'
     plt.figure()
     plt.title(title)
@@ -111,6 +144,41 @@ def plot_hist_properties(df, ax=None, df_intrinsic=None, df_observable=None,
                         channel=None,
                         show=True, path=None, alpha=0.5,
                         range=None, bins=20, normalise=False,color=COLORS[0], label='', **kwargs):
+    """Plot the histogram of intrinsic and/or observable population properties.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing the properties to plot, with an 'intrinsic'
+        and/or an 'observable' column.
+    ax : matplotlib.axes.Axes
+        Axes object to plot the histogram on.
+    df_intrinsic : pandas.DataFrame
+        DataFrame with the intrinsic population properties.
+    df_observable : pandas.DataFrame
+        DataFrame with the observable population properties.
+    channel : str
+        Formation channel to be plotted.
+    show : bool
+        If True, the figure is shown.
+    path : str
+        Path where the figure should be saved.
+    alpha : float
+        Transparency of the histogram bars.
+    range : tuple
+        Lower and upper range of the bins.
+    bins : int
+        Number of bins.
+    normalise : bool
+        If True, the histogram is normalized to a probability density.
+    color : str
+        Color of the histogram.
+    label : str
+        Label prefix for the histogram.
+    **kwargs : dict
+        Additional keyword arguments, e.g. 'xlabel', 'yscale' and 'xscale'.
+
+    """
     if ax is None:
         fig, ax = plt.subplots(1,1, figsize=(5,5))
 
@@ -180,7 +248,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
                                 log_prop=False, alpha=0.3, s=5.,
                                 show_fig=True, save_fig=True, close_fig=True,
                                 plot_extension='png', verbose=False):
-    '''Plot the population synthesis data over a grid slice
+    """Plot the population synthesis data over a grid slice.
 
     Outputs one or multiple plots of the population synthesis data over a grid slice.
     Either stores the plots in a directory or shows them.
@@ -222,7 +290,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
         File extension for saving the plot
     verbose : bool (optional)
         Print information
-    '''
+    """
 
     # Check if step_names in pop.history data
     if 'step_names' not in pop.history.columns:
@@ -290,7 +358,7 @@ def plot_popsyn_over_grid_slice(pop, grid_type, met_Zsun,
             plt.close()
 
 def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
-    '''get the population data of a given metallicity for plotting
+    """Get the population data of a given metallicity for plotting.
 
     Parameters
     ----------
@@ -303,12 +371,14 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
         Options are 'HMS-HMS', 'CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO'.
     channel : str
         Formation channel to be plotted
+    prop : str
+        Property to add to the population data, e.g. a merger property.
 
     Returns
     -------
     data : DataFrame
         Population data of the given metallicity and channel and grid type
-    '''
+    """
 
     # 1. mask channel
     if channel is not None:
@@ -366,7 +436,7 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     return data
 
 def setup_grid_slice_plotting(grid, grid_type, plot_extension):
-    '''Setup the values for plotting the grid slice
+    """Setup the values for plotting the grid slice.
 
     Parameters
     ----------
@@ -390,7 +460,7 @@ def setup_grid_slice_plotting(grid, grid_type, plot_extension):
         String of the 3D variable to slice the grid
     tmp_fname : str
         Template file name for saving the plot
-    '''
+    """
 
     if grid_type == "HMS-HMS":
         grid_q_unique = np.unique(np.around(grid.initial_values['star_2_mass']/grid.initial_values['star_1_mass'],2))
@@ -433,7 +503,7 @@ def plot_population_data(data,
                          log_prop=False,
                          alpha=0.3,
                          s=5):
-    '''Plot the population data based on the grid slice parameters
+    """Plot the population data based on the grid slice parameters.
 
     Parameters
     ----------
@@ -453,7 +523,7 @@ def plot_population_data(data,
         Transparency of the data points
     s : float (optional)
         Size of the data points
-    '''
+    """
 
     # get only slice data
     if slice_3D_var_str == 'mass_ratio':
@@ -511,6 +581,22 @@ def plot_population_data(data,
                     zorder=0.5)
 
 def plot_grid_slice(grid, slice_3D_var_str, slice_3D_var_range, termination_flag='combined_TF12', PLOT_PROPERTIES=None):
+    """Plot the grid slice.
+
+    Parameters
+    ----------
+    grid : PSyGrid
+        PSyGrid object
+    slice_3D_var_str : str
+        String of the 3D variable to slice the grid
+    slice_3D_var_range : list
+        Range of the 3D variable to slice the grid
+    termination_flag : str
+        Termination flag to display
+    PLOT_PROPERTIES : dict
+        Dictionary of plot properties
+
+    """
     grid.plot2D('star_1_mass', 'period_days', None,
                 termination_flag=termination_flag,
                 grid_3D=True, slice_3D_var_str=slice_3D_var_str,

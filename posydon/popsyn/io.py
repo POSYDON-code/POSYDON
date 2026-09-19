@@ -167,12 +167,13 @@ SCALAR_NAMES_DTYPES = {
 
 def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
                             extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
-    """Take a posydon binary history DataFrame from the
-    BinaryStar.to_df method and clean the data for saving
-    by setting Data Types of the columns explicitly.
+    """Take a posydon binary history DataFrame and clean the data for saving.
+
+    The DataFrame comes from the ``BinaryStar.to_df`` method. The data is
+    cleaned by setting Data Types of the columns explicitly.
 
     Parameters
-    ---------
+    ----------
     binary_df : DataFrame
         A pandas Dataframe containing binary history
     extra_binary_dtypes_user : dict, optional
@@ -246,9 +247,10 @@ def clean_binary_history_df(binary_df, extra_binary_dtypes_user=None,
 
 def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
                             extra_S1_dtypes_user=None, extra_S2_dtypes_user=None):
-    """Take a posydon binary oneline DataFrame from the
-    BinaryStar.to_oneline_df method and clean the data for saving
-    by setting Data Types of the columns explicitly.
+    """Take a posydon binary oneline DataFrame and clean the data for saving.
+
+    The DataFrame comes from the ``BinaryStar.to_oneline_df`` method. The data
+    is cleaned by setting Data Types of the columns explicitly.
 
     This method is similar to clean_binary_history_df since they
     have many overalapping columns, with a few extras and different naming.
@@ -256,9 +258,9 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
     Note: there may be edge cases not handed if new scalar_names are added.
 
     Parameters
-    ---------
-    binary_df : DataFrame
-        A pandas Dataframe containing binary history
+    ----------
+    oneline_df : DataFrame
+        A pandas Dataframe containing binary oneline data
     extra_binary_dtypes_user : dict, optional
         A dictionary with extra column names as keys, and their
         associated data types as values.
@@ -269,8 +271,8 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
 
     Returns
     -------
-    binary_df : DataFrame
-        A cleaned binary history ready for saving to HDF.
+    oneline_df : DataFrame
+        A cleaned binary oneline ready for saving to HDF.
     """
     assert isinstance( oneline_df, pd.DataFrame )
 
@@ -349,7 +351,7 @@ def parse_inifile(path, verbose=False):
     """Parse an inifile for evolving binary populations.
 
     Parameters
-    ---------
+    ----------
     path : str or list like
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first
@@ -403,7 +405,7 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
     """Convert an inifile into kwargs for the SimulationProperties class.
 
     Parameters
-    ---------
+    ----------
     path : str or list like
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first
@@ -505,7 +507,7 @@ def binarypop_kwargs_from_ini(path, verbose=False):
     """Convert an inifile into kwargs for the BinaryPopulation class.
 
     Parameters
-    ---------
+    ----------
     path : str or list like
         Path to inifile. If multiple files are given,
         duplicate args are overwritten (stacked) first

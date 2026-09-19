@@ -1,3 +1,5 @@
+"""POSYDON: A fast population synthesis code for binary stars."""
+
 from importlib.metadata import PackageNotFoundError, version
 
 try:

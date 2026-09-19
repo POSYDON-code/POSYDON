@@ -91,7 +91,7 @@ class StepSN(object):
     """The supernova step in POSYDON.
 
     Keyword Arguments
-    ----------
+    -----------------
     mechanism : str
         Mechanism to perform the core-collapse on the star object and
         predict the supernova remnant outcome. Available options are:
@@ -264,7 +264,14 @@ class StepSN(object):
 
 
     def __init__(self, **kwargs):
-        """Initialize a StepSN instance."""
+        """Initialize a StepSN instance.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments used to set the class attributes. The
+            available options are the keys of ``StepSN.DEFAULT_KWARGS``.
+        """
         # read kwargs to initialize the class
         if kwargs:
             for key in kwargs:
@@ -436,7 +443,13 @@ class StepSN(object):
 
 
     def _reset_other_star_properties(self, star):
-        """Reset the properties of the star that is not being collapsed."""
+        """Reset the properties of the star that is not being collapsed.
+
+        Parameters
+        ----------
+        star : object
+            Star object whose properties are reset.
+        """
         star.lg_mdot = None
         star.lg_system_mdot = None
 
@@ -551,7 +564,6 @@ class StepSN(object):
         ----------
         star : object
             Star object containing the star properties.
-
 
         Returns
         -------
@@ -1122,7 +1134,28 @@ class StepSN(object):
         return m_PISN
 
     def check_SN_type(self, m_core, m_He_core, m_star):
-        """Get the remnant mass, fallback frac., state & SN type of the SN."""
+        """Get the remnant mass, fallback fraction, state and SN type.
+
+        Parameters
+        ----------
+        m_core : double
+            Mass of the CO core at the pre-supernova phase in M_sun.
+        m_He_core : double
+            Mass of the He core at the pre-supernova phase in M_sun.
+        m_star : double
+            Total stellar mass at the pre-supernova phase in M_sun.
+
+        Returns
+        -------
+        m_rembar : double
+            Baryonic mass of the remnant in M_sun.
+        f_fb : double
+            Mass fraction falling back onto the compact object.
+        state : string
+            Final state of the stellar remnant.
+        SN_type : string
+            Type of the supernova, i.e. 'WD', 'ECSN' or 'CCSN'.
+        """
         if self.ECSN == "Tauris+15":
             # Label the supernova type as in Tauris et al. (2015),
             # considering their definition of metal core quivalent
@@ -1484,7 +1517,6 @@ class StepSN(object):
 
         tilt :
             The angle between pre- and post- supernova orbital angular momentum vectors
-
 
         Parameters
         ----------
@@ -1906,6 +1938,8 @@ class StepSN(object):
                     Kick velocity in cm/s.
                 cos_theta : double
                     The cosine of the angle between pre- & post-SN orbital planes.
+                verbose : bool
+                    If True, the orbital checks are printed in the console.
 
                 Returns
                 -------
@@ -2215,29 +2249,31 @@ class StepSN(object):
         return norm
 
     def get_combined_tilt(self, tilt_1, tilt_2, true_anomaly_1, true_anomaly_2):
-        """Get the combined spin-orbit-tilt after two supernovae, assuming
-        the spin as not realigned with the orbital angular momentum after
-        SN1
+        """Get the combined spin-orbit tilt after two supernovae.
 
-            Parameters
-            ----------
-            tilt_1: float
-                Angle, in radians, through which the orbital plane was tilted
-                by SN1
-            tilt_2: float
-                Angle, in radians, through which the orbital plane was tilted
-                by SN2
-            true_anomaly_1: float
-                Angle, in radians, of the true anomaly at the moment of SN1
-            true_anomaly_2: float
-                Angle, in radians, of the true anomaly at the moment of SN2
+        This assumes that the spin is not realigned with the orbital angular
+        momentum after the first supernova.
 
+        Parameters
+        ----------
+        tilt_1 : float
+            Angle, in radians, through which the orbital plane was tilted
+            by the first supernova.
+        tilt_2 : float
+            Angle, in radians, through which the orbital plane was tilted
+            by the second supernova.
+        true_anomaly_1 : float
+            Angle, in radians, of the true anomaly at the moment of the
+            first supernova.
+        true_anomaly_2 : float
+            Angle, in radians, of the true anomaly at the moment of the
+            second supernova.
 
-            Returns
-            -------
-            combined_tilt: float
-                Angle, in radians, between the spin and orbital angular momentum
-                after SN2
+        Returns
+        -------
+        combined_tilt : float
+            Angle, in radians, between the spin and orbital angular momentum
+            after the second supernova.
         """
         z_prime = rotate((1,0,0), tilt_1).dot((0,0,1))
         x_prime = rotate(z_prime, true_anomaly_2-true_anomaly_1).dot((1,0,0))
@@ -2247,11 +2283,23 @@ class StepSN(object):
         return combined_tilt
 
     def C_abundance_for_H_stars(self, CO_core_mass):
-        """Get the C abundance for a H-star given it's CO core mass."""
+        """Get the C abundance for an H-rich star given its CO core mass.
+
+        Parameters
+        ----------
+        CO_core_mass : double
+            Mass of the CO core in M_sun.
+        """
         return 0.20/CO_core_mass + 0.15
 
     def C_abundance_for_He_stars(self, CO_core_mass):
-        """Get the C abundance for a He-star given it's CO core mass."""
+        """Get the C abundance for a He-star given its CO core mass.
+
+        Parameters
+        ----------
+        CO_core_mass : double
+            Mass of the CO core in M_sun.
+        """
         return -0.084 * np.log(CO_core_mass) + 0.4
 
     def get_CO_core_params(self, star, approximation=False):
@@ -2264,22 +2312,21 @@ class StepSN(object):
         latter is computed from the formulas at Patton&Sukhbold,20.
 
         Parameters
-            ----------
-            star : obj
-                Star object of a collapsing star containing the MESA profile.
-            approximation : bool
-                In case the core masses at he-depletion are not present in the
-                star object, compute them from the history default behaviour,
-                else (approximation=True) approximate it from the core masses
-                at C depletion.
+        ----------
+        star : object
+            Star object of a collapsing star containing the MESA profile.
+        approximation : bool
+            In case the core masses at He depletion are not present in the
+            star object, compute them from the history default behaviour,
+            else (approximation=True) approximate it from the core masses
+            at C depletion.
 
-            Returns
-            -------
-            CO_core_mass : float
-                Mass of the CO core at He depletion == C core ignition.
-
-            C_core_abundance : float
-                C abundance of the CO core  He depletion == C core ignition.
+        Returns
+        -------
+        CO_core_mass : float
+            Mass of the CO core at He depletion == C core ignition.
+        C_core_abundance : float
+            C abundance of the CO core at He depletion == C core ignition.
         """
         if approximation:
             CO_core_mass = star.co_core_mass # at C_depletion, which is assumed to be close to He depletion
@@ -2306,7 +2353,28 @@ class StepSN(object):
         return CO_core_mass, C_core_abundance
 
     def get_M4_mu4_Patton20(self, CO_core_mass, C_core_abundance):
-        """Get the M4 and mu4 using Patton+20."""
+        """Get the M4, mu4, Xi and sc values using the Patton+20 data.
+
+        Parameters
+        ----------
+        CO_core_mass : double
+            Mass of the CO core at He depletion in M_sun.
+        C_core_abundance : double
+            C abundance of the CO core at He depletion.
+
+        Returns
+        -------
+        M4 : float
+            Remnant mass predicted by the Patton+20 prescription.
+        mu4 : float
+            Compactness parameter predicted by the Patton+20 prescription.
+        Xi : float
+            Central entropy parameter predicted by the Patton+20
+            prescription.
+        sc : float
+            Critical entropy parameter predicted by the Patton+20
+            prescription.
+        """
 
         M4 = self.M4_interpolator.predict([[C_core_abundance, CO_core_mass]])
         mu4 = self.mu4_interpolator.predict([[C_core_abundance, CO_core_mass]])
@@ -2324,8 +2392,14 @@ class StepSN(object):
 
         Parameters
         ----------
-            star : obj
-                Star object of a collapsing star containing the MESA profile.
+        star : object
+            Star object of a collapsing star containing the MESA profile.
+        engine : str
+            Engine to use for the core-collapse prescription. Possible
+            options are: 'N20', 'S19.8', 'W15', 'W20', 'W18' and 'Ertl2020'.
+        conserve_hydrogen_envelope : bool
+            Whether to assume that the hydrogen envelope is conserved in
+            direct collapse to a BH.
 
         Returns
         -------
@@ -2333,6 +2407,8 @@ class StepSN(object):
             Remnant mass of the compact object in M_sun.
         f_fb : double
             Fallback mass of the compact object in M_sun.
+        state : str
+            Final state of the stellar remnant, i.e. 'NS' or 'BH'.
 
         References
         ----------
@@ -2410,13 +2486,14 @@ class StepSN(object):
 
         Parameters
         ----------
-            star : obj
-                Star object of a collapsing star containing the MESA profile.
-            engine : str
-                Engine to use for the core-collapse prescription
-                Possible options are: 'M16'
-            conserve_hydrogen_envelope : bool
-                Whether to assume that the hydrogen envelope is conserved in direct collapse to a BH.
+        star : object
+            Star object of a collapsing star containing the MESA profile.
+        engine : str
+            Engine to use for the core-collapse prescription. Possible
+            options are: 'M16'.
+        conserve_hydrogen_envelope : bool
+            Whether to assume that the hydrogen envelope is conserved in
+            direct collapse to a BH.
 
         Returns
         -------
@@ -2512,6 +2589,34 @@ class StepSN(object):
         return m_rem, f_fb, state
 
     def NS_vs_fallbackBH(self, comp_val, mco_val, M4_val, mu4M4_val):
+        """Determine whether the remnant is a neutron star or a fallback BH.
+
+        This implements eq. (7) and (8) of [8]_. The remnant is a
+        guaranteed neutron star if any of the conditions is fulfilled,
+        otherwise its type is drawn stochastically.
+
+        Parameters
+        ----------
+        comp_val : float
+            Compactness of the CO core.
+        mco_val : float
+            Mass of the CO core in M_sun.
+        M4_val : float
+            Remnant mass predicted by the [8]_ prescription in M_sun.
+        mu4M4_val : float
+            Product of the compactness parameter and remnant mass.
+
+        Returns
+        -------
+        rem : str
+            Remnant type, i.e. 'NS' or 'fallback_BH'.
+
+        References
+        ----------
+        .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger,
+            F.K. Roepke, E. Laplace, 2025, A&A, 700, A20. Explodability
+            criteria for the neutrino-driven supernova mechanism
+        """
         a, b = 1.75, -0.044  # eq. (8) of [8]_
         # conditions for guaranteed NS formation (eq. 7)
         if comp_val <= 0.04 or (comp_val < a*mu4M4_val + b and comp_val <= 0.4) or M4_val/mco_val > 0.6:
@@ -2527,6 +2632,38 @@ class StepSN(object):
 
     # implemented from Maltsev+25
     def explod_crit(self, comp_val, sc_val, mu4M4_val, mu4_val, k1, k2):
+        """Determine whether the supernova is successful or failed.
+
+        This implements the explodability criteria of [8]_. The fate is
+        classified from the compactness and central specific entropy, and
+        from the reversed Ertl criterion when needed.
+
+        Parameters
+        ----------
+        comp_val : float
+            Compactness of the CO core.
+        sc_val : float
+            Central specific entropy of the CO core.
+        mu4M4_val : float
+            Product of the compactness parameter and remnant mass.
+        mu4_val : float
+            Compactness parameter of the CO core.
+        k1 : float
+            First coefficient of the reversed Ertl criterion.
+        k2 : float
+            Second coefficient of the reversed Ertl criterion.
+
+        Returns
+        -------
+        ff : bool
+            True if the supernova is successful, False otherwise.
+
+        References
+        ----------
+        .. [8] K. Maltsev, F.R.N. Schneider, I. Mandel, B. Mueller, A. Heger,
+            F.K. Roepke, E. Laplace, 2025, A&A, 700, A20. Explodability
+            criteria for the neutrino-driven supernova mechanism
+        """
         ff1, ff2 = [], []
         unclassified = True
         comp_crit1, comp_crit2 = 0.314, 0.544 # compactness
@@ -2580,6 +2717,9 @@ class Sukhbold16_corecollapse(object):
         Path to the location of the data on initial and final states
         for each engine described in [1]_
 
+    verbose : bool
+        If True, the messages are printed in the console.
+
     Returns
     -------
     m_rem : double
@@ -2598,7 +2738,18 @@ class Sukhbold16_corecollapse(object):
     """
 
     def __init__(self, engine, path_engine_dataset, verbose):
-        """Initialize a Sukhbold16_corecollapse instance."""
+        """Initialize a Sukhbold16_corecollapse instance.
+
+        Parameters
+        ----------
+        engine : string
+            Engine for the supernova explosion, from the ones used in [1]_.
+        path_engine_dataset : string
+            Path to the location of the data on initial and final states
+            for each engine described in [1]_.
+        verbose : bool
+            If True, the messages are printed in the console.
+        """
         self.engines = ['N20', 'S19.8', 'W15', 'W20', 'W18']
         self.engine = engine
         self.path_engine_dataset = path_engine_dataset
@@ -2673,6 +2824,21 @@ class Sukhbold16_corecollapse(object):
             # Gets the neutron-star mass in terms of the He core mass
             # if a succesful explotion is predicted
             def extrapolate1d_NS(value, interpolator):
+                """Extrapolate the neutron-star mass in terms of the He core mass.
+
+                Parameters
+                ----------
+                value : float
+                    He core mass pre-supernova in M_sun.
+                interpolator : object
+                    Interpolator of the remnant mass as a function of the He
+                    core mass.
+
+                Returns
+                -------
+                result : float
+                    Remnant mass of the neutron star in M_sun.
+                """
                 x = interpolator.x
 
                 if (value >= np.min(x)) and (value <= np.max(x)):
@@ -2687,6 +2853,21 @@ class Sukhbold16_corecollapse(object):
             # Gets the black-hole mass in terms of the He core mass
             # if a unsuccesful explotion is predicted
             def extrapolate1d_BH(value, interpolator):
+                """Extrapolate the black-hole mass in terms of the He core mass.
+
+                Parameters
+                ----------
+                value : float
+                    He core mass pre-supernova in M_sun.
+                interpolator : object
+                    Interpolator of the remnant mass as a function of the He
+                    core mass.
+
+                Returns
+                -------
+                result : float
+                    Remnant mass of the black hole in M_sun.
+                """
                 x = interpolator.x
 
                 if (value >= np.min(x)) and (value <= np.max(x)):
@@ -2757,12 +2938,16 @@ class Couch20_corecollapse(object):
 
     Parameters
     ----------
-    engine : string
-        Engine for the supernova explosion, from the one where used in [1]_.
+    turbulence_strength : string
+        Turbulence strength of the supernova explosion, from the ones used
+        in [1]_.
 
     path_engine_dataset : string
         Path to the location of the data on initial and final states
-        for each engine described in [1]_
+        for each engine described in [1]_.
+
+    verbose : bool
+        If True, the messages are printed in the console.
 
     Returns
     -------
@@ -2790,7 +2975,19 @@ class Couch20_corecollapse(object):
     """
 
     def __init__(self, turbulence_strength, path_engine_dataset, verbose):
-        """Initialize a Couch20_corecollapse instance."""
+        """Initialize a Couch20_corecollapse instance.
+
+        Parameters
+        ----------
+        turbulence_strength : string
+            Turbulence strength of the supernova explosion, from the ones
+            used in [1]_.
+        path_engine_dataset : string
+            Path to the location of the data on initial and final states
+            for each engine described in [1]_.
+        verbose : bool
+            If True, the messages are printed in the console.
+        """
         self.turbulence_strength_options = ["1.0", "1.2", "1.23", "1.25",
                                             "1.27", "1.3", "1.4"]
         self.turbulence_strength = turbulence_strength
@@ -2908,7 +3105,7 @@ class Couch20_corecollapse(object):
 
 
 def check_SN_CO_match(SN_type, state):
-    '''Check if the SN type matches the stellar state of the given star.
+    """Check if the SN type matches the stellar state of the given star.
 
     Parameters
     ----------
@@ -2921,7 +3118,7 @@ def check_SN_CO_match(SN_type, state):
     -------
     correct_SN_type : bool
         True if the SN type matches the stellar state of the star.
-    '''
+    """
     # TODO: remove star.state == PISN, because PISN shouldn't be a stellar state
     if state == 'PISN':
         state = 'massless_remnant'
