@@ -99,6 +99,11 @@ def evolve_binary(binary, binary_id):
 
         # Ensure we always have a dataframe
         if evolution_df is not None:
+            # Defragment the DataFrame from POSYDON's column-by-column construction.
+            # This must happen before any new column is added, otherwise the
+            # insertion triggers pandas' fragmentation PerformanceWarning.
+            evolution_df = evolution_df.copy()
+
             # Decode bytes columns if needed
             for col in evolution_df.select_dtypes([object]):
                 if evolution_df[col].apply(lambda x: isinstance(x, bytes)).any():
@@ -109,9 +114,6 @@ def evolve_binary(binary, binary_id):
             # Always ensure binary_id exists
             if "binary_id" not in evolution_df.columns:
                 evolution_df["binary_id"] = int(binary_id)
-
-            # Defragment the DataFrame from POSYDON's column-by-column construction
-            evolution_df = evolution_df.copy()
 
         # Save warnings
         if captured_warnings:
