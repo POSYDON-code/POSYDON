@@ -664,6 +664,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     if orbit_averaged:
+        # see Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897 eq. 6
         mdot_acc = alpha / (2 * np.sqrt(1 - ecc**2))
         mdot_acc *= ( (G * m_acc * Msun) / (sep * Rsun * v_wind**2) )**2
         mdot_acc *= ( 1 + (G * (m_acc + m) * Msun) / (sep * Rsun * v_wind**2) )**(-3/2)
