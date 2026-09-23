@@ -654,13 +654,9 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     b = sep * Rsun * np.sqrt(1 - ecc**2)
     r_vec = np.array([sep * Rsun * (np.cos(E) - ecc), b * np.sin(E)])
-    v_dir = np.array([-sep * Rsun * np.sin(E), b * np.cos(E)])
     r = np.linalg.norm(r_vec, axis=0)
-    v_dir_norm = np.linalg.norm(v_dir, axis=0)
-
-    k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
     v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
-    v_rel = np.sqrt(v**2 + v_wind**2 - 2 * v * v_wind * k)                # m/s
+
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     if orbit_averaged:
@@ -671,6 +667,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         mdot_acc *= 10**lg_mdot
     # instantaneous calculation randomly sampled around orbit
     else:
+        v_dir = np.array([-sep * Rsun * np.sin(E), b * np.cos(E)])
+        v_dir_norm = np.linalg.norm(v_dir, axis=0)
+        k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
+        v_rel = np.sqrt(v**2 + v_wind**2 - 2 * v * v_wind * k)      # m/s
+
         mdot_acc = alpha * ((G * m_acc * Msun)**2
                         / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
 
