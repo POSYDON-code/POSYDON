@@ -159,7 +159,7 @@ def correct_sum(fv_dict, sum_keys, constraint):
 
     if abs(keys_sum - target) > EPS:
         for key in sum_keys:
-            fv_dict[key] = constraint * (fv_dict[key] / keys_sum)
+            fv_dict[key] = target * (fv_dict[key] / keys_sum)
 
     return fv_dict
 
@@ -358,18 +358,28 @@ CONSTRAINTS = [
 
 
 def check_order_of_constraints():
-    """Report possible issues with the order of application of constraints.
-
-    TODO: this needs to be updated for the new types of constraints.
-    """
+    """Report possible issues with the order of application of constraints."""
     changed_so_far, used_so_far = set(), set()
 
     for constraint in CONSTRAINTS:
-        # find all colnames for the independent variables (including per star)
-        indep_cols = set([col.format(star) for star in [1, 2]
-                         for col in constraint.independent])
-        # same with dependent variables
-        dep_cols = set([constraint.dependent.format(star) for star in [1, 2]])
+        ctype = constraint["type"]
+
+        if ctype == 1:
+            # find all colnames for the independent variables (including per star)
+            indep_cols = set([col.format(star) for star in [1, 2]
+                             for col in constraint["independent"]])
+            # same with dependent variables
+            dep_cols = set([constraint["dependent"].format(star)
+                            for star in [1, 2]])
+        elif ctype == 2:
+            indep_cols = set([field.format(star) for star in [1, 2]
+                             for fields in constraint["fields"]
+                             for field in fields])
+            dep_cols = set(indep_cols)
+        elif ctype == 3:
+            indep_cols = set([field.format(star) for star in [1, 2]
+                             for field in constraint["sum_fields"]])
+            dep_cols = set(indep_cols)
 
         # track quantities relevant to this constraint, already encountered
         already_changed = changed_so_far.intersection(indep_cols)
@@ -379,14 +389,14 @@ def check_order_of_constraints():
         if len(already_changed) > 0:
             print("In constraint {}, independent quanitities ({}) may have "
                   "been modified by a previous constraint.".format(
-                      constraint.name, already_changed))
+                      constraint["name"], already_changed))
         if len(about_to_change) > 0:
             print("Constraint {} may modify previously used dependent "
-                  "quanitities ({}).".format(constraint.name, about_to_change))
+                  "quanitities ({}).".format(constraint["name"], about_to_change))
 
         # you've seen these now...
         changed_so_far.update(dep_cols)
-        used_so_far.upate(indep_cols)
+        used_so_far.update(indep_cols)
 
 
 def find_constraints_to_apply(out_keys):
