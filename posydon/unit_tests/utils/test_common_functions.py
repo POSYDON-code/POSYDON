@@ -755,12 +755,12 @@ class TestFunctions:
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, wind_disk_criteria=False) ==\
+                                  RNG=rng) ==\
                approx(5.34028698228e-17, abs=6e-29) # form always a disk
         rng = MockRNG2() # other angle
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  wind_disk_criteria=False, RNG=rng) ==\
+                                  RNG=rng) ==\
                approx(5.62813289713e-8, abs=6e-20)
 
     def test_rejection_sampler(self, monkeypatch):

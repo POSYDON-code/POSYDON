@@ -506,7 +506,7 @@ def beaming(binary):
     return mdot_beam, b
 
 
-def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
+def bondi_hoyle(binary, accretor, donor, idx=-1,
                 RNG=np.random.default_rng(), scheme='Hurley+2002',
                 orbit_averaged=False):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
@@ -521,13 +521,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         The donor in the binary.
     idx : int
         default: -1
-    wind_disk_criteria : bool
-        default: True, see [5]_
     scheme : str
         There are different options:
 
         - 'Hurley+2002' : following [3]_
-        - 'Kudritzki+2000' : following [7]_
+        - 'Kudritzki+2000' : following [6]_
 
     Returns
     -------
@@ -537,7 +535,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     Notes
     -----
     An approximation is used for the accretion rate [2]_ and the wind velocity
-    of the donor is moddeled as in [3]_, [6]_. Also see [4]_.
+    of the donor is moddeled as in [3]_, [5]_. Also see [4]_.
 
     References
     ----------
@@ -546,10 +544,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
         223
-    .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-        Quast, M., 2021, A&A
-    .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
-    .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
+    .. [5] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
+    .. [6] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
     """
     alpha = 1.5
@@ -557,7 +553,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     G = const.standard_cgrav * 1e-3     # 6.67428e-11 m3 kg-1 s-2
     Msun = const.Msun * 1e-3            # 1.988547e30  kg
     Rsun = const.Rsun * 1e-2            # 6.9566e8 m
-    clight = const.clight * 0.01        # 2.99792458e8 m s-1
 
     sep = np.atleast_1d(
         np.asanyarray([*binary.separation_history, binary.separation],
@@ -643,20 +638,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         else:
             pass
 
-    # mean motion
-    n = np.sqrt((G * (m_acc + m) * Msun) / ((sep * Rsun)**3))
-    # random orbital period draws
-    t0 = RNG.random(len(sep)) * 2 * np.pi / n
-    # solve Kepler's equation for eccentric anomaly E
-    E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
-               np.ones_like(sep) * np.pi / 2,
-               maxiter=100)
-
-    b = sep * Rsun * np.sqrt(1 - ecc**2)
-    r_vec = np.array([sep * Rsun * (np.cos(E) - ecc), b * np.sin(E)])
-    r = np.linalg.norm(r_vec, axis=0)
-    v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
-
+   
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
     if orbit_averaged:
@@ -668,6 +650,19 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         mdot_acc *= 10**lg_mdot
     # instantaneous calculation randomly sampled around orbit
     else:
+        # mean motion
+        n = np.sqrt((G * (m_acc + m) * Msun) / ((sep * Rsun)**3))
+        # random orbital period draws
+        t0 = RNG.random(len(sep)) * 2 * np.pi / n
+        # solve Kepler's equation for eccentric anomaly E
+        E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
+                    np.ones_like(sep) * np.pi / 2,
+                    maxiter=100)
+    
+        b = sep * Rsun * np.sqrt(1 - ecc**2)
+        r_vec = np.array([sep * Rsun * (np.cos(E) - ecc), b * np.sin(E)])
+        r = np.linalg.norm(r_vec, axis=0)
+        v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
         v_dir = np.array([-sep * Rsun * np.sin(E), b * np.cos(E)])
         v_dir_norm = np.linalg.norm(v_dir, axis=0)
         k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
@@ -675,20 +670,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
         mdot_acc = alpha * ((G * m_acc * Msun)**2
                         / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
-
-    # eq. 10 in Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C.,
-    # Quast, M., 2021, A&A
-    if wind_disk_criteria:      # check if accretion disk will form
-        eta = 1.0/3.0           # wind accretion efficiency between 1 and 1/3
-        gamma = 1.0             # for non-spinning BH
-        q = m / m_acc
-        rdisk_div_risco = (
-            (2/3) * (eta / (1 + q)) ** 2
-            * (v / clight) ** (-2)
-            * (1 + (v_wind / v) ** 2) ** (-4) * gamma ** (-1))
-        for i in range(len(rdisk_div_risco)):
-            if rdisk_div_risco[i] <= 1:         # No disk formed
-                mdot_acc[i] = 10**-99.0
 
     # make it Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
