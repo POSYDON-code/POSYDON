@@ -813,7 +813,7 @@ class MesaGridStep:
 
             key_bh = POSYDON_TO_MESA['star']['lg_mdot']+'_%d' % (k_bh+1)
             tmp_lg_mdot = np.log10(10**cb_bh[key_bh][-1] + cf.bondi_hoyle(
-                binary, accretor, donor, idx=-1, RNG=self.RNG, 
+                binary, accretor, donor, idx=-1, RNG=self.RNG,
                 scheme='Kudritzki+2000', orbit_averaged=True))
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
 
@@ -826,7 +826,7 @@ class MesaGridStep:
                 edd = cf.eddington_limit(binary, idx=len_binary_hist)[0]
                 history_of_attribute = (np.log10(
                     10**cb_bh[key_bh][0] + cf.bondi_hoyle(
-                        binary, accretor, donor, idx=len_binary_hist,RNG=self.RNG, 
+                        binary, accretor, donor, idx=len_binary_hist,RNG=self.RNG,
                         scheme='Kudritzki+2000', orbit_averaged=True)))
                 if 10**history_of_attribute > edd:
                     history_of_attribute = np.log10(edd)
@@ -990,7 +990,7 @@ class MesaGridStep:
 
             tmp_lg_mdot = np.log10(
                 10**fv[key_bh] + cf.bondi_hoyle(
-                    binary, accretor, donor, idx=-1, RNG=self.RNG, 
+                    binary, accretor, donor, idx=-1, RNG=self.RNG,
                     scheme='Kudritzki+2000', orbit_averaged=True))
 
             mdot_edd = cf.eddington_limit(binary, idx=-1)[0]
