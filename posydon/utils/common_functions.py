@@ -506,7 +506,7 @@ def beaming(binary):
     return mdot_beam, b
 
 
-def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=np.random.default_rng(), 
+def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=np.random.default_rng(),
                 scheme='Hurley+2002', orbit_averaged=False):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
