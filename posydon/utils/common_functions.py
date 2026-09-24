@@ -600,7 +600,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
         beta[cond] = 0.5 + (m[cond] - 1.4) / (120.0 - 1.4) * (6.5)
         # Giants, as defined in Hurley+2002 surrounding eq. 9
         # (make sure to apply this last, so it is applied to all giants)
-        beta[np.logical_and(he_core_mass, radius > 900.0)] = 0.125
+        beta[np.logical_and(he_core_mass > 0.0, radius > 900.0)] = 0.125
 
         # For He-rich stars
         beta[np.logical_and(surface_h1 <= 0.01, m > 120.0)] = 7.0
