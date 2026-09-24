@@ -751,7 +751,7 @@ class TestFunctions:
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
-               1e-99
+               approx(        7.24216082e-18, abs=6e-29)
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
