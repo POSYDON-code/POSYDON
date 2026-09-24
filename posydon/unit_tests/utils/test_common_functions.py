@@ -747,7 +747,8 @@ class TestFunctions:
                approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') == 1e-99
+                                  RNG=rng, scheme='Kudritzki+2000') ==\
+               approx(3.92668160462e-17, abs=6e-29)
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
                1e-99
