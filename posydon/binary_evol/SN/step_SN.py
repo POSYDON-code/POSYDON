@@ -376,7 +376,10 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
-                        data_download(set_name='auxiliary')
+                        Pwarn(f"While loading auxiliary data, unable to find {filename}."
+                               "Attempting to download the data from Zenodo.",
+                               "MissingFilesWarning")
+                        data_download(set_name='auxiliary', confirm=True)
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -2633,7 +2636,10 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                Pwarn(f"While loading auxiliary data, unable to find {filename}."
+                       "Attempting to download the data from Zenodo.",
+                       "MissingFilesWarning")
+                data_download(set_name='auxiliary', confirm=True)
 
             Engine_data = read_csv(filename)
 
@@ -2826,7 +2832,10 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                Pwarn(f"While loading auxiliary data, unable to find {filename}."
+                       "Attempting to download the data from Zenodo.",
+                       "MissingFilesWarning")
+                data_download(set_name='auxiliary', confirm=True)
 
             Couch_data_file = open(filename)
             Couch_data = json.load(Couch_data_file)
