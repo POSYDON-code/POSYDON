@@ -465,10 +465,10 @@ class TestIllustrisTNG:
     def test_init_parameters(self, illustris_model, mock_illustris_data):
         """Test that initialization sets the parameters correctly."""
         # Check that data was loaded correctly
-        np.testing.assert_array_equal(illustris_model.CSFRD_data, np.flip(mock_illustris_data["SFR"]))
-        np.testing.assert_array_equal(illustris_model.redshifts, np.flip(mock_illustris_data["redshifts"]))
-        np.testing.assert_array_equal(illustris_model.Z, mock_illustris_data["mets"])
-        np.testing.assert_array_equal(illustris_model.M, np.flip(mock_illustris_data["M"], axis=0))
+        np.testing.assert_array_equal(illustris_model.CSFRD_data, np.flip(mock_illustris_data["100-1"]["SFR"]))
+        np.testing.assert_array_equal(illustris_model.redshifts, np.flip(mock_illustris_data["100-1"]["redshifts"]))
+        np.testing.assert_array_equal(illustris_model.Z, mock_illustris_data["100-1"]["mets"])
+        np.testing.assert_array_equal(illustris_model.M, np.flip(mock_illustris_data["100-1"]["M"], axis=0))
 
         # Check that model parameters were set correctly
         assert illustris_model.Z_max == 0.3
@@ -480,8 +480,8 @@ class TestIllustrisTNG:
         result = illustris_model.CSFRD(z_values)
 
         # Expected values come from interpolating flipped SFR data
-        flipped_sfr = np.flip(mock_illustris_data["SFR"])
-        flipped_redshifts = np.flip(mock_illustris_data["redshifts"])
+        flipped_sfr = np.flip(mock_illustris_data["100-1"]["SFR"])
+        flipped_redshifts = np.flip(mock_illustris_data["100-1"]["redshifts"])
         expected = np.interp(z_values, flipped_redshifts, flipped_sfr)
 
         np.testing.assert_allclose(result, expected)
@@ -493,9 +493,9 @@ class TestIllustrisTNG:
         result = illustris_model.mean_metallicity(z_values)
 
         # Calculate expected values manually
-        flipped_redshifts = np.flip(mock_illustris_data["redshifts"])
-        flipped_masses = np.flip(mock_illustris_data["M"], axis=0)
-        metallicities = mock_illustris_data["mets"]
+        flipped_redshifts = np.flip(mock_illustris_data["100-1"]["redshifts"])
+        flipped_masses = np.flip(mock_illustris_data["100-1"]["M"], axis=0)
+        metallicities = mock_illustris_data["100-1"]["mets"]
 
         # Calculate expected mean metallicities at each test redshift
         out = np.zeros_like(flipped_redshifts)
