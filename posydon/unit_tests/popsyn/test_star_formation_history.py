@@ -433,8 +433,8 @@ class TestIllustrisTNG:
             "redshifts": np.linspace(0.0, 9.0, num_redshifts)[::-1],  # Redshifts from 0 to 9
             "mets": np.logspace(-4, -1, num_metallicities),  # Metallicities from 1e-4 to 1e-1
             "M": np.ones((num_redshifts, num_metallicities)),  # Equal mass in all bins for simplicity
-            "Lbox_Mpc": 75, #Side length of IllustrisTNG box, in Mpc/h
-            "h": 0.6774 #Dimensionless Hubble constant
+            "Lbox_Mpc": np.array(75), #Side length of IllustrisTNG box, in Mpc/h
+            "h": np.array(0.6774) #Dimensionless Hubble constant
         }}
 
         # Add some variation to mass distribution for testing mean_metallicity
@@ -953,8 +953,8 @@ class TestGetSFHModel:
                 "redshifts": np.array([0.0, 1.0, 2.0]),
                 "mets": np.array([0.001, 0.01, 0.02]),
                 "M": np.ones((3, 3)),
-                "Lbox":75,
-                "h":0.6774
+                "Lbox_Mpc":np.array(75),
+                "h":np.array(0.6774)
             }}
 
         # Patch the data loading method
