@@ -428,14 +428,14 @@ class TestIllustrisTNG:
         num_redshifts = 10
         num_metallicities = 5
 
-        mock_data = {
+        mock_data = {"100-1" : {
             "BoxSFR": np.linspace(1e5, 1e6, num_redshifts)[::-1],  # SFR decreases with redshift
             "redshifts": np.linspace(0.0, 9.0, num_redshifts)[::-1],  # Redshifts from 0 to 9
             "mets": np.logspace(-4, -1, num_metallicities),  # Metallicities from 1e-4 to 1e-1
             "M": np.ones((num_redshifts, num_metallicities)),  # Equal mass in all bins for simplicity
             "Lbox": 75, #Side length of IllustrisTNG box, in Mpc/h
             "h": 0.6774 #Dimensionless Hubble constant
-        }
+        }}
 
         # Add some variation to mass distribution for testing mean_metallicity
         for i in range(num_redshifts):
