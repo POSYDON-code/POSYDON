@@ -428,24 +428,24 @@ class TestIllustrisTNG:
         num_redshifts = 10
         num_metallicities = 5
 
-        mock_data = {
+        mock_data = {"100-1" : {
             "BoxSFR": np.linspace(1e5, 1e6, num_redshifts)[::-1],  # SFR decreases with redshift
             "redshifts": np.linspace(0.0, 9.0, num_redshifts)[::-1],  # Redshifts from 0 to 9
             "mets": np.logspace(-4, -1, num_metallicities),  # Metallicities from 1e-4 to 1e-1
             "M": np.ones((num_redshifts, num_metallicities)),  # Equal mass in all bins for simplicity
-            "Lbox": 75, #Side length of IllustrisTNG box, in Mpc/h
-            "h": 0.6774 #Dimensionless Hubble constant
-        }
+            "Lbox_Mpc": np.array(75), #Side length of IllustrisTNG box, in Mpc/h
+            "h": np.array(0.6774) #Dimensionless Hubble constant
+        }}
 
         # Add some variation to mass distribution for testing mean_metallicity
         for i in range(num_redshifts):
             # Linear decrease in higher metallicities as redshift increases
             scale = 1.0 - i / num_redshifts
-            mock_data["M"][i] = np.linspace(1.0, scale, num_metallicities)
+            mock_data["100-1"]["M"][i] = np.linspace(1.0, scale, num_metallicities)
 
-        mock_data["M"] = np.flip(mock_data["M"], axis=0)  # Reverse the mass array
-        Lbox = mock_data["Lbox"]/mock_data["h"] #Side length of IllustrisTNG box in Mpc
-        mock_data["SFR"] = mock_data["BoxSFR"]/Lbox**3 #Rescale SFR to units of SFR/Mpc^3 instead of SFR/box
+        mock_data["100-1"]["M"] = np.flip(mock_data["100-1"]["M"], axis=0)  # Reverse the mass array
+        Lbox = mock_data["100-1"]["Lbox_Mpc"]/mock_data["100-1"]["h"] #Side length of IllustrisTNG box in Mpc
+        mock_data["100-1"]["SFR"] = mock_data["100-1"]["BoxSFR"]/Lbox**3 #Rescale SFR to units of SFR/Mpc^3 instead of SFR/box
         return mock_data
 
     @pytest.fixture
@@ -465,10 +465,10 @@ class TestIllustrisTNG:
     def test_init_parameters(self, illustris_model, mock_illustris_data):
         """Test that initialization sets the parameters correctly."""
         # Check that data was loaded correctly
-        np.testing.assert_array_equal(illustris_model.CSFRD_data, np.flip(mock_illustris_data["SFR"]))
-        np.testing.assert_array_equal(illustris_model.redshifts, np.flip(mock_illustris_data["redshifts"]))
-        np.testing.assert_array_equal(illustris_model.Z, mock_illustris_data["mets"])
-        np.testing.assert_array_equal(illustris_model.M, np.flip(mock_illustris_data["M"], axis=0))
+        np.testing.assert_array_equal(illustris_model.CSFRD_data, np.flip(mock_illustris_data["100-1"]["SFR"]))
+        np.testing.assert_array_equal(illustris_model.redshifts, np.flip(mock_illustris_data["100-1"]["redshifts"]))
+        np.testing.assert_array_equal(illustris_model.Z, mock_illustris_data["100-1"]["mets"])
+        np.testing.assert_array_equal(illustris_model.M, np.flip(mock_illustris_data["100-1"]["M"], axis=0))
 
         # Check that model parameters were set correctly
         assert illustris_model.Z_max == 0.3
@@ -480,8 +480,8 @@ class TestIllustrisTNG:
         result = illustris_model.CSFRD(z_values)
 
         # Expected values come from interpolating flipped SFR data
-        flipped_sfr = np.flip(mock_illustris_data["SFR"])
-        flipped_redshifts = np.flip(mock_illustris_data["redshifts"])
+        flipped_sfr = np.flip(mock_illustris_data["100-1"]["SFR"])
+        flipped_redshifts = np.flip(mock_illustris_data["100-1"]["redshifts"])
         expected = np.interp(z_values, flipped_redshifts, flipped_sfr)
 
         np.testing.assert_allclose(result, expected)
@@ -493,9 +493,9 @@ class TestIllustrisTNG:
         result = illustris_model.mean_metallicity(z_values)
 
         # Calculate expected values manually
-        flipped_redshifts = np.flip(mock_illustris_data["redshifts"])
-        flipped_masses = np.flip(mock_illustris_data["M"], axis=0)
-        metallicities = mock_illustris_data["mets"]
+        flipped_redshifts = np.flip(mock_illustris_data["100-1"]["redshifts"])
+        flipped_masses = np.flip(mock_illustris_data["100-1"]["M"], axis=0)
+        metallicities = mock_illustris_data["100-1"]["mets"]
 
         # Calculate expected mean metallicities at each test redshift
         out = np.zeros_like(flipped_redshifts)
@@ -948,14 +948,14 @@ class TestGetSFHModel:
         # Mock the data loading method
         def mock_get_data(self, verbose=False):
             # Return minimal mock data structure
-            return {
+            return { "100-1": {
                 "BoxSFR": np.array([1e5, 2e5, 3e5]),
                 "redshifts": np.array([0.0, 1.0, 2.0]),
                 "mets": np.array([0.001, 0.01, 0.02]),
                 "M": np.ones((3, 3)),
-                "Lbox":75,
-                "h":0.6774
-            }
+                "Lbox_Mpc":np.array(75),
+                "h":np.array(0.6774)
+            }}
 
         # Patch the data loading method
         monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", mock_get_data)
