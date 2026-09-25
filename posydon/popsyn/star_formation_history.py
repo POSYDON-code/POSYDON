@@ -12,11 +12,11 @@ __authors__ = [
 import os
 from abc import ABC, abstractmethod
 
+import h5py
 import numpy as np
 import pandas as pd
 import scipy as sp
 from scipy import stats
-import h5py
 
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import (
