@@ -16,6 +16,7 @@ import numpy as np
 import pandas as pd
 import scipy as sp
 from scipy import stats
+import h5py
 
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import (
@@ -589,16 +590,18 @@ class IllustrisTNG(SFHBase):
         super().__init__(SFH_MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
+        # load the TNG100-1 data
+        illustris_data = illustris_data["100-1"]
 
         # the data is stored in reverse order high to low redshift
         # the SFR is stored as SFR/Box, need to convert it to SFR/Mpc^3
-        BoxSFR = np.flip(illustris_data["BoxSFR"]) #CSFRD/Box
-        Lbox = illustris_data["Lbox"]/illustris_data["h"]  #Lbox for TNG100-1 = 75/h Mpc, h=0.6774
+        BoxSFR = np.flip(illustris_data["BoxSFR"][:]) #CSFRD/Box
+        Lbox = illustris_data["Lbox_Mpc"][()]/illustris_data["h"][()]  #Lbox for TNG100-1 = 75/h Mpc, h=0.6774
         self.CSFRD_data = BoxSFR / Lbox**3
-        self.redshifts = np.flip(illustris_data["redshifts"])
+        self.redshifts = np.flip(illustris_data["redshifts"][:])
 
-        self.Z = illustris_data["mets"] #metallicities
-        self.M = np.flip(illustris_data["M"], axis=0)  # star-forming mass, Msun
+        self.Z = illustris_data["mets"][:] #metallicities
+        self.M = np.flip(illustris_data["M"][:], axis=0)  # star-forming mass, Msun
 
     def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
@@ -610,7 +613,7 @@ class IllustrisTNG(SFHBase):
         """
         if verbose:
             print("Loading IllustrisTNG data...")
-        return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG100-1.npz"))
+        return h5py.File(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.h5"), 'r')
 
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
