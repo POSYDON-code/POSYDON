@@ -199,7 +199,7 @@ while their past history with <cite>binary.star_1.mass_history</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.binarystar.BinaryStar">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.binarystar.</span></span><span class="sig-name descname"><span class="pre">BinaryStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">star_1</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">star_2</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">properties</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">binary_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/binarystar.html#BinaryStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.binarystar.BinaryStar" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>A class containing the state and history of a stellar binary.</p>
 <p>Initialize a binary star.</p>
 <dl class="field-list simple">
@@ -261,8 +261,8 @@ while their past history with <cite>binary.star_1.mass_history</cite>.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>dataframe</strong> (<em>Pandas DataFrame</em>) – data to turn into a BinaryStar instance.</p></li>
-<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Sets the binary index.</p></li>
-<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Column names to be added directly to binary
+<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>optional</em>) – Sets the binary index.</p></li>
+<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>, </em><em>optional</em>) – Column names to be added directly to binary
 not in BINARYPROPERTIES.</p></li>
 </ul>
 </dd>
@@ -283,8 +283,8 @@ histories.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>oneline_df</strong> (<em>DataFrame</em>) – A oneline DataFrame describing a binary.</p></li>
-<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>None</em>) – Binary index</p></li>
-<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Names of any extra history columns not inlcuded
+<li><p><strong>index</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a><em>, </em><em>None</em>) – Binary index</p></li>
+<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Names of any extra history columns not inlcuded
 in BINARYPROPERTIES</p></li>
 </ul>
 </dd>
@@ -324,7 +324,7 @@ in BINARYPROPERTIES</p></li>
 <dd><p>Generate a message with the initial conditions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>ini_params</strong> (<em>None</em><em> or </em><em>iterable</em><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If None take the initial conditions from the binary, otherwise add
+<dd class="field-odd"><p><strong>ini_params</strong> (<em>None</em><em> or </em><em>iterable</em><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If None take the initial conditions from the binary, otherwise add
 each item of it to the message.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -353,7 +353,7 @@ each item of it to the message.</p>
 <dd><p>Restore the BinaryStar() object to its i-th state, keeping the binary history before the i-th state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The index of the binary object history to reset the binary to.
+<dd class="field-odd"><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – The index of the binary object history to reset the binary to.
 By default 0, i.e. the star will be restored to its initial state.</p>
 </dd>
 </dl>
@@ -379,24 +379,24 @@ By default 0, i.e. the star will be restored to its initial state.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>( </em><em>'name':dtype</em><em>, </em><em>...</em><em>.</em><em> )</em>) – Extra binary parameters to return in DataFrame that are not
+<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>( </em><em>'name':dtype</em><em>, </em><em>...</em><em>.</em><em> )</em>) – Extra binary parameters to return in DataFrame that are not
 included in BINARYPROPERTIES. All columns must have an
 associated pandas data type.
 Can be used in combination with <cite>only_select_columns</cite>.
 Assumes names have no suffix.</p></li>
-<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of binary parameters to ignore.
+<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of binary parameters to ignore.
 Assumes names have <cite>_history</cite> suffix.</p></li>
-<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of the only columns to include.
+<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of the only columns to include.
 Assumes names have <cite>_history</cite> suffix.
 Can be used in combination with <cite>extra_columns</cite>.</p></li>
-<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Replace all None values with something else (for saving).
+<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Replace all None values with something else (for saving).
 Default is np.nan.</p></li>
-<li><p><strong>include_S1</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Choose to include star 1 or 2 data to the DataFrame.
+<li><p><strong>include_S1</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Choose to include star 1 or 2 data to the DataFrame.
 The default is to include both.</p></li>
-<li><p><strong>include_S2</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Choose to include star 1 or 2 data to the DataFrame.
+<li><p><strong>include_S2</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Choose to include star 1 or 2 data to the DataFrame.
 The default is to include both.</p></li>
-<li><p><strong>S1_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – kwargs to pass to each star’s ‘to_df’ method (extra/ignore columns)</p></li>
-<li><p><strong>S2_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – kwargs to pass to each star’s ‘to_df’ method (extra/ignore columns)</p></li>
+<li><p><strong>S1_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – kwargs to pass to each star’s ‘to_df’ method (extra/ignore columns)</p></li>
+<li><p><strong>S2_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – kwargs to pass to each star’s ‘to_df’ method (extra/ignore columns)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -447,9 +447,9 @@ future development and deal with complexity it is build dynamically.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flow chart that maps the tuple (star_1_state, star_1_state,
+<li><p><strong>FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Flow chart that maps the tuple (star_1_state, star_1_state,
 binary_state, binary_event) to a step.</p></li>
-<li><p><strong>CHANGE_FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>Flow chart to change the default FLOW_CHART. E.g.
+<li><p><strong>CHANGE_FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – <p>Flow chart to change the default FLOW_CHART. E.g.
 CHANGE_FLOW_CHART = {(‘NS’, ‘NS’, ‘detached’, None) : ‘step_end’,</p>
 <blockquote>
 <div><p>(‘NS’, ‘HeMS’, ‘RLO1’, ‘pRLO1’) : ‘step_my_RLO1’}</p>
@@ -461,7 +461,7 @@ CHANGE_FLOW_CHART = {(‘NS’, ‘NS’, ‘detached’, None) : ‘step_end’
 <dd class="field-even"><p>Flow chart.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -477,15 +477,15 @@ oRLO1/oRLO2 -&gt; HMS-HMS RLO grid</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><em>None</em>)</p></li>
-<li><p><strong>CHANGE_FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><em>None</em>)</p></li>
+<li><p><strong>FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><em>None</em>)</p></li>
+<li><p><strong>CHANGE_FLOW_CHART</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em> or </em><em>None</em>)</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Modified flow chart.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -498,7 +498,7 @@ oRLO1/oRLO2 -&gt; HMS-HMS RLO grid</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.EvolveHooks">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">EvolveHooks</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#EvolveHooks"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.EvolveHooks" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Base class for hooking into binary evolution.</p>
 <p>Add any new output columns to the hooks constructor.
 Example for extra binary columns:</p>
@@ -538,7 +538,7 @@ Example for extra binary columns:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.NullStep">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">NullStep</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#NullStep"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.NullStep" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>An evolution step that does nothing but is used to initialize.</p>
 </dd></dl>
 
@@ -573,49 +573,49 @@ Example for extra binary columns:</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.simulationproperties.SimulationProperties">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.simulationproperties.</span></span><span class="sig-name descname"><span class="pre">SimulationProperties</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flow</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">({},</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_HMS_HMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_CO_HeMS</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_CO_HMS_RLO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_CO_HeMS_RLO</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_detached</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_disrupted</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_merged</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_initially_single</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_dco</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_SN</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_CE</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">step_end</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(NullStep(),</span> <span class="pre">{})</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">extra_hooks</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[]</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/simulationproperties.html#SimulationProperties"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.simulationproperties.SimulationProperties" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class describing the properties of a population synthesis simulation.</p>
 <p>Construct the simulation properties object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>flow_chart</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – A POSYDON flow_chart dictionary.</p></li>
-<li><p><strong>step_HMS_HMS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
+<li><p><strong>flow_chart</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – A POSYDON flow_chart dictionary.</p></li>
+<li><p><strong>step_HMS_HMS</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
 HMS-HMS evolution, like MS_MS_step. The second element is a
 dictionary of kwargs for that step.</p></li>
-<li><p><strong>step_CO_HeMS</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
+<li><p><strong>step_CO_HeMS</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
 CO-HeMS evolution, like CO_HeMS_step. The second element is a
 dictionary of kwargs for that step.</p></li>
-<li><p><strong>step_CO_HMS_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
+<li><p><strong>step_CO_HMS_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
 CO-HMS-RLO evolution, like CO_HMS_RLO_step. The second element is a
 dictionary of kwargs for that step.</p></li>
-<li><p><strong>step_CO_HeMS_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
+<li><p><strong>step_CO_HeMS_RLO</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MesaGridStep class handling
 CO-HeMS-RLO evolution, like CO_HeMS_RLO_step. The second element is a
 dictionary of kwargs for that step.</p></li>
-<li><p><strong>step_detached</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a detached_step class handling detached
+<li><p><strong>step_detached</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a detached_step class handling detached
 evolution. The second element is a dictionary of kwargs for that step.</p></li>
-<li><p><strong>step_disrupted</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a DisruptedStep class handling
+<li><p><strong>step_disrupted</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a DisruptedStep class handling
 disrupted evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_merged</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MergedStep class handling
+<li><p><strong>step_merged</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a MergedStep class handling
 merged evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_initially_single</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a InitiallySingleStep class handling
+<li><p><strong>step_initially_single</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a InitiallySingleStep class handling
 initially single evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_dco</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a DoubleCO class handling
+<li><p><strong>step_dco</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a DoubleCO class handling
 double CO evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_SN</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a StepSN class handling
+<li><p><strong>step_SN</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a StepSN class handling
 supernova evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_CE</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a StepCEE class handling
+<li><p><strong>step_CE</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a StepCEE class handling
 common envelope evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>step_end</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a step_end class handling
+<li><p><strong>step_end</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a>) – A tuple whose first element is a step_end class handling
 the end of evolution. The second element is a dictionary of kwargs for
 that step.</p></li>
-<li><p><strong>extra_hooks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>tuples</em>) – Each tuple contains a hooks class and kwargs or the extra step name
+<li><p><strong>extra_hooks</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><em>tuples</em>) – Each tuple contains a hooks class and kwargs or the extra step name
 (e.g., ‘extra_pre_evolve’, ‘extra_pre_step’, ‘extra_post_step’,
 ‘extra_post_evolve’) and the corresponding function.</p></li>
 </ul>
@@ -633,13 +633,13 @@ not yet exist, it is created and stored.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>None</em>) – Default metallicity value to use for the step if not explicitly
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>None</em>) – Default metallicity value to use for the step if not explicitly
 provided in <code class="docutils literal notranslate"><span class="pre">step_kwargs</span></code>.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the pipeline step being checked.</p></li>
-<li><p><strong>step_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Keyword arguments for the step. This dictionary may be modified
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the pipeline step being checked.</p></li>
+<li><p><strong>step_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Keyword arguments for the step. This dictionary may be modified
 in-place to include validated metallicity and/or a TrackMatcher
 instance.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print the keyword arguments used to construct the
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print the keyword arguments used to construct the
 TrackMatcher.</p></li>
 </ul>
 </dd>
@@ -650,7 +650,7 @@ validated <code class="docutils literal notranslate"><span class="pre">metallici
 <code class="docutils literal notranslate"><span class="pre">track_matcher</span></code> object.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)">tuple</a></p>
 </dd>
 </dl>
 <p class="rubric">Notes</p>
@@ -680,10 +680,10 @@ a TrackMatcher instance, which is stored internally.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Stellar metallicity used to select the appropriate grid files.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Identifier for the evolutionary step associated with this
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Stellar metallicity used to select the appropriate grid files.</p></li>
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Identifier for the evolutionary step associated with this
 TrackMatcher.</p></li>
-<li><p><strong>matcher_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Keyword arguments used to initialize the TrackMatcher. This
+<li><p><strong>matcher_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – Keyword arguments used to initialize the TrackMatcher. This
 dictionary will be updated in-place with the following keys:
 ‘grid_Hrich’ and ‘grid_strippedHe’.</p></li>
 </ul>
@@ -710,16 +710,16 @@ using the key <code class="docutils literal notranslate"><span class="pre">(meta
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A metallicity (Z) may be provided to automatically assign
+<li><p><strong>path</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Path to an inifile to load in.</p></li>
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A metallicity (Z) may be provided to automatically assign
 to steps as they are loaded. Should be one of e.g., 2.0, 1.0,
 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
 metallicities available in your POSYDON_DATA grids.</p></li>
-<li><p><strong>load_steps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether or not evolution steps should be automatically loaded.</p></li>
+<li><p><strong>load_steps</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Whether or not evolution steps should be automatically loaded.</p></li>
 <li><p><strong>RNG</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><em>numpy.random.Generator</em></a><em>, </em><em>optional</em>) – Random number generator used for any stochastic components of
 the simulation. Defaults to a new NumPy Generator instance
 created via <code class="docutils literal notranslate"><span class="pre">np.random.default_rng()</span></code>.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print useful info.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print useful info.</p></li>
 <li><p><strong>**override_sim_kwargs</strong> – Additional keyword arguments that override values specified
 in the .ini file when constructing the SimulationProperties
 instance.</p></li>
@@ -747,10 +747,10 @@ and creating a TrackMatcher if required).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the evolution step. The created step instance will be
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the evolution step. The created step instance will be
 attached to the object as <code class="docutils literal notranslate"><span class="pre">self.&lt;step_name&gt;</span></code>. See
 <code class="docutils literal notranslate"><span class="pre">SimulationProperties.__init__</span></code> for the standard set of steps.</p></li>
-<li><p><strong>step_tup</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><em>optional</em>) – <p>Tuple of the form <code class="docutils literal notranslate"><span class="pre">(step_class,</span> <span class="pre">kwargs_dict)</span></code> where:</p>
+<li><p><strong>step_tup</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>, </em><em>optional</em>) – <p>Tuple of the form <code class="docutils literal notranslate"><span class="pre">(step_class,</span> <span class="pre">kwargs_dict)</span></code> where:</p>
 <ul>
 <li><p><code class="docutils literal notranslate"><span class="pre">step_class</span></code> is the class representing the step.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">kwargs_dict</span></code> is a dictionary of keyword arguments used to</p></li>
@@ -758,13 +758,13 @@ attached to the object as <code class="docutils literal notranslate"><span class
 <p>initialize the step.</p>
 <p>Default is <code class="docutils literal notranslate"><span class="pre">(NullStep,</span> <span class="pre">{})</span></code>.</p>
 </p></li>
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Metallicity (Z) to assign to the step if required and not already
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Metallicity (Z) to assign to the step if required and not already
 specified in the step keyword arguments. Default supported values
 are: 2.0, 1.0, 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4.</p></li>
-<li><p><strong>from_ini</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Path to an <cite>.ini</cite> file containing step configuration. If provided
+<li><p><strong>from_ini</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Path to an <cite>.ini</cite> file containing step configuration. If provided
 and the file exists, the step class and keyword arguments for
 <code class="docutils literal notranslate"><span class="pre">step_name</span></code> are loaded from this file and override <code class="docutils literal notranslate"><span class="pre">step_tup</span></code>.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print detailed information about step loading and the
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print detailed information about step loading and the
 keyword arguments used to instantiate the step.</p></li>
 </ul>
 </dd>
@@ -790,11 +790,11 @@ all configured steps have been successfully attached.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A metallicity (Z) may be provided to automatically assign
+<li><p><strong>metallicity</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A metallicity (Z) may be provided to automatically assign
 to steps as they are loaded. Should be one of e.g., 2.0, 1.0,
 4.5e-1, 2e-1, 1e-1, 1e-2, 1e-3, 1e-4, corresponding to
 metallicities available in your POSYDON_DATA grids.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print extra information.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Print extra information.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type<span class="colon">:</span></dt>
@@ -832,7 +832,7 @@ classes or extra functions (except for undefined next step errors).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>instance</em><em> of </em><em>&lt;class</em><em>, </em><em>BinaryStar&gt;</em>) – The binary before evolution starts.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the step about to be called (as defined in the flow).</p></li>
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the step about to be called (as defined in the flow).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -872,7 +872,7 @@ classes or extra functions (except for undefined next step errors).</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>instance</em><em> of </em><em>&lt;class</em><em>, </em><em>BinaryStar&gt;</em>) – The binary before evolution starts.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the step about to be called (as defined in the flow).</p></li>
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – The name of the step about to be called (as defined in the flow).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -917,9 +917,9 @@ as an attribute of the instance.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>path_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the grid path attribute to set. Must be a key in
+<li><p><strong>path_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the grid path attribute to set. Must be a key in
 <code class="docutils literal notranslate"><span class="pre">self.default_grid_paths</span></code> if <code class="docutils literal notranslate"><span class="pre">path_str</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
-<li><p><strong>path_str</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – Path to assign. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a default path corresponding to
+<li><p><strong>path_str</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – Path to assign. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, a default path corresponding to
 <code class="docutils literal notranslate"><span class="pre">path_name</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -1033,12 +1033,12 @@ while his past history with <cite>star.mass_history</cite>.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.singlestar.SingleStar">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.singlestar.</span></span><span class="sig-name descname"><span class="pre">SingleStar</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/singlestar.html#SingleStar"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.singlestar.SingleStar" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Class describing a single star.</p>
 <p>Initialize the star.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – List of initialization parameters for a star.</p>
+<dd class="field-odd"><p><strong>**kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a>) – List of initialization parameters for a star.</p>
 </dd>
 </dl>
 <dl class="py method">
@@ -1060,9 +1060,9 @@ while his past history with <cite>star.mass_history</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Index of the star object history to reset the star to. By default
+<li><p><strong>i</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Index of the star object history to reset the star to. By default
 i == 0, i.e. the star will be restored to its initial state.</p></li>
-<li><p><strong>hooks</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of extra hooks associated with the SimulationProperties() of the BinaryStar()
+<li><p><strong>hooks</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – List of extra hooks associated with the SimulationProperties() of the BinaryStar()
 object containing this SingleStar(), if applicable. This parameter is
 automatically set when restoring a BinaryStar() object.</p></li>
 </ul>
@@ -1078,20 +1078,20 @@ automatically set when restoring a BinaryStar() object.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>( </em><em>'name':dtype</em><em>, </em><em>...</em><em>.</em><em> )</em>) – Extra star history parameters to return in DataFrame that are not
+<li><p><strong>extra_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)"><em>dict</em></a><em>( </em><em>'name':dtype</em><em>, </em><em>...</em><em>.</em><em> )</em>) – Extra star history parameters to return in DataFrame that are not
 included in STARPROPERTIES. All columns must have an
 associated pandas data type.
 Can be used in combination with <cite>only_select_columns</cite>.
 Assumes names have no suffix.</p></li>
-<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of STARPROPERTIES parameters to ignore.
+<li><p><strong>ignore_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of STARPROPERTIES parameters to ignore.
 Assumes names have <cite>_history</cite> suffix.</p></li>
-<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of the only columns to include.
+<li><p><strong>only_select_columns</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – Names of the only columns to include.
 Can be used in combination with <cite>extra_columns</cite>.
 Assumes names have <cite>_history</cite> suffix.</p></li>
-<li><p><strong>include_profile</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the star’s profile in the dataframe (NOT RECOMMENDED)</p></li>
-<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Replace all None values with something else (for saving).
+<li><p><strong>include_profile</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the star’s profile in the dataframe (NOT RECOMMENDED)</p></li>
+<li><p><strong>null_value</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>, </em><em>optional</em>) – Replace all None values with something else (for saving).
 Default is np.nan.</p></li>
-<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Prefix to all column names. (e.g. ‘star_1’, ‘S1’)
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>, </em><em>optional</em>) – Prefix to all column names. (e.g. ‘star_1’, ‘S1’)
 Default has no prefix.</p></li>
 </ul>
 </dd>
@@ -1110,9 +1110,9 @@ method. Any scalar values can also be added.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>scalar_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Names of any values to be added to the oneline DataFrame.</p></li>
-<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the history initial-final values from to_df method.</p></li>
-<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Any prefix to go at the beginning of all columns names.</p></li>
+<li><p><strong>scalar_names</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em> of </em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Names of any values to be added to the oneline DataFrame.</p></li>
+<li><p><strong>history</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Include the history initial-final values from to_df method.</p></li>
+<li><p><strong>prefix</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Any prefix to go at the beginning of all columns names.</p></li>
 <li><p><strong>**kwargs</strong> – All options for the to_df method.</p></li>
 </ul>
 </dd>
@@ -1141,7 +1141,7 @@ method. Any scalar values can also be added.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.step_end.step_end">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.step_end.</span></span><span class="sig-name descname"><span class="pre">step_end</span></span><a class="reference internal" href="../_modules/posydon/binary_evol/step_end.html#step_end"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.step_end.step_end" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Default end step.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="posydon.binary_evol.step_end.step_end.DEFAULT_KWARGS">
@@ -1156,7 +1156,7 @@ method. Any scalar values can also be added.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.track_match.TrackMatcher">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.track_match.</span></span><span class="sig-name descname"><span class="pre">TrackMatcher</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/track_match.html#TrackMatcher"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.track_match.TrackMatcher" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <blockquote>
 <div><p>This class contains the functionality to match binary star components</p>
 </div></blockquote>
@@ -1197,7 +1197,7 @@ calculated from the star’s (pre-match) angular momentum
 and moment of inertia.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 <dt class="field-even">Warns<span class="colon">:</span></dt>
 <dd class="field-even"><p><strong>InappropriateValueWarning</strong> – If the pre-match rotation quantities are NaN or None and can
@@ -1250,7 +1250,7 @@ further.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.POSYDONError" title="posydon.utils.posydonerror.POSYDONError"><strong>POSYDONError</strong></a> – If there is no star to evolve (both are massless remnants), then
 evolution can no continue and detached step should not have been
 called.</p></li>
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the State of star 1 or 2 is not recognized.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the State of star 1 or 2 is not recognized.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.POSYDONError" title="posydon.utils.posydonerror.POSYDONError"><strong>POSYDONError</strong></a> – If the <cite>non_existent_companion</cite> of the binary is determined to
 be not equal to 0 (both stars exist), 1 (only star 2 exists),
 or 2 (only star 1 exists), something has gone wrong.</p></li>
@@ -1285,14 +1285,14 @@ time series of each star for further evolution.</p></li>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>BinaryStar object</em>) – A binary star object, containing the binary system’s properties.</p></li>
-<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If self.record_matching is True, then the matched quantities of
+<li><p><strong>step_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – If self.record_matching is True, then the matched quantities of
 the star will be appended to the history. This is a string that
 can be used as a custom label in the BinaryStar object’s history,
 meant to indicate the relevant evolution step’s name. This should
 normally match the name of the step in which the matching was
 made, e.g., “step_detached”.</p></li>
-<li><p><strong>match_secondary</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that indicates whether to perform matching on star 1.</p></li>
-<li><p><strong>match_primary</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that indicates whether to perform matching on star 2.</p></li>
+<li><p><strong>match_secondary</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that indicates whether to perform matching on star 1.</p></li>
+<li><p><strong>match_primary</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that indicates whether to perform matching on star 2.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1319,7 +1319,7 @@ further.</p></li>
 </dd>
 <dt class="field-odd">Raises<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the <cite>primary_normal</cite> and <cite>primary_not_normal</cite> flags are
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the <cite>primary_normal</cite> and <cite>primary_not_normal</cite> flags are
 both determined to be False. One or the other should be True.</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.MatchingError" title="posydon.utils.posydonerror.MatchingError"><strong>MatchingError</strong></a> – If the stellar matching to a single star model fails, or the
 PchipInterpolator object returned from matching is None.</p></li>
@@ -1341,14 +1341,14 @@ minimum difference occurs.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attr_names</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Contains the keys of the requested specific quantities that will
+<li><p><strong>attr_names</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em>]</em>) – Contains the keys of the requested specific quantities that will
 be matched in the single star track.</p></li>
-<li><p><strong>attr_vals</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains the latest values (from a previous POSYDON step) of the
+<li><p><strong>attr_vals</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains the latest values (from a previous POSYDON step) of the
 quantities of “keys” in the POSYDON SingleStar object. This should
 be the same length as “keys”.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Set True to search the single star H-rich grids, or False to
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Set True to search the single star H-rich grids, or False to
 search the He-rich grids.</p></li>
-<li><p><strong>rescale_facs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains normalization factors to be divided for rescaling
+<li><p><strong>rescale_facs</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – Contains normalization factors to be divided for rescaling
 attribute values. This should be the same length as attr_names.</p></li>
 </ul>
 </dd>
@@ -1375,10 +1375,10 @@ matching to a single star track.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
 that we will grab values from and update <cite>star</cite> with.</p></li>
 </ul>
 </dd>
@@ -1404,9 +1404,9 @@ the compact object to provide a mass and age.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>binary</strong> (<em>BinaryStar object</em>) – A binary star object, containing the binary system’s properties.</p></li>
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>copy_prev_m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A mass value that may be copied from another star in the case
+<li><p><strong>copy_prev_m0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – A mass value that may be copied from another star in the case
 where the target star is a compact object</p></li>
-<li><p><strong>copy_prev_t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – An age value that may be copied from another star in the case
+<li><p><strong>copy_prev_t0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – An age value that may be copied from another star in the case
 where the target star is a compact object</p></li>
 </ul>
 </dd>
@@ -1434,10 +1434,10 @@ star track.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Initial stellar mass (in solar units) of the single star track
 that we will grab values from and update <cite>star</cite> with.</p></li>
 </ul>
 </dd>
@@ -1455,9 +1455,9 @@ of mass <cite>m0</cite> at an age of <cite>t</cite>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the desired quantity.</p></li>
-<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The initial mass of the desired stellar track.</p></li>
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The desired age along the stellar track.</p></li>
+<li><p><strong>key</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the desired quantity.</p></li>
+<li><p><strong>m0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The initial mass of the desired stellar track.</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The desired age along the stellar track.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -1465,7 +1465,7 @@ of mass <cite>m0</cite> at an age of <cite>t</cite>.</p>
 initial mass <cite>m0</cite> at the time <cite>t</cite>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1565,7 +1565,7 @@ in such cases.</p>
 </dd>
 <dt class="field-even">Raises<span class="colon">:</span></dt>
 <dd class="field-even"><ul class="simple">
-<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#AttributeError" title="(in Python v3.14)"><strong>AttributeError</strong></a> – If a matching parameter does not exist in the single star
+<li><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#AttributeError" title="(in Python v3.14)"><strong>AttributeError</strong></a> – If a matching parameter does not exist in the single star
 grid options</p></li>
 <li><p><a class="reference internal" href="posydon.utils.html#posydon.utils.posydonerror.NumericalError" title="posydon.utils.posydonerror.NumericalError"><strong>NumericalError</strong></a> – If SciPy numerical differentiation occured outside boundary
 while matching to single star track.</p></li>
@@ -1585,11 +1585,11 @@ range, thereby preventing a possible match.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>attr_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the requested quantity.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>attr_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Keyword of the requested quantity.</p></li>
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
-<li><p><strong>scaler_method</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Scaling method in the DataScaler class. See
+<li><p><strong>scaler_method</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Scaling method in the DataScaler class. See
 posydon.interpolation.data_scaling.DataScaler().fit() for more
 details.</p></li>
 </ul>
@@ -1665,7 +1665,7 @@ and those quantities are poorly defined.</p>
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star</strong> (<em>SingleStar object</em>) – A single star object that contains the star’s properties.</p></li>
-<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
+<li><p><strong>htrack</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – A boolean that specifies whether the star would be found in the
 hydrogen rich single star grid or not (in which case it is
 matched to the helium rich single star grid).</p></li>
 </ul>
@@ -1715,7 +1715,7 @@ matched to the helium rich single star grid).</p></li>
             
             <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
             
-            <dd><a href="https://posydon.org/POSYDON/v2.3.2/index.html">2.3</a></dd>
+            <dd><a href="https://posydon.org/POSYDON/v2.3.3/index.html">2.3</a></dd>
             
         </dl>
         

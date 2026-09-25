@@ -1,0 +1,7 @@
+posydon\_popsyn
+===============
+
+.. automodule:: posydon_popsyn
+   :members:
+   :show-inheritance:
+   :undoc-members:

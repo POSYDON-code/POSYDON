@@ -213,7 +213,7 @@ updates) has a valid <code class="docutils literal notranslate"><span class="pre
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Independent variable, s = -ln(a/a0).</p></li>
+<li><p><strong>s</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Independent variable, s = -ln(a/a0).</p></li>
 <li><p><strong>y</strong> (<em>array_like</em>) – State vector at s, [l, tau, secondary.omega, primary.omega],
 where l = ln(e).</p></li>
 </ul>
@@ -230,7 +230,7 @@ where l = ln(e).</p></li>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_evolution">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">detached_evolution</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">primary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">secondary</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_wind_loss</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_tides</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_magnetic_braking</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">magnetic_braking_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'RVJ83'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_stellar_evolution_and_spin_from_winds</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">do_gravitational_radiation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_evolution"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_evolution" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>ODE system describing the evolution of a detached binary.</p>
 <p>This class defines the differential equations governing the orbital
 evolution and stellar spin evolution of a detached binary system.
@@ -255,10 +255,10 @@ PChipInterpolator2 objects.</p>
 These must have an <code class="docutils literal notranslate"><span class="pre">interp1d</span></code> interpolator to return stellar
 properties as a function of time.</p></li>
 <li><p><strong>secondary</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar" title="posydon.binary_evol.singlestar.SingleStar"><em>SingleStar</em></a><em>, </em><em>optional</em>) – Secondary star of the binary.</p></li>
-<li><p><strong>do_wind_loss</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include orbital evolution due to stellar wind mass loss.</p></li>
-<li><p><strong>do_tides</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include tidal interactions affecting orbital separation,
+<li><p><strong>do_wind_loss</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include orbital evolution due to stellar wind mass loss.</p></li>
+<li><p><strong>do_tides</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include tidal interactions affecting orbital separation,
 eccentricity, and stellar spin.</p></li>
-<li><p><strong>do_magnetic_braking</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include stellar spin evolution due to magnetic braking.</p></li>
+<li><p><strong>do_magnetic_braking</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include stellar spin evolution due to magnetic braking.</p></li>
 <li><p><strong>magnetic_braking_mode</strong> (<em>{&quot;RVJ83&quot;</em><em>, </em><em>&quot;M15&quot;</em><em>, </em><em>&quot;G18&quot;</em><em>, </em><em>&quot;CARB&quot;}</em><em>, </em><em>optional</em>) – <p>Magnetic braking prescription:</p>
 <ul>
 <li><p>RVJ83 — Rappaport, Verbunt &amp; Joss (1983)</p></li>
@@ -267,10 +267,10 @@ eccentricity, and stellar spin.</p></li>
 <li><p>CARB — Van &amp; Ivanova (2019)</p></li>
 </ul>
 </p></li>
-<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include spin evolution caused by stellar structural
+<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include spin evolution caused by stellar structural
 evolution and angular momentum loss from winds.</p></li>
-<li><p><strong>do_gravitational_radiation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include orbital evolution from gravitational wave emission.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print diagnostic information during the integration.</p></li>
+<li><p><strong>do_gravitational_radiation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, include orbital evolution from gravitational wave emission.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a><em>, </em><em>optional</em>) – If True, print diagnostic information during the integration.</p></li>
 </ul>
 </dd>
 </dl>
@@ -302,7 +302,7 @@ evolution and angular momentum loss from winds.</p></li>
 <dd><p>Current orbital separation (solar radii).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -313,7 +313,7 @@ evolution and angular momentum loss from winds.</p></li>
 <dd><p>Current orbital eccentricity.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -325,7 +325,7 @@ evolution and angular momentum loss from winds.</p></li>
 evolution models.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)">list</a> of <a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,7 +336,7 @@ evolution models.</p>
 <dd><p>Current system age during integration.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -376,8 +376,8 @@ evolution interpolation. Calculated for the secondary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
 in solar radii.</p></li>
 <li><p><strong>primary</strong> (<em>SingleStar object</em>) – A single star object, representing the primary (more evolved) star
 in the binary and containing its properties.</p></li>
@@ -390,7 +390,7 @@ in the binary and containing its properties.</p></li>
 radius.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -406,8 +406,8 @@ evolution interpolation. Calculated for the primary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
 in solar radii.</p></li>
 <li><p><strong>primary</strong> (<em>SingleStar object</em>) – A single star object, representing the primary (more evolved) star
 in the binary and containing its properties.</p></li>
@@ -420,7 +420,7 @@ in the binary and containing its properties.</p></li>
 radius.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -436,8 +436,8 @@ evolution interpolation. Calculated for the secondary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years.</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
 in solar radii.</p></li>
 <li><p><strong>primary</strong> (<em>SingleStar object</em>) – A single star object, representing the primary (more evolved) star
 in the binary and containing its properties.</p></li>
@@ -450,7 +450,7 @@ in the binary and containing its properties.</p></li>
 radius in solar radii.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -466,8 +466,8 @@ evolution interpolation. Calculated for the primary.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – Time of the evolution, in years</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="(in Python v3.14)"><em>tuple</em></a><em>(</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>)</em>) – [separation, eccentricity] at that time. Separation should be
 in solar radii.</p></li>
 <li><p><strong>primary</strong> (<em>SingleStar object</em>) – A single star object, representing the primary (more evolved) star
 in the binary and containing its properties.</p></li>
@@ -480,7 +480,7 @@ in the binary and containing its properties.</p></li>
 radius in solar radii.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -513,7 +513,7 @@ objects already, as required for detached evolution.</p>
 in the binary and containing its properties.</p></li>
 <li><p><strong>secondary</strong> (<em>SingleStar object</em>) – A single star object, representing the secondary (less evolved) star
 in the binary and containing its properties.</p></li>
-<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The time at the start of detached evolution. Typically should be the
+<li><p><strong>t0</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The time at the start of detached evolution. Typically should be the
 binary.time prior to detached evolution.</p></li>
 </ul>
 </dd>
@@ -550,8 +550,8 @@ in calculations during step_detached evolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The current time of integration during solve_ivp().</p></li>
-<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – The current set of solutions for orbital separation [Rsol],</p></li>
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The current time of integration during solve_ivp().</p></li>
+<li><p><strong>y</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)"><em>list</em></a>) – The current set of solutions for orbital separation [Rsol],</p></li>
 <li><p><strong>eccentricity</strong> (<em>orbital</em>)</p></li>
 <li><p><strong>[</strong><strong>rad/yr</strong><strong>]</strong> (<em>spin</em><em> of </em><em>the secondary star</em>)</p></li>
 <li><p><strong>and</strong></p></li>
@@ -566,7 +566,7 @@ in calculations during step_detached evolution.</p>
 <dl class="py class">
 <dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step">
 <span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">posydon.binary_evol.DT.step_detached.</span></span><span class="sig-name descname"><span class="pre">detached_step</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/posydon/binary_evol/DT/step_detached.html#detached_step"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step" title="Link to this definition"></a></dt>
-<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/builtins/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
 <p>Evolve a detached binary.</p>
 <p>The binary will be evolved until Roche-lobe overflow, core-collapse or
 maximum simulation time, using the standard equations that govern the
@@ -574,21 +574,21 @@ orbital evolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The timestep size, in years, to be appended to the history of the
+<li><p><strong>dt</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a>) – The timestep size, in years, to be appended to the history of the
 binary. None means only the final step. Note: do not select very
 small timesteps because it may mess with the solving of the ODE.</p></li>
-<li><p><strong>n_o_steps_history</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Alternatively, we can define the number of timesteps to be appended to
+<li><p><strong>n_o_steps_history</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.14)"><em>int</em></a>) – Alternatively, we can define the number of timesteps to be appended to
 the history of the binary. None means only the final step. If both <cite>dt</cite>
 and <cite>n_o_steps_history</cite> are different than None, <cite>dt</cite> has priority.</p></li>
-<li><p><strong>do_wind_loss</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation due to mass loss
+<li><p><strong>do_wind_loss</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation due to mass loss
 from the star.</p></li>
-<li><p><strong>do_tides</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation, eccentricity and
+<li><p><strong>do_tides</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation, eccentricity and
 star spin due to tidal forces.</p></li>
-<li><p><strong>do_gravitational_radiation</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation and eccentricity
+<li><p><strong>do_gravitational_radiation</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of separation and eccentricity
 due to gravitational wave radiation.</p></li>
-<li><p><strong>do_magnetic_braking</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of star spin due to magnetic
+<li><p><strong>do_magnetic_braking</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of star spin due to magnetic
 braking.</p></li>
-<li><p><strong>magnetic_braking_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <dl class="simple">
+<li><p><strong>magnetic_braking_mode</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – <dl class="simple">
 <dt>A string corresponding to the desired magnetic braking prescription.</dt><dd><p>– RVJ83: Rappaport, Verbunt, &amp; Joss 1983 (Default)
 – M15: Matt et al. 2015
 – G18: Garraffo et al. 2018
@@ -596,10 +596,10 @@ braking.</p></li>
 </dd>
 </dl>
 </p></li>
-<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of star spin due to change of its
+<li><p><strong>do_stellar_evolution_and_spin_from_winds</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – If True, take into account change of star spin due to change of its
 moment of inertia during its evolution and due to spin angular
 momentum loss due to winds.</p></li>
-<li><p><strong>RLO_orbit_at_orbit_with_same_am</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Binaries are circularized instaneously when RLO occurs and this
+<li><p><strong>RLO_orbit_at_orbit_with_same_am</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – Binaries are circularized instaneously when RLO occurs and this
 option dictates how that is handled. If False (default), place
 the binary in an orbit with separation equal to the binary’s
 separation at periastron. If True, circularize the orbit assuming
@@ -610,7 +610,7 @@ evolved until RLO commences once again, but without changing the
 orbit.</p></li>
 <li><p><strong>track_matcher</strong> (<em>TrackMatcher object</em>) – The TrackMatcher object performs functions related to matching
 binary stellar evolution components to single star evolution models.</p></li>
-<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if we want to print stuff.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.14)"><em>bool</em></a>) – True if we want to print stuff.</p></li>
 </ul>
 </dd>
 </dl>
@@ -622,7 +622,7 @@ which are used to extract quantities from the single star
 evolution grids.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#list" title="(in Python v3.14)">list</a>[<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)">str</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -634,7 +634,7 @@ evolution grids.</p>
 POSYDON h5 file PSyGrid data names (items) and MESA data names (keys).</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -657,7 +657,7 @@ evolution.</p>
 <dd><p>Keyword arguments used to initialize <code class="docutils literal notranslate"><span class="pre">detached_evolution</span></code>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.14)">dict</a></p>
 </dd>
 </dl>
 </dd></dl>
@@ -665,7 +665,7 @@ evolution.</p>
 <p>Initialize the step. See class documentation for details.</p>
 <dl class="py attribute">
 <dt class="sig sig-object py" id="posydon.binary_evol.DT.step_detached.detached_step.DEFAULT_KWARGS">
-<span class="sig-name descname"><span class="pre">DEFAULT_KWARGS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'RLO_orbit_at_orbit_with_same_am':</span> <span class="pre">False,</span> <span class="pre">'RNG':</span> <span class="pre">Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7F0F93F5F140,</span> <span class="pre">'do_gravitational_radiation':</span> <span class="pre">True,</span> <span class="pre">'do_magnetic_braking':</span> <span class="pre">True,</span> <span class="pre">'do_stellar_evolution_and_spin_from_winds':</span> <span class="pre">True,</span> <span class="pre">'do_tides':</span> <span class="pre">True,</span> <span class="pre">'do_wind_loss':</span> <span class="pre">True,</span> <span class="pre">'dt':</span> <span class="pre">None,</span> <span class="pre">'magnetic_braking_mode':</span> <span class="pre">'RVJ83',</span> <span class="pre">'metallicity':</span> <span class="pre">None,</span> <span class="pre">'n_o_steps_history':</span> <span class="pre">None,</span> <span class="pre">'track_matcher':</span> <span class="pre">None,</span> <span class="pre">'verbose':</span> <span class="pre">False}</span></span><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.DEFAULT_KWARGS" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">DEFAULT_KWARGS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'RLO_orbit_at_orbit_with_same_am':</span> <span class="pre">False,</span> <span class="pre">'RNG':</span> <span class="pre">Generator(PCG64)</span> <span class="pre">at</span> <span class="pre">0x7F7C16BBCC80,</span> <span class="pre">'do_gravitational_radiation':</span> <span class="pre">True,</span> <span class="pre">'do_magnetic_braking':</span> <span class="pre">True,</span> <span class="pre">'do_stellar_evolution_and_spin_from_winds':</span> <span class="pre">True,</span> <span class="pre">'do_tides':</span> <span class="pre">True,</span> <span class="pre">'do_wind_loss':</span> <span class="pre">True,</span> <span class="pre">'dt':</span> <span class="pre">None,</span> <span class="pre">'magnetic_braking_mode':</span> <span class="pre">'RVJ83',</span> <span class="pre">'metallicity':</span> <span class="pre">None,</span> <span class="pre">'n_o_steps_history':</span> <span class="pre">None,</span> <span class="pre">'track_matcher':</span> <span class="pre">None,</span> <span class="pre">'verbose':</span> <span class="pre">False}</span></span><a class="headerlink" href="#posydon.binary_evol.DT.step_detached.detached_step.DEFAULT_KWARGS" title="Link to this definition"></a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
@@ -692,7 +692,7 @@ or <cite>dt</cite>) to use via the simulation properties ini
 file, in which case it is an array.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a> or array[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)">float</a>]</p>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a> or array[<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)">float</a>]</p>
 </dd>
 </dl>
 </dd></dl>
@@ -745,7 +745,7 @@ interpolation after detached evolution.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – This is the time elapsed as a result of detached
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – This is the time elapsed as a result of detached
 evolution in years. This is a float unless the
 user specifies a timestep to use via the simulation
 properties ini file, in which case it is an array.</p></li>
@@ -774,7 +774,7 @@ values are null.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array</em><em>[</em><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – This is the time elapsed as a result of detached
+<li><p><strong>t</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em> or </em><em>array</em><em>[</em><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.14)"><em>float</em></a><em>]</em>) – This is the time elapsed as a result of detached
 evolution in years. This is a float unless the
 user specifies a timestep to use via the simulation
 properties ini file, in which case it is an array.</p></li>
@@ -863,12 +863,12 @@ based on a grid of single star HDF5 grid.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>star1</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar" title="posydon.binary_evol.singlestar.SingleStar"><em>SingleStar</em></a>) – Primary star</p></li>
 <li><p><strong>star2</strong> (<a class="reference internal" href="posydon.binary_evol.html#posydon.binary_evol.singlestar.SingleStar" title="posydon.binary_evol.singlestar.SingleStar"><em>SingleStar</em></a>) – Companion star</p></li>
-<li><p><strong>abundance_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the SingleStar attribute to average.</p></li>
-<li><p><strong>mass_weight1</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Mass attribute to use as weight for star1.  Special values
+<li><p><strong>abundance_name</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Name of the SingleStar attribute to average.</p></li>
+<li><p><strong>mass_weight1</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a>) – Mass attribute to use as weight for star1.  Special values
 <code class="docutils literal notranslate"><span class="pre">&quot;H-rich_envelope_mass&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;He-rich_envelope_mass&quot;</span></code> are
 computed on the fly; any other value is looked up directly on the
 star object.</p></li>
-<li><p><strong>mass_weight2</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – Mass attribute for star2.</p></li>
+<li><p><strong>mass_weight2</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.14)"><em>str</em></a><em> or </em><em>None</em>) – Mass attribute for star2.</p></li>
 </ul>
 </dd>
 </dl>
@@ -934,7 +934,7 @@ weights depending on the type of merger and the abundance considered.</p>
             
             <dd><a href="https://posydon.org/POSYDON/v2.2.8/index.html">2.2</a></dd>
             
-            <dd><a href="https://posydon.org/POSYDON/v2.3.2/index.html">2.3</a></dd>
+            <dd><a href="https://posydon.org/POSYDON/v2.3.3/index.html">2.3</a></dd>
             
         </dl>
         
