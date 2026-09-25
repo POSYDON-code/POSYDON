@@ -81,7 +81,7 @@ class _SBrentqDenseOutput:
         tau_scale = max(1.0, abs(tau_lo), abs(tau_hi))
         # Treat endpoint residuals smaller than eps as zero to guard
         # against floating-point roundoff near the integration endpoints.
-        tol = 1e4
+        tol = 2e5
         eps = tol * np.finfo(float).eps * tau_scale
 
         for i, tau in enumerate(tau_target):
