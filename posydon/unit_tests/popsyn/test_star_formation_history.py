@@ -433,7 +433,7 @@ class TestIllustrisTNG:
             "redshifts": np.linspace(0.0, 9.0, num_redshifts)[::-1],  # Redshifts from 0 to 9
             "mets": np.logspace(-4, -1, num_metallicities),  # Metallicities from 1e-4 to 1e-1
             "M": np.ones((num_redshifts, num_metallicities)),  # Equal mass in all bins for simplicity
-            "Lbox": 75, #Side length of IllustrisTNG box, in Mpc/h
+            "Lbox_Mpc": 75, #Side length of IllustrisTNG box, in Mpc/h
             "h": 0.6774 #Dimensionless Hubble constant
         }}
 
@@ -441,11 +441,11 @@ class TestIllustrisTNG:
         for i in range(num_redshifts):
             # Linear decrease in higher metallicities as redshift increases
             scale = 1.0 - i / num_redshifts
-            mock_data["M"][i] = np.linspace(1.0, scale, num_metallicities)
+            mock_data["100-1"]["M"][i] = np.linspace(1.0, scale, num_metallicities)
 
-        mock_data["M"] = np.flip(mock_data["M"], axis=0)  # Reverse the mass array
-        Lbox = mock_data["Lbox"]/mock_data["h"] #Side length of IllustrisTNG box in Mpc
-        mock_data["SFR"] = mock_data["BoxSFR"]/Lbox**3 #Rescale SFR to units of SFR/Mpc^3 instead of SFR/box
+        mock_data["100-1"]["M"] = np.flip(mock_data["100-1"]["M"], axis=0)  # Reverse the mass array
+        Lbox = mock_data["100-1"]["Lbox_Mpc"]/mock_data["100-1"]["h"] #Side length of IllustrisTNG box in Mpc
+        mock_data["100-1"]["SFR"] = mock_data["100-1"]["BoxSFR"]/Lbox**3 #Rescale SFR to units of SFR/Mpc^3 instead of SFR/box
         return mock_data
 
     @pytest.fixture
@@ -948,14 +948,14 @@ class TestGetSFHModel:
         # Mock the data loading method
         def mock_get_data(self, verbose=False):
             # Return minimal mock data structure
-            return {
+            return { "100-1": {
                 "BoxSFR": np.array([1e5, 2e5, 3e5]),
                 "redshifts": np.array([0.0, 1.0, 2.0]),
                 "mets": np.array([0.001, 0.01, 0.02]),
                 "M": np.ones((3, 3)),
                 "Lbox":75,
                 "h":0.6774
-            }
+            }}
 
         # Patch the data loading method
         monkeypatch.setattr(IllustrisTNG, "_get_illustrisTNG_data", mock_get_data)
