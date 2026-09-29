@@ -507,7 +507,8 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
-                scheme='Hurley+2002', orbit_averaged=False):
+                scheme='Hurley+2002', orbit_averaged=False,
+                n_E=512):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
@@ -587,6 +588,9 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
 
     f_m = np.empty_like(sep)
 
+    # convert to SI units (Msun, Rsun already in SI, kg, m)
+    m_acc = m_acc * Msun; m = m * Msun; a = sep * Rsun
+
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
         beta = np.empty_like(sep)
@@ -641,18 +645,13 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
         else:
             pass
 
-    # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
+    # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273 accretion rate calculations
+    # either use a grid of eccentric anomalies or random samples around orbit
     if orbit_averaged:
-        # see e.g., Hurley et al. 2002, MNRAS, 329, 897 eq. 6
-        # or Boffin & Jorissen 1988, A&A, 205, 155 eq. 6
-        mdot_acc = alpha / (2 * np.sqrt(1 - ecc**2))
-        mdot_acc *= ( (G * m_acc * Msun) / (sep * Rsun * v_wind**2) )**2
-        mdot_acc *= ( 1 + (G * (m_acc + m) * Msun) / (sep * Rsun * v_wind**2) )**(-3/2)
-        mdot_acc *= 10**lg_mdot
-    # instantaneous calculation randomly sampled around orbit
+        E = np.linspace(0, 2 * np.pi, n_E)
     else:
         # mean motion
-        n = np.sqrt((G * (m_acc + m) * Msun) / ((sep * Rsun)**3))
+        n = np.sqrt((G * (m_acc + m)) / (sep**3))
         # random orbital period draws
         t0 = RNG.random(len(sep)) * 2 * np.pi / n
         # solve Kepler's equation for eccentric anomaly E
@@ -660,21 +659,28 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
                     np.ones_like(sep) * np.pi / 2,
                     maxiter=100)
 
-        b = sep * Rsun * np.sqrt(1 - ecc**2)
-        r_vec = np.array([sep * Rsun * (np.cos(E) - ecc), b * np.sin(E)])
-        r = np.linalg.norm(r_vec, axis=0)
-        v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
-        v_dir = np.array([-sep * Rsun * np.sin(E), b * np.cos(E)])
-        v_dir_norm = np.linalg.norm(v_dir, axis=0)
-        k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
-        v_rel = np.sqrt(v**2 + v_wind**2 - 2 * v * v_wind * k)      # m/s
-
-        mdot_acc = alpha * ((G * m_acc * Msun)**2
-                        / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
-
-    # make it Eddington-limited
+    # calculate orbital geometry and relative velocity
+    b = sep * np.sqrt(1 - ecc**2)
+    r_vec = np.array([sep * (np.cos(E) - ecc), b * np.sin(E)])
+    r = np.linalg.norm(r_vec, axis=0)
+    v = np.sqrt(G * (m + m_acc) * ((2 / r) - (1 / sep)))  # m/s
+    # d(r_vec)/dE, same direction as orbital velocity
+    v_dir = np.array([-sep * np.sin(E), b * np.cos(E)])
+    v_dir_norm = np.linalg.norm(v_dir, axis=0)
+    k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
+    v_rel_sq = v**2 + v_wind**2 - 2 * v * v_wind * k
+    
+    # instantaneous Bondi-Hoyle accretion rate
+    mdot_acc = alpha * (G * m_acc)**2 / (2 * v_rel_sq**1.5 * v_wind * r**2) * 10**lg_mdot
+    # make rate Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
+
+    # numerical orbital average of instantaneous rate over orbit
+    if orbit_averaged:
+        weight = 1.0 - ecc * np.cos(E)
+        trapz = getattr(np, "trapezoid", None) or np.trapz
+        mdot_acc = trapz(mdot_acc * weight, E) / (2 * np.pi)
 
     return np.squeeze(mdot_acc)
 
