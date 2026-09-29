@@ -669,7 +669,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
     v_dir_norm = np.linalg.norm(v_dir, axis=0)
     k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
     v_rel_sq = v**2 + v_wind**2 - 2 * v * v_wind * k
-    
+
     # instantaneous Bondi-Hoyle accretion rate
     mdot_acc = alpha * (G * m_acc)**2 / (2 * v_rel_sq**1.5 * v_wind * r**2) * 10**lg_mdot
     # make rate Eddington-limited
