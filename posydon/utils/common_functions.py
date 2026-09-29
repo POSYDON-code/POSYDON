@@ -680,9 +680,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
     v_rel_sq = v**2 + v_w**2 - 2 * v * v_w * k
 
     # instantaneous Bondi-Hoyle accretion rate
-    mdot_acc = alpha * (G * m_a)**2
-    mdot_acc /= (2 * v_rel_sq**1.5 * v_w * r**2)
-    mdot_acc *= mdot_wind
+    mdot_acc = alpha * (G * m_a)**2 / (2 * v_rel_sq**1.5 * v_w * r**2) \
+               * mdot_wind
     # make rate Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
