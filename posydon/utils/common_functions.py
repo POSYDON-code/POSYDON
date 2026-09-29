@@ -588,8 +588,10 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
 
     f_m = np.empty_like(sep)
 
-    # convert to SI units (Msun, Rsun already in SI, kg, m)
-    m_acc = m_acc * Msun; m = m * Msun; a = sep * Rsun
+    # convert masses and separation to SI units (kg, meters)
+    m_acc_si = m_acc * Msun
+    m_si = m * Msun
+    sep_si = sep * Rsun
 
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
@@ -631,8 +633,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
                          "'Hurley+2002' or "
                          "'Kudritzki+2000'.")
 
-    v_esc = np.sqrt(2 * G * m * Msun / (radius * Rsun))     # m/s
-    v_wind = v_esc * f_m                                    # m/s
+    v_esc = np.sqrt(2 * G * m_si / (radius * Rsun))     # m/s
+    v_wind = v_esc * f_m                                # m/s
 
     # Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
     for i in range(len(m)):
@@ -642,45 +644,54 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
             else:
                 slope = (3.25 - 3.75) / (-5.25 + 7.25)
             v_wind[i] = 10 ** (slope * lg_mdot[i] + 3.25 + 5.25 * slope) * 1000
-        else:
-            pass
 
     # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273 accretion rate calculations
     # either use a grid of eccentric anomalies or random samples around orbit
     if orbit_averaged:
-        E = np.linspace(0, 2 * np.pi, n_E)
+        E = np.linspace(0, 2 * np.pi, n_E)[None, :] # shape (1, n_E) for broadcasting
+        a = sep_si[:, None]                         # shape (N, 1) for broadcasting
+        e = ecc[:, None]
+        m_a = m_acc_si[:, None]
+        m_d = m_si[:, None]
+        v_w = v_wind[:, None]
+        mdot_wind = 10**lg_mdot[:, None]
     else:
         # mean motion
-        n = np.sqrt((G * (m_acc + m)) / (sep**3))
+        n = np.sqrt((G * (m_acc_si + m_si)) / (sep_si**3))
         # random orbital period draws
-        t0 = RNG.random(len(sep)) * 2 * np.pi / n
+        t0 = RNG.random(len(sep_si)) * 2 * np.pi / n
         # solve Kepler's equation for eccentric anomaly E
         E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
-                    np.ones_like(sep) * np.pi / 2,
+                    np.ones_like(sep_si) * np.pi / 2,
                     maxiter=100)
+        a = sep_si
+        e = ecc
+        m_a = m_acc_si
+        m_d = m_si
+        v_w = v_wind
+        mdot_wind = 10**lg_mdot
 
     # calculate orbital geometry and relative velocity
-    b = sep * np.sqrt(1 - ecc**2)
-    r_vec = np.array([sep * (np.cos(E) - ecc), b * np.sin(E)])
-    r = np.linalg.norm(r_vec, axis=0)
-    v = np.sqrt(G * (m + m_acc) * ((2 / r) - (1 / sep)))  # m/s
-    # d(r_vec)/dE, same direction as orbital velocity
-    v_dir = np.array([-sep * np.sin(E), b * np.cos(E)])
-    v_dir_norm = np.linalg.norm(v_dir, axis=0)
-    k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
-    v_rel_sq = v**2 + v_wind**2 - 2 * v * v_wind * k
-    
+    m_tot = m_a + m_d
+    r = a * (1 - e * np.cos(E))
+    v = np.sqrt(G * m_tot * (2 / r - 1 / a))
+    # cosine of the angle between the radial vector and orbital velocity
+    k = e * np.sin(E) / np.sqrt(1 - e**2 * np.cos(E)**2)
+    v_rel_sq = v**2 + v_w**2 - 2 * v * v_w * k
+
     # instantaneous Bondi-Hoyle accretion rate
-    mdot_acc = alpha * (G * m_acc)**2 / (2 * v_rel_sq**1.5 * v_wind * r**2) * 10**lg_mdot
+    mdot_acc = alpha * (G * m_a)**2
+    mdot_acc /= (2 * v_rel_sq**1.5 * v_w * r**2)
+    mdot_acc *= mdot_wind
     # make rate Eddington-limited
     mdot_edd = eddington_limit(binary, idx=idx)[0]
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
 
     # numerical orbital average of instantaneous rate over orbit
     if orbit_averaged:
-        weight = 1.0 - ecc * np.cos(E)
+        weight = 1.0 - e * np.cos(E)
         trapz = getattr(np, "trapezoid", None) or np.trapz
-        mdot_acc = trapz(mdot_acc * weight, E) / (2 * np.pi)
+        mdot_acc = trapz(mdot_acc * weight, E, axis=-1) / (2 * np.pi)
 
     return np.squeeze(mdot_acc)
 
