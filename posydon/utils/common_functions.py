@@ -682,7 +682,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
     mdot_acc = alpha * (G * m_a)**2 / (2 * v_rel_sq**1.5 * v_w * r**2) \
                * mdot_wind
     # make rate Eddington-limited
-    mdot_edd = eddington_limit(binary, idx=idx)[0]
+    mdot_edd = eddington_limit(binary, idx=idx)[0] # shape: (N,)
+    mdot_edd = mdot_edd[:, None] if orbit_averaged else mdot_edd
     mdot_acc = np.minimum(mdot_acc, mdot_edd)
 
     # numerical orbital average of instantaneous rate over orbit
