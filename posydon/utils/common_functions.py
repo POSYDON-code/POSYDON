@@ -509,7 +509,9 @@ def beaming(binary):
 def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
                 scheme='Hurley+2002', orbit_averaged=True,
                 n_E=512):
-    """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
+    """Calculate the Bondi-Hoyle accretion rate of a binary [1]_. 
+    Within POSYDON, this is only ever called for accretion onto a 
+    compact object.
 
     Parameters
     ----------
