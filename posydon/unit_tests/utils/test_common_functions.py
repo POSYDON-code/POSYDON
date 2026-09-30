@@ -746,7 +746,7 @@ class TestFunctions:
                                   orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
                                   RNG=rng, scheme='Kudritzki+2000',
                                   orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
@@ -763,12 +763,12 @@ class TestFunctions:
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng,
                                   orbit_averaged=False) ==\
                approx(5.34028698e-17, rel=1e-10)
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
                                   RNG=rng, orbit_averaged=False) ==\
                approx(5.34028698e-17, rel=1e-10) # form always a disk
         rng = MockRNG2() # other angle
         binary.star_1.state = 'BH'         #accretor is BH
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
                                   RNG=rng, orbit_averaged=False) ==\
                approx(5.62813289713e-8, rel=1e-10)
 
