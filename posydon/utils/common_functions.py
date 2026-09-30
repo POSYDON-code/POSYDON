@@ -507,25 +507,36 @@ def beaming(binary):
 
 
 def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
-                scheme='Hurley+2002', orbit_averaged=False,
+                scheme='Hurley+2002', orbit_averaged=True,
                 n_E=512):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
 
     Parameters
     ----------
     binary : BinaryStar
-        The binary which accretion rate is required.
+        The binary which for which an accretion rate is required.
     accretor : SingleStar
         The accretor in the binary.
     donor : SingleStar
         The donor in the binary.
     idx : int
+        The index of the binary history to use. If -1, the current state is used.
         default: -1
     scheme : str
+        The scheme to use for calculating the wind velocity of the donor.
         There are different options:
 
-        - 'Hurley+2002' : following [3]_
-        - 'Kudritzki+2000' : following [6]_
+        - 'Hurley+2002' : following [2]_
+        - 'Kudritzki+2000' : following [5]_
+    orbit_averaged : bool
+        Whether to average the accretion rate over the orbit. If False, a random
+        orbital phase is used. If True, the accretion rate is averaged over the 
+        via numerical integration of the instaneous rate over the orbit.
+        default: True
+    n_E : int
+        The number of eccentric anomalies to use for orbit averaging. Only used
+        if orbit_averaged is True. 
+        default: 512
 
     Returns
     -------
@@ -534,18 +545,16 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
 
     Notes
     -----
-    An approximation is used for the accretion rate [2]_ and the wind velocity
-    of the donor is moddeled as in [3]_, [5]_. Also see [4]_.
+    The wind velocity of the donor is moddeled as in [2]_, [4]_, [5]_. Also see [3]_.
 
     References
     ----------
     .. [1] Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
-    .. [2] Boffin, H. M. J., & Jorissen, A. 1988, A&A, 205, 155
-    .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
-    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
+    .. [2] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
+    .. [3] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
         223
-    .. [5] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
-    .. [6] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
+    .. [4] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
+    .. [5] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
     """
 
