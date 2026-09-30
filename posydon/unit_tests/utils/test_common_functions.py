@@ -710,11 +710,12 @@ class TestFunctions:
         with raises(TypeError, match="missing 3 required positional "\
                                      +"arguments: 'binary', 'accretor', and "\
                                      +"'donor'"):
-            totest.bondi_hoyle()
+            totest.bondi_hoyle(orbit_averaged=False)
         # bad input
         with raises(RuntimeError, match="Failed to converge after 100 "\
                                         +"iterations"):
-            totest.bondi_hoyle(binary, binary.star_1, binary.star_2)
+            totest.bondi_hoyle(binary, binary.star_1, binary.star_2, 
+                               orbit_averaged=False)
         # examples:
         binary.separation = 1.0            #a semi-major axis of 1Rsun
         binary.eccentricity = 0.1          #a small eccentricity
@@ -731,37 +732,44 @@ class TestFunctions:
                          "'Hurley+2002' or "
                          "'Kudritzki+2000'.")):
             # undefined scheme
-            totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='')
+            totest.bondi_hoyle(binary, binary.star_1, binary.star_2, scheme='',
+                               orbit_averaged=False)
         rng = MockRNG()
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng,
+                                  orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng, \
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng,
                                   orbit_averaged=True) ==\
                approx(3.92668161e-17, rel=1e-10)
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
+                                  RNG=rng, scheme='Kudritzki+2000',
+                                  orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
         binary.star_2.log_R = 1.5          #donor's radius is 10^{1.5}Rsun
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2\
+                                  RNG=rng, scheme='Kudritzki+2000',
+                                  orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
         binary.star_2.log_R = -1.5         #donor's radius is 10^{-1.5}Rsun
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng, scheme='Kudritzki+2000') ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
+                                  RNG=rng, scheme='Kudritzki+2000',
+                                  orbit_averaged=False) ==\
                approx(3.92668161e-17, rel=1e-10)
         binary.star_2.surface_h1 = 0.25    #donor's X_surf=0.25
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng,
+                                  orbit_averaged=False) ==\
                approx(7.24216082e-18, rel=1e-10)
         binary.star_2.lg_wind_mdot = -4.0  #donor's wind is 10^{-4}Msun/yr
-        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng) ==\
+        assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2, RNG=rng,
+                                  orbit_averaged=False) ==\
                approx(5.34028698e-17, rel=1e-10)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng) ==\
+                                  RNG=rng, orbit_averaged=False) ==\
                approx(5.34028698e-17, rel=1e-10) # form always a disk
         rng = MockRNG2() # other angle
         binary.star_1.state = 'BH'         #accretor is BH
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,\
-                                  RNG=rng) ==\
+                                  RNG=rng, orbit_averaged=False) ==\
                approx(5.62813289713e-8, rel=1e-10)
 
     def test_rejection_sampler(self, monkeypatch):
