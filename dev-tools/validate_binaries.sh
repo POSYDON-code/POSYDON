@@ -226,7 +226,8 @@ for Z in $METALLICITIES; do
         continue
     fi
 
-    # compare_runs.py exits 0 (identical), 1 (differences) or 2 (error).
+    # compare_runs.py exits 0 (identical), 2 (differences) or anything else
+    # on error (1 for its own errors and uncaught Python exceptions).
     # $COMPARE_FLAGS is intentionally unquoted so it word-splits into
     # separate arguments for compare_runs.py.
     set +e
@@ -242,7 +243,7 @@ for Z in $METALLICITIES; do
             echo "Z = ${Z} Zsun: PASS" >> "$SUMMARY_FILE"
             PASS=$((PASS + 1))
             ;;
-        1)
+        2)
             echo "  DIFFERENCES DETECTED — see $COMPARISON_FILE"
             echo "Z = ${Z} Zsun: DIFFERENCES DETECTED (see comparison_${Z}Zsun.txt)" >> "$SUMMARY_FILE"
             FAIL=$((FAIL + 1))
