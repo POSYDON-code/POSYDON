@@ -714,7 +714,7 @@ class TestFunctions:
         # bad input
         with raises(RuntimeError, match="Failed to converge after 100 "\
                                         +"iterations"):
-            totest.bondi_hoyle(binary, binary.star_1, binary.star_2, 
+            totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
                                orbit_averaged=False)
         # examples:
         binary.separation = 1.0            #a semi-major axis of 1Rsun
