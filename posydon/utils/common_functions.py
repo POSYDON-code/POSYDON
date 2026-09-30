@@ -549,9 +549,6 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
 
     """
 
-    if RNG is None:
-        RNG = np.random.default_rng()
-
     alpha = 1.5
     # NOTE: Units are in SI for calculations below
     G = const.standard_cgrav * 1e-3     # 6.67428e-11 m3 kg-1 s-2
@@ -656,6 +653,8 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
         v_w = v_wind[:, None]
         mdot_wind = 10**lg_mdot[:, None]
     else:
+        if RNG is None:
+            RNG = np.random.default_rng()
         # mean motion
         n = np.sqrt((G * (m_acc_si + m_si)) / (sep_si**3))
         # random orbital period draws
