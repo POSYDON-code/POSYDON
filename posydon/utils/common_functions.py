@@ -530,12 +530,12 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
         - 'Kudritzki+2000' : following [5]_
     orbit_averaged : bool
         Whether to average the accretion rate over the orbit. If False, a random
-        orbital phase is used. If True, the accretion rate is averaged over the 
+        orbital phase is used. If True, the accretion rate is averaged over the
         via numerical integration of the instaneous rate over the orbit.
         default: True
     n_E : int
         The number of eccentric anomalies to use for orbit averaging. Only used
-        if orbit_averaged is True. 
+        if orbit_averaged is True.
         default: 512
 
     Returns
