@@ -771,7 +771,7 @@ class TestFunctions:
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
                                   RNG=rng, orbit_averaged=False) ==\
                approx(5.62813289713e-8, rel=1e-10)
-        binary.star_1.state = 'H-rich_Core_C_depleted'         
+        binary.star_1.state = 'H-rich_Core_C_depleted'
                                          #accretor is some evolved star
                                          #(never called within POSYDON)
         assert totest.bondi_hoyle(binary, binary.star_1, binary.star_2,
