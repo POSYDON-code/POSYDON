@@ -200,11 +200,7 @@ def get_period_pdf(kwargs):
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            # Since the outer function is set in PDF(P) and inner as P(a),
-            # we need to do a change of variables.
-            # PDF(P) = PDF(a) * |da/dP|
-            # da/dP = (2/3) * (a/P)
-            # PDF(P) = (2/3) * log_uniform(log_a)
+            # period PDFs are per log10(P); a \propto P^(2/3) gives the 2/3
             period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
                 orbital_separation_from_period(P, m1, q*m1)
             ) * 2./3.
