@@ -1,0 +1,139 @@
+#!/usr/bin/env python
+"""POSYDON Grid Management CLI.
+
+A unified command-line interface for managing POSYDON MESA grids.
+Supports subcommands for setting up, running, and managing grid computations.
+
+Usage:
+    posydon-grid setup --inifile <file> --grid-type <type> [options]
+    posydon-grid --help
+
+Author: Max Briel
+"""
+
+import argparse
+import os
+import sys
+
+from posydon.CLI.grids.setup import run_setup
+
+
+def create_setup_parser(subparsers):
+    """Create the 'setup' subcommand parser.
+
+    Parameters
+    ----------
+    subparsers : argparse._SubParsersAction
+        The subparsers object from the main parser
+
+    Returns
+    -------
+    argparse.ArgumentParser
+        The setup subcommand parser
+    """
+    setup_parser = subparsers.add_parser(
+        'setup',
+        help='Setup a MESA grid run',
+        description='Configure and prepare a MESA grid for execution. '
+                    'This includes reading configuration, setting up inlists, '
+                    'and generating submission scripts.'
+    )
+
+    setup_parser.add_argument(
+        "--inifile",
+        help="Path to the ini file containing grid parameters",
+        required=True
+    )
+    setup_parser.add_argument(
+        "--grid-type",
+        help="Type of grid: 'fixed' for a predefined grid of points, "
+             "'dynamic' for sampling new points from a pre-computed MESA grid",
+        required=True,
+        choices=['fixed', 'dynamic']
+    )
+    setup_parser.add_argument(
+        "--run-directory",
+        help="Path where executable will be made and MESA simulation output "
+             "will be placed (default: current directory)",
+        default=os.getcwd()
+    )
+    setup_parser.add_argument(
+        "--submission-type",
+        help="Type of submission script to generate: 'shell' or 'slurm'",
+        default='shell',
+        choices=['slurm', 'shell']
+    )
+    setup_parser.add_argument(
+        "-n", "--nproc",
+        help="Number of processors",
+        type=int,
+        default=1
+    )
+    setup_parser.add_argument(
+        "-v", "--verbose",
+        nargs="?",
+        const="console",
+        default=None,
+        help="Enable verbose logging. Optionally specify a filename to log to "
+             "(e.g., -v logfile.txt). If no filename provided, logs to console."
+    )
+
+    return setup_parser
+
+
+def parse_commandline():
+    """Parse command-line arguments.
+
+    Returns
+    -------
+    argparse.Namespace
+        Parsed command-line arguments
+    """
+    parser = argparse.ArgumentParser(
+        prog='posydon-grid',
+        description='POSYDON Grid Management CLI - A unified interface for '
+                    'managing POSYDON MESA grids.',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog='''
+Examples:
+  posydon-grid setup --inifile config.ini --grid-type fixed
+  posydon-grid setup --inifile config.ini --grid-type dynamic --submission-type slurm
+
+For more information on a specific command, use:
+  posydon-grid <command> --help
+'''
+    )
+
+    subparsers = parser.add_subparsers(
+        dest='command',
+        title='Available commands',
+        description='Use "posydon-grid <command> --help" for more info on a command'
+    )
+
+    # Add the setup subcommand
+    create_setup_parser(subparsers)
+
+    args = parser.parse_args()
+
+    # If no command is specified, print help and exit
+    if args.command is None:
+        parser.print_help()
+        sys.exit(1)
+
+    return args
+
+
+def main():
+    """Main entry point for the posydon-grid CLI."""
+    args = parse_commandline()
+
+    if args.command == 'setup':
+        run_setup(args)
+    else:
+        # This shouldn't happen with proper subparser setup
+        print(f"Unknown command: {args.command}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()
