@@ -516,7 +516,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
     Parameters
     ----------
     binary : BinaryStar
-        The binary which for which an accretion rate is required.
+        The binary system for which an accretion rate is required.
     accretor : SingleStar
         The accretor in the binary.
     donor : SingleStar
@@ -524,10 +524,11 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
     idx : int
         The index of the binary history to use. If -1, the current state is used.
         default: -1
+    RNG : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
     scheme : str
         The scheme to use for calculating the wind velocity of the donor.
         There are different options:
-
         - 'Hurley+2002' : following [2]_
         - 'Kudritzki+2000' : following [5]_
     orbit_averaged : bool
