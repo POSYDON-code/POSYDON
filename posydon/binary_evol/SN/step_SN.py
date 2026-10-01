@@ -76,7 +76,6 @@ from posydon.utils.limits_thresholds import (
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
-
 path_to_Sukhbold_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                          "Sukhbold+16/")
 
@@ -87,11 +86,21 @@ path_to_Couch_datasets = os.path.join(PATH_TO_POSYDON_DATA,
                                       "Couch+2020/")
 ####################################################################################################
 from abc import ABC, abstractmethod
-from posydon.binary_evol.SN.explodability.ECSN_prescriptions import get_ECSN_prescription
-from posydon.binary_evol.SN.explodability.PISN_prescriptions import get_PISN_prescription
-from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import get_CCSN_prescription
-from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import get_remnant_mass_prescription
+
+from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
+    get_CCSN_prescription,
+)
+from posydon.binary_evol.SN.explodability.ECSN_prescriptions import (
+    get_ECSN_prescription,
+)
+from posydon.binary_evol.SN.explodability.PISN_prescriptions import (
+    get_PISN_prescription,
+)
 from posydon.binary_evol.SN.kicks.kick_prescriptions import get_kick_prescription
+from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import (
+    get_remnant_mass_prescription,
+)
+
 ####################################################################################################
 
 class stepSN(object):
@@ -128,7 +137,7 @@ class stepSN(object):
         else:
             for varname in self.DEFAULT_KWARGS:
                 setattr(self, varname, self.DEFAULT_KWARGS[varname])
-                
+
         self._is_ECSN = get_ECSN_prescription(**kwargs)
         self._is_PISN = get_PISN_prescription(**kwargs)
         self._is_CCSN = get_CCSN_prescription(**kwargs)

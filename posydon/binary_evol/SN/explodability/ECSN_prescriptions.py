@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 def get_ECSN_prescription(**kwargs):
     option = kwargs['ECSN']
     if option=="Tauris+15":
@@ -18,7 +19,7 @@ class ECSN_check_base(ABC):
     @abstractmethod
     def __call__(self,star):
         raise NotImplementedError
-    
+
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError

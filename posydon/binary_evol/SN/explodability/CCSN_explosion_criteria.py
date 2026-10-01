@@ -1,18 +1,11 @@
 import numpy as np
 
-from posydon.utils.posydonerror import ModelError
-
-from posydon.utils.common_functions import (
-    # CO_radius,
-    # calculate_Patton20_values_at_He_depl,
-    # inspiral_timescale_from_separation,
+from posydon.utils.common_functions import (  # CO_radius,; calculate_Patton20_values_at_He_depl,; inspiral_timescale_from_separation,; orbital_period_from_separation,; rotate,; separation_evol_wind_loss,; set_binary_to_failed,
     is_number,
-    # orbital_period_from_separation,
-    # rotate,
-    # separation_evol_wind_loss,
-    # set_binary_to_failed,
 )
+from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
+
 
 class BaseCCSNCrit:
     def __call__(self,binary,**kwargs):
@@ -23,7 +16,7 @@ class Fryer12_rapid(BaseCCSNCrit):
         # super().__init__(**kwargs)
         self.expl_crit_name = "Fryer+12-rapid"
     def __call__(self,binary,**kwargs):
-        
+
 
 
 

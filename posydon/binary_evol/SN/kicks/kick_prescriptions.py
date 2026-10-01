@@ -1,4 +1,5 @@
 import numpy as np
+
 from posydon.binary_evol.binarystar import BINARYPROPERTIES
 
 # DAVID (2026.09.15): make sure that WDs have 0 kicks.
@@ -422,7 +423,7 @@ def set_kick(
                 star=star_that_explodes, sigma=sigma, mean=mean
             )
 
-        # removing this bit because it never gets called, added 
+        # removing this bit because it never gets called, added
         # Vkick=0.0 at the point where it should be
 
         # elif binary.star_1.SN_type == "WD":

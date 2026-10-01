@@ -1,7 +1,10 @@
-import numpy as np
 import copy
 from abc import ABC, abstractmethod
+
+import numpy as np
+
 import posydon.utils.constants as const
+
 
 def get_PISN_prescription(**kwargs):
     option = kwargs['PISN_option']
@@ -27,7 +30,7 @@ class PISN_check_base(ABC):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
-    
+
     def _pisn_verbose(self,m_He_core,m_PISN):
         if m_PISN is None:
             print("")
@@ -136,6 +139,6 @@ class PISN_check_hendricks23(PISN_check_base):
         if self.verbose:
             self._pisn_verbose(m_He_core,m_PISN)
         return m_PISN
-    
+
     def __repr__(self):
         return "Prescription_PISN was initialised with the {option} prescription".format(option=self.PISN_option)

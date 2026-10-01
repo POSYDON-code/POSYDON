@@ -1,7 +1,10 @@
-import numpy as np
-from posydon.utils.posydonwarning import Pwarn
-from posydon.utils.posydonerror import ModelError
 from abc import ABC, abstractmethod
+
+import numpy as np
+
+from posydon.utils.posydonerror import ModelError
+from posydon.utils.posydonwarning import Pwarn
+
 
 def get_remnant_mass_prescription(**kwargs):
     option = kwargs["NS_mass_prescription"]
@@ -61,9 +64,9 @@ def PISN_mass_Marchant(star):
         # hence take the He-core masses from table 1 of Marchant
         # et al. (2019)
         return np.nan
-    
+
 def PISN_mass_Hendriks(star):
-    
+
     return star
 
 PISN_MASS_OPTIONS = {
