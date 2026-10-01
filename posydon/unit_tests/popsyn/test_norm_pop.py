@@ -294,14 +294,12 @@ class TestGetMeanMass:
         assert "q_min must be less than q_max" in str(excinfo.value)
 
     def test_q_min_greater_than_q_max_computed_error(self):
-        # Test the validation error when computed q_min > q_max
-        # This happens when secondary_mass_min/primary_mass_min > secondary_mass_max/primary_mass_max
         params = {
             'primary_mass_scheme': 'NonExistentIMF',
             'primary_mass_min': 5,
             'primary_mass_max': 10,
-            'secondary_mass_min': 4,  # 4/5 = 0.8
-            'secondary_mass_max': 6,  # 6/10 = 0.6, so q_min (0.8) > q_max (0.6)
+            'secondary_mass_min': 6,
+            'secondary_mass_max': 4,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,
@@ -335,6 +333,20 @@ class TestGetMeanMass:
 
         mean_mass = norm_pop.get_mean_mass(params)
         assert mean_mass > 0
+
+    @mark.parametrize("secondary_mass_min, secondary_mass_max, f_b",
+                      [(0.35, 140., 1.), (2., 140., 1.), (0.35, 20., 1.),
+                       (0.35, 140., 0.5)])
+    def test_mean_mass_matches_sample(self, base_simulation_kwargs,
+                                      secondary_mass_min, secondary_mass_max,
+                                      f_b):
+        base_simulation_kwargs['secondary_mass_min'] = secondary_mass_min
+        base_simulation_kwargs['secondary_mass_max'] = secondary_mass_max
+        base_simulation_kwargs['binary_fraction_const'] = f_b
+        sample = pop_data(base_simulation_kwargs)
+        sample_mean = (sample['S1_mass_i'] + sample['S2_mass_i']).mean()
+        assert np.isclose(norm_pop.get_mean_mass(base_simulation_kwargs),
+                          sample_mean, rtol=0.01)
 
 
 class TestGetPdf:

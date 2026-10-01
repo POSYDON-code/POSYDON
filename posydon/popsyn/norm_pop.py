@@ -291,19 +291,23 @@ def get_mean_mass(params):
     m1_min = params['primary_mass_min']
     m1_max = params['primary_mass_max']
 
+    # q bounds from secondary masses depend on m1, as in the sampler
     if 'q_min' in params:
         q_min = params['q_min']
     else:
-        q_min = np.max([params['secondary_mass_min']/params['primary_mass_min'],
-                        0])
+        q_min = lambda m: max(params['secondary_mass_min'] / m, 0)
 
     if 'q_max' in params:
         q_max = params['q_max']
     else:
-        q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'],
-                        1])
-    if q_min > q_max:
-        raise ValueError("q_min must be less than q_max")
+        q_max = lambda m: min(params['secondary_mass_max'] / m, 1)
+
+    # bounds are monotonic in m1, so checking the edges is enough
+    for m in (m1_min, m1_max):
+        lo = q_min(m) if callable(q_min) else q_min
+        hi = q_max(m) if callable(q_max) else q_max
+        if lo > hi:
+            raise ValueError("q_min must be less than q_max")
 
     # binary integration
     I_bin = dblquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
