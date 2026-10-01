@@ -1,0 +1,17 @@
+posydon.binary\_evol.DT.winds
+=============================
+
+.. automodule:: posydon.binary_evol.DT.winds
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.binary\_evol.DT.winds.default\_winds
+--------------------------------------------
+
+.. automodule:: posydon.binary_evol.DT.winds.default_winds
+   :members:
+   :show-inheritance:
+   :undoc-members:
