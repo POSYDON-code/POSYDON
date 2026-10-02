@@ -1,0 +1,223 @@
+name: Baseline Validation (Comment Triggered)
+
+# Comment `/run-baseline-check` on a PR (write access required) to evolve the
+# validation binaries on the PR head, compare them against a baseline built
+# from the PR's base branch, and post the results as a sticky PR comment.
+# Differences are informational only; the job fails only on errors.
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  check-trigger:
+    if: github.event.issue.pull_request && startsWith(github.event.comment.body, '/run-baseline-check')
+    runs-on: ubuntu-latest
+    outputs:
+      comment_id: ${{ steps.setup.outputs.comment_id }}
+      pr_branch: ${{ steps.setup.outputs.pr_branch }}
+      pr_sha: ${{ steps.setup.outputs.pr_sha }}
+      base_branch: ${{ steps.setup.outputs.base_branch }}
+      base_sha: ${{ steps.setup.outputs.base_sha }}
+
+    steps:
+      - name: Check permission, fetch PR and post "running" comment
+        id: setup
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const user = context.payload.comment.user.login;
+            const reject = async (msg) => {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body: `❌ ${msg}` });
+              core.setFailed(msg);
+            };
+
+            const { data: { permission } } = await github.rest.repos.getCollaboratorPermissionLevel({
+              owner, repo, username: user,
+            });
+            if (!['admin', 'write'].includes(permission)) {
+              return reject(`@${user} does not have permission to trigger baseline validation.`);
+            }
+
+            const { data: pr } = await github.rest.pulls.get({ owner, repo, pull_number: issue_number });
+            // dev-tools/*.sh clone branches from this repository, so fork branches can't be tested.
+            if (pr.head.repo?.full_name !== pr.base.repo.full_name) {
+              return reject('Baseline validation only supports PRs from branches in this repository.');
+            }
+
+            await github.rest.reactions.createForIssueComment({
+              owner, repo, comment_id: context.payload.comment.id, content: 'rocket',
+            });
+
+            core.setOutput('pr_branch', pr.head.ref);
+            core.setOutput('pr_sha', pr.head.sha);
+            core.setOutput('base_branch', pr.base.ref);
+            core.setOutput('base_sha', pr.base.sha);
+
+            // Create or update the single sticky comment; the validate job fills in the results.
+            const marker = '<!-- posydon-baseline-validation -->';
+            const runUrl = `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`;
+            const body = `${marker}\n## 🔬 Baseline Validation Results\n\n`
+              + `🚀 Running on \`${pr.head.sha}\` (triggered by @${user}) — [view run](${runUrl})\n`;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.body?.includes(marker));
+            const { data: comment } = existing
+              ? await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body })
+              : await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            core.setOutput('comment_id', comment.id);
+
+  validate:
+    needs: check-trigger
+    runs-on: self-hosted
+    # One validation per PR; a newer trigger supersedes an in-flight run. This is
+    # set on the job (not the workflow) so ordinary PR comments don't cancel it.
+    concurrency:
+      group: baseline-validation-${{ github.event.issue.number }}
+      cancel-in-progress: true
+    env:
+      PATH_TO_POSYDON_DATA: /data
+      PR_BRANCH: ${{ needs.check-trigger.outputs.pr_branch }}
+      PR_SHA: ${{ needs.check-trigger.outputs.pr_sha }}
+      BASE_BRANCH: ${{ needs.check-trigger.outputs.base_branch }}
+      BASE_SHA: ${{ needs.check-trigger.outputs.base_sha }}
+
+    steps:
+      # dev-tools/*.sh clone the base and PR branches themselves; this checkout
+      # only provides the (PR's) scripts and test definitions used for both.
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.PR_SHA }}
+
+      - name: Set up paths
+        run: |
+          {
+            echo "BASELINE_DIR=dev-tools/script_data/baselines/${BASE_BRANCH//\//_}"
+            echo "OUTPUT_DIR=dev-tools/script_data/output/binary_star_tests/${PR_BRANCH//\//_}"
+            echo "LOG_DIR=dev-tools/script_data/logs/${PR_BRANCH//\//_}"
+          } >> "$GITHUB_ENV"
+
+      # The baseline depends on the base commit and on the test definitions.
+      - name: Restore cached baseline
+        id: baseline-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.BASELINE_DIR }}
+          key: baseline-${{ env.BASE_BRANCH }}-${{ env.BASE_SHA }}-${{ hashFiles('dev-tools/*.sh', 'dev-tools/script_data/src/**') }}
+
+      - name: Generate baseline from base branch
+        id: baseline
+        if: steps.baseline-cache.outputs.cache-hit != 'true'
+        working-directory: dev-tools
+        run: ./generate_baseline.sh "$BASE_BRANCH" "$BASE_SHA"
+
+      # validate_binaries.sh exits 0 (no differences), 10 (differences) or
+      # anything else on error; only errors fail the job.
+      - name: Run validation on PR head
+        id: validate
+        working-directory: dev-tools
+        run: |
+          set +e
+          ./validate_binaries.sh "$PR_BRANCH" "$BASE_BRANCH" --sha "$PR_SHA"
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          [ "$code" -eq 0 ] || [ "$code" -eq 10 ]
+
+      - name: Collect results and build comment
+        if: ${{ !cancelled() }}
+        env:
+          BASELINE: ${{ steps.baseline-cache.outputs.cache-hit == 'true' && 'cached' || steps.baseline.outcome }}
+          EXIT_CODE: ${{ steps.validate.outputs.exit_code }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          TRIGGERED_BY: ${{ github.event.comment.user.login }}
+        run: |
+          mkdir -p artifacts
+          cp "$OUTPUT_DIR"/comparison_*.txt artifacts/ 2>/dev/null || true
+          if [ -d "$LOG_DIR" ]; then
+            tar -czf artifacts/logs.tar.gz -C "$LOG_DIR" .
+          fi
+
+          case "$BASELINE" in
+            success) baseline_msg='✅ Baseline generated from base branch' ;;
+            cached)  baseline_msg='ℹ️ Reused cached baseline (base commit and test definitions unchanged)' ;;
+            *)       baseline_msg='❌ Baseline generation failed — see the workflow logs' ;;
+          esac
+          case "$EXIT_CODE" in
+            0)  validation_msg='✅ Validation completed — no differences found' ;;
+            10) validation_msg='⚠️ Validation completed with differences (see below) — informational, does not block merging' ;;
+            '') validation_msg='⏭️ Validation did not run' ;;
+            *)  validation_msg="❌ Validation failed with exit code $EXIT_CODE — see the workflow logs" ;;
+          esac
+
+          fence='```'
+          {
+            echo '<!-- posydon-baseline-validation -->'
+            echo '## 🔬 Baseline Validation Results'
+            echo
+            echo "**Base branch:** \`$BASE_BRANCH\` (\`$BASE_SHA\`)  "
+            echo "**PR branch:** \`$PR_BRANCH\` (\`$PR_SHA\`)  "
+            echo "**Triggered by:** @$TRIGGERED_BY"
+            echo
+            echo '### Step 1: Baseline Generation'
+            echo "$baseline_msg"
+            echo
+            echo '### Step 2: Binary Validation'
+            echo "$validation_msg"
+            echo
+            echo '### 📊 Comparison Summary'
+            echo "$fence"
+            cat artifacts/comparison_summary.txt 2>/dev/null || echo 'No comparison summary available'
+            echo "$fence"
+            if ls artifacts/comparison_*Zsun.txt >/dev/null 2>&1; then
+              echo
+              echo '<details>'
+              echo '<summary>📋 Detailed comparisons per metallicity</summary>'
+              for f in artifacts/comparison_*Zsun.txt; do
+                z="${f#artifacts/comparison_}"
+                echo
+                echo "#### ${z%.txt}"
+                echo "$fence"
+                head -c 5000 "$f"
+                if [ "$(wc -c < "$f")" -gt 5000 ]; then
+                  echo; echo '... (truncated, see artifacts)'
+                fi
+                echo "$fence"
+              done
+              echo '</details>'
+            fi
+            echo
+            echo '### 📦 Artifacts'
+            echo "Comparison reports and logs are attached to the [workflow run]($RUN_URL#artifacts)."
+            echo
+            echo '---'
+            echo "*Last updated by workflow run [#$GITHUB_RUN_ID]($RUN_URL). Comment \`/run-baseline-check\` on this PR to re-run.*"
+          } > "$RUNNER_TEMP/comment.md"
+
+      - name: Upload artifacts
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: baseline-validation-results-pr${{ github.event.issue.number }}-${{ github.run_id }}
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 30
+
+      - name: Update sticky comment with results
+        if: ${{ !cancelled() }}
+        uses: actions/github-script@v7
+        env:
+          COMMENT_ID: ${{ needs.check-trigger.outputs.comment_id }}
+        with:
+          script: |
+            await github.rest.issues.updateComment({
+              ...context.repo,
+              comment_id: Number(process.env.COMMENT_ID),
+              body: require('fs').readFileSync(`${process.env.RUNNER_TEMP}/comment.md`, 'utf8'),
+            });
