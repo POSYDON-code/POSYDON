@@ -1,0 +1,256 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "# Run your first MESA HMS-HMS binary simulation with POSYDON"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you haven't done it already, export all the relevant POSYDON and MESA environment variables.\n",
+    "\n",
+    "Tip: create a file called `.bash_POSYDON_MESA` with the following content (please adapt the PATHs to your system):\n",
+    "```bash\n",
+    "export PATH_TO_POSYDON=~/software/POSYDON/\n",
+    "export PATH_TO_POSYDON_DATA=~/software/POSYDON/data/\n",
+    "\n",
+    "export MESA_DIR=~/software/mesa-r11701_witheoschange_andwithreverseMTchange_fiximplicitmdot\n",
+    "export OMP_NUM_THREADS=4\n",
+    "export MESASDK_ROOT=~/software/mesasdk\n",
+    "source $MESASDK_ROOT/bin/mesasdk_init.sh\n",
+    "```\n",
+    "so that every time you open a new terminal you can just run:\n",
+    "```bash\n",
+    "source .bash_POSYDON_MESA\n",
+    "```"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "If you haven't done it already, please download the `development` branch of the `POSYDON-MESA-INLISTS` submodule, see [Architecting MESA Simulation Grids with POSYDON](running-grids.rst). This is the branch that contains the simulation properties of all POSYDON MESA grids."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creating the Initialization File for the POSYDON MESA Submission Script"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You can now copy in your working directory the API ini file configuration of HMS-HMS binaries, which is stored on Github as part of the POSYDON repository. The cell below will download the file for you. \n",
+    "\n",
+    "Note: in the `POSYDON-MESA-INLISTS` submodule we have more example ini files at `POSYDON-MESA_INLISTS/r11701/running_scripts/`. For each grid we support two ini file configured to the Northwestern and UNIGE HPC clusters."
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import urllib.request\n",
+    "\n",
+    "# Download the grid_params.ini file from GitHub\n",
+    "url = \"https://raw.githubusercontent.com/POSYDON-code/POSYDON/refs/heads/main/grid_params/grid_params.ini\"\n",
+    "urllib.request.urlretrieve(url, './HMS-HMS.ini')\n",
+    "print(\"Download completerd\")"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Open the file and edit the following parameters:\n",
+    "- `user=your_username (can be skipped if not run via SLURM)`\n",
+    "- `partition=the_slurm_partition_to_run_on` (can be skipped if not run via SLURM)\n",
+    "- `account=your_slurm_account` (can be skipped if not run via SLURM)\n",
+    "- `email=your_email` (can be skipped if not run via SLURM)\n",
+    "- `posydon_github_root=your_path_to_POSYDON`\n",
+    "- `grid=your_grid_csv_file` (will get created in the next section)\n",
+    "\n",
+    "The `scenario` parameter of the ini file is the main parameter that controls the simulation setup. This parameter let's us decide which simulation we want to run. The syntax is the following:\n",
+    "- the first argument is the name of the submodule `posydon` which points to the POSYDON-MESA-INLISTS submodule (other options are available, e.g. `user` which points to a private submodule)\n",
+    "- the second argument is the name of the branch and commit of the submodule we want to use connected by a dash `-`. In this case we want to use the `development` branch of the submodule and it's latest commit, so we write `development-c1f75acacc3bd645197c5d3e920a121e94d95a80`\n",
+    "- the third argument is the name of the simulation grid we want to run, in this case we want to run a HMS-HMS grid. The name of the grid is `HMS-HMS`.\n",
+    "\n",
+    "To summarize, you should have `scenario = ['posydon', 'development-c1f75acacc3bd645197c5d3e920a121e94d95a80', 'HMS-HMS']`\n",
+    "\n",
+    "The `zams_file` points to the ZAMS model used to generate the HMS stars in the binary system. POSYDON v2.0.0 supports 8 different metallicities, here we would like to use the 0.1Zsun POSYDON MESA ZAMS model `${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/ZAMS_models/zams_z1.42m3_y0.2511.data`\n",
+    "\n",
+    "The last parameter of this file is `grid` and points to the `csv` file containing the initial conditions of the grid. In this case we want to run a `HMS-HMS` grid consisting of one system, so we set `grid = grid_test.csv` and generate such file specifying the metallicity, the two star masses and the initial orbital period."
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Creating the Initial Simulation Points CSV File"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Note: a notebook showing you how all the grid points of v2.0.0 are generated is available in the `POSYDON-MESA-INLISTS` submodule at `$PATH_TO_POSYDON/grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts/parameter_space_v2/create_csv.ipynb`"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "import csv\n",
+    "\n",
+    "with open('./grid_test.csv', 'w', newline='') as file:\n",
+    "    writer = csv.writer(file)\n",
+    "    writer.writerow(['initial_z','Zbase','m1','m2','initial_period_in_days'])\n",
+    "    writer.writerow([0.00142, 0.00142, 30., 21., 10.])"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The above script will create a .csv file for the parameters of a MESA 'grid' with one row, i.e. practically with one binary system.\n",
+    "You should now have the following files in your working directory:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!ls"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "Let's now use POSYDON to set up the MESA simulation. In your terminal run\n",
+    "\n",
+    "```bash\n",
+    "posydon-setup-grid --grid-type fixed --inifile HMS-HMS.ini --submission-type slurm\n",
+    "```\n",
+    "\n",
+    "The following files will be created:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!ls"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "## Running the MESA Model and Exploring the Simulation Output"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "You are now ready to submit the simulation to the cluster with the following command:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!./run_grid.sh"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!squeue -u kruckow"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "After the job is finished, we can check the output files:"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!ls"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!ls Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": null,
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "!gzip -cd Zbase_0.0014_m1_30.0000_m2_21.0000_initial_z_1.4200e-03_initial_period_in_days_1.0000e+01_grid_index_0/out.txt.gz | head -n 320"
+   ]
+  },
+  {
+   "cell_type": "markdown",
+   "metadata": {},
+   "source": [
+    "The above output is standard output of the beginning of a MESA binary run.\n",
+    "Congratulations, you now know how to leverage POSYDON to run a grid of MESA simulations on a computer cluster!"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "posydon-debug",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.11.9"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 4
+}

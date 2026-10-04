@@ -1,0 +1,57 @@
+posydon.interpolation
+=====================
+
+.. automodule:: posydon.interpolation
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+
+posydon.interpolation.IF\_interpolation
+---------------------------------------
+
+.. automodule:: posydon.interpolation.IF_interpolation
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.interpolation.constraints
+---------------------------------
+
+.. automodule:: posydon.interpolation.constraints
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.interpolation.data\_scaling
+-----------------------------------
+
+.. automodule:: posydon.interpolation.data_scaling
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.interpolation.eep
+-------------------------
+
+.. automodule:: posydon.interpolation.eep
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.interpolation.interpolation
+-----------------------------------
+
+.. automodule:: posydon.interpolation.interpolation
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+posydon.interpolation.profile\_interpolation
+--------------------------------------------
+
+.. automodule:: posydon.interpolation.profile_interpolation
+   :members:
+   :show-inheritance:
+   :undoc-members:
