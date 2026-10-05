@@ -39,6 +39,8 @@ _INTERP_METHODS = ['1NN_1NN', 'linear3c_kNN']
 # retry, which gets doubled for each further retry
 _DOWNLOAD_ATTEMPTS = 3
 _RETRY_WAIT = 10
+# number of fresh downloads to retry after a failed MD5 verification
+_MD5_RETRIES = 1
 # errors caused by an interrupted connection, which are worth a retry
 _CONNECTION_ERRORS = (urllib.error.ContentTooShortError, urllib.error.URLError,
                       IncompleteRead, ConnectionError, TimeoutError)
@@ -181,22 +183,9 @@ def _expected_paths(dataset):
                   for grid_dir in _INTERP_GRID_DIRS
                   for interp_method in _INTERP_METHODS]
     elif dataset == 'auxiliary':
-        return ["SFR/IllustrisTNG.npz", "SFR/Zavala+21.txt",
+        return ["SFR/IllustrisTNG.h5", "SFR/Zavala+21.txt",
                 "selection_effects/pdet_grid.hdf5", "Sukhbold+16",
                 "Patton+Sukhbold20", "Couch+2020"]
-    elif dataset == 'DR1_for_v2.0.0-pre1':
-        z_str = convert_metallicity_to_string(1.)
-        return [os.path.join(grid_dir, z_str + "_Zsun.h5")
-                for grid_dir in _GRID_DIRS] \
-               + ["Sukhbold+16", "Patton+Sukhbold20", "Couch+2020"]
-    elif dataset == 'DR1-super_Eddington':
-        # NOTE: it replaces the solar metallicity CO-* grids of
-        #       'DR1_for_v2.0.0-pre1', hence these two data sets cannot be
-        #       distinguished by their extracted files: use 'force' to
-        #       switch between them.
-        z_str = convert_metallicity_to_string(1.)
-        return [os.path.join(grid_dir, z_str + "_Zsun.h5")
-                for grid_dir in ['CO-HMS_RLO', 'CO-HeMS', 'CO-HeMS_RLO']]
     return None
 
 def _dataset_installed(dataset):
@@ -344,7 +333,9 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
 
     # download the data (unless a complete archive exists already) and
     # verify its integrity; a corrupted leftover archive gets replaced by a
-    # fresh download instead of aborting
+    # fresh download instead of aborting, a corrupted fresh download gets
+    # retried _MD5_RETRIES times
+    md5_retries = _MD5_RETRIES
     while True:
         if use_existing_archive:
             if verbose:
@@ -378,6 +369,10 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
         if use_existing_archive:
             use_existing_archive = False
             print("The existing archive did not pass the verification, "
+                  "downloading it again.")
+        elif md5_retries > 0:
+            md5_retries -= 1
+            print("The download did not pass the MD5 verification, "
                   "downloading it again.")
         else:
             raise ValueError("MD5 verification failed!.")

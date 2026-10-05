@@ -36,8 +36,9 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_CONNECTION_ERRORS', '_DOWNLOAD_ATTEMPTS',\
                     '_GRID_DIRS', '_INTERP_GRID_DIRS', '_INTERP_METHODS',\
-                    '_RETRY_WAIT', '_archive_readable',\
-                    '_dataset_installed', '_download_with_retries', '_expected_paths', '_md5_of_file',\
+                    '_MD5_RETRIES', '_RETRY_WAIT', '_archive_readable',\
+                    '_dataset_installed', '_download_with_retries',\
+                    '_expected_paths', '_md5_of_file',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
                     'convert_metallicity_to_string', 'data_download',\
                     'download_one_dataset', 'hashlib', 'list_datasets', 'os',\
@@ -179,9 +180,11 @@ class TestFunctions:
         assert totest._expected_paths('DR2_grids_Zsun') is None
         # other known data sets
         assert totest._expected_paths('auxiliary') is not None
-        assert totest._expected_paths('DR1_for_v2.0.0-pre1') is not None
-        assert totest._expected_paths('DR1-super_Eddington') is not None
-        assert len(totest._expected_paths('DR1-super_Eddington')) == 3
+        # the SFR model reads the HDF5 file
+        assert "SFR/IllustrisTNG.h5" in totest._expected_paths('auxiliary')
+        # only DR2 data sets are verified, others are always downloaded
+        assert totest._expected_paths('DR1_for_v2.0.0-pre1') is None
+        assert totest._expected_paths('DR1-super_Eddington') is None
         # unknown data sets cannot be verified
         assert totest._expected_paths('DR2') is None
         assert totest._expected_paths('v2_tutorial_populations') is None
@@ -428,7 +431,8 @@ class TestFunctions:
             assert extraction_statement.format('Test') in captured_output.out
             clean_up()
 
-        # corrupted fresh downloads get removed and raise an error
+        # corrupted fresh downloads get retried, then removed and raise an
+        # error
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
             mock_ZENODO_COLLECTION = {'Test': {'data': "POSYDON_data.tar.gz",
@@ -440,12 +444,37 @@ class TestFunctions:
             with raises(ValueError, match="MD5 verification failed!."):
                 totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
-            assert download_statement.format('Test') in captured_output.out
+            assert captured_output.out.count(download_statement.format(
+                'Test')) == 1+totest._MD5_RETRIES
+            assert captured_output.out.count("The download did not pass the "\
+                                             +"MD5 verification, downloading "\
+                                             +"it again.")\
+                   == totest._MD5_RETRIES
             assert extraction_statement.format('Test') not in\
                 captured_output.out
             assert failed_MD5_statement not in captured_output.out
             assert not os.path.exists(filepath)
             clean_up()
+            # a one-off corrupted download succeeds on the retry
+            content = b"Unit Test\n"
+            mock_ZENODO_COLLECTION['Test']['md5']\
+                = hashlib.md5(content).hexdigest()
+            self.downloads = 0
+            def mock_urlretrieve_corrupt_once(url, filename=None,
+                                              reporthook=None, data=None):
+                self.downloads += 1
+                with open(filename, "wb") as download:
+                    download.write(content if self.downloads > 1 else b"")
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_corrupt_once)
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert self.downloads == 2
+            assert "The download did not pass the MD5 verification, "\
+                   +"downloading it again." in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            clean_up()
+            mock_ZENODO_COLLECTION['Test']['md5'] = "Unit"
             # unreadable files cannot be verified, but continue anyway;
             # here, the archive vanishes before its removal
             def failing_md5(unused_filepath):
