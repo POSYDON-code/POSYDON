@@ -37,6 +37,7 @@ class TestElements:
                     '_CONNECTION_ERRORS', '_DOWNLOAD_ATTEMPTS',\
                     '_GRID_DIRS', '_INTERP_GRID_DIRS', '_INTERP_METHODS',\
                     '_MD5_RETRIES', '_RETRY_WAIT', '_archive_readable',\
+                    '_archive_verified',\
                     '_dataset_installed', '_download_with_retries',\
                     '_expected_paths', '_md5_of_file',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
@@ -79,6 +80,9 @@ class TestElements:
 
     def test_instance_archive_readable(self):
         assert isroutine(totest._archive_readable)
+
+    def test_instance_archive_verified(self):
+        assert isroutine(totest._archive_verified)
 
     def test_instance_download_with_retries(self):
         assert isroutine(totest._download_with_retries)
@@ -237,6 +241,33 @@ class TestFunctions:
         # missing archive
         assert totest._archive_readable(filepath+".missing") == False
 
+    def test_archive_verified(self, capsys, monkeypatch, tmp_path):
+        content = b"Unit Test\n"
+        filepath = os.path.join(tmp_path, "unit_test.txt")
+        with open(filepath, "wb") as test_file:
+            test_file.write(content)
+        md5 = hashlib.md5(content).hexdigest()
+        # MD5 check
+        assert totest._archive_verified(filepath, md5) == True
+        assert capsys.readouterr().out == ""
+        assert totest._archive_verified(filepath, md5, verbose=True) == True
+        assert "MD5 verified." in capsys.readouterr().out
+        assert totest._archive_verified(filepath, "Unit", verbose=True)\
+               == False
+        assert "MD5 verified." not in capsys.readouterr().out
+        # without a checksum, the archive needs to be readable
+        assert totest._archive_verified(filepath) == False
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "_archive_readable", lambda filepath: True)
+            assert totest._archive_verified(filepath) == True
+            # unreadable files cannot be verified, but pass anyway
+            def failing_md5(filepath):
+                raise OSError("unreadable file")
+            mp.setattr(totest, "_md5_of_file", failing_md5)
+            assert totest._archive_verified(filepath, md5) == True
+            assert "Failed to read the tar.gz file for MD5 verification"\
+                   in capsys.readouterr().out
+
     def test_download_with_retries(self, capsys, monkeypatch, tmp_path):
         partpath = os.path.join(tmp_path, "POSYDON_data.tar.gz.part")
         def mock_urlretrieve(url, filename=None, reporthook=None, data=None):
@@ -273,17 +304,23 @@ class TestFunctions:
             assert self.calls == totest._DOWNLOAD_ATTEMPTS
             assert len(self.waits) == totest._DOWNLOAD_ATTEMPTS-1
             assert not os.path.exists(partpath)
-            # other errors are not retried
-            def failing_urlretrieve(url, filename=None, reporthook=None,
-                                    data=None):
-                self.calls += 1
-                raise KeyboardInterrupt
-            mp.setattr(totest.urllib.request, "urlretrieve",
-                       failing_urlretrieve)
-            self.calls = 0
-            with raises(KeyboardInterrupt):
-                totest._download_with_retries("url", partpath)
-            assert self.calls == 1
+            # HTTP errors (e.g. 404), an unreachable server, and other errors
+            # are not retried
+            for error in [totest.urllib.error.HTTPError("url", 404,
+                                                        "Not Found", {},
+                                                        None),
+                          totest.urllib.error.URLError("unreachable"),
+                          KeyboardInterrupt()]:
+                def failing_urlretrieve(url, filename=None, reporthook=None,
+                                        data=None):
+                    self.calls += 1
+                    raise error
+                mp.setattr(totest.urllib.request, "urlretrieve",
+                           failing_urlretrieve)
+                self.calls = 0
+                with raises(type(error)):
+                    totest._download_with_retries("url", partpath)
+                assert self.calls == 1
 
     def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
                                   download_statement, failed_MD5_statement,\
@@ -441,14 +478,14 @@ class TestFunctions:
             mp.setattr(totest.urllib.request, "urlretrieve",
                        mock_urlretrieve_empty)
             mp.setattr(totest.tarfile, "open", mock_open)
-            with raises(ValueError, match="MD5 verification failed!."):
+            with raises(ValueError, match="^MD5 verification failed!$"):
                 totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert captured_output.out.count(download_statement.format(
                 'Test')) == 1+totest._MD5_RETRIES
             assert captured_output.out.count("The download did not pass the "\
-                                             +"MD5 verification, downloading "\
-                                             +"it again.")\
+                                             +"verification, downloading it "\
+                                             +"again.")\
                    == totest._MD5_RETRIES
             assert extraction_statement.format('Test') not in\
                 captured_output.out
@@ -470,7 +507,7 @@ class TestFunctions:
             totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert self.downloads == 2
-            assert "The download did not pass the MD5 verification, "\
+            assert "The download did not pass the verification, "\
                    +"downloading it again." in captured_output.out
             assert extraction_statement.format('Test') in captured_output.out
             clean_up()

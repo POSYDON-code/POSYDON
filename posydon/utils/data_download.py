@@ -41,9 +41,12 @@ _DOWNLOAD_ATTEMPTS = 3
 _RETRY_WAIT = 10
 # number of fresh downloads to retry after a failed MD5 verification
 _MD5_RETRIES = 1
-# errors caused by an interrupted connection, which are worth a retry
-_CONNECTION_ERRORS = (urllib.error.ContentTooShortError, urllib.error.URLError,
-                      IncompleteRead, ConnectionError, TimeoutError)
+# errors caused by a connection dropping during the download, which are worth
+# a retry; HTTP errors (e.g. 404) and an unreachable server raise a URLError
+# and are not retried
+_CONNECTION_ERRORS = (urllib.error.ContentTooShortError, IncompleteRead,
+                      ConnectionResetError, ConnectionAbortedError,
+                      TimeoutError)
 
 
 def _parse_commandline():
@@ -249,6 +252,38 @@ def _archive_readable(filepath):
         return False
     return True
 
+def _archive_verified(filepath, md5=None, verbose=False):
+    """Check the integrity of a downloaded archive.
+
+        Parameters
+        ----------
+        filepath : string
+            Path to the archive.
+        md5 : string or None (default: None)
+            Expected MD5 checksum of the archive. If None, only check that
+            the archive can be read completely.
+        verbose : boolean (default: False)
+            Enables verbose output.
+
+        Returns
+        -------
+        boolean
+            True, if the archive passed the verification.
+
+    """
+    if md5 is None:
+        return _archive_readable(filepath)
+    try:
+        verified = (_md5_of_file(filepath) == md5)
+    except OSError:
+        print('Failed to read the tar.gz file for MD5 verification, '
+              'cannot guarantee file integrity (this error seems to '
+              'happen only on macOS).')
+        return True
+    if verified and verbose:
+        print("MD5 verified.")
+    return verified
+
 def _download_with_retries(data_url, partpath):
     """Download a file and retry, if the connection gets interrupted.
 
@@ -322,66 +357,44 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
     if original_md5 is None:
         MD5_check = False
         Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
+    md5 = original_md5 if MD5_check else None
 
-    # handle leftovers of previous interrupted downloads: an incomplete
-    # download gets removed and restarted, whereas a complete archive is
-    # verified below and extracted instead of being downloaded again
-    use_existing_archive = os.path.exists(filepath)
+    # an incomplete download of a previous run gets removed
     if os.path.exists(partpath):
         print(f"Removing incomplete download '{filename}.part'...")
         os.remove(partpath)
 
-    # download the data (unless a complete archive exists already) and
-    # verify its integrity; a corrupted leftover archive gets replaced by a
-    # fresh download instead of aborting, a corrupted fresh download gets
-    # retried _MD5_RETRIES times
-    md5_retries = _MD5_RETRIES
-    while True:
-        if use_existing_archive:
-            if verbose:
-                print(f"Verifying existing archive '{filename}'...")
-        else:
+    # a complete archive of a previous run gets extracted instead of being
+    # downloaded again, unless it is corrupted
+    if os.path.exists(filepath):
+        if verbose:
+            print(f"Verifying existing archive '{filename}'...")
+        if not _archive_verified(filepath, md5, verbose):
+            os.remove(filepath)
+            print("The existing archive did not pass the verification, "
+                  "downloading it again.")
+
+    # download the data; a corrupted download gets retried _MD5_RETRIES times
+    if not os.path.exists(filepath):
+        for attempt in range(1+_MD5_RETRIES):
+            if attempt > 0:
+                print("The download did not pass the verification, "
+                      "downloading it again.")
             print(f"Downloading POSYDON data '{dataset}' from Zenodo to "
                   +directory)
             _download_with_retries(data_url, partpath)
             os.replace(partpath, filepath)
-
-        # Compare original MD5 with freshly calculated
-        if MD5_check:
-            try:
-                verified = (_md5_of_file(filepath) == original_md5)
-                if verified and verbose:
-                    print("MD5 verified.")
-            except OSError:
-                verified = True
-                print('Failed to read the tar.gz file for MD5 verification, '
-                      'cannot guarantee file integrity (this error seems to '
-                      'happen only on macOS).')
-        elif use_existing_archive:
-            # without a checksum, at least make sure that a leftover archive
-            # is not truncated
-            verified = _archive_readable(filepath)
+            if _archive_verified(filepath, md5, verbose):
+                break
+            os.remove(filepath)
         else:
-            verified = True
-        if verified:
-            break
-        os.remove(filepath)
-        if use_existing_archive:
-            use_existing_archive = False
-            print("The existing archive did not pass the verification, "
-                  "downloading it again.")
-        elif md5_retries > 0:
-            md5_retries -= 1
-            print("The download did not pass the MD5 verification, "
-                  "downloading it again.")
-        else:
-            raise ValueError("MD5 verification failed!.")
+            raise ValueError(("MD5" if md5 else "Archive")
+                             +" verification failed!")
 
     # extract each file
     print(f"Extracting POSYDON data '{dataset}' from tar file...")
     with tarfile.open(filepath) as tar:
-        for member in tqdm(iterable=tar.getmembers(),
-                           total=len(tar.getmembers())):
+        for member in tqdm(tar.getmembers()):
             tar.extract(member=member, path=directory)
 
     # remove tar files after extracted
