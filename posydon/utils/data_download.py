@@ -162,21 +162,8 @@ def list_datasets(individual_sets=False, verbose=False):
                                        +ZENODO_COLLECTION[dataset]['url']))
 
 def _expected_paths(dataset):
-    """Get the paths, relative to PATH_TO_POSYDON_DATA, whose presence
-    indicates that a data set is installed.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-
-        Returns
-        -------
-        list of strings or None
-            Relative paths created by extracting the data set. None, if
-            they cannot be determined.
-
-    """
+    """Get the paths, relative to PATH_TO_POSYDON_DATA, created by extracting
+    a data set. Returns None, if they cannot be determined."""
     if dataset.startswith('DR2_grids_') and dataset.endswith('Zsun'):
         suffix = dataset[len('DR2_grids_'):-len('Zsun')]
         try:
@@ -196,19 +183,7 @@ def _expected_paths(dataset):
     return None
 
 def _dataset_installed(dataset):
-    """Check whether a data set seems to be already installed.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-
-        Returns
-        -------
-        boolean
-            True, if all expected paths of the data set exist.
-
-    """
+    """Check whether all expected paths of a data set exist."""
     expected_paths = _expected_paths(dataset)
     if not expected_paths:
         return False
@@ -216,19 +191,7 @@ def _dataset_installed(dataset):
                for path in expected_paths)
 
 def _md5_of_file(filepath):
-    """Calculate the MD5 checksum of a file without loading it into memory.
-
-        Parameters
-        ----------
-        filepath : string
-            Path to the file.
-
-        Returns
-        -------
-        string
-            The hexadecimal MD5 checksum of the file.
-
-    """
+    """Calculate the MD5 checksum of a file in chunks, to keep memory low."""
     md5 = hashlib.md5()
     with open(filepath, "rb") as file_to_check:
         for chunk in iter(lambda: file_to_check.read(65536), b""):
@@ -236,19 +199,7 @@ def _md5_of_file(filepath):
     return md5.hexdigest()
 
 def _archive_readable(filepath):
-    """Check whether a tar archive can be read completely.
-
-        Parameters
-        ----------
-        filepath : string
-            Path to the archive.
-
-        Returns
-        -------
-        boolean
-            True, if all members of the archive can be read.
-
-    """
+    """Check whether all members of a tar archive can be read."""
     try:
         with tarfile.open(filepath) as tar:
             tar.getmembers()
@@ -257,24 +208,8 @@ def _archive_readable(filepath):
     return True
 
 def _archive_verified(filepath, md5=None, verbose=False):
-    """Check the integrity of a downloaded archive.
-
-        Parameters
-        ----------
-        filepath : string
-            Path to the archive.
-        md5 : string or None (default: None)
-            Expected MD5 checksum of the archive. If None, only check that
-            the archive can be read completely.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
-        Returns
-        -------
-        boolean
-            True, if the archive passed the verification.
-
-    """
+    """Check the integrity of a downloaded archive. Without an expected
+    MD5 checksum, only check that the archive can be read completely."""
     if md5 is None:
         return _archive_readable(filepath)
     try:
@@ -287,19 +222,8 @@ def _archive_verified(filepath, md5=None, verbose=False):
     return verified
 
 def _remote_size(data_url):
-    """Get the size of a file on the server without downloading it.
-
-        Parameters
-        ----------
-        data_url : string
-            URL of the file.
-
-        Returns
-        -------
-        int or None
-            Size of the file in bytes, or None if the server does not tell.
-
-    """
+    """Get the size of a file on the server in bytes via a HEAD request.
+    Returns None, if the server does not tell."""
     request = urllib.request.Request(data_url, method="HEAD")
     try:
         with urllib.request.urlopen(request, timeout=60) as response:
@@ -310,16 +234,8 @@ def _remote_size(data_url):
         return None
 
 def _check_disk_space(directory, required):
-    """Make sure that there is enough free disk space.
-
-        Parameters
-        ----------
-        directory : string
-            Directory to store data in.
-        required : int
-            Required free disk space in bytes.
-
-    """
+    """Raise an OSError, if the directory has less than the required number
+    of bytes free."""
     free = shutil.disk_usage(directory).free
     if free < required:
         raise OSError(f"Not enough disk space in {directory}: "
@@ -327,17 +243,9 @@ def _check_disk_space(directory, required):
                       f"{free/1e9:.1f} GB free.")
 
 def _download_with_retries(data_url, partpath):
-    """Download a file and retry, if the connection gets interrupted.
-
-        Parameters
-        ----------
-        data_url : string
-            URL of the file to download.
-        partpath : string
-            Path to store the download at. It gets removed after a failed
-            attempt.
-
-    """
+    """Download a file and retry with an increasing waiting time, if the
+    connection drops or the server has a temporary error. The partial
+    download gets removed after each failed attempt."""
     attempt = 1
     while True:
         try:
@@ -358,19 +266,8 @@ def _download_with_retries(data_url, partpath):
             attempt += 1
 
 def _archive_path(dataset):
-    """Get the path to store the archive of a data set at.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-
-        Returns
-        -------
-        string
-            Path to the archive next to PATH_TO_POSYDON_DATA.
-
-    """
+    """Get the path to store the archive of a data set at, next to
+    PATH_TO_POSYDON_DATA."""
     data_url = ZENODO_COLLECTION[dataset]['data']
     if data_url is None:
         raise ValueError(f"The dataset '{dataset}' has no publication yet.")
@@ -381,21 +278,8 @@ def _archive_path(dataset):
     return os.path.join(directory, os.path.basename(data_url))
 
 def _expected_md5(dataset, MD5_check=True):
-    """Get the MD5 checksum to verify the archive of a data set with.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-        MD5_check : boolean (default: True)
-            Use the MD5 check to make sure data is not corrupted.
-
-        Returns
-        -------
-        string or None
-            The MD5 checksum, or None if the MD5 check is skipped.
-
-    """
+    """Get the MD5 checksum to verify the archive of a data set with. Returns
+    None, if the MD5 check is skipped."""
     if not MD5_check:
         return None
     md5 = ZENODO_COLLECTION[dataset]['md5']
@@ -409,18 +293,6 @@ def _clean_up_leftovers(filepath, md5=None, verbose=False, force=False):
     An incomplete download gets removed. A complete archive is kept to be
     extracted instead of being downloaded again, unless it is corrupted or
     a fresh download is forced.
-
-        Parameters
-        ----------
-        filepath : string
-            Path to the archive.
-        md5 : string or None (default: None)
-            Expected MD5 checksum of the archive.
-        verbose : boolean (default: False)
-            Enables verbose output.
-        force : boolean (default: False)
-            Remove a complete archive to download it again.
-
     """
     partpath = filepath + ".part"
     if os.path.exists(partpath):
@@ -446,18 +318,6 @@ def _download_archive(dataset, filepath, md5=None, verbose=False):
     A corrupted download gets retried _MD5_RETRIES times. Before, it is
     checked that there is enough disk space for the archive and its
     extracted content, which is at least as large as the archive.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-        filepath : string
-            Path to store the archive at.
-        md5 : string or None (default: None)
-            Expected MD5 checksum of the archive.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
     """
     partpath = filepath + ".part"
     data_url = ZENODO_COLLECTION[dataset]['data']
@@ -478,18 +338,7 @@ def _download_archive(dataset, filepath, md5=None, verbose=False):
     raise ValueError(("MD5" if md5 else "Archive")+" verification failed!")
 
 def _extract_archive(dataset, filepath, verbose=False):
-    """Extract the archive of a data set and remove it afterwards.
-
-        Parameters
-        ----------
-        dataset : string
-            Name of the data set in ZENODO_COLLECTION.
-        filepath : string
-            Path to the archive.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
-    """
+    """Extract the archive of a data set and remove it afterwards."""
     # the extracted content is at least as large as the archive
     _check_disk_space(os.path.dirname(filepath), os.path.getsize(filepath))
     print(f"Extracting POSYDON data '{dataset}' from tar file...")
