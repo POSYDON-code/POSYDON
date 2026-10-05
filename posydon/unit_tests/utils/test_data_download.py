@@ -36,7 +36,9 @@ class TestElements:
                     '__loader__', '__name__', '__package__', '__spec__',\
                     '_CONNECTION_ERRORS', '_DOWNLOAD_ATTEMPTS',\
                     '_GRID_DIRS', '_INTERP_GRID_DIRS', '_INTERP_METHODS',\
-                    '_MD5_RETRIES', '_RETRY_WAIT', '_archive_readable',\
+                    '_MD5_RETRIES', '_RETRY_HTTP_CODES', '_RETRY_WAIT',\
+                    '_archive_readable', '_check_disk_space',\
+                    '_remote_size',\
                     '_archive_path', '_archive_verified',\
                     '_clean_up_leftovers', '_download_archive',\
                     '_expected_md5', '_extract_archive',\
@@ -45,8 +47,8 @@ class TestElements:
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
                     'convert_metallicity_to_string', 'data_download',\
                     'download_one_dataset', 'hashlib', 'list_datasets', 'os',\
-                    'progressbar', 'tarfile', 'textwrap', 'time', 'tqdm',\
-                    'urllib'}
+                    'progressbar', 'shutil', 'tarfile', 'textwrap', 'time',\
+                    'tqdm', 'urllib'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -100,6 +102,12 @@ class TestElements:
 
     def test_instance_extract_archive(self):
         assert isroutine(totest._extract_archive)
+
+    def test_instance_remote_size(self):
+        assert isroutine(totest._remote_size)
+
+    def test_instance_check_disk_space(self):
+        assert isroutine(totest._check_disk_space)
 
     def test_instance_download_with_retries(self):
         assert isroutine(totest._download_with_retries)
@@ -275,6 +283,45 @@ class TestFunctions:
         # unreadable files do not pass the verification
         assert totest._archive_verified(filepath+".missing", md5) == False
 
+    def test_remote_size(self, monkeypatch):
+        class mock_response:
+            def __init__(self, headers):
+                self.headers = headers
+            def __enter__(self):
+                return self
+            def __exit__(self, exc_type, exc_value, exc_traceback):
+                return False
+        def mock_urlopen(request, timeout=None):
+            self.request = request
+            return mock_response(self.headers)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.urllib.request, "urlopen", mock_urlopen)
+            # size given by the server, without downloading the file
+            self.headers = {"Content-Length": "1234"}
+            assert totest._remote_size("https://unit.test/file") == 1234
+            assert self.request.get_method() == "HEAD"
+            # size unknown
+            self.headers = {}
+            assert totest._remote_size("https://unit.test/file") is None
+            # server not reachable
+            def failing_urlopen(request, timeout=None):
+                raise totest.urllib.error.URLError("unreachable")
+            mp.setattr(totest.urllib.request, "urlopen", failing_urlopen)
+            assert totest._remote_size("https://unit.test/file") is None
+
+    def test_check_disk_space(self, monkeypatch, tmp_path):
+        class mock_usage:
+            free = 2e9
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.shutil, "disk_usage",
+                       lambda directory: mock_usage())
+            # enough space
+            totest._check_disk_space(tmp_path, 2e9)
+            # not enough space
+            with raises(OSError, match="Not enough disk space in .*: 3.0 GB "\
+                                       +"needed, but only 2.0 GB free."):
+                totest._check_disk_space(tmp_path, 3e9)
+
     def test_download_with_retries(self, capsys, monkeypatch, tmp_path):
         partpath = os.path.join(tmp_path, "POSYDON_data.tar.gz.part")
         def mock_urlretrieve(url, filename=None, reporthook=None, data=None):
@@ -311,6 +358,19 @@ class TestFunctions:
             assert self.calls == totest._DOWNLOAD_ATTEMPTS
             assert len(self.waits) == totest._DOWNLOAD_ATTEMPTS-1
             assert not os.path.exists(partpath)
+            # temporary HTTP errors are retried
+            for code in [429, 503]:
+                def busy_urlretrieve(url, filename=None, reporthook=None,
+                                     data=None):
+                    self.calls += 1
+                    if self.calls == 1:
+                        raise totest.urllib.error.HTTPError(url, code, "Busy",
+                                                            {}, None)
+                self.calls = 0
+                mp.setattr(totest.urllib.request, "urlretrieve",
+                           busy_urlretrieve)
+                totest._download_with_retries("url", partpath)
+                assert self.calls == 2
             # HTTP errors (e.g. 404), an unreachable server, and other errors
             # are not retried
             for error in [totest.urllib.error.HTTPError("url", 404,
@@ -332,6 +392,8 @@ class TestFunctions:
     def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
                                   download_statement,\
                                   extraction_statement, removal_statement):
+        # do not ask the server for the size of the archives
+        monkeypatch.setattr(totest, "_remote_size", lambda data_url: None)
         # mocks
         def failing_urlretrieve(url, filename=None, reporthook=None,\
                                 data=None):
@@ -581,6 +643,55 @@ class TestFunctions:
             assert download_statement.format('Test') in captured_output.out
             assert extraction_statement.format('Test') in captured_output.out
             assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+
+        # forced downloads replace a leftover archive by a fresh download
+        build_archive()
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_archive)
+            totest.download_one_dataset(dataset='Test', MD5_check=False,
+                                        force=True)
+            captured_output = capsys.readouterr()
+            assert "Removing existing archive 'POSYDON_data.tar.gz' to "\
+                   +"download it again..." in captured_output.out
+            assert "Verifying existing archive" not in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            clean_up()
+
+        # missing disk space stops before downloading or extracting
+        build_archive()
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       failing_urlretrieve)
+            class mock_usage:
+                free = 0
+            mp.setattr(totest.shutil, "disk_usage",
+                       lambda directory: mock_usage())
+            # leftover archive
+            with raises(OSError, match="Not enough disk space"):
+                totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert extraction_statement.format('Test') not in\
+                captured_output.out
+            assert os.path.exists(filepath)
+            clean_up()
+            # fresh download
+            mp.setattr(totest, "_remote_size", lambda data_url: 1)
+            with raises(OSError, match="Not enough disk space"):
+                totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert download_statement.format('Test') not in\
+                captured_output.out
             clean_up()
 
         # a leftover archive means an interrupted extraction: extract it, even

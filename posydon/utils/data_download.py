@@ -11,6 +11,7 @@ __authors__ = [
 import argparse
 import hashlib
 import os
+import shutil
 import tarfile
 import textwrap
 import time
@@ -42,11 +43,13 @@ _RETRY_WAIT = 10
 # number of fresh downloads to retry after a failed MD5 verification
 _MD5_RETRIES = 1
 # errors caused by a connection dropping during the download, which are worth
-# a retry; HTTP errors (e.g. 404) and an unreachable server raise a URLError
-# and are not retried
+# a retry; an unreachable server raises a URLError and is not retried
 _CONNECTION_ERRORS = (urllib.error.ContentTooShortError, IncompleteRead,
                       ConnectionResetError, ConnectionAbortedError,
                       TimeoutError)
+# temporary HTTP errors, which are worth a retry: too many requests (429) and
+# server errors (5xx); other HTTP errors (e.g. 404) are not retried
+_RETRY_HTTP_CODES = [429] + list(range(500, 600))
 
 
 def _parse_commandline():
@@ -79,7 +82,8 @@ def _parse_commandline():
                         action='store_true')
     parser.add_argument('-f', '--force',
                         help="download the data even if they seem to be "
-                             "already installed (default: False)",
+                             "already installed or an archive is left over "
+                             "(default: False)",
                         default=False,
                         action='store_true')
     parser.add_argument('-v', '--verbose',
@@ -282,6 +286,46 @@ def _archive_verified(filepath, md5=None, verbose=False):
         print("MD5 verified.")
     return verified
 
+def _remote_size(data_url):
+    """Get the size of a file on the server without downloading it.
+
+        Parameters
+        ----------
+        data_url : string
+            URL of the file.
+
+        Returns
+        -------
+        int or None
+            Size of the file in bytes, or None if the server does not tell.
+
+    """
+    request = urllib.request.Request(data_url, method="HEAD")
+    try:
+        with urllib.request.urlopen(request, timeout=60) as response:
+            size = response.headers.get("Content-Length")
+        return None if size is None else int(size)
+    except (OSError, ValueError):
+        # the download itself reports problems with the server
+        return None
+
+def _check_disk_space(directory, required):
+    """Make sure that there is enough free disk space.
+
+        Parameters
+        ----------
+        directory : string
+            Directory to store data in.
+        required : int
+            Required free disk space in bytes.
+
+    """
+    free = shutil.disk_usage(directory).free
+    if free < required:
+        raise OSError(f"Not enough disk space in {directory}: "
+                      f"{required/1e9:.1f} GB needed, but only "
+                      f"{free/1e9:.1f} GB free.")
+
 def _download_with_retries(data_url, partpath):
     """Download a file and retry, if the connection gets interrupted.
 
@@ -299,11 +343,13 @@ def _download_with_retries(data_url, partpath):
         try:
             urllib.request.urlretrieve(data_url, partpath, ProgressBar())
             return
-        except _CONNECTION_ERRORS as e:
+        except (urllib.error.HTTPError,) + _CONNECTION_ERRORS as e:
             # Zenodo does not support resuming a download, hence restart it
             if os.path.exists(partpath):
                 os.remove(partpath)
-            if attempt == _DOWNLOAD_ATTEMPTS:
+            permanent_http_error = (isinstance(e, urllib.error.HTTPError)
+                                    and e.code not in _RETRY_HTTP_CODES)
+            if permanent_http_error or attempt == _DOWNLOAD_ATTEMPTS:
                 raise
             wait = _RETRY_WAIT * 2**(attempt-1)
             print(f"\nDownload interrupted ({e}), retrying in {wait} seconds "
@@ -357,11 +403,12 @@ def _expected_md5(dataset, MD5_check=True):
         Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
     return md5
 
-def _clean_up_leftovers(filepath, md5=None, verbose=False):
+def _clean_up_leftovers(filepath, md5=None, verbose=False, force=False):
     """Handle the leftovers of a previous, interrupted run.
 
     An incomplete download gets removed. A complete archive is kept to be
-    extracted instead of being downloaded again, unless it is corrupted.
+    extracted instead of being downloaded again, unless it is corrupted or
+    a fresh download is forced.
 
         Parameters
         ----------
@@ -371,6 +418,8 @@ def _clean_up_leftovers(filepath, md5=None, verbose=False):
             Expected MD5 checksum of the archive.
         verbose : boolean (default: False)
             Enables verbose output.
+        force : boolean (default: False)
+            Remove a complete archive to download it again.
 
     """
     partpath = filepath + ".part"
@@ -378,6 +427,10 @@ def _clean_up_leftovers(filepath, md5=None, verbose=False):
         print("Removing incomplete download "
               f"'{os.path.basename(partpath)}'...")
         os.remove(partpath)
+    if os.path.exists(filepath) and force:
+        print("Removing existing archive "
+              f"'{os.path.basename(filepath)}' to download it again...")
+        os.remove(filepath)
     if os.path.exists(filepath):
         if verbose:
             print("Verifying existing archive "
@@ -390,7 +443,9 @@ def _clean_up_leftovers(filepath, md5=None, verbose=False):
 def _download_archive(dataset, filepath, md5=None, verbose=False):
     """Download and verify the archive of a data set.
 
-    A corrupted download gets retried _MD5_RETRIES times.
+    A corrupted download gets retried _MD5_RETRIES times. Before, it is
+    checked that there is enough disk space for the archive and its
+    extracted content, which is at least as large as the archive.
 
         Parameters
         ----------
@@ -405,13 +460,17 @@ def _download_archive(dataset, filepath, md5=None, verbose=False):
 
     """
     partpath = filepath + ".part"
+    data_url = ZENODO_COLLECTION[dataset]['data']
+    size = _remote_size(data_url)
+    if size is not None:
+        _check_disk_space(os.path.dirname(filepath), 2*size)
     for attempt in range(1+_MD5_RETRIES):
         if attempt > 0:
             print("The download did not pass the verification, "
                   "downloading it again.")
         print(f"Downloading POSYDON data '{dataset}' from Zenodo to "
               +os.path.dirname(filepath))
-        _download_with_retries(ZENODO_COLLECTION[dataset]['data'], partpath)
+        _download_with_retries(data_url, partpath)
         os.replace(partpath, filepath)
         if _archive_verified(filepath, md5, verbose):
             return
@@ -431,6 +490,8 @@ def _extract_archive(dataset, filepath, verbose=False):
             Enables verbose output.
 
     """
+    # the extracted content is at least as large as the archive
+    _check_disk_space(os.path.dirname(filepath), os.path.getsize(filepath))
     print(f"Extracting POSYDON data '{dataset}' from tar file...")
     with tarfile.open(filepath) as tar:
         for member in tqdm(tar.getmembers()):
@@ -452,7 +513,8 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
         verbose : boolean (default: False)
             Enables verbose output.
         force : boolean (default: False)
-            Download the data even if they seem to be already installed.
+            Download the data even if they seem to be already installed or
+            an archive is left over.
 
     """
     if not isinstance(dataset, str):
@@ -463,14 +525,16 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
 
     # 1. skip installed datasets; a leftover archive indicates an
     #    interrupted extraction, hence the data set is incomplete
-    if (not force and not os.path.exists(filepath)
-            and _dataset_installed(dataset)):
+    if (not force
+        and not os.path.exists(filepath)
+        and _dataset_installed(dataset)
+            ):
         print(f"POSYDON data '{dataset}' is already present, skipping.")
         return
 
     # 2. handle the leftovers of a previous, interrupted run
     md5 = _expected_md5(dataset, MD5_check)
-    _clean_up_leftovers(filepath, md5, verbose)
+    _clean_up_leftovers(filepath, md5, verbose, force)
 
     # 3. download the archive, unless a verified one is left over
     if not os.path.exists(filepath):
@@ -491,7 +555,8 @@ def data_download(set_name='DR2', MD5_check=True, verbose=False, force=False):
         verbose : boolean (default: False)
             Enables verbose output.
         force : boolean (default: False)
-            Download the data even if they seem to be already installed.
+            Download the data even if they seem to be already installed or
+            an archive is left over.
 
     """
     if not isinstance(set_name, str):
