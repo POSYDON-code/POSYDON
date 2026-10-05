@@ -37,7 +37,9 @@ class TestElements:
                     '_CONNECTION_ERRORS', '_DOWNLOAD_ATTEMPTS',\
                     '_GRID_DIRS', '_INTERP_GRID_DIRS', '_INTERP_METHODS',\
                     '_MD5_RETRIES', '_RETRY_WAIT', '_archive_readable',\
-                    '_archive_verified',\
+                    '_archive_path', '_archive_verified',\
+                    '_clean_up_leftovers', '_download_archive',\
+                    '_expected_md5', '_extract_archive',\
                     '_dataset_installed', '_download_with_retries',\
                     '_expected_paths', '_md5_of_file',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
@@ -84,6 +86,21 @@ class TestElements:
     def test_instance_archive_verified(self):
         assert isroutine(totest._archive_verified)
 
+    def test_instance_archive_path(self):
+        assert isroutine(totest._archive_path)
+
+    def test_instance_expected_md5(self):
+        assert isroutine(totest._expected_md5)
+
+    def test_instance_clean_up_leftovers(self):
+        assert isroutine(totest._clean_up_leftovers)
+
+    def test_instance_download_archive(self):
+        assert isroutine(totest._download_archive)
+
+    def test_instance_extract_archive(self):
+        assert isroutine(totest._extract_archive)
+
     def test_instance_download_with_retries(self):
         assert isroutine(totest._download_with_retries)
 
@@ -107,11 +124,6 @@ class TestFunctions:
     def download_statement(self):
         # statement that the download started
         return "Downloading POSYDON data '{}' from Zenodo to "
-
-    @fixture
-    def failed_MD5_statement(self):
-        # statement that MD5 verfication failed
-        return "Failed to read the tar.gz file for MD5 verification"
 
     @fixture
     def extraction_statement(self):
@@ -260,13 +272,8 @@ class TestFunctions:
         with monkeypatch.context() as mp:
             mp.setattr(totest, "_archive_readable", lambda filepath: True)
             assert totest._archive_verified(filepath) == True
-            # unreadable files cannot be verified, but pass anyway
-            def failing_md5(filepath):
-                raise OSError("unreadable file")
-            mp.setattr(totest, "_md5_of_file", failing_md5)
-            assert totest._archive_verified(filepath, md5) == True
-            assert "Failed to read the tar.gz file for MD5 verification"\
-                   in capsys.readouterr().out
+        # unreadable files do not pass the verification
+        assert totest._archive_verified(filepath+".missing", md5) == False
 
     def test_download_with_retries(self, capsys, monkeypatch, tmp_path):
         partpath = os.path.join(tmp_path, "POSYDON_data.tar.gz.part")
@@ -323,7 +330,7 @@ class TestFunctions:
                 assert self.calls == 1
 
     def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
-                                  download_statement, failed_MD5_statement,\
+                                  download_statement,\
                                   extraction_statement, removal_statement):
         # mocks
         def failing_urlretrieve(url, filename=None, reporthook=None,\
@@ -453,7 +460,6 @@ class TestFunctions:
                 totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert download_statement.format('Test') in captured_output.out
-            assert failed_MD5_statement not in captured_output.out
             assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement not in captured_output.out
             clean_up()
@@ -489,7 +495,6 @@ class TestFunctions:
                    == totest._MD5_RETRIES
             assert extraction_statement.format('Test') not in\
                 captured_output.out
-            assert failed_MD5_statement not in captured_output.out
             assert not os.path.exists(filepath)
             clean_up()
             # a one-off corrupted download succeeds on the retry
@@ -512,18 +517,6 @@ class TestFunctions:
             assert extraction_statement.format('Test') in captured_output.out
             clean_up()
             mock_ZENODO_COLLECTION['Test']['md5'] = "Unit"
-            # unreadable files cannot be verified, but continue anyway;
-            # here, the archive vanishes before its removal
-            def failing_md5(unused_filepath):
-                os.remove(filepath)
-                raise OSError("unreadable file")
-            mp.setattr(totest, "_md5_of_file", failing_md5)
-            totest.download_one_dataset(dataset='Test')
-            captured_output = capsys.readouterr()
-            assert failed_MD5_statement in captured_output.out
-            assert extraction_statement.format('Test') in captured_output.out
-            assert removal_statement not in captured_output.out
-            clean_up()
 
         # existing complete archives are verified and extracted instead of
         # being downloaded again
@@ -569,6 +562,24 @@ class TestFunctions:
             assert "MD5 verified." in captured_output.out
             assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+            # unreadable archive: replace it by a fresh download
+            build_archive()
+            md5_of_file = totest._md5_of_file
+            self.md5_calls = 0
+            def unreadable_once_md5(filepath):
+                self.md5_calls += 1
+                if self.md5_calls == 1:
+                    raise OSError("unreadable file")
+                return md5_of_file(filepath)
+            mp.setattr(totest, "_md5_of_file", unreadable_once_md5)
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert "The existing archive did not pass the verification,"\
+                   in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
             assert os.path.exists(os.path.join(test_path, "test.txt"))
             clean_up()
 

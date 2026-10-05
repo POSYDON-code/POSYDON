@@ -276,10 +276,8 @@ def _archive_verified(filepath, md5=None, verbose=False):
     try:
         verified = (_md5_of_file(filepath) == md5)
     except OSError:
-        print('Failed to read the tar.gz file for MD5 verification, '
-              'cannot guarantee file integrity (this error seems to '
-              'happen only on macOS).')
-        return True
+        # an unreadable archive cannot pass the MD5 check
+        return False
     if verified and verbose:
         print("MD5 verified.")
     return verified
@@ -313,6 +311,134 @@ def _download_with_retries(data_url, partpath):
             time.sleep(wait)
             attempt += 1
 
+def _archive_path(dataset):
+    """Get the path to store the archive of a data set at.
+
+        Parameters
+        ----------
+        dataset : string
+            Name of the data set in ZENODO_COLLECTION.
+
+        Returns
+        -------
+        string
+            Path to the archive next to PATH_TO_POSYDON_DATA.
+
+    """
+    data_url = ZENODO_COLLECTION[dataset]['data']
+    if data_url is None:
+        raise ValueError(f"The dataset '{dataset}' has no publication yet.")
+    directory = os.path.dirname(PATH_TO_POSYDON_DATA)
+    if not os.path.isdir(directory):
+        raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a "
+                                 "valid directory.")
+    return os.path.join(directory, os.path.basename(data_url))
+
+def _expected_md5(dataset, MD5_check=True):
+    """Get the MD5 checksum to verify the archive of a data set with.
+
+        Parameters
+        ----------
+        dataset : string
+            Name of the data set in ZENODO_COLLECTION.
+        MD5_check : boolean (default: True)
+            Use the MD5 check to make sure data is not corrupted.
+
+        Returns
+        -------
+        string or None
+            The MD5 checksum, or None if the MD5 check is skipped.
+
+    """
+    if not MD5_check:
+        return None
+    md5 = ZENODO_COLLECTION[dataset]['md5']
+    if md5 is None:
+        Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
+    return md5
+
+def _clean_up_leftovers(filepath, md5=None, verbose=False):
+    """Handle the leftovers of a previous, interrupted run.
+
+    An incomplete download gets removed. A complete archive is kept to be
+    extracted instead of being downloaded again, unless it is corrupted.
+
+        Parameters
+        ----------
+        filepath : string
+            Path to the archive.
+        md5 : string or None (default: None)
+            Expected MD5 checksum of the archive.
+        verbose : boolean (default: False)
+            Enables verbose output.
+
+    """
+    partpath = filepath + ".part"
+    if os.path.exists(partpath):
+        print("Removing incomplete download "
+              f"'{os.path.basename(partpath)}'...")
+        os.remove(partpath)
+    if os.path.exists(filepath):
+        if verbose:
+            print("Verifying existing archive "
+                  f"'{os.path.basename(filepath)}'...")
+        if not _archive_verified(filepath, md5, verbose):
+            os.remove(filepath)
+            print("The existing archive did not pass the verification, "
+                  "downloading it again.")
+
+def _download_archive(dataset, filepath, md5=None, verbose=False):
+    """Download and verify the archive of a data set.
+
+    A corrupted download gets retried _MD5_RETRIES times.
+
+        Parameters
+        ----------
+        dataset : string
+            Name of the data set in ZENODO_COLLECTION.
+        filepath : string
+            Path to store the archive at.
+        md5 : string or None (default: None)
+            Expected MD5 checksum of the archive.
+        verbose : boolean (default: False)
+            Enables verbose output.
+
+    """
+    partpath = filepath + ".part"
+    for attempt in range(1+_MD5_RETRIES):
+        if attempt > 0:
+            print("The download did not pass the verification, "
+                  "downloading it again.")
+        print(f"Downloading POSYDON data '{dataset}' from Zenodo to "
+              +os.path.dirname(filepath))
+        _download_with_retries(ZENODO_COLLECTION[dataset]['data'], partpath)
+        os.replace(partpath, filepath)
+        if _archive_verified(filepath, md5, verbose):
+            return
+        os.remove(filepath)
+    raise ValueError(("MD5" if md5 else "Archive")+" verification failed!")
+
+def _extract_archive(dataset, filepath, verbose=False):
+    """Extract the archive of a data set and remove it afterwards.
+
+        Parameters
+        ----------
+        dataset : string
+            Name of the data set in ZENODO_COLLECTION.
+        filepath : string
+            Path to the archive.
+        verbose : boolean (default: False)
+            Enables verbose output.
+
+    """
+    print(f"Extracting POSYDON data '{dataset}' from tar file...")
+    with tarfile.open(filepath) as tar:
+        for member in tqdm(tar.getmembers()):
+            tar.extract(member=member, path=os.path.dirname(filepath))
+    os.remove(filepath)
+    if verbose:
+        print('Removed downloaded tar file.')
+
 def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
                          force=False):
     """Download a data set from Zenodo if it is not installed yet.
@@ -333,75 +459,25 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
         raise TypeError("'dataset' should be a string.")
     if dataset not in ZENODO_COLLECTION:
         raise KeyError(f"The dataset '{dataset}' is not defined.")
+    filepath = _archive_path(dataset)
 
-    # First, generate filename and make sure the path exists
-    data_url = ZENODO_COLLECTION[dataset]['data']
-    if data_url is None:
-        raise ValueError(f"The dataset '{dataset}' has no publication yet.")
-    filename = os.path.basename(data_url)
-    directory = os.path.dirname(PATH_TO_POSYDON_DATA)
-    filepath = os.path.join(directory, filename)
-    partpath = filepath + ".part"
-    if not os.path.isdir(os.path.dirname(filepath)):
-        raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a "
-                                 "valid directory.")
-
-    # skip data sets, which seem to be installed already; a leftover archive
-    # indicates an interrupted extraction, hence the data set is incomplete
+    # 1. skip installed datasets; a leftover archive indicates an
+    #    interrupted extraction, hence the data set is incomplete
     if (not force and not os.path.exists(filepath)
             and _dataset_installed(dataset)):
         print(f"POSYDON data '{dataset}' is already present, skipping.")
         return
 
-    original_md5 = ZENODO_COLLECTION[dataset]['md5']
-    if original_md5 is None:
-        MD5_check = False
-        Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
-    md5 = original_md5 if MD5_check else None
+    # 2. handle the leftovers of a previous, interrupted run
+    md5 = _expected_md5(dataset, MD5_check)
+    _clean_up_leftovers(filepath, md5, verbose)
 
-    # an incomplete download of a previous run gets removed
-    if os.path.exists(partpath):
-        print(f"Removing incomplete download '{filename}.part'...")
-        os.remove(partpath)
-
-    # a complete archive of a previous run gets extracted instead of being
-    # downloaded again, unless it is corrupted
-    if os.path.exists(filepath):
-        if verbose:
-            print(f"Verifying existing archive '{filename}'...")
-        if not _archive_verified(filepath, md5, verbose):
-            os.remove(filepath)
-            print("The existing archive did not pass the verification, "
-                  "downloading it again.")
-
-    # download the data; a corrupted download gets retried _MD5_RETRIES times
+    # 3. download the archive, unless a verified one is left over
     if not os.path.exists(filepath):
-        for attempt in range(1+_MD5_RETRIES):
-            if attempt > 0:
-                print("The download did not pass the verification, "
-                      "downloading it again.")
-            print(f"Downloading POSYDON data '{dataset}' from Zenodo to "
-                  +directory)
-            _download_with_retries(data_url, partpath)
-            os.replace(partpath, filepath)
-            if _archive_verified(filepath, md5, verbose):
-                break
-            os.remove(filepath)
-        else:
-            raise ValueError(("MD5" if md5 else "Archive")
-                             +" verification failed!")
+        _download_archive(dataset, filepath, md5, verbose)
 
-    # extract each file
-    print(f"Extracting POSYDON data '{dataset}' from tar file...")
-    with tarfile.open(filepath) as tar:
-        for member in tqdm(tar.getmembers()):
-            tar.extract(member=member, path=directory)
-
-    # remove tar files after extracted
-    if os.path.exists(filepath):
-        if verbose:
-            print('Removed downloaded tar file.')
-        os.remove(filepath)
+    # 4. extract the archive + install the dataset
+    _extract_archive(dataset, filepath, verbose)
 
 def data_download(set_name='DR2', MD5_check=True, verbose=False, force=False):
     """Download data files from Zenodo if they are not installed yet.
