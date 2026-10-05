@@ -13,7 +13,10 @@ import hashlib
 import os
 import tarfile
 import textwrap
+import time
+import urllib.error
 import urllib.request
+from http.client import IncompleteRead
 
 import progressbar
 from tqdm import tqdm
@@ -32,6 +35,13 @@ _GRID_DIRS = ['single_HMS', 'single_HeMS', 'HMS-HMS', 'HMS-HMS_RLO',
 _INTERP_GRID_DIRS = ['HMS-HMS', 'HMS-HMS_RLO', 'CO-HMS_RLO', 'CO-HeMS',
                      'CO-HeMS_RLO']
 _INTERP_METHODS = ['1NN_1NN', 'linear3c_kNN']
+# number of download attempts and waiting time in seconds before the first
+# retry, which gets doubled for each further retry
+_DOWNLOAD_ATTEMPTS = 3
+_RETRY_WAIT = 10
+# errors caused by an interrupted connection, which are worth a retry
+_CONNECTION_ERRORS = (urllib.error.ContentTooShortError, urllib.error.URLError,
+                      IncompleteRead, ConnectionError, TimeoutError)
 
 
 def _parse_commandline():
@@ -229,6 +239,56 @@ def _md5_of_file(filepath):
             md5.update(chunk)
     return md5.hexdigest()
 
+def _archive_readable(filepath):
+    """Check whether a tar archive can be read completely.
+
+        Parameters
+        ----------
+        filepath : string
+            Path to the archive.
+
+        Returns
+        -------
+        boolean
+            True, if all members of the archive can be read.
+
+    """
+    try:
+        with tarfile.open(filepath) as tar:
+            tar.getmembers()
+    except (tarfile.TarError, EOFError, OSError):
+        return False
+    return True
+
+def _download_with_retries(data_url, partpath):
+    """Download a file and retry, if the connection gets interrupted.
+
+        Parameters
+        ----------
+        data_url : string
+            URL of the file to download.
+        partpath : string
+            Path to store the download at. It gets removed after a failed
+            attempt.
+
+    """
+    attempt = 1
+    while True:
+        try:
+            urllib.request.urlretrieve(data_url, partpath, ProgressBar())
+            return
+        except _CONNECTION_ERRORS as e:
+            # Zenodo does not support resuming a download, hence restart it
+            if os.path.exists(partpath):
+                os.remove(partpath)
+            if attempt == _DOWNLOAD_ATTEMPTS:
+                raise
+            wait = _RETRY_WAIT * 2**(attempt-1)
+            print(f"\nDownload interrupted ({e}), retrying in {wait} seconds "
+                  f"(attempt {attempt+1} of {_DOWNLOAD_ATTEMPTS})...")
+            time.sleep(wait)
+            attempt += 1
+
 def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
                          force=False):
     """Download a data set from Zenodo if it is not installed yet.
@@ -250,19 +310,10 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
     if dataset not in ZENODO_COLLECTION:
         raise KeyError(f"The dataset '{dataset}' is not defined.")
 
-    # skip data sets, which seem to be installed already
-    if not force and _dataset_installed(dataset):
-        print(f"POSYDON data '{dataset}' is already present, skipping.")
-        return
-
     # First, generate filename and make sure the path exists
     data_url = ZENODO_COLLECTION[dataset]['data']
     if data_url is None:
         raise ValueError(f"The dataset '{dataset}' has no publication yet.")
-    original_md5 = ZENODO_COLLECTION[dataset]['md5']
-    if original_md5 is None:
-        MD5_check = False
-        Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
     filename = os.path.basename(data_url)
     directory = os.path.dirname(PATH_TO_POSYDON_DATA)
     filepath = os.path.join(directory, filename)
@@ -270,6 +321,18 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
     if not os.path.isdir(os.path.dirname(filepath)):
         raise NotADirectoryError("PATH_TO_POSYDON_DATA does not refer to a "
                                  "valid directory.")
+
+    # skip data sets, which seem to be installed already; a leftover archive
+    # indicates an interrupted extraction, hence the data set is incomplete
+    if (not force and not os.path.exists(filepath)
+            and _dataset_installed(dataset)):
+        print(f"POSYDON data '{dataset}' is already present, skipping.")
+        return
+
+    original_md5 = ZENODO_COLLECTION[dataset]['md5']
+    if original_md5 is None:
+        MD5_check = False
+        Pwarn("MD5 undefined, skip MD5 check.", "ReplaceValueWarning")
 
     # handle leftovers of previous interrupted downloads: an incomplete
     # download gets removed and restarted, whereas a complete archive is
@@ -282,7 +345,6 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
     # download the data (unless a complete archive exists already) and
     # verify its integrity; a corrupted leftover archive gets replaced by a
     # fresh download instead of aborting
-    verified = not MD5_check
     while True:
         if use_existing_archive:
             if verbose:
@@ -290,7 +352,7 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
         else:
             print(f"Downloading POSYDON data '{dataset}' from Zenodo to "
                   +directory)
-            urllib.request.urlretrieve(data_url, partpath, ProgressBar())
+            _download_with_retries(data_url, partpath)
             os.replace(partpath, filepath)
 
         # Compare original MD5 with freshly calculated
@@ -304,12 +366,18 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
                 print('Failed to read the tar.gz file for MD5 verification, '
                       'cannot guarantee file integrity (this error seems to '
                       'happen only on macOS).')
+        elif use_existing_archive:
+            # without a checksum, at least make sure that a leftover archive
+            # is not truncated
+            verified = _archive_readable(filepath)
+        else:
+            verified = True
         if verified:
             break
         os.remove(filepath)
         if use_existing_archive:
             use_existing_archive = False
-            print("The existing archive did not pass the MD5 verification, "
+            print("The existing archive did not pass the verification, "
                   "downloading it again.")
         else:
             raise ValueError("MD5 verification failed!.")
