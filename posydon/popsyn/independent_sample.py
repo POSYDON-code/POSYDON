@@ -119,10 +119,11 @@ def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
             or (eccentricity_scheme=='Moe+17-PsandQs'))
 
 
-def generate_orbital_periods(primary_masses,
+def generate_orbital_periods(primary_masses=[],
                              number_of_binaries=1,
                              orbital_period_min=0.35,
                              orbital_period_max=10**3.5,
+                             power_law_slope=0.0,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
     """Randomly generate orbital periods for a sample of binaries."""
@@ -131,14 +132,24 @@ def generate_orbital_periods(primary_masses,
     # Check inputs
 
     # Sana H., et al., 2012, Science, 337, 444
+    # or generically a power law distribution dN/dlogP ~ (logP)^pi
+    valid_schemes = ['Sana+12_period_extended', 'power_law']
+    if orbital_period_scheme not in valid_schemes:
+        raise ValueError("You must provide an allowed orbital period scheme.")
+    
     if orbital_period_scheme == 'Sana+12_period_extended':
         period_dist = distributions.Sana12Period(
             p_min=orbital_period_min,
             p_max=orbital_period_max
         )
         orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
-    else:
-        raise ValueError("You must provide an allowed orbital period scheme.")
+    elif orbital_period_scheme == 'power_law':
+        period_dist = distributions.PowerLawPeriod(
+            p_min=orbital_period_min,
+            p_max=orbital_period_max,
+            slope=power_law_slope
+        )
+        orbital_periods = period_dist.rvs(size=number_of_binaries, rng=RNG)
 
     return orbital_periods
 
