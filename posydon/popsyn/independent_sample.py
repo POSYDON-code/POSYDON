@@ -136,7 +136,7 @@ def generate_orbital_periods(primary_masses=[],
     valid_schemes = ['Sana+12_period_extended', 'power_law']
     if orbital_period_scheme not in valid_schemes:
         raise ValueError("You must provide an allowed orbital period scheme.")
-    
+
     if orbital_period_scheme == 'Sana+12_period_extended':
         period_dist = distributions.Sana12Period(
             p_min=orbital_period_min,
