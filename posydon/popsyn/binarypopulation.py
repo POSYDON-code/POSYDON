@@ -189,10 +189,15 @@ class BinaryPopulation:
         else:
             seed_seq = seq
 
+        # keep the initial seed sequence around to allow resetting the RNG
+        self._seed_seq = seed_seq
         self.RNG = np.random.default_rng(seed=seed_seq)
         self.kwargs['RNG'] = self.RNG
         self.entropy = self.RNG.bit_generator._seed_seq.entropy
         self.kwargs['entropy'] = self.entropy
+
+        # track which binaries have been evolved by this population instance
+        self.evolved_indices = set()
 
         self.manager = PopulationManager(**self.kwargs)
 
@@ -252,6 +257,13 @@ class BinaryPopulation:
             Show tqdm progress bar during evolution.
         optimize_ram : bool, False
             If True, dump binary data during evolve to save RAM.
+        overwrite : bool, False
+            Allow re-evolving binaries that were already evolved by this
+            population instance. If False and any of the requested binaries
+            were already evolved, a warning is issued and nothing is evolved.
+            If True, the RNG is reset before evolving, so the original
+            binaries are regenerated and evolved again. Restoring binaries
+            from hdf (from_hdf=True) is never blocked by this check.
 
         Returns
         -------
@@ -263,10 +275,21 @@ class BinaryPopulation:
         breakdown_to_df_bool = kw.get('breakdown_to_df', False)
         optimize_ram = kw.get('optimize_ram', False)
         from_hdf_bool = kw.get('from_hdf', False)
+        overwrite_bool = kw.get('overwrite', False)
+
+        # allow explicit re-evolution with reproducible initial conditions
+        if overwrite_bool:
+            self.reset_rng()
 
         if self.JOB_ID is None and self.comm is None:   # do regular evolution
             indices = kw.get('indices',
                              list(range(self.number_of_binaries)))
+
+            # avoid accidentally evolving the same binaries twice
+            if not from_hdf_bool and not overwrite_bool:
+                if self._check_evolved_indices(indices):
+                    return
+
             params = {'indices':indices,
                       'tqdm':tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
@@ -283,6 +306,11 @@ class BinaryPopulation:
             batch_indices = indices_split[self.rank]
             mpi_tqdm_bool = True if (tqdm_bool and self.rank == 0) else False
 
+            # avoid accidentally evolving the same binaries twice
+            if not from_hdf_bool and not overwrite_bool:
+                if self._check_evolved_indices(batch_indices):
+                    return
+
             params = {'indices':batch_indices,
                       'tqdm':mpi_tqdm_bool,
                       'breakdown_to_df':breakdown_to_df_bool,
@@ -290,6 +318,41 @@ class BinaryPopulation:
                       'from_hdf':from_hdf_bool}
             self.kwargs.update(params)
             self._safe_evolve(**self.kwargs)
+
+    def _check_evolved_indices(self, indices): # pragma: no cover
+        """Check whether requested binaries were already evolved.
+
+        Parameters
+        ----------
+        indices : list
+            Binary indices requested for evolution.
+
+        Returns
+        -------
+        list
+            Sorted list of requested indices that were already evolved by
+            this population instance. A warning is issued if not empty.
+        """
+        overlap = sorted(set(indices).intersection(self.evolved_indices))
+        if overlap:
+            Pwarn('The binaries with indices {0} have already been evolved '
+                  'by this population. Skipping evolution to avoid '
+                  'duplicated indices. Use pop.evolve(overwrite=True) to '
+                  're-evolve them.'.format(overlap), "ValueWarning")
+        return overlap
+
+    def reset_rng(self): # pragma: no cover
+        """Reset the population RNG to its initial state.
+
+        Restores the random-number generator shared between the population,
+        its manager and its binary generator, such that a repeated evolution
+        regenerates the same binaries.
+        """
+        self.RNG = np.random.default_rng(seed=self._seed_seq)
+        self.kwargs['RNG'] = self.RNG
+        self.manager.kwargs['RNG'] = self.RNG
+        self.manager.binary_generator.RNG = self.RNG
+        self.manager.binary_generator._num_gen = 0
 
     def _safe_evolve(self, **kwargs): # pragma: no cover
         # needs more complex test than unit test
@@ -440,6 +503,11 @@ class BinaryPopulation:
                     self.manager.clear_dfs()
                 else:
                     self.manager.remove(self.manager.binaries.copy())
+
+            # remember that this binary has been evolved by this population;
+            # restored binaries (from_hdf) are intentionally not tracked
+            if not kwargs.get('from_hdf', False):
+                self.evolved_indices.add(index)
 
 
         # handling case if dump rate is not multiple of population size
