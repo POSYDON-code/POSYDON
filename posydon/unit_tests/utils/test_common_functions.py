@@ -74,7 +74,7 @@ class TestElements:
     def test_dir(self):
         # ensure that python forgets about previous unclean warnings
         ## If a module emitted a warning prior to this test, _warningregistry_,
-        ## will be present. We do not care about this module, as it is 
+        ## will be present. We do not care about this module, as it is
         ## dynamically created.
         if hasattr(totest, '__warningregistry__'):
             del totest.__warningregistry__
