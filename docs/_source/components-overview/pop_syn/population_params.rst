@@ -1171,10 +1171,10 @@ This dictionary contains the parameters that will be saved in the output of the 
 
   * - ``scalar_names``
     - | Scalars to include in the output for SingleStar 1.
-      | Example: ``['natal_kick_array', 'SN_type', 'f_fb', 'spin_orbit_tilt_first_SN', 'spin_orbit_tilt_second_SN', 'm_disk_accreted', 'm_disk_radiated']``
+      | Example: ``['natal_kick_velocity', 'SN_type', 'f_fb', 'spin_orbit_tilt_first_SN', 'spin_orbit_tilt_second_SN', 'm_disk_accreted', 'm_disk_radiated']``
       | Options:
 
-      * ``'natal_kick_array'``: The array of natal kicks.
+      * ``'natal_kick_velocity'``: The velocity of the natal kick.
       * ``'SN_type'``: The type of supernova.
       * ``'f_fb'``: The fallback fraction.
       * ``'spin_orbit_tilt_first_SN'``: The spin-orbit tilt after the first supernova.
@@ -1183,7 +1183,7 @@ This dictionary contains the parameters that will be saved in the output of the 
       * ``'m_disk_radiated'``: The mass radiated from the disk.
     - .. code:: python
 
-        ['natal_kick_array',
+        ['natal_kick_velocity',
         'SN_type',
         'f_fb',
         'spin_orbit_tilt_first_SN',

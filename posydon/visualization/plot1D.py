@@ -391,13 +391,11 @@ class plot1D(object):
 
     def set_xlim(self):
         """Set x axes limits."""
-        if self.xmin is not None and self.xmax is not None:
-            plt.xlim(self.xmin, self.xmax)
+        plt.xlim(left=self.xmin, right=self.xmax)
 
     def set_ylim(self):
         """Set y axes limits."""
-        if self.ymin is not None and self.ymax is not None:
-            plt.ylim(self.ymin, self.ymax)
+        plt.ylim(bottom=self.ymin, top=self.ymax)
 
     def set_legend(self, ax, lines):
         """Add legend.

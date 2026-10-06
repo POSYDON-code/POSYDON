@@ -27,26 +27,50 @@ If you use POSYDON for your research and it contributes to a publication, we kin
 
 .. code-block::
 
-        @ARTICLE{2023ApJS..264...45F,
-            author = {{Fragos}, Tassos and {Andrews}, Jeff J. and {Bavera}, Simone S. and {Berry}, Christopher P.~L. and {Coughlin}, Scott and {Dotter}, Aaron and {Giri}, Prabin and {Kalogera}, Vicky and {Katsaggelos}, Aggelos and {Kovlakas}, Konstantinos and {Lalvani}, Shamal and {Misra}, Devina and {Srivastava}, Philipp M. and {Qin}, Ying and {Rocha}, Kyle A. and {Rom{\'a}n-Garza}, Jaime and {Serra}, Juan Gabriel and {Stahle}, Petter and {Sun}, Meng and {Teng}, Xu and {Trajcevski}, Goce and {Tran}, Nam Hai and {Xing}, Zepei and {Zapartas}, Emmanouil and {Zevin}, Michael},
-            title = "{POSYDON: A General-purpose Population Synthesis Code with Detailed Binary-evolution Simulations}",
-            journal = {\apjs},
-            keywords = {Binary stars, Close binary stars, Compact binary stars, Interacting binary stars, X-ray binary stars, Compact objects, Stellar remnants, Black holes, Neutron stars, Gravitational wave sources, Stellar evolutionary models, Stellar populations, 154, 254, 283, 801, 1811, 288, 1627, 162, 1108, 677, 2046, 1622, Astrophysics - Solar and Stellar Astrophysics},
-            year = 2023,
-            month = feb,
-            volume = {264},
-            number = {2},
-            eid = {45},
-            pages = {45},
-            doi = {10.3847/1538-4365/ac90c1},
-            archivePrefix = {arXiv},
-            eprint = {2202.05892},
-            primaryClass = {astro-ph.SR},
-            adsurl = {https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F},
-            adsnote = {Provided by the SAO/NASA Astrophysics Data System}
-        }
+    @ARTICLE{2023ApJS..264...45F,
+        author = {{Fragos}, Tassos and {Andrews}, Jeff J. and {Bavera}, Simone S. and {Berry}, Christopher P.~L. and {Coughlin}, Scott and {Dotter}, Aaron and {Giri}, Prabin and {Kalogera}, Vicky and {Katsaggelos}, Aggelos and {Kovlakas}, Konstantinos and {Lalvani}, Shamal and {Misra}, Devina and {Srivastava}, Philipp M. and {Qin}, Ying and {Rocha}, Kyle A. and {Rom{\'a}n-Garza}, Jaime and {Serra}, Juan Gabriel and {Stahle}, Petter and {Sun}, Meng and {Teng}, Xu and {Trajcevski}, Goce and {Tran}, Nam Hai and {Xing}, Zepei and {Zapartas}, Emmanouil and {Zevin}, Michael},
+        title = "{POSYDON: A General-purpose Population Synthesis Code with Detailed Binary-evolution Simulations}",
+        journal = {\apjs},
+        keywords = {Binary stars, Close binary stars, Compact binary stars, Interacting binary stars, X-ray binary stars, Compact objects, Stellar remnants, Black holes, Neutron stars, Gravitational wave sources, Stellar evolutionary models, Stellar populations, 154, 254, 283, 801, 1811, 288, 1627, 162, 1108, 677, 2046, 1622, Astrophysics - Solar and Stellar Astrophysics},
+        year = 2023,
+        month = feb,
+        volume = {264},
+        number = {2},
+        eid = {45},
+        pages = {45},
+        doi = {10.3847/1538-4365/ac90c1},
+        archivePrefix = {arXiv},
+        eprint = {2202.05892},
+        primaryClass = {astro-ph.SR},
+        adsurl = {https://ui.adsabs.harvard.edu/abs/2023ApJS..264...45F},
+        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+    }
 
 
-- POSYDON Version 2:  Population Synthesis across Metallicities with Detailed Binary-Evolution Simulation, Andrews et al. (in prep.)
+- `POSYDON version 2: population synthesis with detailed binary-evolution simulations across a cosmological range of metallicities <https://ui.adsabs.harvard.edu/abs/2025ApJS..281....3A>`_, **Andrews et al. (2025)**
+
+.. code-block::
+
+    @ARTICLE{2025ApJS..281....3A,
+        author = {{Andrews}, Jeff J. and {Bavera}, Simone S. and {Briel}, Max and {Chattaraj}, Abhishek and {Dotter}, Aaron and {Fragos}, Tassos and {Gallegos-Garcia}, Monica and {Gossage}, Seth and {Kalogera}, Vicky and {Kasdagli}, Eirini and {Katsaggelos}, Aggelos and {Kimball}, Chase and {Kovlakas}, Konstantinos and {Kruckow}, Matthias U. and {Liotine}, Camille and {Misra}, Devina and {Rocha}, Kyle A. and {Souropanis}, Dimitris and {Srivastava}, Philipp M. and {Sun}, Meng and {Teng}, Elizabeth and {Xing}, Zepei and {Zapartas}, Emmanouil and {Zevin}, Michael},
+        title = "{POSYDON Version 2: Population Synthesis with Detailed Binary-evolution Simulations across a Cosmological Range of Metallicities}",
+        journal = {\apjs},
+        keywords = {Binary stars, Stellar populations, Massive stars, High mass x-ray binary stars, Stellar evolutionary models, 154, 1622, 732, 733, 2046, Astrophysics of Galaxies, Solar and Stellar Astrophysics},
+        year = 2025,
+        month = nov,
+        volume = {281},
+        number = {1},
+        eid = {3},
+        pages = {3},
+        doi = {10.3847/1538-4365/adfb78},
+        archivePrefix = {arXiv},
+        eprint = {2411.02376},
+        primaryClass = {astro-ph.GA},
+        adsurl = {https://ui.adsabs.harvard.edu/abs/2025ApJS..281....3A},
+        adsnote = {Provided by the SAO/NASA Astrophysics Data System}
+    }
+
+
+
 
 Acknowledging these works ensures that the development team receives proper credit and supports the continued advancement and maintenance of the POSYDON software.

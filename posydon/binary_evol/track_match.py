@@ -264,7 +264,15 @@ class TrackMatcher:
                       "list_for_matching_postMS":None,
                       "list_for_matching_postHeMS":None,
                       "record_matching":False,
-                      "verbose":False}
+                      "verbose_matching":False}
+
+    # If you ever create a TrackMatcher, the first time you do, it will be trained
+    # using whatever settings exist for these kwargs. If you ever subsequently change
+    # these kwargs for that TrackMatcher, you'd need to retrain it. You can use this
+    # list to flag the TrackMatcher for retraining.
+    TRAINING_TRIGGERS = ["grid_Hrich", "grid_strippedHe", "path", "metallicity",
+                         "list_for_matching_HMS", "list_for_matching_HeStar",
+                         "list_for_matching_postMS", "list_for_matching_postHeMS"]
 
     def __init__(self, **kwargs):
 
@@ -289,10 +297,14 @@ class TrackMatcher:
             for varname in self.DEFAULT_KWARGS:
                 default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, kwargs.get(varname, default_value))
+
+            self.kwargs = kwargs
         else:
             for varname in self.DEFAULT_KWARGS:
                 default_value = self.DEFAULT_KWARGS[varname]
                 setattr(self, varname, default_value)
+
+            self.kwargs = self.DEFAULT_KWARGS.copy()
 
         self.metallicity = convert_metallicity_to_string(self.metallicity)
 
@@ -429,7 +441,7 @@ class TrackMatcher:
             scaler_methods = list_for_matching[2]
             bnds = list_for_matching[3:]
 
-            if self.verbose:
+            if self.verbose_matching:
                 print("Matching parameters and their normalizations:\n",
                         match_attr_names, rescale_facs)
             for htrack in [True, False]:
@@ -734,7 +746,7 @@ class TrackMatcher:
 
         match_vals = [None, None]
 
-        if self.verbose:
+        if self.verbose_matching:
             print(f"\nMatching process started in detached step for "
                   f"{star.state} star with matching "
                   f"method = {self.matching_method}")
@@ -755,7 +767,7 @@ class TrackMatcher:
                                                                 get_root0,
                                                                 get_track_val)
 
-        if self.verbose:
+        if self.verbose_matching:
             # successful match
             if all(pd.notna(match_vals)):
 
@@ -1079,7 +1091,7 @@ class TrackMatcher:
             scaler_methods = list_for_matching[2]
             bnds = list_for_matching[3:]
 
-            if self.verbose:
+            if self.verbose_matching:
                 print("Matching parameters and their normalizations:\n",
                       match_attr_names, rescale_facs)
 
@@ -1154,7 +1166,7 @@ class TrackMatcher:
                     raise ValueError(f"{star.state} invalid for matching step")
 
             elif match_type == "alt":
-                if self.verbose:
+                if self.verbose_matching:
                     print("(Now trying to match with alternative parameters)")
 
                 # set alternative matching metrics based on star state
@@ -1174,7 +1186,7 @@ class TrackMatcher:
                       "post-MS star with a stripped-He grid","EvolutionWarning")
 
                 if star.state in STAR_STATES_FOR_HMS_MATCHING:
-                    if self.verbose:
+                    if self.verbose_matching:
                         print(f"We cannot use match_type={match_type} " \
                                 "since star is on the MS. Skipping...")
                     match_ok = False
@@ -1324,7 +1336,7 @@ class TrackMatcher:
 
             # Powell's method does not work with bound in SciPy version < 1.5.x
             if method == 'Powell' and SCIPY_VER < 1.5:
-                if self.verbose:
+                if self.verbose_matching:
                     print(f"Ignoring bounds because method = {method} "
                           f"does not accept them in SciPy v{SCIPY_VER}.x.")
                 bounds = None
@@ -1338,7 +1350,7 @@ class TrackMatcher:
                 # guard against NaN solutions, ensuring they will fail
                 sol.fun = 1e99 if np.isnan(sol.fun) else sol.fun
 
-                if self.verbose:
+                if self.verbose_matching:
                     print (f"Matching attempt completed:"
                             f"\nBest solution: {np.abs(sol.fun)} "
                             f"(tol = {self.matching_tolerance})"
@@ -1350,27 +1362,27 @@ class TrackMatcher:
 
             # check for failures:
             if (np.abs(sol.fun) > self.matching_tolerance):
-                if self.verbose:
+                if self.verbose_matching:
                     print (f"Matching result: FAILED"
                             "\nReason: Solution exceeds tolerance "
                             f"({np.abs(sol.fun)} > {self.matching_tolerance})")
                 match_ok = False
             if (not sol.success):
-                if self.verbose:
+                if self.verbose_matching:
                     print (f"Matching result: FAILED"
                             "\nReason: Optimizer failed (sol.success = "
                             f"{sol.success})"
                             f"\nOptimizer termination reason: {sol.message}")
                 match_ok = False
 
-            if match_ok and self.verbose:
+            if match_ok and self.verbose_matching:
                 print("Matching result: OK")
 
             return sol, new_htrack, match_ok
 
         # END SUBFUNCTION DEFIITIONS
 
-        if self.verbose:
+        if self.verbose_matching:
             print(DIVIDER_STR)
 
         # defined sequence of matching attempt types and methods
@@ -1397,7 +1409,7 @@ class TrackMatcher:
             match_type = match_sequence[attempt_num]["type"]
             method = match_sequence[attempt_num]["method"]
 
-            if self.verbose:
+            if self.verbose_matching:
                 print(f"\nMatching attempt {attempt_num} started...")
                 print(f"match_type = {match_type}")
                 print(f"method = {method}")
@@ -1419,7 +1431,7 @@ class TrackMatcher:
         # if matching is still not successful, set result to NaN:
         exceeds_tol = np.abs(best_sol.fun) > self.matching_tolerance_hard
         if (exceeds_tol or not best_sol.success):
-            if self.verbose:
+            if self.verbose_matching:
                 print("\nFinal matching result: FAILED")
                 if (np.abs(best_sol.fun) > self.matching_tolerance_hard):
                     print ("\nReason: Solution exceeds hard tolerance "+\
@@ -1435,7 +1447,7 @@ class TrackMatcher:
 
         # or else we found a solution
         else:
-            if self.verbose:
+            if self.verbose_matching:
                 print("\nFinal matching result: SUCCESS"
                         f"\nBest solution within hard tolerance: "
                         f"{np.abs(best_sol.fun):.8f}", "<",
@@ -1499,7 +1511,7 @@ class TrackMatcher:
                 match_m0, match_t0 = self.match_to_single_star(star)
                 t_after_matching = time.time()
 
-                if self.verbose:
+                if self.verbose_matching:
                     match_tspan = t_after_matching-t_before_matching
                     print(f"Matching duration: {match_tspan:.6g} sec\n")
 
@@ -1582,7 +1594,7 @@ class TrackMatcher:
         # validate age data
         i_bad = np.diff(age) <= 0
         if np.any(i_bad):
-            if self.verbose:
+            if self.verbose_matching:
                 print(f"Warning: found non-monotonic age data "
                       f"while matching star (m0={match_m0}). ")
             bad = [None]
@@ -1651,7 +1663,7 @@ class TrackMatcher:
 
         if (pd.notna(log_total_J) and pd.notna(total_MOI)):
 
-            if self.verbose:
+            if self.verbose_matching:
                 print("Calculating post-match omega using " \
                       "pre-match angular momentum and moment of inertia")
 
@@ -1665,7 +1677,7 @@ class TrackMatcher:
             # take into account radiation pressure)
             if pd.notna(omega):
 
-                if self.verbose:
+                if self.verbose_matching:
                     print("Calculating post-match omega using " \
                           "pre-match surf_avg_omega")
 
@@ -1673,7 +1685,7 @@ class TrackMatcher:
 
             elif pd.notna(omega_div_omega_c):
 
-                if self.verbose:
+                if self.verbose_matching:
                     print("Calculating post-match omega using " \
                           "pre-match surf_avg_omega_div_omega_crit")
 
@@ -1699,7 +1711,7 @@ class TrackMatcher:
 
             else:
                 omega_in_rad_per_yr = 0.0
-                if self.verbose:
+                if self.verbose_matching:
                     print("Could not calculate post-match omega, " \
                           "pre-match values are None or NaN.")
                     print("Pre-match rotation rates:")
@@ -1709,7 +1721,7 @@ class TrackMatcher:
                     Pwarn("Setting (post-match) rotation rate to zero.",
                           "InappropriateValueWarning")
 
-        if self.verbose and omega is not None and (omega_in_rad_per_yr != 0):
+        if self.verbose_matching and omega is not None and (omega_in_rad_per_yr != 0):
             print("pre-match omega [rad/yr] = ", omega * const.secyer)
             print("calculated omega [rad/yr] = ", omega_in_rad_per_yr)
             pcdiff = 100.0*(omega_in_rad_per_yr-omega * const.secyer) \
@@ -1916,7 +1928,7 @@ class TrackMatcher:
         # get the matched data of binary components
         # match secondary:
         if self.match_secondary:
-            if self.verbose:
+            if self.verbose_matching:
                 print(f"\nMatching secondary star (state = {secondary.state})...")
 
             if self.secondary_not_normal:
@@ -1944,7 +1956,7 @@ class TrackMatcher:
 
         if self.match_primary:
             # match primary
-            if self.verbose:
+            if self.verbose_matching:
                 print(f"\nMatching primary star (state = {primary.state})...")
 
             if self.primary_not_normal:
