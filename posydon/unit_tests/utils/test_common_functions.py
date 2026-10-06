@@ -72,6 +72,12 @@ def star_profile():
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
+        # ensure that python forgets about previous unclean warnings
+        ## If a module emitted a warning prior to this test, _warningregistry_,
+        ## will be present. We do not care about this module, as it is 
+        ## dynamically created.
+        if hasattr(totest, '__warningregistry__'):
+            del totest.__warningregistry__
         elements = {'ALL_RLO_CASES', 'ALL_STAR_STATES', 'BURNING_STATES',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'COMPACT_OBJECTS', 'CO_radius',\
