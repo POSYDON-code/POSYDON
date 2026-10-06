@@ -124,7 +124,7 @@ def generate_orbital_periods(primary_masses=[],
                              orbital_period_min=0.35,
                              orbital_period_max=10**3.5,
                              power_law_slope=0.0,
-                             orbital_period_scheme='Sana+12_period_extended',
+                             orbital_period_scheme='power_law',
                              **kwargs):
     """Randomly generate orbital periods for a sample of binaries."""
     RNG = kwargs.get('RNG', np.random.default_rng())

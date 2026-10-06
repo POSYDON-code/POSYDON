@@ -100,14 +100,15 @@ class TestFunctions:
 
     def test_generate_orbital_periods(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional argument: 'primary_masses'"):
-            totest.generate_orbital_periods()
+        with raises(ValueError, match="m1 must be a single value or have size=1"):
+            totest.generate_orbital_periods(orbital_period_scheme='Sana+12_period_extended')
 
         # bad input
         with raises(ValueError, match="p_max must be greater than p_min"):
-            totest.generate_orbital_periods(np.array([1.]),
+            totest.generate_orbital_periods(primary_masses=np.array([1.]),
                                             orbital_period_min=10.,
-                                            orbital_period_max=1.)
+                                            orbital_period_max=1.
+                                            orbital_period_scheme='Sana+12_period_extended')
         with raises(ValueError, match="You must provide an allowed orbital period scheme."):
             totest.generate_orbital_periods(np.array([1.]),
                                             orbital_period_scheme='test')
@@ -115,7 +116,7 @@ class TestFunctions:
         tests = [(1.0,42,approx(403.44608837021764,abs=6e-12)),
                  (1.0,12,approx(3.4380527315000666,abs=6e-12))]
         for (m,r,p) in tests:
-            assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
+            assert totest.generate_orbital_periods(primary_masses=m,RNG = np.random.default_rng(seed=r))[0] == p
 
     def test_generate_orbital_separations(self):
         # missing log_normal params
