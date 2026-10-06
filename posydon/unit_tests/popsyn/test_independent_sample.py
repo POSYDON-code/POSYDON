@@ -70,6 +70,7 @@ class TestFunctions:
         # period scheme (default)
         orb_p, ecc_p, m1_p, m2_p = totest.generate_independent_samples(
             orbital_scheme='period',
+            orbital_period_scheme='Sana+12_period_extended',
             RNG=np.random.default_rng(seed=42))
         assert orb_p[0] == approx(872.213878458193,abs=6e-12)
         assert ecc_p[0] == approx(0.7259611833901314,abs=6e-12)
