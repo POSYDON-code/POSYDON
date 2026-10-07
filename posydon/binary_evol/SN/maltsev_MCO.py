@@ -188,8 +188,11 @@ class Maltsev25_MCO_corecollapse(object):
         Maps ``star.first_mt_case`` (set by step_MESA, and the case of the
         first MT episode only, following Maltsev+25, Appendix A.5.1) onto the
         MT class selecting the ``M_CO`` boundaries. This is the only place the
-        grid's prescription-agnostic MT case becomes a Maltsev+25 class. Note
-        that each step_MESA overwrites the case, so the last grid wins.
+        grid's prescription-agnostic MT case becomes a Maltsev+25 class. The
+        case is the star's own first MT episode as a donor: it is kept once
+        set (so a star stripped in an earlier grid stays stripped), and a
+        star that never was a donor (e.g. a former accretor) has none and is
+        treated as 'single'.
 
         Parameters
         ----------
