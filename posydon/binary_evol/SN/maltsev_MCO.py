@@ -8,6 +8,9 @@ mass-transfer (MT) history class of the progenitor. The class is mapped from
 the MT case of the **first** mass-transfer episode (Maltsev+25, Appendix
 A.5.1), which the grids record as ``first_mt_case``; see ``_MT_CASE_TO_CLASS``
 and :meth:`Maltsev25_MCO_corecollapse._resolve_mt_class`.
+``M_CO`` is the CO core mass at He depletion, as in Willcox et al. 2025 and
+as used by the engine-based prescriptions of step_SN (Maltsev+25 notes it
+barely changes until core collapse in their models, footnote 14).
 Crucially, the recipe **separates** two distinct questions:
 
 1. *Explodability* (does the star explode?): a deterministic decision based on
@@ -440,15 +443,16 @@ class Maltsev25_MCO_corecollapse(object):
     # Entry point mirroring the other engine classes
     # ------------------------------------------------------------------
     def __call__(self, star, mt_class='single',
-                 conserve_hydrogen_envelope=False):
+                 conserve_hydrogen_envelope=False, M_CO=None):
         """Compute the remnant type, mass and fallback for a collapsing star.
 
         Parameters
         ----------
         star : object
-            Collapsing star object. Must expose ``co_core_mass`` (M_CO, Msun)
-            and ``metallicity`` (Z/Z_sun). Its ``first_mt_case`` attribute (set
-            by step_MESA) is mapped onto the MT-history class of the recipe.
+            Collapsing star object. Must expose ``metallicity`` (Z/Z_sun) and,
+            unless ``M_CO`` is given, ``co_core_mass_at_He_depletion`` (Msun).
+            Its ``first_mt_case`` attribute (set by step_MESA) is mapped onto
+            the MT-history class of the recipe.
         mt_class : str
             Fallback MT-history class, used only when ``star.first_mt_case`` is
             missing or holds a case the recipe does not distinguish: 'single',
@@ -457,6 +461,11 @@ class Maltsev25_MCO_corecollapse(object):
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.
+        M_CO : float or None
+            CO core mass (Msun) used by the recipe. If ``None``, the CO core
+            mass at He depletion, ``star.co_core_mass_at_He_depletion``, is
+            used, as in Willcox+25 and as the engine-based prescriptions do
+            (step_SN passes the value from ``StepSN.get_CO_core_params``).
 
         Returns
         -------
@@ -472,8 +481,9 @@ class Maltsev25_MCO_corecollapse(object):
         # get the MT class of the collapsing star
         mt_class = self._resolve_mt_class(star, mt_class)
 
-        # main properties for prescription
-        M_CO = star.co_core_mass
+        # main properties for prescription: M_CO at He depletion by default
+        if M_CO is None:
+            M_CO = getattr(star, 'co_core_mass_at_He_depletion', None)
         Z = star.metallicity
 
         # step 1: determine whether the star explodes

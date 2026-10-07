@@ -1479,9 +1479,14 @@ class StepSN(object):
                 m_rembar = m_proto + m_fb
                 state = 'NS'
             else:
+                # CO core mass at He depletion, as for the engine-based
+                # prescriptions
+                CO_core_mass, _ = self.get_CO_core_params(
+                    star, self.approx_at_he_depletion)
                 m_rembar, f_fb, state = self.Maltsev25_MCO_engine(
-                                                star,
-                                                conserve_hydrogen_envelope=self.conserve_hydrogen_envelope)
+                    star,
+                    conserve_hydrogen_envelope=self.conserve_hydrogen_envelope,
+                    M_CO=CO_core_mass)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
@@ -2510,10 +2515,15 @@ class StepSN(object):
                 state = 'NS'
 
             # The Patton models stop at M_CO = 10 Msun, so we fallback to the
-            # Maltsev+25-rapid prescription for CO core masses above 10 Msun.
+            # Maltsev+25-rapid prescription for CO core masses above 10 Msun,
+            # with the same CO core mass (at He depletion). Note that at this
+            # hand-over the NS mass changes from M4 to the constant NS mass of
+            # the rapid recipe, and the outcome depends explicitly on the MT
+            # class and Z (instead of only through the C abundance).
             elif CO_core_mass >= 10.0:
                 m_rem, f_fb, state = self.Maltsev25_MCO_engine(
-                    star, conserve_hydrogen_envelope=conserve_hydrogen_envelope)
+                    star, conserve_hydrogen_envelope=conserve_hydrogen_envelope,
+                    M_CO=CO_core_mass)
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)

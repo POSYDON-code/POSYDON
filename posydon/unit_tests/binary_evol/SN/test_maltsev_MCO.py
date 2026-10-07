@@ -17,6 +17,8 @@ class FakeStar:
     """Minimal stand-in for a collapsing SingleStar."""
 
     def __init__(self, co_core_mass, metallicity, he_core_mass=5.0, mass=20.0):
+        # the recipe uses the CO core mass at He depletion
+        self.co_core_mass_at_He_depletion = co_core_mass
         self.co_core_mass = co_core_mass
         self.metallicity = metallicity  # Z / Z_sun
         self.he_core_mass = he_core_mass
@@ -181,6 +183,57 @@ def test_missing_MCO_raises():
     from posydon.utils.posydonerror import ModelError
     with raises(ModelError):
         eng(star, "single")
+
+
+def test_uses_MCO_at_He_depletion(engine):
+    # single @ Z_sun: direct collapse for 7.2 > M_CO >= 6.6 (M1 <= M_CO <= M2)
+    star = FakeStar(co_core_mass=5.0, metallicity=1.0)
+    star.co_core_mass = 7.0  # final value (C depletion) is ignored
+    _, _, state = engine(star, "single")
+    assert state == "NS"
+    assert star.SN_categorisation == "NS"
+    star.co_core_mass_at_He_depletion = 7.0
+    _, _, state = engine(star, "single")
+    assert star.SN_categorisation == "direct_BH"
+
+
+def test_explicit_MCO_takes_precedence(engine):
+    star = FakeStar(co_core_mass=5.0, metallicity=1.0)
+    engine(star, "single", M_CO=7.0)
+    assert star.SN_categorisation == "direct_BH"
+    del star.co_core_mass_at_He_depletion
+    engine(star, "single", M_CO=5.0)
+    assert star.SN_categorisation == "NS"
+
+
+def test_missing_MCO_at_He_depletion_raises(engine):
+    from posydon.utils.posydonerror import ModelError
+    star = FakeStar(co_core_mass=5.0, metallicity=1.0)
+    star.co_core_mass_at_He_depletion = None
+    with raises(ModelError):
+        engine(star, "single")
+
+
+def test_step_SN_passes_MCO_at_He_depletion(monkeypatch):
+    # both Maltsev+25 mechanisms hand the CO core mass from
+    # get_CO_core_params (at He depletion) to the rapid recipe
+    for mechanism in ("Maltsev+25-MCO-rapid", "Maltsev+25-engine"):
+        step = StepSN(mechanism=mechanism,
+                      engine="M16" if mechanism.endswith("engine") else "",
+                      RNG=np.random.default_rng(1))
+        seen = {}
+        def fake_call(star, mt_class="single",
+                      conserve_hydrogen_envelope=False, M_CO=None):
+            seen["M_CO"] = M_CO
+            return 10.0, 1.0, "BH"
+        monkeypatch.setattr(step, "Maltsev25_MCO_engine", fake_call)
+        star = FakeStar(co_core_mass=12.5, metallicity=1.0)
+        star.co_core_mass_at_He_depletion = 12.0
+        star.avg_c_in_c_core_at_He_depletion = 0.25
+        star.SN_type = "CCSN"
+        star.state = "stripped_He_Core_C_depleted"
+        step.compute_m_rembar(star, None)
+        assert seen["M_CO"] == approx(12.0)
 
 
 def test_resolve_mt_class_reads_star_mt_class(engine):

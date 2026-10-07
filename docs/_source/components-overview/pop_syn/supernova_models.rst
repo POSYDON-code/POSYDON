@@ -40,7 +40,7 @@ POSYDON supports the following core-collapse mechanisms:
      - Advanced engine combining Patton & Sukhbold (2020) results for realistic explosion landscapes
    * - **Maltsev+25-engine**
      - ``M16``
-     - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
+     - Maltsev et al. (2025) explodability criteria applied to the Patton & Sukhbold (2020) models for M_CO < 10 Msun; above that, the ``Maltsev+25-MCO-rapid`` recipe is used (see below).
    * - **Maltsev+25-MCO-rapid**
      - ``None``
      - Maltsev et al. (2025) rapid BPS prescription based on the CO core mass and metallicity (arXiv:2503.23856). Supports the ``optimistic``, ``balanced`` and ``pessimistic`` extrapolation modes via ``Maltsev25_MCO_extrapolation_mode``.
@@ -54,6 +54,19 @@ POSYDON supports the following core-collapse mechanisms:
      - ``None``
      - Simplified prescriptions that directly collapse the pre-supernova to the baryonic mass of the helium core
 
+
+Both Maltsev+25 mechanisms use the CO core mass **at He depletion**
+(``co_core_mass_at_He_depletion``, or its approximation when
+``approx_at_he_depletion = True``), as in Willcox et al. (2025). This mass
+selects between the engine and the rapid recipe at M_CO = 10 Msun in
+``Maltsev+25-engine``, and it is also the mass the rapid recipe uses. Two
+discontinuities remain at this hand-over:
+
+- the neutron-star baryonic mass changes from M4 of the Patton & Sukhbold
+  models (about 1.8-2.2 Msun) to the constant ``Maltsev25_MCO_NS_mass``;
+- below 10 Msun the outcome depends on the MT history and metallicity only
+  through the central carbon abundance, above it explicitly through the MT
+  class and Z of the rapid recipe.
 
 Mechanism-specific parameters
 -----------------------------
