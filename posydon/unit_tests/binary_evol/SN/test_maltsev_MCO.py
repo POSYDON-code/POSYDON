@@ -341,6 +341,45 @@ def test_resolve_mt_class_latest_grid_wins(engine):
     assert engine._resolve_mt_class(star) == "single"
 
 
+def test_resolve_mt_class_self_stripped_is_case_B(engine):
+    # Maltsev+25 A.5.1: self-stripped stars (stripped without being a donor,
+    # e.g. by winds) are treated as Case B
+    star = FakeStar(co_core_mass=14.0, metallicity=1.0)
+    for case in (None, "no_RLOF", "initial_RLOF"):
+        star.first_mt_case = case
+        star.state = "stripped_He_Core_C_depleted"
+        assert engine._resolve_mt_class(star) == "case_B"
+        # H-rich without MT episode as donor stays single
+        star.state = "H-rich_Core_C_depleted"
+        assert engine._resolve_mt_class(star) == "single"
+    # the state history is used if the current state is not set
+    star.first_mt_case, star.state = None, None
+    star.state_history = ["H-rich_Core_H_burning", "stripped_He_Core_He_burning"]
+    assert engine._resolve_mt_class(star) == "case_B"
+    # a recorded MT case takes precedence over the state
+    star.state = "stripped_He_Core_C_depleted"
+    star.first_mt_case = "case_A"
+    assert engine._resolve_mt_class(star) == "case_A"
+    # an explicit class takes precedence over the state-based classification
+    star.first_mt_case = None
+    assert engine._resolve_mt_class(star, "single") == "single"
+
+
+def test_call_self_stripped_star_uses_case_B_boundaries():
+    # Z_sun: M3 = 13.0 (single) vs 15.2 (Case B). A wind-stripped star with
+    # M_CO = 14 explodes, an H-rich star with the same core implodes.
+    eng = Maltsev25_MCO_corecollapse(RNG=np.random.default_rng(1))
+    for _ in range(200):
+        star = FakeStar(co_core_mass=14.0, metallicity=1.0)
+        star.state = "stripped_He_Core_C_depleted"
+        eng(star)
+        assert star.SN_categorisation in ("NS", "fallback_BH")
+        star = FakeStar(co_core_mass=14.0, metallicity=1.0)
+        star.state = "H-rich_Core_C_depleted"
+        eng(star)
+        assert star.SN_categorisation == "direct_BH"
+
+
 def test_call_auto_resolves_star_mt_class(engine):
     # M_CO = 7.0 sits in the 'single' direct-collapse window (M1-M2 = 6.6-7.2)
     # but below the case_A M1 = 7.4, so the star's MT case (set by step_MESA)

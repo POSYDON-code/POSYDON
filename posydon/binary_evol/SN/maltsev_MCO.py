@@ -86,7 +86,8 @@ MT_CLASSES = tuple(_BOUNDARIES.keys())
 
 # Grid MT case of the first episode -> MT class the recipe is calibrated on.
 # 'BA'/'BB'/'BC' are MT from an already stripped He star -> Case B. Cases
-# absent here fall back to the ``default`` of `_resolve_mt_class`.
+# absent here (no MT episode as donor) are classified by `_resolve_mt_class`
+# from the star's state: stripped (self-stripped) -> Case B, else single.
 _MT_CASE_TO_CLASS = {
     'single': 'single',
     'case_A': 'case_A',
@@ -201,7 +202,7 @@ class Maltsev25_MCO_corecollapse(object):
     # ------------------------------------------------------------------
     # MT-class resolution
     # ------------------------------------------------------------------
-    def _resolve_mt_class(self, star, default='single'):
+    def _resolve_mt_class(self, star, default=None):
         """Return the Maltsev+25 MT class of the collapsing star.
 
         Maps ``star.first_mt_case`` (set by step_MESA, and the case of the
@@ -210,16 +211,23 @@ class Maltsev25_MCO_corecollapse(object):
         grid's prescription-agnostic MT case becomes a Maltsev+25 class. The
         case is the star's own first MT episode as a donor: it is kept once
         set (so a star stripped in an earlier grid stays stripped), and a
-        star that never was a donor (e.g. a former accretor) has none and is
-        treated as 'single'.
+        star that never was a donor (e.g. a former accretor) has none.
+
+        A star without a recorded case is classified from its state: a
+        star that is stripped at collapse (``stripped_He`` state) lost its
+        envelope without being a donor, e.g. by winds, and is treated as
+        'case_B', as Maltsev+25 (Appendix A.5.1) recommend for self-stripped
+        stars; any other star as 'single'.
 
         Parameters
         ----------
         star : object or None
             The collapsing star (``None`` in degenerate cases).
-        default : str
-            MT class to fall back to when ``star`` carries no case the recipe
-            distinguishes. One of 'single', 'case_A', 'case_B', 'case_C'.
+        default : str or None
+            MT class to use instead of the state-based classification when
+            ``star`` carries no case the recipe distinguishes. One of
+            'single', 'case_A', 'case_B', 'case_C', or None (default) to
+            classify from the state.
 
         Returns
         -------
@@ -228,11 +236,25 @@ class Maltsev25_MCO_corecollapse(object):
 
         """
         if star is None:
-            return default
+            return 'single' if default is None else default
         mt_case = getattr(star, 'first_mt_case', None)
         if isinstance(mt_case, bytes):
             mt_case = mt_case.decode('utf-8')
-        return _MT_CASE_TO_CLASS.get(mt_case, default)
+        if mt_case in _MT_CASE_TO_CLASS:
+            return _MT_CASE_TO_CLASS[mt_case]
+        if default is not None:
+            return default
+        # no MT episode as donor: self-stripped stars are treated as Case B
+        return 'case_B' if self._is_stripped(star) else 'single'
+
+    @staticmethod
+    def _is_stripped(star):
+        """Whether the star is a stripped He star (state or last state)."""
+        state = getattr(star, 'state', None)
+        if state is None:
+            history = getattr(star, 'state_history', None)
+            state = history[-1] if history else None
+        return 'stripped_He' in str(state)
 
     # ------------------------------------------------------------------
     # Boundary / window accessors
@@ -465,7 +487,7 @@ class Maltsev25_MCO_corecollapse(object):
     # ------------------------------------------------------------------
     # Entry point mirroring the other engine classes
     # ------------------------------------------------------------------
-    def __call__(self, star, mt_class='single',
+    def __call__(self, star, mt_class=None,
                  conserve_hydrogen_envelope=False, M_CO=None):
         """Compute the remnant type, mass and fallback for a collapsing star.
 
@@ -476,11 +498,13 @@ class Maltsev25_MCO_corecollapse(object):
             unless ``M_CO`` is given, ``co_core_mass_at_He_depletion`` (Msun).
             Its ``first_mt_case`` attribute (set by step_MESA) is mapped onto
             the MT-history class of the recipe.
-        mt_class : str
-            Fallback MT-history class, used only when ``star.first_mt_case`` is
-            missing or holds a case the recipe does not distinguish: 'single',
-            'case_A', 'case_B' or 'case_C'. A case the recipe does
-            distinguish takes precedence.
+        mt_class : str or None
+            MT-history class to use when ``star.first_mt_case`` is missing or
+            holds a case the recipe does not distinguish: 'single',
+            'case_A', 'case_B' or 'case_C'. If None (default), such a star is
+            'case_B' when it is stripped at collapse (self-stripped, Maltsev+25
+            Appendix A.5.1) and 'single' otherwise. A case the recipe does
+            distinguish always takes precedence.
         conserve_hydrogen_envelope : bool
             Whether to assume the hydrogen envelope is conserved in direct
             collapse to a BH.
