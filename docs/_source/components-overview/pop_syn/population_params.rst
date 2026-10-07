@@ -99,7 +99,7 @@ Below we give the default values for the HMS-HMS step, as an example.
 
   * - ``import``
     - | The import path for the step and the name of the step class.
-    - ``['posydon.binary_evol.DT.step_MESA', 'step_HMS_HMS']``
+    - ``['posydon.binary_evol.MESA.step_mesa', 'MS_MS_step']``
 
   * - ``absolute_import``
     - | An absolute import of a custom step. It follows the same structure as ``import``.
@@ -259,7 +259,7 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
 
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
-    - ``True``
+    - ``False``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -353,7 +353,7 @@ This means that this step uses the single stars loaded by the detached step.
 
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
-    - ``True``
+    - ``False``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -426,7 +426,7 @@ This means that this step uses the single stars loaded by the detached step.
 
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
-    - ``True``
+    - ``False``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -598,7 +598,7 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
     - | The prescription used for electron-capture supernova.
 
       * ``'Tauris+15'``
-      * ``'Podsiadlowksi+04'``
+      * ``'Podsiadlowski+04'``
     - ``'Tauris+15'``
 
   * - ``conserve_hydrogen_envelope``
@@ -650,22 +650,53 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'NS_one_minus_fallback_BH_one'``
       * ``'one'``
       * ``'zero'``
+    - ``'one_over_mass'``
+  
+  * - ``kick_prescription``
+    - | The distribution from which supernova kicks are drawn.
+
+      * ``'maxwellian'``
+      * ``'log_normal'``
       * ``'asym_ej'``
       * ``'linear'``
-      * ``'log_normal'``
-    - ``'one_over_mass'``
+    - ``'log_normal'``
 
   * - ``sigma_kick_CCSN_NS``
-    - | The standard deviation of the kick velocity for core-collapse supernova neutron stars.
-    - ``265.0``
-
+    - | Width of the kick distribution for neutron stars formed in
+      | core-collapse supernovae. The meaning depends on ``kick_prescription``:
+ 
+      * ``'maxwellian'``: Maxwellian velocity dispersion (km/s)
+      * ``'log_normal'``: dimensionless width of the log-normal distribution (the shape parameter of ``scipy.stats.lognorm``)
+ 
+      Not used by ``'asym_ej'`` and ``'linear'``. ``None`` means no kick.
+    - ``0.68``
+ 
+  * - ``mean_kick_CCSN_NS``
+    - | Scale of the log-normal kick distribution (km/s) for neutron stars
+      | formed in core-collapse supernovae. It is passed as the ``scale`` of
+      | ``scipy.stats.lognorm``, so it is the median of the distribution
+      | (the arithmetic mean is larger by a factor ``exp(sigma**2 / 2)``).
+      | Used only for ``kick_prescription = 'log_normal'``.
+      | If ``None``, ``exp(5.60)`` (about 270.4 km/s) is used.
+    - ``270.43``
+ 
   * - ``sigma_kick_CCSN_BH``
-    - | The standard deviation of the kick velocity for core-collapse supernova black holes.
-    - ``265.0``
-
+    - | As ``sigma_kick_CCSN_NS``, for black holes formed in
+      | core-collapse supernovae.
+    - ``0.68``
+ 
+  * - ``mean_kick_CCSN_BH``
+    - | As ``mean_kick_CCSN_NS``, for black holes formed in
+      | core-collapse supernovae.
+    - ``270.43``
+ 
   * - ``sigma_kick_ECSN``
-    - | The standard deviation of the kick velocity for electron-capture supernova.
+    - | As ``sigma_kick_CCSN_NS``, for electron-capture supernovae.
     - ``20.0``
+ 
+  * - ``mean_kick_ECSN``
+    - | As ``mean_kick_CCSN_NS``, for electron-capture supernovae.
+    - ``None``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -832,9 +863,9 @@ It also contains which sampling distributions to use for the initial conditions 
 
   * - ``use_MPI``
     - | If True, evolve with MPI (equivalent to: ``from mpi4py import MPI, comm = MPI.COMM_WORLD``).
-    - ``True``
+    - ``False``
 
-  * - ``metallicity``
+  * - ``metallicities``
     - | In units of solar metallicity. Supported values ``[2., 1., 0.45, 0.2, 0.1, 0.01, 0.001, 0.0001]``
     - ``[1.]``
 
@@ -875,8 +906,17 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Maximum simulation time (in years).
     - ``13.8e9``
 
-  * - ``binary_fraction``
-    - | Fraction of binaries (0 < fraction <= 1).
+  * - ``binary_fraction_scheme``
+    - | How the binary fraction is chosen.
+      | Options:
+ 
+      * ``'const'``: constant binary fraction, set by ``binary_fraction_const``
+      * ``'Moe+17-massdependent'``: mass-dependent binary fraction from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_
+    - ``'const'``
+ 
+  * - ``binary_fraction_const``
+    - | Fraction of binaries (0 <= fraction <= 1).
+      | Used only for ``binary_fraction_scheme = 'const'``.
     - ``1.0``
 
   * - ``primary_mass_scheme``
@@ -903,7 +943,7 @@ It also contains which sampling distributions to use for the initial conditions 
 
       * ``'flat_mass_ratio'``: flat mass ratio distribution
       * ``'q=1'``: mass ratio of 1. Ignores ``secondary_mass_min/max`` and sets the secondary mass to the primary mass.
-      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``orbital_period_scheme`` and ``eccentricity_scheme`` to be ignored)
+      * ``'Moe+17-PsandQs'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``orbital_period_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'flat_mass_ratio'``
 
   * - ``secondary_mass_min``
@@ -931,9 +971,17 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Used only for ``orbital_scheme = 'period'``.
       | Options:
 
-      * ``Sana+12_period_extended``: `Sana et al. 2012 <https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract>`_
-      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``eccentricity_scheme`` to be ignored)
-    - ``'Sana+12_period_extended'``
+      * ``'power_law'``: Power-law distribution in orbital period, normalised
+        in log10(P) between ``orbital_period_min`` and ``orbital_period_max``.
+        dN/dlogP ∝ P^slope, with the slope set by ``power_law_slope``.
+      * ``'Sana+12_period_extended'``: `Sana et al. 2012 <https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract>`_
+      * ``'Moe+17-PsandQs'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``eccentricity_scheme`` to be ignored)
+    - ``'power_law'``
+
+  * - ``power_law_slope``
+    - | Slope of the power-law period distribution.
+      | Used only for ``orbital_period_scheme = 'power_law'``.
+    - ``0.0``
 
   * - ``orbital_period_min``
     - | Minimum orbital period (in days).
@@ -974,7 +1022,7 @@ It also contains which sampling distributions to use for the initial conditions 
       * ``'zero'`` : zero eccentricity
       * ``'thermal'``: thermal distribution
       * ``'uniform'``: uniform distribution
-      * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``orbital_period_scheme`` to be ignored)
+      * ``'Moe+17-PsandQs'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``orbital_period_scheme`` to be ignored)
 
     - ``'zero'``
 
