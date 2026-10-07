@@ -417,7 +417,9 @@ class StepSN(object):
                 CO_core_params_sc, sc_target = format_data_Patton20(
                     'Kepler_sc_table.dat')
 
-                n_neighbors = 5
+                # nearest Patton & Sukhbold (2020) model, i.e. no averaging
+                # over neighbouring models with different explodability
+                n_neighbors = 1
 
                 if self.verbose:
                     print('Training the classifier ...')
