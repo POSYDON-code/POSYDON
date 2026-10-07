@@ -103,6 +103,15 @@ Leaving any of them out of an ini file that selects a Maltsev+25 mechanism makes
 ``posydon-setup-popsyn`` fail with a message naming the missing parameters.
 Other mechanisms neither use nor have to provide them.
 
+The Maltsev+25 mechanisms also require ``use_interp_values = False``. Their
+outcome is partly stochastic: outside the guaranteed-NS region an exploding
+star forms a fallback black hole with a fixed probability. Values stored in the
+post-processed grids and interpolators would freeze a single random draw per
+grid point into every population, so the outcome is always computed during the
+population synthesis with its own random numbers. ``posydon-setup-popsyn``
+raises an error for an ini file that combines a Maltsev+25 mechanism with
+``use_interp_values = True``.
+
 
 Pulsational pair-instability supernova prescriptions
 ----------------------------------------------------

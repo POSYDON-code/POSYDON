@@ -72,6 +72,57 @@ class TestSNModelValidation:
         # Should be called twice: once normal, once with verbose=True
         assert mock_get_sn_name.call_count == 2
 
+    @pytest.mark.parametrize("mechanism", totest.MALTSEV_MECHANISMS)
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
+    def test_check_SN_MODEL_validity_maltsev_with_interp_true(
+            self, mock_get_sn_name, mock_simprop, mechanism):
+        """The stochastic Maltsev+25 mechanisms cannot use grid values."""
+        from posydon.grids.SN_MODELS import DEFAULT_MALTSEV_SN_MODEL
+        mock_simprop.return_value = {
+            'step_SN': (None, {'use_interp_values': True,
+                               'mechanism': mechanism,
+                               **DEFAULT_MALTSEV_SN_MODEL})
+        }
+        with pytest.raises(ValueError, match="cannot be used with "
+                                             "use_interp_values = True"):
+            totest.check_SN_MODEL_validity("test.ini")
+        mock_get_sn_name.assert_not_called()
+
+    @pytest.mark.parametrize("mechanism", totest.MALTSEV_MECHANISMS)
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
+    def test_check_SN_MODEL_validity_maltsev_with_interp_false(
+            self, mock_get_sn_name, mock_simprop, mechanism):
+        """Maltsev+25 with use_interp_values=False and all its parameters."""
+        from posydon.grids.SN_MODELS import DEFAULT_MALTSEV_SN_MODEL
+        mock_simprop.return_value = {
+            'step_SN': (None, {'use_interp_values': False,
+                               'mechanism': mechanism,
+                               **DEFAULT_MALTSEV_SN_MODEL})
+        }
+        assert totest.check_SN_MODEL_validity("test.ini") is True
+        mock_get_sn_name.assert_not_called()
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
+    def test_check_SN_MODEL_validity_maltsev_missing_parameters(
+            self, mock_get_sn_name, mock_simprop):
+        """Missing Maltsev+25 parameters are reported and fail the check."""
+        mock_simprop.return_value = {
+            'step_SN': (None, {'use_interp_values': False,
+                               'mechanism': 'Maltsev+25-MCO-rapid',
+                               'Maltsev25_MCO_NS_mass': 1.4})
+        }
+        # match by name: other tests may reload posydon.utils.posydonwarning
+        with pytest.warns(Warning,
+                          match="Maltsev25_MCO_fallback_fraction") as record:
+            result = totest.check_SN_MODEL_validity("test.ini")
+        assert result is False
+        assert any(type(w.message).__name__ == "IncompletenessWarning"
+                   for w in record)
+        mock_get_sn_name.assert_not_called()
+
 
 class TestIniFileValidation:
     """Test class for INI file validation."""

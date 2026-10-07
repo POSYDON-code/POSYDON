@@ -13,6 +13,7 @@ from posydon.CLI.io import (
 )
 from posydon.grids.SN_MODELS import (
     DEFAULT_SN_MODEL,
+    MALTSEV_MECHANISMS,
     get_SN_MODEL_NAME,
     missing_SN_MODEL_parameters,
 )
@@ -35,24 +36,44 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     -------
     bool
         True if the model is valid or use_interp_values=False, False otherwise
+
+    Raises
+    ------
+    ValueError
+        If a Maltsev+25 mechanism is combined with use_interp_values=True.
+        Their outcome is partly stochastic (NS or fallback BH), so it has to
+        be computed during the population synthesis with its own random
+        numbers instead of being taken from a single realisation stored in
+        the grids and interpolators.
     '''
 
     simprop_kwargs = simprop_kwargs_from_ini(ini_file)
     step_SN_MODEL = simprop_kwargs['step_SN'][1]
-    # always allow the use of non-interpolation values
-    if step_SN_MODEL['use_interp_values'] == False:
-        return True
+    mechanism = step_SN_MODEL.get('mechanism', DEFAULT_SN_MODEL['mechanism'])
+    use_interp_values = step_SN_MODEL.get('use_interp_values',
+                                          DEFAULT_SN_MODEL['use_interp_values'])
+
+    # stochastic prescriptions cannot use the values stored in the grids
+    if (mechanism in MALTSEV_MECHANISMS) and use_interp_values:
+        raise ValueError(
+            f"The mechanism '{mechanism}' cannot be used with "
+            "use_interp_values = True: its NS/fallback-BH outcome is drawn "
+            "randomly and has to be computed during the population synthesis. "
+            "Set use_interp_values = False in the [step_SN] section of the "
+            "ini file.")
 
     # Report mechanism-specific parameters missing from the ini separately;
     # the matching below would only say that nothing matched.
     missing = missing_SN_MODEL_parameters(step_SN_MODEL)
     if len(missing) > 0:
-        mechanism = step_SN_MODEL.get('mechanism',
-                                      DEFAULT_SN_MODEL['mechanism'])
         Pwarn(f"The mechanism '{mechanism}' requires {missing} to be set in "
               "the [step_SN] section of the ini file.",
               "IncompletenessWarning")
         return False
+
+    # always allow the use of non-interpolation values
+    if use_interp_values == False:
+        return True
 
     # step_SN MODEL check
     SN_MODEL_NAME_SEL = get_SN_MODEL_NAME(step_SN_MODEL)
