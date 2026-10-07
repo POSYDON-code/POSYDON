@@ -535,6 +535,33 @@ class TestFunctions:
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)
 
+    def test_post_process_grid_first_mt_case(self, grid_path, link_SN_data,
+                                             monkeypatch):
+        # the collapsing star needs the MT case of its own first MT episode
+        # as donor (e.g. for Maltsev+25-MCO-rapid) during the post-processing
+        recorded = []
+        def mock_collapse_star(SN, star):
+            recorded.append(star.first_mt_case)
+            for quantity in totest.CC_quantities:
+                setattr(star, quantity, None)
+        test_PSyGrid = PSyGrid()
+        test_PSyGrid.load(grid_path)
+        n_models = len(totest.SN_MODELS)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.StepSN, "collapse_star", mock_collapse_star)
+            with warns(POSYDONWarning):
+                totest.post_process_grid(test_PSyGrid)
+            # collapsing runs: TF2 = 'no_RLOF', 'case_A1', 'case_A1/A2',
+            # 'case_B1' (star 1 collapses in each)
+            assert recorded == (['no_RLOF'] * n_models
+                                + ['case_A'] * 2 * n_models
+                                + ['case_B'] * n_models)
+            recorded.clear()
+            with warns(POSYDONWarning):
+                totest.post_process_grid(test_PSyGrid, single_star=True)
+            assert len(recorded) > 0
+            assert set(recorded) == {'no_RLOF'}
+
     def test_from_run_metallicity(self, grid_path):
         # grids store the absolute Z, while the stars used during the
         # post-processing need Z/Zsun (as in population synthesis runs)

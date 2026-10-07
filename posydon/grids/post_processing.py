@@ -225,6 +225,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
             TF2 = 'no_RLOF'
         TF1 = grid.final_values['termination_flag_1'][i]
 
+        # MT case of each star's own first MT episode as a donor, needed by
+        # MT-history dependent SN prescriptions (e.g. Maltsev+25-MCO-rapid);
+        # from_run does not set it and the grid column is only added below
+        for j, star in enumerate(stars):
+            star.first_mt_case = first_mt_case_from_cumulative(
+                TF2, star_index=j+1)
+
         # compute properties
         for j, star in enumerate(stars):
             if not stars_CO[j] and IC in ['no_MT', 'stable_MT', 'unstable_MT',
