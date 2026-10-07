@@ -1767,7 +1767,10 @@ def first_mt_case_from_cumulative(cumulative_mt_case=None, star_index=None):
     Parameters
     ----------
     cumulative_mt_case : str, bytes or None
-        The cumulative MT-history string, e.g. 'case_A1/B1/A2' or 'no_RLOF'.
+        The cumulative MT-history string, e.g. 'case_A1/B1/A2', or a flag
+        without MT episode: 'no_RLOF' (grid termination_flag_2, see
+        `posydon.grids.termination_flags`) or 'no_RLO' (from
+        `cumulative_mass_transfer_string`), 'initial_RLOF', ...
     star_index : int or None
         Index (1 or 2) of the star (donor) to resolve the case for.
         If None, episodes of either star are considered and the first
@@ -1777,7 +1780,9 @@ def first_mt_case_from_cumulative(cumulative_mt_case=None, star_index=None):
     -------
     str or None
         The MT case of the first episode, e.g. 'case_A', 'case_B', 'case_BB'
-        or 'case_C'; when no qualifying MT episode is found, the original
+        or 'case_C'. If the string contains MT episodes, but none with the
+        star `star_index` as donor, None is returned (the star never was a
+        donor). If it contains no MT episode at all, the original
         ``cumulative_mt_case`` is returned verbatim, e.g. 'no_RLOF',
         'initial_RLOF', 'not_converged' or None.
 
@@ -1786,6 +1791,7 @@ def first_mt_case_from_cumulative(cumulative_mt_case=None, star_index=None):
         cumulative_mt_case = cumulative_mt_case.decode('utf-8')
 
     donor_cases = []
+    any_episode = False
     for token in str(cumulative_mt_case).replace('?', '').split('/'):
         if token.startswith('case_'):
             token = token[len('case_'):]
@@ -1797,10 +1803,14 @@ def first_mt_case_from_cumulative(cumulative_mt_case=None, star_index=None):
         else:
             # e.g. "no_RLOF" or an unrecognised token
             continue
+        any_episode = True
         if star_index is None or donor == str(star_index):
             donor_cases.append(mt_case)
 
     if not donor_cases:
+        # MT episodes, but none with this star as donor
+        if any_episode:
+            return None
         return cumulative_mt_case
 
     # Take the first MT episode

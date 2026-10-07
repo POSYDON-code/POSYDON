@@ -1634,10 +1634,11 @@ class TestFunctions:
         assert totest.first_mt_case_from_cumulative("no_RLO", 1) == "no_RLO"
         assert totest.first_mt_case_from_cumulative(None, 1) is None
         assert totest.first_mt_case_from_cumulative("?", 1) == "?"
-        # an episode in which the star is not the donor is ignored
-        assert totest.first_mt_case_from_cumulative("case_A2", 1) == "case_A2"
+        # an episode in which the star is not the donor is ignored; a star
+        # that never was a donor gets None
+        assert totest.first_mt_case_from_cumulative("case_A2", 1) is None
         assert totest.first_mt_case_from_cumulative("case_A2", 2) == "case_A"
-        assert totest.first_mt_case_from_cumulative("case_A2/B2", 1) == "case_A2/B2"
+        assert totest.first_mt_case_from_cumulative("case_A2/B2", 1) is None
         assert totest.first_mt_case_from_cumulative("case_A2/B2", 2) == "case_A"
         # earliest donor episode of the star wins
         assert totest.first_mt_case_from_cumulative("case_A1/B1/A1", 1) == "case_A"
@@ -1664,8 +1665,10 @@ class TestFunctions:
         assert totest.first_mt_case_from_cumulative(
             "?contact_during_MS") == "?contact_during_MS"
         assert totest.first_mt_case_from_cumulative(None) is None
-        # the flag is retained also for a specific star without donor episodes
-        assert totest.first_mt_case_from_cumulative("case_A2", 1) == "case_A2"
+        # a flag without MT episode is retained also for a specific star
+        assert totest.first_mt_case_from_cumulative("no_RLOF", 1) == "no_RLOF"
+        assert totest.first_mt_case_from_cumulative("no_RLO", 2) == "no_RLO"
+        assert totest.first_mt_case_from_cumulative("?case_BB1", 2) is None
         # bytes input is decoded
         assert totest.first_mt_case_from_cumulative(b"case_A1") == "case_A"
         assert totest.first_mt_case_from_cumulative(b"no_RLOF") == "no_RLOF"
