@@ -5,9 +5,10 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
+from scipy.stats import kstest
+
 # import the module which will be tested
 import posydon.popsyn.independent_sample as totest
-from scipy.stats import kstest
 
 # aliases
 np = totest.np
