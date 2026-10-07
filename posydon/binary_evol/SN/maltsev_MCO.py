@@ -108,8 +108,9 @@ Z_BALANCED_FLOOR = 1.0 / 50.0
 Z_CALIBRATION_LOW = 0.1
 Z_CALIBRATION_HIGH = 1.0
 
-# Default probabilities of forming a fallback BH (instead of an NS) for a
-# successful SN that lies outside the guaranteed-NS sub-window.
+# Probabilities of forming a fallback BH (instead of an NS) for a successful SN
+# with M2 < M_CO < M3: model A only outside the guaranteed-NS sub-window,
+# model B uniformly over the whole range (no guaranteed-NS sub-window).
 _FALLBACK_PROB = {
     'A': 0.15,  # Section 3.2.2 of the paper (model A)
     'B': 0.10,  # Section 3.2.3 of the paper (model B)
@@ -141,8 +142,10 @@ class Maltsev25_MCO_corecollapse(object):
         ``kick_normalisation = 'one_minus_fallback'`` (the default
         ``'one_over_mass'`` does not use it).
     fallback_model : {'A', 'B'}
-        Stochastic model for the NS/fallback-BH split outside the guaranteed-NS
-        window. 'A' uses a 15% fallback probability, 'B' a uniform 10%.
+        Stochastic model for the NS/fallback-BH split of successful SNe with
+        ``M2 < M_CO < M3``. 'A': 15% fallback probability outside the
+        guaranteed-NS window (Maltsev+25, Sect. 3.2.2). 'B': a uniform 10%
+        over the whole range, without guaranteed-NS window (Sect. 3.2.3).
     extrapolation_mode : {'optimistic', 'balanced', 'pessimistic'}
         How to extrapolate the ``M_CO`` boundaries outside the calibrated
         metallicity range ``Z/Z_sun in [0.1, 1]``.  See the module docstring
@@ -376,10 +379,12 @@ class Maltsev25_MCO_corecollapse(object):
     def categorisation(self, M_CO, Z, mt_class):
         """Decide the compact-object type for a *successful* SN.
 
-        A successful SN inside the guaranteed-NS sub-window ``(NS1, NS2)``
-        always forms an NS. Outside that window it forms an NS with probability
-        ``1 - p_fallback`` and a fallback BH with probability ``p_fallback``
-        (``p_fallback`` depends on ``fallback_model``).
+        A successful SN with ``M_CO < M1`` always forms an NS. Above that
+        (``M2 < M_CO < M3``) it forms a fallback BH with probability
+        ``p_fallback`` and an NS otherwise. For ``fallback_model='A'``
+        (``p_fallback = 0.15``) stars inside the guaranteed-NS sub-window
+        ``(NS1, NS2)`` always form an NS; ``fallback_model='B'``
+        (``p_fallback = 0.10``) has no such window.
 
         Parameters
         ----------
@@ -402,10 +407,11 @@ class Maltsev25_MCO_corecollapse(object):
         if M_CO < M1:
             return 'NS'
 
-        # Guaranteed NS window
-        NS1, NS2 = self.get_NS_window(mt_class, Z)
-        if NS1 < M_CO < NS2:
-            return 'NS'
+        # Guaranteed NS window (model A only; model B is uniform)
+        if self.fallback_model == 'A':
+            NS1, NS2 = self.get_NS_window(mt_class, Z)
+            if NS1 < M_CO < NS2:
+                return 'NS'
 
         # fallback BH window
         p_fallback = _FALLBACK_PROB[self.fallback_model]

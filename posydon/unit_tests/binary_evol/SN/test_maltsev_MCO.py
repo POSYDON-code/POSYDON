@@ -126,6 +126,30 @@ def test_fallback_model_B():
     assert frac_fb == approx(0.10, abs=0.02)
 
 
+def test_guaranteed_NS_window_only_for_model_A():
+    # single @ Z_sun: NS window (9.0, 10.2) inside the successful-SN range
+    # (M2, M3) = (7.2, 13.0). Model A: always NS there (Sect. 3.2.2).
+    # Model B: uniform 10% fallback BH in (M2, M3), no window (Sect. 3.2.3).
+    eng_A = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(5), fallback_model="A")
+    for _ in range(5000):
+        assert eng_A.categorisation(9.5, 1.0, "single") == "NS"
+    eng_B = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(5), fallback_model="B")
+    n = 20000
+    n_fb = sum(eng_B.categorisation(9.5, 1.0, "single") == "fallback_BH"
+               for _ in range(n))
+    assert n_fb / n == approx(0.10, abs=0.02)
+
+
+def test_model_B_below_M1_is_always_NS():
+    # the uniform model-B probability only applies in (M2, M3)
+    eng = Maltsev25_MCO_corecollapse(
+        RNG=np.random.default_rng(6), fallback_model="B")
+    for _ in range(5000):
+        assert eng.categorisation(6.0, 1.0, "single") == "NS"
+
+
 def test_call_direct_BH(engine):
     star = FakeStar(co_core_mass=7.0, metallicity=1.0)
     m_rem, f_fb, state = engine(star, "single", conserve_hydrogen_envelope=False)

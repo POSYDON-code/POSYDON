@@ -94,7 +94,7 @@ grid column records the assumptions it was computed with.
      - Fallback fraction ``f_fb`` assigned to a fallback black hole. A fallback black hole gets the full collapsing mass (He core, or the whole star with ``conserve_hydrogen_envelope``), like a direct-collapse black hole; ``f_fb`` only matters for the natal kick with ``kick_normalisation = 'one_minus_fallback'``.
    * - ``Maltsev25_MCO_fallback_model``
      - ``'A'``
-     - ``'A'`` (15%) or ``'B'`` (10%): probability of forming a fallback black hole instead of a neutron star outside the guaranteed-NS window.
+     - Probability of forming a fallback black hole instead of a neutron star for a successful SN with M2 < M_CO < M3: ``'A'``: 15% outside the guaranteed-NS window; ``'B'``: a uniform 10% without guaranteed-NS window (Maltsev et al. 2025, Sects. 3.2.2 and 3.2.3).
    * - ``Maltsev25_MCO_extrapolation_mode``
      - ``'balanced'``
      - ``'balanced'``, ``'optimistic'`` or ``'pessimistic'``: how the M_CO boundaries are extrapolated outside the calibrated range Z/Zsun in [0.1, 1] (Willcox et al. 2025). ``'optimistic'`` applies no floor, so at Z/Zsun of order 0.01 and below the lowest boundary drops under the M_CO,min = 5.6 Msun of the Maltsev+25 explodability criteria.
