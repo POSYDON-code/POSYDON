@@ -132,7 +132,7 @@ def generate_orbital_periods(primary_masses=[],
     Parameters
     ----------
     primary_masses : ndarray of floats
-        Set of primary masses used in Sana+12_period_extended scheme. That 
+        Set of primary masses used in Sana+12_period_extended scheme. That
         distribution has different behaviors for low-mass (≤15 M☉) and
         high-mass (>15 M☉) primary stars.
     number_of_binaries : int
