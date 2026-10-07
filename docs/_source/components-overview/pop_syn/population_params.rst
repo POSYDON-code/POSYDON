@@ -651,7 +651,7 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       * ``'one'``
       * ``'zero'``
     - ``'one_over_mass'``
-  
+
   * - ``kick_prescription``
     - | The distribution from which supernova kicks are drawn.
 
@@ -664,13 +664,13 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
   * - ``sigma_kick_CCSN_NS``
     - | Width of the kick distribution for neutron stars formed in
       | core-collapse supernovae. The meaning depends on ``kick_prescription``:
- 
+
       * ``'maxwellian'``: Maxwellian velocity dispersion (km/s)
       * ``'log_normal'``: dimensionless width of the log-normal distribution (the shape parameter of ``scipy.stats.lognorm``)
- 
+
       Not used by ``'asym_ej'`` and ``'linear'``. ``None`` means no kick.
     - ``0.68``
- 
+
   * - ``mean_kick_CCSN_NS``
     - | Scale of the log-normal kick distribution (km/s) for neutron stars
       | formed in core-collapse supernovae. It is passed as the ``scale`` of
@@ -679,21 +679,21 @@ The collection of trained prescriptions can be found in the ``MODELS.py`` file a
       | Used only for ``kick_prescription = 'log_normal'``.
       | If ``None``, ``exp(5.60)`` (about 270.4 km/s) is used.
     - ``270.43``
- 
+
   * - ``sigma_kick_CCSN_BH``
     - | As ``sigma_kick_CCSN_NS``, for black holes formed in
       | core-collapse supernovae.
     - ``0.68``
- 
+
   * - ``mean_kick_CCSN_BH``
     - | As ``mean_kick_CCSN_NS``, for black holes formed in
       | core-collapse supernovae.
     - ``270.43``
- 
+
   * - ``sigma_kick_ECSN``
     - | As ``sigma_kick_CCSN_NS``, for electron-capture supernovae.
     - ``20.0``
- 
+
   * - ``mean_kick_ECSN``
     - | As ``mean_kick_CCSN_NS``, for electron-capture supernovae.
     - ``None``
@@ -909,11 +909,11 @@ It also contains which sampling distributions to use for the initial conditions 
   * - ``binary_fraction_scheme``
     - | How the binary fraction is chosen.
       | Options:
- 
+
       * ``'const'``: constant binary fraction, set by ``binary_fraction_const``
       * ``'Moe+17-massdependent'``: mass-dependent binary fraction from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_
     - ``'const'``
- 
+
   * - ``binary_fraction_const``
     - | Fraction of binaries (0 <= fraction <= 1).
       | Used only for ``binary_fraction_scheme = 'const'``.
