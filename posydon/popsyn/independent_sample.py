@@ -126,7 +126,35 @@ def generate_orbital_periods(primary_masses=[],
                              power_law_slope=0.0,
                              orbital_period_scheme='power_law',
                              **kwargs):
-    """Randomly generate orbital periods for a sample of binaries."""
+    """
+    Randomly generate orbital periods for a sample of binaries.
+
+    Parameters
+    ----------
+    primary_masses : ndarray of floats
+        Set of primary masses used in Sana+12_period_extended scheme. That 
+        distribution has different behaviors for low-mass (≤15 M☉) and
+        high-mass (>15 M☉) primary stars.
+    number_of_binaries : int
+        Number of binaries that require randomly sampled orbital periods
+    orbital_period_min : float
+        Minimum orbital period in days
+    orbital_period_max : float
+        Maximum orbital period in days
+    orbital_period_scheme : string
+        Distribution from which the orbital periods are randomly drawn.
+        Options: 'Sana+12_period_extended', 'power_law'
+    power_law_slope : float
+        Slope of the power law, only used for orbital_period_scheme
+        'power_law' (see distributions.PowerLawPeriod). A slope of 0 gives
+        a distribution flat in log-period.
+
+    Returns
+    -------
+    orbital_periods : ndarray of floats
+        Randomly drawn orbital periods in days
+
+    """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
     # Check inputs
@@ -135,7 +163,8 @@ def generate_orbital_periods(primary_masses=[],
     # or generically a power law distribution dN/dlogP ~ (logP)^pi
     valid_schemes = ['Sana+12_period_extended', 'power_law']
     if orbital_period_scheme not in valid_schemes:
-        raise ValueError("You must provide an allowed orbital period scheme.")
+        raise ValueError("You must provide an allowed orbital period scheme. "
+                         f"Options: {valid_schemes}")
 
     if orbital_period_scheme == 'Sana+12_period_extended':
         period_dist = distributions.Sana12Period(
@@ -143,6 +172,7 @@ def generate_orbital_periods(primary_masses=[],
             p_max=orbital_period_max
         )
         orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
+    # slope = 0 is consistent with Sana H., et al., 2025, Nature Astronomy, 9, 1337
     elif orbital_period_scheme == 'power_law':
         period_dist = distributions.PowerLawPeriod(
             p_min=orbital_period_min,
