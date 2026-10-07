@@ -91,17 +91,22 @@ grid column records the assumptions it was computed with.
      - Baryonic neutron-star mass (Msun). The recipe predicts the remnant type but not its mass.
    * - ``Maltsev25_MCO_fallback_fraction``
      - ``0.99``
-     - Fallback fraction ``f_fb`` assigned to a fallback black hole.
+     - Fallback fraction ``f_fb`` assigned to a fallback black hole. A fallback black hole gets the full collapsing mass (He core, or the whole star with ``conserve_hydrogen_envelope``), like a direct-collapse black hole; ``f_fb`` only matters for the natal kick with ``kick_normalisation = 'one_minus_fallback'``.
    * - ``Maltsev25_MCO_fallback_model``
      - ``'A'``
      - ``'A'`` (15%) or ``'B'`` (10%): probability of forming a fallback black hole instead of a neutron star outside the guaranteed-NS window.
    * - ``Maltsev25_MCO_extrapolation_mode``
      - ``'balanced'``
-     - ``'balanced'``, ``'optimistic'`` or ``'pessimistic'``: how the M_CO boundaries are extrapolated outside the calibrated range Z/Zsun in [0.1, 1] (Willcox et al. 2025).
+     - ``'balanced'``, ``'optimistic'`` or ``'pessimistic'``: how the M_CO boundaries are extrapolated outside the calibrated range Z/Zsun in [0.1, 1] (Willcox et al. 2025). ``'optimistic'`` applies no floor, so at Z/Zsun of order 0.01 and below the lowest boundary drops under the M_CO,min = 5.6 Msun of the Maltsev+25 explodability criteria.
 
 Leaving any of them out of an ini file that selects a Maltsev+25 mechanism makes
 ``posydon-setup-popsyn`` fail with a message naming the missing parameters.
 Other mechanisms neither use nor have to provide them.
+
+For the M_CO boundaries the paper distinguishes early and late Case B mass
+transfer; ``Maltsev+25-MCO-rapid`` uses the late Case B (Case Bl) values for
+all Case B donors (including Case BA, BB and BC). The guaranteed-NS window is
+given for Case B as a whole.
 
 The Maltsev+25 mechanisms also require ``use_interp_values = False``. Their
 outcome is partly stochastic: outside the guaranteed-NS region an exploding

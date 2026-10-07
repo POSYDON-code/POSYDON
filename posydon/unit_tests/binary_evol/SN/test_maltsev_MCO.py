@@ -344,10 +344,14 @@ def _make_engine(mode):
         RNG=np.random.default_rng(2025), extrapolation_mode=mode)
 
 
-def test_default_extrapolation_mode_is_optimistic():
+def test_default_extrapolation_mode_is_balanced():
+    # same default as DEFAULT_MALTSEV_SN_MODEL and Willcox+25
+    from posydon.grids.SN_MODELS import DEFAULT_MALTSEV_SN_MODEL
     eng = Maltsev25_MCO_corecollapse(
         RNG=np.random.default_rng(0))
-    assert eng.extrapolation_mode == "optimistic"
+    assert eng.extrapolation_mode == "balanced"
+    assert (eng.extrapolation_mode
+            == DEFAULT_MALTSEV_SN_MODEL["Maltsev25_MCO_extrapolation_mode"])
 
 
 def test_invalid_extrapolation_mode_raises():

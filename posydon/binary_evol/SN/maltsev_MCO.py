@@ -31,16 +31,21 @@ The recipe is calibrated for ``Z/Z_sun in (0.1, 1)``.  Outside this range the
 boundaries must be extrapolated.  Three schemes are available, following
 Willcox et al. 2025 (arXiv:2510.07573, Sec. 3.1.1):
 
-* ``'optimistic'`` (default) -- linear extrapolation in ``log10(Z)`` extending
+* ``'optimistic'`` -- linear extrapolation in ``log10(Z)`` extending
   the trend between the calibration boundaries, continued to arbitrary low/high
-  ``Z``.
+  ``Z``. No floor is applied: at very low ``Z`` (``Z/Z_sun`` of order 0.01 and
+  below) ``M1`` drops below the minimum CO core mass of the explodability
+  criteria of Maltsev+25 (``M_CO,min = 5.6`` Msun), and for some classes
+  ``M2 < M1`` (e.g. Case A), which removes the lower direct-collapse window.
+  This follows Willcox et al. 2025.
 * ``'pessimistic'`` -- nearest-neighbour (clamp) at both calibration
   boundaries; the boundary values at ``Z/Z_sun = 0.1`` and ``Z/Z_sun = 1``
   are held constant outside the calibrated range.
-* ``'balanced'`` -- linear extrapolation in ``log10(Z)`` down to
-  ``Z/Z_sun = 1/50`` (~ 0.02), then nearest-neighbour below that floor.
-  Above ``Z/Z_sun = 1`` the behaviour is the same as the pessimistic mode
-  (nearest-neighbour at the upper calibration boundary).
+* ``'balanced'`` (default, as in Willcox et al. 2025) -- linear
+  extrapolation in ``log10(Z)`` down to ``Z/Z_sun = 1/50`` (~ 0.02), then
+  nearest-neighbour below that floor. Above ``Z/Z_sun = 1`` the behaviour is
+  the same as the pessimistic mode (nearest-neighbour at the upper calibration
+  boundary).
 
 """
 
@@ -55,6 +60,10 @@ __authors__ = [
 #   M_i(Z) / M_sun = a_i + b_i * log10(Z / Z_sun)
 # for the three direct-collapse boundaries M1, M2, M3 (Tables 3 & 4 of the
 # paper). Index 0 -> M1, 1 -> M2, 2 -> M3.
+# The paper distinguishes early and late Case B (Be, Bl) for these
+# boundaries; 'case_B' uses the Case Bl values. Case Be would give
+# [(7.8, 0.9), (8.3, 0.4), (15.3, 1.8)]. The NS window (Tables 5 & 6) is
+# given for Case B as a whole (coarse-grained over Be and Bl).
 _BOUNDARIES = {
     'single': [(6.6, 0.5), (7.2, 0.6), (13.0, 0.1)],
     'case_A': [(7.4, 0.5), (8.4, 1.0), (15.4, 1.7)],
@@ -103,7 +112,7 @@ Z_CALIBRATION_HIGH = 1.0
 # successful SN that lies outside the guaranteed-NS sub-window.
 _FALLBACK_PROB = {
     'A': 0.15,  # Section 3.2.2 of the paper (model A)
-    'B': 0.10,  # Appendix A.6 / averaged 10% model (model B)
+    'B': 0.10,  # Section 3.2.3 of the paper (model B)
 }
 
 
@@ -125,15 +134,19 @@ class Maltsev25_MCO_corecollapse(object):
     NS_mass : float
         Default baryonic NS mass (Msun) used by the built-in ``NS_mass_model``.
     fallback_fraction : float
-        Fallback mass fraction ``f_fb`` assigned to a fallback BH (the collapsing
-        mass is the remnant mass). Default 0.99.
+        Fallback mass fraction ``f_fb`` assigned to a fallback BH. Default
+        0.99. The fallback BH gets the full collapsing mass as baryonic
+        remnant mass (as a direct-collapse BH does); ``f_fb`` only matters
+        for the natal kick, and only if step_SN uses
+        ``kick_normalisation = 'one_minus_fallback'`` (the default
+        ``'one_over_mass'`` does not use it).
     fallback_model : {'A', 'B'}
         Stochastic model for the NS/fallback-BH split outside the guaranteed-NS
         window. 'A' uses a 15% fallback probability, 'B' a uniform 10%.
     extrapolation_mode : {'optimistic', 'balanced', 'pessimistic'}
         How to extrapolate the ``M_CO`` boundaries outside the calibrated
         metallicity range ``Z/Z_sun in [0.1, 1]``.  See the module docstring
-        for details.  Default ``'optimistic'``.
+        for details.  Default ``'balanced'``.
     verbose : bool
         Verbosity flag.
 
@@ -141,7 +154,7 @@ class Maltsev25_MCO_corecollapse(object):
 
     def __init__(self, RNG=None, NS_mass_model=None, NS_mass=1.4,
                  fallback_fraction=0.99, fallback_model='A',
-                 extrapolation_mode='optimistic',
+                 extrapolation_mode='balanced',
                  verbose=False):
         """Initialize a Maltsev25_MCO_corecollapse instance."""
         if RNG is None:
@@ -422,7 +435,11 @@ class Maltsev25_MCO_corecollapse(object):
         Returns
         -------
         (m_rembar, f_fb) : tuple of float
-            Baryonic remnant mass (Msun) and fallback mass fraction.
+            Baryonic remnant mass (Msun) and fallback mass fraction. A
+            fallback BH has the same remnant mass as a direct-collapse BH (the
+            collapsing mass); only ``f_fb`` (``self.fallback_fraction`` instead
+            of 1) differs, which affects the natal kick only for
+            ``kick_normalisation = 'one_minus_fallback'`` in step_SN.
 
         """
         if outcome == 'NS':
