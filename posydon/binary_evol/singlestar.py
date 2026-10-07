@@ -622,8 +622,10 @@ class SingleStar:
             setattr(star, attr + "_history", col_history)
             setattr(star, attr, final_value)
 
+        # grids store the absolute metallicity Z, while SingleStar.metallicity
+        # is Z/Zsun (as in step_MESA and the SN/CE steps)
         try:
-            star.metallicity = run.initial_values["Z"]
+            star.metallicity = run.initial_values["Z"] / Zsun
         except AttributeError:
             star.metallicity = None
 

@@ -19,11 +19,12 @@ import h5py
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import fixture, raises, warns
+from pytest import approx, fixture, raises, warns
 
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.grids.psygrid import PSyGrid
 from posydon.unit_tests._helper_functions_for_tests.psygrid import get_PSyGrid
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonwarning import (
     InappropriateValueWarning,
     POSYDONWarning,
@@ -533,6 +534,21 @@ class TestFunctions:
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)
+
+    def test_from_run_metallicity(self, grid_path):
+        # grids store the absolute Z, while the stars used during the
+        # post-processing need Z/Zsun (as in population synthesis runs)
+        test_PSyGrid = PSyGrid()
+        test_PSyGrid.load(grid_path)
+        run = test_PSyGrid[1]
+        Z_div_Zsun = run.initial_values["Z"] / Zsun
+        binary = totest.BinaryStar.from_run(run, history=True)
+        for star in [binary.star_1, binary.star_2]:
+            assert star.metallicity == approx(Z_div_Zsun)
+            assert star.metallicity_history == approx(
+                [Z_div_Zsun] * len(star.mass_history))
+        star = totest.SingleStar.from_run(run, history=True)
+        assert star.metallicity == approx(Z_div_Zsun)
 
     def test_add_post_processed_quantities(self, grid):
         # missing argument
