@@ -12,13 +12,14 @@ import posydon.utils.data_download as totest
 # aliases
 os = totest.os
 
-from contextlib import chdir
-from inspect import isclass, isroutine
-from shutil import rmtree
-from unittest.mock import patch
-
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
+import hashlib
+from contextlib import chdir
+from inspect import isclass, isroutine
+from shutil import copyfile, rmtree
+from unittest.mock import patch
+
 from pytest import approx, fixture, raises, warns
 
 from posydon.utils.posydonwarning import ReplaceValueWarning
@@ -28,14 +29,26 @@ from posydon.utils.posydonwarning import ReplaceValueWarning
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'COMPLETE_SETS', 'PATH_TO_POSYDON_DATA', 'ProgressBar',\
+        elements = {'COMPLETE_SETS', 'IncompleteRead',\
+                    'PATH_TO_POSYDON_DATA', 'ProgressBar',\
                     'Pwarn', 'ZENODO_COLLECTION', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
+                    '_CONNECTION_ERRORS', '_DOWNLOAD_ATTEMPTS',\
+                    '_GRID_DIRS', '_INTERP_GRID_DIRS', '_INTERP_METHODS',\
+                    '_MD5_RETRIES', '_RETRY_HTTP_CODES', '_RETRY_WAIT',\
+                    '_archive_readable', '_check_disk_space',\
+                    '_remote_size',\
+                    '_archive_path', '_archive_verified',\
+                    '_clean_up_leftovers', '_download_archive',\
+                    '_expected_md5', '_extract_archive',\
+                    '_dataset_installed', '_download_with_retries',\
+                    '_expected_paths', '_md5_of_file',\
                     '_get_posydon_data', '_parse_commandline', 'argparse',\
-                    'data_download', 'download_one_dataset', 'hashlib',\
-                    'list_datasets', 'os', 'progressbar', 'tarfile',\
-                    'textwrap', 'tqdm', 'urllib'}
+                    'convert_metallicity_to_string', 'data_download',\
+                    'download_one_dataset', 'hashlib', 'list_datasets', 'os',\
+                    'progressbar', 'shutil', 'tarfile', 'textwrap', 'time',\
+                    'tqdm', 'urllib'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -60,6 +73,45 @@ class TestElements:
     def test_instance_list_datasets(self):
         assert isroutine(totest.list_datasets)
 
+    def test_instance_expected_paths(self):
+        assert isroutine(totest._expected_paths)
+
+    def test_instance_dataset_installed(self):
+        assert isroutine(totest._dataset_installed)
+
+    def test_instance_md5_of_file(self):
+        assert isroutine(totest._md5_of_file)
+
+    def test_instance_archive_readable(self):
+        assert isroutine(totest._archive_readable)
+
+    def test_instance_archive_verified(self):
+        assert isroutine(totest._archive_verified)
+
+    def test_instance_archive_path(self):
+        assert isroutine(totest._archive_path)
+
+    def test_instance_expected_md5(self):
+        assert isroutine(totest._expected_md5)
+
+    def test_instance_clean_up_leftovers(self):
+        assert isroutine(totest._clean_up_leftovers)
+
+    def test_instance_download_archive(self):
+        assert isroutine(totest._download_archive)
+
+    def test_instance_extract_archive(self):
+        assert isroutine(totest._extract_archive)
+
+    def test_instance_remote_size(self):
+        assert isroutine(totest._remote_size)
+
+    def test_instance_check_disk_space(self):
+        assert isroutine(totest._check_disk_space)
+
+    def test_instance_download_with_retries(self):
+        assert isroutine(totest._download_with_retries)
+
     def test_instance_download_one_dataset(self):
         assert isroutine(totest.download_one_dataset)
 
@@ -80,11 +132,6 @@ class TestFunctions:
     def download_statement(self):
         # statement that the download started
         return "Downloading POSYDON data '{}' from Zenodo to "
-
-    @fixture
-    def failed_MD5_statement(self):
-        # statement that MD5 verfication failed
-        return "Failed to read the tar.gz file for MD5 verification"
 
     @fixture
     def extraction_statement(self):
@@ -108,13 +155,13 @@ class TestFunctions:
             mp.setattr(totest.argparse.ArgumentParser, "error", mock_error)
             # bad input
             self.commandline_args = totest.argparse.Namespace(dataset='Test',\
-             listedsets=None, nomd5check=False, verbose=False)
+             listedsets=None, nomd5check=False, force=False, verbose=False)
             with raises(totest.argparse.ArgumentError,\
                         match="unknown dataset, use -l to show defined sets"):
                 totest._parse_commandline()
             # example
             self.commandline_args = totest.argparse.Namespace(dataset='DR1',\
-             listedsets=None, nomd5check=False, verbose=False)
+             listedsets=None, nomd5check=False, force=False, verbose=False)
             assert totest._parse_commandline() == self.commandline_args
 
     def test_list_datasets(self, capsys):
@@ -132,10 +179,232 @@ class TestFunctions:
             if v:
                 assert "more information at" in captured_output.out
 
-    def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
-                                  download_statement, failed_MD5_statement,\
-                                  extraction_statement, removal_statement):
+    def test_expected_paths(self):
+        # grid data sets contain the grids and their pre-trained interpolators
+        for suffix, z_str in [('2', '2e+00'), ('0.45', '4.5e-01'),
+                              ('1e-3', '1e-03')]:
+            expected_paths = totest._expected_paths(
+                'DR2_grids_'+suffix+'Zsun')
+            assert len(expected_paths)\
+                   == (len(totest._GRID_DIRS)
+                       +(len(totest._INTERP_GRID_DIRS)
+                         *len(totest._INTERP_METHODS)))
+            for grid_dir in totest._GRID_DIRS:
+                assert os.path.join(grid_dir, z_str+"_Zsun.h5")\
+                       in expected_paths
+            for grid_dir in totest._INTERP_GRID_DIRS:
+                for interp_method in totest._INTERP_METHODS:
+                    assert os.path.join(grid_dir, "interpolators",
+                                        interp_method,
+                                        z_str+"_Zsun.pkl")\
+                           in expected_paths
+        # unsupported metallicities cannot be verified
+        assert totest._expected_paths('DR2_grids_bogusZsun') is None
+        assert totest._expected_paths('DR2_grids_5Zsun') is None
+        assert totest._expected_paths('DR2_grids_Zsun') is None
+        # other known data sets
+        assert totest._expected_paths('auxiliary') is not None
+        # the SFR model reads the HDF5 file
+        assert "SFR/IllustrisTNG.h5" in totest._expected_paths('auxiliary')
+        # only DR2 data sets are verified, others are always downloaded
+        assert totest._expected_paths('DR1_for_v2.0.0-pre1') is None
+        assert totest._expected_paths('DR1-super_Eddington') is None
+        # unknown data sets cannot be verified
+        assert totest._expected_paths('DR2') is None
+        assert totest._expected_paths('v2_tutorial_populations') is None
+
+    def test_dataset_installed(self, monkeypatch, test_path):
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            # data sets with unknown content cannot be verified
+            assert totest._dataset_installed('Test') == False
+            assert totest._dataset_installed('v2_tutorial_populations')\
+                   == False
+            # partially extracted data sets are not installed
+            auxiliary_paths = totest._expected_paths('auxiliary')
+            for path in auxiliary_paths[:-1]:
+                os.makedirs(os.path.join(test_path, os.path.dirname(path)),
+                            exist_ok=True)
+                with open(os.path.join(test_path, path), "a"):
+                    pass
+            assert totest._dataset_installed('auxiliary') == False
+            # fully extracted data sets are installed
+            with open(os.path.join(test_path, auxiliary_paths[-1]), "a"):
+                pass
+            assert totest._dataset_installed('auxiliary') == True
+
+    def test_md5_of_file(self, tmp_path):
+        content = b"Unit Test\n"
+        test_file_path = os.path.join(tmp_path, "unit_test.txt")
+        with open(test_file_path, "wb") as test_file:
+            test_file.write(content)
+        assert totest._md5_of_file(test_file_path)\
+               == hashlib.md5(content).hexdigest()
+
+    def test_archive_readable(self, tmp_path):
+        with chdir(tmp_path):
+            os.mkdir("POSYDON_data")
+            with open(os.path.join("POSYDON_data", "test.txt"), "w")\
+                 as test_file:
+                test_file.write("Unit Test\n"*10000)
+            if os.system("tar -czf POSYDON_data.tar.gz POSYDON_data") != 0:
+                raise RuntimeError("Please check that you have `tar` "\
+                                   +"installed and up to date.")
+        filepath = os.path.join(tmp_path, "POSYDON_data.tar.gz")
+        # complete archive
+        assert totest._archive_readable(filepath) == True
+        # truncated archive
+        size = os.path.getsize(filepath)
+        with open(filepath, "r+b") as archive:
+            archive.truncate(size//2)
+        assert totest._archive_readable(filepath) == False
+        # missing archive
+        assert totest._archive_readable(filepath+".missing") == False
+
+    def test_archive_verified(self, capsys, monkeypatch, tmp_path):
+        content = b"Unit Test\n"
+        filepath = os.path.join(tmp_path, "unit_test.txt")
+        with open(filepath, "wb") as test_file:
+            test_file.write(content)
+        md5 = hashlib.md5(content).hexdigest()
+        # MD5 check
+        assert totest._archive_verified(filepath, md5) == True
+        assert capsys.readouterr().out == ""
+        assert totest._archive_verified(filepath, md5, verbose=True) == True
+        assert "MD5 verified." in capsys.readouterr().out
+        assert totest._archive_verified(filepath, "Unit", verbose=True)\
+               == False
+        assert "MD5 verified." not in capsys.readouterr().out
+        # without a checksum, the archive needs to be readable
+        assert totest._archive_verified(filepath) == False
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "_archive_readable", lambda filepath: True)
+            assert totest._archive_verified(filepath) == True
+        # unreadable files do not pass the verification
+        assert totest._archive_verified(filepath+".missing", md5) == False
+
+    def test_remote_size(self, monkeypatch):
+        class mock_response:
+            def __init__(self, headers):
+                self.headers = headers
+            def __enter__(self):
+                return self
+            def __exit__(self, exc_type, exc_value, exc_traceback):
+                return False
+        def mock_urlopen(request, timeout=None):
+            self.request = request
+            return mock_response(self.headers)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.urllib.request, "urlopen", mock_urlopen)
+            # size given by the server, without downloading the file
+            self.headers = {"Content-Length": "1234"}
+            assert totest._remote_size("https://unit.test/file") == 1234
+            assert self.request.get_method() == "HEAD"
+            # size unknown
+            self.headers = {}
+            assert totest._remote_size("https://unit.test/file") is None
+            # server not reachable
+            def failing_urlopen(request, timeout=None):
+                raise totest.urllib.error.URLError("unreachable")
+            mp.setattr(totest.urllib.request, "urlopen", failing_urlopen)
+            assert totest._remote_size("https://unit.test/file") is None
+
+    def test_check_disk_space(self, monkeypatch, tmp_path):
+        class mock_usage:
+            free = 2e9
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.shutil, "disk_usage",
+                       lambda directory: mock_usage())
+            # enough space
+            totest._check_disk_space(tmp_path, 2e9)
+            # not enough space
+            with raises(OSError, match="Not enough disk space in .*: 3.0 GB "\
+                                       +"needed, but only 2.0 GB free."):
+                totest._check_disk_space(tmp_path, 3e9)
+
+    def test_download_with_retries(self, capsys, monkeypatch, tmp_path):
+        partpath = os.path.join(tmp_path, "POSYDON_data.tar.gz.part")
         def mock_urlretrieve(url, filename=None, reporthook=None, data=None):
+            # write a partial file and fail for the first calls
+            self.calls += 1
+            if self.calls > 1:
+                # the connection might drop before the file gets created
+                with open(filename, "wb") as part_file:
+                    part_file.write(b"Unit")
+            if self.calls <= self.failures:
+                raise totest.urllib.error.ContentTooShortError(
+                    "retrieval incomplete", None)
+        def mock_sleep(seconds):
+            self.waits.append(seconds)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve)
+            mp.setattr(totest.time, "sleep", mock_sleep)
+            # success after retries
+            self.calls, self.failures, self.waits = 0, 2, []
+            totest._download_with_retries("url", partpath)
+            assert self.calls == 3
+            assert self.waits == [totest._RETRY_WAIT, 2*totest._RETRY_WAIT]
+            assert os.path.exists(partpath)
+            captured_output = capsys.readouterr()
+            assert "Download interrupted (" in captured_output.out
+            assert f"(attempt 3 of {totest._DOWNLOAD_ATTEMPTS})"\
+                   in captured_output.out
+            os.remove(partpath)
+            # failure of all attempts
+            self.calls, self.failures, self.waits = 0, 99, []
+            with raises(totest.urllib.error.ContentTooShortError,
+                        match="retrieval incomplete"):
+                totest._download_with_retries("url", partpath)
+            assert self.calls == totest._DOWNLOAD_ATTEMPTS
+            assert len(self.waits) == totest._DOWNLOAD_ATTEMPTS-1
+            assert not os.path.exists(partpath)
+            # temporary HTTP errors are retried
+            for code in [429, 503]:
+                def busy_urlretrieve(url, filename=None, reporthook=None,
+                                     data=None):
+                    self.calls += 1
+                    if self.calls == 1:
+                        raise totest.urllib.error.HTTPError(url, code, "Busy",
+                                                            {}, None)
+                self.calls = 0
+                mp.setattr(totest.urllib.request, "urlretrieve",
+                           busy_urlretrieve)
+                totest._download_with_retries("url", partpath)
+                assert self.calls == 2
+            # HTTP errors (e.g. 404), an unreachable server, and other errors
+            # are not retried
+            for error in [totest.urllib.error.HTTPError("url", 404,
+                                                        "Not Found", {},
+                                                        None),
+                          totest.urllib.error.URLError("unreachable"),
+                          KeyboardInterrupt()]:
+                def failing_urlretrieve(url, filename=None, reporthook=None,
+                                        data=None):
+                    self.calls += 1
+                    raise error
+                mp.setattr(totest.urllib.request, "urlretrieve",
+                           failing_urlretrieve)
+                self.calls = 0
+                with raises(type(error)):
+                    totest._download_with_retries("url", partpath)
+                assert self.calls == 1
+
+    def test_download_one_dataset(self, capsys, monkeypatch, test_path,\
+                                  download_statement,\
+                                  extraction_statement, removal_statement):
+        # do not ask the server for the size of the archives
+        monkeypatch.setattr(totest, "_remote_size", lambda data_url: None)
+        # mocks
+        def failing_urlretrieve(url, filename=None, reporthook=None,\
+                                data=None):
+            # raise an error, if a download should not happen
+            raise RuntimeError("The dataset should not be downloaded.")
+        def mock_urlretrieve_empty(url, filename=None, reporthook=None,\
+                                   data=None):
+            # simulate a download by creating an empty file
+            if isinstance(filename, str):
+                with open(filename, "wb"):
+                    pass
             return None
         class mock_TarFile:
             def getmembers(self):
@@ -151,24 +420,40 @@ class TestFunctions:
                 return mock_TarFile()
             def __exit__(self, exc_type, exc_value, exc_traceback):
                 return False
-        def mock_urlretrieve2(url, filename=None, reporthook=None, data=None):
-            os.mkdir(test_path)
-            if (isinstance(filename, str) and (len(filename)>=8)):
-                test_ID = filename[-8]
-            else:
-                test_ID = ""
-            with open(os.path.join(test_path, "test"+test_ID+".txt"), "w")\
+
+        # helpers
+        directory = os.path.dirname(test_path)
+        filepath = os.path.join(directory, "POSYDON_data.tar.gz")
+        partpath = filepath+".part"
+        pristine_archive = os.path.join(directory,
+                                        "POSYDON_data_pristine.tar.gz")
+
+        def mock_urlretrieve_archive(url, filename=None, reporthook=None,\
+                                     data=None):
+            # simulate a download by providing the correct archive
+            copyfile(pristine_archive, filename)
+            return None
+
+        def build_archive():
+            # create a small tar.gz archive at filepath
+            os.makedirs(test_path, exist_ok=True)
+            with open(os.path.join(test_path, "test.txt"), "w")\
                  as test_file:
                 test_file.write("Unit Test\n")
-            with chdir(os.path.join(test_path,"..")):
-                try:
-                    os.system("tar -czf POSYDON_data"+test_ID\
-                              +".tar.gz POSYDON_data")
-                except:
+            with chdir(directory):
+                if os.system("tar -czf POSYDON_data.tar.gz POSYDON_data")\
+                   != 0:
                     raise RuntimeError("Please check that you have `tar` "\
                                        +"installed and up to date.")
             rmtree(test_path)
-            return None
+
+        def clean_up():
+            # remove leftovers of previous test scenarios
+            for leftover in [filepath, partpath]:
+                if os.path.exists(leftover):
+                    os.remove(leftover)
+            if os.path.exists(test_path):
+                rmtree(test_path)
 
         # bad input
         with raises(TypeError, match="'dataset' should be a string."):
@@ -192,92 +477,262 @@ class TestFunctions:
                                                   +"not refer to a valid "\
                                                   +"directory."):
                 totest.download_one_dataset(dataset='DR1_for_v2.0.0-pre1')
-        # bad input
+
+        # installed data sets get skipped
         with monkeypatch.context() as mp:
-            mock_ZENODO_COLLECTION = {'Test': {'data' : "./", 'md5': "Unit"}}
-            mp.setattr(totest, "ZENODO_COLLECTION", mock_ZENODO_COLLECTION)
-            with raises(FileExistsError, match="POSYDON data already exists "\
-                                               +"at"):
-                totest.download_one_dataset(dataset='Test')
-        # skip real download: do nothing instead
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'auxiliary': totest.ZENODO_COLLECTION['auxiliary']})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       failing_urlretrieve)
+            for path in totest._expected_paths('auxiliary'):
+                os.makedirs(os.path.join(test_path, os.path.dirname(path)),
+                            exist_ok=True)
+                with open(os.path.join(test_path, path), "a"):
+                    pass
+            totest.download_one_dataset(dataset='auxiliary')
+            captured_output = capsys.readouterr()
+            assert "POSYDON data 'auxiliary' is already present, skipping."\
+                   in captured_output.out
+            clean_up()
+            # forced downloads happen anyway
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_empty)
+            mp.setattr(totest.tarfile, "open", mock_open)
+            totest.download_one_dataset(dataset='auxiliary', MD5_check=False,
+                                        force=True)
+            captured_output = capsys.readouterr()
+            assert download_statement.format('auxiliary')\
+                   in captured_output.out
+            assert extraction_statement.format('auxiliary')\
+                   in captured_output.out
+            clean_up()
+
+        # downloads without an available MD5 checksum cannot be verified
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
             mock_ZENODO_COLLECTION = {'Test': {'data': "POSYDON_data.tar.gz",
-                                               'md5': "Unit"}}
+                                               'md5': None}}
             mp.setattr(totest, "ZENODO_COLLECTION", mock_ZENODO_COLLECTION)
-            mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve)
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_empty)
             mp.setattr(totest.tarfile, "open", mock_open)
-            # mocked download: fails MD5check, no tar file to remove
-            totest.download_one_dataset(dataset='Test', verbose=True)
-            captured_output = capsys.readouterr()
-            assert download_statement.format('Test') in captured_output.out
-            assert failed_MD5_statement in captured_output.out
-            assert extraction_statement.format('Test') in captured_output.out
-            assert removal_statement not in captured_output.out
-            # without MD5 check
-            totest.download_one_dataset(dataset='Test', MD5_check=False)
-            captured_output = capsys.readouterr()
-            assert download_statement.format('Test') in captured_output.out
-            assert failed_MD5_statement not in captured_output.out
-            assert extraction_statement.format('Test') in captured_output.out
-            assert removal_statement not in captured_output.out
-            # without MD5 check
-            mock_ZENODO_COLLECTION['Test']['md5'] = None
             with warns(ReplaceValueWarning, match="MD5 undefined, skip MD5 "\
                                                   +"check."):
                 totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert download_statement.format('Test') in captured_output.out
-            assert failed_MD5_statement not in captured_output.out
             assert extraction_statement.format('Test') in captured_output.out
             assert removal_statement not in captured_output.out
-        # skip real download: create mock file instead
+            clean_up()
+            # incomplete leftover downloads get removed and restarted
+            with open(partpath, "wb"):
+                pass
+            totest.download_one_dataset(dataset='Test', verbose=True)
+            captured_output = capsys.readouterr()
+            assert "Removing incomplete download 'POSYDON_data.tar.gz"\
+                   +".part'" in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            clean_up()
+
+        # corrupted fresh downloads get retried, then removed and raise an
+        # error
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
-            mock_ZENODO_COLLECTION = {'Test0': {'data': "POSYDON_data0.tar.gz",
-                                                'md5': "Unit"},
-                                      'Test1': {'data': "POSYDON_data1.tar.gz",
-                                                'md5': "Unit"},
-                                      'Test2': {'data': "POSYDON_data2.tar.gz",
-                                                'md5': "Unit"}}
+            mock_ZENODO_COLLECTION = {'Test': {'data': "POSYDON_data.tar.gz",
+                                               'md5': "Unit"}}
             mp.setattr(totest, "ZENODO_COLLECTION", mock_ZENODO_COLLECTION)
-            mp.setattr(totest.urllib.request, "urlretrieve", mock_urlretrieve2)
-            # mocked download: fails MD5check, which removes tar file and
-            #                  causes a FileNotFoundError
-            with raises(FileNotFoundError, match="No such file or directory:"):
-                totest.download_one_dataset(dataset='Test0', verbose=True)
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_empty)
+            mp.setattr(totest.tarfile, "open", mock_open)
+            with raises(ValueError, match="^MD5 verification failed!$"):
+                totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
-            assert download_statement.format('Test0') in captured_output.out
-            assert failed_MD5_statement in captured_output.out
-            assert extraction_statement.format('Test0') in captured_output.out
-            assert removal_statement not in captured_output.out
-            # return expected hash for testfile
-            with patch("hashlib.md5") as p_md5:
-                p_md5.return_value.hexdigest.return_value\
-                 = mock_ZENODO_COLLECTION['Test1']['md5']
-                totest.download_one_dataset(dataset='Test1')
-                captured_output = capsys.readouterr()
-                assert download_statement.format('Test1')\
-                       in captured_output.out
-                assert failed_MD5_statement not in captured_output.out
-                assert extraction_statement.format('Test1')\
-                       in captured_output.out
-                assert removal_statement not in captured_output.out
-                assert os.path.exists(test_path)
-                assert os.path.exists(os.path.join(test_path, "test1.txt"))
-                rmtree(test_path) # removed extracted data for next test
-                # with verification output
-                totest.download_one_dataset(dataset='Test2', verbose=True)
-                captured_output = capsys.readouterr()
-                assert download_statement.format('Test2')\
-                       in captured_output.out
-                assert "MD5 verified" in captured_output.out
-                assert extraction_statement.format('Test2')\
-                       in captured_output.out
-                assert removal_statement in captured_output.out
-                assert os.path.exists(test_path)
-                assert os.path.exists(os.path.join(test_path, "test2.txt"))
-#                rmtree(test_path) # removed extracted data for next test
+            assert captured_output.out.count(download_statement.format(
+                'Test')) == 1+totest._MD5_RETRIES
+            assert captured_output.out.count("The download did not pass the "\
+                                             +"verification, downloading it "\
+                                             +"again.")\
+                   == totest._MD5_RETRIES
+            assert extraction_statement.format('Test') not in\
+                captured_output.out
+            assert not os.path.exists(filepath)
+            clean_up()
+            # a one-off corrupted download succeeds on the retry
+            content = b"Unit Test\n"
+            mock_ZENODO_COLLECTION['Test']['md5']\
+                = hashlib.md5(content).hexdigest()
+            self.downloads = 0
+            def mock_urlretrieve_corrupt_once(url, filename=None,
+                                              reporthook=None, data=None):
+                self.downloads += 1
+                with open(filename, "wb") as download:
+                    download.write(content if self.downloads > 1 else b"")
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_corrupt_once)
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert self.downloads == 2
+            assert "The download did not pass the verification, "\
+                   +"downloading it again." in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            clean_up()
+            mock_ZENODO_COLLECTION['Test']['md5'] = "Unit"
+
+        # existing complete archives are verified and extracted instead of
+        # being downloaded again
+        build_archive()
+        copyfile(filepath, pristine_archive)
+        original_md5 = totest._md5_of_file(filepath)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mock_ZENODO_COLLECTION = {'Test': {'data': "POSYDON_data.tar.gz",
+                                               'md5': original_md5}}
+            mp.setattr(totest, "ZENODO_COLLECTION", mock_ZENODO_COLLECTION)
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       failing_urlretrieve)
+            # correct checksum: reuse the existing archive
+            totest.download_one_dataset(dataset='Test', verbose=True)
+            captured_output = capsys.readouterr()
+            assert "Verifying existing archive 'POSYDON_data.tar.gz'"\
+                   in captured_output.out
+            assert "MD5 verified." in captured_output.out
+            assert download_statement.format('Test') not in\
+                captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            assert removal_statement in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+            # without verbose output
+            build_archive()
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert "Verifying existing archive" not in captured_output.out
+            clean_up()
+            # wrong checksum: replace the existing archive by a fresh download
+            build_archive()
+            with open(filepath, "ab") as corrupted_archive:
+                corrupted_archive.write(b"corrupted\n")
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_archive)
+            totest.download_one_dataset(dataset='Test', verbose=True)
+            captured_output = capsys.readouterr()
+            assert "The existing archive did not pass the verification,"\
+                   in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert "MD5 verified." in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            assert removal_statement in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+            # unreadable archive: replace it by a fresh download
+            build_archive()
+            md5_of_file = totest._md5_of_file
+            self.md5_calls = 0
+            def unreadable_once_md5(filepath):
+                self.md5_calls += 1
+                if self.md5_calls == 1:
+                    raise OSError("unreadable file")
+                return md5_of_file(filepath)
+            mp.setattr(totest, "_md5_of_file", unreadable_once_md5)
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert "The existing archive did not pass the verification,"\
+                   in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+
+        # forced downloads replace a leftover archive by a fresh download
+        build_archive()
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_archive)
+            totest.download_one_dataset(dataset='Test', MD5_check=False,
+                                        force=True)
+            captured_output = capsys.readouterr()
+            assert "Removing existing archive 'POSYDON_data.tar.gz' to "\
+                   +"download it again..." in captured_output.out
+            assert "Verifying existing archive" not in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            clean_up()
+
+        # missing disk space stops before downloading or extracting
+        build_archive()
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       failing_urlretrieve)
+            class mock_usage:
+                free = 0
+            mp.setattr(totest.shutil, "disk_usage",
+                       lambda directory: mock_usage())
+            # leftover archive
+            with raises(OSError, match="Not enough disk space"):
+                totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert extraction_statement.format('Test') not in\
+                captured_output.out
+            assert os.path.exists(filepath)
+            clean_up()
+            # fresh download
+            mp.setattr(totest, "_remote_size", lambda data_url: 1)
+            with raises(OSError, match="Not enough disk space"):
+                totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert download_statement.format('Test') not in\
+                captured_output.out
+            clean_up()
+
+        # a leftover archive means an interrupted extraction: extract it, even
+        # if the data set seems to be installed
+        build_archive()
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest, "_dataset_installed", lambda dataset: True)
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       failing_urlretrieve)
+            totest.download_one_dataset(dataset='Test')
+            captured_output = capsys.readouterr()
+            assert "is already present, skipping." not in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+
+        # without MD5 check, a truncated leftover archive gets replaced by a
+        # fresh download
+        build_archive()
+        with open(filepath, "r+b") as truncated_archive:
+            truncated_archive.truncate(os.path.getsize(filepath)//2)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
+            mp.setattr(totest, "ZENODO_COLLECTION",
+                       {'Test': {'data': "POSYDON_data.tar.gz",
+                                 'md5': original_md5}})
+            mp.setattr(totest.urllib.request, "urlretrieve",
+                       mock_urlretrieve_archive)
+            totest.download_one_dataset(dataset='Test', MD5_check=False)
+            captured_output = capsys.readouterr()
+            assert "The existing archive did not pass the verification,"\
+                   in captured_output.out
+            assert download_statement.format('Test') in captured_output.out
+            assert extraction_statement.format('Test') in captured_output.out
+            assert os.path.exists(os.path.join(test_path, "test.txt"))
+            clean_up()
+        os.remove(pristine_archive)
 
     def test_data_download(self, capsys, monkeypatch):
         def mock_download_one_dataset(**kwargs):
@@ -301,10 +756,18 @@ class TestFunctions:
                 assert self.kwargs['dataset'] == 'Test'
                 assert self.kwargs['MD5_check'] == True
                 assert self.kwargs['verbose'] == v
+                assert self.kwargs['force'] == False
                 if v:
                     assert "You are downloading a single data set, which "\
                            + "might not contain all the data needed.\n"\
                            == capsys.readouterr().out
+            # test forced download of a single dataset
+            self.kwargs = None
+            totest.data_download(set_name='Test', force=True)
+            assert self.kwargs['dataset'] == 'Test'
+            assert self.kwargs['MD5_check'] == True
+            assert self.kwargs['verbose'] == False
+            assert self.kwargs['force'] == True
             # test complete set
             mock_COMPLETE_SETS = {'Unit': ['Test', 'Test2']}
             mp.setattr(totest, "COMPLETE_SETS", mock_COMPLETE_SETS)
@@ -313,6 +776,7 @@ class TestFunctions:
             assert self.kwargs['dataset'] == 'Test2'
             assert self.kwargs['MD5_check'] == True
             assert self.kwargs['verbose'] == False
+            assert self.kwargs['force'] == False
 
     def test_get_posydon_data(self, monkeypatch):
         def mock_parse_commandline():
@@ -330,22 +794,26 @@ class TestFunctions:
                 for v in [True, False]:
                     self.list_printed = None
                     self.commandline_args = totest.argparse.Namespace(\
-                     dataset='DR1', listedsets=l, nomd5check=False, verbose=v)
+                     dataset='DR1', listedsets=l, nomd5check=False,
+                     force=False, verbose=v)
                     totest._get_posydon_data()
                     assert self.list_printed['individual_sets']\
                            == (l == 'individual')
                     assert self.list_printed['verbose'] == v
             # examples
             for n in [True, False]:
-                for v in [True, False]:
-                    for d in ['DR1', 'DR2']:
-                        self.downloaded = None
-                        self.commandline_args = totest.argparse.Namespace(\
-                         dataset=d, listedsets=None, nomd5check=n, verbose=v)
-                        totest._get_posydon_data()
-                        assert self.downloaded['set_name'] == d
-                        assert self.downloaded['MD5_check'] == (not n)
-                        assert self.downloaded['verbose'] == v
+                for f in [True, False]:
+                    for v in [True, False]:
+                        for d in ['DR1', 'DR2']:
+                            self.downloaded = None
+                            self.commandline_args = totest.argparse.Namespace(\
+                             dataset=d, listedsets=None, nomd5check=n,
+                             force=f, verbose=v)
+                            totest._get_posydon_data()
+                            assert self.downloaded['set_name'] == d
+                            assert self.downloaded['MD5_check'] == (not n)
+                            assert self.downloaded['verbose'] == v
+                            assert self.downloaded['force'] == f
 
 
 class TestProgressBar:
