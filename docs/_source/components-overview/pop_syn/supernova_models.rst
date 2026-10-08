@@ -38,9 +38,6 @@ POSYDON supports the following core-collapse mechanisms:
    * - **Patton&Sukhbold20-engine**
      -  ``N20``, ``W20``, ``S19.8``, ``W15``, ``W18``
      - Advanced engine combining Patton & Sukhbold (2020) results for realistic explosion landscapes
-   * - **Maltsev+25-engine**
-     - ``M16``
-     - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
    * - **Couch+20-engine**
      - ``"1.0", "1.2", "1.23", "1.25", "1.27", "1.3", "1.4"``
      - Simulations of turbulence-aided neutrino-driven core-collapse supernovae from Couch et al. (2020)
@@ -50,6 +47,11 @@ POSYDON supports the following core-collapse mechanisms:
    * - **direct_he_core**
      - ``None``
      - Simplified prescriptions that directly collapse the pre-supernova to the baryonic mass of the helium core
+
+..
+  * - **Maltsev+25-engine**
+    - ``M16``
+    - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
 
 
 
@@ -68,13 +70,13 @@ POSYDON also supports pulsational pair-instability supernova (PPISN) prescriptio
    * - **Marchant+19**
      - ``None``
      - Marchant et al. (2019) prescription for PPISN and PISN mass loss from
-     | Breivik et al. (2020).
+       Breivik et al. (2020).
    * - **Hendriks+23**
      - ``PISN_CO_shift`` and ``PPI_extra_mass_loss``
      - Hendriks et al. (2023) prescription for PPISN and PISN mass loss.
-     | ``PISN_CO_shift`` shifts the CO core mass threshold for PPI onset
-     | and ``PPI_extra_mass_loss`` adds extra mass loss during PPISN events.
-     | PISN occurs if the remnant mass after PPI mass loss is less than 10 Msun.
+       ``PISN_CO_shift`` shifts the CO core mass threshold for PPI onset
+       and ``PPI_extra_mass_loss`` adds extra mass loss during PPISN events.
+       PISN occurs if the remnant mass after PPI mass loss is less than 10 Msun.
 
 
 
@@ -291,29 +293,27 @@ The following table lists all pre-defined supernova models and their key charact
      - Yes
      - 0.0
 
-   * - SN_MODEL_v2_25
-     - Maltsev+25-engine
-     - M16
-     - No
-     - -20.0
-
-   * - SN_MODEL_v2_26
-     - Maltsev+25-engine
-     - M16
-     - Yes
-     - -20.0
-
-   * - SN_MODEL_v2_27
-     - Maltsev+25-engine
-     - M16
-     - No
-     - 0.0
-
-   * - SN_MODEL_v2_28
-     - Maltsev+25-engine
-     - M16
-     - Yes
-     - 0.0
+..
+  * - SN_MODEL_v2_25
+    - Maltsev+25-engine
+    - M16
+    - No
+    - -20.0
+  * - SN_MODEL_v2_26
+    - Maltsev+25-engine
+    - M16
+    - Yes
+    - -20.0
+  * - SN_MODEL_v2_27
+    - Maltsev+25-engine
+    - M16
+    - No
+    - 0.0
+  * - SN_MODEL_v2_28
+    - Maltsev+25-engine
+    - M16
+    - Yes
+    - 0.0
 
 All pre-defined models use:
 
