@@ -1424,7 +1424,7 @@ class StepCEE(object):
 
         return
 
-    def adjust_secondary_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
+    def adjust_companion_radius(self,comp_star,binary,mc1_i,mc2_i,rc1_i,rc2_i,separation_postCEE):
         """Check and adjust the radius of the companion star.
 
         The radius of the companion star is adjusted if the star overfills
