@@ -36,15 +36,26 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 
 
 class MergedStep(IsolatedStep):
-    """
-    Prepare a merging star to do an an IsolatedStep
-    """
+    """Prepare a merging star to do an isolated step."""
 
     def __init__(self,
                  merger_critical_rot = 0.4,
                  rel_mass_lost_HMS_HMS = 0.1,
                  *args,
                  **kwargs):
+        """Initialize the merged step.
+
+        Parameters
+        ----------
+        merger_critical_rot : float
+            Critical rotation rate fraction for the merged star.
+        rel_mass_lost_HMS_HMS : float
+            Relative mass lost during a hydrogen-rich main-sequence merger.
+        *args : tuple
+            Additional positional arguments passed to the parent class.
+        **kwargs : dict
+            Additional keyword arguments passed to the parent class.
+        """
 
         self.merger_critical_rot = merger_critical_rot
         self.rel_mass_lost_HMS_HMS = rel_mass_lost_HMS_HMS
@@ -229,11 +240,21 @@ class MergedStep(IsolatedStep):
         Abundances are mass-weighted averages of the two stars, with the
         weights depending on the type of merger and the abundance considered.
 
-        star_base: Single Star
-            The star that engulfs its companion.
-            (generally the base for the merged_star)
-        comp: Single Star
+        Parameters
+        ----------
+        star_base : Single Star
+            The star that engulfs its companion (generally the base for the
+            merged_star).
+        comp : Single Star
             The star that is engulfed by star_base.
+
+        Returns
+        -------
+        merged_star : Single Star
+            The resulting merged star.
+        massless_remnant : Single Star
+            The companion converted into a massless remnant (or the compact
+            object companion in the case of a merger with a compact object).
         """
         # By default the stellar attributes are kept from star_base.
         merged_star = star_base

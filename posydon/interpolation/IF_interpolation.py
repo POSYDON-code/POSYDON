@@ -4,7 +4,6 @@ We showcase the initial-final interpolator which plays a critical role in the
 evolving binary populations. To use the initial-final interpolator we first
 import the IFInterpolator class from the POSYDON library.
 
-
   # importing interpolator
   from posydon.interpolation.IF_interpolation import IFInterpolator
 
@@ -18,14 +17,12 @@ the pretrained interpolator can be loaded from. POSYDON provides
 various pretrained models whose corresponding .pkl files
 can be found in the data directory of the POSYDON repository.
 
-
   model = IFInterpolator()
 
   model.load("path/to/file.pkl")
 
-
 II. Training the Interpolator
--------------------------
+-----------------------------
 
 The interpolator can be trained using an instance of the PSyGrid
 class which can be constructed by running ones own simulations or
@@ -69,7 +66,6 @@ are optimized through Monte Carlo Cross Validation.
 interpolate binaries. Only to be specified in the MCInterpolator case.
 
 For most applications specifying only the first four parameters is recommended.
-
 
     from posydon.grids.psygrid import PSyGrid
     from posydon.interpolation.IF_interpolation import IFInterpolator
@@ -129,7 +125,6 @@ For most applications specifying only the first four parameters is recommended.
 
     interp.train() # training interpolator
 
-
 III. Using the Interpolator
 ---------------------------
 
@@ -138,10 +133,8 @@ used to accomplish various tasks which most commonly are to classify a track
 into its class given an input vector and or to approximate a final vector given
 an input vector.
 
-
     from posydon.binary_evol.binarystar import BinaryStar
     from posydon.binary_evol.singlestar import SingleStar
-
 
     # creating binary, refer to BinaryStar documentation
     binary = BinaryStar(**binary_params,
@@ -154,10 +147,7 @@ an input vector.
 Finally a trained interpolator can be easily saved by specifying a path to a
 .pkl file where the interpolator will be saved to.
 
-
    model.save("path/to/file.pkl") # saving interpolator
-
-
 
 """
 
@@ -266,10 +256,12 @@ class IFInterpolator:
         binary : BinaryStar
             A class which is an input vector which are to be classified and for
             which an output vector will be approximated.
+        sanitization_verbose : bool, optional
+            Whether to print sanitization warnings.
 
         Returns
         -------
-        Output space approximation as a tuple containing two dictionary
+        Output space approximation as a tuple containing two dictionaries.
 
         """
         ynums = {}
@@ -285,16 +277,21 @@ class IFInterpolator:
 
 
     def test_interpolator(self, initial_values, sanitization_verbose = False):
-        """ Method that can take in a 2-D numpy array for more efficient use of the interpolator
+        """Method that can take in a 2-D numpy array for more efficient use of the interpolator.
 
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be evolved
+            A numpy array containing the in-key values of the binaries to be
+            evolved.
+        sanitization_verbose : bool, optional
+            Whether to print sanitization warnings.
 
-        Return
-        ------
-        Interpolated values
+        Returns
+        -------
+        numpy array
+            The interpolated values.
+
         """
         new_values = np.array(initial_values, copy = True)
 
@@ -309,16 +306,19 @@ class IFInterpolator:
         return np.concatenate(final_values).T
 
     def test_classifiers(self, initial_values):
-        """ Method that can take in a 2-D numpy array for more efficient use of classifiers
+        """Method that can take in a 2-D numpy array for more efficient use of the classifiers.
 
         Parameters
         ----------
         initial_values : numpy array
-            A numpy array containing the in-key values of the binaries to be classified
+            A numpy array containing the in-key values of the binaries to be
+            classified.
 
-        Return
-        ------
-        Classified values
+        Returns
+        -------
+        dict
+            Dictionary with the classified values for each key.
+
         """
         new_values = np.array(initial_values, copy = True)
 
@@ -413,6 +413,10 @@ class BaseIFInterpolator:
             The keys for which a classifier should be trained. At a minimum
             should contain the keys needed for multi-class interpolation if it
             is requested
+        c_key : string
+            The key specifying by which class the interpolator should
+            interpolate binaries. Only to be specified in the MCInterpolator
+            case.
 
         """
         self.in_keys, self.out_keys = in_keys, out_keys
@@ -628,7 +632,21 @@ class BaseIFInterpolator:
         return Xt
 
     def _setValid(self, ic, X):
-        """Set binary tracks as (in)valid depending on termination flags."""
+        """Set binary tracks as (in)valid depending on termination flags.
+
+        Parameters
+        ----------
+        ic : numpy array
+            The interpolation class of each track in the grid.
+        X : numpy array
+            The input values of each track in the grid.
+
+        Returns
+        -------
+        numpy array of ints
+            Array marking each track as valid (>= 0) or invalid (-1).
+
+        """
         valid = np.zeros(len(ic), dtype=int)
 
         for flag in ['not_converged', 'ignored_no_RLO',
@@ -714,13 +732,14 @@ class BaseIFInterpolator:
     def train_classifiers(self, grid, method='kNN', **options):
         """Train the classifiers.
 
-        Paramaters
+        Parameters
         ----------
-
         grid : PSyGrid
-            The training grid
+            The training grid.
         method : string
-            Specifies the classification method, default is kNN
+            Specifies the classification method, default is kNN.
+        **options : dict
+            Additional keyword arguments passed to the classifier.
 
         """
         for key in self.classifiers:
@@ -742,12 +761,16 @@ class BaseIFInterpolator:
     def train_classifier(self, grid, key, method='kNN', **options):
         """Train a specific classifier.
 
-        Paramaters
+        Parameters
         ----------
         grid : PSyGrid
-            The training grid
+            The training grid.
+        key : string
+            The key for which the classifier will be trained.
         method : string
-            Specifies the classification method, default is kNN
+            Specifies the classification method, default is kNN.
+        **options : dict
+            Additional keyword arguments passed to the classifier.
 
         """
         v = self.valid >= 0
@@ -854,10 +877,12 @@ class BaseIFInterpolator:
         binary : BinaryStar
             A class which is an input vector which are to be classified and for
             which an output vector will be approximated.
+        sanitization_verbose : bool, optional
+            Whether to print sanitization warnings.
 
         Returns
         -------
-        Output space approximation as a tuple containing two dictionary
+        Output space approximation as a tuple containing two dictionaries.
 
         """
         ynum, ycat = self.evaluate_mat(self._binary2array(binary))
@@ -902,9 +927,35 @@ class BaseIFInterpolator:
                 / m2[m1 < 1.05 * m1.min()].min() > 1 + tol)
 
     def _bestInScaling(self, ic):
-        """Find the best scaling for the input space."""
+        """Find the best scaling for the input space.
+
+        Parameters
+        ----------
+        ic : numpy array
+            Contains the interpolation class for each track in the grid.
+
+        Returns
+        -------
+        tuple
+            The input scalings and the combined input scalings.
+
+        """
 
         def in_scale_one(klass = None):
+            """Find the best scaling for the input space for a given class.
+
+            Parameters
+            ----------
+            klass : string or None
+                The class for which the scaling is determined, or None to use
+                all classes.
+
+            Returns
+            -------
+            list of strings
+                The input scalings for each input key.
+
+            """
 
             in_scaling = []  # I assume inputs are positive-valued
             for i in range(self.n_in):
@@ -940,11 +991,45 @@ class BaseIFInterpolator:
 
 
     def _bestScaling(self, ic, unique_in=True, nfolds = 5, p_test = 0.15):
-        """Find the best scaling for both input and output space."""
+        """Find the best scaling for both input and output space.
+
+        Parameters
+        ----------
+        ic : numpy array
+            Contains the interpolation class for each track in the grid.
+        unique_in : bool
+            If True, the input scaling is not output-dependent.
+        nfolds : int
+            Number of folds used in the cross validation.
+        p_test : float
+            Fraction of samples used for testing in the cross validation.
+
+        Returns
+        -------
+        tuple
+            The input scalings and the output scalings.
+
+        """
 
         in_scaling = self._bestInScaling(ic)
 
         def scale_one(in_scaling, klass = None):
+            """Find the best scaling for the output space for a given class.
+
+            Parameters
+            ----------
+            in_scaling : list of strings
+                The scalings for the input keys.
+            klass : string or None
+                The class for which the scaling is determined, or None to use
+                all classes.
+
+            Returns
+            -------
+            list of strings
+                The output scalings for each output key.
+
+            """
 
             # if False, the scaling for the inputs will be output-dependent
             if unique_in:
@@ -1036,7 +1121,14 @@ class BaseIFInterpolator:
         return in_scaling, (out_scaling, cout_scaling)
 
     def _fillNans(self, ic):
-        """Fill nan values i numerical magnitudes with 1NN."""
+        """Fill nan values in numerical magnitudes with 1NN.
+
+        Parameters
+        ----------
+        ic : numpy array
+            Contains the interpolation class for each track in the grid.
+
+        """
         for i in range(self.n_out):
             wnan = pd.isna(self.YT[:, i]) | np.isinf(self.YT[:, i])
             if any(np.isinf(self.YT[:, i])):
@@ -1085,8 +1177,8 @@ class Interpolator:
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
+        Xt : numpy array
+            List of input vectors.
 
         """
         if self.interpolator is None:
@@ -1134,10 +1226,12 @@ class NNInterpolator(Interpolator):
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
-        scaler : #TODO
-        klass : #TODO
+        Xt : numpy array
+            List of input vectors.
+        scaler : Scaler
+            The scaler used to denormalize the input space.
+        klass : string or None
+            The class of the input vectors.
 
         Returns
         -------
@@ -1174,10 +1268,12 @@ class LinInterpolator(Interpolator):
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
-        scaler : #TODO
-        klass : #TODO
+        Xt : numpy array
+            List of input vectors.
+        scaler : Scaler
+            The scaler used to denormalize the input space.
+        klass : string or None
+            The class of the input vectors.
 
         Returns
         -------
@@ -1214,12 +1310,15 @@ class MC_Interpolator:
     def __init__(self, classifier, classes, methods):
         """Initialize the class-wise interpolation.
 
+        Parameters
+        ----------
         classifier : KNNClassifier
-            The classifier that is used to classify input vectors
-        classes : List of strings
-            The classes in question
-        methods : List of strings
-            The methods to be used to interpolate between each class of tracks
+            The classifier that is used to classify input vectors.
+        classes : list of strings
+            The classes in question.
+        methods : list of strings
+            The methods to be used to interpolate between each class of tracks.
+
         """
         self.interpolators = [None] * len(classes)
         self.D = classifier.D
@@ -1267,7 +1366,19 @@ class MC_Interpolator:
             self.interpolators[i].train(XT[which, :], YT[which, :])
 
     def classifier(self, Xt):
+        """Classify the given input vectors.
 
+        Parameters
+        ----------
+        Xt : numpy array
+            A list of input vectors which are to be classified.
+
+        Returns
+        -------
+        numpy array
+            The predicted classes of the input vectors.
+
+        """
         return self.classifier.predict(Xt)
 
     def predict(self, Xt, zpred, scaler = None):
@@ -1275,10 +1386,12 @@ class MC_Interpolator:
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
-        zpred : #TODO
-        scaler : #TODO
+        Xt : numpy array
+            List of input vectors.
+        zpred : numpy array
+            The predicted classes of the input vectors.
+        scaler : Scaler
+            The scaler used to denormalize the input space.
 
         Returns
         -------
@@ -1316,8 +1429,8 @@ class Classifier:
         ----------
         XT : numpy array
             List of input vectors
-        YT : numpy array
-            List of corresponding classes
+        yT : numpy array
+            List of corresponding classes.
 
         """
         assert XT.shape[0] == len(yT)
@@ -1328,8 +1441,8 @@ class Classifier:
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
+        Xt : numpy array
+            List of input vectors.
 
         Returns
         -------
@@ -1346,8 +1459,8 @@ class Classifier:
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
+        Xt : numpy array
+            List of input vectors.
 
         Returns
         -------
@@ -1366,8 +1479,8 @@ class Classifier:
         ----------
         XT : numpy array
             List of input vectors
-        YT : numpy array
-            List of corresponding classes
+        yT : numpy array
+            List of corresponding classes.
         """
         error = np.sum(yT == self.predict(XT))
 
@@ -1385,8 +1498,8 @@ class KNNClassifier(Classifier):
         ----------
         XT : numpy array
             List of input vectors
-        YT : numpy array
-            List of corresponding classes
+        yT : numpy array
+            List of corresponding classes.
         K : #TODO
 
         """
@@ -1403,8 +1516,8 @@ class KNNClassifier(Classifier):
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
+        Xt : numpy array
+            List of input vectors.
 
         Returns
         -------
@@ -1419,8 +1532,8 @@ class KNNClassifier(Classifier):
 
         Parameters
         ----------
-        XT : numpy array
-            List of input vectors
+        Xt : numpy array
+            List of input vectors.
 
         Returns
         -------
@@ -1436,9 +1549,11 @@ class KNNClassifier(Classifier):
         Parameters
         ----------
         XT : numpy array
-            List of input vectors
-        YT : numpy array
-            List of corresponding classes
+            List of input vectors.
+        yT : numpy array
+            List of corresponding classes.
+        **opts : dict
+            Additional options including 'nfolds', 'p_test', and 'nmax'.
 
         """
         nfolds = opts.get('nfolds', 10)
@@ -1472,9 +1587,22 @@ class KNNClassifier(Classifier):
 
 # MATRIX SCALING
 class Scaler:
+    """Class used to scale input and output space on a per-class basis."""
 
     def __init__(self, norms, XT, ic):
+        """Initialize the Scaler with the given scalings.
 
+        Parameters
+        ----------
+        norms : list or dict
+            The scalings for the input or output keys, either a list or a
+            dictionary keyed by class.
+        XT : numpy array
+            The data used to fit the scalings.
+        ic : numpy array
+            The interpolation class of each track in the grid.
+
+        """
         if norms[0] == norms[1]:
             self.scaler = {
                 None:  MatrixScaler(norms[0], XT)
@@ -1488,7 +1616,21 @@ class Scaler:
             self.scaler[None] = MatrixScaler(norms[1], XT)
 
     def normalize(self, X, klass = None):
+        """Normalize the input space using the appropriate scalings.
 
+        Parameters
+        ----------
+        X : numpy array
+            The data to be normalized.
+        klass : string or None
+            The class of the data, or None to use all classes.
+
+        Returns
+        -------
+        numpy array
+            The normalized data.
+
+        """
         if klass is None:
             return self.scaler[klass].normalize(X)
 
@@ -1512,7 +1654,21 @@ class Scaler:
             return normalized
 
     def denormalize(self, Xn, klass = None):
+        """Denormalize the input space using the appropriate scalings.
 
+        Parameters
+        ----------
+        Xn : numpy array
+            The normalized data to be denormalized.
+        klass : string or None
+            The class of the data, or None to use all classes.
+
+        Returns
+        -------
+        numpy array
+            The denormalized data.
+
+        """
         if klass is None:
             return self.scaler[klass].denormalize(Xn)
 
@@ -1539,7 +1695,16 @@ class MatrixScaler:
     """Class used to scale input and output space."""
 
     def __init__(self, norms, XT):
-        """Initialize the Scaler with desired scalings."""
+        """Initialize the Scaler with desired scalings.
+
+        Parameters
+        ----------
+        norms : list of strings
+            The scalings for each column of the input or output space.
+        XT : numpy array
+            The data used to fit the scalings.
+
+        """
         if len(norms) != XT.shape[1]:
             raise ValueError("The number of columns in XT must be equal "
                             "to the length of norms.")
@@ -1552,7 +1717,19 @@ class MatrixScaler:
             self.scalers[i].fit(XT[which, i], method=norms[i])
 
     def normalize(self, X):
-        """Scale input X."""
+        """Scale input X.
+
+        Parameters
+        ----------
+        X : numpy array
+            The data to be normalized.
+
+        Returns
+        -------
+        numpy array
+            The normalized data.
+
+        """
         assert X.shape[1] == self.N
         Xn = np.empty_like(X)
         for i in range(self.N):
@@ -1561,8 +1738,19 @@ class MatrixScaler:
         return Xn
 
     def denormalize(self, Xn):
-        """Unscale input X."""
+        """Unscale input X.
 
+        Parameters
+        ----------
+        Xn : numpy array
+            The normalized data to be denormalized.
+
+        Returns
+        -------
+        numpy array
+            The denormalized data.
+
+        """
         assert Xn.shape[1] == self.N
         X = np.empty_like(Xn)
         for i in range(self.N):
@@ -1829,7 +2017,18 @@ def assess_models(models, grid_T, grid_t, ux2, path='./'):
 
 
 def analize_nans(out_keys, YT, valid):
-    """Find nans in input numerical variables."""
+    """Find nans in input numerical variables.
+
+    Parameters
+    ----------
+    out_keys : list of strings
+        The keys for which the interpolator is supposed to provide values.
+    YT : numpy array
+        The output values of the grid.
+    valid : numpy array
+        Array marking each track as valid or invalid.
+
+    """
     print("\nNans in numerical variables:")
     for i, key in enumerate(out_keys):
         n = []
@@ -1848,7 +2047,18 @@ def analize_nans(out_keys, YT, valid):
 
 
 def analize_nones(classifiers, valid, grid):
-    """Find None values in input categorical variables."""
+    """Find None values in input categorical variables.
+
+    Parameters
+    ----------
+    classifiers : dict
+        Dictionary of classifiers keyed by the categorical variable names.
+    valid : numpy array
+        Array marking each track as valid or invalid.
+    grid : PSyGrid
+        The grid containing the categorical variables.
+
+    """
     print("\nNones in categorical variables:")
     for key in classifiers:
         n = []
@@ -1871,7 +2081,18 @@ def analize_nones(classifiers, valid, grid):
 
 
 def heatmap(CM, ax, **heat_kwargs):
-    """Plot confusion matrix as heatmap."""
+    """Plot confusion matrix as heatmap.
+
+    Parameters
+    ----------
+    CM : numpy array
+        Confusion matrix to be plotted.
+    ax : matplotlib.axes.Axes
+        Axes on which the heatmap will be plotted.
+    **heat_kwargs : dict
+        Additional keyword arguments passed to ax.matshow.
+
+    """
     lw = heat_kwargs.pop('linewidth', 1.5)
     ax.matshow(CM, **heat_kwargs)
     mi, ma = CM.flatten().min(), CM.flatten().max()
@@ -1898,7 +2119,29 @@ CONFMAT_KWARGS = {
 
 
 def plot_conf_matrix(CM, method, varname, labels, savename=None, **kwargs):
-    """Plot confusion matrix for classification assessment."""
+    """Plot confusion matrix for classification assessment.
+
+    Parameters
+    ----------
+    CM : numpy array
+        Confusion matrix to be plotted.
+    method : string
+        The classification method used.
+    varname : string
+        The name of the classified variable.
+    labels : list of strings
+        The labels of the classes.
+    savename : string or None
+        Path where the plot will be saved, if not None.
+    **kwargs : dict
+        Additional keyword arguments passed to the heatmap.
+
+    Returns
+    -------
+    tuple
+        The figure and axes of the plot.
+
+    """
     heat_kwargs = {}
     for arg in CONFMAT_KWARGS:
         heat_kwargs[arg] = kwargs.get(arg, CONFMAT_KWARGS[arg])
@@ -1954,7 +2197,37 @@ PLT_CLASS_KWARGS = {
 
 def plot_mc_classifier(m, key, XT, zT, ux2, Xt=None, zt=None, zt_pred=None,
                        path=None, **pltargs):
-    """Plot slices illustrating decision boundaries and classification prob."""
+    """Plot slices illustrating decision boundaries and classification probability.
+
+    Parameters
+    ----------
+    m : IFInterpolator
+        A trained instance of the IFInterpolator.
+    key : string
+        The name of the classifier to be plotted.
+    XT : numpy array
+        The input values of the training grid.
+    zT : numpy array
+        The classes of the training grid.
+    ux2 : list of floats
+        The slices at which the plots are generated.
+    Xt : numpy array or None
+        The input values of the testing grid, if provided.
+    zt : numpy array or None
+        The classes of the testing grid, if provided.
+    zt_pred : numpy array or None
+        The predicted classes of the testing grid, if provided.
+    path : string or None
+        The path where the plots will be saved, if not None.
+    **pltargs : dict
+        Additional keyword arguments passed to the plotting functions.
+
+    Returns
+    -------
+    tuple
+        The figure and axes of the last plot.
+
+    """
     N = pltargs.pop('N', PLT_CLASS_KWARGS['N'])
     marker_size = pltargs.pop('s', PLT_CLASS_KWARGS['s'])
     fig_kwargs = {}
@@ -2049,7 +2322,25 @@ def plot_mc_classifier(m, key, XT, zT, ux2, Xt=None, zt=None, zt_pred=None,
 
 
 def is_in_ball(x, x0, ux, log):
-    """Helper function for plot_mc_classifier."""
+    """Helper function for plot_mc_classifier.
+
+    Parameters
+    ----------
+    x : numpy array
+        The values to be checked.
+    x0 : float
+        The center of the slice.
+    ux : numpy array
+        The array of slice positions.
+    log : bool
+        If True, the slice is computed in log space.
+
+    Returns
+    -------
+    numpy array
+        Boolean array indicating which values are inside the slice.
+
+    """
     if log:
         d = np.diff(np.log10(ux))[0] / 2
         w = (np.log10(x) > np.log10(x0) - d) & (np.log10(x) < np.log10(x0) + d)
@@ -2060,7 +2351,21 @@ def is_in_ball(x, x0, ux, log):
 
 
 def test_mesh(XT, N):
-    """Helper function for plot_mc_classifier creating mesh for test data."""
+    """Helper function for plot_mc_classifier creating mesh for test data.
+
+    Parameters
+    ----------
+    XT : numpy array
+        The input values used to define the mesh boundaries.
+    N : int
+        Number of points along each axis of the mesh.
+
+    Returns
+    -------
+    tuple
+        The meshgrid arrays and the stacked mesh points.
+
+    """
     a, b = np.log10(XT[:, 0].min()), np.log10(XT[:, 0].max())
     delta = (b - a) / 50
     x_min, x_max = 10 ** (a - delta), 10 ** (b + delta)
@@ -2099,6 +2404,8 @@ def plot_interpolation(m, keys, v2, ux2, scales=None, path=None, **pltargs):
     ux2 : #TODO
     scales : #TODO
     path : #TODO
+    **pltargs : dict
+        Additional keyword arguments passed to the plotting functions.
 
     """
     N = pltargs.pop('N', PLT_INTERP_KWARGS['N'])

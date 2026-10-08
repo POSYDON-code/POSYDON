@@ -1,6 +1,4 @@
-"""Functions for bin/get-posydon-data to handle the download from Zenodo
-
-"""
+"""Functions for bin/get-posydon-data to handle the download from Zenodo."""
 
 __authors__ = [
     "Jeff J Andrews <jeffrey.andrews@northwestern.edu>",
@@ -24,13 +22,12 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def _parse_commandline():
-    """Parse the arguments given on the command-line
+    """Parse the arguments given on the command-line.
 
-        Returns
-        -------
-        Namespace
-            All the passed arguments from the commoand line or their defaults.
-
+    Returns
+    -------
+    Namespace
+        All the passed arguments from the command line or their defaults.
     """
     defined_sets = list(COMPLETE_SETS.keys()) + list(ZENODO_COLLECTION.keys())
     parser = argparse.ArgumentParser(description="Downloading POSYDON data "
@@ -61,7 +58,9 @@ def _parse_commandline():
     return args
 
 class ProgressBar():
+    """Progress bar callback for the download from Zenodo."""
     def __init__(self):
+        """Initialize the progress bar with its default widgets."""
         self.pbar = None
         self.widgets = [progressbar.Bar(marker="#",left="[",right="]"),
                         progressbar.Percentage(), " | ",
@@ -71,6 +70,17 @@ class ProgressBar():
                         progressbar.ETA()]
 
     def __call__(self, block_num, block_size, total_size):
+        """Update the progress bar.
+
+        Parameters
+        ----------
+        block_num : int
+            The number of blocks already downloaded.
+        block_size : int
+            The size of each block.
+        total_size : int
+            The total size of the download.
+        """
         if not self.pbar:
             self.pbar=progressbar.ProgressBar(widgets=self.widgets,
                                               max_value=total_size)
@@ -83,15 +93,14 @@ class ProgressBar():
             self.pbar.finish()
 
 def list_datasets(individual_sets=False, verbose=False):
-    """Print a list of available datasets
+    """Print a list of available datasets.
 
-        Parameters
-        ----------
-        individual_sets : boolean (default: False)
-            Show the individual sets or only the complete sets.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
+    Parameters
+    ----------
+    individual_sets : boolean, optional
+        Show the individual sets or only the complete sets.
+    verbose : boolean, optional
+        Enables verbose output.
     """
     if individual_sets:
         print("Defined individual sets are:")
@@ -127,15 +136,14 @@ def list_datasets(individual_sets=False, verbose=False):
 def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
     """Download a data set from Zenodo if they do not exist.
 
-        Parameters
-        ----------
-        dataset : string (default: 'DR2_1Zsun')
-            Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
-        MD5_check : boolean (default: True)
-            Use the MD5 check to make sure data is not corrupted.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
+    Parameters
+    ----------
+    dataset : string, optional
+        Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
+    MD5_check : boolean, optional
+        Use the MD5 check to make sure data is not corrupted.
+    verbose : boolean, optional
+        Enables verbose output.
     """
     if not isinstance(dataset, str):
         raise TypeError("'dataset' should be a string.")
@@ -203,15 +211,14 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False):
 def data_download(set_name='DR2', MD5_check=True, verbose=False):
     """Download data files from Zenodo if they do not exist.
 
-        Parameters
-        ----------
-        set_name : string (default: 'DR2')
-            Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
-        MD5_check : boolean (default: True)
-            Use the MD5 check to make sure data is not corrupted.
-        verbose : boolean (default: False)
-            Enables verbose output.
-
+    Parameters
+    ----------
+    set_name : string, optional
+        Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
+    MD5_check : boolean, optional
+        Use the MD5 check to make sure data is not corrupted.
+    verbose : boolean, optional
+        Enables verbose output.
     """
     if not isinstance(set_name, str):
         raise TypeError("'set_name' should be a string.")
@@ -230,9 +237,7 @@ def data_download(set_name='DR2', MD5_check=True, verbose=False):
         raise KeyError(f"The dataset '{set_name}' is not defined.")
 
 def _get_posydon_data():
-    """Run the data download or list the datasets
-
-    """
+    """Run the data download or list the datasets."""
     args = _parse_commandline()
     if args.listedsets == 'complete':
         list_datasets(individual_sets=False, verbose=args.verbose)

@@ -22,7 +22,7 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def get_IMF_pdf(kwargs):
-    '''get the IMF pdf function
+    """Get the IMF pdf function.
 
     Supported schemes based on the IMF module:
     Additional parameters can be passed to the scheme
@@ -49,7 +49,7 @@ def get_IMF_pdf(kwargs):
     -------
     IMF_pdf : function
         Function that returns the IMF PDF
-    '''
+    """
 
     primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
     scheme_kwargs = kwargs.get(primary_mass_scheme, {})
@@ -69,7 +69,7 @@ def get_IMF_pdf(kwargs):
     return IMF_pdf
 
 def get_mass_ratio_pdf(kwargs):
-    """Function that returns the mass ratio PDF function
+    """Function that returns the mass ratio PDF function.
 
     Supported schemes:
     - `flat_mass_ratio` for `secondary_mass_scheme`
@@ -97,6 +97,18 @@ def get_mass_ratio_pdf(kwargs):
         # flat mass ratio, where bounds are dependent on m1 and min/max m2
         # and q_min = 0.05, q_max = 1
         def get_pdf_for_m1(m1):
+            """Return the PDF for the mass ratio for a given primary mass.
+
+            Parameters
+            ----------
+            m1 : float or array_like
+                The primary mass(es).
+
+            Returns
+            -------
+            function
+                Function that returns the mass ratio PDF.
+            """
             m1 = np.atleast_1d(m1)
             minimum = np.max(
                 [kwargs['secondary_mass_min'] / m1, np.zeros(len(m1))],
@@ -137,7 +149,7 @@ def get_mass_ratio_pdf(kwargs):
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
-    '''get the binary fraction pdf function
+    """Get the binary fraction pdf function.
 
     Supported schemes:
     - `const` with `binary_fraction_const`
@@ -153,7 +165,7 @@ def get_binary_fraction_pdf(kwargs):
     -------
     pdf : function
         Function that returns the binary fraction PDF
-    '''
+    """
     if kwargs['binary_fraction_scheme'] == 'const':
         f_b = kwargs['binary_fraction_const']
         binary_fraction_pdf = lambda binary: np.where(np.asarray(binary),
@@ -165,7 +177,7 @@ def get_binary_fraction_pdf(kwargs):
     return binary_fraction_pdf
 
 def get_period_pdf(kwargs):
-    '''get the period pdf function
+    """Get the period pdf function.
 
     Parameters
     ----------
@@ -177,7 +189,7 @@ def get_period_pdf(kwargs):
     pdf : function
         Function that returns the period PDF, which expects the following
         parameters; P, m1
-    '''
+    """
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
             period = Sana12Period(
@@ -218,7 +230,7 @@ def get_period_pdf(kwargs):
     return period_pdf
 
 def get_pdf(kwargs, mass_pdf=False):
-    """Function that builds a PDF function given the simulation parameters
+    """Function that builds a PDF function given the simulation parameters.
 
     Parameters
     ----------
@@ -269,7 +281,7 @@ def get_pdf(kwargs, mass_pdf=False):
     return pdf_function
 
 def get_mean_mass(params):
-    '''Calculate the mean mass of the population
+    """Calculate the mean mass of the population.
 
     Integrates the mass distribution to calculate the mean mass of
     the population
@@ -283,7 +295,7 @@ def get_mean_mass(params):
     -------
     mean_mass : float
         Mean mass of the population
-    '''
+    """
 
     PDF = get_pdf(params, mass_pdf=True)
 
@@ -322,7 +334,7 @@ def calculate_model_weights(pop_data,
                             M_sim,
                             simulation_parameters,
                             population_parameters):
-    """Reweight each model in the simulation to the requested population
+    """Reweight each model in the simulation to the requested population.
 
     Uses the PDF of the simulation and the PDF of the requested population to calculate
     the weights for each model in the simulation to match the requested population.

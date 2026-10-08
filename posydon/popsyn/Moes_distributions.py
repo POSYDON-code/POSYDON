@@ -35,8 +35,9 @@ class Moe_17_PsandQs():
     """
 
     def _idl_tabulate(self, x, f, p=5):
-        """Discrete integration in chunks to avoid instabilities for
-        Newton-Cotes rule at high degree.
+        """Discrete integration in chunks for the Newton-Cotes rule.
+
+        This avoids instabilities of the Newton-Cotes rule at high degree.
         This function is similar to the IDL function int_tabulated except, this
         function seems to be slightly more exact in its solution. Therefore,
         relative to the IDL code, there are small numerical differences.
@@ -108,6 +109,14 @@ class Moe_17_PsandQs():
             Number of supporting points in the mass ratio.
         n_e : int (Default: 100)
             Number of supporting points in the eccentricity.
+        orbital_period_min : float (Default: 1.412)
+            Minimum orbital period in days.
+        orbital_period_max : float (Default: 1e8)
+            Maximum orbital period in days.
+        **kwargs : dict, optional
+            Additional keyword arguments. Currently only ``RNG`` is used
+            to pass a custom numpy.random.Generator instance for the
+            Monte Carlo sampling.
         """
         self.numM1 = n_M1
         self.numlogP = n_logP
@@ -373,6 +382,13 @@ class Moe_17_PsandQs():
                 f"n_e={self.nume}")
 
     def _repr_html_(self): # pragma: no cover
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
         return ("<h3>Moe and Di Stefano 2017 distributions on a grid of</h3>"
                 f"<p>n_M1={self.numM1}</p><p>n_logP={self.numlogP}</p>"
                 f"<p>n_q={self.numq}</p><p>n_e={self.nume}</p>")

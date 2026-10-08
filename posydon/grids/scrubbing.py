@@ -174,7 +174,9 @@ def keep_after_RLO(bh, h1, h2):
 def keep_till_central_abundance_He_C(bh, h1, h2,
     Ystop=THRESHOLD_CENTRAL_ABUNDANCE,
     XCstop=THRESHOLD_CENTRAL_ABUNDANCE_LOOSE_C):
-    """Scrub histories to stop when central helium and carbon abundance are
+    """Scrub histories to stop at central helium and carbon depletion.
+
+    Histories are scrubbed when the central helium and carbon abundance are
     below the stopping criteria.
 
     Parameters

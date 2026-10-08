@@ -89,7 +89,6 @@ h) To include specific columns from MESA data files, set the grid properties of
    By default, the provided columns will be added to the default list. In order
    to select the exact set of columns, provide them in a tuple instead of list.
 
-
 II. READING DATA FROM A GRID
 ----------------------------
 mygrid = PSyGrid("thegrid.h5")  # opens a stored grid
@@ -102,7 +101,6 @@ tenth_run = mygrid[10]
 if tenth_run["binary_history"] is None:
     print("No binary history in 10th run.")
 
-
 Use `.close()` method to close the HDF5 file, or delete the grid variable. E.g.
 
     mygrid.close()
@@ -110,7 +108,6 @@ Use `.close()` method to close the HDF5 file, or delete the grid variable. E.g.
     or
 
     del mygrid
-
 
 III. OTHER FUNCTIONS
 --------------------
@@ -142,7 +139,6 @@ e) Getting list or set of runs (i.e., PSyGridView objects):
 f) Printing parameters used during the creation of the grid
 
     print(psygrid.config)
-
 
 WARNING: reducing reading times when accessing a PSyGrid
 --------------------------------------------------------
@@ -391,14 +387,18 @@ class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
 
     def __init__(self, filepath=None, verbose=False, lazy=False):
-        """Initialize the PSyGrid, and if `filename` is provided, open it.
+        """Initialize the PSyGrid, and if `filepath` is provided, open it.
 
         Parameters
         ----------
+        filepath : str or None (default: None)
+            If not None, it is the path of the HDF5 file to be loaded.
         verbose : bool (default: False)
             If `True`, the objects reports by printing to standard output.
-        path : str or None (default: None)
-            If not None, it is the path of the HDF5 file to be loaded.
+        lazy : bool (default: False)
+            If `True`, load hdf5 files lazily. This means that MESA data
+            will not be loaded into RAM (which can be in the GB range).
+            This comes at a small cost to I/O.
 
         """
         self._reset()    # initialize all except for `filepath` and `verbose`
@@ -623,7 +623,16 @@ class PSyGrid:
 
         # Decide on the columns to be included
         def decide_columns(key_in_config, defaults):
-            """Get columns to be saved or `None` if setting is 'all')."""
+            """Get the columns to be saved or `None` if setting is 'all'.
+
+            Parameters
+            ----------
+            key_in_config : str
+                Key in the configuration holding the column setting.
+            defaults : list
+                Default columns to use when the setting is 'minimum'.
+
+            """
             inconfig = self.config[key_in_config]
             if inconfig == "all":
                 return None
@@ -1606,7 +1615,19 @@ class PSyGrid:
             # Cycle through runs to count the number of data files
 
             def one_if_ok(data):
-                """1 if data is not None and has at least one row, else 0."""
+                """Return 1 if data is not None and has at least one row.
+
+                Parameters
+                ----------
+                data : ndarray or None
+                    Data table to check.
+
+                Returns
+                -------
+                int
+                    1 if data is not None and has at least one row, else 0.
+
+                """
                 return 0 if data is None or len(data) == 0 else 1
 
             N_binary_history = 0
@@ -2141,6 +2162,14 @@ class PSyGrid:
 
         """
         def say(msg):
+            """Print a comparison message if verbose is enabled.
+
+            Parameters
+            ----------
+            msg : str
+                The message to print.
+
+            """
             if verbose:
                 print("COMPARISON:", msg)
 
@@ -2416,6 +2445,19 @@ def downsample_history(bh, h1, h2, params):
 
     # ... and return only these rows
     def correct_shape(array):
+        """Return the first row if the array is two-dimensional.
+
+        Parameters
+        ----------
+        array : ndarray
+            Array whose shape is to be corrected.
+
+        Returns
+        -------
+        ndarray
+            The array with the singleton leading dimension removed.
+
+        """
         return array[0] if len(array.shape) == 2 else array
 
     return (correct_shape(bh[TD.keep]) if bh is not None else None,
@@ -2505,6 +2547,14 @@ def join_grids(input_paths, output_path,
 
     """
     def say(something):
+        """Print a message if verbose is enabled.
+
+        Parameters
+        ----------
+        something : str
+            The message to print.
+
+        """
         if verbose:
             print(something)
 

@@ -22,11 +22,18 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
 class InitiallySingleStep(IsolatedStep):
-    """
-    Prepare a runaway star to do an an isolated_step)
-    """
+    """Prepare a runaway star to do an isolated step."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the initially single step.
+
+        Parameters
+        ----------
+        *args : tuple
+            Additional positional arguments passed to the parent class.
+        **kwargs : dict
+            Additional keyword arguments passed to the parent class.
+        """
 
         super().__init__(*args, **kwargs)
 
