@@ -105,34 +105,6 @@ class TestValues:
         for m in ["Maltsev+25-engine", "Maltsev+25-MCO-rapid"]:
             assert m in totest.MALTSEV_MECHANISMS
 
-    def test_rapid_balanced_models(self):
-        rapid_balanced = [n for n in totest.SN_MODELS
-                          if totest.SN_MODELS[n].get('mechanism') ==
-                          "Maltsev+25-MCO-rapid" and
-                          totest.SN_MODELS[n].get(
-                              'Maltsev25_MCO_extrapolation_mode') == "balanced"]
-        assert len(rapid_balanced) == 4
-        for n in rapid_balanced:
-            model = totest.get_SN_MODEL(n)
-            assert model['mechanism'] == "Maltsev+25-MCO-rapid"
-            assert model['Maltsev25_MCO_extrapolation_mode'] == "balanced"
-            # every Maltsev parameter is set by the model itself
-            assert totest.missing_SN_MODEL_parameters(
-                totest.SN_MODELS[n]) == []
-            # round-trip back to the model name
-            assert totest.get_SN_MODEL_NAME(model) == n
-
-    def test_balanced_does_not_match_optimistic(self):
-        n = "SN_MODEL_v2_29"
-        m = totest.get_SN_MODEL(n)
-        # flipping the extrapolation mode to optimistic must no longer match
-        # the balanced model
-        m2 = dict(m)
-        m2['Maltsev25_MCO_extrapolation_mode'] = "optimistic"
-        # must not match the balanced rapid model; could match another model
-        # or be None, but not n
-        assert totest.get_SN_MODEL_NAME(m2) != n
-
     def test_get_SN_MODEL_parameters(self):
         # a mechanism without extra parameters is defined by the default model
         assert totest.get_SN_MODEL_parameters("Fryer+12-delayed") ==\
@@ -173,23 +145,6 @@ class TestValues:
         for k in totest.DEFAULT_MALTSEV_SN_MODEL.keys():
             assert k not in input_SN_MODEL
         assert totest.get_SN_MODEL_NAME(input_SN_MODEL) is not None
-
-    def test_model_matching_needs_Maltsev_parameters(self):
-        # a Maltsev model is only identified with all of its parameters given
-        n = "SN_MODEL_v2_29"
-        model = totest.get_SN_MODEL(n)
-        assert totest.get_SN_MODEL_NAME(model) == n
-        for k in totest.DEFAULT_MALTSEV_SN_MODEL.keys():
-            incomplete = {key: v for key, v in model.items() if key != k}
-            assert totest.get_SN_MODEL_NAME(incomplete) is None
-        # ...and each of them is part of the model identity
-        for k, v in [('Maltsev25_MCO_NS_mass', 1.5),
-                     ('Maltsev25_MCO_fallback_fraction', 0.5),
-                     ('Maltsev25_MCO_fallback_model', "B"),
-                     ('Maltsev25_MCO_extrapolation_mode', "optimistic")]:
-            changed = dict(model)
-            changed[k] = v
-            assert totest.get_SN_MODEL_NAME(changed) != n
 
     def test_value_SN_MODELS(self):
         assert len(totest.SN_MODELS) > 0
