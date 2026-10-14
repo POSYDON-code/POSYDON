@@ -7,7 +7,7 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
-    "David Aguilera-Dena <daguilera@astro.unam.mx>",
+    "David R. Aguilera-Dena <daguilera@astro.unam.mx>",
 ]
 
 import argparse
