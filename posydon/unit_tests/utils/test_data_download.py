@@ -3,7 +3,9 @@
 """
 
 __authors__ = [
-    "Matthias Kruckow <Matthias.Kruckow@unige.ch>"
+    "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
+    "Max Briel <max.briel@unige.ch>",
+    "David Aguilera-Dena <daguilera@astro.unam.mx>",
 ]
 
 # import the module which will be tested
