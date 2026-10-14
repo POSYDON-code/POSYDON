@@ -106,6 +106,8 @@ Anaconda (Recommended)
         get-posydon-data
 
     You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
+    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
     If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
@@ -199,6 +201,8 @@ For users interested in the latest features and developments, you can install PO
         get-posydon-data
 
     You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
+    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
     If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
