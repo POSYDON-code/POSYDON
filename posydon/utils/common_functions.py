@@ -506,27 +506,40 @@ def beaming(binary):
     return mdot_beam, b
 
 
-def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
-                RNG=np.random.default_rng(), scheme='Hurley+2002'):
+def bondi_hoyle(binary, accretor, donor, idx=-1, RNG=None,
+                scheme='Hurley+2002', orbit_averaged=True,
+                n_E=512):
     """Calculate the Bondi-Hoyle accretion rate of a binary [1]_.
+    Within POSYDON, this is only ever called for accretion onto a
+    compact object.
 
     Parameters
     ----------
     binary : BinaryStar
-        The binary which accretion rate is required.
+        The binary system for which an accretion rate is required.
     accretor : SingleStar
         The accretor in the binary.
     donor : SingleStar
         The donor in the binary.
     idx : int
+        The index of the binary history to use. If -1, the current state is used.
         default: -1
-    wind_disk_criteria : bool
-        default: True, see [5]_
+    RNG : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
     scheme : str
+        The scheme to use for calculating the wind velocity of the donor.
         There are different options:
-
-        - 'Hurley+2002' : following [3]_
-        - 'Kudritzki+2000' : following [7]_
+        - 'Hurley+2002' : following [2]_
+        - 'Kudritzki+2000' : following [5]_
+    orbit_averaged : bool
+        Whether to average the accretion rate over the orbit. If False, a random
+        orbital phase is used. If True, the accretion rate is averaged over the
+        via numerical integration of the instaneous rate over the orbit.
+        default: True
+    n_E : int
+        The number of eccentric anomalies to use for orbit averaging. Only used
+        if orbit_averaged is True.
+        default: 512
 
     Returns
     -------
@@ -535,23 +548,21 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
 
     Notes
     -----
-    An approximation is used for the accretion rate [2]_ and the wind velocity
-    of the donor is moddeled as in [3]_, [6]_. Also see [4]_.
+    The wind velocity of the donor is moddeled as in [2]_, [4]_, [5]_. Also see [3]_.
 
     References
     ----------
     .. [1] Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
-    .. [2] Boffin, H. M. J., & Jorissen, A. 1988, A&A, 205, 155
-    .. [3] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
-    .. [4] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
+    .. [2] Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
+    .. [3] Belczynski, K., Kalogera, V., Rasio, F. A., et al. 2008, ApJS, 174,
         223
-    .. [5] Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C., &
-        Quast, M., 2021, A&A
-    .. [6] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
-    .. [7] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
+    .. [4] Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
+    .. [5] Kudritzki, R.-P., & Puls, J. 2000, ARA&A, 38, 613
 
     """
+
     alpha = 1.5
+    # NOTE: Units are in SI for calculations below
     G = const.standard_cgrav * 1e-3     # 6.67428e-11 m3 kg-1 s-2
     Msun = const.Msun * 1e-3            # 1.988547e30  kg
     Rsun = const.Rsun * 1e-2            # 6.9566e8 m
@@ -572,7 +583,7 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
         np.asanyarray([*donor.lg_wind_mdot_history, donor.lg_wind_mdot],
                       dtype=float)[idx])
     he_core_mass = np.atleast_1d(
-        np.asanyarray([*donor.he_core_radius_history, donor.he_core_radius],
+        np.asanyarray([*donor.he_core_mass_history, donor.he_core_mass],
                       dtype=float)[idx])
     log_R = np.atleast_1d(
         np.asanyarray([*donor.log_R_history, donor.log_R], dtype=float)[idx])
@@ -580,20 +591,31 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     surface_h1 = np.atleast_1d(
         np.asanyarray([*donor.surface_h1_history, donor.surface_h1],
                       dtype=float)[idx])
-    L = np.atleast_1d(
+    log_L = np.atleast_1d(
         np.asanyarray([*donor.log_L_history, donor.log_L], dtype=float)[idx])
-    Teff = stefan_boltzmann_law(10**L, radius)
+    Teff = stefan_boltzmann_law(10**log_L, radius)
 
-    beta = np.empty_like(sep)
+    f_m = np.empty_like(sep)
+
+    # convert masses and separation to SI units (kg, meters)
+    m_acc_si = m_acc * Msun
+    m_si = m * Msun
+    sep_si = sep * Rsun
 
     # Hurley, J. R., Tout, C. A., & Pols, O. R. 2002, MNRAS, 329, 897
     if scheme == 'Hurley+2002':
-        # For H-rich stars
-        beta[np.logical_and(he_core_mass, radius > 900.0)] = 0.125
+        beta = np.empty_like(sep)
+        # For H-rich...
+        # O-type stars
         beta[m > 120.0] = 7.0
+        # A and F-type stars (and lower masses)
         beta[m < 1.4] = 0.5
+        # in between (B-type stars)
         cond = np.logical_and(m >= 1.4, m <= 120.0)
         beta[cond] = 0.5 + (m[cond] - 1.4) / (120.0 - 1.4) * (6.5)
+        # Giants, as defined in Hurley+2002 surrounding eq. 9
+        # (make sure to apply this last, so it is applied to all giants)
+        beta[np.logical_and(he_core_mass > 0.0, radius > 900.0)] = 0.125
 
         # For He-rich stars
         beta[np.logical_and(surface_h1 <= 0.01, m > 120.0)] = 7.0
@@ -608,14 +630,20 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
     elif scheme == 'Kudritzki+2000':
         for i in range(len(m)):
             if Teff[i] >= 21000:
-                f_m = 2.65
+                f_m[i] = 2.65
             elif Teff[i] <= 10000:
-                f_m = 1.0
+                f_m[i] = 1.0
             else:
-                f_m = 1.4
+                f_m[i] = 1.4
 
-    v_esc = np.sqrt(2 * G * m * Msun / (radius * Rsun))     # m/s
-    v_wind = v_esc * f_m                                    # m/s
+    else:
+        raise ValueError(f"Invalid Bondi-Hoyle wind scheme: {scheme}. "
+                         "Available options are "
+                         "'Hurley+2002' or "
+                         "'Kudritzki+2000'.")
+
+    v_esc = np.sqrt(2 * G * m_si / (radius * Rsun))     # m/s
+    v_wind = v_esc * f_m                                # m/s
 
     # Sander A. A. C., Vink J. S., 2020, MNRAS, 499, 873
     for i in range(len(m)):
@@ -625,46 +653,57 @@ def bondi_hoyle(binary, accretor, donor, idx=-1, wind_disk_criteria=True,
             else:
                 slope = (3.25 - 3.75) / (-5.25 + 7.25)
             v_wind[i] = 10 ** (slope * lg_mdot[i] + 3.25 + 5.25 * slope) * 1000
-        else:
-            pass
 
-    n = np.sqrt((G * (m_acc + m) * Msun) / ((radius * Rsun)**3))
-    t0 = RNG.random(len(sep)) * 2 * np.pi / n
-    E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
-               np.ones_like(sep) * np.pi / 2,
-               maxiter=100)
+    # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273 accretion rate calculations
+    # either use a grid of eccentric anomalies or random samples around orbit
+    if orbit_averaged:
+        E = np.linspace(0, 2 * np.pi, n_E)[None, :] # shape (1, n_E) for broadcasting
+        a = sep_si[:, None]                         # shape (N, 1) for broadcasting
+        e = ecc[:, None]
+        m_a = m_acc_si[:, None]
+        m_d = m_si[:, None]
+        v_w = v_wind[:, None]
+        mdot_wind = 10**lg_mdot[:, None]
+    else:
+        if RNG is None:
+            RNG = np.random.default_rng()
+        # mean motion
+        n = np.sqrt((G * (m_acc_si + m_si)) / (sep_si**3))
+        # random orbital period draws
+        t0 = RNG.random(len(sep_si)) * 2 * np.pi / n
+        # solve Kepler's equation for eccentric anomaly E
+        E = newton(lambda x: x - ecc * np.sin(x) - n * t0,
+                    np.ones_like(sep_si) * np.pi / 2,
+                    maxiter=100)
+        a = sep_si
+        e = ecc
+        m_a = m_acc_si
+        m_d = m_si
+        v_w = v_wind
+        mdot_wind = 10**lg_mdot
 
-    b = sep * Rsun * np.sqrt(1 - ecc**2)
-    r_vec = np.array([sep * Rsun * (np.cos(E) - ecc), b * np.sin(E)])
-    v_dir = np.array([-sep * Rsun * np.sin(E), b * np.cos(E)])
-    r = np.linalg.norm(r_vec, axis=0)
-    v_dir_norm = np.linalg.norm(v_dir, axis=0)
+    # calculate orbital geometry and relative velocity
+    m_tot = m_a + m_d
+    r = a * (1 - e * np.cos(E))
+    v = np.sqrt(G * m_tot * (2 / r - 1 / a))
+    # cosine of the angle between the radial vector and orbital velocity
+    k = e * np.sin(E) / np.sqrt(1 - e**2 * np.cos(E)**2)
+    v_rel_sq = v**2 + v_w**2 - 2 * v * v_w * k
 
-    k = np.einsum('ij,ij->j', r_vec, v_dir) / (r * v_dir_norm)  # cos(angle)
-    v = np.sqrt(G * (m + m_acc) * Msun * ((2 / r) - (1 / (sep * Rsun))))  # m/s
-    v_rel = np.sqrt(v**2 + v_wind**2 + 2 * v * v_wind * k)                # m/s
+    # instantaneous Bondi-Hoyle accretion rate
+    mdot_acc = alpha * (G * m_a)**2 / (2 * v_rel_sq**1.5 * v_w * r**2) \
+               * mdot_wind
+    # make rate Eddington-limited for compact objects
+    if accretor.state in ['NS', 'BH', 'WD']:
+        mdot_edd = np.atleast_1d(eddington_limit(binary, idx=idx)[0]) # shape: (N,)
+        mdot_edd = mdot_edd[:, None] if orbit_averaged else mdot_edd
+        mdot_acc = np.minimum(mdot_acc, mdot_edd)
 
-    # Bondi, H., & Hoyle, F. 1944, MNRAS, 104, 273
-    mdot_acc = alpha * ((G * m_acc * Msun)**2
-                        / (2 * v_rel**3 * v_wind * r**2)) * 10**lg_mdot
-
-    # eq. 10 in Sen, K. ,Xu, X. -T., Langer, N., El Mellah, I. , Schurmann, C.,
-    # Quast, M., 2021, A&A
-    if wind_disk_criteria:      # check if accretion disk will form
-        eta = 1.0/3.0           # wind accretion efficiency between 1 and 1/3
-        gamma = 1.0             # for non-spinning BH
-        q = m / m_acc
-        rdisk_div_risco = (
-            (2/3) * (eta / (1 + q)) ** 2
-            * (v / (const.clight * 0.01)) ** (-2)
-            * (1 + (v_wind / v) ** 2) ** (-4) * gamma ** (-1))
-        for i in range(len(rdisk_div_risco)):
-            if rdisk_div_risco[i] <= 1:         # No disk formed
-                mdot_acc[i] = 10**-99.0
-
-    # make it Eddington-limited
-    mdot_edd = eddington_limit(binary, idx=idx)[0]
-    mdot_acc = np.minimum(mdot_acc, mdot_edd)
+    # numerical orbital average of instantaneous rate over orbit
+    if orbit_averaged:
+        weight = 1.0 - e * np.cos(E)
+        trapz = getattr(np, "trapezoid", None) or np.trapz
+        mdot_acc = trapz(mdot_acc * weight, E, axis=-1) / (2 * np.pi)
 
     return np.squeeze(mdot_acc)
 
