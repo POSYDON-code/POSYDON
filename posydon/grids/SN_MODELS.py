@@ -1,6 +1,7 @@
-"""
-This file contains all supernova models we use in our post processing and, as a
-consequence, what the user will be able to select in the initial/final
+"""Supernova models used in POSYDON post-processing.
+
+This file contains all supernova models we use in our post processing and, as
+a consequence, what the user will be able to select in the initial/final
 interpolation. There is a default supernova model, which is used to fill not
 specified parameters in the set of models. Each model is a dictionary
 containing the properties of the model used by step_SN. The functions

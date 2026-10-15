@@ -42,7 +42,19 @@ class Infos:
     connected: bool
 
     def __init__(self, column_id, infos_type, connected):
-        """Initialize an Infos instance."""
+        """Initialize an Infos instance.
+
+        Parameters
+        ----------
+        column_id : int
+            ID of the column where the widget will be placed.
+        infos_type : INFOSTYPE
+            Type of information to display.
+        connected : bool
+            Indicate if this widget needs to be connected with the previous
+            one in the same column.
+
+        """
         self.column_id = column_id
         self.infos_type = infos_type
         self.connected = connected
@@ -71,7 +83,14 @@ class CaseInfos(Infos):
         tot_left_txt: str = "",
         border_width: int = 0,
     ):
-        """Initialize a CaseInfos instance."""
+        """Initialize a CaseInfos instance.
+
+        Parameters
+        ----------
+        column_id : int
+            ID of the column where the widget will be placed.
+
+        """
         super(CaseInfos, self).__init__(column_id, INFOSTYPE.CASE, True)
 
         self.centered_text = centered_txt
@@ -89,7 +108,16 @@ class PointInfos(Infos):
     text: str
 
     def __init__(self, column_id, text: str = ""):
-        """Initialize a PointInfos instance."""
+        """Initialize a PointInfos instance.
+
+        Parameters
+        ----------
+        column_id : int
+            ID of the column where the widget will be placed.
+        text : str
+            Text to display.
+
+        """
         super(PointInfos, self).__init__(column_id, INFOSTYPE.POINT, True)
 
         self.text = text
@@ -174,27 +202,69 @@ class GraphVisualizerCase(GraphVisualizerItem):
         bot_label_layout.addWidget(self._bot_right_label)
 
     def set_central_text(self, text):
-        """Set the text at the center."""
+        """Set the text at the center.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._center_text_label.setText(text)
 
     def set_bottom_left_text(self, text):
-        """Set the text at the bottom left."""
+        """Set the text at the bottom left.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._bot_left_label.setText(text)
 
     def set_bottom_rigth_text(self, text):
-        """Set the text at the bottom right."""
+        """Set the text at the bottom right.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._bot_right_label.setText(text)
 
     def set_top_left_text(self, text):
-        """Set the text at the top left."""
+        """Set the text at the top left.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._top_left_label.setText(text)
 
     def set_top_right_text(self, text):
-        """Set the text at the top right."""
+        """Set the text at the top right.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._top_right_label.setText(text)
 
     def set_central_border(self, width):
-        """Set the text at the central border."""
+        """Set the width of the central border.
+
+        Parameters
+        ----------
+        width : int
+            Width of the border.
+
+        """
         self._center_widget.setFrameShape(QFrame.Box)
         self._center_widget.setLineWidth(width)
 
@@ -252,7 +322,14 @@ class GraphVisualizerPointDraw(QWidget):
         self.setMaximumSize(QSize(13, 13))
 
     def paintEvent(self, event):  # override paintEvent of QWidget
-        """Paint an event."""
+        """Paint an event.
+
+        Parameters
+        ----------
+        event : QPaintEvent
+            Paint event.
+
+        """
         painter = QPainter(self)
         painter.drawEllipse(self.rect().center(), 6, 6)
         painter.setBrush(Qt.black)
@@ -278,7 +355,14 @@ class GraphVisualizerPoint(GraphVisualizerItem):
         self._layout.addWidget(self._label, 0, 1)
 
     def set_text(self, text):
-        """Se the text of the label."""
+        """Set the text of the label.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+
+        """
         self._label.setText(text)
 
     def get_attach_point_top(self):
@@ -330,7 +414,14 @@ class StateInfos(Infos):
         event_filename=None,
         distance=1,
     ):
-        """Initialize a StateInfos instance."""
+        """Initialize a StateInfos instance.
+
+        Parameters
+        ----------
+        column_id : int
+            ID of the column where the widget will be placed.
+
+        """
         super(StateInfos, self).__init__(column_id, INFOSTYPE.STATE, False)
 
         self.distance = distance
@@ -452,13 +543,29 @@ class GraphVisualizerState(GraphVisualizerItem):
         return True
 
     def set_distance(self, dist):
-        """Set the distance."""
+        """Set the distance.
+
+        Parameters
+        ----------
+        dist : float
+            Distance between the two stars, normalised between 0 and 1.
+
+        """
         if dist > 1 or dist < 0:
             print("`dist` needs to be normalised.")
         self._distance = dist
 
     def set_top_text(self, text, index):
-        """Set the text of the top label."""
+        """Set the text of the top label.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+        index : int
+            Index of the top label.
+
+        """
         if index >= len(self._top_labels):
             print(f"Can't set text to top label {index}")
             return
@@ -466,7 +573,16 @@ class GraphVisualizerState(GraphVisualizerItem):
         self._top_labels[index].setText(text)
 
     def set_bot_text(self, text, index):
-        """Se the text of the bottom label."""
+        """Set the text of the bottom label.
+
+        Parameters
+        ----------
+        text : str
+            Text to set.
+        index : int
+            Index of the bottom label.
+
+        """
         if index >= len(self._bot_labels):
             print(f"Can't set text to bot label {index}")
             return
@@ -486,7 +602,14 @@ class GraphVisualizerState(GraphVisualizerItem):
         ) + QPoint(int(self._bg_container.width() / 2), 0)
 
     def resizeEvent(self, event):
-        """Resize the event."""
+        """Resize the event.
+
+        Parameters
+        ----------
+        event : QResizeEvent
+            Resize event.
+
+        """
         self._bg_container.resize(event.size().width(),
                                   self._bg_container.height())
         # Offset is used here to keep the possibility to scale down
@@ -496,7 +619,14 @@ class GraphVisualizerState(GraphVisualizerItem):
         self._bg_container.setPixmap(self._bg)
 
     def paintEvent(self, event):  # override paintEvent of QWidget
-        """Paint the event."""
+        """Paint the event.
+
+        Parameters
+        ----------
+        event : QPaintEvent
+            Paint event.
+
+        """
         self._bg.fill()
         painter = QPainter(self._bg)
 
@@ -579,7 +709,16 @@ class ConnectedItem:
 
     def __init__(self, from_item: GraphVisualizerItem,
                  to_item: GraphVisualizerItem):
-        """Initialize a ConnectedItem instance."""
+        """Initialize a ConnectedItem instance.
+
+        Parameters
+        ----------
+        from_item : GraphVisualizerItem
+            Widget from which the link starts.
+        to_item : GraphVisualizerItem
+            Widget to which the link ends.
+
+        """
         self.from_item = from_item
         self.to_item = to_item
 
@@ -617,7 +756,14 @@ class GraphVisualizercolumn:
         self._last_item = None
 
     def set_title(self, title):
-        """Set the title."""
+        """Set the title.
+
+        Parameters
+        ----------
+        title : str
+            Title to set.
+
+        """
         font = QFont()
         font.setPointSize(25)
         self._title_label.setFont(font)
@@ -679,6 +825,7 @@ class GraphVisualizercolumn:
         return self._column_id
 
     def _create_title_label(self):
+        """Create the title label of the column."""
         self._title_label = QLabel()
         self._title_label.setAlignment(Qt.AlignCenter)
         self._add_widget(self._title_label)
@@ -702,7 +849,18 @@ class GraphVisualizerConnectedcolumn(GraphVisualizercolumn):
     """Simple visual column with arrow between connected widget."""
 
     def __init__(self, grid, column_id, column_span=1):
-        """Initialize a GraphVisualizerConnectedcolumn instance."""
+        """Initialize a GraphVisualizerConnectedcolumn instance.
+
+        Parameters
+        ----------
+        grid : QGridLayout
+            Grid where column take place.
+        column_id : int
+            Unique id of this column.
+        column_span : int
+            Number of logical column used.
+
+        """
         super(GraphVisualizerConnectedcolumn, self).__init__(
             grid, column_id, column_span
         )
@@ -711,7 +869,14 @@ class GraphVisualizerConnectedcolumn(GraphVisualizercolumn):
             self._grid.setColumnStretch(self._column_id + i, 1)
 
     def draw(self, surface):
-        """Draw the surface."""
+        """Draw the surface.
+
+        Parameters
+        ----------
+        surface : QWidget
+            Widget on which to draw.
+
+        """
         painter = QPainter(surface)
 
         for connection in self._connected_items:
@@ -735,14 +900,32 @@ class GraphVisualizerTimeline(GraphVisualizercolumn):
     """Draw a visual column, compressed by another other column."""
 
     def __init__(self, grid, column_id, column_span=1):
-        """Initialize a GraphVisualizerTimeline instance."""
+        """Initialize a GraphVisualizerTimeline instance.
+
+        Parameters
+        ----------
+        grid : QGridLayout
+            Grid where column take place.
+        column_id : int
+            Unique id of this column.
+        column_span : int
+            Number of logical column used.
+
+        """
         super(GraphVisualizerTimeline, self).__init__(
             grid, column_id, column_span)
         for i in range(column_span):
             self._grid.setColumnStretch(self._column_id + i, 0)
 
     def draw(self, surface):
-        """Draw the surface."""
+        """Draw the surface.
+
+        Parameters
+        ----------
+        surface : QWidget
+            Widget on which to draw.
+
+        """
         painter = QPainter(surface)
 
         for connection in self._connected_items:
@@ -867,7 +1050,14 @@ class GraphVisualizer(QWidget):
         self._columns = []
 
     def paintEvent(self, event):  # override paintEvent of QWidget
-        """Paint the event."""
+        """Paint the event.
+
+        Parameters
+        ----------
+        event : QPaintEvent
+            Paint event.
+
+        """
         for col in self._columns:
             col.draw(self)
 

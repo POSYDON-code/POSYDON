@@ -67,6 +67,14 @@ class OptionsWindow(QWidget):
         self._main_layout.addWidget(self._distance_checkbox)
 
     def _show_additional_option(self, state: bool):
+        """Show or hide the distance representation checkbox.
+
+        Parameters
+        ----------
+        state : bool
+            Whether the additional option is visible.
+
+        """
         self._distance_checkbox.setVisible(state)
 
     def _setup_options(self):
@@ -85,38 +93,56 @@ class OptionsWindow(QWidget):
         self._show_additional_option(False)
 
     def _diagram_callback(self, *, emit=True):
+        """Emit the diagram required signal when the diagram view is selected."""
         self._show_additional_option(True)
 
         if emit:
             self.diagram_required.emit()
 
     def _simplified_callback(self, *, emit=True):
+        """Emit the simplify required signal when the simplified view is selected."""
         self._show_additional_option(False)
 
         if emit:
             self.simplify_required.emit()
 
     def _reduced_callback(self, *, emit=True):
+        """Emit the reduce required signal when the reduced view is selected."""
         self._show_additional_option(False)
 
         if emit:
             self.reduce_required.emit()
 
     def _detailled_callback(self, *, emit=True):
+        """Emit the detail required signal when the detailed view is selected."""
         self._show_additional_option(False)
 
         if emit:
             self.detail_requiered.emit()
 
     def set_distance_representation(self, state: bool):
-        """Set the distance representation."""
+        """Set the distance representation.
+
+        Parameters
+        ----------
+        state : bool
+            Whether the distance representation is enabled.
+
+        """
         if state:
             self._distance_checkbox.setCheckState(Qt.Checked)
         else:
             self._distance_checkbox.setCheckState(Qt.Unchecked)
 
     def set_showed_mode(self, mode: PresenterMode):
-        """Set the showed mode."""
+        """Set the showed mode.
+
+        Parameters
+        ----------
+        mode : PresenterMode
+            The mode to display.
+
+        """
         self._dropdow_options.setCurrentText(self._mode_to_text[mode])
 
         # Active callback without emitting

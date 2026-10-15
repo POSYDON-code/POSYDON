@@ -34,7 +34,6 @@ Examples
     my_config_file.update(D)
     my_config_file.save(filename)
 
-
 (2) Loading and printing configuration:
 
     config = ConfigFile(filename)
@@ -76,7 +75,6 @@ Examples
     print("Ok, I'll repeat that...:")
     for key, value in config.items():
         print("    {}: {}".format(key, value))
-
 """
 
 
@@ -101,7 +99,13 @@ class ConfigFile:
     """Class handling input, process and output of configurations."""
 
     def __init__(self, path=None):
-        """Initialize a ConfigFile with or without a path."""
+        """Initialize a ConfigFile with or without a path.
+
+        Parameters
+        ----------
+        path : str or None
+            The path to the configuration file.
+        """
         self.entries = {}
         self.path = path
         if self.path is not None:
@@ -117,7 +121,18 @@ class ConfigFile:
 
     @staticmethod
     def _serialize(data):
-        """Serialize data of types unknown to Python's `json` module."""
+        """Serialize data of types unknown to Python's `json` module.
+
+        Parameters
+        ----------
+        data : object
+            The data to serialize.
+
+        Returns
+        -------
+        list or None
+            The serialized data, or None if it is a known type.
+        """
         if isinstance(data, np.ndarray):
             return data.tolist()
 
@@ -197,7 +212,13 @@ class ConfigFile:
         return iter(self.entries)
 
     def update(self, dictionary):
-        """Create new or update entries from an external dictionary."""
+        """Create new or update entries from an external dictionary.
+
+        Parameters
+        ----------
+        dictionary : dict
+            The dictionary with the entries to add or update.
+        """
         self.entries.update(dictionary)
 
     def keys(self):
@@ -229,7 +250,24 @@ class ConfigFile:
 
 
 def parse_inifile(inifile):
-    """Parse an inifile and return dicts of each section."""
+    """Parse an inifile and return dicts of each section.
+
+    Parameters
+    ----------
+    inifile : str
+        The path to the inifile to parse.
+
+    Returns
+    -------
+    run_parameters : dict
+        The run parameters section.
+    slurm : dict
+        The slurm section.
+    mesa_inlists : dict
+        The mesa inlists section.
+    mesa_extras : dict
+        The mesa extras section.
+    """
     binOps = {
         ast.Add: operator.add,
         ast.Sub: operator.sub,
@@ -239,11 +277,33 @@ def parse_inifile(inifile):
     }
 
     def arithmetic_eval(s):
-        """Control how the strings from the inifile get parsed."""
+        """Control how the strings from the inifile get parsed.
+
+        Parameters
+        ----------
+        s : str
+            The string to evaluate.
+
+        Returns
+        -------
+        object
+            The evaluated value.
+        """
         node = ast.parse(s, mode='eval')
 
         def _eval(node):
-            """Different strings receive different evaluation."""
+            """Different strings receive different evaluation.
+
+            Parameters
+            ----------
+            node : ast.AST
+                The AST node to evaluate.
+
+            Returns
+            -------
+            object
+                The evaluated value.
+            """
             if isinstance(node, ast.Expression):
                 return _eval(node.body)
             elif isinstance(node, ast.Str):

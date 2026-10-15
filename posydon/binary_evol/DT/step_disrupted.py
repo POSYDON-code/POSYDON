@@ -22,23 +22,30 @@ LIST_ACCEPTABLE_STATES_FOR_POSTHeMS = STAR_STATES_HE_RICH.copy()
 [LIST_ACCEPTABLE_STATES_FOR_POSTHeMS.remove(x) for x in LIST_ACCEPTABLE_STATES_FOR_HeMS]
 
 class DisruptedStep(IsolatedStep):
-    """
-    Prepare a runaway star to do an an isolated_step)
-    """
+    """Prepare a runaway star to do an isolated step."""
 
     def __init__(self, *args, **kwargs):
+        """Initialize the disrupted step.
+
+        Parameters
+        ----------
+        *args : tuple
+            Additional positional arguments passed to the parent class.
+        **kwargs : dict
+            Additional keyword arguments passed to the parent class.
+        """
 
         super().__init__(*args, **kwargs)
 
     def __call__(self,binary):
 
-        '''
+        """
         if binary.state == "disrupted":
             #find which star is a CO, the other will be evolved in isolation
             if binary.star_1 in STAR_STATES_CO:   ## TODO KEEP IT AS CORE-COLLAPSE
                 binary.star_1 = None
             elif binary.star_2 in STAR_STATES_CO:
                 binary.star_2 = None
-        '''
+        """
 
         super().__call__(binary)

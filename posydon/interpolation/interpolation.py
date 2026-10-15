@@ -23,6 +23,17 @@ def _extract_model_name(key):
     """Extract SN_MODEL_NAME from a full column key.
 
     E.g. 'S1_SN_MODEL_v2_01_CO_type' → 'SN_MODEL_v2_01'.
+
+    Parameters
+    ----------
+    key : str
+        Full column key starting with 'S1_' or 'S2_'.
+
+    Returns
+    -------
+    str
+        The name of the SN_MODEL contained in the column key.
+
     """
     rest = key[3:]  # strip 'S1_' or 'S2_'
     return next(name for name in SN_MODELS if rest.startswith(name + '_'))
@@ -89,6 +100,8 @@ class psyTrackInterp:
     def load(self, filename):
         """Load interpolation model to be used for predictions.
 
+        Parameters
+        ----------
         filename : str
             path/name of pickle file to be loaded.
 
@@ -104,7 +117,14 @@ class psyTrackInterp:
             self.grid.close()
 
     def train(self, method='NearestNeighbor'):
-        """Training method."""
+        """Train the interpolation model.
+
+        Parameters
+        ----------
+        method : string
+            The interpolation method to use, default is 'NearestNeighbor'.
+
+        """
         self.method = method
 
         XT = self._grid2array(self.grid)
@@ -127,7 +147,23 @@ class psyTrackInterp:
             raise ValueError("Method %s not supported." % self.method)
 
     def evaluate(self, binary, print_dist=False):
-        """Evaluate given a binary object."""
+        """Evaluate the binary against the trained interpolation model.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object to evaluate.
+        print_dist : boolean
+            Whether to print the distances to the nearest neighbor,
+            default is false.
+
+        Returns
+        -------
+        tuple
+            The closest MESA binary run, the vector of input differences,
+            and the termination flags of the closest run.
+
+        """
         Xt = self._binary2array(binary)
         Xtn = self._normalize(Xt)
 
@@ -193,7 +229,19 @@ class psyTrackInterp:
         return Xn
 
     def _binary2array(self, binary):
+        """Convert a binary object into a single-row data array.
 
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary object to convert to an input array.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of shape (1, 3) with the star masses and orbital period.
+
+        """
         var2 = binary.star_2.mass
         if self.interp_in_q:
             var2 = binary.star_2.mass / binary.star_1.mass
@@ -207,6 +255,18 @@ class psyTrackInterp:
         The normalized matrix will be stored as a class attribute.
         The function also stores DataScaler objects that allow for later
         denormalization of variables.
+
+        Parameters
+        ----------
+        X : numpy.ndarray
+            The input matrix with self.n_in columns to be normalized.
+        norms : list of strings
+            The scaling method to apply to each column of X.
+
+        Returns
+        -------
+        numpy.ndarray
+            The normalized version of the input matrix X.
 
         """
         if not (X.shape[1] == self.n_in) or not (len(norms) == self.n_in):
@@ -330,7 +390,16 @@ class GRIDInterpolator():
     """
 
     def __init__(self, path, verbose=False):
-        """Initialize the GRIDInterpolator."""
+        """Initialize the GRIDInterpolator.
+
+        Parameters
+        ----------
+        path : str
+            The path to the directory that contains the h5 grid.
+        verbose : bool
+            Whether to run in verbose mode, default is False.
+
+        """
         self.path = path
         self.verbose = verbose
 
@@ -523,7 +592,7 @@ class GRIDInterpolator():
 
         Parameters
         ----------
-        *args
+        *args : float
             Associated initial masses
             which corresponding data should be loaded.
 
@@ -622,6 +691,23 @@ class GRIDInterpolator():
         return kvalue[i_zams:]
 
     def get_final_values(self, key, M_new):
+        """Return the interpolated final value for the given key.
+
+        Parameters
+        ----------
+        key : str
+            The specific final value key.
+        M_new : float
+            The associated initial mass
+            which final value requires interpolation.
+
+        Returns
+        -------
+        float
+            The interpolated final value specified by `key`
+            associated with the initial mass `M_new`.
+
+        """
         if M_new in self.grid_mass:
             try:
                 kvalue = self.grid_final_values[M_new][key]
@@ -677,6 +763,23 @@ class GRIDInterpolator():
         return kvalue
 
     def get_final_state(self, key, M_new):
+        """Return the final state for the given key.
+
+        Parameters
+        ----------
+        key : str
+            The specific final value key.
+        M_new : float
+            The associated initial mass
+            which final state requires interpolation.
+
+        Returns
+        -------
+        float
+            The final state value specified by `key`
+            associated with the initial mass `M_new`.
+
+        """
         if M_new in self.grid_mass:
             try:
                 kstate = self.grid_final_values[M_new][key]
@@ -709,6 +812,24 @@ class GRIDInterpolator():
         return kstate
 
     def get_profile(self, key, M_new):
+        """Return the interpolated profile for the given key.
+
+        Parameters
+        ----------
+        key : str
+            The specific profile key.
+        M_new : float
+            The associated initial mass
+            which profile requires interpolation.
+
+        Returns
+        -------
+        tuple
+            The interpolated profile specified by `key`
+            associated with the initial mass `M_new`,
+            and the final profile of the closest grid model.
+
+        """
         grid = self.grid
         if M_new in self.grid_mass:
             try:

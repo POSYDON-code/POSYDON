@@ -1,12 +1,9 @@
-"""The POSYDON warnings class and subclasses for more detailed warning
-handling.
+"""The POSYDON warnings class and subclasses for detailed warning handling.
 
 Mainly the function `Pwarn` should be called to submit a warning, which behaves
 like warnings.warn.
 All the defined POSYDON warnings are collected in `_POSYDONWarning_subclasses`
 for those will be checked automatically, when using `Pwarn`.
-The functions `SetPOSYDONWarnings`, `AllPOSYDONWarnings`, and
-`NoPOSYDONWarnings` allow to change the filter settings.
 It should be noted, that we register POSYDON warnings by category, filename,
 and lineno. We do not include the warning text in the identifier of a new
 warning for the default filter, hence it behaves different to python warnings.
@@ -41,8 +38,25 @@ import warnings
 
 
 def nosrc_code_format(message, category, filename, lineno, line=None):
-    """
-    This sets the warning format to not include the source code line.
+    """Set the warning format to not include the source code line.
+
+    Parameters
+    ----------
+    message : str
+        The warning message.
+    category : type
+        The warning category.
+    filename : str
+        The file in which the warning was issued.
+    lineno : int
+        The line number at which the warning was issued.
+    line : str, optional
+        The source code line (unused).
+
+    Returns
+    -------
+    str
+        The formatted warning text.
     """
     return f"{filename}:{lineno}: {category.__name__}: {message}\n"
 
@@ -53,6 +67,13 @@ warnings.formatwarning = nosrc_code_format
 class POSYDONWarning(Warning):
     """General POSYDON warning class."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         self.message = message
 
     def __str__(self):
@@ -61,82 +82,196 @@ class POSYDONWarning(Warning):
 class ApproximationWarning(POSYDONWarning):
     """Warning that a physical approximation was used during binary evolution."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class BinaryParsingWarning(POSYDONWarning):
     """Warnings related to parsing of binaries."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class ClassificationWarning(POSYDONWarning):
     """Warnings related to classification during binary evolution."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class EvolutionWarning(POSYDONWarning):
-    """Warning that something unexpeted occurred during the binary evolution, but
-    the evolution is able to continue (binary did not fail)."""
+    """Warning that something unexpected occurred during the binary evolution.
+
+    The evolution is able to continue (binary did not fail).
+    """
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class InappropriateValueWarning(POSYDONWarning):
     """Warnings that a strange value is used."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class IncompletenessWarning(POSYDONWarning):
     """Warnings when not all tasks could be done."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class InterpolationWarning(POSYDONWarning):
     """Warnings related to interpolation during binary evolution."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class MissingFilesWarning(POSYDONWarning):
     """Warnings related to missing files."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class OverwriteWarning(POSYDONWarning):
     """Warning that a data will get overwritten."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class ReplaceValueWarning(POSYDONWarning):
     """Warning that a value got replaced."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class UnsupportedModelWarning(POSYDONWarning):
     """Warnings related to selecting a model that is not supported."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class SFHModelWarning(POSYDONWarning):
     """Warnings related to the SFH model."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class DeprecationWarning(POSYDONWarning):
     """Warnings related to deprecated features."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class ValueWarning(POSYDONWarning):
     """Warnings related to a ValueError."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class InitializationWarning(POSYDONWarning):
     """Warnings related to intializing things."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 class StepWarning(POSYDONWarning):
     """Warnings related to an evolution step."""
     def __init__(self, message=''):
+        """Initialize the warning with a message.
+
+        Parameters
+        ----------
+        message : str, optional
+            The warning message.
+        """
         super().__init__(message)
 
 

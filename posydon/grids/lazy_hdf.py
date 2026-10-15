@@ -1,3 +1,5 @@
+"""Lazy wrapper around HDF5 datasets with optional dtype conversion."""
+
 __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>"
 ]
@@ -43,6 +45,16 @@ class LazyHDF5:
       provided.
     """
     def __init__(self, dataset, dtype_set=None):
+        """Initialize the lazy wrapper around an HDF5 dataset.
+
+        Parameters
+        ----------
+        dataset : h5py.Dataset or array-like
+            The underlying dataset providing the data.
+        dtype_set : dict or None (default: None)
+            Mapping of field names to NumPy dtypes used to cast the data.
+
+        """
         self._dataset = dataset
         self._dtype_set = dtype_set
         if self._dtype_set is not None:
@@ -73,20 +85,58 @@ class LazyHDF5:
         return data
 
     def astype(self, dtype): # pragma: no cover
+        """Return a new LazyHDF5 with the data cast to the given dtype.
+
+        Parameters
+        ----------
+        dtype : numpy dtype or str
+            The dtype to cast the data to.
+
+        Returns
+        -------
+        LazyHDF5
+            A new LazyHDF5 wrapping the cast array.
+
+        """
         return LazyHDF5(np.asarray(self).astype(dtype), self._dtype_set)
 
     @property
     def dtype(self):
+        """Return the dtype of the wrapped data.
+
+        Returns
+        -------
+        numpy dtype
+            The dtype of the dataset, or the converted dtype if a
+            `dtype_set` was provided.
+
+        """
         if self._dtype_set is not None:
             return np.dtype(self._dtype_list)
         return self._dataset.dtype
 
     @property
     def shape(self): # pragma: no cover
+        """Return the shape of the wrapped dataset.
+
+        Returns
+        -------
+        tuple
+            The shape of the underlying dataset.
+
+        """
         return self._dataset.shape
 
     def __len__(self): # pragma: no cover
         return len(self._dataset)
 
     def to_df(self): # pragma: no cover
+        """Convert the wrapped data to a pandas DataFrame.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The data as a DataFrame.
+
+        """
         return pd.DataFrame(self.__array__())

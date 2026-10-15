@@ -1,4 +1,4 @@
-""" Module to evaluate IFInterpolator class """
+"""Module to evaluate the IFInterpolator class."""
 
 __authors__ = [
     "Philipp Moura Srivastava <philipp.msrivastava@gmail.com>"
@@ -13,10 +13,9 @@ from posydon.interpolation.IF_interpolation import _get_grid_column
 
 
 class EvaluateIFInterpolator:
-    """ Class that is helpful for evaluating interpolation performance
-    """
+    """Class that is helpful for evaluating interpolation performance."""
     def __init__(self, interpolator, test_grid):
-        """ Initialize the EvaluateIFInterpolator class
+        """Initialize the EvaluateIFInterpolator class.
 
         Parameters
         ----------
@@ -41,7 +40,7 @@ class EvaluateIFInterpolator:
         self.__compute_errs()
 
     def __compute_errs(self):
-        """ Method that computes both interpolation and classification errors """
+        """Method that computes both interpolation and classification errors."""
 
         iv = np.array(self.test_grid.initial_values[self.in_keys].tolist(),
                       dtype=float) # initial values
@@ -113,19 +112,21 @@ class EvaluateIFInterpolator:
 
 
     def __format(self, s, title = False):
-        """ Method that formats keys for plots
+        """Method that formats keys for plots.
 
         Parameters
         ----------
         s : str
             string to be formatted
+        title : bool
+            If True, the string is title-cased.
 
         """
 
         return s.replace("_", " ").title()
 
     def __find_labels(self, key):
-        """ Method that finds labels in classifier
+        """Method that finds labels in the classifier.
 
         Parameters
         ----------
@@ -154,6 +155,19 @@ class EvaluateIFInterpolator:
         return labels
 
     def __clean_errs(self, errs):
+        """Remove rows with NaN or infinite values from the errors array.
+
+        Parameters
+        ----------
+        errs : pandas.DataFrame
+            Array of errors to clean.
+
+        Returns
+        -------
+        pandas.DataFrame
+            Array of errors without NaN or infinite values.
+
+        """
 
         errs = errs[pd.notna(errs).any(axis = 1)] # dropping nans
         errs = errs[~np.isinf(errs).any(axis = 1)] # dropping infs
@@ -163,8 +177,9 @@ class EvaluateIFInterpolator:
 
     def violin_plots(self, err_type = "relative", keys = None,
                      save_path = None, close_fig = False):
-        """ Method that plots distribution of specified error for given keys and
-        optionally saves it.
+        """Method that plots the distribution of specified error for given keys.
+
+        Optionally saves the figure.
 
         Parameters
         ----------
@@ -222,6 +237,18 @@ class EvaluateIFInterpolator:
         axs.grid(axis = "y")
 
         def halve_paths(field, color, right = True):
+            """Cut the violin plot paths at the center of the distribution.
+
+            Parameters
+            ----------
+            field : matplotlib.collections.PathCollection
+                The matplotlib collection to modify.
+            color : str
+                Edge color of the paths.
+            right : bool
+                If True, keep the right half of the paths, otherwise the left.
+
+            """
 
             for i, path in enumerate(field.get_paths()):
 
@@ -236,6 +263,21 @@ class EvaluateIFInterpolator:
                 field.set_edgecolor(color)
 
         def customize_violinplot(plot, color, outlined = False, right = True):
+            """Customize a violin plot with the given color and half.
+
+            Parameters
+            ----------
+            plot : dict
+                Violin plot object containing 'bodies', 'cmins', 'cmaxes'
+                and 'cmedians'.
+            color : str
+                Color of the violin plot.
+            outlined : bool
+                If True, only the outline of the violin plot is colored.
+            right : bool
+                If True, keep the right half of the paths, otherwise the left.
+
+            """
 
             halve_paths(plot["cmins"], color, right = right)
             halve_paths(plot["cmaxes"], color, right = right)
@@ -276,7 +318,7 @@ class EvaluateIFInterpolator:
 
     def confusion_matrix(self, key, params = {}, save_path = None,
                          close_fig = False):
-        """ Method that plots confusion matrices to evaluate classification
+        """Method that plots confusion matrices to evaluate classification.
 
         Parameters
         ----------
@@ -341,7 +383,7 @@ class EvaluateIFInterpolator:
             plt.close(fig)
 
     def classifiers(self):
-        """ Method that lists classifiers available """
+        """Method that lists the available classifiers."""
         classes = self.interpolator.test_classifiers(
             np.array([
             self.test_grid.initial_values[self.in_keys].tolist()
@@ -351,7 +393,7 @@ class EvaluateIFInterpolator:
         return list(classes.keys())
 
     def keys(self):
-        """ Method that lists out keys available """
+        """Method that lists the available output keys."""
 
         out_keys = []
 
@@ -361,10 +403,26 @@ class EvaluateIFInterpolator:
         return out_keys
 
     def decision_boundaries(self):
+        """Plot the decision boundaries of the classifiers."""
 
         pass
 
     def plot2D(self, key, slice_3D_var_str, slice_3D_var_range, PLOT_PROPERTIES):
+        """Plot the interpolation errors on a 2D grid slice.
+
+        Parameters
+        ----------
+        key : str
+            The output key for which the errors are plotted.
+        slice_3D_var_str : str
+            The 3D variable along which to slice the grid. Allowed values
+            are 'mass_ratio' or 'star_2_mass'.
+        slice_3D_var_range : list
+            Lower and upper values of the 3D variable used for slicing.
+        PLOT_PROPERTIES : dict
+            Dictionary of extra plotting properties.
+
+        """
 
         k_ind = self.out_keys.index(key)
 

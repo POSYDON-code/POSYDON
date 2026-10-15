@@ -51,21 +51,21 @@ def _get_grid_column(grid, key):
     raise KeyError(f"Column {key!r} not found in final_values or SN_MODELS")
 
 def join_lists(A, B):
-    """Make a joint list of A and B without elements already in A and keeping
-    the order.
+    """Make a joint list of A and B without repeating elements.
+
+    Elements already in A are not added again from B, keeping the order.
 
     Parameters
     ----------
     A : iterable
         The baseline list to be extended.
     B : iterable
-        The second list from which additional elements will be appened.
+        The second list from which additional elements will be appended.
 
     Returns
     -------
     list
         The joint list by merging A and B.
-
     """
     result = []
     for element in A:
@@ -110,7 +110,20 @@ def read_MESA_data_file(path, columns):
 
 
 def read_EEP_data_file(path, columns):
-    """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`."""
+    """Read an EEP file (can be `.gz`) - similar to `read_MESA_data_file()`.
+
+    Parameters
+    ----------
+    path : str
+        The path to the file.
+    columns : list of strings
+        The list of names of the columns to be returned.
+
+    Returns
+    -------
+    array or None
+        The array containing the MESA data, or `None` if reading failed.
+    """
     if path is None:
         return None
     try:
@@ -122,7 +135,18 @@ def read_EEP_data_file(path, columns):
 
 
 def fix_He_core(history):
-    """Make He core mass/radius at least equal to CO core mass/radius."""
+    """Make He core mass/radius at least equal to CO core mass/radius.
+
+    Parameters
+    ----------
+    history : numpy structured array
+        The history data to fix in-place.
+
+    Returns
+    -------
+    numpy structured array
+        The corrected history data.
+    """
     if history is not None:
         columns = history.dtype.names
         if "he_core_mass" in columns and "co_core_mass" in columns:
@@ -222,13 +246,39 @@ def get_cell_edges(grid_x, grid_y):
 
 
 def find_nearest(val, array):
-    """Find the element of `array` closest to the value `val`."""
+    """Find the element of `array` closest to the value `val`.
+
+    Parameters
+    ----------
+    val : float
+        The value to find the closest element to.
+    array : array
+        The array to search.
+
+    Returns
+    -------
+    float
+        The element of `array` closest to `val`.
+    """
     nearest_idx = (abs(val-array)).argmin()
     return array[nearest_idx]
 
 
 def find_index_nearest_neighbour(array, value):
-    """Find the index of `array` closest to the value."""
+    """Find the index of `array` closest to the value.
+
+    Parameters
+    ----------
+    array : array
+        The array to search.
+    value : float
+        The value to find the closest element to.
+
+    Returns
+    -------
+    int
+        The index of the element of `array` closest to `value`.
+    """
     idex = np.argmin(np.abs(array - value))
     return idex
 

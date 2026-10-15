@@ -42,24 +42,31 @@ class VisualizerInterface:
         return self._visualizer
 
     def detail_required(self):
+        """Return the detail required signal from the options window."""
         return self._options.detail_requiered
 
     def reduce_required(self):
+        """Return the reduce required signal from the options window."""
         return self._options.reduce_required
 
     def simplify_required(self):
+        """Return the simplify required signal from the options window."""
         return self._options.simplify_required
 
     def diagram_required(self):
+        """Return the diagram required signal from the options window."""
         return self._options.diagram_required
 
     def save_required(self):
+        """Return the save required signal from the main window."""
         return self._main_win.save_requiered
 
     def distance_representation_required(self):
+        """Return the distance representation required signal from the options window."""
         return self._options.distance_representation_required
 
     def options(self):
+        """Return the options window."""
         return self._options
 
 
@@ -109,8 +116,23 @@ class MainWindow(QMainWindow):
         self.setMenuBar(bar)
 
     def _show_option_window(self, _):
+        """Show the option window.
+
+        Parameters
+        ----------
+        _ : object
+            Unused argument provided by the triggered signal.
+
+        """
         self._option_window.showNormal()
 
     def closeEvent(self, event):    # Override closeEvent of QWidget
-        """Close the option window."""
+        """Close the option window.
+
+        Parameters
+        ----------
+        event : QCloseEvent
+            The close event.
+
+        """
         self._option_window.close()

@@ -1,3 +1,5 @@
+"""Functions to compute merger rates and related cosmological quantities."""
+
 __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
@@ -49,11 +51,37 @@ def get_shell_comoving_volume(z_hor_i, z_hor_f, sensitivity="infinite"):
     H_0 = cosmology.H(0).to("1/yr").value  # km/Gpc*s
 
     def E(z):
+        """Compute the Hubble expansion factor.
+
+        Parameters
+        ----------
+        z : double
+            Cosmological redshift.
+
+        Returns
+        -------
+        double
+            The expansion factor E(z).
+        """
         Omega_m = cosmology.Om0
         Omega_L = 1 - cosmology.Om0
         return np.sqrt(Omega_m * (1.0 + z) ** 3 + Omega_L)
 
     def f(z, sensitivity):
+        """Compute the comoving volume element.
+
+        Parameters
+        ----------
+        z : double
+            Cosmological redshift.
+        sensitivity : string
+            The GW detector sensitivity.
+
+        Returns
+        -------
+        double
+            The comoving volume element.
+        """
         if sensitivity == "infinite":
             return (
                 1.0

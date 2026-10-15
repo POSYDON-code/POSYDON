@@ -24,8 +24,23 @@ from posydon.utils.posydonerror import NumericalError
 
 
 def _event(terminal, direction=0):
-    """Return a decorator that sets solve_ivp event attributes."""
+    """Return a decorator that sets solve_ivp event attributes.
+
+    Parameters
+    ----------
+    terminal : bool
+        Whether the event is terminal.
+    direction : float
+        Direction of the event crossing.
+    """
     def dec(f):
+        """Set the terminal and direction attributes on an event function.
+
+        Parameters
+        ----------
+        f : callable
+            Event function to be decorated.
+        """
         f.terminal = terminal
         f.direction = direction
         return f
@@ -56,6 +71,23 @@ class _SBrentqDenseOutput:
     """
 
     def __init__(self, sol, a0_Rsun, t_scale, t0_phys, s_lo, s_hi):
+        """Store the dense ODE output and the physical scaling parameters.
+
+        Parameters
+        ----------
+        sol : OdeSolution
+            Dense output from solve_ivp in s-space.
+        a0_Rsun : float
+            Initial separation [Rsun].
+        t_scale : float
+            Characteristic GW timescale [yr].
+        t0_phys : float
+            Physical time at integration start [yr].
+        s_lo : float
+            Lower bound of s integration range.
+        s_hi : float
+            Upper bound of s integration range.
+        """
         self.sol = sol
         self.a0_Rsun = a0_Rsun
         self.t_scale = t_scale
@@ -130,6 +162,13 @@ class DoubleCO(detached_step):
     """
 
     def __init__(self, **kwargs):
+        """Initialize the double compact-object evolution step.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments passed to the detached_step initializer.
+        """
         super().__init__(**kwargs)
         # Use the DCO-specific evolution object (disables tides, winds, etc.)
         self.evo = double_CO_evolution(**self.evo_kwargs)
@@ -159,6 +198,15 @@ class DoubleCO(detached_step):
            and t0 is the characteristic GW timescale.
         2. We then substitute s = -ln(\alpha) to eliminate the singularity in the Peters equations,
            which removes the alpha^-3 and alpha^-4 prefactors that cause numerical issues for tight binaries.
+
+        Parameters
+        ----------
+        binary : BinaryStar
+            The binary system to evolve.
+        primary : SingleStar
+            Primary star of the binary.
+        secondary : SingleStar
+            Secondary star of the binary.
         """
         self.max_time = binary.properties.max_simulation_time
         t0_phys = binary.time                                     # [yr]
@@ -197,6 +245,15 @@ class DoubleCO(detached_step):
         # --- max-time event: tau reaches tau_max before contact ---------------
         @_event(True, +1)
         def ev_maxtime(s, y):
+            """Trigger when dimensionless time tau reaches the max-time limit.
+
+            Parameters
+            ----------
+            s : float
+                Independent variable, s = -ln(a/a0).
+            y : array_like
+                State vector at s, [l, tau, secondary.omega, primary.omega].
+            """
             return y[1] - tau_max
 
         # --- integrate -------------------------------------------------------
@@ -276,6 +333,13 @@ class double_CO_evolution(detached_evolution):
     """
 
     def __init__(self, **kwargs):
+        """Initialize the double compact-object evolution object.
+
+        Parameters
+        ----------
+        **kwargs : dict
+            Keyword arguments passed to the detached_evolution initializer.
+        """
         super().__init__(**kwargs)
         self.do_magnetic_braking = False
         self.do_tides = False
@@ -307,6 +371,11 @@ class double_CO_evolution(detached_evolution):
 
         Defined as f(e) = 1 + (73/24)e^2 + (37/96)e^4 in Peters (1964), Eq. 5.11.
         Named _g here to match the GW-integration convention.
+
+        Parameters
+        ----------
+        e2 : float
+            Squared eccentricity, e^2.
         """
         return 1.0 + (73.0 / 24.0) * e2 + (37.0 / 96.0) * e2 * e2
 
@@ -316,6 +385,11 @@ class double_CO_evolution(detached_evolution):
 
         Defined as g(e) = 1 + (121/304)e^2 in Peters (1964), Eq. 5.13.
         Named _f here to match the GW-integration convention.
+
+        Parameters
+        ----------
+        e2 : float
+            Squared eccentricity, e^2.
         """
         return 1.0 + (121.0 / 304.0) * e2
 

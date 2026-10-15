@@ -20,7 +20,16 @@ class MathTextLabel(QtWidgets.QWidget):
     """Custom label to display LaTeX formula."""
 
     def __init__(self, parent=None, **kwargs):
-        """Initialize a MathTextLabel instance."""
+        """Initialize a MathTextLabel instance.
+
+        Parameters
+        ----------
+        parent : QWidget, optional
+            Parent widget.
+        **kwargs :
+            Additional keyword arguments passed to the parent class.
+
+        """
         super(QtWidgets.QWidget, self).__init__(parent, **kwargs)
 
         layout = QVBoxLayout(self)

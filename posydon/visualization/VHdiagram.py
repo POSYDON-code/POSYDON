@@ -41,7 +41,18 @@ class VHdiagram:
         displayMode=DisplayMode.WINDOW,
         figsize=(10, 8)
     ):
-        """Initialize a VHdiagram instance."""
+        """Initialize a VHdiagram instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the simulation file.
+        path : str, optional
+            Path to the file.
+        index : int, optional
+            Index of the binary to display.
+
+        """
         self._app = (
             QApplication.instance()
         )  # Check if there is instance of QApplication
@@ -60,11 +71,20 @@ class VHdiagram:
         self._app.exec_()
 
     def _display_inline_b(self):
+        """Display the VH diagram inline as an image in the notebook."""
         filepath = self._presenter.screen()
         self._presenter.close()
         display(Image(filename=filepath))
 
     def _display_inline_s(self, figsize):
+        """Display the VH diagram inline with matplotlib at the given size.
+
+        Parameters
+        ----------
+        figsize : tuple of int
+            Size of the figure.
+
+        """
         filepath = self._presenter.screen()
         self._presenter.close()
 

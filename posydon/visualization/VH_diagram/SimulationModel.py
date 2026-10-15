@@ -16,7 +16,16 @@ class SimulationModel:
     """Model containing the dataset of simulations."""
 
     def __init__(self, filename, path="./"):
-        """Initialize a SimulationModel instance."""
+        """Initialize a SimulationModel instance.
+
+        Parameters
+        ----------
+        filename : str
+            Name of the simulation file.
+        path : str, optional
+            Path to the file.
+
+        """
         self._df = None
         self.path = path
         self.filename = filename
