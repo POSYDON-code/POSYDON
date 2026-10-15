@@ -7,6 +7,7 @@
 # Usage:
 #   ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities]
 #                          [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve]
+#                          [--sha VALUE]
 #
 # Positional arguments:
 #   candidate_branch   Branch or tag to validate (required)
@@ -26,6 +27,10 @@
 # Other flags:
 #   --skip-evolve      Skip Step 1 (evolution) and compare existing outputs
 #                      against baseline. Candidate files must already exist.
+#   --sha VALUE        Evolve this commit of the candidate branch instead of
+#                      its HEAD.
+#
+# Flags may appear anywhere after candidate_branch.
 #
 # Examples:
 #   ./validate_binaries.sh feature/new-SN                      # compare vs main, exact
@@ -42,21 +47,23 @@
 # Output:
 #   outputs/<branch>/comparison_<Z>Zsun.txt — per-metallicity comparison reports
 #   outputs/<branch>/comparison_summary.txt — overall summary
+#
+# Exit codes:
+#   0   all comparisons passed
+#   10  differences detected (evolution and comparison ran fine)
+#   1   error (missing baseline/candidate, comparison crashed, ...)
 # =============================================================================
 
 set -euo pipefail
 
 # ── Parse arguments ───────────────────────────────────────────────────────
 
-CANDIDATE_BRANCH=${1:?Usage: ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE]}
-BASELINE_BRANCH=${2:-main}
-METALLICITIES=${3:-"2 1 0.45 0.2 0.1 0.01 0.001 0.0001"}
-shift $(( $# < 3 ? $# : 3 ))
-
+POSITIONAL=()
 LOOSE=false
 RTOL=""
 ATOL=""
 SKIP_EVOLVE=false
+SHA=""
 
 while [[ $# -gt 0 ]]; do
     case "$1" in
@@ -76,12 +83,24 @@ while [[ $# -gt 0 ]]; do
             SKIP_EVOLVE=true
             shift
             ;;
-        *)
+        --sha)
+            SHA="${2:?--sha requires a value}"
+            shift 2
+            ;;
+        --*)
             echo "ERROR: Unknown option: $1" >&2
             exit 1
             ;;
+        *)
+            POSITIONAL+=("$1")
+            shift
+            ;;
     esac
 done
+
+CANDIDATE_BRANCH=${POSITIONAL[0]:?Usage: ./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve] [--sha VALUE]}
+BASELINE_BRANCH=${POSITIONAL[1]:-main}
+METALLICITIES=${POSITIONAL[2]:-"2 1 0.45 0.2 0.1 0.01 0.001 0.0001"}
 
 DEV_TOOLS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 SCRIPT_DIR="${DEV_TOOLS_DIR}/script_data"
@@ -148,16 +167,16 @@ echo "  Found $BASELINE_COUNT baseline file(s)."
 # ── Step 1: Evolve binaries on candidate branch ──────────────────────────
 if [ "$SKIP_EVOLVE" = true ]; then
     echo ""
-    echo "Step 1: SKIPPED (--skip-evolve: using existing outputs in $OUTPUT_DIR)"
-    if [ ! -d "$OUTPUT_DIR" ]; then
-        echo "ERROR: No outputs found at $OUTPUT_DIR" >&2
+    echo "Step 1: SKIPPED (--skip-evolve: using existing outputs in $BINARY_OUTPUT_DIR)"
+    if [ ! -d "$BINARY_OUTPUT_DIR" ]; then
+        echo "ERROR: No outputs found at $BINARY_OUTPUT_DIR" >&2
         echo "Run evolve_binaries.sh first, or drop --skip-evolve to evolve from scratch." >&2
         exit 1
     fi
 else
     echo ""
     echo "Step 1: Evolving binaries on candidate branch '$CANDIDATE_BRANCH'..."
-    "$DEV_TOOLS_DIR/run_test_suite.sh" "$CANDIDATE_BRANCH" "" "$METALLICITIES"
+    "$DEV_TOOLS_DIR/run_test_suite.sh" "$CANDIDATE_BRANCH" "$SHA" "$METALLICITIES"
 fi
 
 # ── Step 2: Compare each metallicity ─────────────────────────────────────
@@ -168,6 +187,7 @@ TOTAL=0
 PASS=0
 FAIL=0
 SKIP=0
+ERROR=0
 
 # Initialize summary
 mkdir -p "$BINARY_OUTPUT_DIR"
@@ -200,42 +220,59 @@ for Z in $METALLICITIES; do
     fi
 
     if [ ! -f "$CANDIDATE_FILE" ]; then
-        echo "  FAIL: No candidate file for Z=${Z}"
-        echo "Z = ${Z} Zsun: FAIL (no candidate output)" >> "$SUMMARY_FILE"
-        FAIL=$((FAIL + 1))
+        echo "  ERROR: No candidate file for Z=${Z}"
+        echo "Z = ${Z} Zsun: ERROR (no candidate output)" >> "$SUMMARY_FILE"
+        ERROR=$((ERROR + 1))
         continue
     fi
 
+    # compare_runs.py exits 0 (identical), 2 (differences) or anything else
+    # on error (1 for its own errors and uncaught Python exceptions).
     # $COMPARE_FLAGS is intentionally unquoted so it word-splits into
     # separate arguments for compare_runs.py.
-    if python "$SRC_DIR/compare_runs.py" "$BASELINE_FILE" "$CANDIDATE_FILE" \
+    set +e
+    python "$SRC_DIR/compare_runs.py" "$BASELINE_FILE" "$CANDIDATE_FILE" \
         $COMPARE_FLAGS \
-        2>&1 | tee "$COMPARISON_FILE"; then
-        echo "  PASS: No differences"
-        echo "Z = ${Z} Zsun: PASS" >> "$SUMMARY_FILE"
-        PASS=$((PASS + 1))
-    else
-        echo "  DIFFERENCES DETECTED — see $COMPARISON_FILE"
-        echo "Z = ${Z} Zsun: DIFFERENCES DETECTED (see comparison_${Z}Zsun.txt)" >> "$SUMMARY_FILE"
-        FAIL=$((FAIL + 1))
-    fi
+        2>&1 | tee "$COMPARISON_FILE"
+    COMPARE_EXIT=${PIPESTATUS[0]}
+    set -e
+
+    case $COMPARE_EXIT in
+        0)
+            echo "  PASS: No differences"
+            echo "Z = ${Z} Zsun: PASS" >> "$SUMMARY_FILE"
+            PASS=$((PASS + 1))
+            ;;
+        2)
+            echo "  DIFFERENCES DETECTED — see $COMPARISON_FILE"
+            echo "Z = ${Z} Zsun: DIFFERENCES DETECTED (see comparison_${Z}Zsun.txt)" >> "$SUMMARY_FILE"
+            FAIL=$((FAIL + 1))
+            ;;
+        *)
+            echo "  ERROR: compare_runs.py failed (exit code $COMPARE_EXIT)" >&2
+            echo "Z = ${Z} Zsun: ERROR (comparison failed, exit code $COMPARE_EXIT)" >> "$SUMMARY_FILE"
+            ERROR=$((ERROR + 1))
+            ;;
+    esac
 done
 
 # ── Final Summary ─────────────────────────────────────────────────────────
 cat >> "$SUMMARY_FILE" << EOF
 
 ================================================
-TOTAL: $TOTAL | PASS: $PASS | FAIL: $FAIL | SKIP: $SKIP
+TOTAL: $TOTAL | PASS: $PASS | FAIL: $FAIL | SKIP: $SKIP | ERROR: $ERROR
 EOF
 
 echo ""
 echo "============================================================"
 echo "  Validation Summary"
-echo "  TOTAL: $TOTAL | PASS: $PASS | FAIL: $FAIL | SKIP: $SKIP"
+echo "  TOTAL: $TOTAL | PASS: $PASS | FAIL: $FAIL | SKIP: $SKIP | ERROR: $ERROR"
 echo "  Full summary: $SUMMARY_FILE"
 echo "============================================================"
 
-if [ $FAIL -gt 0 ]; then
+if [ $ERROR -gt 0 ]; then
     exit 1
+elif [ $FAIL -gt 0 ]; then
+    exit 10
 fi
 exit 0
