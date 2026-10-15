@@ -29,11 +29,21 @@ from posydon.utils.posydonerror import ModelError
 
 ####################################################################################################
 from abc import ABC, abstractmethod
-from posydon.binary_evol.SN.explodability.ECSN_prescriptions import get_ECSN_prescription
-from posydon.binary_evol.SN.explodability.PISN_prescriptions import get_PISN_prescription
-from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import get_CCSN_prescription
-from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import get_remnant_mass_prescription
+
+from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
+    get_CCSN_prescription,
+)
+from posydon.binary_evol.SN.explodability.ECSN_prescriptions import (
+    get_ECSN_prescription,
+)
+from posydon.binary_evol.SN.explodability.PISN_prescriptions import (
+    get_PISN_prescription,
+)
 from posydon.binary_evol.SN.kicks.kick_prescriptions import get_kick_prescription
+from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import (
+    get_remnant_mass_prescription,
+)
+
 ####################################################################################################
 
 class StepSN(object):

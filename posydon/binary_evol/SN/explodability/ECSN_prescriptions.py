@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+
 def get_ECSN_prescription(**kwargs):
     option = kwargs['ECSN']
     if option=="Tauris+15":
