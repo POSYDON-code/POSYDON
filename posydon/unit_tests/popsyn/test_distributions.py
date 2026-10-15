@@ -738,8 +738,16 @@ class TestLogUniform:
         log_uniform = LogUniform(min=10.0, max=1000.0)
         x_values = np.array([10.0, 50.0, 100.0, 500.0, 1000.0])
         pdf_values = log_uniform.pdf(x_values)
-        expected = log_uniform.norm / x_values
+        expected = np.full_like(x_values, log_uniform.norm)
         np.testing.assert_allclose(pdf_values, expected)
+
+    def test_pdf_normalised_in_log_space(self):
+        """Test the PDF integrates to 1 over log10(x)."""
+        log_uniform = LogUniform(min=10.0, max=1000.0)
+        integral, _ = quad(lambda logx: log_uniform.pdf(10**logx),
+                           np.log10(log_uniform.min),
+                           np.log10(log_uniform.max))
+        assert np.isclose(integral, 1.0)
 
     def test_pdf_outside_range(self):
         """Test PDF outside the valid range."""
