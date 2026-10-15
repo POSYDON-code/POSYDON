@@ -20,15 +20,10 @@ __credits__ = [
 ]
 
 
-import numpy as np
-from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL
-from posydon.utils.common_functions import (
-    set_binary_to_failed,
-)
-from posydon.utils.posydonerror import ModelError
-
 ####################################################################################################
 from abc import ABC, abstractmethod
+
+import numpy as np
 
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     get_CCSN_prescription,
@@ -43,6 +38,11 @@ from posydon.binary_evol.SN.kicks.kick_prescriptions import get_kick_prescriptio
 from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import (
     get_remnant_mass_prescription,
 )
+from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL
+from posydon.utils.common_functions import (
+    set_binary_to_failed,
+)
+from posydon.utils.posydonerror import ModelError
 
 ####################################################################################################
 

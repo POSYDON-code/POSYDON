@@ -30,7 +30,7 @@ class PISN_check_base(ABC):
     @abstractmethod
     def __repr__(self):
         raise NotImplementedError
-    
+
     # def _pisn_verbose(self,m_He_core,m_PISN):
     #     if m_PISN is None:
     #         print("")
@@ -74,7 +74,7 @@ class PISN_check_marchant19(PISN_check_base):
 
 class PISN_check_hendricks23(PISN_check_base):
     def __call__(self,star):
-        # Hendriks et al. 2023 PISN prescription    
+        # Hendriks et al. 2023 PISN prescription
         # 10.1093/mnras/stad2857
         # Shifting PPI and PISN gap
         # works by removing delta_M_PPI from the star
