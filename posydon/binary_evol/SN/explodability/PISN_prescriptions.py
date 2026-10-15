@@ -4,7 +4,7 @@ from abc import ABC, abstractmethod
 import posydon.utils.constants as const
 
 def get_PISN_prescription(**kwargs):
-    option = kwargs['PISN_option']
+    option = kwargs['PISN']
     if option=="Marchant+19":
         return PISN_check_marchant19(**kwargs)
     elif option=="Hendriks+23":
@@ -16,9 +16,9 @@ class PISN_check_base(ABC):
     def __init__(self,**kwargs):
         self.PISN_option = kwargs['PISN']
         self.verbose = kwargs['verbose']
-        self.PISN_CO_shift = kwargs['PISN_CO_shift']
-        self.PPI_extra_mass_loss = kwargs['PPI_extra_mass_loss']
-        self.conserve_hydrogen_PPI = kwargs['conserve_hydrogen_PPI']
+        # self.PISN_CO_shift = kwargs['PISN_CO_shift']
+        # self.PPI_extra_mass_loss = kwargs['PPI_extra_mass_loss']
+        # self.conserve_hydrogen_PPI = kwargs['conserve_hydrogen_PPI']
 
     @abstractmethod
     def __call__(self,star):
@@ -28,46 +28,50 @@ class PISN_check_base(ABC):
     def __repr__(self):
         raise NotImplementedError
     
-    def _pisn_verbose(self,m_He_core,m_PISN):
-        if m_PISN is None:
-            print("")
-            print("The star did NOT lose any mass because of "
-                    "PPIN or PISN.")
-        elif not np.isna(m_PISN):
-            print("")
-            print(
-                "The star with initial mass {:2.2f}".format(m_He_core),
-                "M_sun went through the PISN routine and lost",
-                "{:2.2f} M_sun.".format(m_He_core - m_PISN),
-                "The new m_rembar mass that will collapse to form a ",
-                "CO object is {:2.2f} M_sun.".format(m_PISN))
-        else:
-            print("The star was disrupted by the PISN prescription!")
+    # def _pisn_verbose(self,m_He_core,m_PISN):
+    #     if m_PISN is None:
+    #         print("")
+    #         print("The star did NOT lose any mass because of "
+    #                 "PPIN or PISN.")
+    #     elif not np.isna(m_PISN):
+    #         print("")
+    #         print(
+    #             "The star with initial mass {:2.2f}".format(m_He_core),
+    #             "M_sun went through the PISN routine and lost",
+    #             "{:2.2f} M_sun.".format(m_He_core - m_PISN),
+    #             "The new m_rembar mass that will collapse to form a ",
+    #             "CO object is {:2.2f} M_sun.".format(m_PISN))
+    #     else:
+    #         print("The star was disrupted by the PISN prescription!")
 
-        def _pisn_constant(self,star):
-            m_He_core = star.he_core_mass
-            if m_He_core > self.PISN:
-                m_PISN = self.PISN
-            elif 0.0 < m_He_core <= self.PISN:
-                m_PISN = None
-            if self.verbose:
-                self._pisn_verbose(m_PISN)
-            return m_PISN
+        # def _pisn_constant(self,star):
+        #     m_He_core = star.he_core_mass
+        #     if m_He_core > self.PISN:
+        #         m_PISN = self.PISN
+        #     elif 0.0 < m_He_core <= self.PISN:
+        #         m_PISN = None
+        #     if self.verbose:
+        #         self._pisn_verbose(m_PISN)
+        #     return m_PISN
 
 
 class PISN_check_marchant19(PISN_check_base):
     def __call__(self,star):
         m_He_core = star.he_core_mass
-        if m_He_core >= 31.99 and m_He_core < 124.12:
+        if m_He_core >= 31.99 and m_He_core <= 61.10:
+            return "PPISN"
+        elif m_He_core > 61.10 and m_He_core < 124.12:
             return "PISN"
         elif m_He_core>=124.12:
             return "direct_collapse"
+        else:
+            return None
     def __repr__(self):
         return "Prescription_PISN was initialised with the {option} prescription".format(option=self.PISN_option)
 
 class PISN_check_hendricks23(PISN_check_base):
     def __call__(self,star):
-        # Hendriks et al. 2023 PISN prescription
+        # Hendriks et al. 2023 PISN prescription    
         # 10.1093/mnras/stad2857
         # Shifting PPI and PISN gap
         # works by removing delta_M_PPI from the star
