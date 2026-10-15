@@ -148,10 +148,10 @@ echo "  Found $BASELINE_COUNT baseline file(s)."
 # ── Step 1: Evolve binaries on candidate branch ──────────────────────────
 if [ "$SKIP_EVOLVE" = true ]; then
     echo ""
-    echo "Step 1: SKIPPED (--skip-evolve: using existing outputs in $OUTPUT_DIR)"
-    if [ ! -d "$OUTPUT_DIR" ]; then
-        echo "ERROR: No outputs found at $OUTPUT_DIR" >&2
-        echo "Run evolve_binaries.sh first, or drop --skip-evolve to evolve from scratch." >&2
+    echo "Step 1: SKIPPED (--skip-evolve: using existing outputs in $BINARY_OUTPUT_DIR)"
+    if [ ! -d "$BINARY_OUTPUT_DIR" ]; then
+        echo "ERROR: No outputs found at $BINARY_OUTPUT_DIR" >&2
+        echo "Run run_test_suite.sh first, or drop --skip-evolve to evolve from scratch." >&2
         exit 1
     fi
 else

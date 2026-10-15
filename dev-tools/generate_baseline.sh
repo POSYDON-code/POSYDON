@@ -132,9 +132,9 @@ try:
         m = s['/metadata']
         n = int(m['n_missing'].iloc[0])
         if n > 0:
-            print(f'Z={Z}: {n} missing — {m[\"missing_ids\"].iloc[0]}')
+            print(f'Z=${Z}: {n} missing — {m[\"missing_ids\"].iloc[0]}')
 except Exception as e:
-    print(f'Z={Z}: could not read metadata ({e})', file=sys.stderr)
+    print(f'Z=${Z}: could not read metadata ({e})', file=sys.stderr)
 " 2>/dev/null)
         if [ -n "$MISSING" ]; then
             echo "  ⚠️  $MISSING"

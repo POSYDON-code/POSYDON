@@ -1,5 +1,24 @@
 Validation suite for POSYDON binary evolution. Evolves a fixed set of test binaries on a candidate branch and compares results against a stored baseline to catch regressions. A baseline can be formed from any branch (`main` by default) and is represented by a set of results from `binary_suite.py`, saved HDF5 files, all stored in `dev-tools/baselines/<branch-name>`.
 
+## Requirements
+
+- `conda` (used to create a separate environment for each tested branch)
+- `git`
+- A Python environment with `numpy`, `pandas` and `pytables` **in the shell you launch the scripts from**
+
+The simplest setup is to launch the scripts from an environment that already has POSYDON installed, for example:
+
+```bash
+conda activate posydon
+./generate_baseline.sh main
+```
+
+or install only what the wrapper scripts need:
+
+```bash
+pip install numpy pandas tables
+```
+
 ## Quick Start
 
 ```bash
