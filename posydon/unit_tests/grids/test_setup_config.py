@@ -317,11 +317,13 @@ class TestSubmissionSection:
     def test_values(self, write_ini):
         config = totest.read_config(write_ini(
             MINIMAL + "[submission]\nbackend = slurm_mpi\nnodes = 2\n"
+            "job_array = false\n"
             "mpi_tasks = 8\ncpus_per_task = 4\naccount = test\n"
             "email = a@b.c\nwork_dir = /scratch\nnewgroup = posydon\n"))
         submission = config.submission
         assert (submission.backend, submission.nodes, submission.mpi_tasks,
                 submission.cpus_per_task) == ("slurm_mpi", 2, 8, 4)
+        assert submission.job_array is False
         assert submission.work_dir == "/scratch"
 
     @pytest.mark.parametrize("text, message", [

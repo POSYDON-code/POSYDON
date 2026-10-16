@@ -265,6 +265,7 @@ def read_legacy_config(path, grid_type="fixed", submission_type=None,
     defaults = SubmissionSection()
     config.submission = SubmissionSection(
         backend=backend,
+        job_array=bool(slurm.get("job_array", defaults.job_array)),
         partition=slurm.get("partition"),
         account=slurm.get("account"),
         walltime=slurm.get("walltime"),

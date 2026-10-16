@@ -124,9 +124,15 @@ class OutputSection:
 
 @dataclass
 class SubmissionSection:
-    """How the grid is submitted."""
+    """How the grid is submitted.
+
+    ``job_array`` only matters for the shell backend: run the points one
+    after another (True) or as one ``mpirun`` (False). The SLURM backends
+    say it in their name.
+    """
 
     backend: str = "shell"
+    job_array: bool = True
     partition: str = None
     account: str = None
     walltime: str = None
@@ -315,6 +321,8 @@ def _read_submission(options):
     for key, value in options.items():
         if key == "backend":
             submission.backend = _choice("submission", key, value, BACKENDS)
+        elif key == "job_array":
+            submission.job_array = _bool("submission", key, value)
         elif key in ("nodes", "mpi_tasks", "cpus_per_task"):
             setattr(submission, key, _int("submission", key, value))
         elif key in ("partition", "account", "walltime", "email",

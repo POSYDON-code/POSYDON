@@ -237,6 +237,8 @@ class TestReadLegacyConfig:
         assert read(write_ini(), submission_type="shell").submission\
             .backend == "shell"
         no_array = write_ini(replace=[("job_array=True", "job_array=False")])
+        shell = read(no_array, submission_type="shell").submission
+        assert (shell.backend, shell.job_array) == ("shell", False)
         assert read(no_array, submission_type="slurm").submission\
             .backend == "slurm_mpi"
 

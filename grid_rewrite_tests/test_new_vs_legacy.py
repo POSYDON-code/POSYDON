@@ -344,3 +344,65 @@ def test_extras_match_make_executables(case, tmp_path, monkeypatch,
                                     str(old_run).encode())
                  for name, data in staged_files(new_run).items()}
     assert new_files == old_files
+
+
+###############################################################################
+# submit.py against the command line and scripts of main()
+###############################################################################
+from test_setup_grid_baseline import GRID_ROWS, run_setup  # noqa: E402
+
+from posydon.grids.setup.submit import (  # noqa: E402
+    command_line,
+    write_scripts,
+)
+
+SCRIPTS = ["grid_command.sh", "job_array_grid_submit.slurm",
+           "mpi_grid_submit.slurm", "cleanup.slurm", "run_grid.sh"]
+
+
+@pytest.mark.parametrize("case", GOLDEN_CASES, ids=CASE_IDS)
+def test_scripts_match_main(case, tmp_path, monkeypatch,
+                            inlist_origin):  # noqa: F811
+    env = make_setup_env(tmp_path, inlist_origin)
+    old_run = env["run"]
+    result = run_setup(case, env)  # today's script, run from old_run
+    if result.returncode != 0:
+        pytest.skip("fails today: " + result.stderr.strip().splitlines()[-1])
+    monkeypatch.setenv("MESA_DIR", str(env["mesa"]))
+
+    new_run = tmp_path / "new"
+    new_run.mkdir()
+    config = read_legacy_config(old_run / "grid.ini",
+                                grid_type=case.grid_type,
+                                submission_type=case.submission,
+                                mesa_dir=env["mesa"])
+    scenario = None
+    if config.scenario.is_set:
+        repo = fetch_inlist_repo(config.scenario, home=env["home"])
+        scenario = scenario_files(repo, get_grid_type(config.grid.type))
+    params = GRID_COLUMNS[case.columns].split(",")
+    if case.grid_type == "dynamic":
+        params = ["m1", "m2", "initial_period_in_days"]
+    built = build_inlists(config, new_run, params, scenario=scenario)
+    stage_extras(keep_highest_binary_extras(merge_extras(
+        config.extras, scenario.extras if scenario else None)), new_run)
+    monkeypatch.chdir(tmp_path)  # the new code must not depend on the cwd
+    executables = compile_executables(new_run)
+    columns = stage_column_lists(column_list_sources(config, scenario),
+                                 new_run)
+    command = command_line(config, built, executables, columns,
+                           str(new_run), str(env["bin"] / "posydon-run-grid"))
+    scripts = tmp_path / "scripts"
+    scripts.mkdir()
+    write_scripts(config, command, len(GRID_ROWS[case.columns]), scripts,
+                  "/opt/mesasdk-stub", str(env["mesa"]))
+
+    old = {name: (old_run / name) for name in SCRIPTS
+           if (old_run / name).exists()}
+    new = {path.name: path for path in scripts.iterdir()}
+    assert set(new) == set(old)
+    for name in old:
+        new_text = new[name].read_text().replace(str(new_run), str(old_run))
+        assert new_text == old[name].read_text(), name
+        assert new[name].stat().st_mode & 0o777 == \
+            old[name].stat().st_mode & 0o777, name

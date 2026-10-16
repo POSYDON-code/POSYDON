@@ -895,3 +895,15 @@ def test_outputs_go_to_run_directory(setup_env):
                    capture_output=True, text=True, timeout=300)
     assert (run / "job_array_grid_submit.slurm").exists()
     assert not (other / "job_array_grid_submit.slurm").exists()
+
+
+@pytest.mark.xfail(strict=True, reason="a shell script without a job array "
+                   "has no newline between the command and compress-mesa "
+                   "(bin/posydon-setup-grid:1149-1153)")
+def test_shell_script_without_job_array_ends_the_command(setup_env):
+    case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", submission="shell",
+                    grid_type="dynamic", job_array=False)
+    result = run_setup(case, setup_env)
+    assert result.returncode == 0, result.stderr[-2000:]
+    script = (setup_env["run"] / "grid_command.sh").read_text()
+    assert "\ncompress-mesa ." in script

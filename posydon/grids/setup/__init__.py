@@ -20,6 +20,8 @@ build
     Stack the layers, add the generated keys and write a grid's inlists.
 extras
     Stage the Fortran sources and column lists, and compile.
+submit
+    Write the posydon-run-grid command line and the shell/SLURM scripts.
 """
 
 __authors__ = [
