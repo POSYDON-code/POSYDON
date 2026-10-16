@@ -199,6 +199,86 @@ def pick_whole_file(candidates, layer_order=LAYER_ORDER):
     return None
 
 
+def formation_step_count(star, targets_list):
+    """How many formation steps a star has.
+
+    Parameters
+    ----------
+    star : str
+        ``"star1"`` or ``"star2"``.
+    targets_list : iterable of dict
+        Target-to-files maps (e.g. ``InlistFiles.targets`` of each layer).
+
+    Returns
+    -------
+    int
+        One more than the highest ``<star>_formation_step<N>_*`` target; 1
+        if there are only ``<star>_formation_every_step_*`` targets; 0 if
+        the star has no formation at all.
+
+    Examples
+    --------
+    >>> formation_step_count("star1", [{"star1_formation_step1_job": []}])
+    2
+    """
+    prefix = "{}_formation_".format(star)
+    count = 0
+    for targets in targets_list:
+        for target in targets:
+            if not target.startswith(prefix):
+                continue
+            rest = target[len(prefix):]
+            if rest.startswith("every_step_"):
+                count = max(count, 1)
+            else:
+                count = max(count, int(rest[len("step"):].split("_")[0]) + 1)
+    return count
+
+
+def expand_every_step(targets, star, n_steps):
+    """Give each formation step its own targets, every-step files first.
+
+    ``<star>_formation_every_step_<part>`` holds files that apply to all
+    steps. They are put in front of each step's own files, as today's setup
+    does with one file per step.
+
+    Parameters
+    ----------
+    targets : dict
+        Target to list of files, for one layer.
+    star : str
+        ``"star1"`` or ``"star2"``.
+    n_steps : int
+        From ``formation_step_count`` over all layers.
+
+    Returns
+    -------
+    dict
+        A new target map without ``every_step`` targets for ``star``.
+
+    Examples
+    --------
+    >>> expanded = expand_every_step(
+    ...     {"star1_formation_every_step_job": ["common"],
+    ...      "star1_formation_step1_job": ["step2"]}, "star1", 2)
+    >>> expanded["star1_formation_step0_job"]
+    ['common']
+    >>> expanded["star1_formation_step1_job"]
+    ['common', 'step2']
+    """
+    every = "{}_formation_every_step_".format(star)
+    result = {target: list(files) for target, files in targets.items()
+              if not target.startswith(every)}
+    for part in ("controls", "job"):
+        shared = targets.get(every + part, [])
+        if not shared:
+            continue
+        for step in range(n_steps):
+            target = "{}_formation_step{}_{}".format(star, step, part)
+            result[target] = list(shared) + result.get(target, [])
+    return result
+
+
 def drop_wiring_keys(values):
     """Remove keys that wire inlists together, as today's setup does.
 

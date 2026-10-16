@@ -14,6 +14,8 @@ legacy
     Read today's grid ini files into the same GridConfig.
 grid_types
     The registry of grid types and what makes each one different.
+scenario
+    Get the inlist repository at the scenario's commit and list its files.
 """
 
 __authors__ = [

@@ -65,7 +65,8 @@ class TestElements:
         elements = {'LAYER_ORDER', 'LEGACY_SKIPPED_VALUES', 'LayerStack',
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
-                    '__spec__', 'drop_wiring_keys', 'fix_num_x_ctrls',
+                    '__spec__', 'drop_wiring_keys', 'expand_every_step',
+                    'fix_num_x_ctrls', 'formation_step_count',
                     'pick_whole_file', 'read_inlist', 'section_for'}
         assert set(dir(totest)) == elements
 
@@ -77,7 +78,9 @@ class TestElements:
         assert isclass(totest.LayerStack)
 
     @pytest.mark.parametrize("name", ['section_for', 'pick_whole_file',
-                                      'drop_wiring_keys', 'fix_num_x_ctrls'])
+                                      'drop_wiring_keys', 'fix_num_x_ctrls',
+                                      'formation_step_count',
+                                      'expand_every_step'])
     def test_instance_functions(self, name):
         assert isroutine(getattr(totest, name))
 
@@ -230,6 +233,44 @@ class TestPickWholeFile:
     def test_custom_layer_order(self):
         assert totest.pick_whole_file({"a": "x", "b": "y"},
                                       layer_order=("b", "a")) == ("a", "x")
+
+
+class TestFormationSteps:
+    def test_count(self):
+        targets = [{"star1_formation_step0_controls": [],
+                    "star1_formation_step2_job": [],
+                    "star2_formation_step0_job": [],
+                    "star1_controls": []},
+                   {"star1_formation_every_step_job": []}]
+        assert totest.formation_step_count("star1", targets) == 3
+        assert totest.formation_step_count("star2", targets) == 1
+
+    def test_count_every_step_only(self):
+        assert totest.formation_step_count(
+            "star1", [{"star1_formation_every_step_controls": []}]) == 1
+
+    def test_count_no_formation(self):
+        assert totest.formation_step_count("star1",
+                                           [{"star1_controls": []}]) == 0
+
+    def test_expand(self):
+        targets = {"star1_formation_every_step_controls": ["c"],
+                   "star1_formation_every_step_job": ["c"],
+                   "star1_formation_step1_controls": ["s2"],
+                   "star1_controls": ["x"],
+                   "star2_formation_every_step_job": ["d"]}
+        expanded = totest.expand_every_step(targets, "star1", 2)
+        assert expanded == {"star1_formation_step0_controls": ["c"],
+                            "star1_formation_step1_controls": ["c", "s2"],
+                            "star1_formation_step0_job": ["c"],
+                            "star1_formation_step1_job": ["c"],
+                            "star1_controls": ["x"],
+                            "star2_formation_every_step_job": ["d"]}
+        assert targets["star1_formation_step1_controls"] == ["s2"]
+
+    def test_expand_nothing_shared(self):
+        targets = {"star1_formation_step0_job": ["s"]}
+        assert totest.expand_every_step(targets, "star1", 1) == targets
 
 
 class TestLegacyKeyRules:
