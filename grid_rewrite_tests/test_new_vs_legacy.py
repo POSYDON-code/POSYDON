@@ -256,3 +256,91 @@ def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
 def read_inlist_text(text):
     from posydon.grids.setup.inlist import parse_inlist
     return parse_inlist(text)
+
+
+###############################################################################
+# extras.py against make_executables and the column-list copy of main()
+###############################################################################
+from posydon.grids.setup.extras import column_list_sources  # noqa: E402
+from posydon.grids.setup.extras import (
+    compile_executables,
+    keep_highest_binary_extras,
+    merge_extras,
+    stage_column_lists,
+    stage_extras,
+)
+
+
+def legacy_stage(setup_grid, ini, run, monkeypatch, home):
+    """main() of today's posydon-setup-grid: extras, make, column lists."""
+    run.mkdir(parents=True, exist_ok=True)
+    _, _, mesa_inlists, mesa_extras = configfile.parse_inifile(str(ini))
+    mesa_inlists.setdefault("scenario", None)
+    setup_grid.mesa_inlists = mesa_inlists
+    setup_grid.mesa_extras = mesa_extras
+    monkeypatch.setenv("HOME", str(home))
+    monkeypatch.chdir(run)
+    if mesa_inlists["scenario"] is not None:
+        setup_grid.find_inlist_from_scenario(*mesa_inlists["scenario"])
+    monkeypatch.chdir(run)  # mk is written to and run from the cwd
+    kinds = sorted(set(key.split('_')[0] for key in mesa_extras
+                       if 'binary_extras' in key))
+    for key in mesa_extras:
+        if 'binary_extras' in key and kinds[-1] not in key:
+            mesa_extras[key] = None
+    executables = setup_grid.make_executables(mesa_extras=mesa_extras,
+                                              working_directory=str(run))
+    folder = run / "column_lists"
+    folder.mkdir()
+    for key, name in (("star_history_columns", "history_columns.list"),
+                      ("binary_history_columns",
+                       "binary_history_columns.list"),
+                      ("profile_columns", "profile_columns.list")):
+        shutil.copy(mesa_inlists[key], folder / name)
+    return executables
+
+
+def staged_files(run):
+    names = ["mk"] + [path.relative_to(run).as_posix() for path in
+                      sorted(run.glob("*/src/*")) +
+                      sorted(run.glob("*/make/*")) +
+                      sorted(run.glob("column_lists/*"))]
+    names += [path.name for path in run.iterdir()
+              if path.is_file() and path.name not in ("mk", "grid.ini")]
+    return {name: (run / name).read_bytes() for name in names}
+
+
+@pytest.mark.parametrize("case", GOLDEN_CASES, ids=CASE_IDS)
+def test_extras_match_make_executables(case, tmp_path, monkeypatch,
+                                       inlist_origin,  # noqa: F811
+                                       setup_grid):
+    if case.name == "single_HeMS__scenario":
+        pytest.skip("crashes today (S1)")
+    env = make_setup_env(tmp_path, inlist_origin)
+    monkeypatch.setenv("MESA_DIR", str(env["mesa"]))
+    ini = tmp_path / "grid.ini"
+    ini.write_text(build_ini(case, env))
+    old_run, new_run = tmp_path / "old", tmp_path / "new"
+    old_exes = legacy_stage(setup_grid, ini, old_run, monkeypatch,
+                            env["home"])
+
+    config = read_legacy_config(ini, mesa_dir=env["mesa"])
+    scenario = None
+    if config.scenario.is_set:
+        repo = fetch_inlist_repo(config.scenario, home=env["home"])
+        scenario = scenario_files(repo, get_grid_type(config.grid.type))
+    extras = keep_highest_binary_extras(merge_extras(
+        config.extras, scenario.extras if scenario else None))
+    new_run.mkdir()
+    monkeypatch.chdir(tmp_path)  # the new code must not depend on the cwd
+    stage_extras(extras, new_run)
+    new_exes = compile_executables(new_run)
+    stage_column_lists(column_list_sources(config, scenario), new_run)
+
+    assert [path.replace(str(new_run), str(old_run))
+            for path in new_exes] == list(old_exes)
+    old_files = staged_files(old_run)
+    new_files = {name: data.replace(str(new_run).encode(),
+                                    str(old_run).encode())
+                 for name, data in staged_files(new_run).items()}
+    assert new_files == old_files

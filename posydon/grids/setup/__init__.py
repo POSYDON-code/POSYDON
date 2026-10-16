@@ -18,6 +18,8 @@ scenario
     Get the inlist repository at the scenario's commit and list its files.
 build
     Stack the layers, add the generated keys and write a grid's inlists.
+extras
+    Stage the Fortran sources and column lists, and compile.
 """
 
 __authors__ = [
