@@ -640,6 +640,37 @@ def test_scenario_equals_explicit_paths(label, tmp_path, inlist_origin):
 ###############################################################################
 REFERENCE = os.environ.get("POSYDON_YGGDRASIL_REFERENCE", "")
 
+# Run folders (<type>/<Z>/<run>) whose inlists were edited by hand after
+# setup, so no ini reproduces them; not checked by the replay.
+HAND_EDITED_RUNS = {
+    # relax_initial_mass / new_mass set for a single-mass rerun
+    "HMS-HMS/1e+00_Zsun/grid_low_res_rerun_LBV_wind_m2_283",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_113Msun",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_127Msun",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_142Msun",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_160Msun",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_202Msun",
+    "HMS-HMS/1e-03_Zsun/grid_low_res_rerun_80Msun",
+    "HMS-HMS/1e-03_Zsun/rerun_PISN_grid_low_res_rerun_202Msun",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m1_227",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m1_255",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m1_286",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m2_214",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m2_229_q080",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m2_243",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_m2_272",
+    # other keys changed by hand (mesh, surface, max_tries1, do_jdot_ls, ...)
+    "HMS-HMS/1e+00_Zsun/grid_low_res_0",
+    "HMS-HMS/1e+00_Zsun/rerun_thermohaline_mixing_grid_random_combined",
+    "HMS-HMS/1e-02_Zsun/grid_low_res_rerun_LBV_wind_fr_limit",
+    "HMS-HMS/1e-02_Zsun/rerun_thermohaline_mixing_grid_random_combined",
+    "HMS-HMS/1e-04_Zsun/rerun_thermohaline_mixing_grid_random_combined",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_LBV_wind_initsync",
+    "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_LBV_wind_initsync_extras",
+}
+# grid types whose setup is a pinned xfail bug today
+KNOWN_FAILING_TYPES = {"single_HeMS"}
+
 
 def _path_name(value):
     """Compare absolute paths by file name only (cluster roots differ)."""
@@ -653,8 +684,11 @@ def test_replay_yggdrasil_runs(tmp_path):
     """Today's setup reproduces the inlists of real yggdrasil runs.
 
     POSYDON_YGGDRASIL_REFERENCE/grids/<type>/<Z>/<run>/ must hold the run's
-    ini, grid.csv and generated binary/ and star*/ inlists. The scenario refs
-    are read from a copy of the local ~/.posydon_mesa_inlists clone.
+    ini, its grid CSV and generated binary/ and star*/ inlists. The scenario
+    refs are read from a copy of the local ~/.posydon_mesa_inlists clone.
+    Skipped: hand-edited runs, known-failing grid types, ini files whose grid
+    file is missing or empty (e.g. an unrelated ini copied into the folder),
+    and scenario commits missing from the local clone.
     """
     source_clone = Path.home() / ".posydon_mesa_inlists"
     if not source_clone.is_dir():
@@ -673,17 +707,34 @@ def test_replay_yggdrasil_runs(tmp_path):
     (stub_bin / "posydon-run-grid").chmod(0o755)
     env = {"HOME": str(home), "PATH": f"{stub_bin}:/usr/bin:/bin",
            "MESA_DIR": str(mesa), "MESASDK_ROOT": "/opt/mesasdk-stub",
-           "PYTHONPATH": str(ROOT), "LANG": "C.UTF-8"}
+           "PYTHONPATH": str(ROOT), "LANG": "C.UTF-8",
+           "MPLCONFIGDIR": str(tmp_path / "mplconfig")}
     failures, replayed = [], 0
+    clone = home / ".posydon_mesa_inlists"
     for ini in sorted(Path(REFERENCE).glob("grids/*/*/*/*.ini")):
         ref = ini.parent
-        if not (ref / "binary" / "inlist1").exists():
+        rel = ref.relative_to(Path(REFERENCE) / "grids").as_posix()
+        if not (ref / "binary" / "inlist1").exists() \
+                or rel in HAND_EDITED_RUNS \
+                or rel.split("/")[0] in KNOWN_FAILING_TYPES:
             continue
-        run = tmp_path / "runs" / ref.relative_to(REFERENCE) / ini.stem
+        text = ini.read_text()
+        match = re.search(r"(?m)^grid\s*=\s*(\S+)", text)
+        grid = ref / Path(match.group(1) if match else "grid.csv").name
+        if not grid.exists() or grid.stat().st_size == 0:
+            continue
+        scenario = r"(?m)^scenario\s*=\s*\[[^,]*,\s*'[^']*-([0-9a-f]+)'"
+        match = re.search(scenario, text)
+        if match and subprocess.run(
+                ["git", "-C", str(clone), "cat-file", "-e",
+                 match.group(1) + "^{commit}"],
+                capture_output=True).returncode:
+            continue
+        run = tmp_path / "runs" / rel / ini.stem
         run.mkdir(parents=True)
-        shutil.copy(ref / "grid.csv", run / "grid.csv")
+        shutil.copy(grid, run / "grid.csv")
         text = re.sub(r"(?m)^posydon_github_root\s*=.*$",
-                      f"posydon_github_root={ROOT}", ini.read_text())
+                      f"posydon_github_root={ROOT}", text)
         text = text.replace("POSYDON-MESA-INLISTS-public",
                             "POSYDON-MESA-INLISTS")
         text = re.sub(r"(?m)^grid\s*=.*$", f"grid = {run / 'grid.csv'}",
