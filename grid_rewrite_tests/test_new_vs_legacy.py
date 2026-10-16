@@ -145,3 +145,114 @@ def test_new_code_leaves_the_clone_clean(home):
     status = subprocess.run(["git", "-C", str(repo), "status",
                              "--porcelain"], capture_output=True, text=True)
     assert status.stdout == ""
+
+
+###############################################################################
+# build.py against construct_static_inlist, for every golden case
+###############################################################################
+from test_setup_grid_baseline import CASE_IDS
+from test_setup_grid_baseline import CASES as GOLDEN_CASES  # noqa: E402
+from test_setup_grid_baseline import GRID_COLUMNS, build_ini, make_setup_env
+
+from posydon.grids.setup.build import build_inlists  # noqa: E402
+from posydon.grids.setup.grid_types import get_grid_type  # noqa: E402
+from posydon.grids.setup.legacy import read_legacy_config  # noqa: E402
+from posydon.utils import configfile  # noqa: E402
+
+# keys set by the fixture user inlists (grid_rewrite_tests/setup_grid_data/
+# extra/user_inlist*); with a scenario they never took effect today (S6)
+USER_KEYS = {"fm", "mesh_delta_coeff", "pgstar_flag"}
+
+
+def legacy_build(setup_grid, ini, run, params, monkeypatch, home):
+    """main() of today's posydon-setup-grid, up to construct_static_inlist."""
+    for folder in ("binary", "star1", "star2"):
+        (run / folder).mkdir(parents=True, exist_ok=True)
+    _, _, mesa_inlists, mesa_extras = configfile.parse_inifile(str(ini))
+    mesa_inlists.setdefault("scenario", None)
+    setup_grid.mesa_inlists = mesa_inlists
+    setup_grid.mesa_extras = mesa_extras
+    if mesa_inlists["scenario"] is not None:
+        monkeypatch.setenv("HOME", str(home))
+        monkeypatch.chdir(run)
+        setup_grid.find_inlist_from_scenario(*mesa_inlists["scenario"])
+    return setup_grid.construct_static_inlist(mesa_inlists,
+                                              grid_parameters=params,
+                                              working_directory=str(run))
+
+
+def written_inlists(run):
+    return {path.relative_to(run).as_posix(): path.read_text()
+            for path in sorted(run.glob("binary/inlist*")) +
+            sorted(run.glob("star[12]/inlist_step*"))}
+
+
+@pytest.mark.parametrize("case", GOLDEN_CASES, ids=CASE_IDS)
+def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
+                                               inlist_origin,  # noqa: F811
+                                               setup_grid):
+    if case.name == "single_HeMS__scenario":
+        pytest.skip("crashes today (S1); compared with the v2 grids instead")
+    env = make_setup_env(tmp_path, inlist_origin)
+    monkeypatch.setenv("MESA_DIR", str(env["mesa"]))
+    ini = env["run"] / "grid.ini"
+    ini.write_text(build_ini(case, env))
+    params = GRID_COLUMNS[case.columns].split(",")
+    if case.grid_type == "dynamic":
+        params = ["m1", "m2", "initial_period_in_days"]
+
+    old_run, new_run = tmp_path / "old", tmp_path / "new"
+    old = legacy_build(setup_grid, ini, old_run, params, monkeypatch,
+                       env["home"])
+    config = read_legacy_config(ini, grid_type=case.grid_type,
+                                mesa_dir=env["mesa"])
+    scenario = None
+    if config.scenario.is_set:
+        repo = fetch_inlist_repo(config.scenario, home=env["home"])
+        scenario = scenario_files(repo, get_grid_type(config.grid.type))
+    new = build_inlists(config, new_run, params, scenario=scenario)
+
+    # what posydon-run-grid is told
+    def same(path):
+        return None if path is None else path.replace(str(new_run),
+                                                       str(old_run))
+    assert (same(new.star1_formation), same(new.star2_formation),
+            same(new.binary_project), same(new.binary_star1),
+            same(new.binary_star2)) == old
+
+    # the files, byte for byte
+    old_files = written_inlists(old_run)
+    new_files = {name: text.replace(str(new_run), str(old_run))
+                 for name, text in written_inlists(new_run).items()}
+    assert set(new_files) == set(old_files)
+    if case.extra_inlists and case.use_scenario:
+        # S6: today the scenario's files win over the user's inlists, and
+        # when the ini names a *_user file, the grid type's own folder file
+        # takes that key's earlier place, so the common inlists override it.
+        # Now: common < grid-type folder < user. Changed keys must be the
+        # user's, or keys whose new value is the grid-type folder's.
+        folder_values = {}
+        for paths in scenario.inlists.targets.values():
+            for path in paths:
+                if "default_common_inlists" not in str(path):
+                    for values in read_inlist(path).values():
+                        folder_values.update(values)
+        for name in old_files:
+            old_values, new_values = (read_inlist_text(old_files[name]),
+                                      read_inlist_text(new_files[name]))
+            changed = {key: value for section in new_values
+                       for key, value in new_values[section].items()
+                       if old_values[section].get(key) != value}
+            unexplained = {key for key, value in changed.items()
+                           if key not in USER_KEYS and
+                           folder_values.get(key) != value}
+            assert not unexplained, (name, unexplained)
+        assert any(old_files[name] != new_files[name] for name in old_files)
+    else:
+        for name in old_files:
+            assert new_files[name] == old_files[name], name
+
+
+def read_inlist_text(text):
+    from posydon.grids.setup.inlist import parse_inlist
+    return parse_inlist(text)

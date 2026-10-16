@@ -16,6 +16,8 @@ grid_types
     The registry of grid types and what makes each one different.
 scenario
     Get the inlist repository at the scenario's commit and list its files.
+build
+    Stack the layers, add the generated keys and write a grid's inlists.
 """
 
 __authors__ = [
