@@ -5,10 +5,10 @@ today's script writes for every grid type, so the new implementation can be
 checked against it. Delete this folder once the rewrite has landed.
 
 They are kept out of `posydon/unit_tests/`, so the regular test run and its
-coverage check do not pick them up. CI runs them through
-`.github/workflows/grid_rewrite_tests.yml` (pushes to the rewrite branches and
-pull requests touching the grid scripts or this folder); delete that workflow
-together with this folder.
+coverage check do not pick them up. CI runs them in the `baseline` job of
+`.github/workflows/grid_rewrite_tests.yml` on every push to the rewrite
+branch; delete that job together with this folder. The same workflow also
+runs `posydon/unit_tests` on the branch.
 
 ## Run
 
