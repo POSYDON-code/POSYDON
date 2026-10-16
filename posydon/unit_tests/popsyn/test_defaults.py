@@ -50,6 +50,7 @@ class TestElements:
             'log_orbital_seperation_mean',
             'log_orbital_seperation_sigma',
             'orbital_period_scheme',
+            'power_law_slope',
             'orbital_period_min',
             'orbital_period_max',
             'eccentricity_scheme',
@@ -108,6 +109,10 @@ class TestElements:
     def test_instance_log_orbital_seperation_sigma(self):
         assert isinstance(totest.default_kwargs['log_orbital_seperation_sigma'], (type(None), float)), \
             "log_orbital_seperation_sigma should be None or a float"
+
+    def test_instance_power_law_slope(self):
+        assert isinstance(totest.default_kwargs['power_law_slope'], float), \
+            "power_law_slope should be a float"
 
     def test_instance_orbital_period_min(self):
         assert isinstance(totest.default_kwargs['orbital_period_min'], float), \
