@@ -155,6 +155,9 @@ class GridConfig:
     # user about them, e.g. deprecated keys
     source_format: str = "new"
     notes: list = field(default_factory=list)
+    # a legacy ini's sections as read by posydon.utils.configfile, kept
+    # because their key order decides today's layering
+    legacy: dict = field(default_factory=dict)
 
 
 ###############################################################################

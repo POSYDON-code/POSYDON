@@ -50,7 +50,8 @@ class TestElements:
 
     @pytest.mark.parametrize("name", ['strip_comment', 'parse_inlist',
                                       'read_inlist', 'format_value',
-                                      'render_inlist_section', 'render_inlist'])
+                                      'render_inlist_section',
+                                      'render_inlist'])
     def test_instance_functions(self, name):
         assert isroutine(getattr(totest, name))
 
@@ -174,4 +175,5 @@ class TestRender:
         assert totest.parse_inlist(text) == parsed
 
     def test_empty_section(self):
-        assert totest.render_inlist_section("binary_job", {}) == "&binary_job\n/\n"
+        assert totest.render_inlist_section("binary_job", {}) == \
+            "&binary_job\n/\n"

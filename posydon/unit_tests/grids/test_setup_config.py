@@ -114,6 +114,7 @@ class TestDataclasses:
         assert config.submission.backend == "shell"
         assert config.source_format == "new"
         assert config.notes == []
+        assert config.legacy == {}
 
     def test_scenario_is_set(self):
         assert totest.ScenarioSection(release="v2.0").is_set
