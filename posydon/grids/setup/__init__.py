@@ -12,6 +12,8 @@ config
     The settings of a grid (GridConfig), read from a new-format ini file.
 legacy
     Read today's grid ini files into the same GridConfig.
+grid_types
+    The registry of grid types and what makes each one different.
 """
 
 __authors__ = [
