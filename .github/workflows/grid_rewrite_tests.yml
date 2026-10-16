@@ -6,8 +6,10 @@ name: Grid setup rewrite baseline
 on:
   push:
     branches:
+      # the base branch and its siblings, e.g. ..._pr2 (git cannot hold
+      # branches below an existing branch name)
       - 'enhancement/rewrite_mesa_grids'
-      - 'enhancement/rewrite_mesa_grids/**'
+      - 'enhancement/rewrite_mesa_grids_*'
   pull_request:
     paths:
       - 'bin/posydon-setup-grid'
