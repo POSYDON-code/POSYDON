@@ -1,0 +1,14 @@
+returncode: 1
+error: KeyError: 'star1_controls_special'
+
+## staged sources
+
+## run directory tree
+f grid.csv
+f grid.ini
+
+## created outside the run directory
+(none)
+
+## untracked or changed files in the inlist clone
+?? special_single_star_user_inlist

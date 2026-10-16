@@ -1,0 +1,30 @@
+! only differences compared to default_common_inlists/inlist_project
+
+&binary_job
+
+   inlist_names(1) = 'inlist1'
+   inlist_names(2) = 'inlist2'
+
+   evolve_both_stars = .false.
+
+/ ! end of binary_job namelist
+
+&binary_controls
+
+   ! orbital J controls
+   ! These will turn back on when RLOF onto then compact object begins
+   do_jdot_missing_wind = .false.
+   do_j_accretion = .false.
+   do_jdot_gr = .false.
+   do_jdot_ml = .false.
+   do_jdot_ls = .false.
+
+   mdot_scheme = "roche_lobe" ! This switches to Kolb after TAMS
+   limit_retention_by_mdot_edd= .true.
+   use_other_mdot_edd = .true.
+
+   history_interval = 1
+   terminal_interval = 10
+   write_header_frequency = 10
+
+/ ! end of binary_controls namelist

@@ -1,0 +1,17 @@
+! only differences compared to default_common_inlists/inlist1
+
+&star_job
+      show_log_description_at_start = .false.
+
+/ ! end of star_job namelist
+
+&controls
+
+      !OUTPUT OPTIONS
+      history_interval = 1
+      terminal_interval = 10
+      write_header_frequency = 10
+
+      x_ctrl(1) = 1.0d0 !Eddington limit calculated * 1
+
+/ ! end of controls namelist

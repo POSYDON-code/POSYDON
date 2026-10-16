@@ -1,0 +1,6 @@
+&controls
+	mesh_delta_coeff = 0.8d0
+/
+&star_job
+	pgstar_flag = .false.
+/

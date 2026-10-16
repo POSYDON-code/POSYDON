@@ -1,0 +1,70 @@
+&binary_job
+
+   inlist_names(1) = 'inlist1'
+   inlist_names(2) = 'inlist2'
+
+   evolve_both_stars = .true.
+
+/ ! end of binary_job namelist
+
+&binary_controls
+   photo_interval = 0
+   do_jdot_mb = .false.
+   do_jdot_missing_wind = .true.
+   do_j_accretion = .true. ! according to De Mink et al. 2013
+
+   mdot_scheme = "contact" ! This switches to 'Kolb' after one of the two stars reaches TAMS
+
+   ! Mass transfer efficiency controls
+   ! Mass transfer is assumed by default as a base conservative, but is capped further in run_binary_extras
+     mass_transfer_alpha = 0d0      ! fraction of mass lost from the vicinity of donor as fast wind
+     mass_transfer_beta = 0d0       ! fraction of mass lost from the vicinity of accretor as fast wind
+     mass_transfer_delta = 0d0      ! fraction of mass lost from circumbinary coplanar toroid
+
+   append_to_star_history = .false.
+   history_interval = 1
+   terminal_interval = 10
+   write_header_frequency = 100
+
+   ! timestep controls
+   fr = 1d-2 !DEF: 1d-1
+   fr_limit = 1d-2 !DEF: 1d-2
+   fr_dt_limit = 5d2 !1d1
+   fa = 5d-3 !DEF: 1d-2
+   fa_hard = 1d-2 !DEF: 2d-2
+   fm = 5d-3 !DEF: 1d-2
+   fj = 8d-3 !DEF: 1d-3
+   fj_hard = 1d-2 !DEF: 1d-2
+   dt_softening_factor = 0.4d0
+
+   limit_retention_by_mdot_edd = .false. ! turned-on for accretion onto compact objects in run_binary_extras
+   implicit_scheme_tolerance = 1d-4
+   max_tries_to_achieve = 200
+   min_change_factor = 1.01d0
+   max_change_factor = 1.2d0
+   initial_change_factor = 1.2d0
+   change_factor_fraction = 0.8d0
+   implicit_lambda = 0.4d0
+
+   min_mdot_for_implicit = 1d-9
+   roche_min_mdot = 1d-10
+   accretor_overflow_terminate = 100d0
+   terminate_if_L2_overflow = .false. ! L2 oveflow check changes between Marchant et al. 2016 and Misra et al. 2020 for MS or postMS star respectively, in run_binary_extras.f
+
+   use_other_rlo_mdot = .true. ! to be used for reverse MT with postMS evolution of one star, with Kolb scheme.
+   keep_donor_fixed = .false. ! for Kolb this does not work, so we used the use_other_rlo_mdot above
+
+   do_tidal_sync = .true. ! tides are on
+   do_initial_orbit_sync_1 = .true. ! equal initial orbital and stellar spin period
+   do_initial_orbit_sync_2 = .true. ! equal initial orbital and stellar spin period
+
+   use_other_sync_spin_to_orbit = .true. !we decide where to apply the tides. Calls the tidal timescale calculation
+   use_other_tsync = .true. !tidal timescale calculation
+
+   ! If "structure_dependent", then it calculates both timescales for "Hut_rad" (assuming all star radiative)
+   ! and "Hut_conv" (for the most important convective layer in the envelope)
+   ! and picks the shortest one.
+   sync_type_1 = "structure_dependent"
+   sync_type_2 = "structure_dependent"
+
+/ ! end of binary_controls namelist

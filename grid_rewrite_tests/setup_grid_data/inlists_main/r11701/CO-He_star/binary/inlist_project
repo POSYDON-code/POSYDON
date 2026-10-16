@@ -1,0 +1,15 @@
+! only differences compared to default_common_inlists/inlist_project
+
+&binary_job
+
+   evolve_both_stars = .false.
+/ ! end of binary_job namelist
+
+&binary_controls
+
+   do_initial_orbit_sync_1 = .false.
+   mdot_scheme = 'Kolb'
+
+   limit_retention_by_mdot_edd = .true.     ! Use Eddington accretion rate
+   use_other_mdot_edd = .true.
+/ ! end of binary_controls namelist

@@ -1,0 +1,9 @@
+! only differences compared to default_common_inlists/inlist1
+
+&star_job
+
+/ ! end of star_job namelist
+
+&controls
+     x_ctrl(1) = 1.0d0 ! Eddinton limit
+/ ! end of controls namelist

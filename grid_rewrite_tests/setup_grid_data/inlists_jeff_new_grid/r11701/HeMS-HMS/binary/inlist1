@@ -1,0 +1,12 @@
+! only differences compared to default_common_inlists/inlist1
+
+&star_job
+
+/ ! end of star_job namelist
+
+&controls
+
+     ! if true, avoid implementing magnetic braking for this star at RLO (do_jdot_mb stays .false.). in run_binary_extras
+     ! We have the option this not implement it for He_Stars in the CO-He_star grid
+     x_logical_ctrl(6) = .true.
+/ ! end of controls namelist

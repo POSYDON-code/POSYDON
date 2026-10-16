@@ -1,0 +1,45 @@
+!high-mass stars
+
+&star_job
+      load_saved_model = .true.
+      saved_model_name = 'step1.mod'
+
+      save_model_when_terminate = .true.
+      save_model_filename = 'step2.mod'
+
+      change_rotation_flag = .false.
+
+      set_uniform_initial_composition = .true.
+      initial_h1 = 0
+      initial_h2 = 0
+      initial_he3 = 0
+      initial_he4 = 0.9858d0
+
+      initial_zfracs = 6
+
+      relax_initial_Z = .true.
+      new_Z = 1.42d-2
+
+/ ! end of star_job namelist
+
+&controls
+      !initial_z = 1.42d-2
+      !Zbase = 0.0142
+
+      photo_directory = 'photos'
+      log_directory = 'LOGS'
+      history_interval = 1
+      terminal_interval = 1
+      write_header_frequency = 100
+      photo_digits = 5
+      photo_interval = 0
+
+      use_other_wind=.false.
+      hot_wind_scheme = ' '
+      cool_wind_RGB_scheme = ' '
+      cool_wind_AGB_scheme = ' '
+      mass_change = 0d0
+
+      x_logical_ctrl(2) = .true. ! this is only for inlist_step2 of He star formation. Does not get past He-ZAMS
+
+/ ! end of controls namelist

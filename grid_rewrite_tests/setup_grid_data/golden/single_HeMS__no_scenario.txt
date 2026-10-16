@@ -1,0 +1,574 @@
+returncode: 0
+
+## binary/inlist1
+sha256: fe82ca3b1999a77dd666286f6220bd534619378bafae989bf89a6c71b6e1a463
+&controls  (2 keys, 1 not MESA default)
+  history_interval = 1
+&star_job  (6 keys, 4 not MESA default)
+  load_saved_model = .true.
+  saved_model_name = 'initial_star1_step2.mod'
+  save_model_when_terminate = .true.
+  save_model_filename = 'final_star1.mod'
+
+## binary/inlist2
+sha256: b8bb134d2a470a939e9ca1076f10cc341bc4cb9739e76344fe472093f9081fd3
+&controls  (2 keys, 1 not MESA default)
+  history_interval = 1
+&star_job  (3 keys, 2 not MESA default)
+  save_model_when_terminate = .true.
+  save_model_filename = 'final_star2.mod'
+
+## binary/inlist_project
+sha256: cab8055e1c7b19370bb1d0569e5d14b14bb8b1aacbf56977b90489d7551d115b
+&binary_controls  (1 keys, 1 not MESA default)
+  history_interval = 1
+&binary_job  (0 keys, 0 not MESA default)
+
+## star1/inlist_step0
+sha256: c29a98a5a76efffb11ec8d902b1afa08e5dbe096000c822ad480f562fbcc75c3
+&controls  (1659 keys, 122 not MESA default)
+  write_header_frequency = 100
+  photo_interval = 0
+  photo_digits = 5
+  history_interval = 1
+  star_history_dbl_format = '(1pes32.16e3, 1x)'
+  star_history_int_format = '(i32, 1x)'
+  star_history_txt_format = '(a32, 1x)'
+  write_profiles_flag = .false.
+  mixing_D_limit_for_log = 1d-50
+  he_core_boundary_h1_fraction = 1d-2
+  c_core_boundary_he4_fraction = 1d-1
+  o_core_boundary_c12_fraction = 1d-1
+  min_boundary_fraction = 1d-1
+  max_age = 1.4e10
+  gamma_center_limit = 10d0
+  logQ_limit = 58d0
+  mixing_length_alpha = 1.93d0
+  num_cells_for_smooth_gradL_composition_term = 0
+  alpha_semiconvection = 0.1d0
+  thermohaline_coeff = 0.0d0
+  mlt_use_rotation_correction = .false.
+  okay_to_reduce_gradT_excess = .true.
+  conv_premix_avoid_increase = .true.
+  am_D_mix_factor = 0.0333333d0
+  am_nu_factor = 1.0d0
+  am_nu_non_rotation_factor = 1.0d0
+  am_nu_ST_factor = 1.0d0
+  am_nu_visc_factor = 0.333d0
+  D_DSI_factor = 1.0d0
+  D_SH_factor = 0.0d0
+  D_SSI_factor = 1.0d0
+  D_ES_factor = 1.0d0
+  D_GSF_factor = 1.0d0
+  D_ST_factor = 0.0d0
+  D_visc_factor = 0.0d0
+  angsml = 0.0d0
+  am_time_average = .true.
+  recalc_mixing_info_each_substep = .true.
+  w_div_wcrit_max = 0.9d0
+  Pextra_factor = 2.0d0
+  max_mdot_jump_for_rotation = 10.0d0
+  rotational_mdot_boost_fac = 1d10
+  rotational_mdot_kh_fac = 1d10
+  surf_avg_tau_min = 0.0
+  surf_avg_tau = 10.0
+  RGB_to_AGB_wind_switch = 1.0d-4
+  Reimers_scaling_factor = 0.1d0
+  Blocker_scaling_factor = 0.2d0
+  Dutch_scaling_factor = 1.0d0
+  max_mdot_redo_cnt = 200
+  min_years_dt_for_redo_mdot = 0.0
+  mdot_revise_factor = 1.2d0
+  accrete_same_as_surface = .false.
+  accrete_given_mass_fractions = .true.
+  num_accretion_species = 1
+  accretion_species_xa(1) = 1.0
+  max_allowed_nz = 20000
+  max_dq = 1d-3
+  convective_bdy_weight = 0.5d0
+  diffusion_dt_limit = 3.15d9
+  do_Ne22_sedimentation_heating = .true.
+  diffusion_min_dq_at_surface = 1.0d-3
+  diffusion_min_T_at_surface = 1.0d3
+  diffusion_gamma_full_off = 175d0
+  diffusion_gamma_full_on = 165d0
+  diffusion_use_full_net = .true.
+  use_eosDT2 = .false.
+  use_eosELM = .false.
+  cubic_interpolation_in_X = .true.
+  cubic_interpolation_in_Z = .true.
+  use_Type2_opacities = .true.
+  Zbase = 0.02d0
+  kap_Type2_full_off_X = 1.0d-3
+  kap_Type2_full_on_X = 1.0d-6
+  use_gold_tolerances = .false.
+  timestep_factor_for_retries = 0.75d0
+  varcontrol_target = 1d-3
+  newton_iterations_limit = 20
+  delta_lgRho_limit = 0.5d0
+  delta_lgT_limit = 0.025d0
+  delta_lgL_He_limit = 0.1d0
+  delta_HR_ds_L = 0.125d0
+  delta_HR_ds_Teff = 2.0d0
+  delta_HR_limit = 0.1d0
+  delta_HR_hard_limit = 0.2d0
+  delta_lgT_cntr_limit = 0.005d0
+  delta_lgRho_cntr_limit = 0.025d0
+  delta_lg_XHe_cntr_min = -4.0d0
+  delta_lg_XHe_cntr_max = 0.0d0
+  delta_lg_XHe_cntr_limit = 0.01d0
+  delta_lg_XHe_cntr_hard_limit = 0.02d0
+  delta_lg_XC_cntr_min = -2.0d0
+  delta_lg_XC_cntr_max = 0.0d0
+  delta_lg_XC_cntr_limit = 0.01d0
+  delta_lg_XC_cntr_hard_limit = 0.02d0
+  delta_lg_XO_cntr_min = -3.0d0
+  delta_lg_XO_cntr_max = 0.0d0
+  delta_lg_XO_cntr_limit = 0.01d0
+  delta_lg_XO_cntr_hard_limit = 0.02d0
+  delta_XH_cntr_limit = 0.005d0
+  delta_XH_cntr_hard_limit = -1
+  delta_XHe_cntr_hard_limit = -1
+  delta_XC_cntr_limit = 0.002d0
+  delta_XC_cntr_hard_limit = -1
+  warn_when_large_rel_run_E_err = 1d99
+  warn_when_stop_checking_residuals = .false.
+  zams_filename = "zams_z2m2_y28.data"
+  x_ctrl(1:1) = 0d0
+  x_integer_ctrl(1:1) = 0
+  x_logical_ctrl(1:1) = .false.
+  mlt_option = 'Mihalas'
+  use_ledoux_criterion = .true.
+  hot_wind_scheme = ' '
+  cool_wind_RGB_scheme = ' '
+  cool_wind_AGB_scheme = ' '
+  x_logical_ctrl(1) = .false.
+  x_logical_ctrl(2) = .false.
+  x_logical_ctrl(3) = .true.
+  x_logical_ctrl(4) = .false.
+  accretion_species_id(1) = 'he4'
+  xa_central_lower_limit_species(1) = 'he4'
+  xa_central_lower_limit(1) = 1.0
+&star_job  (457 keys, 16 not MESA default)
+  show_log_description_at_start = .false.
+  show_net_species_info = .true.
+  save_model_when_terminate = .true.
+  save_model_filename = 'initial_star1_step0.mod'
+  set_initial_age = .true.
+  initial_age = 0.0d0
+  set_initial_model_number = .true.
+  num_steps_to_relax_composition = 50
+  relax_initial_to_xaccrete = .true.
+  change_rotation_flag = .true.
+  new_surface_rotation_v = 0.0d0
+  num_steps_to_relax_rotation = 50
+  set_eos_PC_parameters = .true.
+  change_net = .true.
+  set_rates_preference = .true.
+  new_net_name = 'approx21.net'
+
+## star1/inlist_step1
+sha256: e3f80b8929ac0b4d37e43f03a8176e9b51679c86f36ffb9c9daeb1ee74c0abbf
+&controls  (1656 keys, 113 not MESA default)
+  write_header_frequency = 100
+  photo_interval = 0
+  photo_digits = 5
+  history_interval = 1
+  star_history_dbl_format = '(1pes32.16e3, 1x)'
+  star_history_int_format = '(i32, 1x)'
+  star_history_txt_format = '(a32, 1x)'
+  write_profiles_flag = .false.
+  mixing_D_limit_for_log = 1d-50
+  he_core_boundary_h1_fraction = 1d-2
+  c_core_boundary_he4_fraction = 1d-1
+  o_core_boundary_c12_fraction = 1d-1
+  min_boundary_fraction = 1d-1
+  max_age = 1.4e10
+  gamma_center_limit = 10d0
+  logQ_limit = 58d0
+  mixing_length_alpha = 1.93d0
+  num_cells_for_smooth_gradL_composition_term = 0
+  alpha_semiconvection = 0.1d0
+  thermohaline_coeff = 0.0d0
+  mlt_use_rotation_correction = .false.
+  okay_to_reduce_gradT_excess = .true.
+  conv_premix_avoid_increase = .true.
+  am_D_mix_factor = 0.0333333d0
+  am_nu_factor = 1.0d0
+  am_nu_non_rotation_factor = 1.0d0
+  am_nu_ST_factor = 1.0d0
+  am_nu_visc_factor = 0.333d0
+  D_DSI_factor = 1.0d0
+  D_SH_factor = 0.0d0
+  D_SSI_factor = 1.0d0
+  D_ES_factor = 1.0d0
+  D_GSF_factor = 1.0d0
+  D_ST_factor = 0.0d0
+  D_visc_factor = 0.0d0
+  angsml = 0.0d0
+  am_time_average = .true.
+  recalc_mixing_info_each_substep = .true.
+  w_div_wcrit_max = 0.9d0
+  Pextra_factor = 2.0d0
+  max_mdot_jump_for_rotation = 10.0d0
+  rotational_mdot_boost_fac = 1d10
+  rotational_mdot_kh_fac = 1d10
+  surf_avg_tau_min = 0.0
+  surf_avg_tau = 10.0
+  RGB_to_AGB_wind_switch = 1.0d-4
+  Reimers_scaling_factor = 0.1d0
+  Blocker_scaling_factor = 0.2d0
+  Dutch_scaling_factor = 1.0d0
+  max_mdot_redo_cnt = 200
+  min_years_dt_for_redo_mdot = 0.0
+  mdot_revise_factor = 1.2d0
+  max_allowed_nz = 20000
+  max_dq = 1d-3
+  convective_bdy_weight = 0.5d0
+  diffusion_dt_limit = 3.15d9
+  do_Ne22_sedimentation_heating = .true.
+  diffusion_min_dq_at_surface = 1.0d-3
+  diffusion_min_T_at_surface = 1.0d3
+  diffusion_gamma_full_off = 175d0
+  diffusion_gamma_full_on = 165d0
+  diffusion_use_full_net = .true.
+  use_eosDT2 = .false.
+  use_eosELM = .false.
+  cubic_interpolation_in_X = .true.
+  cubic_interpolation_in_Z = .true.
+  use_Type2_opacities = .true.
+  kap_Type2_full_off_X = 1.0d-3
+  kap_Type2_full_on_X = 1.0d-6
+  use_gold_tolerances = .false.
+  timestep_factor_for_retries = 0.75d0
+  varcontrol_target = 1d-3
+  newton_iterations_limit = 20
+  delta_lgRho_limit = 0.5d0
+  delta_lgT_limit = 0.025d0
+  delta_lgL_He_limit = 0.1d0
+  delta_HR_ds_L = 0.125d0
+  delta_HR_ds_Teff = 2.0d0
+  delta_HR_limit = 0.1d0
+  delta_HR_hard_limit = 0.2d0
+  delta_lgT_cntr_limit = 0.005d0
+  delta_lgRho_cntr_limit = 0.025d0
+  delta_lg_XHe_cntr_min = -4.0d0
+  delta_lg_XHe_cntr_max = 0.0d0
+  delta_lg_XHe_cntr_limit = 0.01d0
+  delta_lg_XHe_cntr_hard_limit = 0.02d0
+  delta_lg_XC_cntr_min = -2.0d0
+  delta_lg_XC_cntr_max = 0.0d0
+  delta_lg_XC_cntr_limit = 0.01d0
+  delta_lg_XC_cntr_hard_limit = 0.02d0
+  delta_lg_XO_cntr_min = -3.0d0
+  delta_lg_XO_cntr_max = 0.0d0
+  delta_lg_XO_cntr_limit = 0.01d0
+  delta_lg_XO_cntr_hard_limit = 0.02d0
+  delta_XH_cntr_limit = 0.005d0
+  delta_XH_cntr_hard_limit = -1
+  delta_XHe_cntr_hard_limit = -1
+  delta_XC_cntr_limit = 0.002d0
+  delta_XC_cntr_hard_limit = -1
+  warn_when_large_rel_run_E_err = 1d99
+  warn_when_stop_checking_residuals = .false.
+  x_ctrl(1:1) = 0d0
+  x_integer_ctrl(1:1) = 0
+  x_logical_ctrl(1:1) = .false.
+  mlt_option = 'Mihalas'
+  use_ledoux_criterion = .true.
+  hot_wind_scheme = ' '
+  cool_wind_RGB_scheme = ' '
+  cool_wind_AGB_scheme = ' '
+  x_logical_ctrl(1) = .false.
+  x_logical_ctrl(2) = .true.
+  x_logical_ctrl(3) = .true.
+  x_logical_ctrl(4) = .false.
+&star_job  (457 keys, 24 not MESA default)
+  show_log_description_at_start = .false.
+  show_net_species_info = .true.
+  save_model_when_terminate = .true.
+  save_model_filename = 'initial_star1_step1.mod'
+  load_saved_model = .true.
+  saved_model_name = 'initial_star1_step0.mod'
+  set_initial_age = .true.
+  initial_age = 0.0d0
+  set_initial_model_number = .true.
+  set_uniform_initial_composition = .true.
+  initial_h1 = 0
+  initial_h2 = 0
+  initial_he3 = 0
+  initial_he4 = 0.9858d0
+  initial_zfracs = 6
+  relax_initial_Z = .true.
+  new_rotation_flag = .true.
+  new_surface_rotation_v = 0.0d0
+  set_initial_surface_rotation_v = .true.
+  num_steps_to_relax_rotation = 50
+  set_eos_PC_parameters = .true.
+  change_net = .true.
+  set_rates_preference = .true.
+  new_net_name = 'approx21.net'
+
+## star1/inlist_step2
+sha256: aed55be5a3d02dcfb45d5c7e8ec88b3b64df02b945cea04ba068686f320f8220
+&controls  (1656 keys, 117 not MESA default)
+  terminal_interval = 10
+  write_header_frequency = 100
+  photo_directory = 'photos1'
+  photo_interval = 0
+  photo_digits = 5
+  log_directory = 'LOGS1'
+  history_interval = 1
+  star_history_dbl_format = '(1pes32.16e3, 1x)'
+  star_history_int_format = '(i32, 1x)'
+  star_history_txt_format = '(a32, 1x)'
+  write_profiles_flag = .false.
+  mixing_D_limit_for_log = 1d-50
+  he_core_boundary_h1_fraction = 1d-2
+  c_core_boundary_he4_fraction = 1d-1
+  o_core_boundary_c12_fraction = 1d-1
+  min_boundary_fraction = 1d-1
+  max_age = 1.4e10
+  gamma_center_limit = 10d0
+  logQ_limit = 58d0
+  mixing_length_alpha = 1.93d0
+  num_cells_for_smooth_gradL_composition_term = 0
+  alpha_semiconvection = 0.1d0
+  thermohaline_coeff = 0.0d0
+  mlt_use_rotation_correction = .false.
+  okay_to_reduce_gradT_excess = .true.
+  conv_premix_avoid_increase = .true.
+  am_D_mix_factor = 0.0333333d0
+  am_nu_factor = 1.0d0
+  am_nu_non_rotation_factor = 1.0d0
+  am_nu_ST_factor = 1.0d0
+  am_nu_visc_factor = 0.333d0
+  D_DSI_factor = 1.0d0
+  D_SH_factor = 0.0d0
+  D_SSI_factor = 1.0d0
+  D_ES_factor = 1.0d0
+  D_GSF_factor = 1.0d0
+  D_ST_factor = 0.0d0
+  D_visc_factor = 0.0d0
+  angsml = 0.0d0
+  am_time_average = .true.
+  recalc_mixing_info_each_substep = .true.
+  w_div_wcrit_max = 0.9d0
+  Pextra_factor = 2.0d0
+  max_mdot_jump_for_rotation = 10.0d0
+  rotational_mdot_boost_fac = 1d10
+  rotational_mdot_kh_fac = 1d10
+  surf_avg_tau_min = 0.0
+  surf_avg_tau = 10.0
+  RGB_to_AGB_wind_switch = 1.0d-4
+  Reimers_scaling_factor = 0.1d0
+  Blocker_scaling_factor = 0.2d0
+  Dutch_scaling_factor = 1.0d0
+  max_mdot_redo_cnt = 200
+  min_years_dt_for_redo_mdot = 0.0
+  mdot_revise_factor = 1.2d0
+  max_allowed_nz = 20000
+  max_dq = 1d-3
+  convective_bdy_weight = 0.5d0
+  diffusion_dt_limit = 3.15d9
+  do_Ne22_sedimentation_heating = .true.
+  diffusion_min_dq_at_surface = 1.0d-3
+  diffusion_min_T_at_surface = 1.0d3
+  diffusion_gamma_full_off = 175d0
+  diffusion_gamma_full_on = 165d0
+  diffusion_use_full_net = .true.
+  use_eosDT2 = .false.
+  use_eosELM = .false.
+  cubic_interpolation_in_X = .true.
+  cubic_interpolation_in_Z = .true.
+  use_Type2_opacities = .true.
+  kap_Type2_full_off_X = 1.0d-3
+  kap_Type2_full_on_X = 1.0d-6
+  use_gold_tolerances = .false.
+  timestep_factor_for_retries = 0.75d0
+  varcontrol_target = 1d-3
+  newton_iterations_limit = 20
+  delta_lgRho_limit = 0.5d0
+  delta_lgT_limit = 0.025d0
+  delta_lgL_He_limit = 0.1d0
+  delta_HR_ds_L = 0.125d0
+  delta_HR_ds_Teff = 2.0d0
+  delta_HR_limit = 0.1d0
+  delta_HR_hard_limit = 0.2d0
+  delta_lgT_cntr_limit = 0.005d0
+  delta_lgRho_cntr_limit = 0.025d0
+  delta_lg_XHe_cntr_min = -4.0d0
+  delta_lg_XHe_cntr_max = 0.0d0
+  delta_lg_XHe_cntr_limit = 0.01d0
+  delta_lg_XHe_cntr_hard_limit = 0.02d0
+  delta_lg_XC_cntr_min = -2.0d0
+  delta_lg_XC_cntr_max = 0.0d0
+  delta_lg_XC_cntr_limit = 0.01d0
+  delta_lg_XC_cntr_hard_limit = 0.02d0
+  delta_lg_XO_cntr_min = -3.0d0
+  delta_lg_XO_cntr_max = 0.0d0
+  delta_lg_XO_cntr_limit = 0.01d0
+  delta_lg_XO_cntr_hard_limit = 0.02d0
+  delta_XH_cntr_limit = 0.005d0
+  delta_XH_cntr_hard_limit = -1
+  delta_XHe_cntr_hard_limit = -1
+  delta_XC_cntr_limit = 0.002d0
+  delta_XC_cntr_hard_limit = -1
+  warn_when_large_rel_run_E_err = 1d99
+  warn_when_stop_checking_residuals = .false.
+  use_other_wind = .true.
+  x_ctrl(1:1) = 0d0
+  x_integer_ctrl(1:1) = 0
+  x_logical_ctrl(1:1) = .false.
+  mlt_option = 'Mihalas'
+  use_ledoux_criterion = .true.
+  hot_wind_scheme = 'Dutch'
+  cool_wind_RGB_scheme = 'Dutch'
+  cool_wind_AGB_scheme = 'Blocker'
+  x_logical_ctrl(1) = .true.
+  x_logical_ctrl(2) = .false.
+  x_logical_ctrl(3) = .true.
+  x_logical_ctrl(4) = .false.
+&star_job  (457 keys, 18 not MESA default)
+  show_log_description_at_start = .false.
+  show_net_species_info = .true.
+  save_model_when_terminate = .true.
+  save_model_filename = 'initial_star1_step2.mod'
+  load_saved_model = .true.
+  saved_model_name = 'initial_star1_step1.mod'
+  set_initial_age = .true.
+  initial_age = 0.0d0
+  set_initial_model_number = .true.
+  new_rotation_flag = .true.
+  change_rotation_flag = .true.
+  new_surface_rotation_v = 0.0d0
+  set_initial_surface_rotation_v = .true.
+  num_steps_to_relax_rotation = 50
+  set_eos_PC_parameters = .true.
+  change_net = .true.
+  set_rates_preference = .true.
+  new_net_name = 'approx21.net'
+
+## column_lists/binary_history_columns.list
+sha256: f34aa8f0ca3c0a8dfe3e4e44dc07c45d23413f09ea55bc556d9c318f4fb50e89
+lines: 126
+
+## column_lists/history_columns.list
+sha256: c5dbdf34925529e06c30c13dba2fc8a8a0f22c3c842f21392873d2702274cff1
+lines: 727
+
+## column_lists/profile_columns.list
+sha256: 2abdd6d3f1d226dbf07b0fbac46d31597b88f2a556e186b45edd757660f77d89
+lines: 758
+
+## staged sources
+binary/src/binary_run.f: ! STUB for tests: MESA_DIR/binary/work/src/binary_run.f
+binary/src/run_binary_extras.f: ! STUB for tests: r11701/default_common_inlists/binary/src/run_binary_extras.f
+binary/src/run_star_extras.f: ! STUB for tests: r11701/default_common_inlists/binary/src/run_star_extras.f
+star1/src/run.f: ! STUB for tests: MESA_DIR/star/work/src/run.f
+star1/src/run_star_extras.f: ! STUB for tests: r11701/default_common_inlists/binary/src/run_star_extras.f
+star2/src/run.f: ! STUB for tests: MESA_DIR/star/work/src/run.f
+star2/src/run_star_extras.f: ! STUB for tests: MESA_DIR/star/work/src/run_star_extras.f
+binary/make/makefile_binary: # STUB makefile for tests: compiles nothing
+star1/make/makefile_star: # STUB makefile for tests: compiles nothing
+star2/make/makefile_star: # STUB makefile for tests: compiles nothing
+
+## mk
+cd <RUN>/binary/make
+make -f makefile_binary
+cd <RUN>/star1/make
+make -f makefile_star
+cd <RUN>/star2/make
+make -f makefile_star
+
+## job_array_grid_submit.slurm
+#!/bin/bash
+#SBATCH --account=test
+#SBATCH --partition=test-cpu
+#SBATCH -N 1
+#SBATCH --array=0-2
+#SBATCH --cpus-per-task 4
+#SBATCH --ntasks-per-node 1
+#SBATCH --time=2-00:00:00
+#SBATCH --job-name="mesa_grid_\${SLURM_ARRAY_TASK_ID}"
+#SBATCH --output=mesa_grid.%A_%a.out
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=tester@posydon.invalid
+#SBATCH --mem-per-cpu=4G
+
+export OMP_NUM_THREADS=4
+
+export MESASDK_ROOT=/opt/mesasdk-stub
+source $MESASDK_ROOT/bin/mesasdk_init.sh
+export MESA_DIR=<MESA_DIR>
+
+
+python <BIN>/posydon-run-grid --mesa-grid <RUN>/grid.csv --mesa-binary-executable <RUN>/binary/binary --mesa-star1-executable <RUN>/star1/star --mesa-star2-executable <RUN>/star2/star --mesa-binary-inlist-project <RUN>/binary/inlist_project --mesa-binary-inlist1 <RUN>/binary/inlist1 --mesa-binary-inlist2 <RUN>/binary/inlist2 --mesa-star1-inlist-project  <RUN>/star1/inlist_step0 <RUN>/star1/inlist_step1 <RUN>/star1/inlist_step2 --mesa-star2-inlist-project None --mesa-star-history-columns <RUN>/column_lists/history_columns.list --mesa-binary-history-columns <RUN>/column_lists/binary_history_columns.list --mesa-profile-columns <RUN>/column_lists/profile_columns.list --output-directory <RUN> --grid-type fixed --psycris-inifile None --grid-point-index $SLURM_ARRAY_TASK_ID --job_end $SLURM_JOB_END_TIME
+
+## cleanup.slurm
+#!/bin/bash
+#SBATCH --account=test
+#SBATCH --partition=test-cpu
+#SBATCH -N 1
+#SBATCH --cpus-per-task 1
+#SBATCH --ntasks-per-node 1
+#SBATCH --time=2-00:00:00
+#SBATCH --job-name="mesa_grid_cleanup"
+#SBATCH --output=mesa_cleanup.out
+#SBATCH --mail-type=ALL
+#SBATCH --mail-user=tester@posydon.invalid
+#SBATCH --mem-per-cpu=4G
+
+compress-mesa .
+
+echo "Done."
+
+## run_grid.sh
+#!/bin/bash
+ID_GRID=$(sbatch --parsable job_array_grid_submit.slurm)
+echo "job_array_grid_submit.slurm submitted as "${ID_GRID}
+ID_cleanup=$(sbatch --parsable --dependency=afterany:${ID_GRID} --kill-on-invalid-dep=yes cleanup.slurm)
+echo "cleanup.slurm submitted as "${ID_cleanup}
+
+## run directory tree
+d binary/
+f binary/inlist1
+f binary/inlist2
+f binary/inlist_project
+d binary/make/
+f binary/make/makefile_binary
+d binary/src/
+f binary/src/binary_run.f
+f binary/src/run_binary_extras.f
+f binary/src/run_star_extras.f
+f cleanup.slurm
+d column_lists/
+f column_lists/binary_history_columns.list
+f column_lists/history_columns.list
+f column_lists/profile_columns.list
+f grid.csv
+f grid.ini
+f job_array_grid_submit.slurm
+x mk
+x run_grid.sh
+d star1/
+f star1/inlist_step0
+f star1/inlist_step1
+f star1/inlist_step2
+d star1/make/
+f star1/make/makefile_star
+d star1/src/
+f star1/src/run.f
+f star1/src/run_star_extras.f
+d star2/
+d star2/make/
+f star2/make/makefile_star
+d star2/src/
+f star2/src/run.f
+f star2/src/run_star_extras.f
+
+## created outside the run directory
+(none)
+
+## untracked or changed files in the inlist clone
+(none)
