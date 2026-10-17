@@ -1053,9 +1053,10 @@ class StepSN(object):
 
                     # delta_PPI -> -inf if Z -> 0
                     # limit mass loss to Z = 1e-4 for Z below it.
-                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
-                    if star.metallicity < 1e-4:
-                        Z = 1e-4
+                    # 1e-4 is the lowest (absolute) metallicity in the
+                    # Hendriks et al. 2023, while star.metallicity is Z/Zsun
+                    if star.metallicity < 1e-4 / const.Zsun:
+                        Z = 1e-4 / const.Zsun
                     else:
                         Z = star.metallicity
                     # Hendriks et al. 2023 Equation 6
