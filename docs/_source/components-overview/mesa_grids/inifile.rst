@@ -57,38 +57,18 @@ Write a starter file for a grid type with
 
 and fill in the ``<...>`` values. The file lists every option the grid
 type takes, each with a short note; options left at their default are
-commented out (``; key = value``), so remove the ``;`` to set one. A
-shorter example:
+commented out (``; key = value``), so remove the ``;`` to set one.
 
-.. code-block:: ini
+**Examples.** Ready-made files for every grid type, and for a rerun with your
+own physics, a dynamic grid and a laptop run, are in
+`docs/_source/components-overview/mesa_grids/examples
+<https://github.com/POSYDON-code/POSYDON/tree/main/docs/_source/components-overview/mesa_grids/examples>`_
+(they are read and set up by POSYDON's unit tests, so they follow the
+format). For example, an HMS-HMS grid with a rerun of v2.0 and your own
+inlists and Fortran source on top:
 
-    [grid]
-    type = CO-HeMS              ; see --list-grid-types
-    mode = fixed                ; fixed | dynamic (needs psycris_inifile)
-    points = grid.csv           ; one row per MESA run
-    run_directory = .
-
-    [scenario]                  ; which POSYDON inlists to use
-    release = v2.0
-    rerun = matthias_lbv_thermo_dedt_noAgeLimit   ; optional
-    inlist_repo = ~/POSYDON-MESA-INLISTS          ; your clone, read as it is
-
-    [user_inlists]              ; your own MESA inlists, on top
-    star1_controls = my_inlist1
-
-    [output]
-    history_interval = 1
-    star1 = history, final_model
-    star2 = none
-    binary = history
-
-    [submission]
-    backend = slurm_array       ; shell | slurm_array | slurm_mpi
-    partition = {PARTITION}
-    account = {ACCOUNT}
-    walltime = 2-00:00:00
-    email = {EMAIL}
-    cpus_per_task = 4
+.. literalinclude:: examples/HMS-HMS_rerun_and_my_physics.ini
+    :language: ini
 
 Relative paths are relative to the :samp:`ini` file.
 
