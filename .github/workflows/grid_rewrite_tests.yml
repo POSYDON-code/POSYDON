@@ -42,8 +42,18 @@ jobs:
         python -m pip install --upgrade pip
         pip install .[test]
 
+    - name: Clone POSYDON-MESA-INLISTS for the release-manifest tests
+      run: |
+        git clone --branch v2_sources --single-branch \
+          https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git \
+          "$RUNNER_TEMP/inlists"
+        git -C "$RUNNER_TEMP/inlists" checkout \
+          8482d7d2d6f4abd3374437053aa6cf2b11ff70ca
+
     - name: Run the grid setup baseline tests
-      run: pytest grid_rewrite_tests
+      run: |
+        export POSYDON_INLIST_REPO="$RUNNER_TEMP/inlists"
+        pytest grid_rewrite_tests
 
   unit-tests:
     runs-on: ${{ matrix.os }}

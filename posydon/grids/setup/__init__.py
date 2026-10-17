@@ -22,6 +22,8 @@ extras
     Stage the Fortran sources and column lists, and compile.
 submit
     Write the posydon-run-grid command line and the shell/SLURM scripts.
+manifest
+    Read a release of the restructured inlist repository from its manifests.
 """
 
 __authors__ = [

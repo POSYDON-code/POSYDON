@@ -31,6 +31,10 @@ cluster is used.
 - `test_setup_grid_baseline.py`: harness, golden cases, folder-structure
   checks, scenario-vs-explicit-paths checks, the opt-in replay and strict
   xfail tests for known bugs.
+- `test_release_manifests.py`: the restructured inlist repo
+  (`r11701/releases/v2.0` + reruns, branch `v2_sources`) against today's
+  scenario rules on every archived production commit. Needs
+  `POSYDON_INLIST_REPO=<clone at the commit pinned in the file>`; CI clones it.
 - `test_new_vs_legacy.py`: each new module against the matching part of
   the pre-rewrite script.
 - `legacy_posydon_setup_grid.py`: `bin/posydon-setup-grid` as it was before
