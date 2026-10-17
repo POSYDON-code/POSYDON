@@ -25,6 +25,7 @@ run_directory = ./run
 [scenario]                ; selects posydon_inlists
 release = v2.0
 rerun = dedt_hepulse
+commit = 8482d7d          ; of the inlist repository
 
 [user_inlists]            ; your MESA inlists, layered above posydon_inlists
 star1_controls = ./my_inlist1
@@ -235,11 +236,18 @@ class TestScenarioSection:
         assert scenario.commit == "18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
         assert scenario.inlist_repo == tmp_path / "repo"
 
+    def test_release_from_a_local_path_needs_no_ref(self, write_ini):
+        config = totest.read_config(write_ini(
+            MINIMAL + "[scenario]\nsource = path\nrelease = v2.0\n"
+            "inlist_repo = repo\n"))
+        assert (config.scenario.ref, config.scenario.commit) == (None, None)
+
     @pytest.mark.parametrize("text, message", [
         ("source = cloud\n", r"\[scenario\] source: unknown value"),
         ("commit = main-18710e9\n", r"\[scenario\] commit: expected a git"),
         ("commit = 18710\n", r"\[scenario\] commit: expected a git"),
         ("rerun = dedt\n", r"\[scenario\] rerun: a rerun needs a release"),
+        ("release = v2.0\n", r"\[scenario\] release: a release needs ref"),
         ("system = HMS-HMS\n", r"\[scenario\] system: unknown key"),
     ])
     def test_errors(self, write_ini, text, message):

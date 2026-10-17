@@ -255,6 +255,13 @@ def _read_scenario(options, base):
             raise ConfigError("scenario", key, "unknown key")
     if scenario.rerun is not None and scenario.release is None:
         raise ConfigError("scenario", "rerun", "a rerun needs a release")
+    if scenario.release is not None and scenario.source != "path" and \
+            scenario.ref is None and scenario.commit is None:
+        # no hidden default: the ini says which version of the inlist
+        # repository it was set up with
+        raise ConfigError("scenario", "release", "a release needs ref (a "
+                          "branch or tag of the inlist repository) or "
+                          "commit")
     return scenario
 
 

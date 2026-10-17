@@ -24,6 +24,8 @@ submit
     Write the posydon-run-grid command line and the shell/SLURM scripts.
 manifest
     Read a release of the restructured inlist repository from its manifests.
+resolve
+    Turn [scenario] (legacy or release) into the files of posydon_inlists.
 """
 
 __authors__ = [
