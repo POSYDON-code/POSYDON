@@ -23,7 +23,6 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-import subprocess
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -33,7 +32,9 @@ from posydon.grids.setup.manifest import find_release, release_files
 from posydon.grids.setup.scenario import (
     REPOSITORIES,
     ScenarioFiles,
+    clone_if_missing,
     fetch_inlist_repo,
+    git,
     inlist_repo_path,
     scenario_files,
 )
@@ -49,14 +50,9 @@ class ResolvedScenario:
     release: object = None
 
 
-def _git(repo, *args):
-    return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True)
-
-
 def _head(repo):
     """The checked-out commit, or None outside a git repository."""
-    result = _git(repo, "rev-parse", "HEAD")
+    result = git(repo, "rev-parse", "HEAD")
     return result.stdout.strip() if result.returncode == 0 else None
 
 
@@ -94,23 +90,16 @@ def checkout_release_repo(scenario, home=None):
             raise ConfigError("scenario", "commit", "{} is at {}, not {}"
                               .format(repo, head, scenario.commit))
         return repo, head
-    if not repo.is_dir():
-        url = REPOSITORIES[scenario.source][0]
-        result = subprocess.run(["git", "clone", url, str(repo)],
-                                capture_output=True, text=True)
-        if result.returncode != 0:
-            raise ConfigError("scenario", "source", "could not clone {} "
-                              "into {}: {}".format(url, repo,
-                                                   result.stderr.strip()))
+    clone_if_missing(REPOSITORIES[scenario.source][0], repo)
     # a failed fetch (no network) is fine if the version is already here
-    fetched = _git(repo, "fetch", "--tags", "origin").returncode == 0
+    fetched = git(repo, "fetch", "--tags", "origin").returncode == 0
     if scenario.commit is not None:
         key, names = "commit", [scenario.commit]
     else:
         key, names = "ref", ["origin/" + scenario.ref, scenario.ref]
     target = None
     for name in names:
-        result = _git(repo, "rev-parse", "--verify", "--quiet",
+        result = git(repo, "rev-parse", "--verify", "--quiet",
                       name + "^{commit}")
         if result.returncode == 0:
             target = result.stdout.strip()
@@ -118,7 +107,7 @@ def checkout_release_repo(scenario, home=None):
     if target is None:
         raise ConfigError("scenario", key, "{!r} is not in {}{}".format(
             names[-1], repo, "" if fetched else " (and fetching failed)"))
-    result = _git(repo, "checkout", "--quiet", "--detach", target)
+    result = git(repo, "checkout", "--quiet", "--detach", target)
     if result.returncode != 0:
         raise ConfigError("scenario", key, "could not check out {} in {}: "
                           "{}".format(target, repo, result.stderr.strip()))

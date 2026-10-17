@@ -201,6 +201,8 @@ class TestScripts:
         assert "--mail-type" not in text
         assert "--mem-per-cpu=4G" in text
         assert "None" not in totest.cleanup_script(config)
+        config.submission.mem_per_cpu = None
+        assert "--mem-per-cpu" not in totest.cleanup_script(config)
 
     def test_run_script(self):
         assert totest.run_script("grid.slurm") == (

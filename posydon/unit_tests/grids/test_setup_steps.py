@@ -138,6 +138,34 @@ class TestSetupGrid:
         assert text.startswith("binary_controls\n")
         assert not grid["run"].exists()
 
+    def test_explain_reads_no_grid_points(self, grid, monkeypatch,
+                                          tmp_path):
+        """Before, a MESA grid folder was converted to fixed_grid_results.h5
+        in the current directory just to explain the inlists."""
+        runs = tmp_path / "runs"
+        (runs / "Zbase_0.0142_m1_10.0").mkdir(parents=True)
+        ini = grid["ini"].read_text().replace(
+            "points = {}/grid.csv".format(grid["dir"]),
+            "points = {}".format(runs))
+        assert ini != grid["ini"].read_text()
+        grid["ini"].write_text(ini)
+
+        def no_reading(points):
+            raise AssertionError("explain read the grid points")
+        monkeypatch.setattr(totest, "read_grid_points", no_reading)
+        monkeypatch.chdir(tmp_path)
+        before = sorted(tmp_path.rglob("*"))
+        text = totest.explain_grid(grid["ini"])
+        assert text.startswith("binary_controls\n")
+        assert sorted(tmp_path.rglob("*")) == before
+
+    def test_prepare_reads_the_grid_points(self, grid):
+        ready = totest.prepare(grid["ini"])
+        assert len(ready.grid_df) == 2
+        assert list(ready.parameters) == list(ready.grid_df.columns)
+        ready = totest.prepare(grid["ini"], read_points=False)
+        assert (ready.grid_df, ready.parameters) == (None, None)
+
     def test_explain_with_a_scenario(self, grid, monkeypatch, tmp_path):
         d = grid["dir"]
         files = ScenarioFiles()

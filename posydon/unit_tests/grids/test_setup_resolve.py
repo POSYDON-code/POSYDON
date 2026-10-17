@@ -88,10 +88,10 @@ class TestElements:
                     'ResolvedScenario', 'ScenarioFiles', '__authors__',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
-                    '_git', '_head', 'checkout_release_repo', 'dataclass',
-                    'fetch_inlist_repo', 'find_release', 'get_grid_type',
-                    'inlist_repo_path', 'release_files', 'resolve_scenario',
-                    'scenario_files', 'subprocess'}
+                    '_head', 'checkout_release_repo', 'clone_if_missing',
+                    'dataclass', 'fetch_inlist_repo', 'find_release',
+                    'get_grid_type', 'git', 'inlist_repo_path',
+                    'release_files', 'resolve_scenario', 'scenario_files'}
         assert set(dir(totest)) == elements
 
     @pytest.mark.parametrize("name", ['checkout_release_repo',
@@ -165,13 +165,13 @@ class TestCheckout:
         assert commit == origin["first"]
 
     def test_checkout_fails(self, clone, monkeypatch):
-        real = totest._git
+        real = totest.git
 
-        def broken(repo, *args):
+        def broken(repo, *args, **options):
             if args[0] == "checkout":
                 return subprocess.CompletedProcess(args, 1, "", "locked")
-            return real(repo, *args)
-        monkeypatch.setattr(totest, "_git", broken)
+            return real(repo, *args, **options)
+        monkeypatch.setattr(totest, "git", broken)
         with pytest.raises(ConfigError, match="could not check out .*locked"):
             totest.checkout_release_repo(
                 config_for(clone, ref="main").scenario)

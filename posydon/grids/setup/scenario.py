@@ -77,10 +77,48 @@ def inlist_repo_path(scenario, home=None):
     return home / REPOSITORIES[scenario.source][1]
 
 
-def _git(repo, *args):
-    """Run git in ``repo``; return the CompletedProcess (never raises)."""
+def git(repo, *args, text=True):
+    """Run git in ``repo``; return the CompletedProcess (never raises).
+
+    ``text=False`` keeps the output as bytes, e.g. for ``git archive``.
+    Used for every git call of the setup (``resolve``, ``support``).
+    """
     return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True, text=True)
+                          capture_output=True, text=text)
+
+
+def clone_if_missing(url, repo, section="scenario", key="source",
+                     context=""):
+    """Clone ``url`` into ``repo``, unless that folder exists.
+
+    Parameters
+    ----------
+    url : str or None
+        The repository; None if none is known (then ``repo`` must exist).
+    repo : str or Path
+        Where the clone goes.
+    section, key, context : str
+        Name the ini setting the error is about, and say why the clone is
+        needed (put in front of the message).
+
+    Raises
+    ------
+    ConfigError
+        If the clone fails, or there is no folder and no ``url``.
+    """
+    repo = Path(repo)
+    if repo.is_dir():
+        return
+    if url is None:
+        raise ConfigError(section, key, "{}{} does not exist and no "
+                          "repository is known to clone into it".format(
+                              context, repo))
+    result = subprocess.run(["git", "clone", url, str(repo)],
+                            capture_output=True, text=True)
+    if result.returncode != 0:
+        raise ConfigError(section, key, "{}could not clone {} into {}: {}"
+                          .format(context, url, repo,
+                                  result.stderr.strip()))
 
 
 def fetch_inlist_repo(scenario, home=None):
@@ -105,20 +143,13 @@ def fetch_inlist_repo(scenario, home=None):
         If the clone cannot be made or the commit cannot be checked out.
     """
     repo = inlist_repo_path(scenario, home=home)
-    if not repo.is_dir():
-        url = REPOSITORIES.get(scenario.source, (None,))[0]
-        result = subprocess.run(["git", "clone", url, str(repo)],
-                                capture_output=True, text=True)
-        if result.returncode != 0:
-            raise ConfigError("scenario", "source", "could not clone {} "
-                              "into {}: {}".format(url, repo,
-                                                   result.stderr.strip()))
+    clone_if_missing(REPOSITORIES.get(scenario.source, (None,))[0], repo)
     if scenario.branch is not None:
         # failures here are not fatal: the branch may only exist remotely,
         # and the pull needs a network
-        _git(repo, "checkout", scenario.branch)
-        _git(repo, "pull")
-    result = _git(repo, "checkout", scenario.commit)
+        git(repo, "checkout", scenario.branch)
+        git(repo, "pull")
+    result = git(repo, "checkout", scenario.commit)
     if result.returncode != 0:
         raise ConfigError("scenario", "commit", "could not check out {} in "
                           "{}: {}".format(scenario.commit, repo,

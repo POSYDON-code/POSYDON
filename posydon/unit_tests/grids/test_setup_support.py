@@ -125,8 +125,9 @@ class TestSupportRoot:
     def test_clone_fails(self, tmp_path, monkeypatch):
         monkeypatch.setitem(totest.REPOSITORIES, "posydon",
                             (str(tmp_path / "missing"), ".inlists"))
-        with pytest.raises(ConfigError, match="no longer part of POSYDON "
-                           "and cloning"):
+        with pytest.raises(ConfigError, match="posydon_github_root: "
+                           "grid_params/ is no longer part of POSYDON, and "
+                           "could not clone"):
             totest.support_root(home=tmp_path)
 
     def test_unknown_commit(self, origin, tmp_path):

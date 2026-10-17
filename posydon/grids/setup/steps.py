@@ -15,9 +15,11 @@ done by the other modules of ``posydon.grids.setup``:
     7. write the submission scripts    submit.command_line, write_scripts
     8. record what it was set up from  record.write_record (setup_record.ini)
 
-``prepare`` does steps 1-3, which check everything and write nothing;
-``explain_grid`` stops there and says where each inlist value comes from;
-``setup_grid`` goes on to write the run directory.
+``prepare`` does steps 1-3, which check everything; ``explain_grid``
+stops there, without step 2, and says where each inlist value comes from;
+``setup_grid`` goes on to write the run directory. Only reading the grid
+points can write: a MESA grid folder is first converted into
+``fixed_grid_results.h5`` (in the current directory, as today).
 
 An ini with a ``[grid]`` section is a new-format ini: it says the mode, run
 directory and backend itself. Any other ini is a legacy ini, which needs
@@ -263,10 +265,17 @@ class Prepared:
 
 
 def prepare(inifile, grid_type=None, run_directory=None,
-            submission_type=None, overrides=False):
-    """Steps 1-3: read and check everything; write nothing.
+            submission_type=None, overrides=False, read_points=True):
+    """Steps 1-3: read and check everything.
 
-    Parameters are those of ``read_any_config``.
+    Parameters are those of ``read_any_config``, and
+
+    read_points : bool
+        Read the grid points (step 2). ``explain_grid`` does not need them:
+        it checks that they exist, but does not read them, so it writes
+        nothing even for a MESA grid folder (which ``read_grid_points``
+        converts into an HDF5 file first). Without them, ``grid_df`` and
+        ``parameters`` are None.
 
     Returns
     -------
@@ -278,9 +287,12 @@ def prepare(inifile, grid_type=None, run_directory=None,
     # written into the inlists and scripts as given (legacy: --run-directory)
     run_dir = run_directory or str(config.grid.run_directory)
     check_config(config)
-    grid_df, mpi_grid = read_grid_points(config.grid)
-    if not one_point_per_task(config.submission):
-        config.grid.points = Path(mpi_grid)
+    grid_df = parameters = None
+    if read_points:
+        grid_df, mpi_grid = read_grid_points(config.grid)
+        if not one_point_per_task(config.submission):
+            config.grid.points = Path(mpi_grid)
+        parameters = grid_parameters(config, grid_df)
     resolved = resolve_scenario(config)
     scenario = resolved.files if resolved is not None else None
     fill_defaults(config, resolved, os.environ['MESA_DIR'])
@@ -297,7 +309,7 @@ def prepare(inifile, grid_type=None, run_directory=None,
                           "lists {}".format(", ".join(missing)))
     return Prepared(config=config, run_directory=run_dir, grid_df=grid_df,
                     resolved=resolved, extras=extras, columns=columns,
-                    parameters=grid_parameters(config, grid_df))
+                    parameters=parameters)
 
 
 def explain_grid(inifile, **options):
@@ -305,7 +317,7 @@ def explain_grid(inifile, **options):
 
     Options are those of ``read_any_config``.
     """
-    ready = prepare(inifile, **options)
+    ready = prepare(inifile, read_points=False, **options)
     roots = [ready.resolved.repo] if ready.resolved is not None else []
     return explain_text(ready.config, ready.scenario, roots)
 

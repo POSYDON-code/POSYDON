@@ -33,7 +33,11 @@ import tempfile
 from pathlib import Path
 
 from posydon.grids.setup.config import ConfigError
-from posydon.grids.setup.scenario import REPOSITORIES
+from posydon.grids.setup.scenario import (
+    REPOSITORIES,
+    clone_if_missing,
+    git,
+)
 
 # POSYDON-MESA-INLISTS, branch v2_sources: the restructured layout with
 # r11701/mesa/default (byte-identical to grid_params/defaults/r11701)
@@ -99,11 +103,6 @@ def map_grid_params_path(path):
     return None
 
 
-def _git(repo, *args):
-    return subprocess.run(["git", "-C", str(repo), *args],
-                          capture_output=True)
-
-
 def support_root(home=None, clone=None, commit=SUPPORT_COMMIT):
     """The cache folder with the support files at ``commit``.
 
@@ -133,18 +132,12 @@ def support_root(home=None, clone=None, commit=SUPPORT_COMMIT):
         return cache
     url, name = REPOSITORIES["posydon"]
     clone = home / name if clone is None else Path(clone)
-    if not clone.is_dir():
-        result = subprocess.run(["git", "clone", url, str(clone)],
-                                capture_output=True, text=True)
-        if result.returncode != 0:
-            raise ConfigError("mesa_inlists", "posydon_github_root",
-                              "grid_params/ is no longer part of POSYDON "
-                              "and cloning {} failed: {}".format(
-                                  url, result.stderr.strip()))
-    if _git(clone, "cat-file", "-e", commit + "^{commit}").returncode:
-        _git(clone, "fetch", "origin")
-    archive = _git(clone, "archive", "--format=tar", commit,
-                   *SUPPORT_PATHS)
+    clone_if_missing(url, clone, "mesa_inlists", "posydon_github_root",
+                     "grid_params/ is no longer part of POSYDON, and ")
+    if git(clone, "cat-file", "-e", commit + "^{commit}").returncode:
+        git(clone, "fetch", "origin")
+    archive = git(clone, "archive", "--format=tar", commit, *SUPPORT_PATHS,
+                  text=False)
     if archive.returncode != 0:
         raise ConfigError("mesa_inlists", "posydon_github_root",
                           "grid_params/ is no longer part of POSYDON, and "

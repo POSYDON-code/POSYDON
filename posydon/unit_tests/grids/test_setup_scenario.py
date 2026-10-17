@@ -89,7 +89,8 @@ class TestElements:
                     'SINGLE_STAR_FLAG', 'ScenarioFiles', '__authors__',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
-                    '_add_every_step', '_add_formation', '_add_star', '_git',
+                    '_add_every_step', '_add_formation', '_add_star', 'git',
+                    'clone_if_missing',
                     '_formation_steps', '_step_order', '_zams_from_inlist',
                     'dataclass', 're',
                     'fetch_inlist_repo', 'field', 'inlist_repo_path',
@@ -174,6 +175,14 @@ class TestFetchInlistRepo:
         clone = totest.fetch_inlist_repo(scenario, home=tmp_path)
         assert clone == tmp_path / ".posydon_mesa_inlists"
         assert git(clone, "rev-parse", "HEAD") == first
+
+    def test_unknown_source_without_a_clone(self, tmp_path):
+        """Before, this ran 'git clone None' and raised a TypeError."""
+        scenario = ScenarioSection(source="path", commit="1234567",
+                                   inlist_repo=tmp_path / "nothing")
+        with pytest.raises(ConfigError, match=r"\[scenario\] source: .*"
+                           "nothing does not exist and no repository"):
+            totest.fetch_inlist_repo(scenario)
 
     def test_clone_fails(self, tmp_path, monkeypatch):
         monkeypatch.setitem(totest.REPOSITORIES, "posydon",
