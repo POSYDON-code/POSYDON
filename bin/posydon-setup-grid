@@ -50,6 +50,7 @@ from posydon.grids.setup.extras import (
     compile_executables,
     keep_highest_extras,
     merge_extras,
+    replaced_column_lists,
     stage_column_lists,
     stage_extras,
 )
@@ -267,6 +268,11 @@ if __name__ == '__main__':
     fill_defaults(config, resolved, os.environ['MESA_DIR'])
     extras = chosen_extras(config, scenario)
     columns = column_list_sources(config, scenario)
+    for name in replaced_column_lists(config, scenario):
+        # the scenario's column lists win over the ini's (tracker C7)
+        Pwarn("{} in the ini file is not used: the scenario's {} is "
+              "used instead".format(name, columns[name]),
+              "ReplaceValueWarning")
     missing = [name for name in COLUMN_LIST_FILES if name not in columns]
     if missing:
         raise ConfigError("mesa_inlists", None, "no file for the column "

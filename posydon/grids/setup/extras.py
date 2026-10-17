@@ -223,6 +223,32 @@ def column_list_sources(config, scenario=None):
     return chosen
 
 
+def replaced_column_lists(config, scenario):
+    """Column lists the ini names but the scenario replaces with another file.
+
+    Within ``posydon_inlists`` the scenario's list wins (tracker C7); this
+    says which of the ini's lists that ignores, so the user can be told.
+    Lists whose files have the same content are not reported.
+
+    Returns
+    -------
+    list of str
+        Column-list names, in ``COLUMN_LIST_FILES`` order.
+    """
+    if scenario is None:
+        return []
+    ini = config.inlists["posydon_inlists"].whole_files
+    used = scenario.inlists.whole_files
+    names = []
+    for name in COLUMN_LIST_FILES:
+        if name in ini and name in used:
+            mine, theirs = Path(ini[name]), Path(used[name])
+            if not (mine.is_file() and
+                    mine.read_bytes() == theirs.read_bytes()):
+                names.append(name)
+    return names
+
+
 def stage_column_lists(sources, run_directory):
     """Copy the column lists into ``column_lists/`` (emptied first).
 

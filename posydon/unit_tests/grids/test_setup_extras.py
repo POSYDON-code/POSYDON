@@ -37,6 +37,7 @@ class TestElements:
                     '__spec__', 'column_list_sources', 'compile_executables',
                     'LAYER_PREFIXES', 'destinations', 'keep_highest_extras',
                     'merge_extras', 'mk_lines', 'os', 'pick_whole_file',
+                    'replaced_column_lists',
                     'shutil', 'stage_column_lists', 'stage_extras',
                     'subprocess'}
         assert set(dir(totest)) == elements
@@ -212,6 +213,22 @@ class TestColumnLists:
 
     def test_missing(self):
         assert totest.column_list_sources(GridConfig()) == {}
+
+    def test_replaced(self, sources):
+        """C7: the ini's lists that the scenario replaces, if different."""
+        config = self.config(sources)
+        scenario = ScenarioFiles()
+        scenario.inlists.whole_files.update({
+            "history_columns": sources / "makefile",            # differs
+            "binary_history_columns": sources / "notes.txt"})   # the same
+        # profile_columns: named by the ini only
+        assert totest.replaced_column_lists(config, scenario) == [
+            "history_columns"]
+        config.inlists["posydon_inlists"].whole_files[
+            "binary_history_columns"] = sources / "missing.list"
+        assert totest.replaced_column_lists(config, scenario) == [
+            "history_columns", "binary_history_columns"]
+        assert totest.replaced_column_lists(config, None) == []
 
     def test_stage_new_folder(self, sources, tmp_path):
         staged = totest.stage_column_lists(
