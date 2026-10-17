@@ -37,6 +37,7 @@ import re
 from pathlib import Path
 
 from posydon.grids.setup.config import ConfigError, GridConfig, SubmissionSection
+from posydon.grids.setup.support import SUPPORT_COMMIT, map_grid_params_path
 from posydon.utils.configfile import parse_inifile
 
 # (system type in the scenario, single_star_grid) -> grid type
@@ -152,8 +153,49 @@ def _read_inlist_keys(mesa_inlists, config, single_star):
                       Path(value))
 
 
+def rewrite_grid_params(sections, support):
+    """Point ``grid_params/`` paths that no longer exist to the inlist repo.
+
+    POSYDON no longer ships ``grid_params/``; its files are read from
+    POSYDON-MESA-INLISTS at a pinned commit (``support.support_root``).
+
+    Parameters
+    ----------
+    sections : list of dict
+        ``[mesa_inlists]`` and ``[mesa_extras]`` as read, changed in place;
+        values are paths or lists of paths.
+    support : callable
+        Returns the support cache folder; only called if a path needs it.
+
+    Returns
+    -------
+    int
+        How many paths were rewritten.
+    """
+    root = None
+    count = 0
+
+    def new(value):
+        nonlocal root, count
+        if not isinstance(value, str) or Path(value).exists():
+            return value
+        relative = map_grid_params_path(value)
+        if relative is None:
+            return value
+        if root is None:
+            root = Path(support())
+        count += 1
+        return str(root / relative)
+
+    for options in sections:
+        for key, value in options.items():
+            options[key] = [new(item) for item in value] \
+                if isinstance(value, list) else new(value)
+    return count
+
+
 def read_legacy_config(path, grid_type="fixed", submission_type=None,
-                       run_directory=None, mesa_dir=None):
+                       run_directory=None, mesa_dir=None, support=None):
     """Read a legacy grid ini file into a ``GridConfig``.
 
     Parameters
@@ -169,6 +211,10 @@ def read_legacy_config(path, grid_type="fixed", submission_type=None,
         ``--run-directory``.
     mesa_dir : str, Path or None
         Value for ``${MESA_DIR}`` in the file; defaults to ``$MESA_DIR``.
+    support : callable or None
+        Returns the folder of the files that used to be in POSYDON's
+        ``grid_params/`` (``support.support_root``); paths there that no
+        longer exist are rewritten to it. None leaves them as they are.
 
     Returns
     -------
@@ -181,11 +227,18 @@ def read_legacy_config(path, grid_type="fixed", submission_type=None,
         raise ConfigError("file", None, "{} not found".format(path))
     run_parameters, slurm, mesa_inlists, mesa_extras = \
         _read_with_mesa_dir(path, mesa_dir)
+    rewritten = 0 if support is None else \
+        rewrite_grid_params([mesa_inlists, mesa_extras], support)
     config = GridConfig(source_format="legacy")
     config.legacy = {"run_parameters": run_parameters, "slurm": slurm,
                      "mesa_inlists": mesa_inlists, "mesa_extras": mesa_extras}
     config.notes.append("legacy ini format; see the grid documentation for "
                         "the new [grid]/[scenario]/[user_inlists] format")
+    if rewritten:
+        config.notes.append("{} grid_params/ paths are read from "
+                            "POSYDON-MESA-INLISTS at {} instead (POSYDON "
+                            "no longer ships grid_params/)".format(
+                                rewritten, SUPPORT_COMMIT[:7]))
     single_star = bool(mesa_inlists.get("single_star_grid", False))
 
     # [mesa_inlists] scenario -> scenario and grid type

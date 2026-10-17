@@ -4,8 +4,10 @@ For every grid type, ``posydon-setup-grid`` runs twice on the real
 POSYDON-MESA-INLISTS:
 
 - on a legacy ini: ``scenario = ['posydon', '<branch>-<commit>',
-  '<system type>']`` at the production commit, MESA defaults from
-  ``grid_params/``;
+  '<system type>']`` at the production commit, MESA defaults named as
+  ``${posydon_github_root}/grid_params/defaults/...``, which POSYDON no
+  longer ships: the setup reads them from POSYDON-MESA-INLISTS at the
+  pinned commit (``support.py``);
 - on the equivalent new-format ini: ``[scenario] release = v2.0`` (+ the
   rerun of that commit) at the restructured repo, MESA defaults and
   extras filled in by ``defaults.fill_defaults``.
@@ -36,8 +38,10 @@ from test_release_manifests import (
 from test_setup_grid_baseline import CASES as GOLDEN_CASES
 from test_setup_grid_baseline import inlist_origin  # noqa: F401
 from test_setup_grid_baseline import (
+    DATA,
     GRID_COLUMNS,
     GRID_ROWS,
+    ROOT,
     SETUP_GRID,
     build_ini,
     make_setup_env,
@@ -126,6 +130,10 @@ def test_new_ini_equals_legacy_ini(case, tmp_path,
                           "scenario = ['posydon', '{}-{}', '{}']".format(
                               branch, commit, case.system_type),
                           build_ini(case, {**env, "run": run}))
+            # as the v2 ini files: MESA defaults under grid_params/
+            assert not (ROOT / "grid_params").exists()
+            text = text.replace(str(DATA / "mesa_defaults"),
+                                str(ROOT / "grid_params/defaults/r11701"))
             args = ["--grid-type", case.grid_type, "--run-directory",
                     str(run), "--submission-type", case.submission]
         else:

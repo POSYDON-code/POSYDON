@@ -63,6 +63,7 @@ from posydon.grids.setup.submit import (
     one_point_per_task,
     write_scripts,
 )
+from posydon.grids.setup.support import support_root
 from posydon.grids.setup.template import ini_template
 from posydon.utils.posydonwarning import Pwarn
 
@@ -133,7 +134,10 @@ def read_any_config(args):
         return read_legacy_config(
             args.inifile, grid_type=args.grid_type,
             submission_type=args.submission_type or 'shell',
-            run_directory=args.run_directory or os.getcwd())
+            run_directory=args.run_directory or os.getcwd(),
+            # grid_params/ paths: from POSYDON-MESA-INLISTS at a pinned
+            # commit, since POSYDON no longer ships grid_params/
+            support=support_root)
     config = read_config(args.inifile)
     if args.grid_type is not None:
         config.grid.mode = args.grid_type

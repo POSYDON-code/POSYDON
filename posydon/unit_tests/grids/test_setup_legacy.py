@@ -94,7 +94,8 @@ class TestElements:
                     '__name__', '__package__', '__spec__', '_as_list',
                     '_read_inlist_keys', '_read_with_mesa_dir', 'os',
                     'parse_inifile', 're', 'read_legacy_config',
-                    'split_scenario_ref'}
+                    'rewrite_grid_params', 'split_scenario_ref',
+                    'SUPPORT_COMMIT', 'map_grid_params_path'}
         assert set(dir(totest)) == elements
 
     def test_instance_LEGACY_GRID_TYPES(self):
@@ -154,6 +155,62 @@ class TestSplitScenarioRef:
     def test_invalid(self, ref):
         with pytest.raises(ConfigError, match="expected 'branch-commit'"):
             totest.split_scenario_ref(ref)
+
+
+class TestRewriteGridParams:
+    GRID_PARAMS_INI = LEGACY_INI.replace(
+        "${posydon_github_root}/defaults/", "${posydon_github_root}/"
+        "grid_params/defaults/r11701/star/").replace(
+        "history_interval = 1", "history_interval = 1\nzams_filename = "
+        "${posydon_github_root}/grid_params/POSYDON-MESA-INLISTS/r11701/"
+        "ZAMS_models/zams.data")
+
+    def test_missing_paths_are_rewritten(self, write_ini, tmp_path):
+        calls = []
+
+        def support():
+            calls.append(1)
+            return tmp_path / "cache"
+        config = read(write_ini(self.GRID_PARAMS_INI), support=support)
+        assert calls == [1]  # extracted once, lazily
+        assert config.inlists["mesa_inlists"].targets["binary_job"] == [
+            tmp_path / "cache/r11701/mesa/default/defaults/star/"
+            "binary_job.defaults"]
+        assert config.legacy["mesa_inlists"]["zams_filename"] == \
+            str(tmp_path / "cache/r11701/ZAMS_models/zams.data")
+        assert config.grid.zams_star1 == \
+            tmp_path / "cache/r11701/ZAMS_models/zams.data"
+        assert any("9 grid_params/ paths are read from POSYDON-MESA-"
+                   "INLISTS at 8482d7d" in note for note in config.notes)
+
+    def test_existing_paths_and_others_stay(self, write_ini, tmp_path):
+        root = tmp_path / "POSYDON"
+        defaults = root / "grid_params/defaults/r11701/star"
+        defaults.mkdir(parents=True)
+        for name in ("star_job", "controls", "binary_controls",
+                     "binary_job"):
+            (defaults / (name + ".defaults")).write_text("")
+        text = self.GRID_PARAMS_INI.replace("/opt/POSYDON", str(root))
+        config = read(write_ini(text), support=lambda: tmp_path / "cache")
+        assert config.inlists["mesa_inlists"].targets["binary_job"] == [
+            defaults / "binary_job.defaults"]
+        assert config.extras["binary_run"] == \
+            Path("/mesa/binary/work/src/binary_run.f")
+        assert any("1 grid_params/ paths" in n for n in config.notes)
+
+    def test_lists_and_unknown_paths(self):
+        sections = [{"a": ["/p/grid_params/pipeline_quest.ini",
+                           "/p/grid_params/unknown/file"],
+                     "b": None}]
+        count = totest.rewrite_grid_params(sections, lambda: Path("/c"))
+        assert count == 1
+        assert sections[0]["a"] == ["/c/templates/pipeline_quest.ini",
+                                    "/p/grid_params/unknown/file"]
+
+    def test_no_support(self, write_ini):
+        config = read(write_ini(self.GRID_PARAMS_INI))
+        assert config.legacy["mesa_inlists"]["zams_filename"].startswith(
+            "/opt/POSYDON/grid_params/")
 
 
 class TestReadLegacyConfig:

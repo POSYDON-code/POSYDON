@@ -21,13 +21,14 @@ Below we describe each section of the :samp:`ini` file and what each value corre
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
-Here is a link to the most recent stable release version of the default :samp:`ini` file
-for POSYDON:
-`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
+The default :samp:`ini` file is in POSYDON-MESA-INLISTS:
+`grid_params.ini <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS/blob/v2_sources/templates/grid_params.ini>`_
 
-Here is a link to the unstable development version of the default :samp:`ini` file for
-POSYDON:
-`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
+POSYDON no longer ships the ``grid_params/`` folder. Ini files still name
+its files as ``${posydon_github_root}/grid_params/...`` (MESA defaults, ZAMS
+models, column lists); when such a path does not exist, ``posydon-setup-grid``
+reads the same file from POSYDON-MESA-INLISTS at the commit POSYDON pins
+(``posydon/grids/setup/support.py``) and says so in a warning.
 
 The sections below the next one describe this (legacy) format. A shorter,
 new format is also accepted; it is described first.

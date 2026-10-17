@@ -17,8 +17,11 @@ import pytest
 import posydon.grids.setup.inlist as totest
 from posydon.utils.gridutils import clean_inlist_file
 
-MESA_DEFAULTS = Path(__file__).resolve().parents[3] / "grid_params" \
-    / "defaults" / "r11701"
+# MESA r11701's defaults, as vendored for the grid-setup rewrite tests from
+# POSYDON-MESA-INLISTS (r11701/mesa/default/defaults); the comparison with
+# today's reader below is skipped once that temporary folder is gone
+MESA_DEFAULTS = Path(__file__).resolve().parents[3] / "grid_rewrite_tests" \
+    / "setup_grid_data" / "mesa_defaults"
 
 INLIST = """
 ! a comment line
@@ -131,7 +134,7 @@ class TestReadInlist:
                                                           {"a": "1"}}
 
     @pytest.mark.skipif(not MESA_DEFAULTS.is_dir(),
-                        reason="grid_params/defaults not present")
+                        reason="vendored MESA defaults not present")
     @pytest.mark.parametrize("name, section", [
         ("star/controls.defaults", "&controls"),
         ("star/star_job.defaults", "&star_job"),

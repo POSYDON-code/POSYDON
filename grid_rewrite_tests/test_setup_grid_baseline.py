@@ -38,7 +38,9 @@ SETUP_GRID = ROOT / "bin" / "posydon-setup-grid"
 LEGACY_SETUP_GRID = Path(__file__).parent / "legacy_posydon_setup_grid.py"
 DATA = Path(__file__).resolve().parent / "setup_grid_data"
 GOLDEN = DATA / "golden"
-MESA_DEFAULTS = ROOT / "grid_params" / "defaults" / "r11701"
+# MESA r11701's defaults, from POSYDON-MESA-INLISTS r11701/mesa/default
+MESA_DEFAULTS = Path(__file__).resolve().parent / "setup_grid_data" \
+    / "mesa_defaults"
 
 UPDATE_GOLDEN = os.environ.get("POSYDON_UPDATE_GOLDEN", "") == "1"
 SEMANTIC = os.environ.get("POSYDON_GOLDEN_MODE", "strict") == "semantic"
@@ -301,7 +303,7 @@ def _explicit_extras():
 
 def build_ini(case, env):
     """Return the ini text for a case."""
-    defaults = "${posydon_github_root}/grid_params/defaults/r11701"
+    defaults = "@DATA@/mesa_defaults"
     columns_root = "@INLISTS@/r11701/default_common_inlists"
     lines = ["[slurm]",
              "number_of_nodes=1", "number_of_mpi_tasks=1",
@@ -706,6 +708,13 @@ def test_replay_yggdrasil_runs(tmp_path):
     subprocess.run(["git", "-C", str(home / ".posydon_mesa_inlists"),
                     "remote", "set-url", "origin", "file:///nonexistent"],
                    check=True)
+    # the ini files' grid_params/ paths are read from POSYDON-MESA-INLISTS
+    # at the pinned commit; without network, extract it from a local clone
+    inlist_repo = os.environ.get("POSYDON_INLIST_REPO", "")
+    if not inlist_repo:
+        pytest.skip("needs POSYDON_INLIST_REPO for the grid_params/ files")
+    from posydon.grids.setup.support import support_root
+    support_root(home=home, clone=inlist_repo)
     mesa = tmp_path / "mesa"
     shutil.copytree(DATA / "mesa_stub", mesa)
     stub_bin = tmp_path / "bin"

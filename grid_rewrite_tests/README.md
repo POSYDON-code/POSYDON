@@ -47,6 +47,9 @@ cluster is used.
 - `setup_grid_data/inlists_main/`, `inlists_jeff_new_grid/`: vendored
   POSYDON-MESA-INLISTS snapshot (`a060b7b`, plus `HeMS-HMS/` from
   `jeff_new_grid`), with Fortran sources replaced by labelled stubs.
+- `setup_grid_data/mesa_defaults/`: MESA r11701's `.defaults`, byte-identical
+  to POSYDON-MESA-INLISTS `r11701/mesa/default/defaults/` (POSYDON no longer
+  ships `grid_params/`).
 - `setup_grid_data/mesa_stub/`: stub `MESA_DIR` with no-op makefiles.
 - `setup_grid_data/extra/`: extra fixture inlists and a psy-cris ini.
 - `setup_grid_data/golden/`: one file per case.
