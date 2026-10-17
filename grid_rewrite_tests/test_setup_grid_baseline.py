@@ -33,6 +33,9 @@ import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
 SETUP_GRID = ROOT / "bin" / "posydon-setup-grid"
+# today's script before the rewrite (stage 3.6), kept for the comparisons in
+# test_new_vs_legacy.py
+LEGACY_SETUP_GRID = Path(__file__).parent / "legacy_posydon_setup_grid.py"
 DATA = Path(__file__).resolve().parent / "setup_grid_data"
 GOLDEN = DATA / "golden"
 MESA_DEFAULTS = ROOT / "grid_params" / "defaults" / "r11701"
@@ -387,7 +390,7 @@ def build_ini(case, env):
     return text
 
 
-def run_setup(case, env):
+def run_setup(case, env, script=SETUP_GRID):
     """Write the grid and ini, then run posydon-setup-grid."""
     run = env["run"]
     rows = GRID_ROWS[case.columns]
@@ -395,7 +398,7 @@ def run_setup(case, env):
         "\n".join([GRID_COLUMNS[case.columns]] + rows) + "\n")
     (run / "grid.ini").write_text(build_ini(case, env))
     return subprocess.run(
-        [sys.executable, str(SETUP_GRID), "--inifile", "grid.ini",
+        [sys.executable, str(script), "--inifile", "grid.ini",
          "--grid-type", case.grid_type, "--run-directory", str(run),
          "--submission-type", case.submission],
         cwd=run, env=env["env"], capture_output=True, text=True, timeout=300)
@@ -611,8 +614,6 @@ def _inlist_part(snap):
 _EQUIVALENCE_XFAIL = {
     "HeMS-HMS": "zams_filename in the ini re-sets zams_filename_1 after the "
                 "HeMS-HMS scenario cleared it, so star 1 is not formed",
-    "single_HeMS": "the single_HeMS scenario raises KeyError "
-                   "'star1_controls_special'",
 }
 
 
@@ -629,7 +630,13 @@ def test_scenario_equals_explicit_paths(label, tmp_path, inlist_origin):
         sub = tmp_path / ("scenario" if use_scenario else "explicit")
         sub.mkdir()
         env = make_setup_env(sub, inlist_origin)
-        case = _variant(base, base.name, use_scenario=use_scenario)
+        zams = base.zams
+        if label == "single_HeMS" and not use_scenario:
+            # the scenario forms the He star without a ZAMS model and ignores
+            # zams_filename (S3); spelled out, that is no ZAMS model at all
+            zams = "none"
+        case = _variant(base, base.name, use_scenario=use_scenario,
+                        zams=zams)
         result, snap = _run_case(case, env)
         snaps[use_scenario] = (result.returncode, _inlist_part(snap))
     assert snaps[True] == snaps[False]
@@ -669,7 +676,7 @@ HAND_EDITED_RUNS = {
     "HMS-HMS/2e+00_Zsun/grid_low_res_rerun_LBV_wind_initsync_extras",
 }
 # grid types whose setup is a pinned xfail bug today
-KNOWN_FAILING_TYPES = {"single_HeMS"}
+KNOWN_FAILING_TYPES = set()
 
 
 def _path_name(value):
@@ -773,11 +780,12 @@ def test_replay_yggdrasil_runs(tmp_path):
 ###############################################################################
 # known bugs: the correct behaviour, expected to fail until fixed
 ###############################################################################
-@pytest.mark.xfail(strict=True, reason="find_inlist_from_scenario appends to "
-                   "mesa_inlists['star1_controls_special'], which is never "
-                   "created")
 def test_single_HeMS_scenario_runs(setup_env):
-    """As the v2 grids: 2 He-star formation steps plus a flagged third."""
+    """As the v2 grids: 2 He-star formation steps plus a flagged third.
+
+    Fixed in stage 3.6 (tracker S1); before, the scenario appended to
+    mesa_inlists['star1_controls_special'], which was never created.
+    """
     result = run_setup(_variant(GRID_TYPES["single_HeMS"], "single_HeMS"),
                        setup_env)
     assert result.returncode == 0, result.stderr[-2000:]
@@ -786,25 +794,32 @@ def test_single_HeMS_scenario_runs(setup_env):
                                        "inlist_step2"]
     last = read_namelists(steps[-1])["controls"]
     assert last.get("x_logical_ctrl(1)") == ".true."
+
+
+def test_single_HeMS_scenario_uses_no_zams_model(setup_env):
+    """As the v2 grids: no zams_filename anywhere. Fixed in stage 3.6 (S3)."""
+    result = run_setup(_variant(GRID_TYPES["single_HeMS"], "single_HeMS"),
+                       setup_env)
+    assert result.returncode == 0, result.stderr[-2000:]
+    steps = sorted((setup_env["run"] / "star1").glob("inlist_step*"))
     # the He star is relaxed from a model, not read from a ZAMS file
-    assert "zams_filename" not in read_namelists(steps[0])["controls"]
-    assert "zams_filename" not in read_namelists(
-        setup_env["run"] / "binary" / "inlist1")["controls"]
+    for step in steps:
+        assert "zams_filename" not in read_namelists(step)["controls"], step
+    for name in ("inlist1", "inlist2"):
+        assert "zams_filename" not in read_namelists(
+            setup_env["run"] / "binary" / name)["controls"], name
 
 
-@pytest.mark.xfail(strict=True, reason="the scenario chdirs into the inlist "
-                   "clone and writes special_single_star_user_inlist there")
 def test_single_HMS_scenario_leaves_inlist_clone_clean(setup_env):
+    """Fixed in stage 3.6 (tracker S7)."""
     run_setup(_variant(GRID_TYPES["single_HMS"], "single_HMS"), setup_env)
     status = subprocess.run(["git", "-C", str(setup_env["clone"]), "status",
                              "--porcelain"], capture_output=True, text=True)
     assert status.stdout.strip() == ""
 
 
-@pytest.mark.xfail(strict=True, reason="find_inlist_from_scenario overwrites "
-                   "binary_controls_user for every system type except "
-                   "HMS-HMS")
 def test_user_inlist_survives_scenario(setup_env):
+    """Fixed in stage 3.6 (tracker S6): user_inlists above the scenario."""
     case = _variant(GRID_TYPES["CO-HMS_RLO"], "CO-HMS_RLO", extra_inlists=[
         ("binary_controls_user", "@DATA@/extra/user_inlist_project")])
     result = run_setup(case, setup_env)
@@ -813,11 +828,10 @@ def test_user_inlist_survives_scenario(setup_env):
     assert values["binary_controls"].get("fm") == "0.002d0"
 
 
-@pytest.mark.xfail(strict=True, reason="single-star grids without a ZAMS "
-                   "model keep zams_filename from the inlists: the branch "
-                   "meant to drop it checks for a key 'zams_filename_1' "
-                   "(bin/posydon-setup-grid:608)")
 def test_single_HeMS_explicit_drops_zams_filename(setup_env):
+    """Fixed in stage 3.6 (tracker S3); before, the branch meant to drop it
+    checked for a key 'zams_filename_1' (legacy_posydon_setup_grid.py:608).
+    """
     case = _variant(GRID_TYPES["single_HeMS"], "single_HeMS",
                     use_scenario=False, zams="none")
     result = run_setup(case, setup_env)
@@ -828,7 +842,7 @@ def test_single_HeMS_explicit_drops_zams_filename(setup_env):
 
 @pytest.mark.xfail(strict=True, reason="construct_static_inlist copies "
                    "zams_filename into zams_filename_1 after the scenario set "
-                   "it to None (bin/posydon-setup-grid:229 vs :395)")
+                   "it to None (legacy_posydon_setup_grid.py:229 vs :395)")
 def test_HeMS_HMS_scenario_forms_star1(setup_env):
     result = run_setup(_variant(GRID_TYPES["HeMS-HMS"], "HeMS-HMS"),
                        setup_env)
@@ -837,8 +851,9 @@ def test_HeMS_HMS_scenario_forms_star1(setup_env):
 
 
 @pytest.mark.xfail(strict=True, reason="a fixed grid without a job array "
-                   "reads run_parameters['psycris_inifile'] "
-                   "(bin/posydon-setup-grid:1125)")
+                   "is refused: posydon-run-grid would run no points (R1); "
+                   "before stage 3.6 it read run_parameters['psycris_inifile'] "
+                   "(legacy_posydon_setup_grid.py:1125)")
 def test_fixed_mpi_grid_needs_no_psycris_ini(setup_env):
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", job_array=False)
     result = run_setup(case, setup_env)
@@ -847,7 +862,7 @@ def test_fixed_mpi_grid_needs_no_psycris_ini(setup_env):
 
 @pytest.mark.xfail(strict=True, reason="with job_array=True the command line "
                    "is built with grid type 'fixed', whatever --grid-type "
-                   "says (bin/posydon-setup-grid:1088-1107)")
+                   "says (legacy_posydon_setup_grid.py:1088-1107)")
 def test_dynamic_grid_keeps_dynamic_with_job_array(setup_env):
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", grid_type="dynamic",
                     job_array=True)
@@ -857,9 +872,8 @@ def test_dynamic_grid_keeps_dynamic_with_job_array(setup_env):
     assert "--grid-type dynamic" in script
 
 
-@pytest.mark.xfail(strict=True, reason="setup compiles and writes the run "
-                   "directory before failing on a missing psycris_inifile")
 def test_failed_setup_leaves_no_partial_run_directory(setup_env):
+    """Fixed in stage 3.6 (tracker S10): all checks run before writing."""
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", job_array=False)
     result = run_setup(case, setup_env)
     if result.returncode == 0:
@@ -877,9 +891,8 @@ def test_formation_extras_are_staged(setup_env):
     assert "CO-He_star/star1_formation/src" in staged.read_text()
 
 
-@pytest.mark.xfail(strict=True, reason="mk and the submit scripts are written "
-                   "to the current directory, not --run-directory")
 def test_outputs_go_to_run_directory(setup_env):
+    """Fixed in stage 3.6 (tracker S9)."""
     other = setup_env["tmp"] / "elsewhere"
     other.mkdir()
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS")
@@ -899,7 +912,7 @@ def test_outputs_go_to_run_directory(setup_env):
 
 @pytest.mark.xfail(strict=True, reason="a shell script without a job array "
                    "has no newline between the command and compress-mesa "
-                   "(bin/posydon-setup-grid:1149-1153)")
+                   "(legacy_posydon_setup_grid.py:1149-1153)")
 def test_shell_script_without_job_array_ends_the_command(setup_env):
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", submission="shell",
                     grid_type="dynamic", job_array=False)

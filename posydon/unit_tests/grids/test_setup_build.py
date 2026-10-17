@@ -185,6 +185,15 @@ class TestLegacyZams:
         assert totest.legacy_zams(config, scenario) == {"star1": "/r/z1",
                                                         "star2": None}
 
+    def test_formed_single_star_has_no_zams(self):
+        """S3: the scenario forms star 1 of single_HeMS."""
+        config = GridConfig()
+        config.grid.type = "single_HeMS"
+        config.legacy = {"mesa_inlists": {"zams_filename": "z"}}
+        scenario = ScenarioFiles(formation_stars=("star1",))
+        assert totest.legacy_zams(config, scenario) == {"star1": None,
+                                                        "star2": None}
+
     def test_single_star_clears_star2(self):
         config = GridConfig()
         config.grid.type = "single_HeMS"
@@ -340,6 +349,13 @@ class TestBuildInlists:
         step0 = read(tmp_path / "star1" / "inlist_step0")
         assert step0["controls"]["x_logical_ctrl(1)"] == ".true."
         assert step0["controls"]["zams_filename"] == "'/z.data'"
+
+        # without a ZAMS model, not even MESA's default is kept (S3)
+        del config.legacy["mesa_inlists"]["zams_filename"]
+        totest.build_inlists(config, tmp_path, ["initial_mass"],
+                             scenario=scenario)
+        step0 = read(tmp_path / "star1" / "inlist_step0")
+        assert "zams_filename" not in step0["controls"]
         assert read(built.binary_project) == {
             "binary_controls": {"history_interval": "1"}, "binary_job": {}}
         assert "read_extra_controls_inlist1" not in \

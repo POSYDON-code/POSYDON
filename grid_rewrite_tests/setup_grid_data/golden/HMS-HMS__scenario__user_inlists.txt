@@ -1,8 +1,8 @@
 returncode: 0
 
 ## binary/inlist1
-sha256: 5d91f71f3431a2edaa7d9a73141172c22b6fa982628c3fdb5e8532eb0417753a
-&controls  (1658 keys, 120 not MESA default)
+sha256: 2f3232e6b452c47fc53dc09406ebe2197a613b3848a19e406594b70c100213ac
+&controls  (1658 keys, 121 not MESA default)
   terminal_interval = 10
   write_header_frequency = 100
   photo_directory = 'photos1'
@@ -59,6 +59,7 @@ sha256: 5d91f71f3431a2edaa7d9a73141172c22b6fa982628c3fdb5e8532eb0417753a
   min_years_dt_for_redo_mdot = 0.0
   mdot_revise_factor = 1.2d0
   max_allowed_nz = 20000
+  mesh_delta_coeff = 0.8d0
   max_dq = 1d-3
   convective_bdy_weight = 0.5d0
   diffusion_dt_limit = 3.15d9
@@ -281,14 +282,14 @@ sha256: 42eee930dfee60a81a914c3fc3fe0b4d649e89eacefb9ae70712bcb719e81cd0
   new_net_name = 'approx21.net'
 
 ## binary/inlist_project
-sha256: ab6dead0f675cb0947e4feb53b4326ca9b740a601b17fffeb335cfc870541b49
+sha256: 402c85ded177f5736354230cb396c6cf46d78ae785c6d7e8654c324fa4ccf848
 &binary_controls  (151 keys, 39 not MESA default)
   history_interval = 1
   append_to_star_history = .false.
   photo_interval = 0
   terminal_interval = 10
   write_header_frequency = 100
-  fm = 5d-3
+  fm = 0.002d0
   fa = 5d-3
   fa_hard = 1d-2
   fr = 1d-2

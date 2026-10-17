@@ -135,6 +135,10 @@ def legacy_zams(config, scenario=None):
     That last step is bug S2: a HeMS-HMS grid with ``zams_filename`` never
     forms star 1. Step 6 replaces this function.
 
+    Fixed (S3): a single-star grid whose star 1 the scenario forms
+    (single_HeMS) has no ZAMS model for either star, whatever
+    ``zams_filename`` says, as in the v2 single_HeMS grids.
+
     Returns
     -------
     dict
@@ -160,6 +164,9 @@ def legacy_zams(config, scenario=None):
             zams["star2"] = None
     if raw.get("zams_filename") is not None:
         zams["star1"] = zams["star2"] = raw["zams_filename"]
+    if scenario is not None and is_single_star(config) \
+            and "star1" in scenario.formation_stars:
+        zams["star1"] = zams["star2"] = None
     return zams
 
 
@@ -300,8 +307,13 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
                     star, step - 1)
             job["save_model_when_terminate"] = ".true."
             job["save_model_filename"] = model
-            if star == "star1" and single and zams["star1"] is not None:
-                controls["zams_filename"] = "'{}'".format(zams["star1"])
+            if star == "star1" and single:
+                if zams["star1"] is not None:
+                    controls["zams_filename"] = "'{}'".format(zams["star1"])
+                else:
+                    # formed without a ZAMS model: no zams_filename at all,
+                    # not even MESA's default (S3)
+                    controls.pop("zams_filename", None)
             path = os.path.join(run, star, "inlist_step{}".format(step))
             Path(path).parent.mkdir(parents=True, exist_ok=True)
             Path(path).write_text(render_formation_step(star, controls, job))

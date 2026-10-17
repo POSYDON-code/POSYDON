@@ -31,6 +31,12 @@ cluster is used.
 - `test_setup_grid_baseline.py`: harness, golden cases, folder-structure
   checks, scenario-vs-explicit-paths checks, the opt-in replay and strict
   xfail tests for known bugs.
+- `test_new_vs_legacy.py`: each new module against the matching part of
+  the pre-rewrite script.
+- `legacy_posydon_setup_grid.py`: `bin/posydon-setup-grid` as it was before
+  stage 3.6 replaced it with a thin script over `posydon.grids.setup`; the
+  comparisons in `test_new_vs_legacy.py` run it. The goldens, folder checks,
+  replay and xfails run the new `bin/posydon-setup-grid`.
 - `setup_grid_data/inlists_main/`, `inlists_jeff_new_grid/`: vendored
   POSYDON-MESA-INLISTS snapshot (`a060b7b`, plus `HeMS-HMS/` from
   `jeff_new_grid`), with Fortran sources replaced by labelled stubs.

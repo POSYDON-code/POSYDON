@@ -279,14 +279,13 @@ sha256: 27710d180539372935090b51afcf87fca255173594c22736ec787cfd60653da8
   new_net_name = 'approx21.net'
 
 ## binary/inlist_project
-sha256: ad08c340be3f46b8b449d0426618a771d30d5198d3d75c1caf19aa4a7cd26a12
-&binary_controls  (151 keys, 43 not MESA default)
+sha256: 6ea83b68adffe224caa877a2864eacd7c55e4c74a28dd0400373dd613809b1d0
+&binary_controls  (151 keys, 41 not MESA default)
   history_interval = 1
   append_to_star_history = .false.
   photo_interval = 0
   terminal_interval = 10
-  write_header_frequency = 100
-  fm = 5d-3
+  fm = 0.002d0
   fa = 5d-3
   fa_hard = 1d-2
   fr = 1d-2
@@ -298,7 +297,8 @@ sha256: ad08c340be3f46b8b449d0426618a771d30d5198d3d75c1caf19aa4a7cd26a12
   mass_transfer_alpha = 0d0
   mass_transfer_beta = 0d0
   mass_transfer_delta = 0d0
-  mdot_scheme = "contact"
+  limit_retention_by_mdot_edd = .true.
+  mdot_scheme = "roche_lobe"
   max_tries_to_achieve = 200
   implicit_scheme_tolerance = 1d-4
   initial_change_factor = 1.2d0
@@ -311,9 +311,7 @@ sha256: ad08c340be3f46b8b449d0426618a771d30d5198d3d75c1caf19aa4a7cd26a12
   do_jdot_gr = .false.
   do_jdot_ml = .false.
   do_jdot_ls = .false.
-  do_jdot_missing_wind = .true.
   do_jdot_mb = .false.
-  do_j_accretion = .true.
   do_tidal_sync = .true.
   sync_type_1 = "structure_dependent"
   sync_type_2 = "structure_dependent"

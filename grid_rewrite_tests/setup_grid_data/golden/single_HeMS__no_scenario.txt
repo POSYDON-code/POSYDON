@@ -25,8 +25,8 @@ sha256: cab8055e1c7b19370bb1d0569e5d14b14bb8b1aacbf56977b90489d7551d115b
 &binary_job  (0 keys, 0 not MESA default)
 
 ## star1/inlist_step0
-sha256: c29a98a5a76efffb11ec8d902b1afa08e5dbe096000c822ad480f562fbcc75c3
-&controls  (1659 keys, 122 not MESA default)
+sha256: 64af8dd5c104aedc13ae7cfda865d263d3dd5f257fa8e33a9842115fb3165fa1
+&controls  (1658 keys, 121 not MESA default)
   write_header_frequency = 100
   photo_interval = 0
   photo_digits = 5
@@ -133,7 +133,6 @@ sha256: c29a98a5a76efffb11ec8d902b1afa08e5dbe096000c822ad480f562fbcc75c3
   delta_XC_cntr_hard_limit = -1
   warn_when_large_rel_run_E_err = 1d99
   warn_when_stop_checking_residuals = .false.
-  zams_filename = "zams_z2m2_y28.data"
   x_ctrl(1:1) = 0d0
   x_integer_ctrl(1:1) = 0
   x_logical_ctrl(1:1) = .false.
@@ -168,8 +167,8 @@ sha256: c29a98a5a76efffb11ec8d902b1afa08e5dbe096000c822ad480f562fbcc75c3
   new_net_name = 'approx21.net'
 
 ## star1/inlist_step1
-sha256: e3f80b8929ac0b4d37e43f03a8176e9b51679c86f36ffb9c9daeb1ee74c0abbf
-&controls  (1656 keys, 113 not MESA default)
+sha256: c23e82a9ddefe8622fe7999d2ed7bce98e514a24b58b143184bb199635c2de56
+&controls  (1655 keys, 113 not MESA default)
   write_header_frequency = 100
   photo_interval = 0
   photo_digits = 5
@@ -310,8 +309,8 @@ sha256: e3f80b8929ac0b4d37e43f03a8176e9b51679c86f36ffb9c9daeb1ee74c0abbf
   new_net_name = 'approx21.net'
 
 ## star1/inlist_step2
-sha256: aed55be5a3d02dcfb45d5c7e8ec88b3b64df02b945cea04ba068686f320f8220
-&controls  (1656 keys, 117 not MESA default)
+sha256: 5d2677ef9e4af8855fe72b1f3a5ac12103e7736cffde6f60b1026503e22b9448
+&controls  (1655 keys, 117 not MESA default)
   terminal_interval = 10
   write_header_frequency = 100
   photo_directory = 'photos1'

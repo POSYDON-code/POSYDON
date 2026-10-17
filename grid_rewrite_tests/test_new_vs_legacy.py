@@ -1,7 +1,7 @@
 """The new posydon.grids.setup modules against today's code, piece by piece.
 
-Each test runs a function of today's bin/posydon-setup-grid (loaded as a
-module) and its replacement on the same input, and compares the results.
+Each test runs a function of the pre-rewrite bin/posydon-setup-grid (kept as
+legacy_posydon_setup_grid.py and loaded as a module) and its replacement on the same input, and compares the results.
 They complement the end-to-end goldens in test_setup_grid_baseline.py.
 """
 
@@ -16,7 +16,8 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from test_setup_grid_baseline import SETUP_GRID, inlist_origin  # noqa: F401
+from test_setup_grid_baseline import LEGACY_SETUP_GRID  # noqa: F401
+from test_setup_grid_baseline import inlist_origin  # noqa: F401
 
 from posydon.grids.setup import legacy
 from posydon.grids.setup.config import GridConfig, ScenarioSection
@@ -27,9 +28,9 @@ from posydon.grids.setup.scenario import fetch_inlist_repo, scenario_files
 
 
 def load_setup_grid():
-    """bin/posydon-setup-grid as a module (its __main__ block is skipped)."""
+    """The pre-rewrite posydon-setup-grid as a module (its __main__ block is skipped)."""
     loader = importlib.machinery.SourceFileLoader("legacy_setup_grid",
-                                                  str(SETUP_GRID))
+                                                  str(LEGACY_SETUP_GRID))
     spec = importlib.util.spec_from_loader(loader.name, loader)
     module = importlib.util.module_from_spec(spec)
     loader.exec_module(module)
@@ -248,6 +249,16 @@ def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
                            folder_values.get(key) != value}
             assert not unexplained, (name, unexplained)
         assert any(old_files[name] != new_files[name] for name in old_files)
+    elif case.name == "single_HeMS__no_scenario":
+        # S3: without a ZAMS model the formation steps no longer carry
+        # MESA's default zams_filename; nothing else may change
+        for name in old_files:
+            old_values, new_values = (read_inlist_text(old_files[name]),
+                                      read_inlist_text(new_files[name]))
+            for values in old_values.values():
+                values.pop("zams_filename", None)
+            assert new_values == old_values, name
+        assert any(old_files[name] != new_files[name] for name in old_files)
     else:
         for name in old_files:
             assert new_files[name] == old_files[name], name
@@ -365,7 +376,8 @@ def test_scripts_match_main(case, tmp_path, monkeypatch,
                             inlist_origin):  # noqa: F811
     env = make_setup_env(tmp_path, inlist_origin)
     old_run = env["run"]
-    result = run_setup(case, env)  # today's script, run from old_run
+    # the pre-rewrite script, run from old_run
+    result = run_setup(case, env, script=LEGACY_SETUP_GRID)
     if result.returncode != 0:
         pytest.skip("fails today: " + result.stderr.strip().splitlines()[-1])
     monkeypatch.setenv("MESA_DIR", str(env["mesa"]))
