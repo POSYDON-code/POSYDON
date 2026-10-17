@@ -29,8 +29,6 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
-GRID_TYPES = ("HMS-HMS", "CO-HMS_RLO", "CO-HeMS", "single_HMS",
-              "single_HeMS", "HeMS-HMS")
 GRID_MODES = ("fixed", "dynamic")
 SCENARIO_SOURCES = ("posydon", "user", "path")
 BACKENDS = ("shell", "slurm_array", "slurm_mpi")
@@ -161,6 +159,9 @@ class GridConfig:
     # user about them, e.g. deprecated keys
     source_format: str = "new"
     notes: list = field(default_factory=list)
+    # True when the extras are MESA's stock files filled in by
+    # defaults.fill_defaults, not ones the ini names
+    default_extras: bool = False
     # a legacy ini's sections as read by posydon.utils.configfile, kept
     # because their key order decides today's layering
     legacy: dict = field(default_factory=dict)
@@ -211,7 +212,10 @@ def _read_grid(options, base):
     grid = GridSection()
     for key, value in options.items():
         if key == "type":
-            grid.type = _choice("grid", key, value, GRID_TYPES)
+            # the names come from the registry; imported here because
+            # grid_types.py imports ConfigError from this module
+            from posydon.grids.setup.grid_types import get_grid_type
+            grid.type = get_grid_type(value).name
         elif key == "mode":
             grid.mode = _choice("grid", key, value, GRID_MODES)
         elif key in ("points", "run_directory", "psycris_inifile"):

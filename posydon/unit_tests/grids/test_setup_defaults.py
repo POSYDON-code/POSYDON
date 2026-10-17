@@ -98,6 +98,7 @@ class TestFillDefaults:
             [folder / "binary" / "binary_job.defaults"]
         assert config.extras["star_run"] == Path("/mesa/star/work/src/run.f")
         assert list(config.extras) == list(totest.MESA_EXTRAS)
+        assert config.default_extras
 
     def test_keeps_what_the_ini_sets(self):
         config = self.config()
@@ -107,6 +108,7 @@ class TestFillDefaults:
         assert config.inlists["mesa_inlists"].targets == {
             "binary_job": [Path("/mine")]}
         assert config.extras == {"star_run": Path("/my/run.f")}
+        assert not config.default_extras
 
     @pytest.mark.parametrize("resolved", [
         None, ResolvedScenario(files=ScenarioFiles(), repo=Path("/r"))])

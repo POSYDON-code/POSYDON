@@ -106,3 +106,4 @@ def fill_defaults(config, resolved, mesa_dir):
     if not config.extras:
         config.extras = {key: Path(mesa_dir) / rel
                          for key, rel in MESA_EXTRAS.items()}
+        config.default_extras = True

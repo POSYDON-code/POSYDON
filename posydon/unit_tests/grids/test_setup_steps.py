@@ -87,7 +87,7 @@ binary_run = {d}/binary_run.f
 
 class TestElements:
     def test_dir(self):
-        assert {'GRID_TYPES', 'SUBMISSION_TYPES', 'Prepared',
+        assert {'SUBMISSION_TYPES', 'Prepared',
                 'check_config', 'chosen_extras', 'explain_grid',
                 'grid_parameters', 'is_new_format', 'prepare',
                 'read_any_config', 'read_grid_points',
@@ -191,6 +191,11 @@ class TestReadAnyConfig:
             totest.read_any_config(grid["ini"], grid_type="fixed",
                                    submission_type="shell")
 
+    def test_new_format_refuses_one_option(self, grid):
+        with pytest.raises(ValueError, match="--grid-type only applies to "
+                           "legacy"):
+            totest.read_any_config(grid["ini"], grid_type="fixed")
+
     def test_new_format_overrides(self, grid):
         config = totest.read_any_config(
             grid["ini"], grid_type="dynamic", run_directory="/elsewhere",
@@ -243,16 +248,28 @@ class TestCheckConfig:
         with pytest.raises(ValueError, match="psycris inifile"):
             totest.check_config(self.config(tmp_path, mode="dynamic"))
 
-    def test_fixed_needs_a_job_array(self, tmp_path):
+    def test_fixed_needs_one_point_per_task(self, tmp_path):
         config = self.config(tmp_path)
         config.submission.backend = "slurm_mpi"
-        with pytest.raises(ConfigError, match="fixed grid needs job_array"):
+        with pytest.raises(ConfigError, match=r"^\[submission\] backend: a "
+                           "fixed grid runs one point per task: use "
+                           "slurm_array"):
+            totest.check_config(config)
+        config.source_format = "legacy"
+        with pytest.raises(ConfigError, match=r"^\[slurm\] job_array: a "
+                           "fixed grid needs job_array = True"):
             totest.check_config(config)
 
     def test_dynamic_refuses_a_job_array(self, tmp_path):
         config = self.config(tmp_path, mode="dynamic",
                              psycris_inifile=tmp_path / "p.ini")
-        with pytest.raises(ConfigError, match="one MPI job"):
+        with pytest.raises(ConfigError, match=r"^\[submission\] backend: a "
+                           "dynamic grid runs as one MPI job: use slurm_mpi"):
+            totest.check_config(config)
+        config.source_format = "legacy"
+        with pytest.raises(ConfigError, match=r"^\[slurm\] job_array: a "
+                           "dynamic grid runs as one MPI job: set job_array "
+                           "= False"):
             totest.check_config(config)
 
     def test_unknown_system_type(self, tmp_path):
@@ -328,7 +345,7 @@ class TestGridParameters:
 
 class TestChosenExtras:
     def test_lower_layers_dropped_with_a_warning(self):
-        config = GridConfig()
+        config = GridConfig(source_format="legacy")
         config.extras = {"mesa_binary_extras": Path("m/run_binary_extras.f")}
         scenario = ScenarioFiles()
         scenario.extras = {"posydon_binary_extras":
@@ -337,6 +354,27 @@ class TestChosenExtras:
             kept = totest.chosen_extras(config, scenario)
         assert kept == {"posydon_binary_extras":
                         Path("p/run_binary_extras.f")}
+
+    def test_new_format_names_the_extras_key(self):
+        config = GridConfig()
+        config.extras = {"mesa_binary_extras": Path("m/run_binary_extras.f")}
+        scenario = ScenarioFiles()
+        scenario.extras = {"posydon_binary_extras":
+                           Path("p/run_binary_extras.f")}
+        with pytest.warns(match=r"\[extras\] mesa_binary_extras is not "
+                          "used: a higher layer's file goes to the same "
+                          "place"):
+            totest.chosen_extras(config, scenario)
+
+    def test_filled_in_mesa_extras_drop_silently(self, recwarn):
+        config = GridConfig(default_extras=True)
+        config.extras = {"mesa_binary_extras": Path("m/run_binary_extras.f")}
+        scenario = ScenarioFiles()
+        scenario.extras = {"posydon_binary_extras":
+                           Path("p/run_binary_extras.f")}
+        kept = totest.chosen_extras(config, scenario)
+        assert list(kept) == ["posydon_binary_extras"]
+        assert len(recwarn) == 0
 
     def test_no_scenario(self):
         config = GridConfig()

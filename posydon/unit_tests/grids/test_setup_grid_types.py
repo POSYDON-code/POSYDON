@@ -42,9 +42,11 @@ class TestElements:
 
 
 class TestRegistry:
-    def test_names_match_config(self):
-        """config.py validates [grid] type against the same names."""
-        assert set(totest.GRID_TYPES) == set(config.GRID_TYPES)
+    @pytest.mark.parametrize("name", list(totest.GRID_TYPES))
+    def test_config_accepts_every_name(self, name, tmp_path):
+        """config.py validates [grid] type against this registry."""
+        grid = config._read_grid({"type": name, "points": "g.csv"}, tmp_path)
+        assert grid.type == name
 
     def test_legacy_mapping_points_into_the_registry(self):
         assert set(legacy.LEGACY_GRID_TYPES.values()) <= \

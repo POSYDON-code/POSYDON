@@ -58,7 +58,7 @@ def write_ini(tmp_path):
 
 class TestElements:
     def test_dir(self):
-        elements = {'BACKENDS', 'ConfigError', 'GRID_MODES', 'GRID_TYPES',
+        elements = {'BACKENDS', 'ConfigError', 'GRID_MODES',
                     'GridConfig', 'GridSection', 'INLIST_SHORTHANDS',
                     'INLIST_TARGETS', 'InlistFiles', 'OUTPUT_OPTIONS',
                     'OutputSection', 'Path', 'SCENARIO_SOURCES', 'SECTIONS',
@@ -72,8 +72,6 @@ class TestElements:
         assert set(dir(totest)) == elements
 
     def test_instance_constants(self):
-        assert totest.GRID_TYPES == ("HMS-HMS", "CO-HMS_RLO", "CO-HeMS",
-                                     "single_HMS", "single_HeMS", "HeMS-HMS")
         assert totest.GRID_MODES == ("fixed", "dynamic")
         assert totest.BACKENDS == ("shell", "slurm_array", "slurm_mpi")
         assert set(totest.INLIST_SHORTHANDS) == {"binary", "star1", "star2"}
@@ -194,7 +192,7 @@ class TestGridSection:
         ("[grid]\npoints = g.csv\n", r"\[grid\] type: missing"),
         ("[grid]\ntype = HMS-HMS\n", r"\[grid\] points: missing"),
         ("[grid]\ntype = MS-MS\npoints = g.csv\n",
-         r"\[grid\] type: unknown value 'MS-MS'"),
+         r"\[grid\] type: unknown grid type 'MS-MS'"),
         (MINIMAL + "mode = sample\n", r"\[grid\] mode: unknown value"),
         (MINIMAL + "colour = red\n", r"\[grid\] colour: unknown key"),
         (MINIMAL + "keep_photos = maybe\n",

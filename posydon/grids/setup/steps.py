@@ -62,7 +62,6 @@ from posydon.grids.setup.submit import (
 from posydon.grids.setup.support import support_root
 from posydon.utils.posydonwarning import Pwarn
 
-GRID_TYPES = ("fixed", "dynamic")
 SUBMISSION_TYPES = ("shell", "slurm")
 
 
@@ -103,9 +102,11 @@ def read_any_config(inifile, grid_type=None, run_directory=None,
         ("--grid-type", grid_type), ("--run-directory", run_directory),
         ("--submission-type", submission_type)) if value is not None]
     if given and not overrides:
-        raise ValueError("{} only apply to legacy ini files; a new-format "
+        raise ValueError("{} only {} to legacy ini files; a new-format "
                          "ini says this in [grid] mode, run_directory and "
-                         "[submission] backend".format(", ".join(given)))
+                         "[submission] backend".format(
+                             ", ".join(given),
+                             "applies" if len(given) == 1 else "apply"))
     config = read_config(inifile)
     if grid_type is not None:
         config.grid.mode = grid_type
@@ -129,18 +130,25 @@ def check_config(config):
     if grid.mode == "dynamic" and grid.psycris_inifile is None:
         raise ValueError("Please add psycris inifile to the [run_parameters] "
                          "section of the inifile.")
+    # named as the ini says it: [slurm] job_array in a legacy ini,
+    # [submission] backend in a new-format one
+    legacy = config.source_format == "legacy"
+    where = ("slurm", "job_array") if legacy else ("submission", "backend")
     if grid.mode == "fixed" and not one_point_per_task(config.submission):
         # posydon-run-grid runs a fixed grid one point per call
         # (--grid-point-index); without it nothing would run (tracker S4, R1)
-        raise ConfigError("slurm", "job_array",
-                          "a fixed grid needs job_array = True")
+        raise ConfigError(*where, (
+            "a fixed grid needs job_array = True" if legacy else
+            "a fixed grid runs one point per task: use slurm_array, or "
+            "shell with job_array = true"))
     if grid.mode == "dynamic" and one_point_per_task(config.submission):
         # posydon-run-grid samples a dynamic grid on rank 0 of one MPI job;
         # a job array cannot run it (tracker S5: it silently ran as fixed)
-        raise ConfigError("slurm", "job_array",
-                          "a dynamic grid runs as one MPI job: set job_array "
-                          "= False (new format: [submission] backend = "
-                          "slurm_mpi)")
+        raise ConfigError(*where, (
+            "a dynamic grid runs as one MPI job: set job_array = False (new "
+            "format: [submission] backend = slurm_mpi)" if legacy else
+            "a dynamic grid runs as one MPI job: use slurm_mpi, or shell "
+            "with job_array = false"))
     if config.scenario.is_set and config.grid.type is None:
         raise ConfigError("mesa_inlists", "scenario",
                           "unknown system type {!r}".format(
@@ -190,10 +198,18 @@ def chosen_extras(config, scenario):
     extras = merge_extras(config.extras,
                           scenario.extras if scenario is not None else None)
     kept = keep_highest_extras(extras)
+    if config.default_extras:
+        # MESA's stock files, filled in for a new-format ini: losing to
+        # POSYDON's is what they are there for, so no warning
+        return kept
     for key in extras:
         if key not in kept:
-            Pwarn("Section mesa_extras value {0} is being set to None"
-                  .format(key), "ReplaceValueWarning")
+            if config.source_format == "legacy":
+                Pwarn("Section mesa_extras value {0} is being set to None"
+                      .format(key), "ReplaceValueWarning")
+            else:
+                Pwarn("[extras] {} is not used: a higher layer's file goes "
+                      "to the same place".format(key), "ReplaceValueWarning")
     return kept
 
 

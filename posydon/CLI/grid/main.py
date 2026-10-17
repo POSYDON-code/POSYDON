@@ -31,9 +31,9 @@ import os
 import shlex
 import sys
 
+from posydon.grids.setup.config import GRID_MODES
 from posydon.grids.setup.grid_types import describe_grid_types
 from posydon.grids.setup.steps import (
-    GRID_TYPES,
     SUBMISSION_TYPES,
     explain_grid,
     setup_grid,
@@ -49,7 +49,7 @@ def _add_legacy_options(parser):
     group = parser.add_argument_group(
         "legacy ini files only", "a new-format ini says this in [grid] "
         "and [submission]")
-    group.add_argument("--grid-type", choices=GRID_TYPES,
+    group.add_argument("--grid-type", choices=GRID_MODES,
                        help="fixed (a grid of points) or dynamic (points "
                        "sampled by psy-cris)")
     group.add_argument("--run-directory",
@@ -146,7 +146,7 @@ def build_legacy_parser():
         description="Deprecated: use posydon-grid (types, init, explain, "
         "setup, run).")
     parser.add_argument("--inifile", help="Name of ini file of params")
-    parser.add_argument("--grid-type", choices=GRID_TYPES)
+    parser.add_argument("--grid-type", choices=GRID_MODES)
     parser.add_argument("--run-directory")
     parser.add_argument("--submission-type", choices=SUBMISSION_TYPES)
     parser.add_argument("-n", "--nproc", type=int, default=1,
