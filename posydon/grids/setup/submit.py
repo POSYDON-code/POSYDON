@@ -22,12 +22,14 @@ one MPI job (``posydon-run-grid`` samples new points on rank 0 and runs
 them on the others), so a dynamic grid with a job array is refused (fixed
 S5: before, it silently ran as a fixed grid over the CSV).
 
-All text is written exactly as today, including what the tracker lists: a
-missing star inlist is passed as the literal ``None`` and the job name
-holds a literal ``\\${SLURM_ARRAY_TASK_ID}`` (C11), only the ``.sh``
-scripts are made executable (C12). A shell script without a job array ends
-the command with a newline before ``compress-mesa`` (fixed S13: before,
-the two were glued into one line).
+The command line is written as ``posydon-run-grid`` expects it, including
+the literal ``None`` for a star without formation steps (C11, until step
+7). The job array is named ``mesa_grid`` (fixed C11: before, its name was
+the literal text ``mesa_grid_\\${SLURM_ARRAY_TASK_ID}``, since SLURM does not
+expand variables in ``#SBATCH`` lines). Only the ``.sh`` scripts are made
+executable; the ``.slurm`` ones are for ``sbatch`` (C12). A shell script
+without a job array ends the command with a newline before
+``compress-mesa`` (fixed S13: before, the two were glued into one line).
 """
 
 __authors__ = [
@@ -239,8 +241,8 @@ def slurm_grid_script(config, command, n_points, mesasdk_root, mesa_dir):
             "--cpus-per-task {}".format(submission.cpus_per_task),
             "--ntasks-per-node 1",
             "--time={}".format(submission.walltime),
-            # a literal \$ (C11)
-            '--job-name="mesa_grid_\\${SLURM_ARRAY_TASK_ID}"',
+            # the task index is in the output name (%a) and in squeue
+            '--job-name="mesa_grid"',
             "--output=mesa_grid.%A_%a.out"])
     else:
         header = _sbatch(submission, [

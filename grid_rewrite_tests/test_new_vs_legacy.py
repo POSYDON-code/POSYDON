@@ -458,6 +458,11 @@ def test_scripts_match_main(case, tmp_path, monkeypatch,
     assert set(new) == set(old)
     for name in old:
         new_text = new[name].read_text().replace(str(new_run), str(old_run))
+        # C11: the job array is named mesa_grid, not the literal text
+        # mesa_grid_\${SLURM_ARRAY_TASK_ID}
+        new_text = new_text.replace(
+            '--job-name="mesa_grid"\n',
+            '--job-name="mesa_grid_\\${SLURM_ARRAY_TASK_ID}"\n')
         if case.name == "HeMS-HMS__scenario" and \
                 "--mesa-star1-inlist-project" in new_text:
             # S2: star 1 is formed now, so posydon-run-grid gets its steps

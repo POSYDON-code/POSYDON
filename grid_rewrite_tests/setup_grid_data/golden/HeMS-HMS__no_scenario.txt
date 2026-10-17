@@ -660,7 +660,7 @@ make -f makefile_star
 #SBATCH --cpus-per-task 4
 #SBATCH --ntasks-per-node 1
 #SBATCH --time=2-00:00:00
-#SBATCH --job-name="mesa_grid_\${SLURM_ARRAY_TASK_ID}"
+#SBATCH --job-name="mesa_grid"
 #SBATCH --output=mesa_grid.%A_%a.out
 #SBATCH --mail-type=ALL
 #SBATCH --mail-user=tester@posydon.invalid

@@ -167,7 +167,7 @@ class TestScripts:
             "#!/bin/bash\n#SBATCH --account=acc\n#SBATCH --partition=part\n"
             "#SBATCH -N 1\n#SBATCH --array=0-4\n#SBATCH --cpus-per-task 4\n"
             "#SBATCH --ntasks-per-node 1\n#SBATCH --time=1:00\n"
-            '#SBATCH --job-name="mesa_grid_\\${SLURM_ARRAY_TASK_ID}"\n'
+            '#SBATCH --job-name="mesa_grid"\n'
             "#SBATCH --output=mesa_grid.%A_%a.out\n#SBATCH --mail-type=ALL\n"
             "#SBATCH --mail-user=a@b.c\n#SBATCH --mem-per-cpu=4G\n\n"
             "export OMP_NUM_THREADS=4\n\nexport MESASDK_ROOT=/sdk\n"
