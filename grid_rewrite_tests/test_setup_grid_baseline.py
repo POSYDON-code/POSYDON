@@ -613,10 +613,8 @@ def _inlist_part(snap):
     return "\n## ".join(keep)
 
 
-_EQUIVALENCE_XFAIL = {
-    "HeMS-HMS": "zams_filename in the ini re-sets zams_filename_1 after the "
-                "HeMS-HMS scenario cleared it, so star 1 is not formed",
-}
+# fixed in step 6: HeMS-HMS (S2)
+_EQUIVALENCE_XFAIL = {}
 
 
 @pytest.mark.parametrize("label", [
@@ -849,10 +847,10 @@ def test_single_HeMS_explicit_drops_zams_filename(setup_env):
         assert "zams_filename" not in read_namelists(step)["controls"], step
 
 
-@pytest.mark.xfail(strict=True, reason="construct_static_inlist copies "
-                   "zams_filename into zams_filename_1 after the scenario set "
-                   "it to None (legacy_posydon_setup_grid.py:229 vs :395)")
 def test_HeMS_HMS_scenario_forms_star1(setup_env):
+    """Fixed in step 6 (tracker S2); before, construct_static_inlist copied
+    zams_filename into zams_filename_1 after the scenario set it to None
+    (legacy_posydon_setup_grid.py:229 vs :395)."""
     result = run_setup(_variant(GRID_TYPES["HeMS-HMS"], "HeMS-HMS"),
                        setup_env)
     assert result.returncode == 0, result.stderr[-2000:]

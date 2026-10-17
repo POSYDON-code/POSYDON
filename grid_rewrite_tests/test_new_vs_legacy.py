@@ -213,6 +213,31 @@ def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
         scenario = scenario_files(repo, get_grid_type(config.grid.type))
     new = build_inlists(config, new_run, params, scenario=scenario)
 
+    if case.name == "HeMS-HMS__scenario":
+        # S2: today zams_filename keeps star 1 from forming; now it is formed
+        # in steps and binary/inlist1 loads the formed model instead of the
+        # ZAMS file. The binary and star 2 do not change.
+        assert old[0] is None and new.star1_formation is not None
+        old_files, new_files = written_inlists(old_run), {
+            name: text.replace(str(new_run), str(old_run))
+            for name, text in written_inlists(new_run).items()}
+        assert sorted(set(new_files) - set(old_files)) == [
+            "star1/inlist_step0", "star1/inlist_step1"]
+        for name in ("binary/inlist_project", "binary/inlist2"):
+            assert new_files[name] == old_files[name], name
+        old1, new1 = (read_inlist_text(old_files["binary/inlist1"]),
+                      read_inlist_text(new_files["binary/inlist1"]))
+        # the ini's ZAMS model gives way to MESA's default, as in the v2
+        # CO-HeMS runs; unused, since star 1 loads its formed model
+        assert old1["controls"].pop("zams_filename") != \
+            new1["controls"].pop("zams_filename") == "'zams_z2m2_y28.data'"
+        assert new1["controls"] == old1["controls"]
+        assert {key: value for key, value in new1["star_job"].items()
+                if old1["star_job"].get(key) != value} == {
+            "load_saved_model": ".true.",
+            "saved_model_name": "'initial_star1_step1.mod'"}
+        return
+
     # what posydon-run-grid is told
     def same(path):
         return None if path is None else path.replace(str(new_run),
@@ -415,6 +440,13 @@ def test_scripts_match_main(case, tmp_path, monkeypatch,
     assert set(new) == set(old)
     for name in old:
         new_text = new[name].read_text().replace(str(new_run), str(old_run))
+        if case.name == "HeMS-HMS__scenario" and \
+                "--mesa-star1-inlist-project" in new_text:
+            # S2: star 1 is formed now, so posydon-run-grid gets its steps
+            steps = " {0}/star1/inlist_step0 {0}/star1/inlist_step1".format(
+                old_run)
+            assert "--mesa-star1-inlist-project " + steps + " " in new_text
+            new_text = new_text.replace(steps, "None")
         assert new_text == old[name].read_text(), name
         assert new[name].stat().st_mode & 0o777 == \
             old[name].stat().st_mode & 0o777, name

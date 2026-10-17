@@ -127,17 +127,15 @@ def stack_target(target, files, flags):
 # ZAMS models: today's rules
 ###############################################################################
 def legacy_zams(config, scenario=None):
-    """The ZAMS model of each star, by today's rules.
+    """The ZAMS model of each star.
 
-    Today the scenario first sets ``zams_filename_1/2`` (from the common
-    inlists) and clears them for stars it builds from formation steps;
-    afterwards, a ``zams_filename`` key in the ini sets both stars again.
-    That last step is bug S2: a HeMS-HMS grid with ``zams_filename`` never
-    forms star 1. Step 6 replaces this function.
-
-    Fixed (S3): a single-star grid whose star 1 the scenario forms
-    (single_HeMS) has no ZAMS model for either star, whatever
-    ``zams_filename`` says, as in the v2 single_HeMS grids.
+    In order: the ini's ``zams_filename_1/2`` (legacy) or ``[grid]
+    zams_star1/2`` (new format); the ZAMS models the scenario names; the
+    legacy ``zams_filename``, for both stars. Last, a star the scenario
+    builds in formation steps has no ZAMS model, whatever the ini says
+    (fixed S2: before, ``zams_filename`` came last, so a HeMS-HMS grid never
+    formed star 1). A single-star grid whose star 1 is formed has no ZAMS
+    model for star 2 either (fixed S3), as in the v2 single_HeMS grids.
 
     Returns
     -------
@@ -158,16 +156,16 @@ def legacy_zams(config, scenario=None):
             found = getattr(scenario, "zams_" + star)
             if found is not None:
                 zams[star] = str(found)
-        for star in scenario.formation_stars:
-            zams[star] = None
         if is_single_star(config) and raw:
             # legacy only; a new-format ini's [grid] zams_star2 is kept
             zams["star2"] = None
     if raw.get("zams_filename") is not None:
         zams["star1"] = zams["star2"] = raw["zams_filename"]
-    if scenario is not None and is_single_star(config) \
-            and "star1" in scenario.formation_stars:
-        zams["star1"] = zams["star2"] = None
+    if scenario is not None:
+        for star in scenario.formation_stars:
+            zams[star] = None  # S2
+        if is_single_star(config) and "star1" in scenario.formation_stars:
+            zams["star2"] = None  # S3
     return zams
 
 

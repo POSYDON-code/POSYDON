@@ -167,12 +167,12 @@ class TestLegacyZams:
         config.legacy = {"mesa_inlists": {"zams_filename_2": "z2"}}
         assert totest.legacy_zams(config) == {"star1": None, "star2": "z2"}
 
-    def test_zams_filename_sets_both_after_the_scenario(self):
-        """Today's order, including bug S2."""
+    def test_formed_star_has_no_zams_whatever_zams_filename_says(self):
+        """S2: a HeMS-HMS grid with zams_filename still forms star 1."""
         config = GridConfig()
         config.legacy = {"mesa_inlists": {"zams_filename": "z"}}
         scenario = ScenarioFiles(formation_stars=("star1",))
-        assert totest.legacy_zams(config, scenario) == {"star1": "z",
+        assert totest.legacy_zams(config, scenario) == {"star1": None,
                                                         "star2": "z"}
 
     def test_scenario(self):
