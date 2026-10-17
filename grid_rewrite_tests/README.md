@@ -10,6 +10,10 @@ coverage check do not pick them up. CI runs them in the `baseline` job of
 branch; delete that job together with this folder. The same workflow also
 runs `posydon/unit_tests` on the branch.
 
+`notebooks/` holds hands-on notebooks that take the new setup apart, step
+by step (see its README). They use the stub MESA in `setup_grid_data/`, so
+move both together if the notebooks should outlive this folder.
+
 ## Run
 
 From the repository root:
