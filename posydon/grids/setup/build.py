@@ -35,7 +35,7 @@ __authors__ = [
 ]
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from posydon.grids.setup.grid_types import get_grid_type
@@ -259,7 +259,9 @@ class BuiltInlists:
     """Paths of the written inlists, as posydon-run-grid needs them.
 
     ``star1_formation``/``star2_formation`` are today's command-line value:
-    the step files, each preceded by a space, or ``None``.
+    the step files, each preceded by a space, or ``None``. ``stacks`` maps
+    each written namelist, e.g. ``"binary/inlist1 &controls"``, to the
+    ``(layer, source)`` files stacked into it, lowest first.
     """
 
     binary_project: str
@@ -267,6 +269,7 @@ class BuiltInlists:
     binary_star2: str
     star1_formation: str = None
     star2_formation: str = None
+    stacks: dict = field(default_factory=dict)
 
 
 def build_inlists(config, run_directory, grid_parameters, scenario=None):
@@ -294,8 +297,14 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
     files, flags = layer_targets(config, scenario)
     zams = legacy_zams(config, scenario)
 
-    def merged(target):
-        return stack_target(target, files, flags).merged()
+    stacks = {}
+
+    def merged(target, written):
+        """The target's values; ``written`` names where they are written,
+        e.g. ``binary/inlist1 &controls``, to keep its stack."""
+        stack = stack_target(target, files, flags)
+        stacks[written] = stack.sources()
+        return stack.merged()
 
     binary_project = os.path.join(run, "binary", "inlist_project")
     binary_star = {star: os.path.join(run, "binary", "inlist{}".format(
@@ -304,9 +313,14 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
     # 1. the binary and its two stars
     final = {}
     if not single:
-        for target in ("binary_controls", "binary_job", "star1_controls",
-                       "star1_job", "star2_controls", "star2_job"):
-            final[target] = merged(target)
+        for target, written in (
+                ("binary_controls", "binary/inlist_project &binary_controls"),
+                ("binary_job", "binary/inlist_project &binary_job"),
+                ("star1_controls", "binary/inlist1 &controls"),
+                ("star1_job", "binary/inlist1 &star_job"),
+                ("star2_controls", "binary/inlist2 &controls"),
+                ("star2_job", "binary/inlist2 &star_job")):
+            final[target] = merged(target, written)
         for star in STARS:
             for part, extra in (("controls", "controls"),
                                 ("job", "star_job")):
@@ -341,9 +355,11 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
             continue
         paths = []
         for step in range(n_steps):
-            controls = merged("{}_formation_step{}_controls".format(star,
-                                                                    step))
-            job = merged("{}_formation_step{}_job".format(star, step))
+            written = "{}/inlist_step{} &".format(star, step)
+            controls = merged("{}_formation_step{}_controls".format(
+                star, step), written + "controls")
+            job = merged("{}_formation_step{}_job".format(star, step),
+                         written + "star_job")
             model = "'initial_{}_step{}.mod'".format(star, step)
             binary_job = final["{}_job".format(star)]
             binary_job["create_pre_main_sequence_model"] = ".false."
@@ -406,4 +422,5 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
                         binary_star1=binary_star["star1"],
                         binary_star2=binary_star["star2"],
                         star1_formation=formation["star1"],
-                        star2_formation=formation["star2"])
+                        star2_formation=formation["star2"],
+                        stacks=stacks)

@@ -115,13 +115,13 @@ def fingerprint(repo, paths):
     return hashlib.sha256("".join(sorted(lines)).encode()).hexdigest()
 
 
-def git_state(repo, paths):
+def git_state(repo, paths, untracked=True):
     """``(commit, dirty, remote)`` of a folder, read-only.
 
     All None unless ``repo`` is the top of a git repository (a folder
     inside some other repository would report that one's commit). ``dirty``
     says whether any of ``paths`` differs from the commit, untracked files
-    included.
+    included unless ``untracked`` is False.
     """
     try:
         top = git(repo, "rev-parse", "--show-toplevel")
@@ -134,8 +134,8 @@ def git_state(repo, paths):
     rels = [rel.as_posix() for rel in (_relative(repo, path)
                                        for path in paths)
             if rel is not None]
-    status = git(repo, "status", "--porcelain", "--untracked-files=all",
-                 "--", *rels)
+    status = git(repo, "status", "--porcelain", "--untracked-files=" +
+                 ("all" if untracked else "no"), "--", *rels)
     dirty = bool(status.stdout.strip()) if status.returncode == 0 else None
     remote = git(repo, "remote", "get-url", "origin")
     return commit, dirty, \

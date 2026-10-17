@@ -131,10 +131,6 @@ def _inlists(grid_type):
                    "Same keys as [user_inlists]; a file given for a "
                    "namelist replaces", "MESA's defaults there.")
     text += _line(keys[0][0], "<file>", active=False)
-    text += "\n" + _header("posydon_inlists", "More POSYDON files, same "
-                           "keys as [user_inlists]; the release's",
-                           "files come after them, key by key.")
-    text += _line(keys[0][0], "<file>", active=False)
     text += "\n" + _header("user_inlists", "Your own MESA inlists, on top "
                            "of the release, key by key.",
                            "Several files for one key: <file>, <file> (the "

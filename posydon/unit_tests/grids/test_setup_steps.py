@@ -8,6 +8,7 @@ __authors__ = [
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import configparser
+import warnings
 from inspect import isroutine
 from pathlib import Path
 
@@ -71,7 +72,7 @@ star1_job = {d}/star_job.defaults
 star2_controls = {d}/controls.defaults
 star2_job = {d}/star_job.defaults
 
-[posydon_inlists]
+[user_inlists]
 history_columns = {d}/history_columns.list
 binary_history_columns = {d}/binary_history_columns.list
 profile_columns = {d}/profile_columns.list
@@ -180,21 +181,31 @@ class TestSetupGrid:
 
 
 class TestPrepare:
-    def test_replaced_column_lists_warn(self, grid, monkeypatch, tmp_path):
+    def test_user_column_lists_win(self, grid, monkeypatch, tmp_path):
+        """[user_inlists] lists win over the scenario's, silently."""
         files = ScenarioFiles()
         files.inlists.whole_files["history_columns"] = write(
             tmp_path / "other.list", "other")
         monkeypatch.setattr(totest, "resolve_scenario", lambda config:
                             ResolvedScenario(files=files, repo=tmp_path))
-        with pytest.warns(match="history_columns in the ini file is not "
-                          "used"):
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
             ready = totest.prepare(grid["ini"])
-        assert ready.columns["history_columns"] == tmp_path / "other.list"
+        assert ready.columns["history_columns"] == \
+            grid["dir"] / "history_columns.list"
         assert ready.scenario is files
+
+    def test_replaced_column_lists_warn(self, grid, monkeypatch):
+        """A legacy ini's lists lose to the scenario's (tracker C7)."""
+        monkeypatch.setattr(totest, "replaced_column_lists",
+                            lambda config, scenario: ["history_columns"])
+        with pytest.warns(match="history_columns in the ini file is not "
+                          "used: the scenario's .* is used instead"):
+            totest.prepare(grid["ini"])
 
     def test_missing_column_lists(self, grid):
         text = grid["ini"].read_text()
-        grid["ini"].write_text(text.split("[posydon_inlists]")[0] +
+        grid["ini"].write_text(text.split("[user_inlists]")[0] +
                                "[extras]" + text.split("[extras]")[1])
         with pytest.raises(ConfigError, match="no file for the column "
                            "lists history_columns, binary_history_columns, "

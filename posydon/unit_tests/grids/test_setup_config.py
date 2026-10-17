@@ -22,12 +22,12 @@ mode = fixed              ; fixed | dynamic
 points = ./grid.csv
 run_directory = ./run
 
-[scenario]                ; selects posydon_inlists
+[scenario]                ; selects POSYDON's inlists
 release = v2.0
 rerun = dedt_hepulse
 inlist_repo = ~/inlists   ; read as it is
 
-[user_inlists]            ; your MESA inlists, layered above posydon_inlists
+[user_inlists]            ; your MESA inlists, on top of the release
 star1_controls = ./my_inlist1
 binary = ./my_inlist_project
 
@@ -61,7 +61,7 @@ class TestElements:
         elements = {'BACKENDS', 'ConfigError', 'GRID_MODES',
                     'GridConfig', 'GridSection', 'INLIST_SHORTHANDS',
                     'INLIST_TARGETS', 'InlistFiles', 'OUTPUT_OPTIONS',
-                    'OutputSection', 'Path', 'GIT_KEYS', 'SECTIONS',
+                    'OutputSection', 'Path', 'GIT_KEYS', 'INI_LAYERS', 'SECTIONS',
                     'ScenarioSection', 'SubmissionSection', 'WHOLE_FILES',
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
@@ -262,7 +262,14 @@ class TestScenarioSection:
 
 
 class TestInlistSections:
-    @pytest.mark.parametrize("layer", ["mesa_inlists", "posydon_inlists",
+    def test_posydon_inlists_is_refused(self, write_ini):
+        with pytest.raises(totest.ConfigError, match=r"\[posydon_inlists\]:"
+                           " no longer used: POSYDON's inlists come from "
+                           r"\[scenario\]"):
+            totest.read_config(write_ini(
+                MINIMAL + "[posydon_inlists]\nstar1 = x\n"))
+
+    @pytest.mark.parametrize("layer", ["mesa_inlists",
                                        "user_inlists"])
     def test_every_layer_is_read(self, write_ini, tmp_path, layer):
         config = totest.read_config(write_ini(

@@ -119,6 +119,10 @@ key by key:
 3. your ``[user_inlists]``;
 4. the keys the setup writes itself (wiring, output options, ZAMS models).
 
+There is no ``[posydon_inlists]`` section: POSYDON's inlists come from the
+``[scenario]`` release. Put your own files in ``[user_inlists]``, or make your
+own release folder in your clone of the inlist repository.
+
 ``[user_inlists]`` takes ``binary``, ``star1``, ``star2`` (both namelists),
 a single namelist such as ``star1_controls`` or ``binary_job``,
 ``star1_formation_step0`` (on top of that formation step), and whole files
@@ -165,13 +169,26 @@ file cannot say these, so for it they are given on the command line:
 
     posydon-grid setup grid_params.ini --grid-type fixed --submission-type slurm
 
-**The run directory** gets a ``setup_record.ini`` with the :samp:`ini` file,
-the POSYDON version, ``$MESA_DIR``, the scenario, and the inlist repository
-as it was read: its folder, ``origin``, commit (``inlist_commit``), whether
-the files used differed from that commit (``inlist_dirty``) and a sha256 of
-those files (``inlist_fingerprint``). Two grids with the same fingerprint
-read identical files, whatever folder or branch they came from. ``None``
-means git could not tell: the folder is not a git repository of its own.
+**The run directory** gets a ``setup_record.ini`` with what it was set up
+from:
+
+- ``[setup]``: the :samp:`ini` file, its format, the grid type and mode,
+  when, on which host and with which command;
+- ``[posydon]``: the POSYDON that ran (version, location, its commit, and
+  whether its ``posydon/`` or ``bin/`` code differed from it) and Python;
+- ``[mesa]``: ``$MESA_DIR`` and ``$MESASDK_ROOT``;
+- ``[scenario]``: the release and rerun, and the inlist repository as it was
+  read: its folder, ``origin``, commit (``inlist_commit``), whether the
+  files used differed from that commit (``inlist_dirty``) and a sha256 of
+  those files (``inlist_fingerprint``). Two grids with the same fingerprint
+  read identical files, whatever folder or branch they came from;
+- ``[inlists]``: for every written inlist and namelist, the files stacked
+  into it, lowest layer first (``mesa``, ``release``, ``user``);
+- ``[whole_files]``: for every column list and Fortran source in the run
+  directory, the file it was copied from.
+
+``None`` means git could not tell (not a git repository of its own). Paths
+inside the inlist repository are relative to it.
 
 .. _inifile_slurm:
 

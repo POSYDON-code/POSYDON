@@ -121,9 +121,9 @@ def file_name(key, path):
 def whole_file_extras(config):
     """The Fortran sources the inlist layers name as whole files.
 
-    ``run_binary_extras`` and ``run_star_extras`` in ``[mesa_inlists]``,
-    ``[posydon_inlists]`` or ``[user_inlists]`` become extras keys of that
-    layer: ``run_star_extras`` in ``[user_inlists]`` is
+    ``run_binary_extras`` and ``run_star_extras`` in ``[mesa_inlists]`` or
+    ``[user_inlists]`` (or a legacy ini's ``posydon_inlists`` layer) become
+    extras keys of that layer: ``run_star_extras`` in ``[user_inlists]`` is
     ``user_star_binary_extras``, ``user_star1_extras`` and
     ``user_star2_extras``, so it is used wherever a star runs. Before, these
     keys were accepted and then never used.
@@ -257,6 +257,43 @@ def stage_extras(extras, run_directory):
         line + "\n" for line in mk_lines(extras, run_directory)))
     mk.chmod(0o755)
     return mk
+
+
+def copied_files(extras, columns):
+    """Each file the setup copies into the run directory, and its source.
+
+    Parameters
+    ----------
+    extras : dict
+        The extras that are staged (``stage_extras``).
+    columns : dict
+        Column-list name to its source (``column_list_sources``).
+
+    Returns
+    -------
+    dict
+        Path in the run directory to the source path, as
+        ``setup_record.ini`` lists them.
+
+    Examples
+    --------
+    >>> copied_files({"star_run": "/m/run.f", "mesa_dir": None},
+    ...              {"profile_columns": "/r/p.list"})
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'star1/src/run.f': '/m/run.f', 'star2/src/run.f': '/m/run.f',
+     'column_lists/profile_columns.list': '/r/p.list'}
+    """
+    copied = {}
+    for key, source in extras.items():
+        if source is None:
+            continue
+        for destination in destinations(key):
+            if destination.endswith("/") or destination == "":
+                destination += file_name(key, source)
+            copied[destination] = source
+    for name, source in columns.items():
+        copied["column_lists/" + COLUMN_LIST_FILES[name]] = source
+    return copied
 
 
 def compile_executables(run_directory):

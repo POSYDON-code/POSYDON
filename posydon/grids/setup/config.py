@@ -4,13 +4,15 @@ Everything ``posydon-setup-grid`` needs is collected in one ``GridConfig``.
 Each part of it comes from one section of the ini file::
 
     [grid]            -> GridSection        what to run, where
-    [scenario]        -> ScenarioSection    which posydon_inlists to use
-    [mesa_inlists]    -> InlistFiles        \\
-    [posydon_inlists] -> InlistFiles         > files per layer and target
-    [user_inlists]    -> InlistFiles        /
+    [scenario]        -> ScenarioSection    which POSYDON inlists to use
+    [mesa_inlists]    -> InlistFiles        \\ files per layer
+    [user_inlists]    -> InlistFiles        /  and target
     [output]          -> OutputSection      history, profiles, final models
     [submission]      -> SubmissionSection  shell or SLURM settings
     [extras]          -> dict               extra Fortran sources by name
+
+The ``posydon_inlists`` layer between them is filled by the scenario (the
+release's files); a new-format ini has no section for it.
 
 ``read_config`` reads this new format. Today's ini files (with
 ``[mesa_inlists]`` holding ``*_mesa_defaults`` keys) are read by
@@ -75,7 +77,7 @@ class GridSection:
 
 @dataclass
 class ScenarioSection:
-    """Which ``posydon_inlists`` to use; empty when no scenario is set.
+    """Which POSYDON inlists to use; empty when no scenario is set.
 
     A new-format ini sets ``release`` (+ ``rerun``, ``mesa``) and
     ``inlist_repo``; the setup reads that folder as it is. ``source``,
@@ -350,8 +352,10 @@ def _read_submission(options):
 ###############################################################################
 # the whole file
 ###############################################################################
-SECTIONS = ("grid", "scenario", "mesa_inlists", "posydon_inlists",
-            "user_inlists", "output", "submission", "extras")
+SECTIONS = ("grid", "scenario", "mesa_inlists", "user_inlists", "output",
+            "submission", "extras")
+# the inlist layers an ini can fill; posydon_inlists comes from [scenario]
+INI_LAYERS = ("mesa_inlists", "user_inlists")
 
 
 def read_config(path):
@@ -382,6 +386,10 @@ def read_config(path):
         inline_comment_prefixes=(";",))  # "key = value  ; comment"
     parser.optionxform = str  # keep the case of keys
     parser.read(path)
+    if parser.has_section("posydon_inlists"):
+        raise ConfigError("posydon_inlists", None, "no longer used: "
+                          "POSYDON's inlists come from [scenario] (the "
+                          "release); put your own files in [user_inlists]")
     unknown = [name for name in parser.sections() if name not in SECTIONS]
     if unknown:
         raise ConfigError(unknown[0], None, "unknown section; expected "
@@ -400,7 +408,7 @@ def read_config(path):
         submission=_read_submission(options("submission")),
         extras={key: _path(base, value)
                 for key, value in options("extras").items()})
-    for layer in config.inlists:
+    for layer in INI_LAYERS:
         config.inlists[layer] = _read_inlist_files(layer, options(layer),
                                                    base)
     return config

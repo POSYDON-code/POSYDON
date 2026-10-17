@@ -153,6 +153,19 @@ class LayerStack:
             result.update(values)
         return result
 
+    def sources(self):
+        """Every ``(layer, source)`` added, in the order they apply.
+
+        Examples
+        --------
+        >>> stack = LayerStack("binary_job")
+        >>> stack.add("user_inlists", {}, source="mine")
+        >>> stack.add("mesa_inlists", {}, source="defaults")
+        >>> stack.sources()
+        [('mesa_inlists', 'defaults'), ('user_inlists', 'mine')]
+        """
+        return [(layer, source) for layer, source, _ in self._in_order()]
+
     def explain(self, key):
         """Every layer that set a key, lowest first; the last one wins.
 

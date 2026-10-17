@@ -133,7 +133,9 @@ def main(argv=None):
     elif args.command == "explain":
         print(explain_grid(args.inifile, **_options(args)))
     else:
-        setup_grid(args.inifile, **_options(args))
+        setup_grid(args.inifile, command=" ".join(
+            ["posydon-grid"] + [shlex.quote(arg) for arg in argv]),
+            **_options(args))
 
 
 ###############################################################################
@@ -198,4 +200,7 @@ def legacy_main(argv=None):
     elif args.explain:
         print(explain_grid(args.inifile, **_options(args, overrides=True)))
     else:
-        setup_grid(args.inifile, **_options(args, overrides=True))
+        setup_grid(args.inifile, command=" ".join(
+            ["posydon-setup-grid"] + [shlex.quote(arg) for arg in (
+                sys.argv[1:] if argv is None else argv)]),
+            **_options(args, overrides=True))

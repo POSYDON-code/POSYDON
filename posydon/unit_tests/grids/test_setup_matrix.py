@@ -227,7 +227,7 @@ def ini_text(env, grid_type, grid=None, scenario=None, sections=None,
 def setup(env, grid_type, **options):
     ini = write(env["tmp"] / "grid.ini",
                 ini_text(env, grid_type, **options))
-    run = totest.setup_grid(ini)
+    run = totest.setup_grid(ini, command="posydon-grid setup grid.ini")
     return Run(run)
 
 
@@ -377,6 +377,19 @@ class TestGridTypes:
         assert len(scenario["inlist_fingerprint"]) == 64
         assert int(scenario["inlist_files"]) > 10
         assert "source" not in scenario
+        assert record["setup"]["command"] == "posydon-grid setup grid.ini"
+        # every written namelist, with the files stacked into it
+        inlists = record["inlists"]
+        assert len(inlists) == 2 * (STAR1_STEPS[grid_type] + (
+            0 if grid_type in SINGLE else 3))
+        layers = [line.split()[0] for line in inlists[
+            run.star_runs_in(grid_type) + " &controls"].split("\n")
+            if line.strip()]
+        assert layers[0] == "mesa" and "release" in layers
+        assert record["whole_files"]["star1/src/run_star_extras.f"] == \
+            "r11701/releases/v2.0/common/binary/src/run_star_extras.f"
+        assert record["posydon"]["location"]
+        assert record["mesa"]["mesasdk_root"] == "/sdk"
 
     def test_column_lists_and_extras_from_the_release(self, env, grid_type):
         run = setup(env, grid_type)
@@ -502,17 +515,14 @@ class TestUserInlists:
         assert reach(run, grid_type, "u_s0j") == {
             ("star1/inlist_step0", "star_job")}
 
-    def test_posydon_inlists_between_release_and_user(self, env, grid_type):
-        """[posydon_inlists] adds to the release; [user_inlists] wins."""
-        extra = user_file(env, "extra", {"mesh_delta_coeff": "0.6d0",
-                                         "p_c": "1"})
+    def test_user_inlists_over_the_release(self, env, grid_type):
+        """[user_inlists] wins over the release key by key."""
         mine = user_file(env, "mine", {"mesh_delta_coeff": "0.5d0"})
-        run = setup(env, grid_type, sections={
-            "posydon_inlists": {"star1_controls": extra},
-            "user_inlists": {"star1_controls": mine}})
+        run = setup(env, grid_type,
+                    sections={"user_inlists": {"star1_controls": mine}})
         controls = run.inlist(run.star_runs_in(grid_type))["controls"]
-        assert controls["p_c"] == "1"
         assert controls["mesh_delta_coeff"] == "0.5d0"
+        assert controls["m_common_star1"] == "1"
 
     def test_mesa_inlists_one_target(self, env, grid_type):
         """Naming one target's MESA defaults keeps the others'."""
@@ -706,6 +716,10 @@ def test_slurm_settings(env):
     ({}, None, None, {"output": {"star1": "everything"}},
      r"\[output\] star1: unknown value"),
     ({"type": "MS-MS"}, None, None, None, r"\[grid\] type: unknown grid"),
+    ({}, None, None, {"posydon_inlists": {"star1": "x"}},
+     r"\[posydon_inlists\]: no longer used: POSYDON's inlists come from "
+     r"\[scenario\] \(the release\); put your own files in "
+     r"\[user_inlists\]"),
 ])
 def test_refused(env, grid, submission, scenario, sections, message):
     ini = write(env["tmp"] / "grid.ini", ini_text(
@@ -760,11 +774,10 @@ def test_explain_names_the_user_layer(env, grid_type):
 ###############################################################################
 LAYER_SETS = {
     "mesa": ("mesa_inlists",),
-    "mesa+posydon": ("mesa_inlists", "posydon_inlists"),
-    "all": ("mesa_inlists", "posydon_inlists", "user_inlists"),
+    "user": ("user_inlists",),
+    "all": ("mesa_inlists", "user_inlists"),
 }
-SHORT = {"mesa_inlists": "mesa", "posydon_inlists": "posydon",
-         "user_inlists": "user"}
+SHORT = {"mesa_inlists": "mesa", "user_inlists": "user"}
 
 
 def layer_files(env, layer, grid_type, style):
@@ -817,7 +830,7 @@ def written_targets(run, grid_type):
 @pytest.mark.parametrize("rerun", [False, True])
 @pytest.mark.parametrize("style", ["steps", "list"])
 def test_every_layer_filled(env, grid_type, layers, rerun, style):
-    """mesa < release < rerun < posydon < user, for every target at once."""
+    """mesa < release < rerun < user, for every target at once."""
     given = LAYER_SETS[layers]
     sections = {layer: layer_files(env, layer, grid_type, style)
                 for layer in given}
@@ -830,11 +843,6 @@ def test_every_layer_filled(env, grid_type, layers, rerun, style):
         # every section of the file: the highest layer wins
         if "user_inlists" in given:
             top = "'user_{}'".format(target)
-        elif "posydon_inlists" in given and target.startswith("step"):
-            # the scenario's files come after the ini's [posydon_inlists]
-            # (as for column lists, C7); only a step's own file is more
-            # specific than the release's every-step file
-            top = "'posydon_{}'".format(target)
         elif rerun and rel != "binary/inlist_project" \
                 and rel != "binary/inlist2":
             top = "'rerun'"
@@ -850,9 +858,11 @@ def test_every_layer_filled(env, grid_type, layers, rerun, style):
                 # ...and star 1's on every step of a single star only
                 has_star1 = keys.get("{}_m_star1".format(short)) == "1"
                 assert has_star1 == star1_runs_here, (rel, section, layer)
-            # an ini file replaces MESA's defaults for its target
-            assert "m_mesa_c" not in keys and "m_mesa_j" not in keys and \
-                "m_mesa_bc" not in keys and "m_mesa_bj" not in keys, rel
+            # an ini's [mesa_inlists] file replaces MESA's defaults for its
+            # target; without one, they are under everything
+            mesa_defaults = {"m_mesa_c", "m_mesa_j", "m_mesa_bc",
+                             "m_mesa_bj"} & set(keys)
+            assert bool(mesa_defaults) != ("mesa_inlists" in given), rel
     top_whole = SHORT[given[-1]] if "user_inlists" in given else "release"
     for name in ("history_columns", "binary_history_columns",
                  "profile_columns"):

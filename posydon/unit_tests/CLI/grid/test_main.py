@@ -50,7 +50,8 @@ class TestPosydonGrid:
     def test_setup_new_format(self, calls):
         totest.main(["setup", "grid.ini"])
         assert calls == [("setup", "grid.ini",
-                          dict(LEGACY, overrides=False))]
+                          dict(LEGACY, overrides=False,
+                               command="posydon-grid setup grid.ini"))]
 
     def test_setup_legacy_options(self, calls):
         totest.main(["setup", "old.ini", "--grid-type", "fixed",
@@ -58,7 +59,10 @@ class TestPosydonGrid:
                      "slurm"])
         assert calls[0][2] == {"grid_type": "fixed", "run_directory": "/run",
                                "submission_type": "slurm",
-                               "overrides": False}
+                               "overrides": False, "command":
+                               "posydon-grid setup old.ini --grid-type "
+                               "fixed --run-directory /run "
+                               "--submission-type slurm"}
 
     def test_explain(self, calls, capsys):
         totest.main(["explain", "grid.ini"])
@@ -97,7 +101,9 @@ class TestPosydonSetupGrid:
             totest.legacy_main(["--inifile", "grid.ini", "--grid-type",
                                 "fixed"])
         assert calls == [("setup", "grid.ini",
-                          dict(LEGACY, grid_type="fixed", overrides=True))]
+                          dict(LEGACY, grid_type="fixed", overrides=True,
+                               command="posydon-setup-grid --inifile "
+                               "grid.ini --grid-type fixed"))]
 
     def test_explain(self, calls, capsys):
         with pytest.warns(match="'posydon-grid explain grid.ini'"):

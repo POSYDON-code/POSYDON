@@ -46,6 +46,7 @@ from posydon.grids.setup.extras import (
     COLUMN_LIST_FILES,
     column_list_sources,
     compile_executables,
+    copied_files,
     keep_highest_extras,
     merge_extras,
     place,
@@ -206,26 +207,19 @@ def chosen_extras(config, scenario):
     MESA's stock files filled in by ``fill_defaults``, and scenario files a
     user file replaces, are dropped silently: that is what they are for.
 
-    A whole file of ``[mesa_inlists]`` or ``[posydon_inlists]`` loses to the
-    scenario's file at the same place, as the column lists do (before, it
-    replaced the release's ``mesa_star1_extras``, so star 1 and star 2
-    compiled it while the binary's star took the release's).
+    A whole file of ``[mesa_inlists]`` loses to the scenario's file at the
+    same place (before, it replaced the release's ``mesa_star1_extras``, so
+    star 1 and star 2 compiled it while the binary's star took the
+    release's); one of ``[user_inlists]`` wins.
     """
     scenario_extras = scenario.extras if scenario is not None else {}
     extras = merge_extras(config.extras, scenario_extras)
     # the places the scenario fills, star 2's copy of star 1's included
     taken = {place(key, path) for key, path in
              merge_extras({}, scenario_extras).items()}
-    replaced = []
     for key, path in whole_file_extras(config).items():
-        if not key.startswith("user_") and place(key, path) in taken:
-            if key.startswith("posydon_") and path not in replaced:
-                replaced.append(path)
-            continue
-        extras[key] = path
-    for path in replaced:
-        Pwarn("[posydon_inlists] {} is not used: the scenario's file is "
-              "used instead".format(path), "ReplaceValueWarning")
+        if key.startswith("user_") or place(key, path) not in taken:
+            extras[key] = path
     kept = keep_highest_extras(extras)
     for key in extras:
         if key in kept:
@@ -322,10 +316,11 @@ def explain_grid(inifile, **options):
     return explain_text(ready.config, ready.scenario, roots)
 
 
-def setup_grid(inifile, **options):
+def setup_grid(inifile, command=None, **options):
     """Set up the run directory of a grid; return it.
 
-    Options are those of ``read_any_config``.
+    ``command`` is the command line that runs it, for the record (None when
+    called from Python). Options are those of ``read_any_config``.
     """
     _environment("MESA_DIR", "MESASDK_ROOT")
     run_grid = find_run_grid()
@@ -340,13 +335,18 @@ def setup_grid(inifile, **options):
     staged_columns = stage_column_lists(ready.columns, run_directory)
 
     # 7. the scripts that run it, next to the run (tracker S9)
-    command = command_line(ready.config, inlists, executables,
-                           staged_columns, run_directory, run_grid)
-    write_scripts(ready.config, command, len(ready.grid_df), run_directory,
-                  os.environ['MESASDK_ROOT'], os.environ['MESA_DIR'])
+    run_command = command_line(ready.config, inlists, executables,
+                               staged_columns, run_directory, run_grid)
+    write_scripts(ready.config, run_command, len(ready.grid_df),
+                  run_directory, os.environ['MESASDK_ROOT'],
+                  os.environ['MESA_DIR'])
 
-    # 8. what it was set up from: ini, POSYDON, inlist commit (tracker C13)
+    # 8. what it was set up from (tracker C13): the ini, POSYDON, MESA, the
+    # inlist repository, and the files stacked into each inlist
     from posydon import __version__ as posydon_version
     write_record(run_directory, ready.config, ready.resolved, inifile,
-                 os.environ['MESA_DIR'], posydon_version)
+                 os.environ['MESA_DIR'], posydon_version,
+                 mesasdk_root=os.environ['MESASDK_ROOT'], command=command,
+                 stacks=inlists.stacks,
+                 whole_files=copied_files(ready.extras, ready.columns))
     return Path(run_directory)

@@ -71,6 +71,7 @@ def binary_config(files, single=False):
 class TestElements:
     def test_dir(self):
         elements = {'BuiltInlists', 'LAYER_ORDER', 'LayerStack', 'Path',
+                    'field',
                     'STARS', '__authors__', '__builtins__', '__cached__',
                     '__doc__', '__file__', '__loader__', '__name__',
                     '__package__', '__spec__', '_cleanup_for', '_lines',
@@ -308,7 +309,17 @@ class TestBuildInlists:
         assert built == totest.BuiltInlists(
             binary_project=str(run / "binary" / "inlist_project"),
             binary_star1=str(run / "binary" / "inlist1"),
-            binary_star2=str(run / "binary" / "inlist2"))
+            binary_star2=str(run / "binary" / "inlist2"),
+            stacks=built.stacks)
+        # what was stacked into each written namelist, lowest first
+        assert built.stacks["binary/inlist1 &controls"] == [
+            ("mesa_inlists", str(files / "controls.defaults")),
+            ("posydon_inlists", str(files / "inlist1"))]
+        assert list(built.stacks) == [
+            "binary/inlist_project &binary_controls",
+            "binary/inlist_project &binary_job",
+            "binary/inlist1 &controls", "binary/inlist1 &star_job",
+            "binary/inlist2 &controls", "binary/inlist2 &star_job"]
         project = read(built.binary_project)
         assert project["binary_controls"] == {"fm": "5d-3", "m1": "1d0",
                                               "history_interval": "1"}

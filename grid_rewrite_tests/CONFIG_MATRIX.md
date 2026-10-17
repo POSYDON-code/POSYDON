@@ -13,11 +13,10 @@ code, so a failure means the code and the spec disagree.
 |---|---|
 | ini format | new (`[grid]`), legacy (`[run_parameters]`, `[mesa_inlists]`, ...) |
 | grid type | HMS-HMS, CO-HMS_RLO, CO-HeMS, HeMS-HMS, single_HMS, single_HeMS |
-| scenario | none; release + `ref`/`commit`; release + `source = path`; release + `rerun`; legacy `branch-commit` + system type |
+| scenario | none; release (read from `inlist_repo` as it is); release + `rerun`; legacy `branch-commit` + system type |
 | mode × backend | fixed: shell + job_array, slurm_array; dynamic: slurm_mpi, shell without job_array |
 | ZAMS | none; `zams` (both); `zams_star1`; `zams_star2` |
 | `[mesa_inlists]` | empty (release defaults); some targets; all targets |
-| `[posydon_inlists]` | empty; extra files on top of the release |
 | `[user_inlists]` | `binary`, `star1`, `star2`, a single namelist (`star1_controls`, `binary_job`, ...), `star1_formation`, `star1_formation_step<N>`, column lists, `run_binary_extras`, `run_star_extras` |
 | `[output]` | per star: history, final_profile, final_model or none; binary history or none; history_interval |
 | `[extras]` | empty (MESA's stock files); some keys; any key name |
@@ -39,12 +38,11 @@ code, so a failure means the code and the spec disagree.
 
 1. **Layers.** For every key, the value is the one from the highest layer
    that sets it: MESA defaults (or the ini's `[mesa_inlists]` file for that
-   target, which replaces them) < `[posydon_inlists]` < release (< rerun
-   overlay) < `[user_inlists]` < generated keys. The release comes after
-   the ini's `[posydon_inlists]` in the same layer (tracker C7), so only a
-   formation step's own `[posydon_inlists]` file beats the release's
-   every-step file. `test_every_layer_filled` fills every target of all
-   three ini layers at once and checks this for each written namelist.
+   target, which replaces them) < release (< rerun overlay) <
+   `[user_inlists]` < generated keys. There is no `[posydon_inlists]`:
+   POSYDON's inlists come from the scenario. `test_every_layer_filled`
+   fills every target of both ini layers at once and checks this for each
+   written namelist.
 2. **Where a user file goes.** `binary` → `binary/inlist_project`;
    `star1`/`star2` → `binary/inlist1`/`inlist2` in a binary grid, every
    step in a single-star grid; `star1_formation_step<N>` → only
@@ -67,13 +65,16 @@ code, so a failure means the code and the spec disagree.
    wired: `posydon-run-grid` wraps each step in an inlist that reads the
    step and then `inlist_grid_points`.
 7. **Whole files.** Column lists and Fortran sources: the highest layer
-   wins (`[mesa_inlists]` and `[posydon_inlists]` files lose to the
-   release's, `[user_inlists]` files win), copied under the name MESA
+   wins (`[mesa_inlists]` files lose to the release's, `[user_inlists]`
+   files win), copied under the name MESA
    compiles; `mk` builds all three executables.
 8. **Scripts.** One script per backend; job arrays cover every grid
    point; SLURM headers contain only the settings the ini gives.
 9. **Refusals.** Fixed grids without one point per task, dynamic grids
    with a job array or without `psycris_inifile`, a scenario without a
    release, a rerun without a release, unknown sections, keys or values.
-10. **Record.** `setup_record.ini` names the ini, grid type, mode, release
-    and the commit used.
+10. **Record.** `setup_record.ini` names the ini, grid type, mode, when,
+    where and the command; the POSYDON, Python and MESA used; the release
+    and the inlist repository as it was read (commit, dirty, fingerprint);
+    the files stacked into every written namelist; and the source of every
+    copied column list and Fortran source.

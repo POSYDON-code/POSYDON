@@ -8,6 +8,7 @@ __authors__ = [
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import configparser
+import platform
 from inspect import isroutine
 from pathlib import Path
 
@@ -38,17 +39,87 @@ class TestElements:
         assert isroutine(getattr(totest, name))
 
 
+POSYDON = {"location": "/posydon", "commit": "c0ffee", "dirty": "False",
+           "python": "3.11.9 (/bin/python)"}
+FIXED = {"posydon": POSYDON, "now": "2026-10-18T12:00:00",
+         "host": "login1"}
+
+
 class TestRecord:
     def test_no_scenario(self, tmp_path):
         config = GridConfig()
         config.grid.type = "HMS-HMS"
         text = totest.record_text(config, None, tmp_path / "grid.ini",
-                                  "/mesa", "2.2")
+                                  "/mesa", "2.2", mesasdk_root="/sdk",
+                                  command="posydon-grid setup grid.ini",
+                                  **FIXED)
         assert text.startswith("; What this run directory")
-        assert parse(text) == {"setup": {
-            "inifile": str((tmp_path / "grid.ini").resolve()),
-            "ini_format": "new", "posydon_version": "2.2",
-            "mesa_dir": "/mesa", "grid_type": "HMS-HMS", "mode": "fixed"}}
+        assert parse(text) == {
+            "setup": {"inifile": str((tmp_path / "grid.ini").resolve()),
+                      "ini_format": "new", "grid_type": "HMS-HMS",
+                      "mode": "fixed", "written": "2026-10-18T12:00:00",
+                      "host": "login1",
+                      "command": "posydon-grid setup grid.ini"},
+            "posydon": dict(POSYDON, version="2.2"),
+            "mesa": {"mesa_dir": "/mesa", "mesasdk_root": "/sdk"}}
+
+    def test_legacy_layer_name(self):
+        config = GridConfig(source_format="legacy")
+        resolved = ResolvedScenario(files=ScenarioFiles(), repo=Path("/r"))
+        record = parse(totest.record_text(
+            config, resolved, "g.ini", "/m", "2.2", stacks={
+                "binary/inlist1 &controls": [("posydon_inlists", "/x")]},
+            **FIXED))
+        assert record["inlists"]["binary/inlist1 &controls"] == \
+            "\nposydon  /x"
+
+    def test_read_now(self, tmp_path):
+        """Without them given, the time, host and POSYDON are read."""
+        config = GridConfig()
+        record = parse(totest.record_text(config, None, "g.ini", "/m",
+                                          "2.2"))
+        assert record["setup"]["command"] == "None (called from Python)"
+        assert record["setup"]["written"][:2] == "20"
+        assert record["setup"]["host"]
+        assert record["posydon"]["version"] == "2.2"
+
+    def test_posydon_state(self):
+        import posydon
+        state = totest.posydon_state()
+        root = Path(posydon.__file__).resolve().parents[1]
+        assert state["location"] == str(root)
+        assert state["version"] == posydon.__version__
+        assert state["dirty"] in ("True", "False", "None")
+        assert state["python"].startswith(platform.python_version())
+
+    def test_inlists_and_whole_files(self, tmp_path):
+        config = GridConfig()
+        repo = tmp_path / "repo"
+        resolved = ResolvedScenario(files=ScenarioFiles(), repo=repo,
+                                    release=Release(
+                                        name="v2.0", folder=repo,
+                                        mesa_version="r11701",
+                                        mesa="default", frozen=True))
+        stacks = {"binary/inlist1 &controls": [
+            ("mesa_inlists", str(repo / "r11701/mesa/controls.defaults")),
+            ("posydon_inlists", str(repo / "r11701/releases/v2.0/inlist1")),
+            ("posydon_inlists", "grid type flag"),
+            ("user_inlists", "/home/me/mine")]}
+        whole = {"star1/src/run.f": "/mesa/star/work/src/run.f",
+                 "column_lists/history_columns.list":
+                     str(repo / "r11701/releases/v2.0/h.list")}
+        record = parse(totest.record_text(
+            config, resolved, "g.ini", "/m", "2.2", stacks=stacks,
+            whole_files=whole, **FIXED))
+        assert record["inlists"] == {"binary/inlist1 &controls": (
+            "\nmesa     r11701/mesa/controls.defaults"
+            "\nrelease  r11701/releases/v2.0/inlist1"
+            "\nrelease  grid type flag"
+            "\nuser     /home/me/mine")}
+        assert record["whole_files"] == {
+            "column_lists/history_columns.list": "r11701/releases/v2.0/"
+                                                 "h.list",
+            "star1/src/run.f": "/mesa/star/work/src/run.f"}
 
     def test_release(self, tmp_path):
         config = GridConfig()
@@ -62,7 +133,7 @@ class TestRecord:
             release=release, dirty=False, remote="https://x/inlists",
             fingerprint="f" * 64, n_files=12)
         path = totest.write_record(tmp_path, config, resolved, "grid.ini",
-                                   "/mesa", "2.2")
+                                   "/mesa", "2.2", **FIXED)
         assert path == tmp_path / "setup_record.ini"
         assert parse(path.read_text())["scenario"] == {
             "release": "v2.0", "rerun": "hot", "mesa_version": "r11701",
@@ -80,7 +151,7 @@ class TestRecord:
         resolved = ResolvedScenario(files=ScenarioFiles(),
                                     repo=Path("/repo"), commit="18710e9abc")
         record = parse(totest.record_text(config, resolved, "g.ini", "/m",
-                                          "2.2"))
+                                          "2.2", **FIXED))
         assert record["setup"]["ini_format"] == "legacy"
         assert record["scenario"] == {
             "source": "posydon", "branch": "main", "commit": "18710e9",
