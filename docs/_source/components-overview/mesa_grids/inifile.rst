@@ -26,10 +26,14 @@ Below we describe each section of the :samp:`ini` file and what each value corre
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
-The default :samp:`ini` file is in POSYDON-MESA-INLISTS:
-`grid_params.ini <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS/blob/v2_sources/templates/grid_params.ini>`_
+The template of a **legacy** :samp:`ini` file (the format with
+``[slurm]``, ``[mesa_inlists]``, ``[mesa_extras]`` and ``[run_parameters]``,
+described from :ref:`inifile_slurm` on) is in POSYDON-MESA-INLISTS:
+`grid_params.ini <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS/blob/v2_sources/templates/grid_params.ini>`_.
+For the new format, write a starter file with ``posydon-grid init`` instead
+(:ref:`inifile_new`).
 
-POSYDON no longer ships the ``grid_params/`` folder. Ini files still name
+POSYDON no longer ships the ``grid_params/`` folder. Legacy ini files still name
 its files as ``${posydon_github_root}/grid_params/...`` (MESA defaults, ZAMS
 models, column lists); when such a path does not exist, ``posydon-grid``
 reads the same file from POSYDON-MESA-INLISTS at the commit POSYDON pins
