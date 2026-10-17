@@ -68,8 +68,9 @@ def layer_targets(config, scenario=None):
 
     A single-star grid runs star 1 as its formation steps, so files given
     for star 1 itself (``star1``, ``star1_controls``, ``star1_job``) apply
-    to every step, after that layer's every-step files, as a legacy ini's
-    ``star1_*_user`` keys do (before, a new-format ini's were dropped).
+    to every step, before the scenario's files of the same layer, as a
+    legacy ini's ``star1_*_user`` keys do (before, a new-format ini's were
+    dropped).
 
     Returns
     -------
@@ -81,13 +82,8 @@ def layer_targets(config, scenario=None):
     files = {layer: {target: list(paths) for target, paths in
                      config.inlists[layer].targets.items()}
              for layer in config.inlists}
-    flags = {}
-    if scenario is not None:
-        posydon = files["posydon_inlists"]
-        for target, paths in scenario.inlists.targets.items():
-            posydon.setdefault(target, []).extend(paths)
-        flags = {target: dict(values)
-                 for target, values in scenario.flags.items()}
+    # a single star's own files apply to every step; moved before the
+    # scenario's files are added, so those still come after the ini's
     if is_single_star(config):
         for targets in files.values():
             for part in ("controls", "job"):
@@ -95,6 +91,13 @@ def layer_targets(config, scenario=None):
                 if paths:
                     targets.setdefault("star1_formation_every_step_{}".format(
                         part), []).extend(paths)
+    flags = {}
+    if scenario is not None:
+        posydon = files["posydon_inlists"]
+        for target, paths in scenario.inlists.targets.items():
+            posydon.setdefault(target, []).extend(paths)
+        flags = {target: dict(values)
+                 for target, values in scenario.flags.items()}
     for star in STARS:
         n_steps = formation_step_count(star, list(files.values()) +
                                        [flags])

@@ -143,6 +143,11 @@ def whole_file_extras(config):
     return extras
 
 
+def place(key, path):
+    """Where a key's file ends up: its folders and the name it gets."""
+    return tuple(destinations(key)), file_name(key, path)
+
+
 def keep_highest_extras(extras):
     """For each file the extras put in place, keep only the highest layer's.
 
@@ -167,10 +172,10 @@ def keep_highest_extras(extras):
         prefix = key.split("_")[0]
         if prefix not in LAYER_PREFIXES or path is None:
             continue
-        place = (tuple(destinations(key)), file_name(key, path))
+        where = place(key, path)
         rank = LAYER_PREFIXES.index(prefix)
-        if place not in best or rank >= best[place][0]:
-            best[place] = (rank, key)
+        if where not in best or rank >= best[where][0]:
+            best[where] = (rank, key)
     kept = {key for _, key in best.values()}
     return {key: path for key, path in extras.items()
             if key in kept or key.split("_")[0] not in LAYER_PREFIXES

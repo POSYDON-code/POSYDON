@@ -26,6 +26,7 @@ from pathlib import Path
 
 from posydon.grids.setup.config import ConfigError
 from posydon.grids.setup.grid_types import get_grid_type
+from posydon.grids.setup.layers import formation_step_count
 from posydon.grids.setup.manifest import mesa_installation
 
 # legacy [mesa_extras] name -> file in $MESA_DIR, in the order of the v2 inis
@@ -73,6 +74,26 @@ def mesa_defaults_targets(grid_type, defaults):
     return targets
 
 
+def _per_step(targets, config, scenario):
+    """Turn every-step targets into one target per formation step.
+
+    So that ``[mesa_inlists] star1_formation_step0`` replaces MESA's
+    defaults for that step, as any other target's file does, instead of
+    being stacked on top of them.
+    """
+    layers = [files.targets for files in config.inlists.values()]
+    layers += [scenario.inlists.targets, scenario.flags]
+    out = {}
+    for target, path in targets.items():
+        star, every, part = target.partition("_formation_every_step_")
+        if not every:
+            out[target] = path
+            continue
+        for step in range(max(formation_step_count(star, layers), 1)):
+            out["{}_formation_step{}_{}".format(star, step, part)] = path
+    return out
+
+
 def fill_defaults(config, resolved, mesa_dir):
     """Fill the ``mesa_inlists`` layer and the extras of a new-format ini.
 
@@ -105,10 +126,21 @@ def fill_defaults(config, resolved, mesa_dir):
         # target by target: an ini that names the defaults of one target
         # still gets MESA's for the others (before, naming any left out
         # all of them)
-        targets = mesa_defaults_targets(get_grid_type(config.grid.type),
+        grid_type = get_grid_type(config.grid.type)
+        targets = mesa_defaults_targets(grid_type,
                                         mesa_installation(release))
+        targets = _per_step(targets, config, resolved.files)
+        given = set(mesa_layer.targets)
+        if grid_type.single_star:
+            # a single star runs as its steps: [mesa_inlists] star1 is
+            # every step's defaults
+            for part in ("controls", "job"):
+                if "star1_{}".format(part) in given:
+                    given |= {target for target in targets if
+                              target.startswith("star1_formation_step") and
+                              target.endswith("_" + part)}
         for target, path in targets.items():
-            if target not in mesa_layer.targets:
+            if target not in given:
                 mesa_layer.add(target, path)
     # key by key: an ini that names one source still gets MESA's makefiles
     # and the others (before, naming any [extras] key left out all of them,

@@ -31,7 +31,7 @@ def sources(tmp_path):
 
 class TestElements:
     def test_dir(self):
-        elements = {'COLUMN_LIST_FILES', 'INLIST_LAYERS', 'Path',
+        elements = {'COLUMN_LIST_FILES', 'INLIST_LAYERS', 'Path', 'place',
                     'SOURCE_FOLDERS', 'SOURCE_NAMES', 'WHOLE_FILE_EXTRAS',
                     'file_name', 'whole_file_extras',
                     '__authors__', '__builtins__', '__cached__', '__doc__',

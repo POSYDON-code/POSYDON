@@ -37,6 +37,7 @@ def release(tmp_path):
 class TestElements:
     def test_dir(self):
         elements = {'ConfigError', 'MESA_EXTRAS', 'Path', '__authors__',
+                    '_per_step', 'formation_step_count',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
                     'fill_defaults', 'get_grid_type', 'mesa_defaults_targets',
@@ -129,8 +130,10 @@ class TestFillDefaults:
         assert targets["binary_job"] == [Path("/mine")]
         assert targets["binary_controls"] == \
             [folder / "binary" / "binary_controls.defaults"]
-        assert targets["star1_formation_every_step_controls"] == \
+        # one target per formation step, so a step's file can replace them
+        assert targets["star1_formation_step0_controls"] == \
             [folder / "star" / "controls.defaults"]
+        assert "star1_formation_every_step_controls" not in targets
 
     def test_nothing_to_fill(self):
         config = self.config()

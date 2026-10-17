@@ -46,6 +46,7 @@ from posydon.grids.setup.extras import (
     compile_executables,
     keep_highest_extras,
     merge_extras,
+    place,
     replaced_column_lists,
     stage_column_lists,
     stage_extras,
@@ -202,10 +203,27 @@ def chosen_extras(config, scenario):
     legacy ini (today's warning), an ``[extras]`` key of a new-format one.
     MESA's stock files filled in by ``fill_defaults``, and scenario files a
     user file replaces, are dropped silently: that is what they are for.
+
+    A whole file of ``[mesa_inlists]`` or ``[posydon_inlists]`` loses to the
+    scenario's file at the same place, as the column lists do (before, it
+    replaced the release's ``mesa_star1_extras``, so star 1 and star 2
+    compiled it while the binary's star took the release's).
     """
-    extras = merge_extras(config.extras,
-                          scenario.extras if scenario is not None else None)
-    extras.update(whole_file_extras(config))
+    scenario_extras = scenario.extras if scenario is not None else {}
+    extras = merge_extras(config.extras, scenario_extras)
+    # the places the scenario fills, star 2's copy of star 1's included
+    taken = {place(key, path) for key, path in
+             merge_extras({}, scenario_extras).items()}
+    replaced = []
+    for key, path in whole_file_extras(config).items():
+        if not key.startswith("user_") and place(key, path) in taken:
+            if key.startswith("posydon_") and path not in replaced:
+                replaced.append(path)
+            continue
+        extras[key] = path
+    for path in replaced:
+        Pwarn("[posydon_inlists] {} is not used: the scenario's file is "
+              "used instead".format(path), "ReplaceValueWarning")
     kept = keep_highest_extras(extras)
     for key in extras:
         if key in kept:
