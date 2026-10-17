@@ -166,6 +166,13 @@ def check_config(config):
         # (--grid-point-index); without it nothing would run (tracker S4, R1)
         raise ConfigError("slurm", "job_array",
                           "a fixed grid needs job_array = True")
+    if grid.mode == "dynamic" and one_point_per_task(config.submission):
+        # posydon-run-grid samples a dynamic grid on rank 0 of one MPI job;
+        # a job array cannot run it (tracker S5: it silently ran as fixed)
+        raise ConfigError("slurm", "job_array",
+                          "a dynamic grid runs as one MPI job: set job_array "
+                          "= False (new format: [submission] backend = "
+                          "slurm_mpi)")
     if config.scenario.is_set and config.grid.type is None:
         raise ConfigError("mesa_inlists", "scenario",
                           "unknown system type {!r}".format(

@@ -108,11 +108,15 @@ class TestCommandLine:
             "--grid-point-index $SLURM_ARRAY_TASK_ID "
             "--job_end $SLURM_JOB_END_TIME")
 
-    def test_job_array_is_always_fixed(self):
-        config = make_config()
+    @pytest.mark.parametrize("backend", ["slurm_array", "shell"])
+    def test_dynamic_job_array_is_refused(self, backend):
+        """S5: before, it silently ran as a fixed grid."""
+        config = make_config(backend)
         config.grid.mode = "dynamic"
         config.grid.psycris_inifile = Path("/run/psycris.ini")
-        assert "--grid-type fixed --psycris-inifile None" in command(config)
+        with pytest.raises(ValueError, match="dynamic grid runs as one MPI "
+                           "job"):
+            command(config)
 
     def test_mpi_dynamic(self):
         config = make_config("slurm_mpi", work_dir="/scratch")

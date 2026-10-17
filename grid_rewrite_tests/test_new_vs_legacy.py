@@ -427,6 +427,15 @@ def test_scripts_match_main(case, tmp_path, monkeypatch,
     executables = compile_executables(new_run)
     columns = stage_column_lists(column_list_sources(config, scenario),
                                  new_run)
+    if case.name == "HMS-HMS__scenario__dynamic_job_array":
+        # S5: today this writes a fixed-grid command; now it is refused
+        assert "--grid-type fixed" in (old_run /
+                                       "job_array_grid_submit.slurm"
+                                       ).read_text()
+        with pytest.raises(ValueError, match="one MPI job"):
+            command_line(config, built, executables, columns, str(new_run),
+                         str(env["bin"] / "posydon-run-grid"))
+        return
     command = command_line(config, built, executables, columns,
                            str(new_run), str(env["bin"] / "posydon-run-grid"))
     scripts = tmp_path / "scripts"

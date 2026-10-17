@@ -17,8 +17,12 @@ line (``command_line``). The scripts around it depend on the backend of
 waits for it, compresses the output (``compress-mesa``) and, with
 ``newgroup``, hands the files to that group.
 
-All text is written exactly as today, including what the tracker lists:
-a job array always runs as ``--grid-type fixed`` without psy-cris (S5), a
+A job array runs a fixed grid, one point per task. A dynamic grid needs
+one MPI job (``posydon-run-grid`` samples new points on rank 0 and runs
+them on the others), so a dynamic grid with a job array is refused (fixed
+S5: before, it silently ran as a fixed grid over the CSV).
+
+All text is written exactly as today, including what the tracker lists: a
 missing star inlist is passed as the literal ``None`` and the job name
 holds a literal ``\\${SLURM_ARRAY_TASK_ID}`` (C11), only the ``.sh``
 scripts are made executable (C12), and a shell script without a job array
@@ -156,7 +160,10 @@ def command_line(config, inlists, executables, column_lists, run_directory,
     keep = {"keep_profiles": config.grid.keep_profiles,
             "keep_photos": config.grid.keep_photos}
     if one_point_per_task(submission):
-        # today a job array always runs as fixed, without psy-cris (S5)
+        if config.grid.mode == "dynamic":
+            raise ValueError("a dynamic grid runs as one MPI job; it cannot "
+                             "use a job array (S5)")
+        # a fixed grid, one point per task; psy-cris is not passed
         values["psycris_inifile"] = None
         command = run_grid_call(values, run_grid, **keep)
         command += " --grid-point-index $SLURM_ARRAY_TASK_ID"

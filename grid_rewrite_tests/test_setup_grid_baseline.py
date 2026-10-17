@@ -867,16 +867,18 @@ def test_fixed_mpi_grid_needs_no_psycris_ini(setup_env):
     assert result.returncode == 0, result.stderr[-2000:]
 
 
-@pytest.mark.xfail(strict=True, reason="with job_array=True the command line "
-                   "is built with grid type 'fixed', whatever --grid-type "
-                   "says (legacy_posydon_setup_grid.py:1088-1107)")
-def test_dynamic_grid_keeps_dynamic_with_job_array(setup_env):
+def test_dynamic_grid_with_job_array_is_refused(setup_env):
+    """Fixed in step 6 (tracker S5): a dynamic grid runs as one MPI job.
+    Before, with job_array=True the command line was built with grid type
+    'fixed', whatever --grid-type said (legacy_posydon_setup_grid.py:
+    1088-1107), and the grid silently ran as a fixed grid."""
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", grid_type="dynamic",
                     job_array=True)
     result = run_setup(case, setup_env)
-    assert result.returncode == 0, result.stderr[-2000:]
-    script = (setup_env["run"] / "job_array_grid_submit.slurm").read_text()
-    assert "--grid-type dynamic" in script
+    assert result.returncode != 0
+    assert "a dynamic grid runs as one MPI job" in result.stderr
+    created = {p.name for p in setup_env["run"].iterdir()}
+    assert created <= {"grid.csv", "grid.ini"}, sorted(created)
 
 
 def test_failed_setup_leaves_no_partial_run_directory(setup_env):
