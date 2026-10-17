@@ -160,7 +160,8 @@ def legacy_zams(config, scenario=None):
                 zams[star] = str(found)
         for star in scenario.formation_stars:
             zams[star] = None
-        if is_single_star(config):
+        if is_single_star(config) and raw:
+            # legacy only; a new-format ini's [grid] zams_star2 is kept
             zams["star2"] = None
     if raw.get("zams_filename") is not None:
         zams["star1"] = zams["star2"] = raw["zams_filename"]

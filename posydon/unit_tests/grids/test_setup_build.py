@@ -200,6 +200,13 @@ class TestLegacyZams:
         config.legacy = {"mesa_inlists": {"zams_filename_2": "z2"}}
         assert totest.legacy_zams(config, ScenarioFiles())["star2"] is None
 
+    def test_new_format_single_star_keeps_star2(self):
+        config = GridConfig()
+        config.grid.type = "single_HMS"
+        config.grid.zams_star1 = config.grid.zams_star2 = Path("/z.data")
+        assert totest.legacy_zams(config, ScenarioFiles()) == {
+            "star1": "/z.data", "star2": "/z.data"}
+
     def test_new_format(self):
         config = GridConfig()
         config.grid.zams_star1 = Path("/z/one.data")

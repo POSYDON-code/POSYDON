@@ -4,9 +4,11 @@
 The work is done by the modules of ``posydon.grids.setup``; this script
 reads the command line and calls them in order:
 
-    1. read and check the ini file     legacy.read_legacy_config
+    1. read and check the ini file     config.read_config (new format) or
+                                       legacy.read_legacy_config
     2. read the grid points            (CSV, PSyGrid .h5 or a MESA grid folder)
-    3. get the scenario's inlists      scenario.fetch_inlist_repo, scenario_files
+    3. get the scenario's inlists      resolve.resolve_scenario; defaults of a
+                                       new-format ini: defaults.fill_defaults
     4. stage sources and compile       extras.stage_extras, compile_executables
     5. write the inlists               build.build_inlists
     6. stage the column lists          extras.stage_column_lists
@@ -14,18 +16,25 @@ reads the command line and calls them in order:
 
 Everything that can fail is checked in steps 1-3, before anything is written
 into the run directory.
+
+An ini with a [grid] section is a new-format ini; its [grid] and
+[submission] say the mode, run directory and backend, and --grid-type,
+--run-directory and --submission-type override them when given. Any other
+ini is read as a legacy ini, which needs --grid-type.
 """
 ##############################################################################
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
 ##############################################################################
 import argparse
+import configparser
 import os
 from pathlib import Path
 
 import pandas
 
 from posydon.grids.setup.build import build_inlists
-from posydon.grids.setup.config import ConfigError
+from posydon.grids.setup.config import ConfigError, read_config
+from posydon.grids.setup.defaults import fill_defaults
 from posydon.grids.setup.extras import (
     COLUMN_LIST_FILES,
     column_list_sources,
@@ -35,9 +44,8 @@ from posydon.grids.setup.extras import (
     stage_column_lists,
     stage_extras,
 )
-from posydon.grids.setup.grid_types import get_grid_type
 from posydon.grids.setup.legacy import read_legacy_config
-from posydon.grids.setup.scenario import fetch_inlist_repo, scenario_files
+from posydon.grids.setup.resolve import resolve_scenario
 from posydon.grids.setup.submit import (
     command_line,
     find_run_grid,
@@ -60,14 +68,15 @@ def parse_commandline():
     parser.add_argument("--grid-type",
                         help="Either you are supplying a grid "
                         "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
-                        "grid and want to sample new points to run MESA on (dynamic).",
-                        required=True)
+                        "grid and want to sample new points to run MESA on (dynamic). "
+                        "Needed for a legacy ini; overrides [grid] mode otherwise.")
     parser.add_argument("--run-directory",
                         help="Path where executable will be made and MESA "
-                             "simulation output will be placed", default=os.getcwd())
+                             "simulation output will be placed (default: the "
+                             "current directory, or [grid] run_directory)")
     parser.add_argument("--submission-type",
-                        help="Options include creating a shell script or a slurm script",
-                        default='shell')
+                        help="Options include creating a shell script or a slurm script "
+                        "(default: shell, or [submission] backend)")
     parser.add_argument("-n", "--nproc",
                         help="number of processors", type=int, default=1)
     parser.add_argument("--verbose", action="store_true", default=False,
@@ -75,10 +84,10 @@ def parse_commandline():
 
     args = parser.parse_args()
 
-    if args.grid_type not in ['fixed', 'dynamic']:
+    if args.grid_type not in [None, 'fixed', 'dynamic']:
         raise parser.error("--grid-type must be either fixed or dynamic")
 
-    if args.submission_type not in ['slurm', 'shell']:
+    if args.submission_type not in [None, 'slurm', 'shell']:
         raise parser.error('--submission-type must be either slurm of shell')
 
     return args
@@ -87,6 +96,36 @@ def parse_commandline():
 ###############################################################################
 # STEPS
 ###############################################################################
+def is_new_format(path):
+    """Whether an ini file is in the new format (it has a [grid] section)."""
+    parser = configparser.ConfigParser(interpolation=None, strict=False)
+    parser.read(path)
+    return parser.has_section("grid")
+
+
+def read_any_config(args):
+    """Read the ini in either format, with the command line on top."""
+    if not is_new_format(args.inifile):
+        if args.grid_type is None:
+            raise ValueError("--grid-type is needed for a legacy ini file")
+        return read_legacy_config(
+            args.inifile, grid_type=args.grid_type,
+            submission_type=args.submission_type or 'shell',
+            run_directory=args.run_directory or os.getcwd())
+    config = read_config(args.inifile)
+    if args.grid_type is not None:
+        config.grid.mode = args.grid_type
+    if args.run_directory is not None:
+        config.grid.run_directory = Path(args.run_directory)
+    if args.submission_type == 'shell':
+        config.submission.backend = 'shell'
+    elif args.submission_type == 'slurm' and \
+            config.submission.backend == 'shell':
+        config.submission.backend = 'slurm_array' \
+            if config.submission.job_array else 'slurm_mpi'
+    return config
+
+
 def check_config(config):
     """Stop on settings that would fail later, before anything is written."""
     grid = config.grid
@@ -169,20 +208,18 @@ if __name__ == '__main__':
                              "before you can set up a grid of MESA runs"
                              .format(name))
     run_grid = find_run_grid()
-    run_directory = args.run_directory
 
     # 1-3. read and check everything
-    config = read_legacy_config(args.inifile, grid_type=args.grid_type,
-                                submission_type=args.submission_type,
-                                run_directory=run_directory)
+    config = read_any_config(args)
+    # written into the inlists and scripts as given (legacy: --run-directory)
+    run_directory = args.run_directory or str(config.grid.run_directory)
     check_config(config)
     grid_df, mpi_grid = read_grid_points(config.grid)
     if not one_point_per_task(config.submission):
         config.grid.points = Path(mpi_grid)
-    scenario = None
-    if config.scenario.is_set:
-        repo = fetch_inlist_repo(config.scenario)
-        scenario = scenario_files(repo, get_grid_type(config.grid.type))
+    resolved = resolve_scenario(config)
+    scenario = resolved.files if resolved is not None else None
+    fill_defaults(config, resolved, os.environ['MESA_DIR'])
     extras = chosen_extras(config, scenario)
     columns = column_list_sources(config, scenario)
     missing = [name for name in COLUMN_LIST_FILES if name not in columns]

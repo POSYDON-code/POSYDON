@@ -26,6 +26,8 @@ manifest
     Read a release of the restructured inlist repository from its manifests.
 resolve
     Turn [scenario] (legacy or release) into the files of posydon_inlists.
+defaults
+    Fill the MESA defaults and extras a new-format ini leaves out.
 """
 
 __authors__ = [
