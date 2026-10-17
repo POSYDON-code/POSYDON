@@ -28,6 +28,10 @@ resolve
     Turn [scenario] (legacy or release) into the files of posydon_inlists.
 defaults
     Fill the MESA defaults and extras a new-format ini leaves out.
+explain
+    Where each inlist value comes from (posydon-setup-grid --explain).
+template
+    A starter new-format ini for a grid type (posydon-setup-grid --init).
 """
 
 __authors__ = [

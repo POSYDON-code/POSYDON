@@ -21,6 +21,13 @@ An ini with a [grid] section is a new-format ini; its [grid] and
 [submission] say the mode, run directory and backend, and --grid-type,
 --run-directory and --submission-type override them when given. Any other
 ini is read as a legacy ini, which needs --grid-type.
+
+Other modes, which write no run directory:
+
+    --list-grid-types           the grid types and what they are
+    --init GRID_TYPE            write a starter new-format ini to --inifile
+    --explain                   for each inlist, the keys POSYDON or the
+                                user set and where each value comes from
 """
 ##############################################################################
 #  IMPORT ALL NECESSARY PYTHON PACKAGES
@@ -35,6 +42,7 @@ import pandas
 from posydon.grids.setup.build import build_inlists
 from posydon.grids.setup.config import ConfigError, read_config
 from posydon.grids.setup.defaults import fill_defaults
+from posydon.grids.setup.explain import explain_text
 from posydon.grids.setup.extras import (
     COLUMN_LIST_FILES,
     column_list_sources,
@@ -44,6 +52,7 @@ from posydon.grids.setup.extras import (
     stage_column_lists,
     stage_extras,
 )
+from posydon.grids.setup.grid_types import describe_grid_types
 from posydon.grids.setup.legacy import read_legacy_config
 from posydon.grids.setup.resolve import resolve_scenario
 from posydon.grids.setup.submit import (
@@ -52,6 +61,7 @@ from posydon.grids.setup.submit import (
     one_point_per_task,
     write_scripts,
 )
+from posydon.grids.setup.template import ini_template
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -63,8 +73,7 @@ def parse_commandline():
     """
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--inifile",
-                        help="Name of ini file of params",
-                        required=True)
+                        help="Name of ini file of params")
     parser.add_argument("--grid-type",
                         help="Either you are supplying a grid "
                         "of points to run MESA on (fixed) or you are supplying a pre computed MESA "
@@ -81,8 +90,19 @@ def parse_commandline():
                         help="number of processors", type=int, default=1)
     parser.add_argument("--verbose", action="store_true", default=False,
                         help="Run in Verbose Mode")
+    parser.add_argument("--list-grid-types", action="store_true",
+                        help="List the grid types and exit")
+    parser.add_argument("--init", metavar="GRID_TYPE",
+                        help="Write a starter ini for GRID_TYPE to --inifile "
+                        "and exit")
+    parser.add_argument("--explain", action="store_true",
+                        help="Show where each inlist value comes from, "
+                        "write nothing and exit")
 
     args = parser.parse_args()
+
+    if args.inifile is None and not args.list_grid_types:
+        raise parser.error("--inifile is required")
 
     if args.grid_type not in [None, 'fixed', 'dynamic']:
         raise parser.error("--grid-type must be either fixed or dynamic")
@@ -202,6 +222,18 @@ def chosen_extras(config, scenario):
 if __name__ == '__main__':
     args = parse_commandline()
 
+    if args.list_grid_types:
+        print(describe_grid_types())
+        raise SystemExit(0)
+    if args.init is not None:
+        if os.path.exists(args.inifile):
+            raise ValueError("{} exists; not overwriting it".format(
+                args.inifile))
+        with open(args.inifile, "w") as handle:
+            handle.write(ini_template(args.init))
+        print("Wrote {}; fill in the <...> values.".format(args.inifile))
+        raise SystemExit(0)
+
     for name in ('MESA_DIR', 'MESASDK_ROOT'):
         if name not in os.environ:
             raise ValueError("{} must be defined in your environment "
@@ -227,6 +259,10 @@ if __name__ == '__main__':
         raise ConfigError("mesa_inlists", None, "no file for the column "
                           "lists {}".format(", ".join(missing)))
     parameters = grid_parameters(config, grid_df)
+    if args.explain:
+        roots = [resolved.repo] if resolved is not None else []
+        print(explain_text(config, scenario, roots))
+        raise SystemExit(0)
 
     # 4-6. write the run directory
     stage_extras(extras, run_directory)
