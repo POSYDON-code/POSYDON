@@ -891,13 +891,19 @@ def test_failed_setup_leaves_no_partial_run_directory(setup_env):
     assert created <= {"grid.csv", "grid.ini"}, sorted(created)
 
 
-@pytest.mark.xfail(strict=True, reason="the formation step's own src/ "
-                   "(star1_formation/src/run_star_extras.f) is never staged")
-def test_formation_extras_are_staged(setup_env):
+def test_formation_uses_the_common_extras(setup_env):
+    """Tracker S8, decided in step 6: the formation steps are compiled with
+    the common run_star_extras.f, as in every v2 CO-HeMS grid. The grid
+    type's star1_formation/src/ is v1-era code whose run.f does not build
+    against the v2 MESA (do_run_star without an inlist name), so it stays
+    unstaged."""
     result = run_setup(_variant(GRID_TYPES["CO-HeMS"], "CO-HeMS"), setup_env)
     assert result.returncode == 0, result.stderr[-2000:]
     staged = (setup_env["run"] / "star1" / "src" / "run_star_extras.f")
-    assert "CO-He_star/star1_formation/src" in staged.read_text()
+    assert "default_common_inlists/binary/src/run_star_extras.f" in \
+        staged.read_text()
+    assert not (setup_env["run"] / "star1" / "src" / "run.f").read_text(
+        ).startswith("! STUB for tests: r11701/CO-He_star")
 
 
 def test_outputs_go_to_run_directory(setup_env):
