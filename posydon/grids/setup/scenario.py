@@ -35,6 +35,7 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
+import re
 import subprocess
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -149,9 +150,20 @@ class ScenarioFiles:
     formation_stars: tuple = ()
 
 
+def _step_order(path):
+    """Sort key putting ``inlist_step2`` before ``inlist_step10``."""
+    return [int(part) if part.isdigit() else part
+            for part in re.split(r"(\d+)", path.name)]
+
+
 def _formation_steps(folder, star):
-    """The formation step files of a star, in order (``*step*``)."""
-    return sorted((folder / "{}_formation".format(star)).glob("*step*"))
+    """The formation step files of a star, in order (``*step*``).
+
+    Numbers in the names are compared as numbers (before, a plain sort put
+    ``inlist_step10`` before ``inlist_step2``).
+    """
+    return sorted((folder / "{}_formation".format(star)).glob("*step*"),
+                  key=_step_order)
 
 
 def _zams_from_inlist(root, inlist):

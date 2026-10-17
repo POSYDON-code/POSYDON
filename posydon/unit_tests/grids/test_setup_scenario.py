@@ -90,7 +90,8 @@ class TestElements:
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
                     '_add_every_step', '_add_formation', '_add_star', '_git',
-                    '_formation_steps', '_zams_from_inlist', 'dataclass',
+                    '_formation_steps', '_step_order', '_zams_from_inlist',
+                    'dataclass', 're',
                     'fetch_inlist_repo', 'field', 'inlist_repo_path',
                     'read_inlist', 'scenario_files', 'subprocess'}
         assert set(dir(totest)) == elements
@@ -206,6 +207,18 @@ def short(result):
 
 
 C = "default_common_inlists/binary/"
+
+
+class TestFormationSteps:
+    def test_numbers_sort_as_numbers(self, tmp_path):
+        folder = tmp_path / "star1_formation"
+        folder.mkdir()
+        for step in (1, 2, 10, 11):
+            (folder / "inlist_step{}".format(step)).write_text("")
+        assert [path.name for path in
+                totest._formation_steps(tmp_path, "star1")] == [
+            "inlist_step1", "inlist_step2", "inlist_step10",
+            "inlist_step11"]
 
 
 class TestScenarioFiles:

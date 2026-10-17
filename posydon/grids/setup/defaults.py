@@ -7,8 +7,9 @@ production ini did:
 - ``mesa_inlists``: MESA's ``.defaults`` of the release's MESA
   installation (``<mesa_version>/mesa/<installation>/defaults/``) for the
   binary, star 1 and star 2, and for every formation step of a star the
-  grid type builds in steps. A single-star grid runs star 1 as its
-  formation steps, so star 1's defaults go there.
+  grid type builds in steps, for every target ``[mesa_inlists]`` does not
+  name files for. A single-star grid runs star 1 as its formation steps,
+  so star 1's defaults go there.
 - ``extras``: MESA's own work files in ``$MESA_DIR`` (makefiles,
   ``run.f``, ``binary_run.f`` and the stock extras), under the legacy
   ``[mesa_extras]`` names, for every name the ini's ``[extras]`` does not
@@ -93,16 +94,22 @@ def fill_defaults(config, resolved, mesa_dir):
     if config.source_format != "new":
         return
     mesa_layer = config.inlists["mesa_inlists"]
-    if not mesa_layer.targets:
-        release = resolved.release if resolved is not None else None
-        if release is None:
+    release = resolved.release if resolved is not None else None
+    if release is None:
+        # without a release, the ini's [mesa_inlists] is all there is
+        if not mesa_layer.targets:
             raise ConfigError("mesa_inlists", None, "needed without a "
                               "[scenario] release, which would name the "
                               "MESA defaults")
+    else:
+        # target by target: an ini that names the defaults of one target
+        # still gets MESA's for the others (before, naming any left out
+        # all of them)
         targets = mesa_defaults_targets(get_grid_type(config.grid.type),
                                         mesa_installation(release))
         for target, path in targets.items():
-            mesa_layer.add(target, path)
+            if target not in mesa_layer.targets:
+                mesa_layer.add(target, path)
     # key by key: an ini that names one source still gets MESA's makefiles
     # and the others (before, naming any [extras] key left out all of them,
     # so nothing was compiled)

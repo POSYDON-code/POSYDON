@@ -136,6 +136,13 @@ class TestResolveScenario:
         assert resolved.release is None
         assert "star1_controls" in resolved.files.inlists.targets
 
+    def test_no_release_needs_a_commit(self, clone):
+        """Before, git was run with commit None and raised a TypeError."""
+        config = config_for(clone, ref="main")
+        with pytest.raises(ConfigError, match=r"\[scenario\] release: "
+                           "missing"):
+            totest.resolve_scenario(config)
+
 
 class TestCheckout:
     def test_unknown_ref(self, clone):

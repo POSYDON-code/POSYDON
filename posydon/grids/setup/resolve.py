@@ -146,6 +146,9 @@ def resolve_scenario(config, home=None):
         raise ConfigError("grid", "type", "needed to use a scenario")
     grid_type = get_grid_type(config.grid.type)
     if scenario.release is None:
+        if scenario.commit is None:
+            raise ConfigError("scenario", "release", "missing; without a "
+                              "release, a (legacy) scenario needs a commit")
         repo = fetch_inlist_repo(scenario, home=home)
         return ResolvedScenario(files=scenario_files(repo, grid_type),
                                 repo=repo, commit=_head(repo))

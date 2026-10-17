@@ -98,7 +98,8 @@ release exists for several.
 key by key:
 
 1. MESA's defaults of the release's MESA installation
-   (``r11701/mesa/<installation>/``), unless ``[mesa_inlists]`` lists files;
+   (``r11701/mesa/<installation>/``), for every inlist ``[mesa_inlists]``
+   does not list files for;
 2. the release's files for the grid type (and the rerun's on top of them);
 3. your ``[user_inlists]``;
 4. the keys the setup writes itself (wiring, output options, ZAMS models).
@@ -108,7 +109,13 @@ a single namelist such as ``star1_controls`` or ``binary_job``,
 ``star1_formation_step0`` (on top of that formation step), and whole files
 for ``history_columns``, ``binary_history_columns``, ``profile_columns``,
 ``run_binary_extras`` and ``run_star_extras``. Several files for one key are
-separated by commas and applied in order.
+separated by commas and applied in order. In a single-star grid, which
+runs star 1 as its formation steps, ``star1`` files apply to every step.
+
+A ZAMS model set in ``[grid]`` (``zams``, ``zams_star1``, ``zams_star2``)
+is used instead of the release's. ``[submission]`` settings left out
+(``account``, ``partition``, ``walltime``, ``email``) are left out of the
+SLURM scripts, so the cluster's defaults apply.
 
 A whole file from a higher layer replaces the lower one: your
 ``run_star_extras`` replaces POSYDON's wherever a star runs (in the binary

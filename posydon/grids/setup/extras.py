@@ -259,10 +259,21 @@ def compile_executables(run_directory):
 
     The make output goes to the terminal, as today. ``mk`` is run through
     ``sh``, as ``os.system`` did, which works whether or not the run
-    directory's file system allows executing it.
+    directory's file system allows executing it, with ``-e`` so that the
+    first failing ``cd`` or ``make`` stops it.
+
+    Raises
+    ------
+    RuntimeError
+        If ``mk`` fails (before, a failed compile was ignored and the setup
+        went on to write scripts for executables that did not exist).
     """
     run = Path(run_directory)
-    subprocess.run(["sh", "./mk"], cwd=run, check=False)
+    result = subprocess.run(["sh", "-e", "./mk"], cwd=run, check=False)
+    if result.returncode != 0:
+        raise RuntimeError("compiling the MESA executables failed (mk "
+                           "exited with {}); see the make output above"
+                           .format(result.returncode))
     return (str(run / "binary" / "binary"), str(run / "star1" / "star"),
             str(run / "star2" / "star"))
 

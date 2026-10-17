@@ -204,13 +204,27 @@ def _finish(submission):
     return text + '\necho "Done."'
 
 
+def _time(submission):
+    """``--time``, or nothing when the ini sets no walltime."""
+    return [] if submission.walltime is None else \
+        ["--time={}".format(submission.walltime)]
+
+
 def _sbatch(submission, lines):
-    """``#!/bin/bash`` and the ``#SBATCH`` header around ``lines``."""
-    head = ["--account={}".format(submission.account),
-            "--partition={}".format(submission.partition)]
+    """``#!/bin/bash`` and the ``#SBATCH`` header around ``lines``.
+
+    Settings the ini leaves out are left out of the header, so SLURM uses
+    the cluster's defaults (before, they were written as ``--account=None``
+    and the like, which ``sbatch`` refuses).
+    """
+    head = ["--{}={}".format(option, value) for option, value in
+            (("account", submission.account),
+             ("partition", submission.partition)) if value is not None]
     tail = ["--mail-type=ALL",
-            "--mail-user={}".format(submission.email),
-            "--mem-per-cpu={}".format(submission.mem_per_cpu)]
+            "--mail-user={}".format(submission.email)] \
+        if submission.email is not None else []
+    if submission.mem_per_cpu is not None:
+        tail.append("--mem-per-cpu={}".format(submission.mem_per_cpu))
     return "#!/bin/bash\n" + "".join(
         "#SBATCH {}\n".format(line) for line in head + lines + tail) + "\n"
 
@@ -240,7 +254,7 @@ def slurm_grid_script(config, command, n_points, mesasdk_root, mesa_dir):
             "--array=0-{}".format(n_points - 1),
             "--cpus-per-task {}".format(submission.cpus_per_task),
             "--ntasks-per-node 1",
-            "--time={}".format(submission.walltime),
+            *_time(submission),
             # the task index is in the output name (%a) and in squeue
             '--job-name="mesa_grid"',
             "--output=mesa_grid.%A_%a.out"])
@@ -249,7 +263,7 @@ def slurm_grid_script(config, command, n_points, mesasdk_root, mesa_dir):
             "-N {}".format(submission.nodes),
             "--cpus-per-task {}".format(submission.cpus_per_task),
             "--ntasks-per-node {}".format(submission.mpi_tasks),
-            "--time={}".format(submission.walltime),
+            *_time(submission),
             '--output="mesa_grid.out"'])
     return header + _environment(submission, mesasdk_root, mesa_dir) \
         + "\n" + command
@@ -262,7 +276,7 @@ def cleanup_script(config):
         "-N 1",
         "--cpus-per-task 1",
         "--ntasks-per-node 1",
-        "--time={}".format(submission.walltime),
+        *_time(submission),
         '--job-name="mesa_grid_cleanup"',
         "--output=mesa_cleanup.out"]) + _finish(submission)
 

@@ -82,7 +82,9 @@ binary_run = {d}/binary_run.f
     # a stub MESA: the files fill_defaults takes for what [extras] leaves out
     from posydon.grids.setup.defaults import MESA_EXTRAS
     for rel in MESA_EXTRAS.values():
-        write(tmp_path / "mesa" / rel, "! MESA " + rel + "\n")
+        # makefiles that build nothing, so mk succeeds
+        write(tmp_path / "mesa" / rel, "all:\n\t@true\n"
+              if "makefile" in rel else "! MESA " + rel + "\n")
     monkeypatch.setenv("MESA_DIR", str(tmp_path / "mesa"))
     monkeypatch.setenv("MESASDK_ROOT", "/sdk")
     monkeypatch.setattr(totest, "find_run_grid", lambda: "/bin/run-grid")

@@ -137,6 +137,28 @@ class TestLayerTargets:
         assert layers["user_inlists"] == {"binary_job": ["mine"]}
         assert flags == {}
 
+    def test_single_star_files_for_star1_go_to_every_step(self):
+        """A new-format single-star ini's star1 files reach the steps."""
+        config = GridConfig()
+        config.grid.type = "single_HMS"
+        config.inlists["mesa_inlists"].add(
+            "star1_formation_every_step_controls", "defaults")
+        config.inlists["user_inlists"].add("star1_controls", "mine")
+        config.inlists["user_inlists"].add("star1_job", "mine")
+        layers, _ = totest.layer_targets(config)
+        assert layers["user_inlists"] == {
+            "star1_formation_step0_controls": ["mine"],
+            "star1_formation_step0_job": ["mine"]}
+        assert layers["mesa_inlists"] == {
+            "star1_formation_step0_controls": ["defaults"]}
+
+    def test_binary_grid_keeps_star1_files(self):
+        config = GridConfig()
+        config.grid.type = "HMS-HMS"
+        config.inlists["user_inlists"].add("star1_controls", "mine")
+        layers, _ = totest.layer_targets(config)
+        assert layers["user_inlists"] == {"star1_controls": ["mine"]}
+
 
 class TestStackTarget:
     def test_cleanup_and_flags(self, files):
@@ -212,6 +234,21 @@ class TestLegacyZams:
         config.grid.zams_star1 = Path("/z/one.data")
         assert totest.legacy_zams(config) == {"star1": "/z/one.data",
                                               "star2": None}
+
+    def test_new_format_zams_wins_over_the_scenario(self):
+        config = GridConfig()
+        config.grid.zams_star1 = Path("/mine.data")
+        scenario = ScenarioFiles(zams_star1=Path("/release1.data"),
+                                 zams_star2=Path("/release2.data"))
+        assert totest.legacy_zams(config, scenario) == {
+            "star1": "/mine.data", "star2": "/release2.data"}
+
+    def test_new_format_formed_star_still_has_no_zams(self):
+        config = GridConfig()
+        config.grid.zams_star1 = config.grid.zams_star2 = Path("/z.data")
+        scenario = ScenarioFiles(formation_stars=("star1",))
+        assert totest.legacy_zams(config, scenario) == {"star1": None,
+                                                        "star2": "/z.data"}
 
 
 class TestRender:
@@ -367,3 +404,22 @@ class TestBuildInlists:
             "binary_controls": {"history_interval": "1"}, "binary_job": {}}
         assert "read_extra_controls_inlist1" not in \
             read(built.binary_star1)["controls"]
+
+    def test_new_format_single_star_user_inlist(self, files, tmp_path):
+        """[user_inlists] star1 of a single_HMS grid is in its step."""
+        config = GridConfig()
+        config.grid.type = "single_HMS"
+        for part, name in (("controls", "controls.defaults"),
+                           ("job", "star_job.defaults")):
+            config.inlists["mesa_inlists"].add(
+                "star1_formation_every_step_{}".format(part), files / name)
+        (tmp_path / "mine").write_text(
+            "&controls\n mesh_delta_coeff = 0.5d0\n/\n"
+            "&star_job\n pgstar_flag = .true.\n/\n")
+        for target in ("star1_controls", "star1_job"):
+            config.inlists["user_inlists"].add(target, tmp_path / "mine")
+        run = tmp_path / "run"
+        totest.build_inlists(config, run, ["initial_mass"])
+        step0 = read(run / "star1" / "inlist_step0")
+        assert step0["controls"]["mesh_delta_coeff"] == "0.5d0"
+        assert step0["star_job"]["pgstar_flag"] == ".true."

@@ -60,7 +60,7 @@ class TestElements:
                     'RUN_GRID_OPTIONS', 'RUN_SCRIPT', '__authors__',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
-                    '_environment', '_finish', '_sbatch', '_write',
+                    '_environment', '_finish', '_sbatch', '_time', '_write',
                     'cleanup_script', 'command_line', 'find_run_grid',
                     'one_point_per_task', 'run_grid_call', 'run_script',
                     'shell_script', 'shutil', 'slurm_grid_script',
@@ -191,6 +191,16 @@ class TestScripts:
             "#SBATCH --output=mesa_cleanup.out\n#SBATCH --mail-type=ALL\n"
             "#SBATCH --mail-user=a@b.c\n#SBATCH --mem-per-cpu=4G\n\n"
             'compress-mesa .\n\necho "Done."')
+
+    def test_unset_options_are_left_out(self):
+        """Before, they were written as --account=None and so on."""
+        config = make_config(account=None, partition=None, walltime=None,
+                             email=None)
+        text = totest.slurm_grid_script(config, "CMD", 5, "/sdk", "/mesa")
+        assert "None" not in text
+        assert "--mail-type" not in text
+        assert "--mem-per-cpu=4G" in text
+        assert "None" not in totest.cleanup_script(config)
 
     def test_run_script(self):
         assert totest.run_script("grid.slurm") == (

@@ -117,6 +117,21 @@ class TestFillDefaults:
         assert "star_run" not in config.default_extras
         assert "makefile_binary" in config.default_extras
 
+    def test_fills_the_targets_the_ini_leaves_out(self, release):
+        """Before, naming one [mesa_inlists] file left out all others."""
+        config = self.config()
+        config.inlists["mesa_inlists"].add("binary_job", Path("/mine"))
+        resolved = ResolvedScenario(files=ScenarioFiles(), repo=Path("/r"),
+                                    release=release)
+        totest.fill_defaults(config, resolved, "/mesa")
+        folder = release.folder.parents[1] / "mesa" / "default" / "defaults"
+        targets = config.inlists["mesa_inlists"].targets
+        assert targets["binary_job"] == [Path("/mine")]
+        assert targets["binary_controls"] == \
+            [folder / "binary" / "binary_controls.defaults"]
+        assert targets["star1_formation_every_step_controls"] == \
+            [folder / "star" / "controls.defaults"]
+
     def test_nothing_to_fill(self):
         config = self.config()
         config.inlists["mesa_inlists"].add("binary_job", Path("/mine"))

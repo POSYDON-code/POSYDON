@@ -246,6 +246,9 @@ class TestScenarioSection:
         ("commit = 18710\n", r"\[scenario\] commit: expected a git"),
         ("rerun = dedt\n", r"\[scenario\] rerun: a rerun needs a release"),
         ("release = v2.0\n", r"\[scenario\] release: a release needs ref"),
+        ("ref = v2_sources\n", r"\[scenario\] release: missing"),
+        ("branch = main\ncommit = 18710e9\n",
+         r"\[scenario\] release: missing"),
         ("system = HMS-HMS\n", r"\[scenario\] system: unknown key"),
     ])
     def test_errors(self, write_ini, text, message):

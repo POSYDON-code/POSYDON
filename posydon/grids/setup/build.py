@@ -66,6 +66,11 @@ def layer_targets(config, scenario=None):
     The scenario's files go into ``posydon_inlists`` after any given in the
     ini, and its values (the single-star flag) after the files.
 
+    A single-star grid runs star 1 as its formation steps, so files given
+    for star 1 itself (``star1``, ``star1_controls``, ``star1_job``) apply
+    to every step, after that layer's every-step files, as a legacy ini's
+    ``star1_*_user`` keys do (before, a new-format ini's were dropped).
+
     Returns
     -------
     files : dict
@@ -83,6 +88,13 @@ def layer_targets(config, scenario=None):
             posydon.setdefault(target, []).extend(paths)
         flags = {target: dict(values)
                  for target, values in scenario.flags.items()}
+    if is_single_star(config):
+        for targets in files.values():
+            for part in ("controls", "job"):
+                paths = targets.pop("star1_{}".format(part), [])
+                if paths:
+                    targets.setdefault("star1_formation_every_step_{}".format(
+                        part), []).extend(paths)
     for star in STARS:
         n_steps = formation_step_count(star, list(files.values()) +
                                        [flags])
@@ -129,9 +141,11 @@ def stack_target(target, files, flags):
 def legacy_zams(config, scenario=None):
     """The ZAMS model of each star.
 
-    In order: the ini's ``zams_filename_1/2`` (legacy) or ``[grid]
-    zams_star1/2`` (new format); the ZAMS models the scenario names; the
-    legacy ``zams_filename``, for both stars. Last, a star the scenario
+    In order: the ini's ``zams_filename_1/2`` (legacy); the ZAMS models the
+    scenario names; the legacy ``zams_filename``, for both stars. A
+    new-format ini's ``[grid] zams``/``zams_star1/2`` wins over the
+    scenario, as the user's own setting (before, the release's model
+    silently replaced it). Last, a star the scenario
     builds in formation steps has no ZAMS model, whatever the ini says
     (fixed S2: before, ``zams_filename`` came last, so a HeMS-HMS grid never
     formed star 1). A single-star grid whose star 1 is formed has no ZAMS
@@ -154,7 +168,7 @@ def legacy_zams(config, scenario=None):
     if scenario is not None:
         for star in STARS:
             found = getattr(scenario, "zams_" + star)
-            if found is not None:
+            if found is not None and (raw or zams[star] is None):
                 zams[star] = str(found)
         if is_single_star(config) and raw:
             # legacy only; a new-format ini's [grid] zams_star2 is kept

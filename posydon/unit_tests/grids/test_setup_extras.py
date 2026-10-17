@@ -239,6 +239,15 @@ class TestStageAndCompile:
         assert (run / "compiled").exists()
         assert not (tmp_path / "compiled").exists()
 
+    def test_failure_stops_the_setup(self, tmp_path):
+        """Before, a failed make was ignored; -e also stops at the first."""
+        run = tmp_path / "run"
+        run.mkdir()
+        (run / "mk").write_text("false\ntouch compiled\n")
+        with pytest.raises(RuntimeError, match="mk exited with 1"):
+            totest.compile_executables(run)
+        assert not (run / "compiled").exists()
+
 
 class TestColumnLists:
     def config(self, sources):
