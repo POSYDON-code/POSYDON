@@ -364,8 +364,8 @@ def build_ini(case, env):
               "mesa_star_binary_extras = "
               "${MESA_DIR}/binary/work/src/run_star_extras.f",
               f"mesa_star1_extras = {star1_extras}",
-              "mesa_star2_extras = "
-              "${MESA_DIR}/star/work/src/run_star_extras.f",
+              # as the scenario sets it: star 2 like star 1 (C1)
+              f"mesa_star2_extras = {star1_extras}",
               "binary_run = ${MESA_DIR}/binary/work/src/binary_run.f",
               "star_run = ${MESA_DIR}/star/work/src/run.f"]
     if not case.use_scenario:

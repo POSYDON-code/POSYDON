@@ -64,6 +64,18 @@ class TestMergeExtras:
     def test_no_scenario(self):
         assert totest.merge_extras({"a": "1"}) == {"a": Path("1")}
 
+    def test_star2_follows_the_scenario_star1(self):
+        """C1: star 2 gets the scenario's run_star_extras.f too."""
+        ini = {"mesa_star1_extras": "mesa/run_star_extras.f",
+               "mesa_star2_extras": "mesa/run_star_extras.f"}
+        extras = totest.merge_extras(
+            ini, {"mesa_star1_extras": "posydon/run_star_extras.f"})
+        assert extras["mesa_star2_extras"] == \
+            Path("posydon/run_star_extras.f")
+        both = totest.merge_extras(
+            ini, {"mesa_star1_extras": "p1.f", "mesa_star2_extras": "p2.f"})
+        assert both["mesa_star2_extras"] == Path("p2.f")
+
 
 class TestKeepHighestExtras:
     def test_per_file(self):

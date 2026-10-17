@@ -346,7 +346,7 @@ binary/src/run_star_extras.f: ! STUB for tests: r11701/default_common_inlists/bi
 star1/src/run.f: ! STUB for tests: MESA_DIR/star/work/src/run.f
 star1/src/run_star_extras.f: ! STUB for tests: r11701/default_common_inlists/binary/src/run_star_extras.f
 star2/src/run.f: ! STUB for tests: MESA_DIR/star/work/src/run.f
-star2/src/run_star_extras.f: ! STUB for tests: MESA_DIR/star/work/src/run_star_extras.f
+star2/src/run_star_extras.f: ! STUB for tests: r11701/default_common_inlists/binary/src/run_star_extras.f
 binary/make/makefile_binary: # STUB makefile for tests: compiles nothing
 star1/make/makefile_star: # STUB makefile for tests: compiles nothing
 star2/make/makefile_star: # STUB makefile for tests: compiles nothing

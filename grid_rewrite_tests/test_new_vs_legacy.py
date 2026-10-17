@@ -379,9 +379,15 @@ def test_extras_match_make_executables(case, tmp_path, monkeypatch,
     new_files = {name: data.replace(str(new_run).encode(),
                                     str(old_run).encode())
                  for name, data in staged_files(new_run).items()}
-    # C15: mk now starts with a #! line; nothing else changes
+    # C15: mk now starts with a #! line
     assert new_files["mk"].startswith(b"#!/bin/sh\n")
     new_files["mk"] = new_files["mk"][len(b"#!/bin/sh\n"):]
+    if scenario is not None:
+        # C1: star 2 gets the scenario's run_star_extras.f, as star 1 does
+        name = "star2/src/run_star_extras.f"
+        assert new_files[name] == new_files["star1/src/run_star_extras.f"]
+        assert new_files[name] != old_files[name]
+        new_files[name] = old_files[name]
     assert new_files == old_files
 
 

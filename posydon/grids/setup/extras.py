@@ -55,14 +55,22 @@ SOURCE_FOLDERS = ("star1/src", "star1/make", "star2/src", "star2/make",
 
 
 def merge_extras(config_extras, scenario_extras=None):
-    """The extras of the ini with the scenario's applied, as today.
+    """The extras of the ini with the scenario's applied.
 
     The scenario's keys replace ini keys of the same name in place and are
-    appended otherwise (today it writes into the same dictionary).
+    appended otherwise (today it writes into the same dictionary). If the
+    scenario gives star 1 its ``run_star_extras.f`` (``mesa_star1_extras``)
+    but names none for star 2, star 2 gets the same file (fixed C1: before,
+    star 2 kept MESA's stock one from the ini).
     """
+    scenario_extras = scenario_extras or {}
     extras = {key: Path(path) for key, path in config_extras.items()}
-    for key, path in (scenario_extras or {}).items():
+    for key, path in scenario_extras.items():
         extras[key] = Path(path)
+    if "mesa_star1_extras" in scenario_extras and \
+            "mesa_star2_extras" not in scenario_extras:
+        extras["mesa_star2_extras"] = Path(
+            scenario_extras["mesa_star1_extras"])
     return extras
 
 
