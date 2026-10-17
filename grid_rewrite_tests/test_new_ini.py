@@ -92,8 +92,9 @@ def new_ini(case, run, repo):
 
 
 def run_dir_files(run):
+    # setup_record.ini names the ini and scenario, which differ by design
     skip = {"grid.csv", "grid.ini", "binary/binary", "star1/star",
-            "star2/star"}
+            "star2/star", "setup_record.ini"}
     return {path.relative_to(run).as_posix():
             path.read_bytes().replace(str(run).encode(), b"<RUN>")
             for path in sorted(run.rglob("*")) if path.is_file()

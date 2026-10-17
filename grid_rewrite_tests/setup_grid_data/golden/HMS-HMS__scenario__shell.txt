@@ -393,6 +393,7 @@ f grid.csv
 f grid.ini
 x grid_command.sh
 x mk
+f setup_record.ini
 d star1/
 d star1/make/
 f star1/make/makefile_star

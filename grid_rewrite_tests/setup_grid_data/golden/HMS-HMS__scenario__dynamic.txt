@@ -423,6 +423,7 @@ f grid.ini
 x mk
 f mpi_grid_submit.slurm
 x run_grid.sh
+f setup_record.ini
 d star1/
 d star1/make/
 f star1/make/makefile_star

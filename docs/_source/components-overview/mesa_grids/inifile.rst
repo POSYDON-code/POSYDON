@@ -29,6 +29,98 @@ Here is a link to the unstable development version of the default :samp:`ini` fi
 POSYDON:
 `Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
 
+The sections below the next one describe this (legacy) format. A shorter,
+new format is also accepted; it is described first.
+
+.. _inifile_new:
+
+The new format
+==============
+
+An :samp:`ini` file with a ``[grid]`` section is read in the new format.
+Write a starter file for a grid type with
+
+.. code-block:: bash
+
+    posydon-setup-grid --list-grid-types
+    posydon-setup-grid --init CO-HeMS --inifile grid.ini
+
+and fill in the ``<...>`` values. A complete example:
+
+.. code-block:: ini
+
+    [grid]
+    type = CO-HeMS              ; see --list-grid-types
+    mode = fixed                ; fixed | dynamic (needs psycris_inifile)
+    points = grid.csv           ; one row per MESA run
+    run_directory = .
+
+    [scenario]                  ; which POSYDON inlists to use
+    release = v2.0
+    rerun = matthias_lbv_thermo_dedt_noAgeLimit   ; optional
+    commit = 8482d7d            ; or ref = <branch or tag>; one is required
+
+    [user_inlists]              ; your own MESA inlists, on top
+    star1_controls = my_inlist1
+
+    [output]
+    history_interval = 1
+    star1 = history, final_model
+    star2 = none
+    binary = history
+
+    [submission]
+    backend = slurm_array       ; shell | slurm_array | slurm_mpi
+    partition = {PARTITION}
+    account = {ACCOUNT}
+    walltime = 2-00:00:00
+    email = {EMAIL}
+    cpus_per_task = 4
+
+Relative paths are relative to the :samp:`ini` file.
+
+**The scenario** selects the POSYDON inlists. ``release`` is a folder of
+`POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_
+(``r11701/releases/<release>/``) and ``rerun`` one of its physics variants
+(``reruns/<rerun>/``, which holds only the keys and files it changes). There
+is no default version of the inlist repository: give ``ref`` (a branch or
+tag) or ``commit``. ``source = path`` with ``inlist_repo = <folder>`` uses a
+local copy as it is, without git. ``mesa`` names the MESA version if a
+release exists for several.
+
+**Layers.** For every inlist the values are stacked, a later layer winning
+key by key:
+
+1. MESA's defaults of the release's MESA installation
+   (``r11701/mesa/<installation>/``), unless ``[mesa_inlists]`` lists files;
+2. the release's files for the grid type (and the rerun's on top of them);
+3. your ``[user_inlists]``;
+4. the keys the setup writes itself (wiring, output options, ZAMS models).
+
+``[user_inlists]`` takes ``binary``, ``star1``, ``star2`` (both namelists),
+a single namelist such as ``star1_controls`` or ``binary_job``,
+``star1_formation_step0`` (on top of that formation step), and whole files
+for ``history_columns``, ``binary_history_columns``, ``profile_columns``,
+``run_binary_extras`` and ``run_star_extras``. Several files for one key are
+separated by commas and applied in order.
+
+To see where every value comes from without writing anything, run
+
+.. code-block:: bash
+
+    posydon-setup-grid --inifile grid.ini --explain
+
+It lists, for each inlist, the keys POSYDON or you set, with the layer and
+file of each value and the values it overrides.
+
+**Command line.** ``--grid-type``, ``--run-directory`` and
+``--submission-type`` are optional with a new-format file and override
+``[grid] mode``, ``run_directory`` and ``[submission] backend``.
+
+**The run directory** gets a ``setup_record.ini`` with the :samp:`ini` file,
+the POSYDON version, ``$MESA_DIR``, the scenario and the exact commit of the
+inlist repository it used.
+
 .. _inifile_slurm:
 
 

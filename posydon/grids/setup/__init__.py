@@ -32,6 +32,8 @@ explain
     Where each inlist value comes from (posydon-setup-grid --explain).
 template
     A starter new-format ini for a grid type (posydon-setup-grid --init).
+record
+    Write setup_record.ini: what a run directory was set up from.
 """
 
 __authors__ = [
