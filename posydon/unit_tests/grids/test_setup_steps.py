@@ -405,16 +405,20 @@ class TestChosenExtras:
         assert kept == {"posydon_binary_extras":
                         Path("p/run_binary_extras.f")}
 
-    def test_new_format_names_the_extras_key(self):
+    def test_user_source_wins_silently(self, recwarn):
+        """MESA's < the release's < [user_inlists]'s, without a word."""
         config = GridConfig()
-        config.extras = {"mesa_binary_extras": Path("m/run_binary_extras.f")}
+        config.extras = {"mesa_star1_extras": Path("m/run_star_extras.f"),
+                         "star_run": Path("m/run.f")}
+        config.inlists["user_inlists"].whole_files["run_star1_extras"] = \
+            Path("u/mine.f")
         scenario = ScenarioFiles()
-        scenario.extras = {"posydon_binary_extras":
-                           Path("p/run_binary_extras.f")}
-        with pytest.warns(match=r"\[extras\] mesa_binary_extras is not "
-                          "used: a higher layer's file goes to the same "
-                          "place"):
-            totest.chosen_extras(config, scenario)
+        scenario.extras = {"mesa_star1_extras": Path("p/run_star_extras.f")}
+        assert totest.chosen_extras(config, scenario) == {
+            "star_run": Path("m/run.f"),
+            "mesa_star2_extras": Path("p/run_star_extras.f"),
+            "user_star1_extras": Path("u/mine.f")}
+        assert len(recwarn) == 0
 
     def test_filled_in_mesa_extras_drop_silently(self, recwarn):
         config = GridConfig(default_extras=("mesa_binary_extras",))

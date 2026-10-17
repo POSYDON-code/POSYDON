@@ -63,6 +63,8 @@ class TestElements:
                     'INLIST_TARGETS', 'InlistFiles', 'OUTPUT_OPTIONS',
                     'OutputSection', 'Path', 'GIT_KEYS', 'INI_LAYERS', 'SECTIONS',
                     'ScenarioSection', 'SubmissionSection', 'WHOLE_FILES',
+                    'COLUMN_FILES', 'SOURCE_FILES', 'EXTRAS_KEYS',
+                    '_read_extras',
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
                     '__spec__', '_bool', '_choice', '_int', '_list', '_path',
@@ -172,10 +174,29 @@ class TestReadConfig:
     def test_absolute_and_relative_paths(self, write_ini, tmp_path):
         config = totest.read_config(write_ini(
             "[grid]\ntype = HMS-HMS\npoints = /data/grid.csv\n"
-            "[extras]\nrun_star_extras = src/run_star_extras.f\n"))
+            "[extras]\nstar_run = src/run.f\n"))
         assert str(config.grid.points) == "/data/grid.csv"
-        assert config.extras == {"run_star_extras":
-                                 tmp_path / "src" / "run_star_extras.f"}
+        assert config.extras == {"star_run": tmp_path / "src" / "run.f"}
+
+    @pytest.mark.parametrize("key", ["makefile_binary", "makefile_star",
+                                     "binary_run", "star_run"])
+    def test_extras_takes_mesa_work_files(self, write_ini, key):
+        config = totest.read_config(write_ini(
+            MINIMAL + "[extras]\n{} = x\n".format(key)))
+        assert list(config.extras) == [key]
+
+    @pytest.mark.parametrize("key", ["user_star1_extras", "mesa_binary_extras",
+                                     "posydon_star_binary_extras",
+                                     "run_star_extras", "my_extras"])
+    def test_extras_refuses_sources(self, write_ini, key):
+        """Each Fortran source has one place: [user_inlists]."""
+        with pytest.raises(totest.ConfigError, match=r"\[extras\] {}: not "
+                           r"an \[extras\] key: \[extras\] takes MESA's "
+                           r"work files \(makefile_binary, makefile_star, "
+                           r"binary_run, star_run\); Fortran sources go in "
+                           r"\[user_inlists\]".format(key)):
+            totest.read_config(write_ini(
+                MINIMAL + "[extras]\n{} = x\n".format(key)))
 
     def test_inline_comments(self, write_ini):
         config = totest.read_config(write_ini(
@@ -268,6 +289,20 @@ class TestInlistSections:
                            r"\[scenario\]"):
             totest.read_config(write_ini(
                 MINIMAL + "[posydon_inlists]\nstar1 = x\n"))
+
+    @pytest.mark.parametrize("key", ["run_star_extras", "run_binary_extras",
+                                     "run_star1_extras", "run_star2_extras"])
+    def test_sources_only_in_user_inlists(self, write_ini, tmp_path, key):
+        config = totest.read_config(write_ini(
+            MINIMAL + "[user_inlists]\n{} = mine.f\n".format(key)))
+        assert config.inlists["user_inlists"].whole_files == {
+            key: tmp_path / "mine.f"}
+        with pytest.raises(totest.ConfigError, match=r"\[mesa_inlists\] "
+                           "{}: Fortran sources go in ".format(key) +
+                           r"\[user_inlists\]; MESA's own come from "
+                           r"\$MESA_DIR"):
+            totest.read_config(write_ini(
+                MINIMAL + "[mesa_inlists]\n{} = mine.f\n".format(key)))
 
     @pytest.mark.parametrize("layer", ["mesa_inlists",
                                        "user_inlists"])

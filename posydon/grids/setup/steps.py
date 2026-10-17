@@ -49,7 +49,6 @@ from posydon.grids.setup.extras import (
     copied_files,
     keep_highest_extras,
     merge_extras,
-    place,
     replaced_column_lists,
     stage_column_lists,
     stage_extras,
@@ -199,37 +198,23 @@ def grid_parameters(config, grid_df):
 
 
 def chosen_extras(config, scenario):
-    """The extras of the ini, the scenario and the inlist layers' whole
-    files, one file per place.
+    """The extras of the ini, the scenario and ``[user_inlists]``'s
+    Fortran sources, one file per place.
 
-    A dropped key is reported only when the ini set it: every key of a
-    legacy ini (today's warning), an ``[extras]`` key of a new-format one.
-    MESA's stock files filled in by ``fill_defaults``, and scenario files a
-    user file replaces, are dropped silently: that is what they are for.
-
-    A whole file of ``[mesa_inlists]`` loses to the scenario's file at the
-    same place (before, it replaced the release's ``mesa_star1_extras``, so
-    star 1 and star 2 compiled it while the binary's star took the
-    release's); one of ``[user_inlists]`` wins.
+    Each source has one place: MESA's stock ones (filled in by
+    ``fill_defaults``) < the scenario's < ``[user_inlists]``. Lower ones are
+    dropped silently: that is what they are for. A legacy ini's
+    ``[mesa_extras]`` key that is dropped is reported, as today.
     """
     scenario_extras = scenario.extras if scenario is not None else {}
     extras = merge_extras(config.extras, scenario_extras)
-    # the places the scenario fills, star 2's copy of star 1's included
-    taken = {place(key, path) for key, path in
-             merge_extras({}, scenario_extras).items()}
-    for key, path in whole_file_extras(config).items():
-        if key.startswith("user_") or place(key, path) not in taken:
-            extras[key] = path
+    extras.update(whole_file_extras(config))
     kept = keep_highest_extras(extras)
-    for key in extras:
-        if key in kept:
-            continue
-        if config.source_format == "legacy":
-            Pwarn("Section mesa_extras value {0} is being set to None"
-                  .format(key), "ReplaceValueWarning")
-        elif key in config.extras and key not in config.default_extras:
-            Pwarn("[extras] {} is not used: a higher layer's file goes "
-                  "to the same place".format(key), "ReplaceValueWarning")
+    if config.source_format == "legacy":
+        for key in extras:
+            if key not in kept:
+                Pwarn("Section mesa_extras value {0} is being set to None"
+                      .format(key), "ReplaceValueWarning")
     return kept
 
 

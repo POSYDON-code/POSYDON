@@ -63,16 +63,6 @@ class TestRecord:
             "posydon": dict(POSYDON, version="2.2"),
             "mesa": {"mesa_dir": "/mesa", "mesasdk_root": "/sdk"}}
 
-    def test_legacy_layer_name(self):
-        config = GridConfig(source_format="legacy")
-        resolved = ResolvedScenario(files=ScenarioFiles(), repo=Path("/r"))
-        record = parse(totest.record_text(
-            config, resolved, "g.ini", "/m", "2.2", stacks={
-                "binary/inlist1 &controls": [("posydon_inlists", "/x")]},
-            **FIXED))
-        assert record["inlists"]["binary/inlist1 &controls"] == \
-            "\nposydon  /x"
-
     def test_read_now(self, tmp_path):
         """Without them given, the time, host and POSYDON are read."""
         config = GridConfig()
@@ -112,10 +102,10 @@ class TestRecord:
             config, resolved, "g.ini", "/m", "2.2", stacks=stacks,
             whole_files=whole, **FIXED))
         assert record["inlists"] == {"binary/inlist1 &controls": (
-            "\nmesa     r11701/mesa/controls.defaults"
-            "\nrelease  r11701/releases/v2.0/inlist1"
-            "\nrelease  grid type flag"
-            "\nuser     /home/me/mine")}
+            "\nmesa_inlists     r11701/mesa/controls.defaults"
+            "\nposydon_inlists  r11701/releases/v2.0/inlist1"
+            "\nposydon_inlists  grid type flag"
+            "\nuser_inlists     /home/me/mine")}
         assert record["whole_files"] == {
             "column_lists/history_columns.list": "r11701/releases/v2.0/"
                                                  "h.list",

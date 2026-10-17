@@ -12,8 +12,8 @@
                    whether the files used differed from it (inlist_dirty),
                    and a fingerprint of those files
     [inlists]      per written inlist and namelist, the files stacked into
-                   it, lowest layer first: mesa, release (posydon for a
-                   legacy ini), user
+                   it, lowest layer first, named as posydon-grid explain
+                   names them (mesa_inlists, posydon_inlists, user_inlists)
     [whole_files]  per column list and Fortran source in the run
                    directory, the file it was copied from
 
@@ -38,10 +38,6 @@ from pathlib import Path
 from posydon.grids.setup.resolve import git_state
 
 RECORD_FILE = "setup_record.ini"
-# how the layers are named in [inlists]; with a release, the
-# posydon_inlists layer holds only its files
-LAYER_NAMES = {"mesa_inlists": "mesa", "posydon_inlists": "posydon",
-               "user_inlists": "user", "generated": "generated"}
 
 
 def posydon_state():
@@ -138,13 +134,9 @@ def record_text(config, resolved, inifile, mesa_dir, posydon_version,
         values["inlist_files"] = str(resolved.n_files)
         parser["scenario"] = values
     if stacks:
-        names = dict(LAYER_NAMES)
-        if resolved is not None and resolved.release is not None:
-            names["posydon_inlists"] = "release"
         parser["inlists"] = {
-            written: "".join("\n{:9s}{}".format(
-                names.get(layer, layer), _shown(source, repo))
-                for layer, source in sources)
+            written: "".join("\n{:17s}{}".format(layer, _shown(source, repo))
+                             for layer, source in sources)
             for written, sources in stacks.items()}
     if whole_files:
         parser["whole_files"] = {

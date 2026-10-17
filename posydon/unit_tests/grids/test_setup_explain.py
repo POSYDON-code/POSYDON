@@ -19,9 +19,10 @@ import pytest
 import posydon.grids.setup.explain as totest
 import posydon.grids.setup.template as template
 from posydon.grids.setup.config import (
+    COLUMN_FILES,
+    EXTRAS_KEYS,
     INLIST_SHORTHANDS,
     INLIST_TARGETS,
-    WHOLE_FILES,
     GridConfig,
     GridSection,
     OutputSection,
@@ -29,7 +30,6 @@ from posydon.grids.setup.config import (
     SubmissionSection,
     read_config,
 )
-from posydon.grids.setup.defaults import MESA_EXTRAS
 from posydon.grids.setup.grid_types import GRID_TYPES
 from posydon.grids.setup.scenario import ScenarioFiles
 
@@ -140,14 +140,14 @@ class TestTemplate:
         """Uncommenting every option of the template still reads."""
         text = template.ini_template(name)
         options = re.findall(r"^; ([a-z0-9_]+) = ", text, flags=re.M)
-        assert len(options) > 25
+        assert len(options) > 20
         text = re.sub(r"^; ([a-z0-9_]+ = )", r"\1", text, flags=re.M)
         text = re.sub(r"<[^>]*>", "x", text)
         config = read_config(write(tmp_path / "grid.ini", text))
         assert config.scenario.inlist_repo is not None
         assert config.scenario.rerun is not None
         assert config.submission.newgroup == "x"
-        assert set(config.extras) == set(MESA_EXTRAS)
+        assert set(config.extras) == set(EXTRAS_KEYS)
 
     @pytest.mark.parametrize("name", list(GRID_TYPES))
     def test_lists_every_option(self, name):
@@ -176,7 +176,14 @@ class TestTemplate:
         stars = {"star1"}
         if grid_type.star2 in ("zams", "formation"):
             stars.add("star2")
-        inlists = set(WHOLE_FILES) | {
+        # Fortran sources: every star; the binary and star 1 of a binary
+        # grid; star 2 when it is evolved
+        sources = {"run_star_extras"}
+        if not grid_type.single_star:
+            sources |= {"run_binary_extras", "run_star1_extras"}
+        if "star2" in stars:
+            sources.add("run_star2_extras")
+        inlists = set(COLUMN_FILES) | sources | {
             key for key in set(INLIST_TARGETS) | set(INLIST_SHORTHANDS)
             if key.split("_")[0] in stars or
             (key.startswith("binary") and not grid_type.single_star)}
@@ -193,7 +200,7 @@ class TestTemplate:
         assert listed["output"] == output
         assert listed["submission"] == {
             field.name for field in fields(SubmissionSection)}
-        assert listed["extras"] == set(MESA_EXTRAS)
+        assert listed["extras"] == set(EXTRAS_KEYS)
 
     def test_zams_keys(self):
         assert "\nzams = <" in template.ini_template("HMS-HMS")

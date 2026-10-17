@@ -43,9 +43,16 @@ INLIST_TARGETS = ("binary_controls", "binary_job", "star1_controls",
 INLIST_SHORTHANDS = {"binary": ("binary_controls", "binary_job"),
                      "star1": ("star1_controls", "star1_job"),
                      "star2": ("star2_controls", "star2_job")}
-# files that are used whole instead of merged
-WHOLE_FILES = ("history_columns", "binary_history_columns",
-               "profile_columns", "run_binary_extras", "run_star_extras")
+# files that are used whole instead of merged: column lists, and Fortran
+# sources (each source has one place: [user_inlists]; MESA's own come from
+# $MESA_DIR, and the release replaces them)
+COLUMN_FILES = ("history_columns", "binary_history_columns",
+                "profile_columns")
+SOURCE_FILES = ("run_binary_extras", "run_star_extras", "run_star1_extras",
+                "run_star2_extras")
+WHOLE_FILES = COLUMN_FILES + SOURCE_FILES
+# what [extras] of a new-format ini takes: MESA's work files
+EXTRAS_KEYS = ("makefile_binary", "makefile_star", "binary_run", "star_run")
 OUTPUT_OPTIONS = ("history", "final_profile", "final_model")
 
 
@@ -301,12 +308,32 @@ def _read_inlist_files(section, options, base):
                     files.add("{}_formation_step{}_{}".format(
                         star, index, part), path)
         elif key in WHOLE_FILES:
+            if key in SOURCE_FILES and section != "user_inlists":
+                # a file here could never win: MESA's stock sources are
+                # filled in, and the release replaces them
+                raise ConfigError(section, key, "Fortran sources go in "
+                                  "[user_inlists]; MESA's own come from "
+                                  "$MESA_DIR")
             if len(paths) > 1:
                 raise ConfigError(section, key, "expected one file")
             files.whole_files[key] = paths[0]
         else:
             raise ConfigError(section, key, "unknown key")
     return files
+
+
+def _read_extras(options, base):
+    extras = {}
+    for key, value in options.items():
+        if key not in EXTRAS_KEYS:
+            raise ConfigError("extras", key, "not an [extras] key: [extras] "
+                              "takes MESA's work files ({}); Fortran sources "
+                              "go in [user_inlists] (run_star_extras, "
+                              "run_binary_extras, run_star1_extras, "
+                              "run_star2_extras)".format(
+                                  ", ".join(EXTRAS_KEYS)))
+        extras[key] = _path(base, value)
+    return extras
 
 
 def _read_output(options):
@@ -406,8 +433,7 @@ def read_config(path):
         scenario=_read_scenario(options("scenario"), base),
         output=_read_output(options("output")),
         submission=_read_submission(options("submission")),
-        extras={key: _path(base, value)
-                for key, value in options("extras").items()})
+        extras=_read_extras(options("extras"), base))
     for layer in INI_LAYERS:
         config.inlists[layer] = _read_inlist_files(layer, options(layer),
                                                    base)

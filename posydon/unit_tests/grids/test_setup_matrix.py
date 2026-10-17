@@ -385,7 +385,8 @@ class TestGridTypes:
         layers = [line.split()[0] for line in inlists[
             run.star_runs_in(grid_type) + " &controls"].split("\n")
             if line.strip()]
-        assert layers[0] == "mesa" and "release" in layers
+        # named as posydon-grid explain names them
+        assert layers[0] == "mesa_inlists" and "posydon_inlists" in layers
         assert record["whole_files"]["star1/src/run_star_extras.f"] == \
             "r11701/releases/v2.0/common/binary/src/run_star_extras.f"
         assert record["posydon"]["location"]
@@ -558,6 +559,37 @@ class TestUserInlists:
                      sections={"user_inlists": {"run_binary_extras": mine}})
         assert run.text("binary/src/run_binary_extras.f") == "! mine\n"
 
+    def test_one_star_sources(self, env, grid_type):
+        """run_star1/2_extras reach only their star, over run_star_extras."""
+        every = write(env["tmp"] / "user" / "every.f", "! every\n")
+        one = write(env["tmp"] / "user" / "one.f", "! one\n")
+        two = write(env["tmp"] / "user" / "two.f", "! two\n")
+        run = setup(env, grid_type, sections={"user_inlists": {
+            "run_star_extras": every, "run_star1_extras": one,
+            "run_star2_extras": two}})
+        assert run.text("binary/src/run_star_extras.f") == "! every\n"
+        assert run.text("star1/src/run_star_extras.f") == "! one\n"
+        assert run.text("star2/src/run_star_extras.f") == "! two\n"
+        # MESA's work files still come from $MESA_DIR
+        assert run.text("star1/src/run.f").startswith("! MESA ")
+
+    def test_one_star_source_alone(self, env, grid_type):
+        one = write(env["tmp"] / "user" / "one.f", "! one\n")
+        run = setup(env, grid_type, sections={"user_inlists": {
+            "run_star1_extras": one}})
+        assert run.text("star1/src/run_star_extras.f") == "! one\n"
+        release = "! release run_star_extras.f\n"
+        assert run.text("binary/src/run_star_extras.f") == release
+        assert run.text("star2/src/run_star_extras.f") == release
+
+    def test_mesa_work_file(self, env, grid_type):
+        run_f = write(env["tmp"] / "user" / "my_run.f", "! my run\n")
+        run = setup(env, grid_type,
+                    sections={"extras": {"star_run": run_f}})
+        assert run.text("star1/src/run.f") == "! my run\n"
+        assert run.text("star2/src/run.f") == "! my run\n"
+        assert run.text("binary/src/binary_run.f").startswith("! MESA ")
+
     def test_rerun_overlay(self, env, grid_type):
         run = setup(env, grid_type, scenario={"rerun": "hot"})
         controls = run.inlist(run.star_runs_in(grid_type))["controls"]
@@ -716,6 +748,14 @@ def test_slurm_settings(env):
     ({}, None, None, {"output": {"star1": "everything"}},
      r"\[output\] star1: unknown value"),
     ({"type": "MS-MS"}, None, None, None, r"\[grid\] type: unknown grid"),
+    ({}, None, None, {"extras": {"user_star1_extras": "x"}},
+     r"\[extras\] user_star1_extras: not an \[extras\] key(.|\n)*Fortran "
+     r"sources go in \[user_inlists\]"),
+    ({}, None, None, {"extras": {"mesa_binary_extras": "x"}},
+     r"\[extras\] mesa_binary_extras: not an \[extras\] key"),
+    ({}, None, None, {"mesa_inlists": {"run_star_extras": "x"}},
+     r"\[mesa_inlists\] run_star_extras: Fortran sources go in "
+     r"\[user_inlists\]"),
     ({}, None, None, {"posydon_inlists": {"star1": "x"}},
      r"\[posydon_inlists\]: no longer used: POSYDON's inlists come from "
      r"\[scenario\] \(the release\); put your own files in "
@@ -810,8 +850,12 @@ def layer_files(env, layer, grid_type, style):
     for name in ("history_columns", "binary_history_columns",
                  "profile_columns"):
         keys[name] = write(folder / (name + ".list"), short + "\n")
-    keys["run_star_extras"] = write(folder / "rse.f", "! " + short + "\n")
-    keys["run_binary_extras"] = write(folder / "rbe.f", "! " + short + "\n")
+    if layer == "user_inlists":
+        # Fortran sources have one place: [user_inlists]
+        keys["run_star_extras"] = write(folder / "rse.f",
+                                        "! " + short + "\n")
+        keys["run_binary_extras"] = write(folder / "rbe.f",
+                                          "! " + short + "\n")
     return keys
 
 

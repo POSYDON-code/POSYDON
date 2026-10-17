@@ -18,7 +18,7 @@ __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
-from posydon.grids.setup.defaults import MESA_EXTRAS
+from posydon.grids.setup.config import EXTRAS_KEYS
 from posydon.grids.setup.grid_types import get_grid_type
 
 # column of the inline comments, and the longest line
@@ -116,11 +116,17 @@ def _inlist_keys(grid_type):
                       "one file per formation step, in order"),
                      ("{}_formation_step0".format(star),
                       "on top of formation step 0 (one key per step)")]
-    keys += [("history_columns", "whole files: replace the lower layers'"),
+    keys += [("history_columns", "whole files: replace the release's"),
              ("binary_history_columns", None),
              ("profile_columns", None),
-             ("run_binary_extras", "Fortran sources, any file name"),
-             ("run_star_extras", None)]
+             ("run_star_extras", "Fortran, any file name; " +
+              ("star 1" if single else "every star")),
+             ]
+    if not single:
+        keys += [("run_binary_extras", None),
+                 ("run_star1_extras", "only star 1, over run_star_extras")]
+    if grid_type.star2 in ("zams", "formation"):
+        keys += [("run_star2_extras", "only star 2, over run_star_extras")]
     return keys
 
 
@@ -128,8 +134,9 @@ def _inlists(grid_type):
     keys = _inlist_keys(grid_type)
     text = _header("mesa_inlists", "MESA's defaults; by default those of "
                    "the release's MESA installation.",
-                   "Same keys as [user_inlists]; a file given for a "
-                   "namelist replaces", "MESA's defaults there.")
+                   "Same keys as [user_inlists] but no Fortran sources; a "
+                   "file given for", "a namelist replaces MESA's defaults "
+                   "there.")
     text += _line(keys[0][0], "<file>", active=False)
     text += "\n" + _header("user_inlists", "Your own MESA inlists, on top "
                            "of the release, key by key.",
@@ -179,12 +186,11 @@ def _submission():
 
 
 def _extras():
-    text = _header("extras", "Fortran sources and makefiles. For any key "
-                   "not set, MESA's own file", "in $MESA_DIR is used, e.g. "
-                   "makefile_binary: binary/work/make/makefile.",
-                   "A key with a user_ prefix (e.g. user_star1_extras) wins "
-                   "over the release's.")
-    for key in MESA_EXTRAS:
+    text = _header("extras", "MESA's own work files; each one not set "
+                   "comes from $MESA_DIR,", "e.g. makefile_binary: "
+                   "binary/work/make/makefile. Fortran sources go in",
+                   "[user_inlists].")
+    for key in EXTRAS_KEYS:
         text += _line(key, "<file>", active=False)
     return text
 

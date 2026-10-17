@@ -126,8 +126,8 @@ own release folder in your clone of the inlist repository.
 ``[user_inlists]`` takes ``binary``, ``star1``, ``star2`` (both namelists),
 a single namelist such as ``star1_controls`` or ``binary_job``,
 ``star1_formation_step0`` (on top of that formation step), and whole files
-for ``history_columns``, ``binary_history_columns``, ``profile_columns``,
-``run_binary_extras`` and ``run_star_extras``. Several files for one key are
+for ``history_columns``, ``binary_history_columns``, ``profile_columns``
+and the Fortran sources (below). Several files for one key are
 separated by commas and applied in order. In a single-star grid, which
 runs star 1 as its formation steps, ``star1`` files apply to every step,
 and ``[output] star1`` applies to its last step, which runs the star to
@@ -138,12 +138,24 @@ is used instead of the release's. ``[submission]`` settings left out
 (``account``, ``partition``, ``walltime``, ``email``) are left out of the
 SLURM scripts, so the cluster's defaults apply.
 
-A whole file from a higher layer replaces the lower one: your
-``run_star_extras`` replaces POSYDON's wherever a star runs (in the binary
-and in the formation steps). Fortran sources are copied under the name MESA
-compiles (``run_star_extras.f``, ``run_binary_extras.f``, ...), so your file
-can have any name. MESA's makefiles and stock sources are filled in for
-every ``[extras]`` key the file does not set.
+**Fortran sources** have one place, ``[user_inlists]``, and replace the
+release's (which replace MESA's stock ones):
+
+.. code-block:: ini
+
+    [user_inlists]
+    run_star_extras = my_star_extras.f     ; every star: the binary's, star 1, star 2
+    run_binary_extras = my_binary_extras.f
+    run_star1_extras = my_star1_extras.f   ; only star 1 (wins over run_star_extras there)
+    run_star2_extras = my_star2_extras.f   ; only star 2
+
+They are copied under the name MESA compiles (``run_star_extras.f``,
+``run_binary_extras.f``), so your files can have any name.
+``[mesa_inlists]`` takes no Fortran sources. ``[extras]`` takes only MESA's
+own work files, ``makefile_binary``, ``makefile_star``, ``binary_run`` and
+``star_run``; each one it does not set comes from ``$MESA_DIR``. Other
+``[extras]`` keys (``user_star1_extras``, ...) are refused with a pointer to
+``[user_inlists]``. The legacy ``[mesa_extras]`` section is unchanged.
 
 To see where every value comes from without writing anything, run
 
@@ -183,7 +195,9 @@ from:
   those files (``inlist_fingerprint``). Two grids with the same fingerprint
   read identical files, whatever folder or branch they came from;
 - ``[inlists]``: for every written inlist and namelist, the files stacked
-  into it, lowest layer first (``mesa``, ``release``, ``user``);
+  into it, lowest layer first, with the layer names of ``posydon-grid
+  explain`` (``mesa_inlists``, ``posydon_inlists`` for the release's files,
+  ``user_inlists``);
 - ``[whole_files]``: for every column list and Fortran source in the run
   directory, the file it was copied from.
 

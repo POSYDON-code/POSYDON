@@ -31,7 +31,7 @@ def sources(tmp_path):
 
 class TestElements:
     def test_dir(self):
-        elements = {'COLUMN_LIST_FILES', 'INLIST_LAYERS', 'Path', 'place',
+        elements = {'COLUMN_LIST_FILES', 'Path', 'place',
                     'copied_files',
                     'SOURCE_FOLDERS', 'SOURCE_NAMES', 'WHOLE_FILE_EXTRAS',
                     'file_name', 'whole_file_extras',
@@ -141,19 +141,32 @@ class TestFileName:
 
 
 class TestWholeFileExtras:
-    def test_layers_and_targets(self):
+    def test_targets(self):
         config = GridConfig()
-        config.inlists["mesa_inlists"].whole_files["run_binary_extras"] = \
-            "m/b.f"
-        config.inlists["user_inlists"].whole_files["run_star_extras"] = \
-            "u/s.f"
-        config.inlists["user_inlists"].whole_files["history_columns"] = \
-            "u/h.list"
+        whole = config.inlists["user_inlists"].whole_files
+        whole.update(run_binary_extras="u/b.f", run_star_extras="u/s.f",
+                     history_columns="u/h.list")
         assert totest.whole_file_extras(config) == {
-            "mesa_binary_extras": Path("m/b.f"),
+            "user_binary_extras": Path("u/b.f"),
             "user_star_binary_extras": Path("u/s.f"),
             "user_star1_extras": Path("u/s.f"),
             "user_star2_extras": Path("u/s.f")}
+
+    def test_one_star_wins_over_every_star(self):
+        config = GridConfig()
+        config.inlists["user_inlists"].whole_files.update(
+            run_star_extras="u/s.f", run_star1_extras="u/one.f",
+            run_star2_extras="u/two.f")
+        assert totest.whole_file_extras(config) == {
+            "user_star_binary_extras": Path("u/s.f"),
+            "user_star1_extras": Path("u/one.f"),
+            "user_star2_extras": Path("u/two.f")}
+
+    def test_only_user_inlists(self):
+        """A legacy ini's other layers hold no Fortran sources."""
+        config = GridConfig()
+        config.inlists["mesa_inlists"].whole_files["run_star_extras"] = "m.f"
+        assert totest.whole_file_extras(config) == {}
 
     def test_none(self):
         assert totest.whole_file_extras(GridConfig()) == {}
