@@ -35,14 +35,14 @@ class TestElements:
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
                     '__spec__', 'column_list_sources', 'compile_executables',
-                    'destinations', 'keep_highest_binary_extras',
+                    'LAYER_PREFIXES', 'destinations', 'keep_highest_extras',
                     'merge_extras', 'mk_lines', 'os', 'pick_whole_file',
                     'shutil', 'stage_column_lists', 'stage_extras',
                     'subprocess'}
         assert set(dir(totest)) == elements
 
     @pytest.mark.parametrize("name", [
-        'merge_extras', 'keep_highest_binary_extras', 'destinations',
+        'merge_extras', 'keep_highest_extras', 'destinations',
         'mk_lines', 'stage_extras', 'compile_executables',
         'column_list_sources', 'stage_column_lists'])
     def test_instance_functions(self, name):
@@ -65,17 +65,39 @@ class TestMergeExtras:
         assert totest.merge_extras({"a": "1"}) == {"a": Path("1")}
 
 
-class TestKeepHighestBinaryExtras:
-    def test_user_wins(self):
-        extras = {"mesa_binary_extras": 1, "mesa_star_binary_extras": 2,
-                  "posydon_star_binary_extras": 3, "user_binary_extras": 4,
-                  "star_run": 5}
-        assert totest.keep_highest_binary_extras(extras) == {
-            "user_binary_extras": 4, "star_run": 5}
+class TestKeepHighestExtras:
+    def test_per_file(self):
+        """C4: a user run_binary_extras.f keeps POSYDON's
+        run_star_extras.f; before, every other *binary_extras* key went."""
+        extras = {"mesa_binary_extras": "m/run_binary_extras.f",
+                  "mesa_star_binary_extras": "m/run_star_extras.f",
+                  "posydon_star_binary_extras": "p/run_star_extras.f",
+                  "user_binary_extras": "u/run_binary_extras.f",
+                  "star_run": "m/run.f"}
+        assert totest.keep_highest_extras(extras) == {
+            "posydon_star_binary_extras": "p/run_star_extras.f",
+            "user_binary_extras": "u/run_binary_extras.f",
+            "star_run": "m/run.f"}
 
-    def test_no_binary_extras(self):
+    def test_star_extras_too(self):
+        extras = {"mesa_star1_extras": "m/run_star_extras.f",
+                  "user_star1_extras": "u/run_star_extras.f",
+                  "mesa_star2_extras": "m/run_star_extras.f"}
+        assert totest.keep_highest_extras(extras) == {
+            "user_star1_extras": "u/run_star_extras.f",
+            "mesa_star2_extras": "m/run_star_extras.f"}
+
+    def test_order_not_alphabet_and_none(self):
+        extras = {"user_binary_extras": "u/run_binary_extras.f",
+                  "posydon_binary_extras": "p/run_binary_extras.f",
+                  "mesa_star2_extras": None}
+        assert totest.keep_highest_extras(extras) == {
+            "user_binary_extras": "u/run_binary_extras.f",
+            "mesa_star2_extras": None}
+
+    def test_no_layered_extras(self):
         extras = {"star_run": 1}
-        assert totest.keep_highest_binary_extras(extras) == extras
+        assert totest.keep_highest_extras(extras) == extras
 
 
 class TestDestinations:

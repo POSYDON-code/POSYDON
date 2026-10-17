@@ -48,7 +48,7 @@ from posydon.grids.setup.extras import (
     COLUMN_LIST_FILES,
     column_list_sources,
     compile_executables,
-    keep_highest_binary_extras,
+    keep_highest_extras,
     merge_extras,
     stage_column_lists,
     stage_extras,
@@ -221,7 +221,7 @@ def chosen_extras(config, scenario):
     """The extras of the ini and the scenario, one binary_extras kind."""
     extras = merge_extras(config.extras,
                           scenario.extras if scenario is not None else None)
-    kept = keep_highest_binary_extras(extras)
+    kept = keep_highest_extras(extras)
     for key in extras:
         if key not in kept:
             Pwarn("Section mesa_extras value {0} is being set to None"

@@ -17,9 +17,13 @@ key says where its file goes, by today's rules (``destinations``)::
     mesa_dir                (not a file)
     anything else           the run directory itself
 
-Several ``*binary_extras*`` keys can name the same file name; only the keys
-with the highest prefix are kept (``mesa`` < ``posydon`` < ``user``, by
-alphabetical order as today; tracker C4).
+Several keys can put a file with the same name in the same place (e.g.
+``mesa_binary_extras`` and ``posydon_binary_extras`` both give
+``binary/src/run_binary_extras.f``); then only the highest layer's is kept,
+``mesa`` < ``posydon`` < ``user`` (``keep_highest_extras``; fixed C4:
+before, the alphabetically last prefix of all ``*binary_extras*`` keys
+won, and every other ``*binary_extras*`` key was dropped, whatever file it
+gave).
 
 The column lists (``history_columns``, ``binary_history_columns``,
 ``profile_columns``) go to ``column_lists/``; the highest layer that names
@@ -40,6 +44,8 @@ from pathlib import Path
 
 from posydon.grids.setup.layers import pick_whole_file
 
+# extras keys by layer, lowest first: mesa_*, posydon_*, user_*
+LAYER_PREFIXES = ("mesa", "posydon", "user")
 COLUMN_LIST_FILES = {"history_columns": "history_columns.list",
                      "binary_history_columns": "binary_history_columns.list",
                      "profile_columns": "profile_columns.list"}
@@ -60,25 +66,38 @@ def merge_extras(config_extras, scenario_extras=None):
     return extras
 
 
-def keep_highest_binary_extras(extras):
-    """Drop ``*binary_extras*`` keys whose prefix is not the highest.
+def keep_highest_extras(extras):
+    """For each file the extras put in place, keep only the highest layer's.
 
-    The prefix is the part before the first ``_`` (``mesa``, ``posydon``,
-    ``user``); the alphabetically last one is kept, as today.
+    Keys are grouped by where their file goes and its name; within a group,
+    the key whose prefix (the part before the first ``_``) is highest in
+    ``LAYER_PREFIXES`` is kept. Keys without such a prefix (``binary_run``,
+    ``star_run``, makefiles) are kept as they are.
 
     Examples
     --------
-    >>> keep_highest_binary_extras({"mesa_binary_extras": "a",
-    ...                             "posydon_binary_extras": "b",
-    ...                             "binary_run": "c"})
-    {'posydon_binary_extras': 'b', 'binary_run': 'c'}
+    >>> keep_highest_extras({"mesa_binary_extras": "x/run_binary_extras.f",
+    ...                      "mesa_star_binary_extras": "x/run_star_extras.f",
+    ...                      "user_binary_extras": "y/run_binary_extras.f",
+    ...                      "binary_run": "x/binary_run.f"})
+    ... # doctest: +NORMALIZE_WHITESPACE
+    {'mesa_star_binary_extras': 'x/run_star_extras.f',
+     'user_binary_extras': 'y/run_binary_extras.f',
+     'binary_run': 'x/binary_run.f'}
     """
-    prefixes = sorted({key.split("_")[0] for key in extras
-                       if "binary_extras" in key})
-    if not prefixes:
-        return dict(extras)
+    best = {}
+    for key, path in extras.items():
+        prefix = key.split("_")[0]
+        if prefix not in LAYER_PREFIXES or path is None:
+            continue
+        place = (tuple(destinations(key)), Path(path).name)
+        rank = LAYER_PREFIXES.index(prefix)
+        if place not in best or rank >= best[place][0]:
+            best[place] = (rank, key)
+    kept = {key for _, key in best.values()}
     return {key: path for key, path in extras.items()
-            if "binary_extras" not in key or prefixes[-1] in key}
+            if key in kept or key.split("_")[0] not in LAYER_PREFIXES
+            or path is None}
 
 
 def destinations(key):

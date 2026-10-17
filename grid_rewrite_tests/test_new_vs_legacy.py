@@ -300,7 +300,7 @@ def read_inlist_text(text):
 from posydon.grids.setup.extras import column_list_sources  # noqa: E402
 from posydon.grids.setup.extras import (
     compile_executables,
-    keep_highest_binary_extras,
+    keep_highest_extras,
     merge_extras,
     stage_column_lists,
     stage_extras,
@@ -365,7 +365,7 @@ def test_extras_match_make_executables(case, tmp_path, monkeypatch,
     if config.scenario.is_set:
         repo = fetch_inlist_repo(config.scenario, home=env["home"])
         scenario = scenario_files(repo, get_grid_type(config.grid.type))
-    extras = keep_highest_binary_extras(merge_extras(
+    extras = keep_highest_extras(merge_extras(
         config.extras, scenario.extras if scenario else None))
     new_run.mkdir()
     monkeypatch.chdir(tmp_path)  # the new code must not depend on the cwd
@@ -424,7 +424,7 @@ def test_scripts_match_main(case, tmp_path, monkeypatch,
     if case.grid_type == "dynamic":
         params = ["m1", "m2", "initial_period_in_days"]
     built = build_inlists(config, new_run, params, scenario=scenario)
-    stage_extras(keep_highest_binary_extras(merge_extras(
+    stage_extras(keep_highest_extras(merge_extras(
         config.extras, scenario.extras if scenario else None)), new_run)
     monkeypatch.chdir(tmp_path)  # the new code must not depend on the cwd
     executables = compile_executables(new_run)
