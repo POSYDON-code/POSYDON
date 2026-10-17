@@ -100,7 +100,7 @@ def get_grid_type(name):
 
 
 def describe_grid_types():
-    """One line per grid type, for ``posydon-setup-grid --list-grid-types``.
+    """One line per grid type, for ``posydon-grid types``.
 
     Examples
     --------

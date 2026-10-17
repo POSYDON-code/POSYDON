@@ -16,10 +16,11 @@ __authors__ = [
 from posydon.grids.setup.grid_types import get_grid_type
 
 TEMPLATE = """\
-; posydon-setup-grid settings for a {name} grid:
+; posydon-grid settings for a {name} grid:
 ; {description}.
-; Written by posydon-setup-grid --init {name}. Paths are relative to this
-; file. Run with: posydon-setup-grid --inifile <this file>
+; Written by posydon-grid init {name}. Paths are relative to this file.
+; Check with: posydon-grid explain <this file>
+; Set up with: posydon-grid setup <this file>
 
 [grid]
 type = {name}

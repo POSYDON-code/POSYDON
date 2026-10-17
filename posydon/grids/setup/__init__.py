@@ -1,6 +1,7 @@
 """Building blocks for setting up MESA grids.
 
-This package is the rewrite of ``posydon-setup-grid``.
+This package is the rewrite of ``posydon-setup-grid``; the command is now
+``posydon-grid`` (``posydon/CLI/grid/main.py``).
 
 Modules
 -------
@@ -29,11 +30,14 @@ resolve
 defaults
     Fill the MESA defaults and extras a new-format ini leaves out.
 explain
-    Where each inlist value comes from (posydon-setup-grid --explain).
+    Where each inlist value comes from (posydon-grid explain).
 template
-    A starter new-format ini for a grid type (posydon-setup-grid --init).
+    A starter new-format ini for a grid type (posydon-grid init).
 record
     Write setup_record.ini: what a run directory was set up from.
+steps
+    The steps of a setup, in order: setup_grid, explain_grid (used by
+    posydon-grid setup and explain; callable from Python too).
 """
 
 __authors__ = [

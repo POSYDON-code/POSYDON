@@ -35,7 +35,7 @@ cluster is used.
   (`r11701/releases/v2.0` + reruns, branch `v2_sources`) against today's
   scenario rules on every archived production commit. Needs
   `POSYDON_INLIST_REPO=<clone at the commit pinned in the file>`; CI clones it.
-- `test_new_ini.py`: `posydon-setup-grid` on a legacy ini and on its
+- `test_new_ini.py`: `posydon-grid setup` on a legacy ini and on its
   new-format equivalent (`[scenario] release = v2.0`) writes the same run
   directory, for every grid type. Needs `POSYDON_INLIST_REPO`.
 - `test_new_vs_legacy.py`: each new module against the matching part of
@@ -43,7 +43,9 @@ cluster is used.
 - `legacy_posydon_setup_grid.py`: `bin/posydon-setup-grid` as it was before
   stage 3.6 replaced it with a thin script over `posydon.grids.setup`; the
   comparisons in `test_new_vs_legacy.py` run it. The goldens, folder checks,
-  replay and xfails run the new `bin/posydon-setup-grid`.
+  replay and xfails run `posydon-grid setup` (`bin/posydon-grid`); one
+  test checks that the deprecated `bin/posydon-setup-grid` still gives the
+  same result and warns.
 - `setup_grid_data/inlists_main/`, `inlists_jeff_new_grid/`: vendored
   POSYDON-MESA-INLISTS snapshot (`a060b7b`, plus `HeMS-HMS/` from
   `jeff_new_grid`), with Fortran sources replaced by labelled stubs.

@@ -87,7 +87,7 @@ def find_release(repo, release, mesa_version=None):
     repo : str or Path
         A checked-out POSYDON-MESA-INLISTS.
     release : str
-        e.g. ``v2.0`` or ``development``.
+        e.g. ``v2.0``.
     mesa_version : str or None
         e.g. ``r11701``; only needed if the release exists for several.
 

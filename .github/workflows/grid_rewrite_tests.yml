@@ -11,6 +11,7 @@ on:
       - 'enhancement/rewrite_mesa_grids'
   pull_request:
     paths:
+      - 'bin/posydon-grid'
       - 'bin/posydon-setup-grid'
       - 'bin/posydon-run-grid'
       - 'posydon/**'

@@ -32,6 +32,9 @@ from pathlib import Path
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+# the command the tests run: posydon-grid setup (step 8); the deprecated
+# posydon-setup-grid is checked on its own
+POSYDON_GRID = ROOT / "bin" / "posydon-grid"
 SETUP_GRID = ROOT / "bin" / "posydon-setup-grid"
 # today's script before the rewrite (stage 3.6), kept for the comparisons in
 # test_new_vs_legacy.py
@@ -392,17 +395,27 @@ def build_ini(case, env):
     return text
 
 
-def run_setup(case, env, script=SETUP_GRID):
-    """Write the grid and ini, then run posydon-setup-grid."""
+def setup_command(inifile, grid_type, run_directory, submission_type,
+                  script=POSYDON_GRID):
+    """The command line that sets up a grid from a legacy ini."""
+    options = ["--grid-type", grid_type, "--run-directory",
+               str(run_directory), "--submission-type", submission_type]
+    if script == POSYDON_GRID:
+        return [sys.executable, str(script), "setup", str(inifile)] + options
+    # posydon-setup-grid and the pre-rewrite script
+    return [sys.executable, str(script), "--inifile", str(inifile)] + options
+
+
+def run_setup(case, env, script=POSYDON_GRID):
+    """Write the grid and ini, then set the grid up."""
     run = env["run"]
     rows = GRID_ROWS[case.columns]
     (run / "grid.csv").write_text(
         "\n".join([GRID_COLUMNS[case.columns]] + rows) + "\n")
     (run / "grid.ini").write_text(build_ini(case, env))
     return subprocess.run(
-        [sys.executable, str(script), "--inifile", "grid.ini",
-         "--grid-type", case.grid_type, "--run-directory", str(run),
-         "--submission-type", case.submission],
+        setup_command("grid.ini", case.grid_type, run, case.submission,
+                      script),
         cwd=run, env=env["env"], capture_output=True, text=True, timeout=300)
 
 
@@ -755,10 +768,8 @@ def test_replay_yggdrasil_runs(tmp_path):
                       text)
         (run / "grid.ini").write_text(text)
         result = subprocess.run(
-            [sys.executable, str(SETUP_GRID), "--inifile", "grid.ini",
-             "--grid-type", "fixed", "--run-directory", str(run),
-             "--submission-type", "slurm"], cwd=run, env=env,
-            capture_output=True, text=True, timeout=600)
+            setup_command("grid.ini", "fixed", run, "slurm"), cwd=run,
+            env=env, capture_output=True, text=True, timeout=600)
         replayed += 1
         if result.returncode != 0:
             failures.append(f"{ini}: setup failed")
@@ -916,11 +927,9 @@ def test_outputs_go_to_run_directory(setup_env):
         "\n".join([GRID_COLUMNS[case.columns]] + GRID_ROWS[case.columns])
         + "\n")
     (run / "grid.ini").write_text(build_ini(case, setup_env))
-    subprocess.run([sys.executable, str(SETUP_GRID), "--inifile",
-                    str(run / "grid.ini"), "--grid-type", "fixed",
-                    "--run-directory", str(run), "--submission-type",
-                    "slurm"], cwd=other, env=setup_env["env"],
-                   capture_output=True, text=True, timeout=300)
+    subprocess.run(setup_command(run / "grid.ini", "fixed", run, "slurm"),
+                   cwd=other, env=setup_env["env"], capture_output=True,
+                   text=True, timeout=300)
     assert (run / "job_array_grid_submit.slurm").exists()
     assert not (other / "job_array_grid_submit.slurm").exists()
 
@@ -935,3 +944,18 @@ def test_shell_script_without_job_array_ends_the_command(setup_env):
     assert result.returncode == 0, result.stderr[-2000:]
     script = (setup_env["run"] / "grid_command.sh").read_text()
     assert "\ncompress-mesa ." in script
+
+
+###############################################################################
+# the deprecated posydon-setup-grid
+###############################################################################
+def test_posydon_setup_grid_still_works_and_warns(setup_env):
+    """Step 8: posydon-setup-grid sets up the same grid as posydon-grid
+    setup, says it is deprecated and prints the command to use instead."""
+    case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS__scenario")
+    result = run_setup(case, setup_env, script=SETUP_GRID)
+    assert result.returncode == 0, result.stderr[-2000:]
+    assert "posydon-setup-grid is deprecated" in result.stderr
+    assert "'posydon-grid setup grid.ini --grid-type fixed" in result.stderr
+    golden = GOLDEN / "HMS-HMS__scenario.txt"
+    assert snapshot(result, setup_env) == golden.read_text()

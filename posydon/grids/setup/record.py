@@ -1,6 +1,6 @@
 """Record what a run directory was set up from (tracker C13).
 
-``posydon-setup-grid`` writes ``setup_record.ini`` into the run directory:
+``posydon-grid setup`` writes ``setup_record.ini`` into the run directory:
 the ini it read, the POSYDON version, ``$MESA_DIR``, the grid type and, for
 a scenario, the inlist repository and the exact commit it was checked out
 at. A grid can then be traced to its physics even after the ini or a
@@ -58,7 +58,7 @@ def record_text(config, resolved, inifile, mesa_dir, posydon_version):
         parser["scenario"] = values
     out = io.StringIO()
     out.write("; What this run directory was set up from; written by "
-              "posydon-setup-grid.\n\n")
+              "posydon-grid setup.\n\n")
     parser.write(out)
     return out.getvalue().rstrip("\n") + "\n"
 

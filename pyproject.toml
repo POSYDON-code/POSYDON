@@ -102,6 +102,7 @@ include-package-data = true
 script-files = [
   "bin/compress-mesa",
   "bin/get-posydon-data",
+  "bin/posydon-grid",
   "bin/posydon-popsyn",
   "bin/posydon-run-grid",
   "bin/posydon-run-pipeline",

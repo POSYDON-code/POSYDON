@@ -41,8 +41,8 @@ from test_setup_grid_baseline import (
     DATA,
     GRID_COLUMNS,
     GRID_ROWS,
+    POSYDON_GRID,
     ROOT,
-    SETUP_GRID,
     build_ini,
     make_setup_env,
 )
@@ -134,15 +134,15 @@ def test_new_ini_equals_legacy_ini(case, tmp_path,
             assert not (ROOT / "grid_params").exists()
             text = text.replace(str(DATA / "mesa_defaults"),
                                 str(ROOT / "grid_params/defaults/r11701"))
-            args = ["--grid-type", case.grid_type, "--run-directory",
-                    str(run), "--submission-type", case.submission]
+            options = ["--grid-type", case.grid_type, "--run-directory",
+                       str(run), "--submission-type", case.submission]
         else:
             text = new_ini(case, run, clone(tmp_path / "inlists_new"))
-            args = []
+            options = []  # the ini says it all
         (run / "grid.ini").write_text(text)
         result = subprocess.run(
-            [sys.executable, str(SETUP_GRID), "--inifile", "grid.ini"]
-            + args, cwd=run, env=env["env"], capture_output=True, text=True,
+            [sys.executable, str(POSYDON_GRID), "setup", "grid.ini"]
+            + options, cwd=run, env=env["env"], capture_output=True, text=True,
             timeout=300)
         assert result.returncode == 0, (kind, result.stderr[-3000:])
         runs[kind] = run_dir_files(run)

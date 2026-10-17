@@ -7,7 +7,12 @@ ini file documentation for POSYDON GRIDS
 How to write a configuration file
 ==================================
 
-The `posydon-setup-grid` command-line executable cannot run without a
+Grids are set up with the ``posydon-grid`` command (``posydon-grid types``,
+``init``, ``explain``, ``setup``; ``posydon-grid run`` runs a grid). The
+older ``posydon-setup-grid`` still works but is deprecated: it prints the
+``posydon-grid`` command to use instead.
+
+``posydon-grid setup`` cannot run without a
 configuration file. This :samp:`ini` file needs to specify all aspects of the MESA
 simulation that are static, i.e. those parts that are shared amongst every MESA
 simulation in your grid. The design of the :samp:`ini` file file is such that it will
@@ -26,7 +31,7 @@ The default :samp:`ini` file is in POSYDON-MESA-INLISTS:
 
 POSYDON no longer ships the ``grid_params/`` folder. Ini files still name
 its files as ``${posydon_github_root}/grid_params/...`` (MESA defaults, ZAMS
-models, column lists); when such a path does not exist, ``posydon-setup-grid``
+models, column lists); when such a path does not exist, ``posydon-grid``
 reads the same file from POSYDON-MESA-INLISTS at the commit POSYDON pins
 (``posydon/grids/setup/support.py``) and says so in a warning.
 
@@ -43,8 +48,8 @@ Write a starter file for a grid type with
 
 .. code-block:: bash
 
-    posydon-setup-grid --list-grid-types
-    posydon-setup-grid --init CO-HeMS --inifile grid.ini
+    posydon-grid types
+    posydon-grid init CO-HeMS grid.ini
 
 and fill in the ``<...>`` values. A complete example:
 
@@ -109,14 +114,25 @@ To see where every value comes from without writing anything, run
 
 .. code-block:: bash
 
-    posydon-setup-grid --inifile grid.ini --explain
+    posydon-grid explain grid.ini
 
 It lists, for each inlist, the keys POSYDON or you set, with the layer and
 file of each value and the values it overrides.
 
-**Command line.** ``--grid-type``, ``--run-directory`` and
-``--submission-type`` are optional with a new-format file and override
-``[grid] mode``, ``run_directory`` and ``[submission] backend``.
+**Command line.** A new-format file is the only input:
+
+.. code-block:: bash
+
+    posydon-grid setup grid.ini
+
+It says the mode, run directory and backend itself (``[grid] mode``,
+``run_directory``, ``[submission] backend``), so ``--grid-type``,
+``--run-directory`` and ``--submission-type`` are refused for it. A legacy
+file cannot say these, so for it they are given on the command line:
+
+.. code-block:: bash
+
+    posydon-grid setup grid_params.ini --grid-type fixed --submission-type slurm
 
 **The run directory** gets a ``setup_record.ini`` with the :samp:`ini` file,
 the POSYDON version, ``$MESA_DIR``, the scenario and the exact commit of the
