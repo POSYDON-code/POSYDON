@@ -158,7 +158,7 @@ class TestScripts:
     def test_shell_without_job_array(self):
         config = make_config("shell", job_array=False)
         assert totest.shell_script(config, "CMD", 3, "/sdk", "/mesa")\
-            .endswith('export MESA_DIR=/mesa\n\nCMDcompress-mesa .\n\n'
+            .endswith('export MESA_DIR=/mesa\n\nCMD\n\ncompress-mesa .\n\n'
                       'echo "Done."')
 
     def test_slurm_array(self):

@@ -25,8 +25,9 @@ S5: before, it silently ran as a fixed grid over the CSV).
 All text is written exactly as today, including what the tracker lists: a
 missing star inlist is passed as the literal ``None`` and the job name
 holds a literal ``\\${SLURM_ARRAY_TASK_ID}`` (C11), only the ``.sh``
-scripts are made executable (C12), and a shell script without a job array
-has no newline between the command and ``compress-mesa`` (S13).
+scripts are made executable (C12). A shell script without a job array ends
+the command with a newline before ``compress-mesa`` (fixed S13: before,
+the two were glued into one line).
 """
 
 __authors__ = [
@@ -222,8 +223,9 @@ def shell_script(config, command, n_points, mesasdk_root, mesa_dir):
                  + "".join("{} ".format(i) for i in range(n_points))
                  + "; do " + command + " ; done\n\n")
     else:
-        # no newline before compress-mesa, as today (S13)
-        text += command
+        # the command on its own line (S13: before, compress-mesa was glued
+        # to its last argument)
+        text += command + "\n\n"
     return text + _finish(submission)
 
 

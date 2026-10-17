@@ -919,10 +919,10 @@ def test_outputs_go_to_run_directory(setup_env):
     assert not (other / "job_array_grid_submit.slurm").exists()
 
 
-@pytest.mark.xfail(strict=True, reason="a shell script without a job array "
-                   "has no newline between the command and compress-mesa "
-                   "(legacy_posydon_setup_grid.py:1149-1153)")
 def test_shell_script_without_job_array_ends_the_command(setup_env):
+    """Fixed in step 6 (tracker S13); before, a shell script without a job
+    array had no newline between the command and compress-mesa
+    (legacy_posydon_setup_grid.py:1149-1153)."""
     case = _variant(GRID_TYPES["HMS-HMS"], "HMS-HMS", submission="shell",
                     grid_type="dynamic", job_array=False)
     result = run_setup(case, setup_env)
