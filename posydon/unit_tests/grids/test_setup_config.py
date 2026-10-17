@@ -25,7 +25,7 @@ run_directory = ./run
 [scenario]                ; selects posydon_inlists
 release = v2.0
 rerun = dedt_hepulse
-commit = 8482d7d          ; of the inlist repository
+inlist_repo = ~/inlists   ; read as it is
 
 [user_inlists]            ; your MESA inlists, layered above posydon_inlists
 star1_controls = ./my_inlist1
@@ -61,7 +61,7 @@ class TestElements:
         elements = {'BACKENDS', 'ConfigError', 'GRID_MODES',
                     'GridConfig', 'GridSection', 'INLIST_SHORTHANDS',
                     'INLIST_TARGETS', 'InlistFiles', 'OUTPUT_OPTIONS',
-                    'OutputSection', 'Path', 'SCENARIO_SOURCES', 'SECTIONS',
+                    'OutputSection', 'Path', 'GIT_KEYS', 'SECTIONS',
                     'ScenarioSection', 'SubmissionSection', 'WHOLE_FILES',
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
@@ -117,8 +117,10 @@ class TestDataclasses:
 
     def test_scenario_is_set(self):
         assert totest.ScenarioSection(release="v2.0").is_set
+        # a legacy scenario names a commit
         assert totest.ScenarioSection(commit="18710e9").is_set
         assert not totest.ScenarioSection(source="user").is_set
+        assert not totest.ScenarioSection(inlist_repo="repo").is_set
 
     def test_inlist_files_add(self):
         files = totest.InlistFiles()
@@ -224,31 +226,34 @@ class TestGridSection:
 class TestScenarioSection:
     def test_all_keys(self, write_ini, tmp_path):
         config = totest.read_config(write_ini(
-            MINIMAL + "[scenario]\nsource = user\nrelease = v2.0\n"
-            "mesa = r11701\nref = v2.0\nbranch = my-branch\n"
-            "commit = 18710e943edd926a5653c4cdb7d6e18e5bdb35a2\n"
-            "inlist_repo = repo\n"))
+            MINIMAL + "[scenario]\nrelease = v2.0\nrerun = hot\n"
+            "mesa = r11701\ninlist_repo = repo\n"))
         scenario = config.scenario
-        assert scenario.source == "user"
-        assert scenario.branch == "my-branch"
-        assert scenario.commit == "18710e943edd926a5653c4cdb7d6e18e5bdb35a2"
+        assert (scenario.release, scenario.rerun, scenario.mesa) == \
+            ("v2.0", "hot", "r11701")
         assert scenario.inlist_repo == tmp_path / "repo"
+        # what a legacy scenario uses to check the repository out
+        assert (scenario.branch, scenario.commit) == (None, None)
 
-    def test_release_from_a_local_path_needs_no_ref(self, write_ini):
+    def test_release_alone(self, write_ini):
+        """No ref or commit: the clone is read as it is."""
         config = totest.read_config(write_ini(
-            MINIMAL + "[scenario]\nsource = path\nrelease = v2.0\n"
-            "inlist_repo = repo\n"))
-        assert (config.scenario.ref, config.scenario.commit) == (None, None)
+            MINIMAL + "[scenario]\nrelease = v2.0\n"))
+        assert config.scenario.is_set
+        assert config.scenario.inlist_repo is None
 
     @pytest.mark.parametrize("text, message", [
-        ("source = cloud\n", r"\[scenario\] source: unknown value"),
-        ("commit = main-18710e9\n", r"\[scenario\] commit: expected a git"),
-        ("commit = 18710\n", r"\[scenario\] commit: expected a git"),
+        ("source = path\n", r"\[scenario\] source: no longer used: the "
+         "setup reads inlist_repo as it is, and the release names the "
+         "version. Remove this key, and update the clone yourself"),
+        ("release = v2.0\nref = v2_sources\n",
+         r"\[scenario\] ref: no longer used"),
+        ("release = v2.0\ncommit = 8482d7d\n",
+         r"\[scenario\] commit: no longer used"),
+        ("branch = main\n", r"\[scenario\] branch: no longer used"),
         ("rerun = dedt\n", r"\[scenario\] rerun: a rerun needs a release"),
-        ("release = v2.0\n", r"\[scenario\] release: a release needs ref"),
-        ("ref = v2_sources\n", r"\[scenario\] release: missing"),
-        ("branch = main\ncommit = 18710e9\n",
-         r"\[scenario\] release: missing"),
+        ("inlist_repo = repo\n", r"\[scenario\] release: missing"),
+        ("mesa = r11701\n", r"\[scenario\] release: missing"),
         ("system = HMS-HMS\n", r"\[scenario\] system: unknown key"),
     ])
     def test_errors(self, write_ini, text, message):

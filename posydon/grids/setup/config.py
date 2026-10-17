@@ -30,7 +30,9 @@ from dataclasses import dataclass, field
 from pathlib import Path
 
 GRID_MODES = ("fixed", "dynamic")
-SCENARIO_SOURCES = ("posydon", "user", "path")
+# [scenario] keys that used to make the setup check out the inlist
+# repository with git; it now reads inlist_repo as it is
+GIT_KEYS = ("source", "ref", "commit", "branch")
 BACKENDS = ("shell", "slurm_array", "slurm_mpi")
 
 # targets one inlist file can feed, and the shorthands for a whole file
@@ -73,23 +75,29 @@ class GridSection:
 
 @dataclass
 class ScenarioSection:
-    """Which ``posydon_inlists`` to use; empty when no scenario is set."""
+    """Which ``posydon_inlists`` to use; empty when no scenario is set.
 
-    source: str = "posydon"
+    A new-format ini sets ``release`` (+ ``rerun``, ``mesa``) and
+    ``inlist_repo``; the setup reads that folder as it is. ``source``,
+    ``branch``, ``commit`` and ``system_type`` come from a legacy ini's
+    ``scenario = [source, 'branch-commit', system type]``, whose
+    repository is still checked out at the commit.
+    """
+
     release: str = None
     rerun: str = None
     mesa: str = None
-    ref: str = None
-    commit: str = None
-    branch: str = None
-    system_type: str = None
     inlist_repo: Path = None
+    source: str = "posydon"
+    branch: str = None
+    commit: str = None
+    system_type: str = None
 
     @property
     def is_set(self):
         """Whether the ini names a scenario at all."""
         return any(value is not None for value in
-                   (self.release, self.ref, self.commit, self.branch,
+                   (self.release, self.commit, self.branch,
                     self.system_type))
 
 
@@ -242,16 +250,14 @@ def _read_grid(options, base):
 def _read_scenario(options, base):
     scenario = ScenarioSection()
     for key, value in options.items():
-        if key == "source":
-            scenario.source = _choice("scenario", key, value,
-                                      SCENARIO_SOURCES)
-        elif key == "commit":
-            if not re.fullmatch(r"[0-9a-f]{7,40}", value):
-                raise ConfigError("scenario", key, "expected a git commit "
-                                  "hash (7 to 40 hex digits), got "
-                                  "{!r}".format(value))
-            scenario.commit = value
-        elif key in ("release", "rerun", "mesa", "ref", "branch"):
+        if key in GIT_KEYS:
+            # the release names the version; keeping the clone up to date
+            # is done outside the setup
+            raise ConfigError("scenario", key, "no longer used: the setup "
+                              "reads inlist_repo as it is, and the release "
+                              "names the version. Remove this key, and "
+                              "update the clone yourself (git pull)")
+        elif key in ("release", "rerun", "mesa"):
             setattr(scenario, key, value)
         elif key == "inlist_repo":
             scenario.inlist_repo = _path(base, value)
@@ -259,18 +265,10 @@ def _read_scenario(options, base):
             raise ConfigError("scenario", key, "unknown key")
     if scenario.rerun is not None and scenario.release is None:
         raise ConfigError("scenario", "rerun", "a rerun needs a release")
-    if scenario.is_set and scenario.release is None:
-        # ref, commit or branch alone would be read as a legacy scenario,
-        # which needs a system type a new-format ini cannot give
+    if scenario.release is None and (scenario.inlist_repo is not None or
+                                     scenario.mesa is not None):
         raise ConfigError("scenario", "release", "missing; a scenario names "
                           "a release of the inlist repository")
-    if scenario.release is not None and scenario.source != "path" and \
-            scenario.ref is None and scenario.commit is None:
-        # no hidden default: the ini says which version of the inlist
-        # repository it was set up with
-        raise ConfigError("scenario", "release", "a release needs ref (a "
-                          "branch or tag of the inlist repository) or "
-                          "commit")
     return scenario
 
 

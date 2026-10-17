@@ -67,7 +67,7 @@ shorter example:
     [scenario]                  ; which POSYDON inlists to use
     release = v2.0
     rerun = matthias_lbv_thermo_dedt_noAgeLimit   ; optional
-    commit = 8482d7d            ; or ref = <branch or tag>; one is required
+    inlist_repo = ~/POSYDON-MESA-INLISTS          ; your clone, read as it is
 
     [user_inlists]              ; your own MESA inlists, on top
     star1_controls = my_inlist1
@@ -91,11 +91,23 @@ Relative paths are relative to the :samp:`ini` file.
 **The scenario** selects the POSYDON inlists. ``release`` is a folder of
 `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_
 (``r11701/releases/<release>/``) and ``rerun`` one of its physics variants
-(``reruns/<rerun>/``, which holds only the keys and files it changes). There
-is no default version of the inlist repository: give ``ref`` (a branch or
-tag) or ``commit``. ``source = path`` with ``inlist_repo = <folder>`` uses a
-local copy as it is, without git. ``mesa`` names the MESA version if a
-release exists for several.
+(``reruns/<rerun>/``, which holds only the keys and files it changes); all
+v2.0 reruns are there. ``mesa`` names the MESA version if a release exists
+for several.
+
+``inlist_repo`` is your clone of the repository (default:
+``~/.posydon_mesa_inlists``). The setup reads it as it is and never runs git
+to change it: cloning it and keeping it up to date is up to you, e.g.
+
+.. code-block:: bash
+
+    git clone --branch v2_sources https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git ~/POSYDON-MESA-INLISTS
+    git -C ~/POSYDON-MESA-INLISTS pull
+
+It can be your own fork or branch, laid out the same way. The keys
+``source``, ``ref``, ``commit`` and ``branch`` of earlier versions are no
+longer used: remove them. (The legacy format, below, still checks out the
+commit its scenario names.)
 
 **Layers.** For every inlist the values are stacked, a later layer winning
 key by key:
@@ -154,8 +166,12 @@ file cannot say these, so for it they are given on the command line:
     posydon-grid setup grid_params.ini --grid-type fixed --submission-type slurm
 
 **The run directory** gets a ``setup_record.ini`` with the :samp:`ini` file,
-the POSYDON version, ``$MESA_DIR``, the scenario and the exact commit of the
-inlist repository it used.
+the POSYDON version, ``$MESA_DIR``, the scenario, and the inlist repository
+as it was read: its folder, ``origin``, commit (``inlist_commit``), whether
+the files used differed from that commit (``inlist_dirty``) and a sha256 of
+those files (``inlist_fingerprint``). Two grids with the same fingerprint
+read identical files, whatever folder or branch they came from. ``None``
+means git could not tell: the folder is not a git repository of its own.
 
 .. _inifile_slurm:
 

@@ -9,8 +9,8 @@ which
 
 - finds a checkout of POSYDON-MESA-INLISTS with the restructured layout
   (``r11701/releases/v2.0``): ``$POSYDON_INLIST_REPO`` if set, otherwise
-  ``~/.posydon_mesa_inlists``. The notebooks read it with ``source = path``,
-  so nothing in it is checked out or changed;
+  ``~/.posydon_mesa_inlists``. The setup reads it as it is and never runs
+  git, so nothing in it is checked out or changed;
 - points ``$MESA_DIR`` at a stub MESA (no-op makefiles, labelled stub
   Fortran sources) copied into ``_work/``, so a setup runs in seconds
   without MESA. Set ``POSYDON_NOTEBOOK_REAL_MESA=1`` to keep your own

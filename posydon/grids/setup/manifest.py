@@ -108,8 +108,19 @@ def find_release(repo, release, mesa_version=None):
         candidates = sorted(repo.glob("*/releases/{}".format(release)))
     found = [folder for folder in candidates if folder.is_dir()]
     if not found:
-        raise ConfigError("scenario", "release", "no release {!r} in {}"
-                          .format(release, repo))
+        known = sorted("{} ({})".format(folder.name, folder.parents[1].name)
+                       for folder in repo.glob("*/releases/*")
+                       if (folder / "release.ini").is_file())
+        if known:
+            raise ConfigError("scenario", "release", "no release {!r} in "
+                              "{}; it has {}".format(release, repo,
+                                                     ", ".join(known)))
+        # e.g. a clone of the main branch, still in the old layout
+        raise ConfigError("scenario", "release", "{} has no releases "
+                          "(no <MESA version>/releases/ folder); is it a "
+                          "clone of POSYDON-MESA-INLISTS on the v2_sources "
+                          "branch? Update it with git outside the setup"
+                          .format(repo))
     if len(found) > 1:
         raise ConfigError("scenario", "mesa", "release {!r} exists for "
                           "several MESA versions ({}); set mesa".format(

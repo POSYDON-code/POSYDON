@@ -10,8 +10,8 @@ that starts from ZAMS.
 What the grid type decides is filled in (its type, what MESA writes for
 each star). What only the user knows is left as ``<...>`` placeholders: the
 SLURM account and partition, and a ZAMS model for stars that start from
-ZAMS. The scenario is written out in full, with no hidden default: the
-release and the inlist repository's ref.
+ZAMS. The scenario names the release; the inlist repository's clone is
+read as it is.
 """
 
 __authors__ = [
@@ -78,18 +78,17 @@ def _grid(grid_type):
 
 
 def _scenario():
-    text = _header("scenario", "which POSYDON inlists to use, from "
-                   "POSYDON-MESA-INLISTS")
+    text = _header("scenario", "which POSYDON inlists to use, from a "
+                   "clone of POSYDON-MESA-INLISTS.",
+                   "The setup reads the clone as it is; keeping it up to "
+                   "date (git pull) is",
+                   "up to you. setup_record.ini notes its commit and the "
+                   "files used.")
     text += _line("release", "v2.0", "r11701/releases/<release>/")
     text += _line("rerun", "matthias_lbv_thermo_dedt_noAgeLimit",
                   "a physics variant: reruns/<rerun>/", active=False)
-    text += _line("ref", "v2_sources", "branch or tag to check out")
-    text += _line("commit", "<hash>", "an exact commit instead (wins over "
-                  "ref)", active=False)
-    text += _line("source", "posydon", "posydon | user | path (path: no "
-                  "git)", active=False)
-    text += _line("inlist_repo", "~/.posydon_mesa_inlists", "the clone; "
-                  "cloned if missing", active=False)
+    text += _line("inlist_repo", "~/.posydon_mesa_inlists", "the clone, "
+                  "on the v2_sources branch", active=False)
     text += _line("mesa", "r11701", "if the release exists for several "
                   "MESA versions", active=False)
     return text

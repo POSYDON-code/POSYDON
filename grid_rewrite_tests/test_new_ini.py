@@ -57,9 +57,13 @@ ZAMS = "/posydon-tests/ZAMS_models/zams_z1.42m2_y0.2703.data"
 CASES = [case for case in GOLDEN_CASES if case.name.endswith("__scenario")]
 
 
-def clone(target):
+def clone(target, commit=None):
     subprocess.run(["git", "clone", "-q", INLIST_REPO, str(target)],
                    check=True)
+    if commit is not None:
+        # the setup reads the clone as it is: put it at the commit here
+        subprocess.run(["git", "-C", str(target), "checkout", "-q", commit],
+                       check=True)
     return target
 
 
@@ -81,8 +85,8 @@ def new_ini(case, run, repo):
         lines.append("zams = {}".format(ZAMS))
     elif case.zams == "star2":
         lines.append("zams_star2 = {}".format(ZAMS))
+    # the clone is read as it is, at INLIST_REPO_COMMIT (see clone)
     lines += ["", "[scenario]", "release = v2.0",
-              "commit = {}".format(INLIST_REPO_COMMIT),
               "inlist_repo = {}".format(repo)]
     if rerun:
         lines.append("rerun = {}".format(rerun))
@@ -137,7 +141,8 @@ def test_new_ini_equals_legacy_ini(case, tmp_path,
             options = ["--grid-type", case.grid_type, "--run-directory",
                        str(run), "--submission-type", case.submission]
         else:
-            text = new_ini(case, run, clone(tmp_path / "inlists_new"))
+            text = new_ini(case, run, clone(tmp_path / "inlists_new",
+                                            INLIST_REPO_COMMIT))
             options = []  # the ini says it all
         (run / "grid.ini").write_text(text)
         result = subprocess.run(

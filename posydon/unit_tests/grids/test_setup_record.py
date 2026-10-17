@@ -55,20 +55,21 @@ class TestRecord:
         config.grid.type = "CO-HeMS"
         config.scenario.release = "v2.0"
         config.scenario.rerun = "hot"
-        config.scenario.ref = "v2_sources"
         release = Release(name="v2.0", folder=Path("/r"),
                           mesa_version="r11701", mesa="default", frozen=True)
-        resolved = ResolvedScenario(files=ScenarioFiles(),
-                                    repo=Path("/repo"), commit="abc123",
-                                    release=release)
+        resolved = ResolvedScenario(
+            files=ScenarioFiles(), repo=Path("/repo"), commit="abc123",
+            release=release, dirty=False, remote="https://x/inlists",
+            fingerprint="f" * 64, n_files=12)
         path = totest.write_record(tmp_path, config, resolved, "grid.ini",
                                    "/mesa", "2.2")
         assert path == tmp_path / "setup_record.ini"
         assert parse(path.read_text())["scenario"] == {
-            "source": "posydon", "release": "v2.0", "rerun": "hot",
-            "ref": "v2_sources", "inlist_repo": "/repo",
-            "inlist_commit": "abc123", "mesa_version": "r11701",
-            "mesa": "default"}
+            "release": "v2.0", "rerun": "hot", "mesa_version": "r11701",
+            "mesa": "default", "inlist_repo": "/repo",
+            "inlist_remote": "https://x/inlists", "inlist_commit": "abc123",
+            "inlist_dirty": "False", "inlist_fingerprint": "f" * 64,
+            "inlist_files": "12"}
 
     def test_legacy(self):
         config = GridConfig(source_format="legacy")
@@ -84,4 +85,6 @@ class TestRecord:
         assert record["scenario"] == {
             "source": "posydon", "branch": "main", "commit": "18710e9",
             "system_type": "MS-MS", "inlist_repo": "/repo",
-            "inlist_commit": "18710e9abc"}
+            "inlist_remote": "None", "inlist_commit": "18710e9abc",
+            "inlist_dirty": "None", "inlist_fingerprint": "None",
+            "inlist_files": "0"}

@@ -65,7 +65,8 @@ class TestElements:
                     'one_point_per_task', 'run_grid_call', 'run_script',
                     'shell_script', 'shutil', 'slurm_grid_script',
                     'write_scripts'}
-        assert set(dir(totest)) == elements
+        # Pwarn's "Replace" warnings of other tests may add a registry
+        assert set(dir(totest)) - {'__warningregistry__'} == elements
 
     @pytest.mark.parametrize("name", [
         'find_run_grid', 'one_point_per_task', 'run_grid_call',

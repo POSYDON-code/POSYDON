@@ -2,9 +2,12 @@
 
 ``posydon-grid setup`` writes ``setup_record.ini`` into the run directory:
 the ini it read, the POSYDON version, ``$MESA_DIR``, the grid type and, for
-a scenario, the inlist repository and the exact commit it was checked out
-at. A grid can then be traced to its physics even after the ini or a
-branch of the inlist repository changes.
+a scenario, the inlist repository as it was read: its folder, ``origin``,
+commit, whether the files used differed from that commit
+(``inlist_dirty``) and a fingerprint of those files. A grid can then be
+traced to its physics even after the ini or the inlist repository
+changes; two grids with the same fingerprint read identical files.
+``None`` means git could not tell (not a git repository).
 """
 
 __authors__ = [
@@ -45,16 +48,23 @@ def record_text(config, resolved, inifile, mesa_dir, posydon_version):
     }
     if resolved is not None:
         scenario = config.scenario
-        values = {"source": scenario.source}
-        for key in ("release", "rerun", "ref", "branch", "commit",
-                    "system_type"):
+        values = {}
+        if resolved.release is None:
+            # legacy: the scenario the repository was checked out at
+            values["source"] = scenario.source
+        for key in ("release", "rerun", "branch", "commit", "system_type"):
             if getattr(scenario, key) is not None:
                 values[key] = getattr(scenario, key)
-        values["inlist_repo"] = str(resolved.repo)
-        values["inlist_commit"] = str(resolved.commit)
         if resolved.release is not None:
             values["mesa_version"] = resolved.release.mesa_version
             values["mesa"] = resolved.release.mesa
+        # what was read: the folder as it was, and its files
+        values["inlist_repo"] = str(resolved.repo)
+        values["inlist_remote"] = str(resolved.remote)
+        values["inlist_commit"] = str(resolved.commit)
+        values["inlist_dirty"] = str(resolved.dirty)
+        values["inlist_fingerprint"] = str(resolved.fingerprint)
+        values["inlist_files"] = str(resolved.n_files)
         parser["scenario"] = values
     out = io.StringIO()
     out.write("; What this run directory was set up from; written by "

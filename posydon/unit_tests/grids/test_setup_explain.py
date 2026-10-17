@@ -131,8 +131,8 @@ class TestTemplate:
         ini = write(tmp_path / "grid.ini", template.ini_template(name))
         config = read_config(ini)
         assert config.grid.type == name
-        assert (config.scenario.release, config.scenario.ref) == \
-            ("v2.0", "v2_sources")
+        assert config.scenario.release == "v2.0"
+        assert config.scenario.inlist_repo is None
         assert config.submission.account == "<account>"
 
     @pytest.mark.parametrize("name", list(GRID_TYPES))
@@ -140,12 +140,11 @@ class TestTemplate:
         """Uncommenting every option of the template still reads."""
         text = template.ini_template(name)
         options = re.findall(r"^; ([a-z0-9_]+) = ", text, flags=re.M)
-        assert len(options) > 30
+        assert len(options) > 25
         text = re.sub(r"^; ([a-z0-9_]+ = )", r"\1", text, flags=re.M)
-        text = text.replace("<hash>", "1234567")
         text = re.sub(r"<[^>]*>", "x", text)
         config = read_config(write(tmp_path / "grid.ini", text))
-        assert config.scenario.commit == "1234567"
+        assert config.scenario.inlist_repo is not None
         assert config.scenario.rerun is not None
         assert config.submission.newgroup == "x"
         assert set(config.extras) == set(MESA_EXTRAS)
@@ -170,10 +169,10 @@ class TestTemplate:
         if len(zams) == 2:
             grid.add("zams")
         assert listed["grid"] == grid
-        # branch and system_type come from legacy inis only
+        # source, branch, commit and system_type come from legacy inis
         assert listed["scenario"] == {
             field.name for field in fields(ScenarioSection)} - {
-            "branch", "system_type"}
+            "source", "branch", "commit", "system_type"}
         stars = {"star1"}
         if grid_type.star2 in ("zams", "formation"):
             stars.add("star2")

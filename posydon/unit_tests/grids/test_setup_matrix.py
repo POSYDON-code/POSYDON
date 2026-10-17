@@ -210,7 +210,7 @@ def ini_text(env, grid_type, grid=None, scenario=None, sections=None,
     grid_lines = {"type": grid_type, "points": env["tmp"] / "grid.csv",
                   "run_directory": env["tmp"] / "run"}
     grid_lines.update(grid or {})
-    scenario_lines = {"source": "path", "release": "v2.0",
+    scenario_lines = {"release": "v2.0",
                       "inlist_repo": env["repo"]}
     if scenario is not None:
         scenario_lines.update(scenario)
@@ -368,7 +368,15 @@ class TestGridTypes:
         record.read(run.path / "setup_record.ini")
         assert record["setup"]["grid_type"] == grid_type
         assert record["setup"]["mode"] == "fixed"
-        assert record["scenario"]["release"] == "v2.0"
+        scenario = record["scenario"]
+        assert scenario["release"] == "v2.0"
+        assert scenario["inlist_repo"] == str(env["repo"])
+        # not a git repository: git cannot tell
+        assert (scenario["inlist_commit"], scenario["inlist_dirty"],
+                scenario["inlist_remote"]) == ("None", "None", "None")
+        assert len(scenario["inlist_fingerprint"]) == 64
+        assert int(scenario["inlist_files"]) > 10
+        assert "source" not in scenario
 
     def test_column_lists_and_extras_from_the_release(self, env, grid_type):
         run = setup(env, grid_type)
@@ -676,8 +684,19 @@ def test_slurm_settings(env):
      r"\[submission\] backend: a dynamic grid runs as one MPI job"),
     ({"mode": "dynamic"}, {"backend": "slurm_mpi"}, None, None,
      r"\[grid\] psycris_inifile: needed"),
-    ({}, None, {"release": None, "ref": "main"}, None,
-     r"\[scenario\] release: missing"),
+    ({}, None, {"ref": "main"}, None, r"\[scenario\] ref: no longer used"),
+    ({}, None, {"commit": "1234567"}, None,
+     r"\[scenario\] commit: no longer used: the setup reads inlist_repo as "
+     "it is"),
+    ({}, None, {"source": "path"}, None,
+     r"\[scenario\] source: no longer used"),
+    ({}, None, {"branch": "main"}, None,
+     r"\[scenario\] branch: no longer used"),
+    ({}, None, {"release": None}, None,
+     r"\[scenario\] release: missing; a scenario names a release"),
+    ({}, None, {"inlist_repo": "missing"}, None,
+     r"\[scenario\] inlist_repo: .*missing does not exist. The setup does "
+     "not clone(.|\n)*git clone --branch v2_sources"),
     ({}, None, {"release": None, "rerun": "hot"}, None,
      r"\[scenario\] rerun: a rerun needs a release"),
     ({}, None, {"rerun": "cold"}, None, r"\[scenario\] rerun: no rerun"),
@@ -697,10 +716,28 @@ def test_refused(env, grid, submission, scenario, sections, message):
     assert not (env["tmp"] / "run").exists()
 
 
+def test_old_layout_says_which_branch(env):
+    """A clone of main (the old layout) has no releases at all."""
+    old = env["tmp"] / "old_clone"
+    write(old / "r11701" / "default_common_inlists" / "binary" / "inlist1")
+    ini = write(env["tmp"] / "grid.ini", ini_text(
+        env, "HMS-HMS", scenario={"inlist_repo": old}))
+    with pytest.raises(ConfigError, match=r"\[scenario\] release: .*"
+                       "old_clone has no releases .* v2_sources branch"):
+        totest.setup_grid(ini)
+
+
+def test_unknown_release_lists_the_releases(env):
+    ini = write(env["tmp"] / "grid.ini", ini_text(
+        env, "HMS-HMS", scenario={"release": "v9"}))
+    with pytest.raises(ConfigError, match=r"no release 'v9' in .*; it has "
+                       r"v2.0 \(r11701\)"):
+        totest.setup_grid(ini)
+
+
 def test_no_scenario_needs_mesa_defaults_and_columns(env):
     ini = write(env["tmp"] / "grid.ini", ini_text(
-        env, "HMS-HMS", scenario={"release": None, "source": None,
-                                  "inlist_repo": None}))
+        env, "HMS-HMS", scenario={"release": None, "inlist_repo": None}))
     with pytest.raises(ConfigError, match=r"\[mesa_inlists\]: needed"):
         totest.setup_grid(ini)
 
@@ -832,3 +869,66 @@ def test_every_layer_filled(env, grid_type, layers, rerun, style):
     assert run.text("binary/src/run_binary_extras.f") == (
         "! release run_binary_extras.f\n" if top_whole == "release"
         else "! user\n")
+
+
+###############################################################################
+# the inlist repository is read as it is
+###############################################################################
+def _git(repo, *args):
+    import subprocess
+    return subprocess.run(["git", "-C", str(repo), *args], check=True,
+                          capture_output=True, text=True,
+                          env={"GIT_AUTHOR_NAME": "t", "GIT_COMMITTER_NAME":
+                               "t", "GIT_AUTHOR_EMAIL": "t@t",
+                               "GIT_COMMITTER_EMAIL": "t@t",
+                               "HOME": str(repo)}).stdout.strip()
+
+
+def _record(run):
+    record = configparser.ConfigParser(interpolation=None)
+    record.read(run.path / "setup_record.ini")
+    return record["scenario"]
+
+
+def test_git_repository_is_read_not_changed(env):
+    repo = env["repo"]
+    _git(repo, "init", "-q", "-b", "my_branch")
+    _git(repo, "add", "-A")
+    _git(repo, "commit", "-q", "-m", "release")
+    _git(repo, "remote", "add", "origin", "https://example.invalid/inlists")
+    head = _git(repo, "rev-parse", "HEAD")
+
+    run = setup(env, "CO-HeMS")
+    scenario = _record(run)
+    assert scenario["inlist_commit"] == head
+    assert scenario["inlist_dirty"] == "False"
+    assert scenario["inlist_remote"] == "https://example.invalid/inlists"
+    clean = scenario["inlist_fingerprint"]
+    # the setup ran no git that changes anything
+    assert _git(repo, "rev-parse", "--abbrev-ref", "HEAD") == "my_branch"
+    assert _git(repo, "rev-parse", "HEAD") == head
+    assert _git(repo, "status", "--porcelain") == ""
+
+    # an edit to a file the release uses is used, and noticed
+    inlist1 = repo / "r11701/releases/v2.0/common/binary/inlist1"
+    inlist1.write_text(inlist1.read_text().replace("0.8d0", "0.6d0"))
+    run = setup(env, "CO-HeMS")
+    scenario = _record(run)
+    assert scenario["inlist_dirty"] == "True"
+    assert scenario["inlist_fingerprint"] != clean
+    assert run.inlist("binary/inlist1")["controls"][
+        "mesh_delta_coeff"] == "0.6d0"
+
+    # files the grid type does not use do not make it dirty
+    inlist1.write_text(inlist1.read_text().replace("0.6d0", "0.8d0"))
+    write(repo / "r11701/releases/v2.0/notes.txt", "unrelated")
+    scenario = _record(setup(env, "CO-HeMS"))
+    assert scenario["inlist_dirty"] == "False"
+    assert scenario["inlist_fingerprint"] == clean
+
+
+def test_folder_inside_another_repository_has_no_commit(env):
+    """git would report the enclosing repository's commit."""
+    _git(env["tmp"], "init", "-q")
+    scenario = _record(setup(env, "HMS-HMS"))
+    assert scenario["inlist_commit"] == "None"
