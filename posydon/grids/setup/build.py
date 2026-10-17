@@ -19,7 +19,9 @@ today's ``posydon-setup-grid``:
    (``inlist_names``);
 2. formation: each step loads the previous step's model and saves its own;
    the binary star loads the last one;
-3. output: history, final profile and final model, ``history_interval``;
+3. output: history, final profile and final model, ``history_interval``,
+   for each star in the binary, and for a single star in its last step
+   (the step that runs it to the end);
 4. ZAMS models: ``zams_filename``.
 
 ZAMS models follow today's rules (``legacy_zams``), including two known
@@ -187,6 +189,36 @@ def legacy_zams(config, scenario=None):
 
 
 ###############################################################################
+# output options
+###############################################################################
+def output_keys(output, star, history_interval):
+    """The keys ``[output]`` sets for a star.
+
+    Returns
+    -------
+    tuple of dict
+        ``(controls, job)``: history on or off and its interval; the final
+        profile and the final model (``final_<star>.mod``), on or off.
+    """
+    chosen = getattr(output, star)
+    job = {}
+    if "final_profile" in chosen:
+        job["write_profile_when_terminate"] = ".true."
+        job["filename_for_profile_when_terminate"] = \
+            "'final_profile_{}.data'".format(star)
+    else:
+        job["write_profile_when_terminate"] = ".false."
+    if "final_model" in chosen:
+        job["save_model_when_terminate"] = ".true."
+        job["save_model_filename"] = "'final_{}.mod'".format(star)
+    else:
+        job["save_model_when_terminate"] = ".false."
+    controls = {"do_history_file": ".true." if "history" in chosen
+                else ".false.", "history_interval": history_interval}
+    return controls, job
+
+
+###############################################################################
 # writing, in today's exact layout
 ###############################################################################
 def _lines(values):
@@ -294,6 +326,7 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
             final[target] = {}
 
     # 2. formation steps
+    history_interval = raw.get("history_interval", output.history_interval)
     formation = {}
     for star in STARS:
         n_steps = formation_step_count(star, list(files.values()) + [flags])
@@ -323,6 +356,16 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
                     star, step - 1)
             job["save_model_when_terminate"] = ".true."
             job["save_model_filename"] = model
+            if star == "star1" and single and step == n_steps - 1:
+                # the last step runs the single star to its end:
+                # posydon-run-grid keeps its output, and nothing loads its
+                # model, so it takes star 1's [output] options (before,
+                # these went only into binary/inlist1, which a single-star
+                # grid never runs)
+                step_controls, step_job = output_keys(output, star,
+                                                      history_interval)
+                controls.update(step_controls)
+                job.update(step_job)
             if star == "star1" and single:
                 if zams["star1"] is not None:
                     controls["zams_filename"] = "'{}'".format(zams["star1"])
@@ -338,27 +381,10 @@ def build_inlists(config, run_directory, grid_parameters, scenario=None):
 
     # 3. output options
     for star in STARS:
-        job = final["{}_job".format(star)]
-        controls = final["{}_controls".format(star)]
-        if "final_profile" in getattr(output, star):
-            job["write_profile_when_terminate"] = ".true."
-            job["filename_for_profile_when_terminate"] = \
-                "'final_profile_{}.data'".format(star)
-        else:
-            job["write_profile_when_terminate"] = ".false."
-    for star in STARS:
-        job = final["{}_job".format(star)]
-        if "final_model" in getattr(output, star):
-            job["save_model_when_terminate"] = ".true."
-            job["save_model_filename"] = "'final_{}.mod'".format(star)
-        else:
-            job["save_model_when_terminate"] = ".false."
-    for star in STARS:
-        final["{}_controls".format(star)]["do_history_file"] = \
-            ".true." if "history" in getattr(output, star) else ".false."
-    history_interval = raw.get("history_interval", output.history_interval)
-    for target in ("binary_controls", "star1_controls", "star2_controls"):
-        final[target]["history_interval"] = history_interval
+        controls, job = output_keys(output, star, history_interval)
+        final["{}_controls".format(star)].update(controls)
+        final["{}_job".format(star)].update(job)
+    final["binary_controls"]["history_interval"] = history_interval
     if not output.binary_history:
         final["binary_controls"]["history_interval"] = "-1"
 

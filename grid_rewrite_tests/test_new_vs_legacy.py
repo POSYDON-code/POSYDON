@@ -156,6 +156,8 @@ from test_setup_grid_baseline import CASES as GOLDEN_CASES  # noqa: E402
 from test_setup_grid_baseline import GRID_COLUMNS, build_ini, make_setup_env
 
 from posydon.grids.setup.build import build_inlists  # noqa: E402
+from posydon.grids.setup.build import is_single_star  # noqa: E402
+from posydon.grids.setup.build import output_keys  # noqa: E402
 from posydon.grids.setup.grid_types import get_grid_type  # noqa: E402
 from posydon.grids.setup.legacy import read_legacy_config  # noqa: E402
 from posydon.utils import configfile  # noqa: E402
@@ -251,6 +253,8 @@ def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
     new_files = {name: text.replace(str(new_run), str(old_run))
                  for name, text in written_inlists(new_run).items()}
     assert set(new_files) == set(old_files)
+    if is_single_star(config):
+        single_star_output(config, old_files, new_files)
     if case.extra_inlists and case.use_scenario:
         # S6: today the scenario's files win over the user's inlists, and
         # when the ini names a *_user file, the grid type's own folder file
@@ -287,6 +291,43 @@ def test_build_matches_construct_static_inlist(case, tmp_path, monkeypatch,
     else:
         for name in old_files:
             assert new_files[name] == old_files[name], name
+
+
+def single_star_output(config, old_files, new_files):
+    """A single star's [output] options now reach its last step.
+
+    Today they are written only into binary/inlist1, which a single-star
+    grid never runs, and the last step saves its model as
+    initial_star1_step<N>.mod, which nothing reads. Now the last step,
+    which runs the star to its end, takes them: final_star1.mod, as
+    PSyGrid expects. Only those keys may differ, with [output]'s values;
+    afterwards the last step is compared like the other files.
+    """
+    last = sorted(name for name in new_files if name.startswith(
+        "star1/inlist_step"))[-1]
+    interval = config.legacy.get("mesa_inlists", {}).get(
+        "history_interval", config.output.history_interval)
+    controls, job = output_keys(config.output, "star1", interval)
+    expected = {"controls": controls, "star_job": job}
+    old_values, new_values = (read_inlist_text(old_files[last]),
+                              read_inlist_text(new_files[last]))
+    for section, values in new_values.items():
+        changed = {key: value for key, value in values.items()
+                   if old_values[section].get(key) != value}
+        for key, value in changed.items():
+            assert str(expected[section].get(key)) == value, (last, key)
+        # nothing is dropped (zams_filename: S3, checked below)
+        assert set(old_values[section]) - {"zams_filename"} <= \
+            set(values), (last, section)
+    if "final_model" in config.output.star1:
+        assert new_values["star_job"]["save_model_filename"] == \
+            "'final_star1.mod'"
+    # the rest of the file as today, but without a zams_filename the new
+    # step does not have (S3, compared by the caller)
+    new_files[last] = "".join(
+        line for line in old_files[last].splitlines(keepends=True)
+        if not (line.strip().startswith("zams_filename =") and
+                "zams_filename" not in new_values["controls"]))
 
 
 def read_inlist_text(text):

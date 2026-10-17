@@ -343,8 +343,12 @@ class TestGridTypes:
         for index, path in enumerate(steps):
             job = parse_inlist(path.read_text())["star_job"]
             assert job["save_model_when_terminate"] == ".true."
-            assert job["save_model_filename"] == \
-                "'initial_star1_step{}.mod'".format(index)
+            # a single star's last step runs it to the end and saves its
+            # final model ([output] star1 = history, final_model by default)
+            last_single = grid_type in SINGLE and index == len(steps) - 1
+            assert job["save_model_filename"] == (
+                "'final_star1.mod'" if last_single else
+                "'initial_star1_step{}.mod'".format(index))
             if index > 0:
                 assert job["load_saved_model"] == ".true."
                 assert job["saved_model_name"] == \
@@ -546,17 +550,7 @@ class TestUserInlists:
 ###############################################################################
 # output options and wiring
 ###############################################################################
-# single-star grids run star 1 in its steps, but the [output] options are
-# written only into binary/inlist1, which they never run; the old
-# posydon-setup-grid does the same (golden single_*__scenario.txt)
-SINGLE_OUTPUT_XFAIL = pytest.mark.xfail(
-    strict=True, reason="[output] does not reach a single star's steps "
-    "(legacy behaviour, kept)")
-
-
-@pytest.mark.parametrize("grid_type", [
-    pytest.param(name, marks=SINGLE_OUTPUT_XFAIL) if name in SINGLE else name
-    for name in GRID_TYPES])
+@pytest.mark.parametrize("grid_type", GRID_TYPES)
 @pytest.mark.parametrize("star1", ["none", "history",
                                    "history, final_profile, final_model"])
 def test_output_options(env, grid_type, star1):
@@ -572,7 +566,16 @@ def test_output_options(env, grid_type, star1):
         assert values["star_job"]["save_model_when_terminate"] == ".true."
         assert values["star_job"]["save_model_filename"] == \
             "'final_star1.mod'", rel
+    else:
+        assert values["star_job"]["save_model_when_terminate"] == ".false."
     assert values["controls"]["history_interval"] == "5", rel
+    # a single star's earlier steps keep the formation chain
+    for path in run.steps("star1")[:-1]:
+        job = parse_inlist(path.read_text())["star_job"]
+        assert job["save_model_when_terminate"] == ".true."
+        assert job["save_model_filename"].startswith("'initial_star1_step")
+        assert "write_profile_when_terminate" not in job or \
+            "final_profile" not in star1
     if grid_type not in SINGLE:
         assert run.inlist("binary/inlist_project")["binary_controls"][
             "history_interval"] == "-1"

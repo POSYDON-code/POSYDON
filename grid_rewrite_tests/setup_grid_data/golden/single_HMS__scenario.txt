@@ -27,7 +27,7 @@ sha256: cab8055e1c7b19370bb1d0569e5d14b14bb8b1aacbf56977b90489d7551d115b
 &binary_job  (0 keys, 0 not MESA default)
 
 ## star1/inlist_step0
-sha256: bd1d9c4564892f644ab0b0d278167177252e0a3a61945bcff498a52f35d6f47c
+sha256: 3a195f8b50088db297f72a208ac83f5c9a84deda6103119f57151bc841aea039
 &controls  (1656 keys, 118 not MESA default)
   terminal_interval = 10
   write_header_frequency = 100
@@ -151,7 +151,7 @@ sha256: bd1d9c4564892f644ab0b0d278167177252e0a3a61945bcff498a52f35d6f47c
   show_log_description_at_start = .false.
   show_net_species_info = .true.
   save_model_when_terminate = .true.
-  save_model_filename = 'initial_star1_step0.mod'
+  save_model_filename = 'final_star1.mod'
   set_initial_age = .true.
   initial_age = 0.0d0
   set_initial_model_number = .true.

@@ -50,16 +50,18 @@ code, so a failure means the code and the spec disagree.
    step in a single-star grid; `star1_formation_step<N>` → only
    `star1/inlist_step<N>`; `star1_controls` → only `&controls`.
 3. **Formation chain.** Step N saves `initial_star1_step<N>.mod`; step N>0
-   loads step N−1's model; the binary star loads the last step's model.
+   loads step N−1's model; the binary star loads the last step's model. A
+   single star's last step saves what `[output]` says instead (rule 5).
 4. **ZAMS.** A star that starts from ZAMS gets `zams_filename` from
    `[grid]`. A formed star never does, whatever `[grid]` says. A single_HMS
    star gets it in its step.
 5. **Output.** `[output] star<N>` sets `do_history_file`,
    `write_profile_when_terminate` and `save_model_when_terminate` in the
    inlist that runs the star; `binary = none` sets the binary
-   `history_interval = -1`. *Open:* single-star grids get these only in
-   `binary/inlist1`, which they never run, as the old setup did (pinned as
-   a strict xfail).
+   `history_interval = -1`. A single star is run by its last step, so that
+   step takes them (the old setup wrote them only into `binary/inlist1`,
+   which a single-star grid never runs); its earlier steps keep saving
+   `initial_star1_step<N>.mod`.
 6. **Wiring.** In a binary grid, a star namelist that holds a grid column
    reads `inlist_grid_star<N>_binary_<part>`. Formation steps are not
    wired: `posydon-run-grid` wraps each step in an inlist that reads the

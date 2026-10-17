@@ -309,7 +309,7 @@ sha256: c23e82a9ddefe8622fe7999d2ed7bce98e514a24b58b143184bb199635c2de56
   new_net_name = 'approx21.net'
 
 ## star1/inlist_step2
-sha256: 5d2677ef9e4af8855fe72b1f3a5ac12103e7736cffde6f60b1026503e22b9448
+sha256: af5df311d463a55fbc702c564b17aabe3b0f11a4fca865eb27dcbc2fa3da4d09
 &controls  (1655 keys, 117 not MESA default)
   terminal_interval = 10
   write_header_frequency = 100
@@ -432,7 +432,7 @@ sha256: 5d2677ef9e4af8855fe72b1f3a5ac12103e7736cffde6f60b1026503e22b9448
   show_log_description_at_start = .false.
   show_net_species_info = .true.
   save_model_when_terminate = .true.
-  save_model_filename = 'initial_star1_step2.mod'
+  save_model_filename = 'final_star1.mod'
   load_saved_model = .true.
   saved_model_name = 'initial_star1_step1.mod'
   set_initial_age = .true.

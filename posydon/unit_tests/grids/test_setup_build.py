@@ -78,7 +78,7 @@ class TestElements:
                     'drop_wiring_keys', 'expand_every_step',
                     'fix_num_x_ctrls', 'formation_step_count',
                     'get_grid_type', 'is_single_star', 'layer_targets',
-                    'legacy_zams', 'os', 'render_binary_project',
+                    'legacy_zams', 'os', 'output_keys', 'render_binary_project',
                     'render_binary_star', 'render_formation_step',
                     'stack_target'}
         assert set(dir(totest)) == elements
@@ -89,7 +89,7 @@ class TestElements:
     @pytest.mark.parametrize("name", [
         'is_single_star', 'layer_targets', 'stack_target', 'legacy_zams',
         'render_binary_project', 'render_binary_star',
-        'render_formation_step', 'build_inlists'])
+        'render_formation_step', 'build_inlists', 'output_keys'])
     def test_instance_functions(self, name):
         assert isroutine(getattr(totest, name))
 
@@ -249,6 +249,26 @@ class TestLegacyZams:
         scenario = ScenarioFiles(formation_stars=("star1",))
         assert totest.legacy_zams(config, scenario) == {"star1": None,
                                                         "star2": "/z.data"}
+
+
+class TestOutputKeys:
+    def test_everything(self):
+        output = OutputSection(star1=("history", "final_profile",
+                                      "final_model"))
+        assert totest.output_keys(output, "star1", 3) == (
+            {"do_history_file": ".true.", "history_interval": 3},
+            {"write_profile_when_terminate": ".true.",
+             "filename_for_profile_when_terminate":
+                 "'final_profile_star1.data'",
+             "save_model_when_terminate": ".true.",
+             "save_model_filename": "'final_star1.mod'"})
+
+    def test_nothing(self):
+        output = OutputSection(star2=())
+        assert totest.output_keys(output, "star2", 1) == (
+            {"do_history_file": ".false.", "history_interval": 1},
+            {"write_profile_when_terminate": ".false.",
+             "save_model_when_terminate": ".false."})
 
 
 class TestRender:
@@ -423,3 +443,29 @@ class TestBuildInlists:
         step0 = read(run / "star1" / "inlist_step0")
         assert step0["controls"]["mesh_delta_coeff"] == "0.5d0"
         assert step0["star_job"]["pgstar_flag"] == ".true."
+
+    def test_single_star_output_goes_to_the_last_step(self, files,
+                                                      tmp_path):
+        """Before, [output] reached only binary/inlist1, never run."""
+        config = GridConfig()
+        config.grid.type = "single_HeMS"
+        config.output = OutputSection(star1=("history", "final_profile"),
+                                      history_interval=7)
+        for step, name in enumerate(("step1", "step2")):
+            for part in ("controls", "job"):
+                config.inlists["posydon_inlists"].add(
+                    "star1_formation_step{}_{}".format(step, part),
+                    files / name)
+        run = tmp_path / "run"
+        totest.build_inlists(config, run, ["initial_mass"])
+        first = read(run / "star1" / "inlist_step0")
+        last = read(run / "star1" / "inlist_step1")
+        assert first["star_job"]["save_model_filename"] == \
+            "'initial_star1_step0.mod'"
+        assert "do_history_file" not in first["controls"]
+        assert last["controls"]["do_history_file"] == ".true."
+        assert last["controls"]["history_interval"] == "7"
+        assert last["star_job"]["write_profile_when_terminate"] == ".true."
+        assert last["star_job"]["save_model_when_terminate"] == ".false."
+        assert last["star_job"]["saved_model_name"] == \
+            "'initial_star1_step0.mod'"

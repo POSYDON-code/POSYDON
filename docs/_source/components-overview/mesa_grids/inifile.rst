@@ -110,7 +110,9 @@ a single namelist such as ``star1_controls`` or ``binary_job``,
 for ``history_columns``, ``binary_history_columns``, ``profile_columns``,
 ``run_binary_extras`` and ``run_star_extras``. Several files for one key are
 separated by commas and applied in order. In a single-star grid, which
-runs star 1 as its formation steps, ``star1`` files apply to every step.
+runs star 1 as its formation steps, ``star1`` files apply to every step,
+and ``[output] star1`` applies to its last step, which runs the star to
+its end (``final_model`` saves ``final_star1.mod``).
 
 A ZAMS model set in ``[grid]`` (``zams``, ``zams_star1``, ``zams_star2``)
 is used instead of the release's. ``[submission]`` settings left out
