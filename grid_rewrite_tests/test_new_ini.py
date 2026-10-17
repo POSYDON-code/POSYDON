@@ -28,7 +28,11 @@ import subprocess
 import sys
 
 import pytest
-from test_release_manifests import INLIST_REPO, INLIST_REPO_COMMIT
+from test_release_manifests import (
+    INLIST_REPO,
+    INLIST_REPO_COMMIT,
+    REQUIRE_INLIST_REPO,
+)
 from test_setup_grid_baseline import CASES as GOLDEN_CASES
 from test_setup_grid_baseline import inlist_origin  # noqa: F401
 from test_setup_grid_baseline import (
@@ -40,8 +44,8 @@ from test_setup_grid_baseline import (
 )
 
 pytestmark = pytest.mark.skipif(
-    not INLIST_REPO, reason="set POSYDON_INLIST_REPO (see "
-    "test_release_manifests.py)")
+    not INLIST_REPO and not REQUIRE_INLIST_REPO,
+    reason="set POSYDON_INLIST_REPO (see test_release_manifests.py)")
 
 # the production commit the legacy inis name (v2.0 itself, no rerun)
 MAIN = ("main", "a060b7bf1a4d94d693f77be9a1b0b3a522c1eadf")
@@ -104,6 +108,7 @@ def run_dir_files(run):
 @pytest.mark.parametrize("case", CASES, ids=[c.name for c in CASES])
 def test_new_ini_equals_legacy_ini(case, tmp_path,
                                    inlist_origin):  # noqa: F811
+    assert INLIST_REPO, "POSYDON_INLIST_REPO is not set"
     grid_type = case.name.split("__")[0]
     env = make_setup_env(tmp_path, inlist_origin)
     shutil.rmtree(env["clone"])

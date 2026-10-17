@@ -14,7 +14,9 @@ layout in ``r11701/releases/v2.0/``, where each of those commits is
   either.
 
 Needs a clone of the inlist repo: ``POSYDON_INLIST_REPO=<path>``, at the
-commit in ``INLIST_REPO_COMMIT`` (CI clones it).
+commit in ``INLIST_REPO_COMMIT`` (CI clones it). Without it these tests are
+skipped, unless ``POSYDON_REQUIRE_INLIST_REPO=1`` (set in CI), which makes
+a missing or wrong clone a failure instead.
 """
 
 __authors__ = [
@@ -42,6 +44,7 @@ from posydon.grids.setup.manifest import (
 from posydon.grids.setup.scenario import scenario_files
 
 INLIST_REPO = os.environ.get("POSYDON_INLIST_REPO", "")
+REQUIRE_INLIST_REPO = os.environ.get("POSYDON_REQUIRE_INLIST_REPO") == "1"
 # v2_sources after "Start releases/development from ..."
 INLIST_REPO_COMMIT = "8482d7d2d6f4abd3374437053aa6cf2b11ff70ca"
 BASE = "a060b7b_main"
@@ -52,8 +55,19 @@ RERUN_NAMES = {"18710e9_main": "main_18710e9",
                "c4f90ce_development": "development_c4f90ce"}
 
 pytestmark = pytest.mark.skipif(
-    not INLIST_REPO, reason="set POSYDON_INLIST_REPO to a clone of "
-    "POSYDON-MESA-INLISTS at {}".format(INLIST_REPO_COMMIT[:7]))
+    not INLIST_REPO and not REQUIRE_INLIST_REPO,
+    reason="set POSYDON_INLIST_REPO to a clone of POSYDON-MESA-INLISTS at "
+    "{}".format(INLIST_REPO_COMMIT[:7]))
+
+
+def test_inlist_repo_is_there():
+    """Fails (in CI) rather than skipping every test when the clone is
+    missing: without it, the parametrized tests below collect nothing."""
+    assert INLIST_REPO, "POSYDON_REQUIRE_INLIST_REPO=1 but " \
+        "POSYDON_INLIST_REPO is not set"
+    assert (Path(INLIST_REPO) / "v2_sources" / "inlists").is_dir(), \
+        "POSYDON_INLIST_REPO={} is not a clone of the v2_sources " \
+        "branch".format(INLIST_REPO)
 
 
 def archived_commits():
