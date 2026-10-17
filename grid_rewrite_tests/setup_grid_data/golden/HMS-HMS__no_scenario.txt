@@ -352,6 +352,7 @@ star1/make/makefile_star: # STUB makefile for tests: compiles nothing
 star2/make/makefile_star: # STUB makefile for tests: compiles nothing
 
 ## mk
+#!/bin/sh
 cd <RUN>/binary/make
 make -f makefile_binary
 cd <RUN>/star1/make

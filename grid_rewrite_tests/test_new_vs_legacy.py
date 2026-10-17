@@ -379,6 +379,9 @@ def test_extras_match_make_executables(case, tmp_path, monkeypatch,
     new_files = {name: data.replace(str(new_run).encode(),
                                     str(old_run).encode())
                  for name, data in staged_files(new_run).items()}
+    # C15: mk now starts with a #! line; nothing else changes
+    assert new_files["mk"].startswith(b"#!/bin/sh\n")
+    new_files["mk"] = new_files["mk"][len(b"#!/bin/sh\n"):]
     assert new_files == old_files
 
 

@@ -121,10 +121,20 @@ class TestStageAndCompile:
                          "star1/src/run_star_extras.f",
                          "star2/make/makefile_star", "star2/src/run.f"]
         assert mk.read_text() == (
+            "#!/bin/sh\n"
             "cd {0}/binary/make\nmake -f makefile_binary\n"
             "cd {0}/star1/make\nmake -f makefile_star\n"
             "cd {0}/star2/make\nmake -f makefile_star\n".format(run))
         assert mk.stat().st_mode & 0o111
+
+    def test_mk_runs_on_its_own(self, sources, tmp_path):
+        """C15: ./mk works without sh in front."""
+        run = tmp_path / "run"
+        mk = totest.stage_extras({"other": sources / "notes.txt"}, run)
+        mk.write_text(mk.read_text() + "touch ran\n")
+        result = totest.subprocess.run(["./mk"], cwd=run)
+        assert result.returncode == 0
+        assert (run / "ran").exists()
 
     def test_mk_lines_without_makefiles(self):
         assert totest.mk_lines({"star_run": "x"}, "/run") == []

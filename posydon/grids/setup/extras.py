@@ -151,8 +151,9 @@ def stage_extras(extras, run_directory):
                 target = target / Path(source).name
             shutil.copy(source, target)
     mk = run / "mk"
-    mk.write_text("".join(line + "\n"
-                          for line in mk_lines(extras, run_directory)))
+    # a #! line, so ./mk runs on its own (C15: before, only through sh)
+    mk.write_text("#!/bin/sh\n" + "".join(
+        line + "\n" for line in mk_lines(extras, run_directory)))
     mk.chmod(0o755)
     return mk
 
@@ -160,9 +161,9 @@ def stage_extras(extras, run_directory):
 def compile_executables(run_directory):
     """Run ``mk`` in the run directory; return the three executables.
 
-    The make output goes to the terminal, as today. ``mk`` has no ``#!``
-    line (today's layout), so it is run through ``sh``, as ``os.system``
-    did.
+    The make output goes to the terminal, as today. ``mk`` is run through
+    ``sh``, as ``os.system`` did, which works whether or not the run
+    directory's file system allows executing it.
     """
     run = Path(run_directory)
     subprocess.run(["sh", "./mk"], cwd=run, check=False)
