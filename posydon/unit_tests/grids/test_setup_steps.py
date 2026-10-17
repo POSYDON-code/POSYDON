@@ -79,6 +79,10 @@ profile_columns = {d}/profile_columns.list
 [extras]
 binary_run = {d}/binary_run.f
 """.format(d=d, run=tmp_path / "run"))
+    # a stub MESA: the files fill_defaults takes for what [extras] leaves out
+    from posydon.grids.setup.defaults import MESA_EXTRAS
+    for rel in MESA_EXTRAS.values():
+        write(tmp_path / "mesa" / rel, "! MESA " + rel + "\n")
     monkeypatch.setenv("MESA_DIR", str(tmp_path / "mesa"))
     monkeypatch.setenv("MESASDK_ROOT", "/sdk")
     monkeypatch.setattr(totest, "find_run_grid", lambda: "/bin/run-grid")
@@ -109,6 +113,11 @@ class TestSetupGrid:
                        for p in run.rglob("*") if p.is_file())
         assert "binary/inlist_project" in names
         assert "binary/src/binary_run.f" in names
+        # the ini names one extra; MESA's makefiles are still filled in
+        assert "binary/make/makefile_binary" in names
+        assert (run / "mk").read_text().count("make -f") == 3
+        assert (run / "binary" / "src" / "binary_run.f").read_text() == \
+            "! binary_run"
         assert "column_lists/profile_columns.list" in names
         assert "grid_command.sh" in names
         record = configparser.ConfigParser(interpolation=None)
@@ -367,7 +376,7 @@ class TestChosenExtras:
             totest.chosen_extras(config, scenario)
 
     def test_filled_in_mesa_extras_drop_silently(self, recwarn):
-        config = GridConfig(default_extras=True)
+        config = GridConfig(default_extras=("mesa_binary_extras",))
         config.extras = {"mesa_binary_extras": Path("m/run_binary_extras.f")}
         scenario = ScenarioFiles()
         scenario.extras = {"posydon_binary_extras":
@@ -375,6 +384,31 @@ class TestChosenExtras:
         kept = totest.chosen_extras(config, scenario)
         assert list(kept) == ["posydon_binary_extras"]
         assert len(recwarn) == 0
+
+    def test_scenario_files_a_user_file_replaces_drop_silently(
+            self, recwarn):
+        config = GridConfig()
+        config.inlists["user_inlists"].whole_files["run_binary_extras"] = \
+            Path("u/mine.f")
+        scenario = ScenarioFiles()
+        scenario.extras = {"posydon_binary_extras":
+                           Path("p/run_binary_extras.f")}
+        kept = totest.chosen_extras(config, scenario)
+        assert kept == {"user_binary_extras": Path("u/mine.f")}
+        assert len(recwarn) == 0
+
+    def test_whole_file_star_extras_go_everywhere_a_star_runs(self):
+        config = GridConfig()
+        config.inlists["user_inlists"].whole_files["run_star_extras"] = \
+            Path("u/mine.f")
+        scenario = ScenarioFiles()
+        scenario.extras = {
+            "posydon_star_binary_extras": Path("p/run_star_extras.f"),
+            "mesa_star1_extras": Path("p/run_star_extras.f")}
+        kept = totest.chosen_extras(config, scenario)
+        assert kept == {"user_star_binary_extras": Path("u/mine.f"),
+                        "user_star1_extras": Path("u/mine.f"),
+                        "user_star2_extras": Path("u/mine.f")}
 
     def test_no_scenario(self):
         config = GridConfig()

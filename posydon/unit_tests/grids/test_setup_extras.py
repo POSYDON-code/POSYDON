@@ -31,7 +31,9 @@ def sources(tmp_path):
 
 class TestElements:
     def test_dir(self):
-        elements = {'COLUMN_LIST_FILES', 'Path', 'SOURCE_FOLDERS',
+        elements = {'COLUMN_LIST_FILES', 'INLIST_LAYERS', 'Path',
+                    'SOURCE_FOLDERS', 'SOURCE_NAMES', 'WHOLE_FILE_EXTRAS',
+                    'file_name', 'whole_file_extras',
                     '__authors__', '__builtins__', '__cached__', '__doc__',
                     '__file__', '__loader__', '__name__', '__package__',
                     '__spec__', 'column_list_sources', 'compile_executables',
@@ -45,7 +47,8 @@ class TestElements:
     @pytest.mark.parametrize("name", [
         'merge_extras', 'keep_highest_extras', 'destinations',
         'mk_lines', 'stage_extras', 'compile_executables',
-        'column_list_sources', 'stage_column_lists'])
+        'column_list_sources', 'stage_column_lists', 'file_name',
+        'whole_file_extras'])
     def test_instance_functions(self, name):
         assert isroutine(getattr(totest, name))
 
@@ -112,6 +115,48 @@ class TestKeepHighestExtras:
         extras = {"star_run": 1}
         assert totest.keep_highest_extras(extras) == extras
 
+    def test_compares_by_the_name_mesa_compiles(self):
+        """A user file under another name still replaces POSYDON's; before,
+        both were kept and MESA compiled POSYDON's."""
+        extras = {"posydon_star_binary_extras": "p/run_star_extras.f",
+                  "user_star_binary_extras": "u/my_extras.f"}
+        assert totest.keep_highest_extras(extras) == {
+            "user_star_binary_extras": "u/my_extras.f"}
+
+
+class TestFileName:
+    @pytest.mark.parametrize("key, expected", [
+        ("posydon_binary_extras", "run_binary_extras.f"),
+        ("user_star_binary_extras", "run_star_extras.f"),
+        ("mesa_star1_extras", "run_star_extras.f"),
+        ("user_star2_extras", "run_star_extras.f"),
+        ("binary_run", "binary_run.f"),
+        ("star_run", "run.f"),
+        ("makefile_star", "a.f"),
+        ("other", "a.f"),
+    ])
+    def test_file_name(self, key, expected):
+        assert totest.file_name(key, "x/a.f") == expected
+
+
+class TestWholeFileExtras:
+    def test_layers_and_targets(self):
+        config = GridConfig()
+        config.inlists["mesa_inlists"].whole_files["run_binary_extras"] = \
+            "m/b.f"
+        config.inlists["user_inlists"].whole_files["run_star_extras"] = \
+            "u/s.f"
+        config.inlists["user_inlists"].whole_files["history_columns"] = \
+            "u/h.list"
+        assert totest.whole_file_extras(config) == {
+            "mesa_binary_extras": Path("m/b.f"),
+            "user_star_binary_extras": Path("u/s.f"),
+            "user_star1_extras": Path("u/s.f"),
+            "user_star2_extras": Path("u/s.f")}
+
+    def test_none(self):
+        assert totest.whole_file_extras(GridConfig()) == {}
+
 
 class TestDestinations:
     @pytest.mark.parametrize("key, expected", [
@@ -161,6 +206,14 @@ class TestStageAndCompile:
             "cd {0}/star1/make\nmake -f makefile_star\n"
             "cd {0}/star2/make\nmake -f makefile_star\n".format(run))
         assert mk.stat().st_mode & 0o111
+
+    def test_copied_under_the_name_mesa_compiles(self, sources, tmp_path):
+        run = tmp_path / "run"
+        totest.stage_extras({"user_star1_extras": sources / "notes.txt"},
+                            run)
+        assert (run / "star1" / "src" / "run_star_extras.f").read_text() == \
+            "! notes.txt\n"
+        assert not (run / "star1" / "src" / "notes.txt").exists()
 
     def test_mk_runs_on_its_own(self, sources, tmp_path):
         """C15: ./mk works without sh in front."""

@@ -49,6 +49,7 @@ from posydon.grids.setup.extras import (
     replaced_column_lists,
     stage_column_lists,
     stage_extras,
+    whole_file_extras,
 )
 from posydon.grids.setup.legacy import read_legacy_config
 from posydon.grids.setup.record import write_record
@@ -194,22 +195,27 @@ def grid_parameters(config, grid_df):
 
 
 def chosen_extras(config, scenario):
-    """The extras of the ini and the scenario, one file per place."""
+    """The extras of the ini, the scenario and the inlist layers' whole
+    files, one file per place.
+
+    A dropped key is reported only when the ini set it: every key of a
+    legacy ini (today's warning), an ``[extras]`` key of a new-format one.
+    MESA's stock files filled in by ``fill_defaults``, and scenario files a
+    user file replaces, are dropped silently: that is what they are for.
+    """
     extras = merge_extras(config.extras,
                           scenario.extras if scenario is not None else None)
+    extras.update(whole_file_extras(config))
     kept = keep_highest_extras(extras)
-    if config.default_extras:
-        # MESA's stock files, filled in for a new-format ini: losing to
-        # POSYDON's is what they are there for, so no warning
-        return kept
     for key in extras:
-        if key not in kept:
-            if config.source_format == "legacy":
-                Pwarn("Section mesa_extras value {0} is being set to None"
-                      .format(key), "ReplaceValueWarning")
-            else:
-                Pwarn("[extras] {} is not used: a higher layer's file goes "
-                      "to the same place".format(key), "ReplaceValueWarning")
+        if key in kept:
+            continue
+        if config.source_format == "legacy":
+            Pwarn("Section mesa_extras value {0} is being set to None"
+                  .format(key), "ReplaceValueWarning")
+        elif key in config.extras and key not in config.default_extras:
+            Pwarn("[extras] {} is not used: a higher layer's file goes "
+                  "to the same place".format(key), "ReplaceValueWarning")
     return kept
 
 

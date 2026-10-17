@@ -110,6 +110,13 @@ for ``history_columns``, ``binary_history_columns``, ``profile_columns``,
 ``run_binary_extras`` and ``run_star_extras``. Several files for one key are
 separated by commas and applied in order.
 
+A whole file from a higher layer replaces the lower one: your
+``run_star_extras`` replaces POSYDON's wherever a star runs (in the binary
+and in the formation steps). Fortran sources are copied under the name MESA
+compiles (``run_star_extras.f``, ``run_binary_extras.f``, ...), so your file
+can have any name. MESA's makefiles and stock sources are filled in for
+every ``[extras]`` key the file does not set.
+
 To see where every value comes from without writing anything, run
 
 .. code-block:: bash

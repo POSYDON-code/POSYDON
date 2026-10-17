@@ -11,8 +11,8 @@ production ini did:
   formation steps, so star 1's defaults go there.
 - ``extras``: MESA's own work files in ``$MESA_DIR`` (makefiles,
   ``run.f``, ``binary_run.f`` and the stock extras), under the legacy
-  ``[mesa_extras]`` names; the scenario's sources then replace the stock
-  extras, as before.
+  ``[mesa_extras]`` names, for every name the ini's ``[extras]`` does not
+  set; the scenario's sources then replace the stock extras, as before.
 
 Anything the ini sets is kept as it is.
 """
@@ -103,7 +103,14 @@ def fill_defaults(config, resolved, mesa_dir):
                                         mesa_installation(release))
         for target, path in targets.items():
             mesa_layer.add(target, path)
-    if not config.extras:
-        config.extras = {key: Path(mesa_dir) / rel
+    # key by key: an ini that names one source still gets MESA's makefiles
+    # and the others (before, naming any [extras] key left out all of them,
+    # so nothing was compiled)
+    filled = tuple(key for key in MESA_EXTRAS if key not in config.extras)
+    if filled:
+        given = config.extras
+        config.extras = {key: given.get(key, Path(mesa_dir) / rel)
                          for key, rel in MESA_EXTRAS.items()}
-        config.default_extras = True
+        config.extras.update({key: path for key, path in given.items()
+                              if key not in MESA_EXTRAS})
+        config.default_extras = filled

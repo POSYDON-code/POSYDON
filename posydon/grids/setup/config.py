@@ -159,9 +159,9 @@ class GridConfig:
     # user about them, e.g. deprecated keys
     source_format: str = "new"
     notes: list = field(default_factory=list)
-    # True when the extras are MESA's stock files filled in by
-    # defaults.fill_defaults, not ones the ini names
-    default_extras: bool = False
+    # the extras keys defaults.fill_defaults filled in with MESA's stock
+    # files, because the ini does not name them
+    default_extras: tuple = ()
     # a legacy ini's sections as read by posydon.utils.configfile, kept
     # because their key order decides today's layering
     legacy: dict = field(default_factory=dict)

@@ -23,7 +23,11 @@ Several keys can put a file with the same name in the same place (e.g.
 ``mesa`` < ``posydon`` < ``user`` (``keep_highest_extras``; fixed C4:
 before, the alphabetically last prefix of all ``*binary_extras*`` keys
 won, and every other ``*binary_extras*`` key was dropped, whatever file it
-gave).
+gave). Places are compared by the name MESA compiles (``file_name``), and
+files are copied under that name.
+
+``run_binary_extras`` and ``run_star_extras`` in an inlist layer are whole
+files too; ``whole_file_extras`` turns them into extras keys of that layer.
 
 The column lists (``history_columns``, ``binary_history_columns``,
 ``profile_columns``) go to ``column_lists/``; the highest layer that names
@@ -49,6 +53,22 @@ LAYER_PREFIXES = ("mesa", "posydon", "user")
 COLUMN_LIST_FILES = {"history_columns": "history_columns.list",
                      "binary_history_columns": "binary_history_columns.list",
                      "profile_columns": "profile_columns.list"}
+# the file MESA compiles for each kind of source (first match wins): a
+# source given under another name is copied under this one
+SOURCE_NAMES = (("star_binary_extras", "run_star_extras.f"),
+                ("binary_extras", "run_binary_extras.f"),
+                ("star1_extras", "run_star_extras.f"),
+                ("star2_extras", "run_star_extras.f"),
+                ("binary_run", "binary_run.f"),
+                ("star_run", "run.f"))
+# whole files of the inlist layers that are Fortran sources, and the extras
+# keys (after the layer prefix) they stand for
+WHOLE_FILE_EXTRAS = {
+    "run_binary_extras": ("binary_extras",),
+    "run_star_extras": ("star_binary_extras", "star1_extras",
+                        "star2_extras"),
+}
+INLIST_LAYERS = ("mesa_inlists", "posydon_inlists", "user_inlists")
 # the folders make_executables recreates, in today's order
 SOURCE_FOLDERS = ("star1/src", "star1/make", "star2/src", "star2/make",
                   "binary/src", "binary/make")
@@ -71,6 +91,55 @@ def merge_extras(config_extras, scenario_extras=None):
             "mesa_star2_extras" not in scenario_extras:
         extras["mesa_star2_extras"] = Path(
             scenario_extras["mesa_star1_extras"])
+    return extras
+
+
+def file_name(key, path):
+    """The name a key's file gets in the run directory.
+
+    Sources are copied under the name MESA compiles (``SOURCE_NAMES``), so
+    ``user_star1_extras = my_extras.f`` becomes ``star1/src/
+    run_star_extras.f`` (before, it was copied as ``my_extras.f``, which
+    MESA never compiles, next to the release's ``run_star_extras.f``).
+    Other files keep their own name.
+
+    Examples
+    --------
+    >>> file_name("user_star1_extras", "my_extras.f")
+    'run_star_extras.f'
+    >>> file_name("posydon_star_binary_extras", "x/a.f")
+    'run_star_extras.f'
+    >>> file_name("something_else", "x/notes.txt")
+    'notes.txt'
+    """
+    for part, name in SOURCE_NAMES:
+        if part in key:
+            return name
+    return Path(path).name
+
+
+def whole_file_extras(config):
+    """The Fortran sources the inlist layers name as whole files.
+
+    ``run_binary_extras`` and ``run_star_extras`` in ``[mesa_inlists]``,
+    ``[posydon_inlists]`` or ``[user_inlists]`` become extras keys of that
+    layer: ``run_star_extras`` in ``[user_inlists]`` is
+    ``user_star_binary_extras``, ``user_star1_extras`` and
+    ``user_star2_extras``, so it is used wherever a star runs. Before, these
+    keys were accepted and then never used.
+
+    Returns
+    -------
+    dict
+        Extras key to path, in layer order.
+    """
+    extras = {}
+    for layer, prefix in zip(INLIST_LAYERS, LAYER_PREFIXES):
+        whole = config.inlists[layer].whole_files
+        for name, parts in WHOLE_FILE_EXTRAS.items():
+            if whole.get(name) is not None:
+                for part in parts:
+                    extras["{}_{}".format(prefix, part)] = Path(whole[name])
     return extras
 
 
@@ -98,7 +167,7 @@ def keep_highest_extras(extras):
         prefix = key.split("_")[0]
         if prefix not in LAYER_PREFIXES or path is None:
             continue
-        place = (tuple(destinations(key)), Path(path).name)
+        place = (tuple(destinations(key)), file_name(key, path))
         rank = LAYER_PREFIXES.index(prefix)
         if place not in best or rank >= best[place][0]:
             best[place] = (rank, key)
@@ -175,7 +244,7 @@ def stage_extras(extras, run_directory):
         for destination in destinations(key):
             target = run / destination
             if destination.endswith("/") or destination == "":
-                target = target / Path(source).name
+                target = target / file_name(key, source)
             shutil.copy(source, target)
     mk = run / "mk"
     # a #! line, so ./mk runs on its own (C15: before, only through sh)

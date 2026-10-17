@@ -98,17 +98,33 @@ class TestFillDefaults:
             [folder / "binary" / "binary_job.defaults"]
         assert config.extras["star_run"] == Path("/mesa/star/work/src/run.f")
         assert list(config.extras) == list(totest.MESA_EXTRAS)
-        assert config.default_extras
+        assert config.default_extras == tuple(totest.MESA_EXTRAS)
 
     def test_keeps_what_the_ini_sets(self):
         config = self.config()
         config.inlists["mesa_inlists"].add("binary_job", Path("/mine"))
-        config.extras = {"star_run": Path("/my/run.f")}
+        config.extras = {"star_run": Path("/my/run.f"),
+                         "user_star1_extras": Path("/my/extras.f")}
         totest.fill_defaults(config, None, "/mesa")
         assert config.inlists["mesa_inlists"].targets == {
             "binary_job": [Path("/mine")]}
-        assert config.extras == {"star_run": Path("/my/run.f")}
-        assert not config.default_extras
+        # the ini's keys are kept; MESA's fill in the rest, in the v2 order
+        assert config.extras["star_run"] == Path("/my/run.f")
+        assert config.extras["makefile_star"] == \
+            Path("/mesa/star/work/make/makefile")
+        assert list(config.extras) == list(totest.MESA_EXTRAS) + [
+            "user_star1_extras"]
+        assert "star_run" not in config.default_extras
+        assert "makefile_binary" in config.default_extras
+
+    def test_nothing_to_fill(self):
+        config = self.config()
+        config.inlists["mesa_inlists"].add("binary_job", Path("/mine"))
+        config.extras = {key: Path("/my") / key for key in totest.MESA_EXTRAS}
+        totest.fill_defaults(config, None, "/mesa")
+        assert config.extras == {key: Path("/my") / key
+                                 for key in totest.MESA_EXTRAS}
+        assert config.default_extras == ()
 
     @pytest.mark.parametrize("resolved", [
         None, ResolvedScenario(files=ScenarioFiles(), repo=Path("/r"))])
