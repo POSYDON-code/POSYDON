@@ -7,7 +7,10 @@ __authors__ = [
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
+import configparser
 import doctest
+import re
+from dataclasses import fields
 from inspect import isroutine
 
 import pytest
@@ -15,7 +18,18 @@ import pytest
 # import the module which will be tested
 import posydon.grids.setup.explain as totest
 import posydon.grids.setup.template as template
-from posydon.grids.setup.config import GridConfig, read_config
+from posydon.grids.setup.config import (
+    INLIST_SHORTHANDS,
+    INLIST_TARGETS,
+    WHOLE_FILES,
+    GridConfig,
+    GridSection,
+    OutputSection,
+    ScenarioSection,
+    SubmissionSection,
+    read_config,
+)
+from posydon.grids.setup.defaults import MESA_EXTRAS
 from posydon.grids.setup.grid_types import GRID_TYPES
 from posydon.grids.setup.scenario import ScenarioFiles
 
@@ -121,6 +135,67 @@ class TestTemplate:
             ("v2.0", "v2_sources")
         assert config.submission.account == "<account>"
 
+    @pytest.mark.parametrize("name", list(GRID_TYPES))
+    def test_every_option_is_valid(self, name, tmp_path):
+        """Uncommenting every option of the template still reads."""
+        text = template.ini_template(name)
+        options = re.findall(r"^; ([a-z0-9_]+) = ", text, flags=re.M)
+        assert len(options) > 30
+        text = re.sub(r"^; ([a-z0-9_]+ = )", r"\1", text, flags=re.M)
+        text = text.replace("<hash>", "1234567")
+        text = re.sub(r"<[^>]*>", "x", text)
+        config = read_config(write(tmp_path / "grid.ini", text))
+        assert config.scenario.commit == "1234567"
+        assert config.scenario.rerun is not None
+        assert config.submission.newgroup == "x"
+        assert set(config.extras) == set(MESA_EXTRAS)
+
+    @pytest.mark.parametrize("name", list(GRID_TYPES))
+    def test_lists_every_option(self, name):
+        """Each option the new format has for the grid type is in it."""
+        grid_type = GRID_TYPES[name]
+        text = template.ini_template(name)
+        parser = configparser.ConfigParser(interpolation=None,
+                                           inline_comment_prefixes=(";",))
+        parser.optionxform = str
+        parser.read_string(re.sub(r"^; ([a-z0-9_]+ = )", r"\1", text,
+                                  flags=re.M))
+        listed = {section: set(parser[section])
+                  for section in parser.sections()}
+        zams = {star for star in ("star1", "star2")
+                if getattr(grid_type, star) == "zams"}
+        grid = {field.name for field in fields(GridSection)} - {
+            "zams_star1", "zams_star2"}
+        grid |= {"zams_" + star for star in zams}
+        if len(zams) == 2:
+            grid.add("zams")
+        assert listed["grid"] == grid
+        # branch and system_type come from legacy inis only
+        assert listed["scenario"] == {
+            field.name for field in fields(ScenarioSection)} - {
+            "branch", "system_type"}
+        stars = {"star1"}
+        if grid_type.star2 in ("zams", "formation"):
+            stars.add("star2")
+        inlists = set(WHOLE_FILES) | {
+            key for key in set(INLIST_TARGETS) | set(INLIST_SHORTHANDS)
+            if key.split("_")[0] in stars or
+            (key.startswith("binary") and not grid_type.single_star)}
+        for star in stars:
+            if getattr(grid_type, star) == "formation":
+                inlists |= {star + "_formation", star + "_formation_step0"}
+        assert listed["user_inlists"] == inlists
+        output = {"history_interval", "star1"}
+        if not grid_type.single_star:
+            output |= {"star2", "binary"}
+        assert listed["output"] <= {"history_interval", "star1", "star2",
+                                    "binary"}
+        assert len(fields(OutputSection)) == 4
+        assert listed["output"] == output
+        assert listed["submission"] == {
+            field.name for field in fields(SubmissionSection)}
+        assert listed["extras"] == set(MESA_EXTRAS)
+
     def test_zams_keys(self):
         assert "\nzams = <" in template.ini_template("HMS-HMS")
         assert "\nzams_star2 = <" in template.ini_template("HeMS-HMS")
@@ -131,4 +206,11 @@ class TestTemplate:
     def test_outputs(self):
         text = template.ini_template("single_HeMS")
         assert "star1 = history, final_model" in text
-        assert "star2 = none" in text
+        # a single star has no star 2 and no binary
+        assert "\nstar2 =" not in text and "\nbinary =" not in text
+        assert "\nstar2 = none" in template.ini_template("CO-HeMS")
+
+    def test_width(self):
+        for name in GRID_TYPES:
+            assert max(len(line) for line in template.ini_template(
+                name).splitlines()) <= template.WIDTH

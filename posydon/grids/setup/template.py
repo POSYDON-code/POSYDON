@@ -1,59 +1,197 @@
-"""A starter new-format ini for a grid type (``--init``).
+"""A starter new-format ini for a grid type (``posydon-grid init``).
 
-The template names every section with comments and fills what the grid
-type decides (its type, what MESA writes for each star). What only the user
-knows is left as ``<...>`` placeholders: the SLURM account and partition,
-and a ZAMS model for stars that start from ZAMS.
+The template lists every option the new format takes for the grid type,
+section by section, each with a short note. Options that have a default or
+are optional are written commented out (``; key = value``): remove the
+``;`` to use one. Options that do not apply to the grid type are left out,
+e.g. star 2's inlists in a single-star grid or formation steps for a star
+that starts from ZAMS.
 
-The scenario is written out in full, with no hidden default: the release,
-a commented-out rerun and the inlist repository's ref.
+What the grid type decides is filled in (its type, what MESA writes for
+each star). What only the user knows is left as ``<...>`` placeholders: the
+SLURM account and partition, and a ZAMS model for stars that start from
+ZAMS. The scenario is written out in full, with no hidden default: the
+release and the inlist repository's ref.
 """
 
 __authors__ = [
     "Max Briel <max.briel@unige.ch>",
 ]
 
+from posydon.grids.setup.defaults import MESA_EXTRAS
 from posydon.grids.setup.grid_types import get_grid_type
 
-TEMPLATE = """\
-; posydon-grid settings for a {name} grid:
-; {description}.
-; Written by posydon-grid init {name}. Paths are relative to this file.
-; Check with: posydon-grid explain <this file>
-; Set up with: posydon-grid setup <this file>
+# column of the inline comments, and the longest line
+COMMENT_COLUMN = 28
+WIDTH = 79
 
-[grid]
-type = {name}
-mode = fixed                ; fixed | dynamic (dynamic needs psycris_inifile)
-points = grid.csv           ; the grid points, one row per MESA run
-run_directory = .           ; where executables, inlists and output go
-{zams}
-[scenario]                  ; which POSYDON inlists to use
-release = v2.0
-; rerun = matthias_lbv_thermo_dedt_noAgeLimit  ; a physics variant of v2.0
-ref = v2_sources            ; branch or tag of POSYDON-MESA-INLISTS;
-                            ; pin a production grid with commit = <hash>
-; source = path             ; use inlist_repo as it is, without git
-; inlist_repo = ~/.posydon_mesa_inlists
+ZAMS_NOTE = "e.g. <inlist repo>/r11701/ZAMS_models/zams_z1.42m2_y0.2703.data"
 
-[user_inlists]              ; your own MESA inlists, on top of the release
-; binary = my_inlist_project
-; star1_controls = my_inlist1
 
-[output]
-history_interval = 1
-star1 = {star1}
-star2 = {star2}
-binary = history            ; history | none
+def _with_note(text, note):
+    """``text  ; note``, or the note on a line of its own above ``text``
+    when the two do not fit in ``WIDTH`` columns."""
+    if not note:
+        return text + "\n"
+    inline = text.ljust(COMMENT_COLUMN - 1) + " ; " + note
+    if len(inline) <= WIDTH:
+        return inline + "\n"
+    return "; " + note + "\n" + text + "\n"
 
-[submission]
-backend = slurm_array       ; shell | slurm_array | slurm_mpi
-partition = <partition>
-account = <account>
-walltime = 2-00:00:00
-email = <email>
-cpus_per_task = 4
-"""
+
+def _line(key, value, note=None, active=True):
+    """``key = value  ; note``, commented out unless ``active``."""
+    return _with_note("{}{} = {}".format("" if active else "; ", key, value),
+                      note)
+
+
+def _header(name, *notes):
+    """``[name]`` and its notes, one comment line each."""
+    return "[{}]\n".format(name) + "".join("; " + note + "\n"
+                                           for note in notes)
+
+
+def _grid(grid_type):
+    text = _header("grid", "what to run, and where")
+    text += _line("type", grid_type.name, "see posydon-grid types")
+    text += _line("mode", "fixed", "fixed | dynamic (psy-cris samples)")
+    text += _line("points", "grid.csv", "a CSV, a PSyGrid .h5 or a folder "
+                  "of runs")
+    text += _line("run_directory", ".", "where executables, inlists and "
+                  "output go")
+    text += _line("psycris_inifile", "<psy-cris ini>", "needed for mode = "
+                  "dynamic", active=False)
+    zams_stars = [star for star in ("star1", "star2")
+                  if getattr(grid_type, star) == "zams"]
+    if len(zams_stars) == 2:
+        text += _line("zams", "<ZAMS model>", "both stars; " + ZAMS_NOTE)
+        text += _line("zams_star1", "<ZAMS model>", "instead of zams, one "
+                      "per star", active=False)
+        text += _line("zams_star2", "<ZAMS model>", active=False)
+    elif zams_stars:
+        text += _line("zams_" + zams_stars[0], "<ZAMS model>", ZAMS_NOTE)
+    text += _line("keep_profiles", "false", "keep each run's profiles",
+                  active=False)
+    text += _line("keep_photos", "false", "keep each run's photos",
+                  active=False)
+    return text
+
+
+def _scenario():
+    text = _header("scenario", "which POSYDON inlists to use, from "
+                   "POSYDON-MESA-INLISTS")
+    text += _line("release", "v2.0", "r11701/releases/<release>/")
+    text += _line("rerun", "matthias_lbv_thermo_dedt_noAgeLimit",
+                  "a physics variant: reruns/<rerun>/", active=False)
+    text += _line("ref", "v2_sources", "branch or tag to check out")
+    text += _line("commit", "<hash>", "an exact commit instead (wins over "
+                  "ref)", active=False)
+    text += _line("source", "posydon", "posydon | user | path (path: no "
+                  "git)", active=False)
+    text += _line("inlist_repo", "~/.posydon_mesa_inlists", "the clone; "
+                  "cloned if missing", active=False)
+    text += _line("mesa", "r11701", "if the release exists for several "
+                  "MESA versions", active=False)
+    return text
+
+
+def _inlist_keys(grid_type):
+    """``(key, note)`` of every inlist-layer key that applies."""
+    single = grid_type.single_star
+    keys = []
+    if not single:
+        keys += [("binary", "&binary_controls and &binary_job"),
+                 ("binary_controls", "only &binary_controls"),
+                 ("binary_job", "only &binary_job")]
+    keys += [("star1", "&controls and &star_job of star 1" +
+              (", every step" if single else "")),
+             ("star1_controls", "only &controls of star 1"),
+             ("star1_job", "only &star_job of star 1")]
+    if grid_type.star2 in ("zams", "formation"):
+        keys += [("star2", "&controls and &star_job of star 2"),
+                 ("star2_controls", "only &controls of star 2"),
+                 ("star2_job", "only &star_job of star 2")]
+    for star in ("star1", "star2"):
+        if getattr(grid_type, star) == "formation":
+            keys += [("{}_formation".format(star),
+                      "one file per formation step, in order"),
+                     ("{}_formation_step0".format(star),
+                      "on top of formation step 0 (one key per step)")]
+    keys += [("history_columns", "whole files: replace the lower layers'"),
+             ("binary_history_columns", None),
+             ("profile_columns", None),
+             ("run_binary_extras", "Fortran sources, any file name"),
+             ("run_star_extras", None)]
+    return keys
+
+
+def _inlists(grid_type):
+    keys = _inlist_keys(grid_type)
+    text = _header("mesa_inlists", "MESA's defaults; by default those of "
+                   "the release's MESA installation.",
+                   "Same keys as [user_inlists]; a file given for a "
+                   "namelist replaces", "MESA's defaults there.")
+    text += _line(keys[0][0], "<file>", active=False)
+    text += "\n" + _header("posydon_inlists", "More POSYDON files, same "
+                           "keys as [user_inlists]; the release's",
+                           "files come after them, key by key.")
+    text += _line(keys[0][0], "<file>", active=False)
+    text += "\n" + _header("user_inlists", "Your own MESA inlists, on top "
+                           "of the release, key by key.",
+                           "Several files for one key: <file>, <file> (the "
+                           "last wins).")
+    for key, note in keys:
+        text += _line(key, "<file>", note, active=False)
+    return text
+
+
+def _output(grid_type):
+    text = _header("output", "what MESA writes")
+    text += _line("history_interval", "1", "MESA steps between history "
+                  "lines")
+    stars = ("star1",) if grid_type.single_star else ("star1", "star2")
+    for star in stars:
+        evolved = getattr(grid_type, star) in ("zams", "formation")
+        text += _line(star, "history, final_model" if evolved else "none",
+                      "history, final_profile, final_model or none"
+                      if star == "star1" else None)
+    if not grid_type.single_star:
+        text += _line("binary", "history", "history | none")
+    return text
+
+
+def _submission():
+    text = _header("submission", "how the grid is run")
+    text += _line("backend", "slurm_array", "shell | slurm_array | "
+                  "slurm_mpi")
+    text += _line("job_array", "true", "shell: one by one, or false: one "
+                  "mpirun", active=False)
+    text += "; SLURM settings, left out of the scripts if not set:\n"
+    text += _line("partition", "<partition>")
+    text += _line("account", "<account>")
+    text += _line("walltime", "2-00:00:00")
+    text += _line("email", "<email>")
+    text += _line("cpus_per_task", "4", "OpenMP threads per MESA run")
+    text += _line("mem_per_cpu", "4G", active=False)
+    text += _line("nodes", "1", "slurm_mpi: nodes, and MPI tasks per node",
+                  active=False)
+    text += _line("mpi_tasks", "1", active=False)
+    text += _line("work_dir", "<scratch folder>", "run each point in a "
+                  "temporary folder there", active=False)
+    text += _line("newgroup", "<group>", "hand the output to this Unix "
+                  "group", active=False)
+    return text
+
+
+def _extras():
+    text = _header("extras", "Fortran sources and makefiles. For any key "
+                   "not set, MESA's own file", "in $MESA_DIR is used, e.g. "
+                   "makefile_binary: binary/work/make/makefile.",
+                   "A key with a user_ prefix (e.g. user_star1_extras) wins "
+                   "over the release's.")
+    for key in MESA_EXTRAS:
+        text += _line(key, "<file>", active=False)
+    return text
 
 
 def ini_template(name):
@@ -63,21 +201,20 @@ def ini_template(name):
     --------
     >>> "star2 = none" in ini_template("CO-HMS_RLO")
     True
+    >>> "; star1_formation_step0 = <file>" in ini_template("CO-HeMS")
+    True
     """
     grid_type = get_grid_type(name)
-    zams_stars = [star for star in ("star1", "star2")
-                  if getattr(grid_type, star) == "zams"]
-    if zams_stars:
-        key = "zams" if len(zams_stars) == 2 else "zams_" + zams_stars[0]
-        zams = ("{} = <ZAMS model, e.g. POSYDON-MESA-INLISTS/r11701/"
-                "ZAMS_models/zams_z1.42m2_y0.2703.data>\n".format(key))
-    else:
-        zams = ""
-    outputs = {}
-    for star in ("star1", "star2"):
-        evolved = getattr(grid_type, star) in ("zams", "formation") and \
-            not (grid_type.single_star and star == "star2")
-        outputs[star] = "history, final_model" if evolved else "none"
-    return TEMPLATE.format(name=grid_type.name,
-                           description=grid_type.description, zams=zams,
-                           star1=outputs["star1"], star2=outputs["star2"])
+    head = ("; posydon-grid settings for a {0} grid:\n"
+            "; {1}.\n"
+            "; Written by posydon-grid init {0}.\n"
+            "; Paths are relative to this file.\n"
+            "; Every option for this grid type is listed; those starting "
+            "with ';' are\n"
+            "; left at their default: remove the ';' to set one.\n"
+            "; Check with: posydon-grid explain <this file>\n"
+            "; Set up with: posydon-grid setup <this file>\n").format(
+                grid_type.name, grid_type.description)
+    return "\n".join([head, _grid(grid_type), _scenario(),
+                      _inlists(grid_type), _output(grid_type),
+                      _submission(), _extras()])

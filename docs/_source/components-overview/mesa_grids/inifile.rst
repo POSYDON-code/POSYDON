@@ -51,7 +51,10 @@ Write a starter file for a grid type with
     posydon-grid types
     posydon-grid init CO-HeMS grid.ini
 
-and fill in the ``<...>`` values. A complete example:
+and fill in the ``<...>`` values. The file lists every option the grid
+type takes, each with a short note; options left at their default are
+commented out (``; key = value``), so remove the ``;`` to set one. A
+shorter example:
 
 .. code-block:: ini
 
