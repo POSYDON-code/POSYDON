@@ -75,6 +75,7 @@ And to download the full DR2 dataset:
 .. code-block:: bash
 
    get-posydon-data DR2
+
 See the ``get-posydon-data`` reference page (``api_reference/get_posydon_data.rst``)
 for the full list of options.
 
