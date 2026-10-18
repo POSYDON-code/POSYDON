@@ -5,16 +5,12 @@ Architecting MESA Simulation Grids with POSYDON
 
 You can use POSYDON framework to run your own, customized MESA simulations of single and binary systems. Here we will go through POSYDON's dedicated MESA configuration repository and infrastructure for one or even big grids of MESA runs.
 
-Getting Started Tutorials
--------------------------
-
-The POSYDON MESA simulation parameters are stored in `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_ Github repository.
-To get the latest version of the POSYDON-MESA-INLISTS repository, you need to clone the POSYDON-MESA-INLISTS repository.
+The POSYDON MESA simulation parameters are stored in the `POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_ Github repository, on its ``v2_sources`` branch.
+Clone it once:
 
 .. code-block:: bash
 
-    git clone https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git
-    cd POSYDON-MESA-INLISTS
+    git clone --branch v2_sources https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git ~/POSYDON-MESA-INLISTS
 
 
 This repository contains the MESA inlists used by POSYDON to run single and binary star simulations.
@@ -25,7 +21,7 @@ Additionally, multiple changes were made to the MESA source code to fix bugs, in
 
     Please contact us if you want to run MESA grids with this adapted version of MESA.
 
-Each branch and commit in the  POSYDON-MESA-INLISTS repository contains a specific set of MESA inlists associated to a POSYDON rerun.
+Each POSYDON release is a folder of this repository (``r11701/releases/v2.0/``), and the reruns of a release, the physics variants some of its grids were run again with, are folders inside it (``reruns/<rerun>/``). You choose a release and a rerun in your :samp:`ini` file; see :ref:`posydon_grid`.
 
 To follow the next step of the tutorial, you will need to have a MESA version compatible with POSYDON installed on your machine. If you do not have MESA installed, please follow the instructions on the `MESA website <https://docs.mesastar.org/en/release-r23.05.1/>`_.
 
@@ -33,6 +29,35 @@ To follow the next step of the tutorial, you will need to have a MESA version co
 
     The POSYDON v2.0.0 code is compatible with MESA r11701 inlists. Support might not be available for the latest MacOS version.
 
+
+How-to guides
+-------------
+
+Each guide sets up one kind of grid with ``posydon-grid``, from an empty
+folder to a run directory ready to submit. They were run as shown, with the
+outputs kept.
+
+.. toctree::
+   :maxdepth: 1
+
+   how-to/hms_hms_rerun
+   how-to/single_hms_rerun
+   how-to/single_hems_rerun
+   how-to/stack_own_inlist
+   how-to/shell_laptop
+
+Ready-made :samp:`ini` files for every grid type are in the `examples folder
+<https://github.com/POSYDON-code/POSYDON/tree/main/docs/_source/components-overview/mesa_grids/examples>`_.
+
+Getting Started Tutorials (legacy ini format)
+---------------------------------------------
+
+.. note::
+
+    The tutorials below use the legacy :samp:`ini` format (``grid_params.ini``,
+    with ``[slurm]``, ``[mesa_inlists]``, ``[mesa_extras]`` and
+    ``[run_parameters]``), which ``posydon-grid`` still reads. For new grids,
+    follow the how-to guides above.
 
 I. Running your first MESA simulation using POSYDON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -85,17 +110,9 @@ Advanced Tutorials
 Creating and Customizing MESA Grids layer by layer
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Step-by-step guide on how to leverage our MESA simulation submission API for creating and customizing MESA grids to suit your needs.
-
-Dive deeper into advanced techniques for grid creation, by layering MESA and POSYDON default inlist parameters and customizing your inlists variables on top to your needs.
-
-.. warning::
-
-    This feature is only partially implemented. Please contact us if you require more information.
-
-.. .. toctree::
-
-..     notebook: Creating and Customizing MESA Grids layer by layer
+Every inlist is stacked from MESA's defaults, the POSYDON release (and
+rerun), and your own inlists. See the how-to
+:doc:`how-to/stack_own_inlist`, and :ref:`posydon_grid` for the layers.
 
 Running a dynamically sampled grid of MESA simulations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

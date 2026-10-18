@@ -313,8 +313,7 @@ def write_scripts(config, command, n_points, folder, mesasdk_root,
     n_points : int
         Number of grid points (rows of the grid CSV).
     folder : str or Path
-        Where the scripts go. Today this is the current directory, not the
-        run directory (S9).
+        Where the scripts go: the run directory.
     mesasdk_root, mesa_dir : str
         Written into the scripts; today ``$MESASDK_ROOT`` and ``$MESA_DIR``.
 
