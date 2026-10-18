@@ -39,7 +39,11 @@ from pathlib import Path
 import pandas
 
 from posydon.grids.setup.build import build_inlists
-from posydon.grids.setup.config import ConfigError, read_config
+from posydon.grids.setup.config import (
+    ConfigError,
+    SetupError,
+    read_config,
+)
 from posydon.grids.setup.defaults import fill_defaults
 from posydon.grids.setup.explain import explain_text
 from posydon.grids.setup.extras import (
@@ -92,9 +96,12 @@ def read_any_config(inifile, grid_type=None, run_directory=None,
         ``posydon-setup-grid`` does); otherwise they are refused, since the
         ini says all of it.
     """
+    if not Path(inifile).is_file():
+        # not a legacy ini without --grid-type: no ini at all
+        raise SetupError("{} not found".format(inifile))
     if not is_new_format(inifile):
         if grid_type is None:
-            raise ValueError("--grid-type is needed for a legacy ini file")
+            raise SetupError("--grid-type is needed for a legacy ini file")
         return read_legacy_config(
             inifile, grid_type=grid_type,
             submission_type=submission_type or 'shell',
@@ -106,7 +113,7 @@ def read_any_config(inifile, grid_type=None, run_directory=None,
         ("--grid-type", grid_type), ("--run-directory", run_directory),
         ("--submission-type", submission_type)) if value is not None]
     if given and not overrides:
-        raise ValueError("{} only {} to legacy ini files; a new-format "
+        raise SetupError("{} only {} to legacy ini files; a new-format "
                          "ini says this in [grid] mode, run_directory and "
                          "[submission] backend".format(
                              ", ".join(given),
@@ -129,10 +136,10 @@ def check_config(config):
     """Stop on settings that would fail later, before anything is written."""
     grid = config.grid
     if not (grid.points.is_file() or grid.points.is_dir()):
-        raise ValueError("Supplied grid does not exist, please check your "
+        raise SetupError("Supplied grid does not exist, please check your "
                          "path and try again")
     if grid.mode == "dynamic" and grid.psycris_inifile is None:
-        raise ValueError("Please add psycris inifile to the [run_parameters] "
+        raise SetupError("Please add psycris inifile to the [run_parameters] "
                          "section of the inifile.")
     # named as the ini says it: [slurm] job_array in a legacy ini,
     # [submission] backend in a new-format one
@@ -184,7 +191,7 @@ def read_grid_points(grid):
         grid_df = psy_grid.get_pandas_initial_final()
         psy_grid.close()
         return grid_df, h5_path
-    raise ValueError('Grid format not recognized, please feed in an '
+    raise SetupError('Grid format not recognized, please feed in an '
                      'acceptable format: csv')
 
 
@@ -221,7 +228,7 @@ def chosen_extras(config, scenario):
 def _environment(*names):
     for name in names:
         if name not in os.environ:
-            raise ValueError("{} must be defined in your environment "
+            raise SetupError("{} must be defined in your environment "
                              "before you can set up a grid of MESA runs"
                              .format(name))
 

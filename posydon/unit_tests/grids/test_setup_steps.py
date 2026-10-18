@@ -17,7 +17,7 @@ import pytest
 
 # import the module which will be tested
 import posydon.grids.setup.steps as totest
-from posydon.grids.setup.config import ConfigError, GridConfig
+from posydon.grids.setup.config import ConfigError, GridConfig, SetupError
 from posydon.grids.setup.resolve import ResolvedScenario
 from posydon.grids.setup.scenario import ScenarioFiles
 
@@ -230,6 +230,11 @@ class TestPrepare:
 
 
 class TestReadAnyConfig:
+    def test_missing_file(self, tmp_path):
+        """Not "--grid-type is needed for a legacy ini file"."""
+        with pytest.raises(SetupError, match="nope.ini not found"):
+            totest.read_any_config(tmp_path / "nope.ini")
+
     def test_is_new_format(self, grid, tmp_path):
         assert totest.is_new_format(grid["ini"])
         assert not totest.is_new_format(write(tmp_path / "old.ini",

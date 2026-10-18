@@ -56,7 +56,16 @@ EXTRAS_KEYS = ("makefile_binary", "makefile_star", "binary_run", "star_run")
 OUTPUT_OPTIONS = ("history", "final_profile", "final_model")
 
 
-class ConfigError(ValueError):
+class SetupError(ValueError):
+    """A mistake the user can fix: in the ini, a file or the environment.
+
+    ``posydon-grid`` prints it as one line, ``posydon-grid: error: ...``,
+    and exits with status 2; any other exception is a bug and keeps its
+    traceback.
+    """
+
+
+class ConfigError(SetupError):
     """A problem in the ini file, naming the section and key."""
 
     def __init__(self, section, key, message):

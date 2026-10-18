@@ -90,6 +90,13 @@ A new-format :samp:`ini` file says everything ``setup`` needs. The options
 ``--grid-type``, ``--run-directory`` and ``--submission-type`` are for
 legacy :samp:`ini` files only (below).
 
+A mistake in the :samp:`ini` file or the environment (a wrong value, a
+missing file, ``$MESASDK_ROOT`` not set, ``init`` onto an existing file) is
+printed as one line, such as ``posydon-grid: error: [submission] backend:
+...``, and the command exits with status 2. A Python traceback means a bug
+in ``posydon-grid``; please report it.
+
+
 
 The layers
 ==========

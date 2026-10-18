@@ -15,6 +15,11 @@ ini cannot say the grid type, run directory and submission type, so for
 it they are given as ``--grid-type``, ``--run-directory`` and
 ``--submission-type``.
 
+A mistake the user can fix (a ``SetupError``: a wrong ini value, a
+missing file, an unset environment variable) is printed as one line,
+``posydon-grid: error: ...``, with exit status 2, as argparse does for a
+wrong option; anything else is a bug and keeps its traceback.
+
 ``posydon-setup-grid`` (``legacy_main``) still works with its old options,
 says it is deprecated and prints the ``posydon-grid`` command to use.
 
@@ -31,7 +36,7 @@ import os
 import shlex
 import sys
 
-from posydon.grids.setup.config import GRID_MODES
+from posydon.grids.setup.config import GRID_MODES, SetupError
 from posydon.grids.setup.grid_types import describe_grid_types
 from posydon.grids.setup.steps import (
     SUBMISSION_TYPES,
@@ -97,7 +102,7 @@ def build_parser():
 def init_command(grid_type, inifile):
     """Write a starter ini; refuse to overwrite one."""
     if os.path.exists(inifile):
-        raise ValueError("{} exists; not overwriting it".format(inifile))
+        raise SetupError("{} exists; not overwriting it".format(inifile))
     with open(inifile, "w") as handle:
         handle.write(ini_template(grid_type))
     print("Wrote {}; fill in the <...> values.".format(inifile))
@@ -119,9 +124,26 @@ def _options(args, overrides=False):
     return options
 
 
+def fail(prog, error):
+    """Print a user error as one line and exit with status 2.
+
+    The status and the ``<prog>: error:`` prefix are those of argparse,
+    so a wrong ini value reads like a wrong option.
+    """
+    print("{}: error: {}".format(prog, error), file=sys.stderr)
+    sys.exit(2)
+
+
 def main(argv=None):
     """Run ``posydon-grid`` with ``argv`` (default: the command line)."""
     argv = sys.argv[1:] if argv is None else list(argv)
+    try:
+        _main(argv)
+    except SetupError as error:
+        fail("posydon-grid", error)
+
+
+def _main(argv):
     if argv[:1] == ["run"]:
         run_command(argv[1:])
         return
@@ -189,6 +211,13 @@ def legacy_main(argv=None):
     args = parser.parse_args(argv)
     if args.inifile is None and not args.list_grid_types:
         parser.error("--inifile is required")
+    try:
+        _legacy_main(args, argv)
+    except SetupError as error:
+        fail("posydon-setup-grid", error)
+
+
+def _legacy_main(args, argv):
     Pwarn("posydon-setup-grid is deprecated and will be removed; use "
           "'{}' instead (posydon-grid has the commands types, init, "
           "explain, setup and run)".format(equivalent_command(args)),

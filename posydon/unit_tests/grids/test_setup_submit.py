@@ -57,7 +57,8 @@ def command(config):
 class TestElements:
     def test_dir(self):
         elements = {'CLEANUP_SCRIPT', 'GRID_SCRIPTS', 'Path', 'Pwarn',
-                    'RUN_GRID_OPTIONS', 'RUN_SCRIPT', '__authors__',
+                    'RUN_GRID_OPTIONS', 'RUN_SCRIPT', 'SetupError',
+                    '__authors__',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
                     '_environment', '_finish', '_sbatch', '_time', '_write',

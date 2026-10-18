@@ -10,6 +10,7 @@ import pytest
 
 # import the module which will be tested
 import posydon.CLI.grid.main as totest
+from posydon.grids.setup.config import ConfigError, SetupError
 
 
 @pytest.fixture
@@ -29,7 +30,7 @@ LEGACY = {"grid_type": None, "run_directory": None, "submission_type": None}
 
 class TestElements:
     def test_dir(self):
-        assert {'build_parser', 'main', 'init_command', 'run_command',
+        assert {'build_parser', 'main', 'fail', 'init_command', 'run_command',
                 'build_legacy_parser', 'equivalent_command',
                 'legacy_main'} <= set(dir(totest))
 
@@ -44,8 +45,8 @@ class TestPosydonGrid:
         totest.main(["init", "CO-HeMS", str(ini)])
         assert "type = CO-HeMS" in ini.read_text()
         assert "Wrote" in capsys.readouterr().out
-        with pytest.raises(ValueError, match="exists; not overwriting"):
-            totest.main(["init", "CO-HeMS", str(ini)])
+        with pytest.raises(SetupError, match="exists; not overwriting"):
+            totest.init_command("CO-HeMS", str(ini))
 
     def test_setup_new_format(self, calls):
         totest.main(["setup", "grid.ini"])
@@ -131,3 +132,89 @@ class TestPosydonSetupGrid:
         assert totest.equivalent_command(args) == (
             "posydon-grid setup 'my grid.ini' --run-directory /r "
             "--submission-type slurm")
+
+
+def raising(error):
+    def command(*args, **kwargs):
+        raise error
+    return command
+
+
+class TestUserErrors:
+    """A user's mistake is one line and exit status 2; a bug raises."""
+
+    def one_line(self, capsys, call):
+        with pytest.raises(SystemExit) as stop:
+            call()
+        assert stop.value.code == 2
+        captured = capsys.readouterr()
+        assert captured.out == ""
+        assert captured.err.count("\n") == 1
+        return captured.err
+
+    def test_init_onto_an_existing_file(self, tmp_path, capsys):
+        ini = tmp_path / "grid.ini"
+        ini.write_text("mine")
+        err = self.one_line(capsys, lambda: totest.main(
+            ["init", "CO-HeMS", str(ini)]))
+        assert err == "posydon-grid: error: {} exists; not overwriting " \
+            "it\n".format(ini)
+        assert ini.read_text() == "mine"
+
+    def test_unknown_grid_type(self, tmp_path, capsys):
+        err = self.one_line(capsys, lambda: totest.main(
+            ["init", "MS-MS", str(tmp_path / "grid.ini")]))
+        assert err.startswith("posydon-grid: error: [grid] type: unknown "
+                              "grid type 'MS-MS'")
+
+    def test_missing_environment(self, tmp_path, capsys, monkeypatch):
+        monkeypatch.setenv("MESA_DIR", str(tmp_path))
+        monkeypatch.delenv("MESASDK_ROOT", raising=False)
+        err = self.one_line(capsys, lambda: totest.main(
+            ["setup", str(tmp_path / "grid.ini")]))
+        assert err.startswith("posydon-grid: error: MESASDK_ROOT must be "
+                              "defined in your environment")
+
+    def test_missing_ini(self, tmp_path, capsys, monkeypatch):
+        monkeypatch.setenv("MESA_DIR", str(tmp_path))
+        err = self.one_line(capsys, lambda: totest.main(
+            ["explain", str(tmp_path / "nope.ini")]))
+        assert err == "posydon-grid: error: {} not found\n".format(
+            tmp_path / "nope.ini")
+
+    def test_config_error(self, capsys, monkeypatch):
+        monkeypatch.setattr(totest, "setup_grid", raising(ConfigError(
+            "submission", "backend", "a fixed grid runs one point per "
+            "task")))
+        err = self.one_line(capsys, lambda: totest.main(
+            ["setup", "grid.ini"]))
+        assert err == "posydon-grid: error: [submission] backend: a fixed " \
+            "grid runs one point per task\n"
+
+    @pytest.mark.parametrize("args", [["run", "--grid-type", "fixed"],
+                                      ["run", "-h"]])
+    def test_run_without_posydon_run_grid(self, args, capsys, monkeypatch,
+                                          tmp_path):
+        monkeypatch.setenv("PATH", str(tmp_path))
+        err = self.one_line(capsys, lambda: totest.main(args))
+        assert err == "posydon-grid: error: Cannot locate posydon-run-grid " \
+            "executable in your path\n"
+
+    def test_deprecated_command(self, capsys, monkeypatch):
+        monkeypatch.setattr(totest, "explain_grid", raising(ConfigError(
+            "grid", "type", "needed")))
+        with pytest.warns(match="deprecated"):
+            err = self.one_line(capsys, lambda: totest.legacy_main(
+                ["--inifile", "grid.ini", "--explain"]))
+        assert err == "posydon-setup-grid: error: [grid] type: needed\n"
+
+    @pytest.mark.parametrize("error", [ValueError("a bug"),
+                                       KeyError("a bug"),
+                                       RuntimeError("mk failed")])
+    def test_other_errors_raise(self, error, monkeypatch):
+        monkeypatch.setattr(totest, "setup_grid", raising(error))
+        monkeypatch.setattr(totest, "explain_grid", raising(error))
+        with pytest.raises(type(error)):
+            totest.main(["setup", "grid.ini"])
+        with pytest.raises(type(error)), pytest.warns(match="deprecated"):
+            totest.legacy_main(["--inifile", "grid.ini", "--explain"])

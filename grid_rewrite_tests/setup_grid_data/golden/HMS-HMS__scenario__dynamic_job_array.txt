@@ -1,5 +1,5 @@
-returncode: 1
-error: posydon.grids.setup.config.ConfigError: [slurm] job_array: a dynamic grid runs as one MPI job: set job_array = False (new format: [submission] backend = slurm_mpi)
+returncode: 2
+error: posydon-grid: error: [slurm] job_array: a dynamic grid runs as one MPI job: set job_array = False (new format: [submission] backend = slurm_mpi)
 
 ## staged sources
 

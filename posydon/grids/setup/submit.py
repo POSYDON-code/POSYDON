@@ -39,6 +39,7 @@ __authors__ = [
 import shutil
 from pathlib import Path
 
+from posydon.grids.setup.config import SetupError
 from posydon.utils.posydonwarning import Pwarn
 
 # the options of posydon-run-grid, in today's order, and the name of the
@@ -72,12 +73,12 @@ def find_run_grid():
 
     Raises
     ------
-    ValueError
+    SetupError
         If it is not on the ``PATH``.
     """
     path = shutil.which("posydon-run-grid")
     if path is None:
-        raise ValueError("Cannot locate posydon-run-grid executable in "
+        raise SetupError("Cannot locate posydon-run-grid executable in "
                          "your path")
     return path
 

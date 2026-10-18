@@ -1,5 +1,5 @@
-returncode: 1
-error: posydon.grids.setup.config.ConfigError: [slurm] job_array: a fixed grid needs job_array = True
+returncode: 2
+error: posydon-grid: error: [slurm] job_array: a fixed grid needs job_array = True
 
 ## staged sources
 
