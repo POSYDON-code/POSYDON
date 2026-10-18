@@ -3,10 +3,6 @@
 Installation Guide
 ******************
 
-.. contents:: On this page
-   :local:
-   :depth: 1
-
 Before you start
 ================
 
