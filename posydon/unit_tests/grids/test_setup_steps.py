@@ -167,6 +167,18 @@ class TestSetupGrid:
         ready = totest.prepare(grid["ini"], read_points=False)
         assert (ready.grid_df, ready.parameters) == (None, None)
 
+    @pytest.mark.parametrize("command", ["explain_grid", "setup_grid"])
+    def test_unknown_keys_warn(self, grid, command):
+        """A misspelled key is found before the grid runs; it does not
+        stop the setup."""
+        mine = write(grid["dir"] / "my_inlist",
+                     "&controls\n  max_modle_number = 10\n/\n")
+        grid["ini"].write_text(grid["ini"].read_text().replace(
+            "[user_inlists]\n", "[user_inlists]\nstar1 = {}\n".format(mine)))
+        with pytest.warns(match=r"\[user_inlists\] {}: max_modle_number is "
+                          r"not a key of &controls".format(mine)):
+            getattr(totest, command)(grid["ini"])
+
     def test_explain_with_a_scenario(self, grid, monkeypatch, tmp_path):
         d = grid["dir"]
         files = ScenarioFiles()

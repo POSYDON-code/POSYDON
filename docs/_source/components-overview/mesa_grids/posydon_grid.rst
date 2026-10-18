@@ -97,7 +97,6 @@ printed as one line, such as ``posydon-grid: error: [submission] backend:
 in ``posydon-grid``; please report it.
 
 
-
 The layers
 ==========
 
@@ -119,11 +118,25 @@ layer names above.
 
 .. note::
 
-    ``posydon-grid`` does not check key names. A misspelled key, or a key in
-    the wrong namelist, is written as it is, and MESA stops with a namelist
-    error when the run starts. In ``posydon-grid explain``, a key of yours
-    with no ``over ... [mesa_inlists]`` line is not a MESA key of that
-    namelist.
+    MESA stops with a namelist error, when the run starts, at a key it does
+    not know. So ``posydon-grid explain`` and ``setup`` warn about every
+    key of your files (``[user_inlists]`` and ``[mesa_inlists]``) that is
+    not a key of the namelist it goes into: a misspelled key
+    (``max_modle_number`` in ``&controls``), or a key in the wrong namelist
+    (``max_model_number`` in ``&star_job``). The warning names the key, the
+    namelist and the file. It does not stop the setup.
+
+    The keys of a namelist are those of MESA's ``.defaults`` file for it, of
+    the MESA version the grid uses: the installation the release names
+    (``r11701/mesa/<installation>/defaults/``), so a release for another
+    MESA version is checked against that version. This holds also where
+    your ``[mesa_inlists]`` replaces MESA's defaults: your file is checked
+    against the installation's. Without a ``[scenario] release`` (or for a
+    legacy :samp:`ini` file), the reference is the ``.defaults`` files of
+    your ``[mesa_inlists]`` (legacy: ``*_mesa_defaults``), and a namelist
+    without one is not checked. Names are compared without case and
+    without an array index: ``x_logical_ctrl(5)`` is ``x_logical_ctrl``.
+    The release's own files are not checked by the setup.
 
 
 The run directory

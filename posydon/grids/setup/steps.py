@@ -8,7 +8,9 @@ done by the other modules of ``posydon.grids.setup``:
                                        legacy.read_legacy_config
     2. read the grid points            (CSV, PSyGrid .h5 or a MESA grid folder)
     3. get the scenario's inlists      resolve.resolve_scenario; defaults of a
-                                       new-format ini: defaults.fill_defaults
+                                       new-format ini: defaults.fill_defaults;
+                                       warn about unknown MESA keys:
+                                       keycheck.check_keys
     4. stage sources and compile       extras.stage_extras, compile_executables
     5. write the inlists               build.build_inlists
     6. stage the column lists          extras.stage_column_lists
@@ -58,6 +60,7 @@ from posydon.grids.setup.extras import (
     stage_extras,
     whole_file_extras,
 )
+from posydon.grids.setup.keycheck import check_keys
 from posydon.grids.setup.legacy import read_legacy_config
 from posydon.grids.setup.record import write_record
 from posydon.grids.setup.resolve import resolve_scenario
@@ -282,6 +285,7 @@ def prepare(inifile, grid_type=None, run_directory=None,
     resolved = resolve_scenario(config)
     scenario = resolved.files if resolved is not None else None
     fill_defaults(config, resolved, os.environ['MESA_DIR'])
+    check_keys(config, resolved)
     extras = chosen_extras(config, scenario)
     columns = column_list_sources(config, scenario)
     for name in replaced_column_lists(config, scenario):

@@ -11,7 +11,10 @@ layout in ``r11701/releases/v2.0/``, where each of those commits is
   the column lists and the Fortran sources byte for byte, the ZAMS models
   and the stars built from formation steps;
 - for every grid type, ``build_inlists`` writes byte-identical files from
-  either.
+  either;
+- every key of every release and rerun file is a key of MESA's defaults of
+  the release's installation (``keycheck``), so that the setup's warning
+  about unknown keys never fires on POSYDON's own files.
 
 Needs a clone of the inlist repo: ``POSYDON_INLIST_REPO=<path>``, at the
 commit in ``INLIST_REPO_COMMIT`` (CI clones it). Without it these tests are
@@ -35,10 +38,17 @@ from test_setup_grid_baseline import GRID_COLUMNS, build_ini, make_setup_env
 from posydon.grids.setup.build import build_inlists
 from posydon.grids.setup.grid_types import GRID_TYPES
 from posydon.grids.setup.inlist import read_inlist
+from posydon.grids.setup.keycheck import (
+    DEFAULTS_NAMELISTS,
+    defaults_keys,
+    key_name,
+)
+from posydon.grids.setup.layers import drop_wiring_keys, section_for
 from posydon.grids.setup.legacy import read_legacy_config
 from posydon.grids.setup.manifest import (
     find_release,
     list_reruns,
+    mesa_installation,
     release_files,
 )
 from posydon.grids.setup.scenario import scenario_files
@@ -199,3 +209,39 @@ def test_build_inlists_is_byte_identical(case, repo, old_roots, tmp_path,
             for path in sorted(run.rglob("inlist*"))}
     assert len(written["old"]) >= 3  # binary/inlist* at least
     assert written["new"] == written["old"]
+
+
+def releases():
+    if not INLIST_REPO:
+        return []
+    return sorted(path.name for path in
+                  Path(INLIST_REPO).glob("*/releases/*")
+                  if (path / "release.ini").is_file())
+
+
+@pytest.mark.parametrize("release_name", releases())
+@pytest.mark.parametrize("grid", list(GRID_TYPES))
+def test_release_keys_are_mesa_keys(release_name, grid, repo):
+    """No file of a release or of its reruns sets a key that MESA's
+    defaults of the release's installation do not have."""
+    release = find_release(repo, release_name)
+    known = {DEFAULTS_NAMELISTS[name]: defaults_keys(path)
+             for name, path in mesa_installation(release).items()}
+    unknown = {}
+    for rerun in [None] + list_reruns(release):
+        files = release_files(release, grid, rerun)
+        for target, paths in files.inlists.targets.items():
+            namelist = section_for(target)
+            for path in paths:
+                values = drop_wiring_keys(read_inlist(
+                    path, default_section=namelist).get(namelist, {}))
+                for key in values:
+                    if key_name(key) not in known[namelist]:
+                        unknown.setdefault("{} &{}".format(
+                            path.relative_to(repo), namelist),
+                            set()).add(key)
+    assert unknown == {}
+
+
+def test_every_release_is_key_checked(repo):
+    assert releases() == ["development", "v2.0"]
