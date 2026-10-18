@@ -5,7 +5,7 @@ Common Installation Issues
 
 From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn't covered here, please `report the issue <https://github.com/POSYDON-code/POSYDON/issues>`_ so we can assist you and possibly update this page for the benefit of others.
 
-1. **Slow `conda` solving or installation taking hours:**
+1. **Slow ``conda`` solving or installation taking hours:**
 
     **Conda Version Requirements**: POSYDON has a complex dependency tree, and older conda versions (especially those prior to v23.1.0) use very slow dependency solvers that can take hours or may never complete the installation process. Modern conda versions (>= 23.1.0) include the libmamba solver by default, which resolves dependencies efficiently in seconds to minutes.
 
@@ -42,12 +42,12 @@ From time to time, users might encounter issues during the installation of POSYD
            # Verify the configuration
            conda config --show solver
 
-    c. **Use mamba** (Alternative): Another option is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_). However, this approach has not been fully vetted with POSYDON.
+    c. **Use mamba** (Alternative): Another option is to use the ``mamba`` package manager, which is a drop-in replacement for ``conda`` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_). However, this approach has not been fully vetted with POSYDON.
 
     .. note::
         If you're on an HPC cluster with an old system-wide conda installation (e.g., conda 2021.11), you may need to install a recent conda version locally in your home directory rather than using the system version.
 
-    `conda` can also be slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster, as it creates many small files which can be difficult for HPC clusters to handle. The libmamba solver helps with this issue as well.
+    ``conda`` can also be slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster, as it creates many small files which can be difficult for HPC clusters to handle. The libmamba solver helps with this issue as well.
 
 2. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.

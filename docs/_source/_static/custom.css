@@ -25,3 +25,15 @@
 .population-params-table td {
   white-space: nowrap !important;
 }
+
+
+/* Shaded box around the installation-method tabs in the installation guide */
+.install-tabs {
+  background-color: #f3f6f9;
+  border: 1px solid #d6dee6;
+  border-radius: 6px;
+  padding: 0.5em 1.25em 0.25em;
+  margin-bottom: 2em;
+  /* hide sphinx-design's line below the tab content */
+  --sd-color-tabs-underline: transparent;
+}

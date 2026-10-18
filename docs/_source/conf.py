@@ -171,6 +171,7 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.ifconfig',
     'nbsphinx',
+    'sphinx_design',
 ]
 autodoc_preserve_defaults = True
 
