@@ -395,7 +395,7 @@ def download_one_dataset(dataset='DR2_1Zsun', MD5_check=True, verbose=False,
     _extract_archive(dataset, filepath, verbose)
 
 def data_download(set_name='DR2', MD5_check=True, verbose=False, force=False,
-                  confirm=False):
+                  confirm=False, missing_file=None):
     """Download data files from Zenodo if they are not installed yet.
 
         Parameters
@@ -404,13 +404,17 @@ def data_download(set_name='DR2', MD5_check=True, verbose=False, force=False,
             Name of the data set to be in COMPLETE_SETS or ZENODO_COLLECTION.
         MD5_check : boolean (default: True)
             Use the MD5 check to make sure data is not corrupted.
-        confirm : boolean (default: False)
-            If True, then prompt user for confirmation to proceed with download.
         verbose : boolean (default: False)
             Enables verbose output.
         force : boolean (default: False)
             Download the data even if they seem to be already installed or
             an archive is left over.
+        confirm : boolean (default: False)
+            If True, prompt the user for confirmation before downloading.
+        missing_file : string or None (default: None)
+            Path of the missing file, which triggered the download. If given,
+            the user gets warned about it and a FileNotFoundError is raised
+            when the download is not confirmed.
 
     """
     if not isinstance(set_name, str):
@@ -427,21 +431,30 @@ def data_download(set_name='DR2', MD5_check=True, verbose=False, force=False,
     else:
         raise KeyError(f"The dataset '{set_name}' is not defined.")
 
-    # Ask for confirmation before downloading.
-    if confirm: # pragma: no cover
-        print(f"About to download POSYDON data set '{set_name}' from Zenodo.")
-        response = input("Continue? [y/N] ").strip().lower()
+    # Tell the user which file triggered the download.
+    if missing_file is not None:
+        Pwarn(f"Unable to find {missing_file}. Attempting to download the "
+              f"POSYDON data set '{set_name}' from Zenodo.",
+              "MissingFilesWarning")
 
+    # Ask for confirmation before downloading.
+    if confirm:
+        print(f"About to download POSYDON data set '{set_name}' from Zenodo.")
+        try:
+            response = input("Continue? [y/N] ").strip().lower()
+        except EOFError:
+            # no interactive input available, e.g. in a batch job
+            response = ''
         if response not in ('y', 'yes'):
             print("Download cancelled.")
+            if missing_file is not None:
+                raise FileNotFoundError(f"{missing_file} is missing and the "
+                                        "download was cancelled.")
             return
 
     for dataset in datasets:
-        download_one_dataset(
-            dataset=dataset,
-            MD5_check=MD5_check,
-            verbose=verbose
-        )
+        download_one_dataset(dataset=dataset, MD5_check=MD5_check,
+                             verbose=verbose, force=force)
 
 def _get_posydon_data():
     """Run the data download or list the datasets

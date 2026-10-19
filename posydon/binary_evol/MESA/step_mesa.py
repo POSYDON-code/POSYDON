@@ -299,10 +299,7 @@ class MesaGridStep:
         # Check if interpolation files exist
         if not (os.path.exists(self.grid_name.replace('%d','0')) or
                 os.path.exists(self.grid_name.replace('_%d',''))):
-            Pwarn(f"While loading interpolators, unable to find {self.grid_name}."
-                   "Attempting to download the data from Zenodo.",
-                   "MissingFilesWarning")
-            data_download(confirm=True)
+            data_download(confirm=True, missing_file=self.grid_name)
 
         if self.verbose:
             print("loading psyTrackInterp: {}".format(self.grid_name))
@@ -318,10 +315,7 @@ class MesaGridStep:
 
         # Check if interpolation files exist
         if not os.path.exists(filename):
-            Pwarn(f"While loading interpolators, unable to find {filename}."
-                   "Attempting to download the data from Zenodo.",
-                   "MissingFilesWarning")
-            data_download(confirm=True)
+            data_download(confirm=True, missing_file=filename)
 
         # Load interpolator
         self._Interp = IFInterpolator()
