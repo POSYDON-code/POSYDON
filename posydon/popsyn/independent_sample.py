@@ -124,11 +124,34 @@ def generate_orbital_periods(primary_masses,
                              orbital_period_min=0.35,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
+                             power_law_slope=None,
                              **kwargs):
-    """Randomly generate orbital periods for a sample of binaries."""
-    RNG = kwargs.get('RNG', np.random.default_rng())
+    """Randomly generate orbital periods for a sample of binaries.
 
-    # Check inputs
+    Parameters
+    ----------
+    primary_masses : float or ndarray of floats
+        Primary mass(es), used by the Sana+12 scheme.
+    number_of_binaries : int
+        Number of binaries that require randomly sampled orbital periods
+    orbital_period_min : float
+        Minimum orbital period in days
+    orbital_period_max : float
+        Maximum orbital period in days
+    orbital_period_scheme : string
+        Distribution from which the orbital periods are randomly drawn:
+        'Sana+12_period_extended', 'power_law' (power law in log10(P)) or
+        'linear_power_law' (power law in P)
+    power_law_slope : float
+        Exponent of the power law for the 'power_law' and
+        'linear_power_law' schemes.
+
+    Returns
+    -------
+    orbital_periods : ndarray of floats
+        Randomly drawn orbital periods in days
+    """
+    RNG = kwargs.get('RNG', np.random.default_rng())
 
     # Sana H., et al., 2012, Science, 337, 444
     if orbital_period_scheme == 'Sana+12_period_extended':
@@ -137,6 +160,21 @@ def generate_orbital_periods(primary_masses,
             p_max=orbital_period_max
         )
         orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
+    elif orbital_period_scheme in ('power_law', 'linear_power_law'):
+        if power_law_slope is None:
+            raise ValueError(
+                f"For the `{orbital_period_scheme}` orbital period scheme "
+                "you must give `power_law_slope`.")
+        if orbital_period_scheme == 'power_law':
+            period_class = distributions.PowerLawPeriod
+        else:
+            period_class = distributions.LinearPowerLawPeriod
+        period_dist = period_class(
+            slope=power_law_slope,
+            p_min=orbital_period_min,
+            p_max=orbital_period_max
+        )
+        orbital_periods = period_dist.rvs(size=number_of_binaries, rng=RNG)
     else:
         raise ValueError("You must provide an allowed orbital period scheme.")
 
@@ -183,16 +221,16 @@ def generate_orbital_separations(number_of_binaries=1,
         raise ValueError("You must provide an allowed "
                          "orbital separation scheme.")
 
+    if orbital_separation_max < orbital_separation_min:
+        raise ValueError("`orbital_separation_max` must be "
+                         "larger than the orbital_separation_min.")
+
     if orbital_separation_scheme == 'log_uniform':
         sep_dist = distributions.LogUniform(
             min=orbital_separation_min,
             max=orbital_separation_max
         )
         orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
-
-    if orbital_separation_max < orbital_separation_min:
-        raise ValueError("`orbital_separation_max` must be "
-                         "larger than the orbital_separation_min.")
 
     elif orbital_separation_scheme == 'log_normal':
         if (log_orbital_separation_mean is None

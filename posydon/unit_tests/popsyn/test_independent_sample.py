@@ -15,7 +15,7 @@ np = totest.np
 # module you like to test
 import re
 
-from pytest import approx, raises
+from pytest import approx, mark, raises
 
 
 # define test classes collecting several test functions
@@ -117,15 +117,35 @@ class TestFunctions:
         for (m,r,p) in tests:
             assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
 
+    @mark.parametrize("scheme", ['power_law', 'linear_power_law'])
+    def test_generate_orbital_periods_power_laws(self, scheme):
+        # missing slope
+        with raises(ValueError, match="you must give `power_law_slope`"):
+            totest.generate_orbital_periods(np.array([1.]),
+                                            orbital_period_scheme=scheme)
+        # samples within the requested range
+        periods = totest.generate_orbital_periods(
+            np.array([1.]), number_of_binaries=1000,
+            orbital_period_min=2., orbital_period_max=1e4,
+            orbital_period_scheme=scheme, power_law_slope=-0.55,
+            RNG=np.random.default_rng(seed=42))
+        assert len(periods) == 1000
+        assert np.all((periods >= 2.) & (periods <= 1e4))
+
     def test_generate_orbital_separations(self):
         # missing log_normal params
         with raises(ValueError, match="For the `log_normal separation` scheme you must give"):
             totest.generate_orbital_separations(orbital_separation_scheme='log_normal')
 
-        # bad input: min > max (raised by LogUniform distribution class)
-        with raises(ValueError, match="max must be greater than min"):
+        # bad input: min > max
+        with raises(ValueError, match="`orbital_separation_max` must be"):
             totest.generate_orbital_separations(orbital_separation_min=10.,
                                                 orbital_separation_max=1.)
+
+        # bad input: min == max (raised by LogUniform distribution class)
+        with raises(ValueError, match="max must be greater than min"):
+            totest.generate_orbital_separations(orbital_separation_min=10.,
+                                                orbital_separation_max=10.)
 
         # bad input: min > max with log_normal
         with raises(ValueError, match="`orbital_separation_max` must be"):

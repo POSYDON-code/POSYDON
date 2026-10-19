@@ -7,10 +7,11 @@ used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
 import numpy as np
 import pytest
 from scipy.integrate import quad, trapezoid
-from scipy.stats import loguniform
+from scipy.stats import kstest, loguniform
 
 from posydon.popsyn.distributions import (
     FlatMassRatio,
+    LinearPowerLawPeriod,
     LogNormalSeparation,
     LogUniform,
     PowerLawMassRatio,
@@ -427,12 +428,10 @@ class TestPowerLawPeriod:
 
     def test_initialization_invalid_parameters(self):
         """Test that initialization raises ValueError for invalid parameters."""
-        # Test p_min <= 0
-        with pytest.raises(ValueError, match="p_min must be positive"):
-            PowerLawPeriod(p_min=0.0, p_max=1000.0)
-
-        with pytest.raises(ValueError, match="p_min must be positive"):
-            PowerLawPeriod(p_min=-1.0, p_max=1000.0)
+        # Test p_min <= 1 day, where (log10 P)^slope is undefined
+        for p_min in (-1.0, 0.0, 0.5, 1.0):
+            with pytest.raises(ValueError, match="p_min must be greater than 1 day"):
+                PowerLawPeriod(p_min=p_min, p_max=1000.0)
 
         # Test p_max <= p_min
         with pytest.raises(ValueError, match="p_max must be greater than p_min"):
@@ -472,7 +471,8 @@ class TestPowerLawPeriod:
         p_values = 10**logp_values
         expected = np.zeros_like(p_values)
         valid = (p_values >= custom_power_law.p_min) & (p_values <= custom_power_law.p_max)
-        expected[valid] = p_values[valid]**custom_power_law.slope
+        # power law in log10(P), not in P
+        expected[valid] = logp_values[valid]**custom_power_law.slope
 
         np.testing.assert_allclose(result, expected)
 
@@ -619,8 +619,8 @@ class TestDistributionComparisons:
 
     def test_different_slope_power_laws(self):
         """Test that different slopes give different distributions."""
-        steep_slope = PowerLawPeriod(slope=-2.0, p_min=1.0, p_max=1000.0)
-        shallow_slope = PowerLawPeriod(slope=-0.5, p_min=1.0, p_max=1000.0)
+        steep_slope = PowerLawPeriod(slope=-2.0, p_min=2.0, p_max=1000.0)
+        shallow_slope = PowerLawPeriod(slope=-0.5, p_min=2.0, p_max=1000.0)
 
         p_test = np.array([10.0, 100.0])
         pdf_steep = steep_slope.pdf(p_test)
@@ -654,7 +654,7 @@ class TestDistributionComparisons:
         assert narrow_flat.norm > 0
 
         # Very wide range for PowerLawPeriod
-        wide_power = PowerLawPeriod(p_min=0.1, p_max=1e8)
+        wide_power = PowerLawPeriod(p_min=1.1, p_max=1e8)
         assert wide_power.norm > 0
 
         # Very small period range for Sana12
@@ -1359,6 +1359,10 @@ class TestDensityConvention:
         (Sana12Period(p_min=0.35, p_max=6e3), 0.35, 6e3, (10.0,)),
         (Sana12Period(p_min=0.35, p_max=6e3), 0.35, 6e3, (30.0,)),
         (PowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e6), 1.4, 3e6, ()),
+        (LinearPowerLawPeriod(slope=-0.55, p_min=0.5, p_max=3e6),
+         0.5, 3e6, ()),
+        (LinearPowerLawPeriod(slope=-1.0, p_min=0.5, p_max=3e6),
+         0.5, 3e6, ()),
         (LogUniform(min=5.0, max=1e5), 5.0, 1e5, ()),
         (LogNormalSeparation(mean=0.85, sigma=0.37, min=5.0, max=1e5),
          5.0, 1e5, ()),
@@ -1366,7 +1370,9 @@ class TestDensityConvention:
         (UniformEccentricity(e_min=0.01, e_max=0.9), 0.01, 0.9, ()),
     ]
     IDS = ["FlatMassRatio", "PowerLawMassRatio", "Sana12Period_low_m1",
-           "Sana12Period_high_m1", "PowerLawPeriod", "LogUniform",
+           "Sana12Period_high_m1", "PowerLawPeriod",
+           "LinearPowerLawPeriod", "LinearPowerLawPeriod_slope_-1",
+           "LogUniform",
            "LogNormalSeparation", "ThermalEccentricity",
            "UniformEccentricity"]
 
@@ -1416,3 +1422,93 @@ class TestDensityConvention:
         zero_ecc = ZeroEccentricity()
         e = np.array([0.0, 0.1, 0.5])
         np.testing.assert_array_equal(zero_ecc.pdf_per_dex(e), 0.0)
+
+
+class TestLinearPowerLawPeriod:
+    """Test class for LinearPowerLawPeriod distribution."""
+
+    def test_initialization_default(self):
+        dist = LinearPowerLawPeriod()
+        assert dist.slope == -1.0
+        assert dist.p_min == 1.4
+        assert dist.p_max == 3e6
+        assert dist.norm > 0
+
+    def test_initialization_invalid_parameters(self):
+        with pytest.raises(ValueError, match="p_min must be positive"):
+            LinearPowerLawPeriod(p_min=0.0, p_max=10.0)
+        with pytest.raises(ValueError, match="p_max must be greater than p_min"):
+            LinearPowerLawPeriod(p_min=10.0, p_max=10.0)
+
+    def test_repr(self):
+        dist = LinearPowerLawPeriod(slope=-0.5, p_min=1.0, p_max=100.0)
+        assert repr(dist) == ("LinearPowerLawPeriod(slope=-0.5, "
+                              "p_min=1.0, p_max=100.0)")
+        html_str = dist._repr_html_()
+        assert "<h3>Linear Power Law Period Distribution</h3>" in html_str
+        assert "slope = -0.5" in html_str
+
+    def test_pdf_is_power_law_in_p(self):
+        dist = LinearPowerLawPeriod(slope=-0.5, p_min=1.0, p_max=100.0)
+        p = np.array([0.5, 1.0, 4.0, 100.0, 200.0])
+        # integral of p^-0.5 from 1 to 100 is 2*(10 - 1) = 18
+        expected = np.array([0.0, 1.0, 0.5, 0.1, 0.0]) / 18.0
+        np.testing.assert_allclose(dist.pdf(p), expected)
+
+    def test_slope_minus_one_is_log_uniform(self):
+        dist = LinearPowerLawPeriod(slope=-1.0, p_min=10.0, p_max=1000.0)
+        p = np.array([10.0, 50.0, 1000.0])
+        np.testing.assert_allclose(dist.pdf_per_dex(p), 0.5)
+
+
+class TestPowerLawPeriodSampling:
+    """The analytical inverse CDF samplers follow their densities."""
+
+    @pytest.mark.parametrize("slope", [-2.0, -1.0, -0.55, 0.0, 1.5])
+    def test_power_law_period_rvs(self, slope):
+        dist = PowerLawPeriod(slope=slope, p_min=1.5, p_max=1e5)
+        samples = dist.rvs(size=20000, rng=np.random.default_rng(1))
+        assert np.all((samples >= dist.p_min) & (samples <= dist.p_max))
+        a, b = np.log10(dist.p_min), np.log10(dist.p_max)
+        cdf = lambda logp: quad(lambda u: dist.pdf_per_dex(10**u), a,
+                                logp)[0]
+        assert kstest(np.log10(samples), np.vectorize(cdf)).pvalue > 0.01
+
+    @pytest.mark.parametrize("slope", [-2.0, -1.0, -0.55, 0.0, 1.5])
+    def test_linear_power_law_period_rvs(self, slope):
+        dist = LinearPowerLawPeriod(slope=slope, p_min=0.5, p_max=1e3)
+        samples = dist.rvs(size=20000, rng=np.random.default_rng(1))
+        assert np.all((samples >= dist.p_min) & (samples <= dist.p_max))
+        cdf = lambda p: quad(dist.pdf, dist.p_min, p)[0]
+        assert kstest(samples, np.vectorize(cdf)).pvalue > 0.01
+
+    def test_rvs_without_rng(self):
+        samples = LinearPowerLawPeriod().rvs(size=10)
+        assert len(samples) == 10
+
+
+class TestSana12PeriodRange:
+    """Sana12Period is well-defined for any period range."""
+
+    @pytest.mark.parametrize("p_min, p_max", [(0.2, 0.9), (0.35, 1.2),
+                                              (2.0, 1e4)])
+    @pytest.mark.parametrize("m1", [10.0, 20.0])
+    def test_normalised(self, p_min, p_max, m1):
+        dist = Sana12Period(p_min=p_min, p_max=p_max)
+        logp = np.linspace(np.log10(p_min), np.log10(p_max), 100001)
+        values = dist.pdf_per_dex(10**logp, m1)
+        assert np.all(np.isfinite(values))
+        assert np.isclose(trapezoid(values, logp), 1.0, rtol=1e-4)
+
+    def test_high_mass_flat_below_break(self):
+        dist = Sana12Period(p_min=0.2, p_max=0.9)
+        values = dist.pdf_per_dex(np.array([0.3, 0.5, 0.8]), 20.0)
+        np.testing.assert_allclose(values, values[0])
+
+    def test_no_warnings_for_invalid_periods(self):
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            values = Sana12Period().pdf_per_dex(np.array([-1.0, 0.0, 10.0]),
+                                                20.0)
+        assert values[0] == 0.0 and values[1] == 0.0 and values[2] > 0.0

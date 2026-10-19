@@ -75,9 +75,12 @@ saved_ini_parameters = ['metallicity',
                    'orbital_period_scheme',
                    'orbital_period_min',
                    'orbital_period_max',
+                   'power_law_slope',
                    'orbital_separation_scheme',
                    'orbital_separation_min',
                    'orbital_separation_max',
+                   'log_orbital_separation_mean',
+                   'log_orbital_separation_sigma',
                    'eccentricity_scheme',
                    'posydon_version']
 
@@ -595,7 +598,9 @@ class BinaryPopulation:
                 if c == 'posydon_version':
                     tmp_df[c] = [posydon.__version__]
                 else:
-                    tmp_df[c] = [self.kwargs[c]]
+                    # optional parameters are stored as NaN when not set
+                    value = self.kwargs.get(c)
+                    tmp_df[c] = [np.nan if value is None else value]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(
@@ -949,7 +954,9 @@ class PopulationManager:
                 if c == 'posydon_version':
                     tmp_df[c] = [posydon.__version__]
                 else:
-                    tmp_df[c] = [self.kwargs[c]]
+                    # optional parameters are stored as NaN when not set
+                    value = self.kwargs.get(c)
+                    tmp_df[c] = [np.nan if value is None else value]
             store.append('ini_parameters', tmp_df)
 
             tmp_df = pd.DataFrame(

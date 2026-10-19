@@ -31,15 +31,14 @@ default_kwargs = {
     'orbital_separation_scheme': 'log_uniform',
     'orbital_separation_min': 5.0,  # in Rsun
     'orbital_separation_max': 1.0e5,  # in Rsun
-    'log_orbital_seperation_mean': None,
-    'log_orbital_seperation_sigma': None,
+    'log_orbital_separation_mean': None,
+    'log_orbital_separation_sigma': None,
 
     # if orbital_scheme == period
     'orbital_period_scheme': 'Sana+12_period_extended',
     'orbital_period_min': 0.75,  # in days
     'orbital_period_max': 6000,  # in days
-    # 'log_orbital_seperation_mean': None,
-    # 'log_orbital_seperation_sigma': None,
+    'power_law_slope': None,  # for 'power_law' and 'linear_power_law'
 
     # Eccentricity
     'eccentricity_scheme': 'zero',

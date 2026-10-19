@@ -18,7 +18,10 @@ from posydon.config import PATH_TO_POSYDON
 # file to test
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
-from posydon.utils.common_functions import orbital_period_from_separation
+from posydon.utils.common_functions import (
+    orbital_period_from_separation,
+    orbital_separation_from_period,
+)
 from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 
@@ -255,6 +258,42 @@ class TestGetPeriodPdf:
         logP_max = np.log10(orbital_period_from_separation(a_max, m1, q*m1))
         integral, _ = quad(lambda logP: separation_pdf_func(10**logP, m1, q),
                            logP_min, logP_max)
+        assert np.isclose(integral, 1.0)
+
+    @mark.parametrize("m1, q", [(10.0, 1.0), (30.0, 0.5)])
+    def test_log_normal_separation_normalised_in_logP(self, m1, q):
+        a_min, a_max = 5.0, 1e5
+        kwargs = {
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': 'log_normal',
+            'orbital_separation_min': a_min,
+            'orbital_separation_max': a_max,
+            'log_orbital_separation_mean': 1.5,
+            'log_orbital_separation_sigma': 0.5,
+        }
+        separation_pdf_func = norm_pop.get_period_pdf(kwargs)
+        # invert orbital_separation_from_period exactly (a ∝ P^(2/3)), since
+        # orbital_period_from_separation uses slightly different constants
+        a_at_1day = orbital_separation_from_period(1.0, m1, q*m1)
+        logP_min = 1.5 * np.log10(a_min / a_at_1day)
+        logP_max = 1.5 * np.log10(a_max / a_at_1day)
+        integral, _ = quad(lambda logP: separation_pdf_func(10**logP, m1, q),
+                           logP_min, logP_max, points=[1.5 * np.log10(10**1.5 / a_at_1day)])
+        assert np.isclose(integral, 1.0)
+
+    @mark.parametrize("scheme, p_min", [('power_law', 1.4),
+                                        ('linear_power_law', 0.35)])
+    def test_power_law_periods_normalised_in_logP(self, scheme, p_min):
+        kwargs = {
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': scheme,
+            'orbital_period_min': p_min,
+            'orbital_period_max': 6e3,
+            'power_law_slope': -0.55,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        integral, _ = quad(lambda logP: period_pdf_func(10**logP),
+                           np.log10(p_min), np.log10(6e3))
         assert np.isclose(integral, 1.0)
 
     def test_invalid_period_scheme(self):

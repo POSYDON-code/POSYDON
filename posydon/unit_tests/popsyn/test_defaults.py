@@ -47,11 +47,12 @@ class TestElements:
             'orbital_separation_scheme',
             'orbital_separation_min',
             'orbital_separation_max',
-            'log_orbital_seperation_mean',
-            'log_orbital_seperation_sigma',
+            'log_orbital_separation_mean',
+            'log_orbital_separation_sigma',
             'orbital_period_scheme',
             'orbital_period_min',
             'orbital_period_max',
+            'power_law_slope',
             'eccentricity_scheme',
             'primary_mass_scheme',
             'primary_mass_min',
@@ -101,13 +102,13 @@ class TestElements:
         assert isinstance(totest.default_kwargs['orbital_separation_max'], float), \
             "orbital_separation_max should be a float"
 
-    def test_instance_log_orbital_seperation_mean(self):
-        assert isinstance(totest.default_kwargs['log_orbital_seperation_mean'], (type(None), float)), \
-            "log_orbital_seperation_mean should be None or a float"
+    def test_instance_log_orbital_separation_mean(self):
+        assert isinstance(totest.default_kwargs['log_orbital_separation_mean'], (type(None), float)), \
+            "log_orbital_separation_mean should be None or a float"
 
-    def test_instance_log_orbital_seperation_sigma(self):
-        assert isinstance(totest.default_kwargs['log_orbital_seperation_sigma'], (type(None), float)), \
-            "log_orbital_seperation_sigma should be None or a float"
+    def test_instance_log_orbital_separation_sigma(self):
+        assert isinstance(totest.default_kwargs['log_orbital_separation_sigma'], (type(None), float)), \
+            "log_orbital_separation_sigma should be None or a float"
 
     def test_instance_orbital_period_min(self):
         assert isinstance(totest.default_kwargs['orbital_period_min'], float), \
@@ -116,6 +117,10 @@ class TestElements:
     def test_instance_orbital_period_max(self):
         assert isinstance(totest.default_kwargs['orbital_period_max'], (float, int)), \
             "orbital_period_max should be a float or int"
+
+    def test_instance_power_law_slope(self):
+        assert isinstance(totest.default_kwargs['power_law_slope'], (type(None), float)), \
+            "power_law_slope should be None or a float"
 
     def test_instance_eccentricity_scheme(self):
         assert isinstance(totest.default_kwargs['eccentricity_scheme'], str), \

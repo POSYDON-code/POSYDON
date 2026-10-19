@@ -11,6 +11,8 @@ import posydon.popsyn.IMFs as IMFs
 from posydon.popsyn import independent_sample
 from posydon.popsyn.distributions import (
     FlatMassRatio,
+    LinearPowerLawPeriod,
+    LogNormalSeparation,
     LogUniform,
     PowerLawMassRatio,
     PowerLawPeriod,
@@ -192,24 +194,38 @@ def get_period_pdf(kwargs):
                 slope=kwargs['power_law_slope'],
             )
             period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
+        elif kwargs['orbital_period_scheme'] == 'linear_power_law':
+            period = LinearPowerLawPeriod(
+                p_min=kwargs['orbital_period_min'],
+                p_max=kwargs['orbital_period_max'],
+                slope=kwargs['power_law_slope'],
+            )
+            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
         else:
             raise ValueError("Orbital period scheme not recognized")
     elif (kwargs['orbital_scheme'] == 'separation'):
         if kwargs['orbital_separation_scheme'] == 'log_uniform':
-            separation_log_uniform = LogUniform(
+            separation = LogUniform(
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            # The period PDF is per unit log10(P), while the separation is
-            # sampled per unit log10(a), so we change variables in log space.
-            # PDF(log P) = PDF(log a) * |dlog a/dlog P|
-            # a^3 ∝ P^2 (fixed masses), so dlog a/dlog P = 2/3
-            # PDF(log P) = (2/3) * PDF(log a)
-            period_pdf = lambda P, m1, q: separation_log_uniform.pdf_per_dex(
-                orbital_separation_from_period(P, m1, q*m1)
-            ) * 2./3.
+        elif kwargs['orbital_separation_scheme'] == 'log_normal':
+            separation = LogNormalSeparation(
+                mean=kwargs['log_orbital_separation_mean'],
+                sigma=kwargs['log_orbital_separation_sigma'],
+                min=kwargs['orbital_separation_min'],
+                max=kwargs['orbital_separation_max'],
+            )
         else:
             raise ValueError("Orbital separation scheme not recognized")
+        # The period PDF is per unit log10(P), while the separation is
+        # sampled per unit log10(a), so we change variables in log space.
+        # PDF(log P) = PDF(log a) * |dlog a/dlog P|
+        # a^3 ∝ P^2 (fixed masses), so dlog a/dlog P = 2/3
+        # PDF(log P) = (2/3) * PDF(log a)
+        period_pdf = lambda P, m1, q: separation.pdf_per_dex(
+            orbital_separation_from_period(P, m1, q*m1)
+        ) * 2./3.
     else:
         raise ValueError("Orbital scheme not recognized. "
                          "Please specify either 'period' or 'separation' "
@@ -356,7 +372,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `linear_power_law`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     population_parameters : dict
@@ -374,7 +391,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `linear_power_law`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     Returns

@@ -932,6 +932,8 @@ It also contains which sampling distributions to use for the initial conditions 
       | Options:
 
       * ``Sana+12_period_extended``: `Sana et al. 2012 <https://ui.adsabs.harvard.edu/abs/2012Sci...337..444S/abstract>`_
+      * ``'power_law'``: power law in log10(P), f(log10 P) ∝ (log10 P)^``power_law_slope`` (requires ``orbital_period_min`` > 1 day)
+      * ``'linear_power_law'``: power law in P, f(P) ∝ P^``power_law_slope``
       * ``'Moe2017'``: distribution from `Moe & Di Stefano (2017) <https://ui.adsabs.harvard.edu/abs/2017ApJS..230...15M/abstract>`_ (it will cause other options on ``secondary_mass_scheme`` and ``eccentricity_scheme`` to be ignored)
     - ``'Sana+12_period_extended'``
 
@@ -942,6 +944,11 @@ It also contains which sampling distributions to use for the initial conditions 
   * - ``orbital_period_max``
     - | Maximum orbital period (in days).
     - ``6000.0``
+
+  * - ``#power_law_slope``
+    - | Used only for ``orbital_period_scheme = 'power_law'`` or ``'linear_power_law'``.
+      | Exponent of log10(P) or P, respectively.
+    - ``None``
 
   * - ``#orbital_separation_scheme``
     - | Used only for ``orbital_scheme = 'separation'``.

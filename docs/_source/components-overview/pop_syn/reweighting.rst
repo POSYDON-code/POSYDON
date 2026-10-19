@@ -47,12 +47,16 @@ several distribution families. The table below summarizes the main options.
      - The flat mass-ratio distribution can be defined either from the allowed
        secondary-mass range or from explicit mass-ratio bounds.
    * - Orbital period
-     - ``period`` with ``Sana+12_period_extended`` or ``power_law``; or
-       ``separation`` with ``log_uniform``
+     - ``period`` with ``Sana+12_period_extended``, ``power_law`` or
+       ``linear_power_law``; or ``separation`` with ``log_uniform`` or
+       ``log_normal``
      - For ``period``: ``orbital_period_min`` and ``orbital_period_max``. For
        ``Sana+12_period_extended`` no additional parameters are needed. For
-       ``power_law``: ``power_law_slope``. For ``separation``:
-       ``orbital_separation_min`` and ``orbital_separation_max``.
+       ``power_law`` (power law in log10(P)) and ``linear_power_law`` (power
+       law in P): ``power_law_slope``. For ``separation``:
+       ``orbital_separation_min`` and ``orbital_separation_max``, plus
+       ``log_orbital_separation_mean`` and ``log_orbital_separation_sigma``
+       for ``log_normal``.
      - Periods are interpreted in days. The period PDF is evaluated per unit
        log10(P) (see :ref:`reweighting_density_convention`). Separation-based
        inputs are converted internally to periods using the
