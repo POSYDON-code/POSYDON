@@ -53,8 +53,11 @@ several distribution families. The table below summarizes the main options.
        ``Sana+12_period_extended`` no additional parameters are needed. For
        ``power_law``: ``power_law_slope``. For ``separation``:
        ``orbital_separation_min`` and ``orbital_separation_max``.
-     - Periods are interpreted in days. Separation-based inputs are converted
-       internally to periods using the orbital-separation relation.
+     - Periods are interpreted in days. The period PDF is evaluated per unit
+       log10(P) (see :ref:`reweighting_density_convention`). Separation-based
+       inputs are converted internally to periods using the
+       orbital-separation relation, which gives a factor 2/3 between the
+       per-dex densities in log10(a) and log10(P).
    * - Binary fraction
      - ``const``
      - ``binary_fraction_scheme``, ``binary_fraction_const``
@@ -77,3 +80,24 @@ In practice, this means that the reweighted population is only meaningful when
 the target and simulation populations share the same support for the sampled
 initial-condition distributions. If the target distribution extends beyond the
 range covered by the simulation, you might miss systems!
+
+.. _reweighting_density_convention:
+
+Density conventions
+-------------------
+
+The distribution classes in ``posydon.popsyn.distributions`` provide two
+densities:
+
+- ``pdf(x)``: the probability density per unit ``x``, which integrates to 1
+  over ``x`` (the same convention as ``scipy.stats``).
+- ``pdf_per_dex(x)``: the probability density per unit ``log10(x)``, evaluated
+  at ``x``, which integrates to 1 over ``log10(x)``.
+
+The two are related by ``pdf_per_dex(x) = pdf(x) * x * ln(10)``.
+
+The reweighting uses ``pdf_per_dex`` for the orbital period, so the period
+term in ``PDF_target`` and ``PDF_sim`` is a density in ``log10(P)``. The mass
+and mass-ratio terms use ``pdf``. Because the same convention is applied to
+both the target and the simulated population, the Jacobian cancels in the
+weight ratio.
