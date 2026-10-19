@@ -6,7 +6,8 @@ used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
 
 import numpy as np
 import pytest
-from scipy.integrate import quad
+from scipy.integrate import quad, trapezoid
+from scipy.stats import loguniform
 
 from posydon.popsyn.distributions import (
     FlatMassRatio,
@@ -503,7 +504,7 @@ class TestPowerLawPeriod:
         """Test PDF returns correct values within the period range."""
         p_values = np.logspace(np.log10(custom_power_law.p_min),
                               np.log10(custom_power_law.p_max), 10)
-        pdf_values = custom_power_law.pdf(p_values)
+        pdf_values = custom_power_law.pdf_per_dex(p_values)
 
         # All should be positive within range
         assert np.all(pdf_values > 0)
@@ -512,6 +513,10 @@ class TestPowerLawPeriod:
         logp = np.log10(p_values)
         expected = custom_power_law.power_law_period(logp) * custom_power_law.norm
         np.testing.assert_allclose(pdf_values, expected)
+
+        # pdf is the per-dex density divided by the Jacobian P*ln(10)
+        np.testing.assert_allclose(custom_power_law.pdf(p_values),
+                                   expected / (p_values * np.log(10)))
 
     def test_pdf_outside_range(self, custom_power_law):
         """Test PDF returns zero for periods outside the range."""
@@ -581,7 +586,7 @@ class TestPowerLawPeriod:
 
         # Test that PDF values are properly normalized
         p_test = np.array([10.0, 100.0, 1000.0])
-        pdf_values = default_power_law.pdf(p_test)
+        pdf_values = default_power_law.pdf_per_dex(p_test)
 
         # Calculate expected PDF values manually
         logp_test = np.log10(p_test)
@@ -737,14 +742,18 @@ class TestLogUniform:
         """Test PDF within the valid range."""
         log_uniform = LogUniform(min=10.0, max=1000.0)
         x_values = np.array([10.0, 50.0, 100.0, 500.0, 1000.0])
-        pdf_values = log_uniform.pdf(x_values)
+        pdf_values = log_uniform.pdf_per_dex(x_values)
         expected = np.full_like(x_values, log_uniform.norm)
         np.testing.assert_allclose(pdf_values, expected)
 
+        # pdf matches scipy.stats.loguniform (density per unit x)
+        np.testing.assert_allclose(log_uniform.pdf(x_values),
+                                   loguniform.pdf(x_values, 10.0, 1000.0))
+
     def test_pdf_normalised_in_log_space(self):
-        """Test the PDF integrates to 1 over log10(x)."""
+        """Test pdf_per_dex integrates to 1 over log10(x)."""
         log_uniform = LogUniform(min=10.0, max=1000.0)
-        integral, _ = quad(lambda logx: log_uniform.pdf(10**logx),
+        integral, _ = quad(lambda logx: log_uniform.pdf_per_dex(10**logx),
                            np.log10(log_uniform.min),
                            np.log10(log_uniform.max))
         assert np.isclose(integral, 1.0)
@@ -1337,3 +1346,73 @@ class TestPowerLawMassRatio:
         dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=1.0)
         integral, _ = quad(dist.pdf, dist.q_min, dist.q_max)
         np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+
+class TestDensityConvention:
+    """pdf is the density per unit x, pdf_per_dex the density per unit
+    log10(x), for every distribution."""
+
+    # (distribution, x_min, x_max, extra args passed to pdf)
+    CASES = [
+        (FlatMassRatio(q_min=0.05, q_max=1.0), 0.05, 1.0, ()),
+        (PowerLawMassRatio(alpha=-1.0, q_min=0.1, q_max=1.0), 0.1, 1.0, ()),
+        (Sana12Period(p_min=0.35, p_max=6e3), 0.35, 6e3, (10.0,)),
+        (Sana12Period(p_min=0.35, p_max=6e3), 0.35, 6e3, (30.0,)),
+        (PowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e6), 1.4, 3e6, ()),
+        (LogUniform(min=5.0, max=1e5), 5.0, 1e5, ()),
+        (LogNormalSeparation(mean=0.85, sigma=0.37, min=5.0, max=1e5),
+         5.0, 1e5, ()),
+        (ThermalEccentricity(e_min=0.01, e_max=0.9), 0.01, 0.9, ()),
+        (UniformEccentricity(e_min=0.01, e_max=0.9), 0.01, 0.9, ()),
+    ]
+    IDS = ["FlatMassRatio", "PowerLawMassRatio", "Sana12Period_low_m1",
+           "Sana12Period_high_m1", "PowerLawPeriod", "LogUniform",
+           "LogNormalSeparation", "ThermalEccentricity",
+           "UniformEccentricity"]
+
+    @pytest.mark.parametrize("dist, x_min, x_max, args", CASES, ids=IDS)
+    def test_pdf_normalised_in_linear_space(self, dist, x_min, x_max, args):
+        x = np.geomspace(x_min, x_max, 200001)[1:-1]
+        integral = trapezoid(dist.pdf(x, *args), x)
+        assert np.isclose(integral, 1.0, rtol=1e-3)
+
+    @pytest.mark.parametrize("dist, x_min, x_max, args", CASES, ids=IDS)
+    def test_pdf_per_dex_normalised_in_log_space(self, dist, x_min, x_max,
+                                                 args):
+        logx = np.linspace(np.log10(x_min), np.log10(x_max), 200001)[1:-1]
+        integral = trapezoid(dist.pdf_per_dex(10**logx, *args), logx)
+        assert np.isclose(integral, 1.0, rtol=1e-3)
+
+    @pytest.mark.parametrize("dist, x_min, x_max, args", CASES, ids=IDS)
+    def test_pdf_per_dex_jacobian(self, dist, x_min, x_max, args):
+        x = np.geomspace(x_min / 2, x_max * 2, 50)
+        np.testing.assert_allclose(dist.pdf_per_dex(x, *args),
+                                   dist.pdf(x, *args) * x * np.log(10))
+
+    @pytest.mark.parametrize("dist, x_min, x_max, args", CASES, ids=IDS)
+    def test_non_positive_values(self, dist, x_min, x_max, args):
+        x = np.array([-1.0, 0.0])
+        np.testing.assert_array_equal(dist.pdf_per_dex(x, *args), 0.0)
+        if x_min > 0:
+            np.testing.assert_array_equal(dist.pdf(x, *args), 0.0)
+
+    @pytest.mark.parametrize("dist, x_min, x_max, args", CASES, ids=IDS)
+    def test_scalar_input(self, dist, x_min, x_max, args):
+        x = np.sqrt(x_min * x_max)
+        assert np.ndim(dist.pdf(x, *args)) == 0
+        assert np.ndim(dist.pdf_per_dex(x, *args)) == 0
+        assert np.isclose(dist.pdf_per_dex(x, *args),
+                          dist.pdf(x, *args) * x * np.log(10))
+
+    def test_sana12_non_integer_mass_with_integer_periods(self):
+        """m1 must not be truncated to the dtype of integer periods."""
+        sana12 = Sana12Period()
+        p = np.array([10, 100])
+        np.testing.assert_allclose(sana12.pdf_per_dex(p, 15.5),
+                                   sana12.pdf_per_dex(p.astype(float), 15.5))
+
+    def test_zero_eccentricity_per_dex(self):
+        """The point mass at e=0 has no density in log10(e) space."""
+        zero_ecc = ZeroEccentricity()
+        e = np.array([0.0, 0.1, 0.5])
+        np.testing.assert_array_equal(zero_ecc.pdf_per_dex(e), 0.0)

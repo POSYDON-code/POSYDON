@@ -175,8 +175,8 @@ def get_period_pdf(kwargs):
     Returns
     -------
     pdf : function
-        Function that returns the period PDF, which expects the following
-        parameters; P, m1
+        Function that returns the period PDF per unit log10(P), which
+        expects the following parameters; P, m1
     '''
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
@@ -184,14 +184,14 @@ def get_period_pdf(kwargs):
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
             )
-            period_pdf = lambda P, m1, q=None: period.pdf(P, m1)
+            period_pdf = lambda P, m1, q=None: period.pdf_per_dex(P, m1)
         elif kwargs['orbital_period_scheme'] == 'power_law':
             period = PowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
                 slope=kwargs['power_law_slope'],
             )
-            period_pdf = lambda P, m1=None, q=None: period.pdf(P)
+            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
         else:
             raise ValueError("Orbital period scheme not recognized")
     elif (kwargs['orbital_scheme'] == 'separation'):
@@ -200,12 +200,12 @@ def get_period_pdf(kwargs):
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            # Since the outer function is set in PDF(P) and inner as P(a),
-            # we need to do a change of variables.
-            # PDF(P) = PDF(a) * |da/dP|
-            # da/dP = (2/3) * (a/P)
-            # PDF(P) = (2/3) * log_uniform(log_a)
-            period_pdf = lambda P, m1, q: separation_log_uniform.pdf(
+            # The period PDF is per unit log10(P), while the separation is
+            # sampled per unit log10(a), so we change variables in log space.
+            # PDF(log P) = PDF(log a) * |dlog a/dlog P|
+            # a^3 ∝ P^2 (fixed masses), so dlog a/dlog P = 2/3
+            # PDF(log P) = (2/3) * PDF(log a)
+            period_pdf = lambda P, m1, q: separation_log_uniform.pdf_per_dex(
                 orbital_separation_from_period(P, m1, q*m1)
             ) * 2./3.
         else:

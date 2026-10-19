@@ -1,4 +1,14 @@
-"""Period and mass ratio distributions module for POSYDON."""
+"""Period and mass ratio distributions module for POSYDON.
+
+All distributions follow the same convention for their densities:
+
+- ``pdf(x)`` is the probability density per unit ``x`` (as in scipy.stats),
+  i.e. it integrates to 1 over ``x``.
+- ``pdf_per_dex(x)`` is the probability density per unit ``log10(x)``,
+  evaluated at ``x``, i.e. it integrates to 1 over ``log10(x)``.
+
+The two are related by ``pdf_per_dex(x) = pdf(x) * x * ln(10)``.
+"""
 
 __authors__ = [
     "Max Briel <max.briel@gmail.com>"
@@ -8,7 +18,55 @@ from scipy.integrate import quad
 from scipy.stats import truncnorm
 
 
-class FlatMassRatio:
+class _Distribution:
+    """Base class providing the conversion between ``pdf`` and ``pdf_per_dex``.
+
+    Distributions defined in linear space implement ``pdf`` and inherit
+    ``pdf_per_dex``. Distributions defined in log10 space override
+    ``pdf_per_dex`` and implement ``pdf`` with ``_pdf_from_per_dex``.
+    """
+
+    def pdf_per_dex(self, x, *args):
+        """Probability density per unit log10(x), evaluated at x.
+
+        Parameters
+        ----------
+        x : float or array_like
+            Value(s) to evaluate the density at.
+        *args
+            Additional arguments passed on to ``pdf``.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(x) at x.
+        """
+        x = np.asarray(x, dtype=float)
+        return self.pdf(x, *args) * x * np.log(10)
+
+    @staticmethod
+    def _pdf_from_per_dex(x, per_dex):
+        """Convert a density per unit log10(x) into a density per unit x.
+
+        Parameters
+        ----------
+        x : float or array_like
+            Value(s) the density was evaluated at.
+        per_dex : float or array_like
+            Probability density per unit log10(x) at x.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit x at x (0 where x <= 0).
+        """
+        x = np.asarray(x, dtype=float)
+        per_dex = np.asarray(per_dex, dtype=float)
+        return np.divide(per_dex, x * np.log(10),
+                         out=np.zeros_like(per_dex), where=x > 0)
+
+
+class FlatMassRatio(_Distribution):
     """Flat mass ratio distribution for binary star systems.
 
     A uniform distribution for mass ratios q = m2/m1 within specified bounds.
@@ -151,7 +209,7 @@ class FlatMassRatio:
         return rng.uniform(self.q_min, self.q_max, size=size)
 
 
-class PowerLawMassRatio:
+class PowerLawMassRatio(_Distribution):
     """Power law mass ratio distribution for binary star systems.
 
     A distribution where the PDF follows q^alpha within specified bounds
@@ -294,7 +352,7 @@ class PowerLawMassRatio:
         return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
 
 
-class Sana12Period():
+class Sana12Period(_Distribution):
     """Period distribution from Sana et al. (2012).
 
     Orbital period distribution for massive binary stars based on the
@@ -443,7 +501,8 @@ class Sana12Period():
         '''Probability density function of the Sana12 period distribution.
         Conditional on m1.
 
-        Normalised in logP space to 1.
+        Normalised in P space to 1. See `pdf_per_dex` for the density
+        per unit log10(P).
 
         Parameters
         ----------
@@ -455,10 +514,31 @@ class Sana12Period():
         Returns
         -------
         float or ndarray
-            Probability density at period p.
+            Probability density per unit P at period p.
 
         '''
-        p = np.asarray(p)
+        return self._pdf_from_per_dex(p, self.pdf_per_dex(p, m1))
+
+    def pdf_per_dex(self, p, m1):
+        '''Probability density per unit log10(P) of the Sana12 period
+        distribution. Conditional on m1.
+
+        Normalised in log10(P) space to 1.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+        m1 : float or array_like
+            Mass value(s). Single value or an array of the same length as p.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
+
+        '''
+        p = np.asarray(p, dtype=float)
         m1 = np.asarray(m1)
         if m1.size == 1:
             m1 = np.full_like(p, m1)
@@ -542,7 +622,7 @@ class Sana12Period():
         return periods
 
 
-class PowerLawPeriod():
+class PowerLawPeriod(_Distribution):
     '''Power law period distribution with slope pi and boundaries m_min, m_max.
 
     Normalised in logP space to 1.
@@ -649,6 +729,9 @@ class PowerLawPeriod():
     def pdf(self, p):
         """Probability density function of the power law period distribution.
 
+        Normalised in P space to 1. See `pdf_per_dex` for the density
+        per unit log10(P).
+
         Parameters
         ----------
         p : float or array_like
@@ -657,7 +740,25 @@ class PowerLawPeriod():
         Returns
         -------
         float or ndarray
-            Probability density at period p.
+            Probability density per unit P at period p.
+        """
+        return self._pdf_from_per_dex(p, self.pdf_per_dex(p))
+
+    def pdf_per_dex(self, p):
+        """Probability density per unit log10(P) of the power law period
+        distribution.
+
+        Normalised in log10(P) space to 1.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
         """
         p = np.asarray(p)
         valid = (p > 0) & (p >= self.p_min) & (p <= self.p_max)
@@ -701,7 +802,7 @@ class PowerLawPeriod():
         return 10**logp_samples
 
 
-class LogUniform():
+class LogUniform(_Distribution):
     """Log-uniform distribution between specified minimum and maximum values.
     """
 
@@ -767,12 +868,31 @@ class LogUniform():
         """
         Probability density function of the log-uniform distribution.
 
-        Normalised in log10(x) space to 1.
+        Normalised in x space to 1, as in scipy.stats.loguniform.
+        See `pdf_per_dex` for the density per unit log10(x).
 
         Parameters
         ----------
         x : float or array_like
             Value(s) to evaluate the PDF at.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit x at x.
+        """
+        return self._pdf_from_per_dex(x, self.pdf_per_dex(x))
+
+    def pdf_per_dex(self, x):
+        """
+        Probability density per unit log10(x) of the log-uniform distribution.
+
+        Normalised in log10(x) space to 1.
+
+        Parameters
+        ----------
+        x : float or array_like
+            Value(s) to evaluate the density at.
 
         Returns
         -------
@@ -812,7 +932,7 @@ class LogUniform():
         return 10**log_samples
 
 
-class ThermalEccentricity:
+class ThermalEccentricity(_Distribution):
     """Thermal eccentricity distribution for binary star systems.
 
     The thermal distribution follows pdf(e) = 2*e, which is the
@@ -947,7 +1067,7 @@ class ThermalEccentricity:
         return np.sqrt(u * (self.e_max**2 - self.e_min**2) + self.e_min**2)
 
 
-class UniformEccentricity:
+class UniformEccentricity(_Distribution):
     """Uniform eccentricity distribution for binary star systems.
 
     A flat distribution over eccentricities between e_min and e_max.
@@ -1046,7 +1166,7 @@ class UniformEccentricity:
         return rng.uniform(self.e_min, self.e_max, size=size)
 
 
-class ZeroEccentricity:
+class ZeroEccentricity(_Distribution):
     """Zero eccentricity distribution for circular binary orbits.
 
     All samples are exactly zero (circular orbits). The PDF is a Dirac delta
@@ -1106,7 +1226,7 @@ class ZeroEccentricity:
         return np.zeros(size)
 
 
-class LogNormalSeparation:
+class LogNormalSeparation(_Distribution):
     """Log-normal orbital separation distribution for binary star systems.
 
     Orbital separations are drawn from a log-normal distribution in log10 space,
@@ -1190,6 +1310,9 @@ class LogNormalSeparation:
     def pdf(self, a):
         """Probability density function of the log-normal separation distribution.
 
+        Normalised in a space to 1. See `pdf_per_dex` for the density
+        per unit log10(a).
+
         Parameters
         ----------
         a : float or array_like
@@ -1198,21 +1321,38 @@ class LogNormalSeparation:
         Returns
         -------
         float or ndarray
-            Probability density at separation a.
+            Probability density per unit a at separation a.
+        """
+        # pdf(a) = pdf_per_dex(a) * |d(log a)/da| = pdf_per_dex(a) / (a * ln(10))
+        return self._pdf_from_per_dex(a, self.pdf_per_dex(a))
+
+    def pdf_per_dex(self, a):
+        """Probability density per unit log10(a) of the log-normal separation
+        distribution.
+
+        Normalised in log10(a) space to 1.
+
+        Parameters
+        ----------
+        a : float or array_like
+            Orbital separation(s) in solar radii.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(a) at separation a.
         """
         a = np.asarray(a)
         valid = (a > 0) & (a >= self.min) & (a <= self.max)
         pdf_values = np.zeros_like(a, dtype=float)
 
-        log_a = np.log10(a[valid])
-        # PDF of truncnorm in log space, transformed to linear space
-        # pdf(a) = pdf_log(log a) * |d(log a)/da| = pdf_log(log a) / (a * ln(10))
+        # truncated normal in log10 space
         pdf_values[valid] = truncnorm.pdf(
-            log_a,
+            np.log10(a[valid]),
             self.a_low, self.a_high,
             loc=self.mean,
             scale=self.sigma
-        ) / (a[valid] * np.log(10))
+        )
 
         return pdf_values
 
