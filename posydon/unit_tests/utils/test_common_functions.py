@@ -614,12 +614,32 @@ class TestFunctions:
                                      +"'m2'"):
             totest.orbital_period_from_separation()
         # examples
-        tests = [(1.0, 15.0, 30.0, approx(1.72773763511e-2, abs=6e-14)),\
-                 (2.0, 15.0, 30.0, approx(4.88677999159e-2, abs=6e-14)),\
-                 (1.0, 30.0, 30.0, approx(1.49626468308e-2, abs=6e-14)),\
-                 (1.0, 15.0, 60.0, approx(1.33829981748e-2, abs=6e-14))]
+        tests = [(1.0, 15.0, 30.0, approx(1.72748216438e-2, abs=6e-14)),\
+                 (2.0, 15.0, 30.0, approx(4.88605741124e-2, abs=6e-14)),\
+                 (1.0, 30.0, 30.0, approx(1.49604343894e-2, abs=6e-14)),\
+                 (1.0, 15.0, 60.0, approx(1.33810193070e-2, abs=6e-14))]
         for (a, m1, m2, r) in tests:
             assert totest.orbital_period_from_separation(a, m1, m2) == r
+
+    def test_orbital_period_separation_round_trip(self):
+        # both directions of Kepler's third law need to be exact inverses
+        for m1 in [0.1, 1.0, 10.0, 150.0]:
+            for m2 in [0.5, 8.0, 70.0]:
+                for a in [1.0, 5.0, 1.0e2, 1.0e4]:
+                    P = totest.orbital_period_from_separation(a, m1, m2)
+                    assert totest.orbital_separation_from_period(P, m1, m2)\
+                           == approx(a, rel=1e-12)
+                for P in [0.1, 1.0, 1.0e2, 1.0e4]:
+                    a = totest.orbital_separation_from_period(P, m1, m2)
+                    assert totest.orbital_period_from_separation(a, m1, m2)\
+                           == approx(P, rel=1e-12)
+        # arrays
+        a = np.array([1.0, 10.0, 1.0e3])
+        m1 = np.array([1.0, 20.0, 50.0])
+        m2 = np.array([0.5, 15.0, 3.0])
+        P = totest.orbital_period_from_separation(a, m1, m2)
+        assert totest.orbital_separation_from_period(P, m1, m2)\
+               == approx(a, rel=1e-12)
 
     def test_eddington_limit(self, binary):
         # missing argument
