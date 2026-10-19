@@ -386,8 +386,6 @@ def orbital_period_from_separation(separation, m1, m2):
 
     """
     #TODO: check for invalid or negative inputs
-    # use the same constants as `orbital_separation_from_period` to be the
-    # exact inverse of it; cast to float64 to avoid overflow
     m1 = np.asarray(m1, dtype="float64")
     m2 = np.asarray(m2, dtype="float64")
     separation = np.asarray(separation, dtype="float64")
