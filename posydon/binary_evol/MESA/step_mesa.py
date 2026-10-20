@@ -11,6 +11,7 @@ __authors__ = [
     "Nam Tran <tranhn03@gmail.com>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 
@@ -121,6 +122,53 @@ POSYDON_TO_MESA = {
         'total_mass_he4': 'total_mass_he4'
     }
 }
+
+
+# MT cases of a mass-transfer episode, which define star.first_mt_case
+FIRST_MT_CASES = ('case_A', 'case_B', 'case_C', 'case_BA', 'case_BB',
+                  'case_BC')
+
+
+def _set_first_mt_case(star, mt_case):
+    """Record the MT case of the first MT episode of a star as a donor.
+
+    Only an MT case in `FIRST_MT_CASES` is recorded, and only if the star has
+    none yet, so an earlier grid wins over later ones (e.g. a star stripped in
+    CO-HMS_RLO keeps its case in CO-HeMS) and a star that never was a donor
+    (e.g. a former accretor) keeps None.
+
+    Parameters
+    ----------
+    star : SingleStar
+        The star to update.
+    mt_case : str or None
+        The MT case of the star's first MT episode as donor in this grid run,
+        see `first_mt_case_from_cumulative`.
+
+    """
+    if ((mt_case in FIRST_MT_CASES)
+        and (getattr(star, 'first_mt_case', None) not in FIRST_MT_CASES)):
+        star.first_mt_case = mt_case
+
+
+def _update_first_mt_cases(stars, stars_CO, cumulative_mt_case):
+    """Update star.first_mt_case of each non-compact star from a grid run.
+
+    Parameters
+    ----------
+    stars : list of SingleStar
+        The two stars in grid order (stars[k] is star k+1 of the grid).
+    stars_CO : list of bool
+        Whether each star is a compact object (never updated).
+    cumulative_mt_case : str or None
+        The cumulative MT case of the run (termination_flag_2), e.g.
+        'case_A1/B2'.
+
+    """
+    for k, star in enumerate(stars):
+        if not stars_CO[k]:
+            _set_first_mt_case(star, cf.first_mt_case_from_cumulative(
+                cumulative_mt_case, star_index=k+1))
 
 
 def _collect_sn_model_values(sn_row, star_idx):
@@ -348,7 +396,6 @@ class MesaGridStep:
 
         elif self.interpolation_method in self.supported_interp_methods:
             self.final_values, self.classes = self._Interp.evaluate(self.binary)
-
             max_MESA_sim_time = self.final_values[POSYDON_TO_MESA['binary']['time']]
         else:
             raise ValueError("unknown interpolation method: {}".format(self.interpolation_method))
@@ -742,6 +789,12 @@ class MesaGridStep:
         mt_history = self.termination_flags[2] # mass transfer history (TF12 plot label)
         setattr(self.binary, f'mt_history_{self.grid_type}', mt_history)
 
+        # first MT episode of this grid run (whichever star is the donor)
+        setattr(self.binary, f'first_mt_case_{self.grid_type}',
+                cf.first_mt_case_from_cumulative(cumulative_mt_case))
+        # first MT episode of each star as a donor
+        _update_first_mt_cases(stars, stars_CO, cumulative_mt_case)
+
         if self.save_initial_conditions:
             # history N is how much to look back in the history
             # here N=1 as we only appended back the first entry
@@ -957,6 +1010,16 @@ class MesaGridStep:
 
         #TODO: add classifier for tf2
         #setattr(self.binary, f'cumulative_mt_case', self.classes['termination_flags_2'])
+
+        # first MT episode of this grid run (whichever star is the donor)
+        first_mt_case = self.classes.get('first_mt_case')
+        setattr(self.binary, f'first_mt_case_{self.grid_type}', first_mt_case)
+        # the classifier does not tell the donor: assign the case to star 1,
+        # which is the donor of the first MT episode in (nearly) all runs
+        # (the primary in HMS-HMS, the non-compact star in CO-H(e)MS)
+        if not star_1_CO:
+            _set_first_mt_case(self.binary.star_1, first_mt_case)
+
         S1_state_inferred = cf.check_state_of_star(self.binary.star_1,
                                                    star_CO=star_1_CO)
         S2_state_inferred = cf.check_state_of_star(self.binary.star_2,

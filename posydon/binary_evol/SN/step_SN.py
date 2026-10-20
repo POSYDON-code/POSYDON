@@ -52,12 +52,19 @@ from posydon.binary_evol.singlestar import (
     STARPROPERTIES,
     convert_star_to_massless_remnant,
 )
+from posydon.binary_evol.SN.maltsev_MCO import (
+    Maltsev25_MCO_corecollapse,
+)
 from posydon.binary_evol.SN.profile_collapse import (
     do_core_collapse_BH,
     get_ejecta_element_mass_at_collapse,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL, get_SN_MODEL_NAME
+from posydon.grids.SN_MODELS import (
+    DEFAULT_MALTSEV_SN_MODEL,
+    DEFAULT_SN_MODEL,
+    get_SN_MODEL_NAME,
+)
 from posydon.utils.common_functions import (
     CO_radius,
     calculate_Patton20_values_at_He_depl,
@@ -263,10 +270,13 @@ class StepSN(object):
         "no_kick_direct_collapse": False,
         # other
         "RNG": None,
-        "verbose": False
+        "verbose": False,
     }
     # add core collapse physics
     DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+    # Maltsev+25 extras: not in DEFAULT_SN_MODEL, but step_SN needs a value
+    # for them whichever mechanism is selected
+    DEFAULT_KWARGS.update(DEFAULT_MALTSEV_SN_MODEL)
 
 
     def __init__(self, **kwargs):
@@ -310,6 +320,7 @@ class StepSN(object):
         self.Patton20_engines = "Patton&Sukhbold20-engine"
         self.Couch20_engines = "Couch+20-engine"
         self.Maltsev25_engines = "Maltsev+25-engine"
+        self.Maltsev25_MCO_rapid = "Maltsev+25-MCO-rapid"
 
 
 
@@ -321,7 +332,8 @@ class StepSN(object):
             self.Sukhbold16_engines,
             self.Patton20_engines,
             self.Couch20_engines,
-            self.Maltsev25_engines
+            self.Maltsev25_engines,
+            self.Maltsev25_MCO_rapid
         ]
 
         if self.mechanism in self.mechanisms:
@@ -411,7 +423,9 @@ class StepSN(object):
                 CO_core_params_sc, sc_target = format_data_Patton20(
                     'Kepler_sc_table.dat')
 
-                n_neighbors = 5
+                # nearest Patton & Sukhbold (2020) model, i.e. no averaging
+                # over neighbouring models with different explodability
+                n_neighbors = 1
 
                 if self.verbose:
                     print('Training the classifier ...')
@@ -432,8 +446,21 @@ class StepSN(object):
                 self.sc_interpolator.fit(CO_core_params_sc, sc_target)
                 if self.verbose:
                     print('Done')
+
         else:
             raise ValueError("Invalid core-collapse mechanism given.")
+
+
+        # For the Maltsev+25 prescriptions, we have to load in the rapid
+        # prescription for both the MCO and the engine prescriptions.
+        if self.mechanism in (self.Maltsev25_MCO_rapid, self.Maltsev25_engines):
+            self.Maltsev25_MCO_engine = Maltsev25_MCO_corecollapse(
+                RNG=self.RNG,
+                NS_mass=self.Maltsev25_MCO_NS_mass,
+                fallback_fraction=self.Maltsev25_MCO_fallback_fraction,
+                fallback_model=self.Maltsev25_MCO_fallback_model,
+                extrapolation_mode=self.Maltsev25_MCO_extrapolation_mode,
+                verbose=self.verbose)
 
     def __repr__(self):
         """Get the string representation of the class and any parameters."""
@@ -826,7 +853,8 @@ class StepSN(object):
             elif self.mechanism in [self.Sukhbold16_engines,
                                     self.Patton20_engines,
                                     self.Couch20_engines,
-                                    self.Maltsev25_engines]:
+                                    self.Maltsev25_engines,
+                                    self.Maltsev25_MCO_rapid]:
                 # The final remnant mass and and state
                 # is computed by the selected mechanism
 
@@ -1448,6 +1476,26 @@ class StepSN(object):
                 m_rembar, f_fb, state = self.Maltsev25_corecollapse(star,
                                                 self.engine,
                                                 self.conserve_hydrogen_envelope)
+
+        elif self.mechanism == self.Maltsev25_MCO_rapid:
+            if star.SN_type == "ECSN":
+                if self.ECSN == 'Podsiadlowski+04':
+                    m_proto = 1.38
+                else:
+                    m_proto = m_core
+                f_fb = 0.0
+                m_fb = 0.0
+                m_rembar = m_proto + m_fb
+                state = 'NS'
+            else:
+                # CO core mass at He depletion, as for the engine-based
+                # prescriptions
+                CO_core_mass, _ = self.get_CO_core_params(
+                    star, self.approx_at_he_depletion)
+                m_rembar, f_fb, state = self.Maltsev25_MCO_engine(
+                    star,
+                    conserve_hydrogen_envelope=self.conserve_hydrogen_envelope,
+                    M_CO=CO_core_mass)
         else:
             raise ValueError("Mechanism %s not supported." % self.mechanism)
 
@@ -2487,18 +2535,16 @@ class StepSN(object):
                 f_fb = 0.0
                 state = 'NS'
 
-            # In the Maltsev prescription, stars with CO core masses above 10 are allowed to explode.
-            # However, since this outcome depends on the mass-transfer (MT) history, we handle it
-            # in post-processing (for now). For all CO core masses above 10, we assume a failed supernova
-            # with fallback = 1 at this stage.
+            # The Patton models stop at M_CO = 10 Msun, so we fallback to the
+            # Maltsev+25-rapid prescription for CO core masses above 10 Msun,
+            # with the same CO core mass (at He depletion). Note that at this
+            # hand-over the NS mass changes from M4 to the constant NS mass of
+            # the rapid recipe, and the outcome depends explicitly on the MT
+            # class and Z (instead of only through the C abundance).
             elif CO_core_mass >= 10.0:
-                # Assuming BH formation by direct collapse
-                if conserve_hydrogen_envelope:
-                    m_rem = star.mass
-                else:
-                    m_rem = star.he_core_mass
-                f_fb = 1.0
-                state = 'BH'
+                m_rem, f_fb, state = self.Maltsev25_MCO_engine(
+                    star, conserve_hydrogen_envelope=conserve_hydrogen_envelope,
+                    M_CO=CO_core_mass)
 
             elif (CO_core_mass > 2.5) and (CO_core_mass < 10.0):
                 successful_SN = self.explod_crit(Xi, sc, mu4M4, mu4, k1, k2)

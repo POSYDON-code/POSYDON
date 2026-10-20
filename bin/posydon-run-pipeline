@@ -384,7 +384,8 @@ def train_interpolators(i, path_to_csv_file, verbose=False):
                             and "SN_MODEL" not in key)]
 
     # define all string keys in final values
-    c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history']
+    c_keys = ['interpolation_class', 'S1_state', 'S2_state', 'mt_history',
+              'first_mt_case']
     for SN_MODEL_NAME in SN_MODELS.keys():
         for i in range(1,3):
             c_keys.append(f'S{i}_{SN_MODEL_NAME}_SN_type')

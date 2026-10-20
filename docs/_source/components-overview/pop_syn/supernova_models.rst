@@ -51,8 +51,74 @@ POSYDON supports the following core-collapse mechanisms:
 ..
   * - **Maltsev+25-engine**
     - ``M16``
-    - Maltsev et al. (2025) with updated explodability criteria and neutrino-driven physics. **Only valid M_CO < 10 Msun!**
+    - Maltsev et al. (2025) explodability criteria applied to the Patton & Sukhbold (2020) models for M_CO < 10 Msun; above that, the ``Maltsev+25-MCO-rapid`` recipe is used (see below).
+  * - **Maltsev+25-MCO-rapid**
+    - ``None``
+    - Maltsev et al. (2025) rapid BPS prescription based on the CO core mass and metallicity (arXiv:2503.23856). Supports the ``optimistic``, ``balanced`` and ``pessimistic`` extrapolation modes via ``Maltsev25_MCO_extrapolation_mode``.
 
+
+..
+   Both Maltsev+25 mechanisms use the CO core mass **at He depletion**
+   (``co_core_mass_at_He_depletion``, or its approximation when
+   ``approx_at_he_depletion = True``), as in Willcox et al. (2025). This mass
+   selects between the engine and the rapid recipe at M_CO = 10 Msun in
+   ``Maltsev+25-engine``, and it is also the mass the rapid recipe uses. Two
+   discontinuities remain at this hand-over:
+
+   - the neutron-star baryonic mass changes from M4 of the Patton & Sukhbold
+     models (about 1.8-2.2 Msun) to the constant ``Maltsev25_MCO_NS_mass``;
+   - below 10 Msun the outcome depends on the MT history and metallicity only
+     through the central carbon abundance, above it explicitly through the MT
+     class and Z of the rapid recipe.
+
+   Mechanism-specific parameters
+   -----------------------------
+
+   Most supernova parameters are shared by all mechanisms and fall back to the
+   values in ``DEFAULT_SN_MODEL``. The two Maltsev+25 mechanisms
+   (``Maltsev+25-engine`` and ``Maltsev+25-MCO-rapid``) are instead defined by four
+   additional parameters, which have **no default in a supernova model** and have
+   to be set explicitly, both in ``SN_MODELS`` and in the ``[step_SN]`` section of
+   an ini file. This keeps them part of the model identity, so a post-processed
+   grid column records the assumptions it was computed with.
+
+   .. list-table:: Parameters required by the Maltsev+25 mechanisms
+      :header-rows: 1
+      :widths: 35 15 50
+
+      * - Parameter
+        - Value in the pre-defined models
+        - Description
+      * - ``Maltsev25_MCO_NS_mass``
+        - ``1.4``
+        - Baryonic neutron-star mass (Msun). The recipe predicts the remnant type but not its mass.
+      * - ``Maltsev25_MCO_fallback_fraction``
+        - ``0.99``
+        - Fallback fraction ``f_fb`` assigned to a fallback black hole. A fallback black hole gets the full collapsing mass (He core, or the whole star with ``conserve_hydrogen_envelope``), like a direct-collapse black hole; ``f_fb`` only matters for the natal kick with ``kick_normalisation = 'one_minus_fallback'``.
+      * - ``Maltsev25_MCO_fallback_model``
+        - ``'A'``
+        - Probability of forming a fallback black hole instead of a neutron star for a successful SN with M2 < M_CO < M3: ``'A'``: 15% outside the guaranteed-NS window; ``'B'``: a uniform 10% without guaranteed-NS window (Maltsev et al. 2025, Sects. 3.2.2 and 3.2.3).
+      * - ``Maltsev25_MCO_extrapolation_mode``
+        - ``'balanced'``
+        - ``'balanced'``, ``'optimistic'`` or ``'pessimistic'``: how the M_CO boundaries are extrapolated outside the calibrated range Z/Zsun in [0.1, 1] (Willcox et al. 2025). ``'optimistic'`` applies no floor, so at Z/Zsun of order 0.01 and below the lowest boundary drops under the M_CO,min = 5.6 Msun of the Maltsev+25 explodability criteria.
+
+   Leaving any of them out of an ini file that selects a Maltsev+25 mechanism makes
+   ``posydon-setup-popsyn`` fail with a message naming the missing parameters.
+   Other mechanisms neither use nor have to provide them.
+
+   For the M_CO boundaries the paper distinguishes early and late Case B mass
+   transfer; ``Maltsev+25-MCO-rapid`` uses the late Case B (Case Bl) values for
+   all Case B donors (including Case BA, BB and BC). The guaranteed-NS window is
+   given for Case B as a whole.
+
+   The Maltsev+25 mechanisms also require ``use_interp_values = False``. Their
+   outcome is partly stochastic: outside the guaranteed-NS region an exploding
+   star forms a fallback black hole with a fixed probability. Values stored in the
+   post-processed grids and interpolators would freeze a single random draw per
+   grid point into every population, so the outcome is always computed during the
+   population synthesis with its own random numbers. ``posydon-setup-popsyn``
+   raises an error for an ini file that combines a Maltsev+25 mechanism with
+   ``use_interp_values = True``.
 
 
 Pulsational pair-instability supernova prescriptions
@@ -314,12 +380,37 @@ The following table lists all pre-defined supernova models and their key charact
     - M16
     - Yes
     - 0.0
+  * - SN_MODEL_v2_29
+    - Maltsev+25-MCO-rapid
+    - \-
+    - No
+    - -20.0
+  * - SN_MODEL_v2_30
+    - Maltsev+25-MCO-rapid
+    - \-
+    - Yes
+    - -20.0
+  * - SN_MODEL_v2_31
+    - Maltsev+25-MCO-rapid
+    - \-
+    - No
+    - 0.0
+  * - SN_MODEL_v2_32
+    - Maltsev+25-MCO-rapid
+    - \-
+    - Yes
+    - 0.0
 
 All pre-defined models use:
 
 - ``use_interp_values = False`` (on-the-fly calculations, not pre-trained interpolators)
 - ``use_profiles = True`` (detailed MESA profiles, downsampled during calculation)
 - ``use_core_masses = False``
+
+..
+   The ``SN_MODEL_v2_25`` to ``SN_MODEL_v2_32`` models use a Maltsev+25 mechanism
+   and therefore also set the four parameters described under
+   `Mechanism-specific parameters`_ explicitly.
 
 Configuration
 ^^^^^^^^^^^^^
