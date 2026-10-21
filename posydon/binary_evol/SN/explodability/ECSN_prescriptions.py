@@ -1,14 +1,13 @@
 from abc import ABC, abstractmethod
 
-
 def get_ECSN_prescription(**kwargs):
     option = kwargs['ECSN']
     if option=="Tauris+15":
-        return ECSN_check_Tauris(**kwargs)
+        return ECSN_check_Tauris15(**kwargs)
     elif option=="Podsiadlowski+04":
-        return ECSN_check_Podsiadlowski(**kwargs)
+        return ECSN_check_Podsiadlowski04(**kwargs)
     elif option=="No_ECSN" or (option is None):
-        return ECSN_check_NoECSN(**kwargs)
+        return ECSN_check_None(**kwargs)
     else:
         raise ValueError(
             f"Invalid option {option} given to ECSN prescription. "
@@ -49,7 +48,7 @@ class ECSN_check_base(ABC):
         return "Prescription_ECSN was initialised with the {option} prescription".format(option=self.ECSN_option)
 
 
-class ECSN_check_Tauris(ECSN_check_base):
+class ECSN_check_Tauris15(ECSN_check_base):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.ECSN_core_type = "CO"
@@ -59,7 +58,7 @@ class ECSN_check_Tauris(ECSN_check_base):
         return star.co_core_mass
 
 
-class ECSN_check_Podsiadlowski(ECSN_check_base):
+class ECSN_check_Podsiadlowski04(ECSN_check_base):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.ECSN_core_type = "He"
@@ -68,7 +67,7 @@ class ECSN_check_Podsiadlowski(ECSN_check_base):
     def core_mass(self,star):
         return star.he_core_mass
 
-class ECSN_check_NoECSN(ECSN_check_base):
+class ECSN_check_None(ECSN_check_base):
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.ECSN_core_type = "CO"

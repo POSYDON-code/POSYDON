@@ -1,4 +1,5 @@
 import numpy as np
+from abc import ABC, abstractmethod
 
 from posydon.utils.common_functions import (  # CO_radius,; calculate_Patton20_values_at_He_depl,; inspiral_timescale_from_separation,; orbital_period_from_separation,; rotate,; separation_evol_wind_loss,; set_binary_to_failed,
     is_number,
@@ -7,13 +8,15 @@ from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
 
-class BaseCCSNCrit:
+class CCSN_check_base(ABC):
+    def __init__(**kwargs):
+        
     def __call__(self,binary,**kwargs):
         raise ModelError("In step_SN, the explosion criterion is undefined")
 
-class Fryer12_rapid(BaseCCSNCrit):
+class CCSN_check_Fryer12_rapid(CCSN_check_base):
     def __init__(self,**kwargs):
-        # super().__init__(**kwargs)
+        super().__init__(**kwargs)
         self.expl_crit_name = "Fryer+12-rapid"
     def __call__(self,binary,**kwargs):
 
