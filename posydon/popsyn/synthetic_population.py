@@ -312,8 +312,9 @@ class DFInterface:
         '''
         indices = np.unique(np.asarray(indices))
         if len(indices) <= 31:
-            return self.select(key, where=f"index in {indices.tolist()}",
-                               columns=columns)
+            return DFInterface.select(self, key,
+                                      where=f"index in {indices.tolist()}",
+                                      columns=columns)
         where = f"index >= {indices[0]} & index <= {indices[-1]}"
         with pd.HDFStore(self.filename, mode="r") as store:
             iterator = store.select(key, where=where, columns=columns,
