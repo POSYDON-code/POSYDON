@@ -365,6 +365,20 @@ class TestHistory:
         assert "val" in rep
         assert "<table" in html
 
+    def test_select_indices_many(self, tmp_path):
+        idx = np.repeat(np.arange(100), 2)
+        df = pd.DataFrame({"a": np.arange(200.0)}, index=pd.Index(idx, name="binary_index"))
+        file_path = os.path.join(tmp_path, "test_many.h5")
+        df.to_hdf(file_path, key="history", format="table")
+        pd.DataFrame({"lengths": [2] * 100}).to_hdf(file_path, key="history_lengths")
+        hist = totest.History(str(file_path), chunksize=7)
+        sel = list(range(10, 60, 1))           # 50 indices, > 31
+        out = hist[sel]
+        pd.testing.assert_frame_equal(out, df[df.index.isin(sel)])
+        out = hist.select_indices(np.array(sel), columns=["a"])
+        assert set(out.index) == set(sel)
+        assert len(hist.select_indices([500, 600, *range(200, 240)])) == 0
+
 class TestOneline:
 
     def test_init(self, tmp_path):
