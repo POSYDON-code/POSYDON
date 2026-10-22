@@ -36,10 +36,12 @@ To re-run comparison with different tolerances without re-evolving:
 Top-level entry point. Evolves test binaries on a candidate branch, then compares results against an existing baseline. This script will look for baseline HDF5 files stored in `dev-tools/baseline/<branch-name>`, where `main` is the default `<branch-name>`.
 
 ```bash
-./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve]
+./validate_binaries.sh <candidate_branch> [baseline_branch] [metallicities] [--loose] [--rtol VALUE] [--atol VALUE] [--skip-evolve] [--sha VALUE]
 ```
 
-By default, comparison is exact (rtol=0, atol=0). Use `--loose` for relaxed floating-point tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly as per [np.allclose](https://numpy.org/devdocs/reference/generated/numpy.allclose.html). Use `--skip-evolve` to skip the evolution step and compare existing candidate outputs against the baseline.
+By default, comparison is exact (rtol=0, atol=0). Use `--loose` for relaxed floating-point tolerances (rtol=1e-12, atol=1e-15), or set `--rtol`/`--atol` explicitly as per [np.allclose](https://numpy.org/devdocs/reference/generated/numpy.allclose.html). Use `--skip-evolve` to skip the evolution step and compare existing candidate outputs against the baseline. Use `--sha` to evolve a specific commit of the candidate branch instead of its HEAD.
+
+The script exits with `0` if all comparisons pass, `10` if differences were detected, and `1` on any error (missing baseline or candidate output, comparison crash, ...).
 
 ### `generate_baseline.sh`
 

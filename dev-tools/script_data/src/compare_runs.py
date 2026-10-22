@@ -19,6 +19,11 @@ Usage:
     python compare_runs.py baseline.h5 candidate.h5 --verbose
     python compare_runs.py baseline.h5 candidate.h5 --loose
 
+Exit codes:
+    0   no differences
+    1   error (bad arguments, missing file, unreadable HDF5, crash, ...)
+    2   differences detected
+
 Authors: Elizabeth Teng
 """
 
@@ -326,6 +331,8 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
                         help="Override absolute tolerance (default: 0, or 1e-15 with --loose)")
     parser.add_argument("--verbose", "-v", action="store_true",
                         help="Print extra diagnostic info")
+    # argparse exits 2 on bad arguments, but 2 means "differences detected".
+    parser.error = lambda message: parser.exit(1, f"{parser.prog}: error: {message}\n")
     args = parser.parse_args()
 
     # Set tolerances
@@ -339,7 +346,7 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
     for f in [args.baseline, args.candidate]:
         if not os.path.exists(f):
             print(f"ERROR: File not found: {f}", file=sys.stderr)
-            sys.exit(2)
+            sys.exit(1)
 
     quant_diffs = []
     qual_diffs = []
@@ -409,7 +416,7 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
 
     except Exception as e:
         print(f"ERROR reading HDF5 files: {e}", file=sys.stderr)
-        sys.exit(2)
+        sys.exit(1)
 
     # ── Report ────────────────────────────────────────────────────────────
     total_diffs = len(quant_diffs) + len(qual_diffs) + len(struct_diffs) + len(warn_diffs)
@@ -494,7 +501,7 @@ Use --loose to allow small floating-point tolerances (rtol=1e-12, atol=1e-15).
         print(f"  Quantitative: {len(quant_diffs)}")
         print(f"  Warnings:     {len(warn_diffs)}")
         print("=" * 70)
-        sys.exit(1)
+        sys.exit(2)
 
 
 if __name__ == "__main__":
