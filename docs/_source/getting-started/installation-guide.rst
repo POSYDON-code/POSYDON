@@ -137,7 +137,10 @@ To download all eight DR2 metallicities (about 110 GB):
     get-posydon-data DR2
 
 Run ``get-posydon-data -l complete`` to list all datasets, and
-``get-posydon-data -h`` for the other options. The data can also be downloaded
+``get-posydon-data -h`` for the other options. Datasets already present in
+``PATH_TO_POSYDON_DATA`` are skipped, so you can safely re-run the same command
+to resume an interrupted download; use ``get-posydon-data -f <dataset>`` to
+force a fresh download. The data can also be downloaded
 manually from the `POSYDON community on Zenodo
 <https://zenodo.org/communities/posydon/>`_. See :ref:`data-releases` for what
 each release contains.
