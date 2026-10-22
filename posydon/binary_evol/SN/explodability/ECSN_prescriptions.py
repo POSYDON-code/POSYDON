@@ -18,7 +18,7 @@ class ECSN_check_base(ABC):
     def __init__(self,**kwargs):
         self.ECSN_option = kwargs['ECSN']
         self.verbose = kwargs['verbose']
-    
+
     def __call__(self,star):
         m_core = self.core_mass(star)
         if m_core < self.min_core_mass_ECSN:
@@ -39,11 +39,11 @@ class ECSN_check_base(ABC):
             print(f'The ECSN_check routine has determined that a collapsing star with a {self.ECSN_core_type} core of')
             print('{core_mass} Msun is not an ECSN or a WD'.format(core_mass=m_core))
         return None
-        
+
     @abstractmethod
     def core_mass(self,star):
         raise NotImplementedError
-    
+
     def __repr__(self):
         return "Prescription_ECSN was initialised with the {option} prescription".format(option=self.ECSN_option)
 
@@ -75,4 +75,3 @@ class ECSN_check_None(ECSN_check_base):
         self.max_core_mass_ECSN = float("-inf")  # Guarantees that there are no ECSN
     def core_mass(self,star):
         return star.co_core_mass
-
