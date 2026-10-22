@@ -378,7 +378,7 @@ class TestHistory:
         out = hist.select_indices(np.array(sel), columns=["a"])
         assert set(out.index) == set(sel)
         assert len(hist.select_indices([500, 600, *range(200, 240)])) == 0
-        
+
 class TestOneline:
 
     def test_init(self, tmp_path):
