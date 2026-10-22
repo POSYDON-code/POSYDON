@@ -1729,30 +1729,26 @@ class PSyGrid:
         return {name: row[name] for name in row.dtype.names}
 
     def get_pandas_initial_final(self):
-        """Convert the initial/final values into a single Pandas dataframe.
+        def _frame(arr, names):
+            df = pd.DataFrame(np.asarray(arr))
+            df.columns = names
+            return df
 
-        Returns
-        -------
-        Pandas data frame
-            Containing the initial and final values.
-
-        """
-        df = pd.DataFrame()
-        for key in self.initial_values.dtype.names:
-            new_col_name = "initial_" + key
-            df[new_col_name] = self.initial_values[key]
-
-        for key in self.final_values.dtype.names:
-            new_col_name = "final_" + key
-            df[new_col_name] = self.final_values[key]
-
-        # Include SN model columns (moved out of final_values after migration)
+        frames = [
+            _frame(self.initial_values,
+                ["initial_" + k for k in self.initial_values.dtype.names]),
+            _frame(self.final_values,
+                ["final_" + k for k in self.final_values.dtype.names]),
+        ]
+        # SN model columns (moved out of final_values after migration)
         for model_name, sn_ds in self.SN_MODELS.items():
+            names = []
             for short_key in sn_ds.dtype.names:
-                prefix, field_name = short_key.split('_', 1)
-                full_key = f"final_{prefix}_{model_name}_{field_name}"
-                df[full_key] = np.array(sn_ds[short_key])
-        return df
+                prefix, field_name = short_key.split("_", 1)
+                names.append(f"final_{prefix}_{model_name}_{field_name}")
+            frames.append(_frame(sn_ds, names))
+
+        return pd.concat(frames, axis=1, copy=False)
 
     def __len__(self):
         """Return the number of runs in the grid.

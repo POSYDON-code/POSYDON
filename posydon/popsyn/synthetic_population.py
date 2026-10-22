@@ -287,7 +287,42 @@ class DFInterface:
                 out.append(chunk)
             out = pd.concat(out, axis=0)
         return out
+    
+    def _select_indices(self, key, indices, columns=None):
+        '''Select the rows of the key table whose index is in `indices`.
 
+        PyTables cannot evaluate `index in [...]` with more than 31 values,
+        in which case pandas reads the whole table and filters in memory.
+        Instead, the read is restricted to [min(indices), max(indices)] and
+        each chunk is filtered with `isin`.
+
+        Parameters
+        ----------
+        key : str
+            The key of the table to select from.
+        indices : array-like of int
+            The indices of the rows to select.
+        columns : list, optional
+            A list of column names to select.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The selected rows, in file order.
+        '''
+        indices = np.unique(np.asarray(indices))
+        if len(indices) <= 31:
+            return self.select(key, where=f"index in {indices.tolist()}",
+                               columns=columns)
+        where = f"index >= {indices[0]} & index <= {indices[-1]}"
+        with pd.HDFStore(self.filename, mode="r") as store:
+            iterator = store.select(key, where=where, columns=columns,
+                                    chunksize=self.chunksize)
+            out = [chunk[chunk.index.isin(indices)] for chunk in iterator]
+            if not out:
+                return store.select(key, start=0, stop=0, columns=columns)
+        return pd.concat(out, axis=0)
+    
     def get_repr(self, key):
         '''Return a string representation of the key table.
 
@@ -449,8 +484,7 @@ class History(DFInterface):
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            indices = list(range(pre, pre + chunk))
-            return self.select(where=f'index in {indices}')
+            return self.select(where=f"index >= {pre} & index < {pre + chunk}")
 
         # single index
         elif isinstance(key, int):
@@ -461,7 +495,7 @@ class History(DFInterface):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
-                return self.select(where=f"index in {key}")
+                return self.select_indices(key)
 
         # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
@@ -469,7 +503,7 @@ class History(DFInterface):
                 return pd.DataFrame()
             else:
                 indices = key.tolist()
-                return self.select(where=f"index in {indices}")
+                return self.select_indices(key)
 
         # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
@@ -564,6 +598,10 @@ class History(DFInterface):
             The HTML representation of the history dataframe.
         """
         return super().get_html_repr("history")
+
+    def select_indices(self, indices, columns=None):
+        """Select the history of the binaries with the given indices."""
+        return super()._select_indices("history", indices, columns=columns)
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -694,24 +732,20 @@ class Oneline(DFInterface):
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            indices = list(range(pre, pre + chunk))
-            return self.select(where=f'index in {indices}')
+            return self.select(where=f"index >= {pre} & index < {pre + chunk}")
 
         elif isinstance(key, int):
             return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            return self.select(where=f"index in {key}")
+            return self.select_indices(key)
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = key.tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(key)
         elif isinstance(key, list) and all(isinstance(x, float) for x in key):
             raise ValueError("elements in list are not integers! Try casting to int.")
         elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
-            indices = self.indices[key.to_numpy().flatten()].tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(self.indices[key.to_numpy().flatten()])
         elif isinstance(key, np.ndarray) and key.dtype == bool:
-            indices = self.indices[key].tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(self.indices[key])
         elif isinstance(key, str):
             if key in self.columns:
                 return self.select(columns=[key])
@@ -788,6 +822,10 @@ class Oneline(DFInterface):
             The HTML representation of the oneline table.
         """
         return super().get_html_repr("oneline")
+
+    def select_indices(self, indices, columns=None):
+        """Select the oneline rows of the binaries with the given indices."""
+        return super()._select_indices("oneline", indices, columns=columns)
 
     def select(self, where=None, start=None, stop=None, columns=None):  # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
@@ -1950,7 +1988,7 @@ class TransientPopulation(Population):
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
             if len(met_indices) == 0: # pragma: no cover
                 continue
-            pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
+            pop_data = self.oneline.select_indices(met_indices,
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
 
             # For some reason some binaries might be flipped in the sampling
