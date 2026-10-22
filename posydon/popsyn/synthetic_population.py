@@ -287,7 +287,7 @@ class DFInterface:
                 out.append(chunk)
             out = pd.concat(out, axis=0)
         return out
-    
+
     def _select_indices(self, key, indices, columns=None):
         '''Select the rows of the key table whose index is in `indices`.
 
@@ -322,7 +322,7 @@ class DFInterface:
             if not out:
                 return store.select(key, start=0, stop=0, columns=columns)
         return pd.concat(out, axis=0)
-    
+
     def get_repr(self, key):
         '''Return a string representation of the key table.
 
