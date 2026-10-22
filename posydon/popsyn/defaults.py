@@ -35,9 +35,10 @@ default_kwargs = {
     'log_orbital_seperation_sigma': None,
 
     # if orbital_scheme == period
-    'orbital_period_scheme': 'Sana+12_period_extended',
+    'orbital_period_scheme': 'power_law',
     'orbital_period_min': 0.75,  # in days
     'orbital_period_max': 6000,  # in days
+    'power_law_slope': 0.0,      # only used if orbital_period_scheme == 'power_law'
     # 'log_orbital_seperation_mean': None,
     # 'log_orbital_seperation_sigma': None,
 
