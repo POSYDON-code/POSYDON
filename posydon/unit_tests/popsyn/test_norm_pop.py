@@ -229,6 +229,23 @@ class TestGetPeriodPdf:
         assert isinstance(result2, (float, np.ndarray))
         assert np.all(result2 >= 0)
 
+    def test_log_power_law_period(self):
+        kwargs = {
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'log_power_law',
+            'orbital_period_min': 0.75,
+            'orbital_period_max': 6e3,
+            'power_law_slope': 0.1,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        P = np.array([0.8, 100.0, 6e3])
+        expected = np.maximum(np.log10(P), 0.15)**0.1
+        result = period_pdf_func(P, 20.0)
+        np.testing.assert_allclose(result / result[1], expected / expected[1])
+        # differs from the power law in P with the same slope
+        kwargs['orbital_period_scheme'] = 'power_law'
+        assert not np.allclose(norm_pop.get_period_pdf(kwargs)(P), result)
+
     def test_log_uniform_separation(self):
         kwargs = {
             'orbital_scheme': 'separation',

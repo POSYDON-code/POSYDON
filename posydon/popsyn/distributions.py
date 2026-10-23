@@ -545,7 +545,10 @@ class Sana12Period():
 class PowerLawPeriod():
     '''Power law period distribution with slope pi and boundaries m_min, m_max.
 
-    Normalised in logP space to 1.
+    The distribution is a power law in P per unit log P,
+    f(log10 P) ∝ P^pi, normalised in logP space to 1.
+    For a power law in log P, f(log10 P) ∝ (log10 P)^pi, as used by
+    Sana et al. (2012, 2025), see LogPowerLawPeriod.
 
     Parameters
     ----------
@@ -638,10 +641,13 @@ class PowerLawPeriod():
         float or ndarray
             Distribution value(s).
         """
-        p = 10**np.asarray(logp)
+        logp = np.asarray(logp, dtype=float)
+        p = 10**logp
 
         result = np.zeros_like(p, dtype=float)
-        valid = (p >= self.p_min) & (p <= self.p_max)
+        # compare in log space: 10**log10(p_max) can round above p_max
+        valid = ((logp >= np.log10(self.p_min))
+                 & (logp <= np.log10(self.p_max)))
         result[valid] = p[valid]**self.slope
 
         return result
@@ -698,6 +704,186 @@ class PowerLawPeriod():
         logp_samples = inverse_sampler(logp_grid, pdf_values, size=size, rng=rng)
 
         # Convert back to linear space
+        return 10**logp_samples
+
+
+class LogPowerLawPeriod():
+    '''Power law in log P period distribution, f(log10 P) ∝ (log10 P)^pi.
+
+    This is the functional form used by Sana et al. (2012) and
+    Sana et al. (2025, pi = 0.1). Since (log10 P)^pi is not defined for
+    P < 1 d, the distribution is constant below log10 P = logp_break,
+    as in the extended Sana+12 distribution (Sana12Period).
+    Normalised in logP space to 1.
+
+    Parameters
+    ----------
+    slope : float
+        Power law slope pi in log P.
+    p_min : float
+        Minimum period in days.
+    p_max : float
+        Maximum period in days.
+    logp_break : float
+        log10 of the period (in days) below which the distribution is flat.
+
+    References
+    ----------
+    Sana H., et al., 2012, Science, 337, 444
+    Sana H., et al., 2025, arXiv:2509.12488
+    '''
+
+    def __init__(self, slope=0.1, p_min=0.35, p_max=6e3, logp_break=0.15):
+        """Initialize the power law in log P period distribution.
+
+        Parameters
+        ----------
+        slope : float, optional
+            Power law slope in log P (default: 0.1, Sana et al. 2025).
+        p_min : float, optional
+            Minimum period in days (default: 0.35).
+        p_max : float, optional
+            Maximum period in days (default: 6000).
+        logp_break : float, optional
+            log10 of the period (in days) below which the distribution
+            is flat (default: 0.15).
+
+        Raises
+        ------
+        ValueError
+            If p_min is not positive, p_max <= p_min, or logp_break
+            is not positive.
+        """
+        if p_min <= 0:
+            raise ValueError("p_min must be positive")
+        if p_max <= p_min:
+            raise ValueError("p_max must be greater than p_min")
+        if logp_break <= 0:
+            raise ValueError("logp_break must be positive")
+        self.slope = slope
+        self.p_min = p_min
+        self.p_max = p_max
+        self.logp_break = logp_break
+
+        self.norm = self._calculate_normalization()
+
+    def __repr__(self):
+        """Return string representation of the distribution.
+
+        Returns
+        -------
+        str
+            String representation showing the distribution parameters.
+        """
+        return (f"LogPowerLawPeriod(slope={self.slope}, p_min={self.p_min}, "
+                f"p_max={self.p_max}, logp_break={self.logp_break})")
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
+        return (f"<h3>Power Law in log P Period Distribution</h3>"
+                f"<p>slope = {self.slope}</p>"
+                f"<p>p_min = {self.p_min}</p>"
+                f"<p>p_max = {self.p_max}</p>"
+                f"<p>logp_break = {self.logp_break}</p>")
+
+    def _calculate_normalization(self):
+        """Calculate the normalization constant of the distribution.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1.
+        """
+        logp_min = np.log10(self.p_min)
+        logp_max = np.log10(self.p_max)
+        points = ([self.logp_break]
+                  if logp_min < self.logp_break < logp_max else None)
+        integral = quad(self.log_power_law_period, logp_min, logp_max,
+                        points=points)[0]
+        if integral == 0: # pragma: no cover
+            raise ValueError("Normalization integral is zero. "
+                             "Check period parameters.")
+        return 1.0 / integral
+
+    def log_power_law_period(self, logp):
+        """Compute the unnormalised distribution at given periods.
+
+        Parameters
+        ----------
+        logp : float or array
+            Log10 of period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Distribution value(s).
+        """
+        logp = np.asarray(logp, dtype=float)
+
+        result = np.zeros_like(logp)
+        valid = ((logp >= np.log10(self.p_min))
+                 & (logp <= np.log10(self.p_max)))
+        result[valid] = np.maximum(logp[valid], self.logp_break)**self.slope
+
+        return result
+
+    def pdf(self, p):
+        """Probability density function of the distribution in log10 P.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s) in days.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        valid = (p > 0) & (p >= self.p_min) & (p <= self.p_max)
+        pdf_values = np.zeros_like(p)
+
+        pdf_values[valid] = (self.log_power_law_period(np.log10(p[valid]))
+                             * self.norm)
+
+        return pdf_values
+
+    def rvs(self, size=1, n_points=1000, rng=None):
+        """Draw random samples from the distribution.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of grid points for the inverse sampling (default: 1000).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random period samples in days.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        # Import here to avoid circular dependency
+        from posydon.utils.common_functions import inverse_sampler
+
+        logp_grid = np.linspace(np.log10(self.p_min), np.log10(self.p_max),
+                                n_points)
+        pdf_values = self.log_power_law_period(logp_grid)
+        logp_samples = inverse_sampler(logp_grid, pdf_values, size=size,
+                                       rng=rng)
+
         return 10**logp_samples
 
 

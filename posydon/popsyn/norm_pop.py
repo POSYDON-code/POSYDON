@@ -11,6 +11,7 @@ import posydon.popsyn.IMFs as IMFs
 from posydon.popsyn import independent_sample
 from posydon.popsyn.distributions import (
     FlatMassRatio,
+    LogPowerLawPeriod,
     LogUniform,
     PowerLawMassRatio,
     PowerLawPeriod,
@@ -192,6 +193,14 @@ def get_period_pdf(kwargs):
                 slope=kwargs['power_law_slope'],
             )
             period_pdf = lambda P, m1=None, q=None: period.pdf(P)
+        elif kwargs['orbital_period_scheme'] == 'log_power_law':
+            period = LogPowerLawPeriod(
+                p_min=kwargs['orbital_period_min'],
+                p_max=kwargs['orbital_period_max'],
+                slope=kwargs['power_law_slope'],
+                logp_break=kwargs.get('log_power_law_break', 0.15),
+            )
+            period_pdf = lambda P, m1=None, q=None: period.pdf(P)
         else:
             raise ValueError("Orbital period scheme not recognized")
     elif (kwargs['orbital_scheme'] == 'separation'):
@@ -356,7 +365,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law` (f(log P) ∝ P^slope) or `log_power_law` (f(log P) ∝ (log P)^slope)
+        - optionally `log_power_law_break` (default 0.15) if `orbital_period_scheme` is `log_power_law`
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     population_parameters : dict
@@ -374,7 +384,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `power_law` (f(log P) ∝ P^slope) or `log_power_law` (f(log P) ∝ (log P)^slope)
+        - optionally `log_power_law_break` (default 0.15) if `orbital_period_scheme` is `log_power_law`
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     Returns

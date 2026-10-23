@@ -1,7 +1,8 @@
 """Unit tests for posydon/popsyn/distributions.py
 
 This module contains comprehensive unit tests for the distribution classes
-used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
+used in population synthesis: FlatMassRatio, Sana12Period, PowerLawPeriod,
+and LogPowerLawPeriod.
 """
 
 import numpy as np
@@ -11,6 +12,7 @@ from scipy.integrate import quad
 from posydon.popsyn.distributions import (
     FlatMassRatio,
     LogNormalSeparation,
+    LogPowerLawPeriod,
     LogUniform,
     PowerLawMassRatio,
     PowerLawPeriod,
@@ -590,6 +592,12 @@ class TestPowerLawPeriod:
 
         np.testing.assert_allclose(pdf_values, expected_pdf)
 
+    def test_pdf_at_p_max(self):
+        """Test that the PDF is non-zero at exactly p_max."""
+        power_law = PowerLawPeriod(slope=0.1, p_min=0.75, p_max=6e3)
+        assert power_law.pdf(6e3) > 0
+        assert power_law.pdf(6e3) == pytest.approx(power_law.pdf(6e3 * (1 - 1e-12)))
+
     def test_rvs(self, custom_power_law):
         """Test random sampling."""
         rng = np.random.default_rng(42)
@@ -607,6 +615,89 @@ class TestPowerLawPeriod:
         assert len(samples) == 100
         assert np.all(samples >= custom_power_law.p_min)
         assert np.all(samples <= custom_power_law.p_max)
+
+
+class TestLogPowerLawPeriod:
+    """Test class for LogPowerLawPeriod distribution."""
+
+    @pytest.fixture
+    def default_log_power_law(self):
+        """Fixture for default LogPowerLawPeriod instance."""
+        return LogPowerLawPeriod()
+
+    @pytest.fixture
+    def sana25(self):
+        """Fixture for the Sana+25 distribution over the POSYDON period range."""
+        return LogPowerLawPeriod(slope=0.1, p_min=0.75, p_max=6e3)
+
+    def test_initialization_default(self, default_log_power_law):
+        """Test default initialization of LogPowerLawPeriod."""
+        assert default_log_power_law.slope == 0.1
+        assert default_log_power_law.p_min == 0.35
+        assert default_log_power_law.p_max == 6e3
+        assert default_log_power_law.logp_break == 0.15
+        assert default_log_power_law.norm > 0
+
+    def test_initialization_invalid_parameters(self):
+        """Test that initialization raises ValueError for invalid parameters."""
+        with pytest.raises(ValueError, match="p_min must be positive"):
+            LogPowerLawPeriod(p_min=0.0)
+        with pytest.raises(ValueError, match="p_max must be greater than p_min"):
+            LogPowerLawPeriod(p_min=100.0, p_max=100.0)
+        with pytest.raises(ValueError, match="logp_break must be positive"):
+            LogPowerLawPeriod(logp_break=0.0)
+
+    def test_repr(self, default_log_power_law):
+        """Test string and HTML representations."""
+        assert repr(default_log_power_law) == ("LogPowerLawPeriod(slope=0.1, p_min=0.35, "
+                                               "p_max=6000.0, logp_break=0.15)")
+        html_str = default_log_power_law._repr_html_()
+        assert "<h3>Power Law in log P Period Distribution</h3>" in html_str
+        assert "logp_break = 0.15" in html_str
+
+    def test_log_power_law_period(self, sana25):
+        """Test the shape: (log P)^slope above the break, constant below."""
+        logp = np.array([np.log10(0.75), 0.0, 0.1, 0.15, 1.0, 3.5, np.log10(6e3)])
+        expected = np.maximum(logp, 0.15)**0.1
+        np.testing.assert_allclose(sana25.log_power_law_period(logp), expected)
+
+    def test_log_power_law_period_outside_range(self, sana25):
+        """Test that the distribution is zero outside the period range."""
+        assert sana25.log_power_law_period(np.log10(0.5)) == 0.0
+        assert sana25.log_power_law_period(np.log10(1e4)) == 0.0
+
+    def test_normalization(self, sana25):
+        """Test that the PDF integrates to 1 in log P."""
+        integral, _ = quad(lambda logp: sana25.pdf(10**logp),
+                           np.log10(sana25.p_min), np.log10(sana25.p_max),
+                           points=[0.15])
+        np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+    def test_pdf(self, sana25):
+        """Test PDF values inside and outside the period range."""
+        p = np.array([0.5, 0.75, 10.0, 6e3, 1e4])
+        pdf_values = sana25.pdf(p)
+        assert pdf_values[0] == 0.0
+        assert pdf_values[-1] == 0.0
+        np.testing.assert_allclose(pdf_values[1:-1],
+                                   np.maximum(np.log10(p[1:-1]), 0.15)**0.1 * sana25.norm)
+
+    def test_differs_from_power_law_in_P(self, sana25):
+        """Test that (log P)^0.1 is not the power law P^0.1 of PowerLawPeriod."""
+        power_law = PowerLawPeriod(slope=0.1, p_min=0.75, p_max=6e3)
+        p = np.array([2.0, 6e3])
+        ratio_log = sana25.pdf(p[1]) / sana25.pdf(p[0])
+        ratio_p = power_law.pdf(p[1]) / power_law.pdf(p[0])
+        np.testing.assert_allclose(ratio_log, (np.log10(6e3) / np.log10(2.0))**0.1)
+        np.testing.assert_allclose(ratio_p, 3e3**0.1)
+
+    def test_rvs(self, sana25):
+        """Test random sampling."""
+        samples = sana25.rvs(size=1000, rng=np.random.default_rng(42))
+        assert len(samples) == 1000
+        assert np.all(samples >= sana25.p_min)
+        assert np.all(samples <= sana25.p_max)
+        assert len(sana25.rvs(size=10)) == 10
 
 
 class TestDistributionComparisons:
