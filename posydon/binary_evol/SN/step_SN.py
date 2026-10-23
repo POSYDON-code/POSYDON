@@ -99,8 +99,8 @@ class StepSN(object):
             return binary.star_2, binary.star_1
         else:
             raise ValueError(
-                "Invalid call of step_SN:"
-                "Called during binary event {event}".format(event=binary.event)
+                "Invalid call of step_SN: \n" + 
+                "Called during binary event {event}".format(event=binary.event) + 
                 "Step_SN should only be called if binary event is CC1 or CC2"
             )
 
