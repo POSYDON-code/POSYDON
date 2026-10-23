@@ -363,7 +363,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             else:
                 # form list using string supplied in .ini file, so we can append to it
                 mesa_inlists['star1_job_user'] = [mesa_inlists['star1_job_user']]
-                
+
             # extend always with star formation settings for single He star
             mesa_inlists['star1_controls_user'].extend(single_star_scenario)
             mesa_inlists['star1_job_user'].extend(single_star_scenario)
