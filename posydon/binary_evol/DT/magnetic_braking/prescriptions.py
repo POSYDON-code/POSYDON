@@ -349,7 +349,7 @@ def CARB_braking(primary, secondary, verbose = False):
         R_alfven_div_R3_sec = (
             R2**4 * rot_ratio_sec**4 * tau_ratio_sec**4
             / (mdot_2**2 * v_mod2_sec)
-            * (const.rsol**2 * const.secyer / const.msol**2))
+            * (const.rsol**2 * const.secyer**4 / const.msol**2))
     else:
         R_alfven_div_R3_sec = 0.0
 
@@ -357,7 +357,7 @@ def CARB_braking(primary, secondary, verbose = False):
         R_alfven_div_R3_pri = (
             R1**4 * rot_ratio_pri**4 * tau_ratio_pri**4
             / (mdot_1**2 * v_mod2_pri)
-            * (const.rsol**2 * const.secyer / const.msol**2))
+            * (const.rsol**2 * const.secyer**4 / const.msol**2))
     else:
         R_alfven_div_R3_pri = 0.0
 
@@ -372,7 +372,7 @@ def CARB_braking(primary, secondary, verbose = False):
 
     dOmega_mb_pri = (
         (2./3.) * omega1 * mdot_1 * R_alfven_pri**2 / MOI_1
-        * np.clip((1.5 - m2) / (1.5 - 1.3), 0, 1)
+        * np.clip((1.5 - m1) / (1.5 - 1.3), 0, 1)
     )
 
     return -abs(dOmega_mb_sec), -abs(dOmega_mb_pri)

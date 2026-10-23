@@ -385,10 +385,21 @@ arguments :samp:`compression`, :samp:`description`, and :samp:`verbose`.
 We recommend that you use the :ref:`post-processing pipeline <pipeline>` to
 create and join grids.
 
-..
-    Extract the initial and final values as a pandas data frame
-    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    TODO: get_pandas_initial_final()
+
+Get initial and final values as a pandas DataFrame
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+If you would rather work with the grid's bound values in a Pandas DataFrame
+(for example to combine them with your own analysis), the ``PSyGrid`` object
+provides the method
+:py:meth:`get_pandas_initial_final <posydon.grids.psygrid.PSyGrid.get_pandas_initial_final>`.
+It returns a DataFrame containing the initial and final values of every system
+in the grid, which you can then filter and inspect with the usual tools.
+
+.. code-block:: python
+
+    df = mygrid.get_pandas_initial_final()
+    print(df.head())
 
 
 Get reruns from a `PSyGrid` object
