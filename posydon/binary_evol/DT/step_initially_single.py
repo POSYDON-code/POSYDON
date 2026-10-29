@@ -35,5 +35,5 @@ class InitiallySingleStep(IsolatedStep):
         if binary.state != "initially_single_star":
             raise AttributeError("sent to InitiallySingleStep without the binary.state being initially_single_star")
 
-        binary.event == None
+        binary.event = None
         super().__call__(binary)

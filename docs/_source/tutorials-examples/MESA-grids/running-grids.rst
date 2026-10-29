@@ -62,7 +62,9 @@ The following tutorial will show you how to run a grid of MESA simulations using
 
     running_a_grid
 
-Now that you have run your first grid, you can process, visualize and explore the results using the POSYDON post-processing pipeline API. TODO: link
+Now that you have run your first grid, you can process, visualize and explore
+the results using the POSYDON :ref:`post-processing pipeline
+<processing-pipeline>`.
 
 III. Running single stars with POSYDON
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -73,7 +75,9 @@ This tutorials shows how to run a grid of single star simulations using POSYDON.
 
    running_single_hms
 
-We show how to export EEPs and make a PSyGrid object in this tutorial TODO: link the advanced tutorial of step 2.
+We show how to export EEPs and make a PSyGrid object in this tutorial
+(see the :ref:`PSyGrid <psygrid>` and :ref:`post-processing pipeline
+<processing-pipeline>` pages for how the extracted data is organized).
 
 Advanced Tutorials
 ------------------
@@ -106,4 +110,6 @@ Provided a sparse, rectilinearly sampled MESA grid, POSYDON allows to dynamicall
 Support & Feedback
 ------------------
 
-Encountered obstacles or have questions? Ensure you consult our [FAQ](link-to-FAQ) or drop by the [contact-information.rst](contact-information.rst) page.
+Encountered obstacles or have questions? Ensure you consult our
+:ref:`code usage FAQ <code-usage>` or drop by the
+:ref:`contact information <contact_info>` page.

@@ -10,6 +10,7 @@ import numpy as np
 import pandas as pd
 import pytest
 from pytest import fixture, mark
+from scipy.integrate import quad
 
 import posydon.popsyn.IMFs as IMFs
 from posydon.config import PATH_TO_POSYDON
@@ -17,6 +18,7 @@ from posydon.config import PATH_TO_POSYDON
 # file to test
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.utils.common_functions import orbital_period_from_separation
 from posydon.utils.posydonwarning import UnsupportedModelWarning
 
 
@@ -239,6 +241,22 @@ class TestGetPeriodPdf:
         assert isinstance(result, (float, np.ndarray))
         assert np.all(result >= 0)
 
+    @mark.parametrize("m1, q", [(10.0, 1.0), (30.0, 0.5), (100.0, 0.1)])
+    def test_log_uniform_separation_normalised_in_logP(self, m1, q):
+        a_min, a_max = 5.0, 1e5
+        kwargs = {
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': 'log_uniform',
+            'orbital_separation_min': a_min,
+            'orbital_separation_max': a_max,
+        }
+        separation_pdf_func = norm_pop.get_period_pdf(kwargs)
+        logP_min = np.log10(orbital_period_from_separation(a_min, m1, q*m1))
+        logP_max = np.log10(orbital_period_from_separation(a_max, m1, q*m1))
+        integral, _ = quad(lambda logP: separation_pdf_func(10**logP, m1, q),
+                           logP_min, logP_max)
+        assert np.isclose(integral, 1.0)
+
     def test_invalid_period_scheme(self):
         kwargs = {
             'orbital_scheme': 'period',
@@ -457,6 +475,12 @@ def pop_data(kwargs):
                                      'eccentricity_i',
                                      'S1_mass_i',
                                      'S2_mass_i',])
+    if kwargs['orbital_scheme'] == 'separation':
+        # sampler returns separations
+        pop_data['orbital_period_i'] = orbital_period_from_separation(
+            pop_data['orbital_period_i'],
+            pop_data['S1_mass_i'],
+            pop_data['S2_mass_i'])
     pop_data['state_i'] = 'detached'
     mask = pd.isna(pop_data['S2_mass_i'])
     pop_data['state_i'][mask] = 'initially_single_star'
@@ -829,6 +853,61 @@ class TestReweighting():
                                                    base_population_kwargs)
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
+
+
+@fixture
+def separation_kwargs(base_simulation_kwargs):
+    kwargs = base_simulation_kwargs.copy()
+    for key in ['orbital_period_scheme', 'orbital_period_min',
+                'orbital_period_max']:
+        kwargs.pop(key)
+    kwargs['orbital_scheme'] = 'separation'
+    kwargs['orbital_separation_scheme'] = 'log_uniform'
+    kwargs['orbital_separation_min'] = 5.0
+    kwargs['orbital_separation_max'] = 1e5
+    return kwargs
+
+def check_reweighting(sim_kwargs, pop_kwargs):
+    '''Compare reweighted sim to direct sampling of the population.
+    The population's orbital range must be inside the sim's for all masses.'''
+    sim_data = pop_data(sim_kwargs)
+    M_sim = sim_data['S1_mass_i'].sum() + sim_data['S2_mass_i'].sum()
+    weights = norm_pop.calculate_model_weights(sim_data, M_sim,
+                                               sim_kwargs, pop_kwargs)
+
+    direct_data = pop_data(pop_kwargs)
+    M_direct = direct_data['S1_mass_i'].sum() + direct_data['S2_mass_i'].sum()
+
+    assert np.isclose(weights.sum(), len(direct_data) / M_direct, rtol=0.03)
+
+    logP_sim = np.log10(sim_data['orbital_period_i'])
+    logP_direct = np.log10(direct_data['orbital_period_i'])
+    assert np.isclose(np.average(logP_sim, weights=weights),
+                      logP_direct.mean(), atol=0.05)
+    assert np.isclose(np.sqrt(np.cov(logP_sim, aweights=weights)),
+                      logP_direct.std(), rtol=0.05)
+
+
+class TestOrbitalSchemeReweighting():
+    def test_separation_to_period(self, separation_kwargs,
+                                  base_simulation_kwargs):
+        # a in [5, 1e5] Rsun covers P in [1, 3000] d for all masses
+        base_simulation_kwargs['orbital_period_min'] = 1.0
+        base_simulation_kwargs['orbital_period_max'] = 3e3
+        check_reweighting(separation_kwargs, base_simulation_kwargs)
+
+    def test_period_to_separation(self, base_simulation_kwargs,
+                                  separation_kwargs):
+        # P in [0.35, 6000] d covers a in [20, 2000] Rsun for all masses
+        separation_kwargs['orbital_separation_min'] = 20.0
+        separation_kwargs['orbital_separation_max'] = 2e3
+        check_reweighting(base_simulation_kwargs, separation_kwargs)
+
+    def test_separation_to_separation(self, separation_kwargs):
+        pop_kwargs = separation_kwargs.copy()
+        pop_kwargs['orbital_separation_min'] = 20.0
+        pop_kwargs['orbital_separation_max'] = 2e3
+        check_reweighting(separation_kwargs, pop_kwargs)
 
 
 class TestBinaryFractions():

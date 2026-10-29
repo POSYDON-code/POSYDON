@@ -49,6 +49,7 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     orbital_separation_from_period,
 )
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import FlowError
 
 # star property: column names in binary history for star 1 and star 2
@@ -918,11 +919,14 @@ class BinaryStar:
             setattr(binary, 'orbital_period', list(period)[-1])
 
         # set the binary, star1, star2 parameters to last history value in df
+        # TODO: remove code? The binary = cls() line already implements
+        # the setting of the right parameters. We don't need to set them here again.
         for params, pointer in zip(
                 [star1_params,  star2_params,  binary_params],
                 [binary.star_1, binary.star_2, binary]):
             for key, val in params.items():
-                setattr(pointer, key.split('_history')[0], val[-1])
+                final_val = val[-1] if isinstance(val, (list, np.ndarray)) else val
+                setattr(pointer, key.split('_history')[0], final_val)
 
         # make BINARYPROPERTIES, history columns same length if not given
         already_included_cols = [name.split('_history')[0]
@@ -1026,8 +1030,10 @@ class BinaryStar:
                     setattr(star, attr, final_value)
 
         # set metallicities (if defined in the track)...
+        # grids store the absolute metallicity Z, while SingleStar.metallicity
+        # is Z/Zsun (as in step_MESA and the SN/CE steps)
         try:
-            metallicity = run.initial_values["Z"]
+            metallicity = run.initial_values["Z"] / Zsun
         except AttributeError:
             metallicity = None
         # ...and other star parameters taken from the binary history

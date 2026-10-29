@@ -30,6 +30,19 @@ Anaconda (Recommended)
 
     If you haven't already, download and install Anaconda from `Anaconda's official website <https://www.anaconda.com/products/distribution>`_.
 
+.. important::
+
+    After you've installed Anaconda, you can use our installation script to set up
+    POSYDON on your machine or continue with the manual installation.
+    For the automatic installation, run the following command in your terminal
+    (this will install POSYDON in a new conda environment named ``posydon_env``):
+
+    .. code-block:: bash
+
+        bash <(curl -sSL https://raw.githubusercontent.com/POSYDON-code/POSYDON/main/install.sh)
+
+
+
 2. **Create a New Conda Environment**
 
     Open your terminal or Anaconda prompt and create a new environment called ``posydon_env`` using Python 3.11 (the ``-y`` automatically answers all confirmations with yes):

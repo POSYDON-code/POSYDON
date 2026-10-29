@@ -12,6 +12,7 @@ __authors__ = [
 import os
 from abc import ABC, abstractmethod
 
+import h5py
 import numpy as np
 import pandas as pd
 import scipy as sp
@@ -589,12 +590,18 @@ class IllustrisTNG(SFHBase):
         super().__init__(SFH_MODEL)
         # load the TNG data
         illustris_data = self._get_illustrisTNG_data()
-        # the data is stored in reverse order high to low redshift
-        self.CSFRD_data = np.flip(illustris_data["SFR"])
-        self.redshifts = np.flip(illustris_data["redshifts"])
+        # load the TNG100-1 data
+        illustris_data = illustris_data["100-1"]
 
-        self.Z = illustris_data["mets"]
-        self.M = np.flip(illustris_data["M"], axis=0)  # Msun
+        # the data is stored in reverse order high to low redshift
+        # the SFR is stored as SFR/Box, need to convert it to SFR/Mpc^3
+        BoxSFR = np.flip(illustris_data["BoxSFR"][:]) #CSFRD/Box
+        Lbox = illustris_data["Lbox_Mpc"][()]/illustris_data["h"][()]  #Lbox for TNG100-1 = 75/h Mpc, h=0.6774
+        self.CSFRD_data = BoxSFR / Lbox**3
+        self.redshifts = np.flip(illustris_data["redshifts"][:])
+
+        self.Z = illustris_data["mets"][:] #metallicities
+        self.M = np.flip(illustris_data["M"][:], axis=0)  # star-forming mass, Msun
 
     def _get_illustrisTNG_data(self, verbose=False): # pragma: no cover
         """Load IllustrisTNG SFR dataset into the class.
@@ -606,7 +613,7 @@ class IllustrisTNG(SFHBase):
         """
         if verbose:
             print("Loading IllustrisTNG data...")
-        return np.load(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.npz"))
+        return h5py.File(os.path.join(PATH_TO_POSYDON_DATA, "SFR/IllustrisTNG.h5"), 'r')
 
     def CSFRD(self, z):
         """The cosmic star formation rate density at a given redshift.
@@ -714,7 +721,7 @@ class Chruslinska21(SFHBase):
                 The scaling of the solar metallicity. Options are:
                 - Asplund09
                 - AndersGrevesse89
-                - GrevesseSauval98
+                - GrevesseSauval98 (used in Chruslinska+21)
                 - Villante14
             Additional SFH model parameters:
             - Z_max : float
@@ -751,6 +758,12 @@ class Chruslinska21(SFHBase):
         # convert the FOH bins to absolute metallicity.
         # Use solar metallicity as the reference point
         self.Z = self._FOH_to_Z(self.FOH_bins)
+        # FOH_bins are the lower edges of the bins: column j of the data
+        # holds the mass formed in [FOH_bins[j], FOH_bins[j] + dFOH]
+        # (see plot_SFRD_Z_z.py in the Chruslinska+21 data release).
+        self.Z_edges = self._FOH_to_Z(np.append(self.FOH_bins,
+                                                self.FOH_bins[-1] + self.dFOH))
+        self.Z_centres = self._FOH_to_Z(self.FOH_bins + self.dFOH / 2)
 
         self._data_folder = os.path.join(PATH_TO_POSYDON_DATA, "SFR/Chruslinska+21")
         _, self.redshifts, delta_T = self._load_redshift_data(verbose)
@@ -770,16 +783,20 @@ class Chruslinska21(SFHBase):
         float or array-like
             The absolute metallicity.
         """
-        # scalings from Chruslinksa+21
+        # scalings from Chruslinksa+21. Note: plot_SFRD_Z_z.py in the data
+        # release labels (0.017, 8.83) as AndersGrevesse89 and (0.0201, 8.93)
+        # as GrevesseSauval98. This is swapped with respect to the paper
+        # (Sec. 1: Z=0.017, 12+log(O/H)=8.83 from Grevesse & Sauval 1998)
+        # and the original references, so the labels are corrected here.
         if self.Z_solar_scaling == "Asplund09":
             Zsun = 0.0134
             FOHsun = 8.69
         elif self.Z_solar_scaling == "AndersGrevesse89":
-            Zsun = 0.017
-            FOHsun = 8.83
-        elif self.Z_solar_scaling == "GrevesseSauval98":
             Zsun = 0.0201
             FOHsun = 8.93
+        elif self.Z_solar_scaling == "GrevesseSauval98":
+            Zsun = 0.017
+            FOHsun = 8.83
         elif self.Z_solar_scaling == "Villante14":
             Zsun = 0.019
             FOHsun = 8.85
@@ -810,7 +827,7 @@ class Chruslinska21(SFHBase):
             if np.sum(self.SFR_data[i]) == 0:
                 mean_over_redshift[i] = np.nan
             else:
-                mean_over_redshift[i] = np.average(self.Z, weights=self.SFR_data[i,:]*self.dFOH)
+                mean_over_redshift[i] = np.average(self.Z_centres, weights=self.SFR_data[i,:]*self.dFOH)
 
         Z_interp = interp1d(self.redshifts, mean_over_redshift)
         return Z_interp(z)
@@ -835,6 +852,7 @@ class Chruslinska21(SFHBase):
         ndarray
             Fraction of the SFR in the given metallicity bin at the given redshift.
         """
+        z = np.atleast_1d(z)
         # only use data within the metallicity bounds (no lower bound)
         if np.min(z) < np.min(self.redshifts):
             Pwarn('Some redshift values are lower than the minimum '
@@ -854,10 +872,11 @@ class Chruslinska21(SFHBase):
             if Z_dist[i].sum() == 0.0:
                 continue
             else:
-                Z_dist_cdf = np.cumsum(Z_dist[i]) / Z_dist[i].sum()
-                Z_dist_cdf = np.append(Z_dist_cdf, 1)
-                Z_x_values = np.append(np.log10(self.Z), 0)
-                Z_dist_cdf_interp = interp1d(Z_x_values, Z_dist_cdf)
+                # CDF on the bin edges: 0 at the lower edge of the first
+                # bin, 1 at the upper edge of the last bin
+                Z_dist_cdf = np.append(0, np.cumsum(Z_dist[i])) / Z_dist[i].sum()
+                Z_dist_cdf_interp = interp1d(np.log10(self.Z_edges), Z_dist_cdf,
+                                             left=0.0, right=1.0)
                 cdf_fun = lambda x: Z_dist_cdf_interp(np.log10(x))
                 fSFR[i, :] = self._distribute_cdf(cdf_fun, metallicity_bins)
         return fSFR
