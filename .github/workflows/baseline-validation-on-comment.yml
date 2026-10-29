@@ -91,10 +91,12 @@ jobs:
     steps:
       # dev-tools/*.sh clone the base and PR branches themselves; this checkout
       # only provides the (PR's) scripts and test definitions used for both.
+      # Don't leave the token in .git/config, where the PR code run below could read it.
       - name: Checkout PR head
         uses: actions/checkout@v4
         with:
           ref: ${{ env.PR_SHA }}
+          persist-credentials: false
 
       - name: Set up paths
         run: |
