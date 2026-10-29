@@ -225,7 +225,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             print("Based on system_type {0} "
                   "We are populating the user inlists in the following directory: "
                   "{1}".format(system_type, inlists_location))
-            
+
             # determine where the user inlists, column lists, and extras are located
             user_files = [
                 (mesa_inlists, ['binary_controls_user', 'binary_job_user'], ("binary", "inlist_project")),
