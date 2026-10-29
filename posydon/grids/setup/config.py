@@ -290,33 +290,34 @@ def _read_scenario(options, base):
     return scenario
 
 
+def _inlist_entries(key, paths):
+    """The (target, path) pairs one key feeds, or None for an unknown key."""
+    if key in INLIST_TARGETS:
+        return [(key, path) for path in paths]
+    if key in INLIST_SHORTHANDS:
+        return [(target, path) for target in INLIST_SHORTHANDS[key]
+                for path in paths]
+    if key in ("star1_formation", "star2_formation"):
+        # file i is formation step i
+        steps = [("{}_step{}".format(key, index), path)
+                 for index, path in enumerate(paths)]
+    elif re.fullmatch(r"star[12]_formation_step\d+", key):
+        # extra files on top of one formation step
+        steps = [(key, path) for path in paths]
+    else:
+        return None
+    # a formation step file feeds both its controls and its job
+    return [("{}_{}".format(step, part), path)
+            for step, path in steps for part in ("controls", "job")]
+
+
 def _read_inlist_files(section, options, base):
     files = InlistFiles()
     for key, value in options.items():
         paths = [_path(base, item) for item in _list(value)]
         if not paths:
             raise ConfigError(section, key, "no file given")
-        step = re.fullmatch(r"(star[12])_formation_step(\d+)", key)
-        if key in INLIST_TARGETS:
-            for path in paths:
-                files.add(key, path)
-        elif key in INLIST_SHORTHANDS:
-            for target in INLIST_SHORTHANDS[key]:
-                for path in paths:
-                    files.add(target, path)
-        elif key in ("star1_formation", "star2_formation"):
-            # one file per formation step
-            for index, path in enumerate(paths):
-                for part in ("controls", "job"):
-                    files.add("{}_step{}_{}".format(key, index, part), path)
-        elif step is not None:
-            # extra files on top of one formation step
-            star, index = step.groups()
-            for path in paths:
-                for part in ("controls", "job"):
-                    files.add("{}_formation_step{}_{}".format(
-                        star, index, part), path)
-        elif key in WHOLE_FILES:
+        if key in WHOLE_FILES:
             if key in SOURCE_FILES and section != "user_inlists":
                 # a file here could never win: MESA's stock sources are
                 # filled in, and the release replaces them
@@ -326,8 +327,12 @@ def _read_inlist_files(section, options, base):
             if len(paths) > 1:
                 raise ConfigError(section, key, "expected one file")
             files.whole_files[key] = paths[0]
-        else:
+            continue
+        entries = _inlist_entries(key, paths)
+        if entries is None:
             raise ConfigError(section, key, "unknown key")
+        for target, path in entries:
+            files.add(target, path)
     return files
 
 
@@ -414,6 +419,7 @@ def read_config(path):
         For a missing file, an unknown section or key, a missing required
         key or an invalid value.
     """
+    # parse the file
     path = Path(path)
     if not path.is_file():
         raise ConfigError("file", None, "{} not found".format(path))
@@ -422,6 +428,8 @@ def read_config(path):
         inline_comment_prefixes=(";",))  # "key = value  ; comment"
     parser.optionxform = str  # keep the case of keys
     parser.read(path)
+
+    # check the sections before reading any of them
     if parser.has_section("posydon_inlists"):
         raise ConfigError("posydon_inlists", None, "no longer used: "
                           "POSYDON's inlists come from [scenario] (the "
@@ -433,9 +441,11 @@ def read_config(path):
     if not parser.has_section("grid"):
         raise ConfigError("grid", None, "missing")
 
+    # read each section; a missing optional section gives the defaults
     def options(name):
         return dict(parser.items(name)) if parser.has_section(name) else {}
 
+    # relative paths in the ini are relative to its folder
     base = path.resolve().parent
     config = GridConfig(
         grid=_read_grid(options("grid"), base),
