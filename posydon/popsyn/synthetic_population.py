@@ -288,13 +288,18 @@ class DFInterface:
             out = pd.concat(out, axis=0)
         return out
 
-    def _select_indices(self, key, indices, columns=None):
+    def _select_indices(self, key, indices, columns=None, max_runs=5000):
         '''Select the rows of the key table whose index is in `indices`.
 
-        PyTables cannot evaluate `index in [...]` with more than 31 values,
-        in which case pandas reads the whole table and filters in memory.
-        Instead, the read is restricted to [min(indices), max(indices)] and
-        each chunk is filtered with `isin`.
+        PyTables cannot evaluate `index in [...]` with more than 31 values
+        (see `pandas.core.computation.pytables.BinOp._max_selectors`), in
+        which case pandas reads the whole table to filter it in memory.
+        Instead, the requested indices are grouped into runs of consecutive
+        values; the rows of each run are located with a range query (fast
+        when the `index` column has a PyTables index, as pandas creates by
+        default) and read as one contiguous block. If there are more than
+        `max_runs` runs, the table is read sequentially in chunks and each
+        chunk is filtered with `isin`.
 
         Parameters
         ----------
@@ -304,22 +309,47 @@ class DFInterface:
             The indices of the rows to select.
         columns : list, optional
             A list of column names to select.
+        max_runs : int, optional
+            Maximum number of runs of consecutive indices to read one by one
+            before switching to a sequential read of the whole table.
 
         Returns
         -------
         pandas.DataFrame
-            The selected rows, in file order.
+            The selected rows.
         '''
-        indices = np.unique(np.asarray(indices))
+        indices = np.unique(np.asarray(indices, dtype=np.int64))
         if len(indices) <= 31:
             return DFInterface.select(self, key,
                                       where=f"index in {indices.tolist()}",
                                       columns=columns)
-        where = f"index >= {indices[0]} & index <= {indices[-1]}"
+        # group the requested indices into runs of consecutive values
+        breaks = np.flatnonzero(np.diff(indices) != 1) + 1
+        run_lo = indices[np.r_[0, breaks]]
+        run_hi = indices[np.r_[breaks - 1, len(indices) - 1]]
+
+        out = []
         with pd.HDFStore(self.filename, mode="r") as store:
-            iterator = store.select(key, where=where, columns=columns,
-                                    chunksize=self.chunksize)
-            out = [chunk[chunk.index.isin(indices)] for chunk in iterator]
+            if len(run_lo) <= max_runs:
+                for lo, hi in zip(run_lo, run_hi):
+                    coords = store.select_as_coordinates(
+                        key, where=f"index >= {lo} & index <= {hi}")
+                    if len(coords) == 0:
+                        continue
+                    c0, c1 = int(coords[0]), int(coords[-1]) + 1
+                    if c1 - c0 == len(coords):  # rows stored contiguously
+                        out.append(store.select(key, start=c0, stop=c1,
+                                                columns=columns))
+                    else:
+                        out.append(store.select(key, where=coords,
+                                                columns=columns))
+            else:
+                nrows = store.get_storer(key).nrows
+                for start in range(0, nrows, self.chunksize):
+                    chunk = store.select(key, start=start,
+                                         stop=start + self.chunksize,
+                                         columns=columns)
+                    out.append(chunk[chunk.index.isin(indices)])
             if not out:
                 return store.select(key, start=0, stop=0, columns=columns)
         return pd.concat(out, axis=0)
@@ -600,9 +630,10 @@ class History(DFInterface):
         """
         return super().get_html_repr("history")
 
-    def select_indices(self, indices, columns=None):
+    def select_indices(self, indices, columns=None, max_runs=5000):
         """Select the history of the binaries with the given indices."""
-        return super()._select_indices("history", indices, columns=columns)
+        return super()._select_indices("history", indices, columns=columns,
+                                       max_runs=max_runs)
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -824,9 +855,10 @@ class Oneline(DFInterface):
         """
         return super().get_html_repr("oneline")
 
-    def select_indices(self, indices, columns=None):
+    def select_indices(self, indices, columns=None, max_runs=5000):
         """Select the oneline rows of the binaries with the given indices."""
-        return super()._select_indices("oneline", indices, columns=columns)
+        return super()._select_indices("oneline", indices, columns=columns,
+                                       max_runs=max_runs)
 
     def select(self, where=None, start=None, stop=None, columns=None):  # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
