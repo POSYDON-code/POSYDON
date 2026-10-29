@@ -376,7 +376,8 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
-                        data_download(set_name='auxiliary')
+                        data_download(set_name='auxiliary', confirm=True,
+                                      missing_file=filename)
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -411,7 +412,7 @@ class StepSN(object):
                 CO_core_params_sc, sc_target = format_data_Patton20(
                     'Kepler_sc_table.dat')
 
-                n_neighbors = 5
+                n_neighbors = 1
 
                 if self.verbose:
                     print('Training the classifier ...')
@@ -2634,7 +2635,8 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True,
+                              missing_file=filename)
 
             Engine_data = read_csv(filename)
 
@@ -2827,7 +2829,8 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True,
+                              missing_file=filename)
 
             Couch_data_file = open(filename)
             Couch_data = json.load(Couch_data_file)
