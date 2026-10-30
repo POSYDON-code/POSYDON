@@ -1,16 +1,18 @@
 """Unit tests for posydon/popsyn/distributions.py
 
 This module contains comprehensive unit tests for the distribution classes
-used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
+used in population synthesis.
 """
 
 import numpy as np
 import pytest
 from scipy.integrate import quad
+from scipy.stats import loguniform
 
 from posydon.popsyn.distributions import (
     FlatMassRatio,
     LogNormalSeparation,
+    LogPowerLawPeriod,
     LogUniform,
     PowerLawMassRatio,
     PowerLawPeriod,
@@ -18,7 +20,40 @@ from posydon.popsyn.distributions import (
     ThermalEccentricity,
     UniformEccentricity,
     ZeroEccentricity,
+    per_dex_to_linear,
 )
+
+
+def integrate_linear(pdf, x_min, x_max):
+    """Integrate a PDF over x, splitting the range at every dex."""
+    edges = np.logspace(np.log10(x_min), np.log10(x_max),
+                        int(np.ceil(np.log10(x_max / x_min))) + 1)
+    return sum(quad(pdf, lo, hi)[0] for lo, hi in zip(edges[:-1], edges[1:]))
+
+
+def integrate_per_dex(pdf, x_min, x_max):
+    """Integrate a PDF over log10(x)."""
+    return quad(lambda logx: pdf(10**logx), np.log10(x_min),
+                np.log10(x_max), limit=200)[0]
+
+
+class TestPerDexToLinear:
+    """Test class for the per_dex_to_linear helper."""
+
+    def test_conversion(self):
+        """Test dP/dx = dP/dlog10(x) / (x ln(10))."""
+        x = np.array([1.0, 10.0, 100.0])
+        per_dex = np.array([0.5, 0.5, 0.5])
+        np.testing.assert_allclose(per_dex_to_linear(per_dex, x),
+                                   per_dex / (x * np.log(10)))
+
+    def test_non_positive_x(self):
+        """Test that non-positive x gives zero density."""
+        x = np.array([-1.0, 0.0, 10.0])
+        result = per_dex_to_linear(np.ones(3), x)
+        assert result[0] == 0.0
+        assert result[1] == 0.0
+        assert result[2] > 0.0
 
 
 class TestFlatMassRatio:
@@ -324,6 +359,29 @@ class TestSana12Period:
         with pytest.raises(ValueError, match="m1 must be a single value or an array of the same length as p"):
             default_sana12.pdf(p_values, m1_wrong)
 
+    @pytest.mark.parametrize("m1", [10.0, 30.0])
+    def test_pdf_per_dex_normalised_in_log_space(self, default_sana12, m1):
+        """Test the PDF per dex integrates to 1 over log10(P)."""
+        integral = integrate_per_dex(
+            lambda p: default_sana12.pdf_per_dex(p, m1),
+            default_sana12.p_min, default_sana12.p_max)
+        assert np.isclose(integral, 1.0)
+
+    @pytest.mark.parametrize("m1", [10.0, 30.0])
+    def test_pdf_normalised_in_linear_space(self, default_sana12, m1):
+        """Test the PDF integrates to 1 over P."""
+        integral = integrate_linear(lambda p: default_sana12.pdf(p, m1),
+                                    default_sana12.p_min, default_sana12.p_max)
+        assert np.isclose(integral, 1.0, rtol=1e-6)
+
+    def test_pdf_and_pdf_per_dex_relation(self, default_sana12):
+        """Test pdf = pdf_per_dex / (P ln(10))."""
+        p = np.array([1.0, 10.0, 100.0])
+        m1 = np.array([10.0, 20.0, 30.0])
+        np.testing.assert_allclose(
+            default_sana12.pdf(p, m1),
+            default_sana12.pdf_per_dex(p, m1) / (p * np.log(10)))
+
     def test_calculate_normalization_integration(self, default_sana12):
         """Test that normalization ensures PDF integrates to reasonable values."""
         # Test for low mass case
@@ -503,7 +561,7 @@ class TestPowerLawPeriod:
         """Test PDF returns correct values within the period range."""
         p_values = np.logspace(np.log10(custom_power_law.p_min),
                               np.log10(custom_power_law.p_max), 10)
-        pdf_values = custom_power_law.pdf(p_values)
+        pdf_values = custom_power_law.pdf_per_dex(p_values)
 
         # All should be positive within range
         assert np.all(pdf_values > 0)
@@ -581,7 +639,7 @@ class TestPowerLawPeriod:
 
         # Test that PDF values are properly normalized
         p_test = np.array([10.0, 100.0, 1000.0])
-        pdf_values = default_power_law.pdf(p_test)
+        pdf_values = default_power_law.pdf_per_dex(p_test)
 
         # Calculate expected PDF values manually
         logp_test = np.log10(p_test)
@@ -589,6 +647,34 @@ class TestPowerLawPeriod:
         expected_pdf = raw_values * default_power_law.norm
 
         np.testing.assert_allclose(pdf_values, expected_pdf)
+
+    def test_pdf_per_dex_shape(self, custom_power_law):
+        """Test the PDF per dex scales as P^slope."""
+        p = np.array([100.0, 1000.0])
+        pdf_values = custom_power_law.pdf_per_dex(p)
+        np.testing.assert_allclose(pdf_values[1] / pdf_values[0],
+                                   10**custom_power_law.slope)
+
+    def test_pdf_per_dex_normalised_in_log_space(self, default_power_law):
+        """Test the PDF per dex integrates to 1 over log10(P)."""
+        integral = integrate_per_dex(default_power_law.pdf_per_dex,
+                                     default_power_law.p_min,
+                                     default_power_law.p_max)
+        assert np.isclose(integral, 1.0)
+
+    def test_pdf_normalised_in_linear_space(self, default_power_law):
+        """Test the PDF integrates to 1 over P."""
+        integral = integrate_linear(default_power_law.pdf,
+                                    default_power_law.p_min,
+                                    default_power_law.p_max)
+        assert np.isclose(integral, 1.0, rtol=1e-6)
+
+    def test_pdf_and_pdf_per_dex_relation(self, custom_power_law):
+        """Test pdf = pdf_per_dex / (P ln(10))."""
+        p = np.array([5.0, 10.0, 100.0, 1e5, 2e5])
+        np.testing.assert_allclose(
+            custom_power_law.pdf(p),
+            custom_power_law.pdf_per_dex(p) / (p * np.log(10)))
 
     def test_rvs(self, custom_power_law):
         """Test random sampling."""
@@ -660,6 +746,7 @@ class TestDistributionComparisons:
     @pytest.mark.parametrize("distribution_class,default_params,test_params", [
         (FlatMassRatio, {}, {"q_min": 0.2, "q_max": 0.9}),
         (PowerLawPeriod, {}, {"slope": -1.5, "p_min": 5.0, "p_max": 1e4}),
+        (LogPowerLawPeriod, {}, {"slope": -1.5, "p_min": 5.0, "p_max": 1e4}),
         (Sana12Period, {}, {"p_min": 1.0, "p_max": 500.0}),
     ])
     def test_parameter_consistency(self, distribution_class, default_params, test_params):
@@ -673,6 +760,128 @@ class TestDistributionComparisons:
         # Verify parameters are set correctly
         for param, value in test_params.items():
             assert getattr(dist_custom, param) == value
+
+
+class TestLogPowerLawPeriod:
+    """Test class for LogPowerLawPeriod distribution."""
+
+    @pytest.fixture
+    def default_log_power_law(self):
+        """Fixture for default LogPowerLawPeriod instance."""
+        return LogPowerLawPeriod()
+
+    @pytest.fixture
+    def custom_log_power_law(self):
+        """Fixture for custom LogPowerLawPeriod instance."""
+        return LogPowerLawPeriod(slope=-1.0, p_min=10.0, p_max=1e5)
+
+    def test_initialization_default(self, default_log_power_law):
+        """Test default initialization of LogPowerLawPeriod."""
+        assert default_log_power_law.slope == -0.55
+        assert default_log_power_law.p_min == 1.4
+        assert default_log_power_law.p_max == 3e6
+        assert default_log_power_law.norm > 0
+
+    def test_initialization_custom(self, custom_log_power_law):
+        """Test custom initialization of LogPowerLawPeriod."""
+        assert custom_log_power_law.slope == -1.0
+        assert custom_log_power_law.p_min == 10.0
+        assert custom_log_power_law.p_max == 1e5
+        # integral of (logP)^-1 over logP is ln(log10(p_max)/log10(p_min))
+        np.testing.assert_allclose(custom_log_power_law.norm, 1.0 / np.log(5))
+
+    def test_invalid_parameters(self):
+        """Test initialization with invalid parameters."""
+        with pytest.raises(ValueError, match="p_min must be larger than 1 day"):
+            LogPowerLawPeriod(p_min=1.0, p_max=1000.0)
+
+        with pytest.raises(ValueError, match="p_min must be larger than 1 day"):
+            LogPowerLawPeriod(p_min=0.5, p_max=1000.0)
+
+        with pytest.raises(ValueError, match="p_max must be greater than p_min"):
+            LogPowerLawPeriod(p_min=100.0, p_max=100.0)
+
+    def test_repr(self, custom_log_power_law):
+        """Test string representation."""
+        rep_str = repr(custom_log_power_law)
+        assert "LogPowerLawPeriod(" in rep_str
+        assert "slope=-1.0" in rep_str
+        assert "p_min=10.0" in rep_str
+        assert "p_max=100000.0" in rep_str
+
+    def test_repr_html(self, custom_log_power_law):
+        """Test HTML representation for Jupyter notebooks."""
+        html_str = custom_log_power_law._repr_html_()
+        assert "<h3>Log Power Law Period Distribution</h3>" in html_str
+        assert "slope = -1.0" in html_str
+        assert "p_min = 10.0" in html_str
+        assert "p_max = 100000.0" in html_str
+
+    def test_log_power_law_period_method(self, custom_log_power_law):
+        """Test the log_power_law_period method."""
+        logp_values = np.array([0.5, 1.0, 2.0, 5.0, 6.0])
+        result = custom_log_power_law.log_power_law_period(logp_values)
+        expected = np.array([0.0, 1.0, 0.5, 0.2, 0.0])
+        np.testing.assert_allclose(result, expected)
+
+    def test_pdf_per_dex_shape(self, custom_log_power_law):
+        """Test the PDF per dex scales as (log10 P)^slope."""
+        p = np.array([100.0, 1e4])
+        pdf_values = custom_log_power_law.pdf_per_dex(p)
+        np.testing.assert_allclose(pdf_values[1] / pdf_values[0],
+                                   (4.0 / 2.0)**custom_log_power_law.slope)
+
+    def test_pdf_outside_range(self, custom_log_power_law):
+        """Test PDFs return zero outside the period range."""
+        p = np.array([0.5, 5.0, 2e5])
+        np.testing.assert_array_equal(custom_log_power_law.pdf_per_dex(p),
+                                      np.zeros_like(p))
+        np.testing.assert_array_equal(custom_log_power_law.pdf(p),
+                                      np.zeros_like(p))
+
+    @pytest.mark.parametrize("slope", [-0.55, 0.0, 1.0])
+    def test_pdf_per_dex_normalised_in_log_space(self, slope):
+        """Test the PDF per dex integrates to 1 over log10(P)."""
+        dist = LogPowerLawPeriod(slope=slope)
+        integral = integrate_per_dex(dist.pdf_per_dex, dist.p_min, dist.p_max)
+        assert np.isclose(integral, 1.0)
+
+    @pytest.mark.parametrize("slope", [-0.55, 0.0, 1.0])
+    def test_pdf_normalised_in_linear_space(self, slope):
+        """Test the PDF integrates to 1 over P."""
+        dist = LogPowerLawPeriod(slope=slope)
+        integral = integrate_linear(dist.pdf, dist.p_min, dist.p_max)
+        assert np.isclose(integral, 1.0, rtol=1e-6)
+
+    def test_pdf_and_pdf_per_dex_relation(self, custom_log_power_law):
+        """Test pdf = pdf_per_dex / (P ln(10))."""
+        p = np.array([10.0, 100.0, 1e5])
+        np.testing.assert_allclose(
+            custom_log_power_law.pdf(p),
+            custom_log_power_law.pdf_per_dex(p) / (p * np.log(10)))
+
+    def test_rvs(self, custom_log_power_law):
+        """Test random sampling follows the PDF per dex."""
+        rng = np.random.default_rng(42)
+        samples = custom_log_power_law.rvs(size=100000, rng=rng)
+
+        assert len(samples) == 100000
+        assert np.all(samples >= custom_log_power_law.p_min)
+        assert np.all(samples <= custom_log_power_law.p_max)
+
+        # fraction of samples in each dex should match the PDF per dex
+        edges = np.arange(1, 6)
+        counts, _ = np.histogram(np.log10(samples), edges)
+        expected = [quad(lambda logp: custom_log_power_law.pdf_per_dex(10**logp),
+                         lo, hi)[0] for lo, hi in zip(edges[:-1], edges[1:])]
+        np.testing.assert_allclose(counts / len(samples), expected, atol=0.01)
+
+    def test_rvs_without_rng(self, custom_log_power_law):
+        """Test random sampling without providing an RNG."""
+        samples = custom_log_power_law.rvs(size=100)
+        assert len(samples) == 100
+        assert np.all(samples >= custom_log_power_law.p_min)
+        assert np.all(samples <= custom_log_power_law.p_max)
 
 
 class TestLogUniform:
@@ -733,34 +942,48 @@ class TestLogUniform:
         assert "min = 10.0" in html_str
         assert "max = 1000.0" in html_str
 
-    def test_pdf_within_range(self):
-        """Test PDF within the valid range."""
+    def test_pdf_per_dex_within_range(self):
+        """Test PDF per dex within the valid range."""
         log_uniform = LogUniform(min=10.0, max=1000.0)
         x_values = np.array([10.0, 50.0, 100.0, 500.0, 1000.0])
-        pdf_values = log_uniform.pdf(x_values)
+        pdf_values = log_uniform.pdf_per_dex(x_values)
         expected = np.full_like(x_values, log_uniform.norm)
         np.testing.assert_allclose(pdf_values, expected)
 
-    def test_pdf_normalised_in_log_space(self):
-        """Test the PDF integrates to 1 over log10(x)."""
+    def test_pdf_per_dex_normalised_in_log_space(self):
+        """Test the PDF per dex integrates to 1 over log10(x)."""
         log_uniform = LogUniform(min=10.0, max=1000.0)
-        integral, _ = quad(lambda logx: log_uniform.pdf(10**logx),
+        integral, _ = quad(lambda logx: log_uniform.pdf_per_dex(10**logx),
                            np.log10(log_uniform.min),
                            np.log10(log_uniform.max))
         assert np.isclose(integral, 1.0)
 
-    def test_pdf_outside_range(self):
-        """Test PDF outside the valid range."""
+    def test_pdf_per_dex_outside_range(self):
+        """Test PDF per dex outside the valid range."""
         log_uniform = LogUniform(min=10.0, max=1000.0)
         # Below range
         x_below = np.array([1.0, 5.0])
-        pdf_below = log_uniform.pdf(x_below)
+        pdf_below = log_uniform.pdf_per_dex(x_below)
         np.testing.assert_array_equal(pdf_below, np.zeros_like(x_below))
 
         # Above range
         x_above = np.array([2000.0, 5000.0])
-        pdf_above = log_uniform.pdf(x_above)
+        pdf_above = log_uniform.pdf_per_dex(x_above)
         np.testing.assert_array_equal(pdf_above, np.zeros_like(x_above))
+
+    def test_pdf_normalised_in_linear_space(self):
+        """Test the PDF integrates to 1 over x."""
+        log_uniform = LogUniform(min=10.0, max=1e5)
+        integral = integrate_linear(log_uniform.pdf, log_uniform.min,
+                                    log_uniform.max)
+        assert np.isclose(integral, 1.0, rtol=1e-6)
+
+    def test_pdf_matches_scipy(self):
+        """Test the PDF matches scipy.stats.loguniform.pdf."""
+        log_uniform = LogUniform(min=10.0, max=1000.0)
+        x_values = np.array([1.0, 10.0, 50.0, 500.0, 1000.0, 2000.0])
+        np.testing.assert_allclose(log_uniform.pdf(x_values),
+                                   loguniform.pdf(x_values, 10.0, 1000.0))
 
     def test_rvs(self):
         """Test random sampling."""

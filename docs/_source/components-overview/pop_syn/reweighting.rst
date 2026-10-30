@@ -47,13 +47,18 @@ several distribution families. The table below summarizes the main options.
      - The flat mass-ratio distribution can be defined either from the allowed
        secondary-mass range or from explicit mass-ratio bounds.
    * - Orbital period
-     - ``period`` with ``Sana+12_period_extended`` or ``power_law``; or
-       ``separation`` with ``log_uniform``
+     - ``period`` with ``Sana+12_period_extended``, ``power_law`` or
+       ``log_power_law``; or ``separation`` with ``log_uniform``
      - For ``period``: ``orbital_period_min`` and ``orbital_period_max``. For
        ``Sana+12_period_extended`` no additional parameters are needed. For
-       ``power_law``: ``power_law_slope``. For ``separation``:
-       ``orbital_separation_min`` and ``orbital_separation_max``.
-     - Periods are interpreted in days. Separation-based inputs are converted
+       ``power_law`` and ``log_power_law``: ``power_law_slope``. For
+       ``separation``: ``orbital_separation_min`` and
+       ``orbital_separation_max``.
+     - Periods are interpreted in days. ``power_law`` follows
+       :math:`dN/d\log_{10}P \propto P^{\rm slope}`, while ``log_power_law``
+       follows :math:`dN/d\log_{10}P \propto (\log_{10}P)^{\rm slope}` and
+       requires ``orbital_period_min`` > 1 day. All period PDFs are evaluated
+       per dex in :math:`\log_{10}P`. Separation-based inputs are converted
        internally to periods using the orbital-separation relation.
    * - Binary fraction
      - ``const``
