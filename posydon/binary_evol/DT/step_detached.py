@@ -43,7 +43,9 @@ from posydon.binary_evol.flow_chart import (
     UNDEFINED_STATES,
 )
 from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.track_match import MATCHER_ONLY_KWARGS
 from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.ini_defaults import section_defaults
 
 #from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
@@ -74,6 +76,33 @@ def event(terminal, direction=0):
         f.direction = direction
         return f
     return dec
+
+# parameters of detached-type steps which are set at run time and therefore
+# are not in the inifile
+DETACHED_RUNTIME_KWARGS = {"metallicity": None,
+                           "track_matcher": None,
+                           "RNG": np.random.default_rng()}
+
+
+def detached_defaults_from_ini(section, base=DETACHED_RUNTIME_KWARGS):
+    """Build the DEFAULT_KWARGS of a detached-type step from the inifile.
+
+    Parameters
+    ----------
+    section : str
+        Name of the step's section in the default inifile.
+    base : dict
+        Defaults the section is put on top of, e.g. the DEFAULT_KWARGS of the
+        parent class, so a subclass accepts the same parameters as its parent.
+
+    Returns
+    -------
+    dict
+        The default keyword arguments. Settings that are handed to the
+        TrackMatcher are left out.
+    """
+    return {**base, **section_defaults(section, exclude=MATCHER_ONLY_KWARGS)}
+
 
 class detached_step:
     """
@@ -161,20 +190,8 @@ class detached_step:
 
     """
 
-    # settings in .ini will override
-    DEFAULT_KWARGS = {"dt": None,
-                      "n_o_steps_history": None,
-                      "do_wind_loss": True,
-                      "do_tides": True,
-                      "do_gravitational_radiation": True,
-                      "do_magnetic_braking": True,
-                      "magnetic_braking_mode": "RVJ83",
-                      "do_stellar_evolution_and_spin_from_winds": True,
-                      "RLO_orbit_at_orbit_with_same_am": False,
-                      "metallicity": None,
-                      "track_matcher": None,
-                      "RNG": np.random.default_rng(),
-                      "verbose": False}
+    # defaults come from the [step_detached] section of the default inifile
+    DEFAULT_KWARGS = detached_defaults_from_ini('step_detached')
 
     def __init__(self, **kwargs):
 

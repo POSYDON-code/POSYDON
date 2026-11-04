@@ -20,8 +20,7 @@ import pandas as pd
 
 # The packaged default inifile. User inifiles are stacked on top of it, so a
 # user only has to give the values that differ from the defaults.
-DEFAULT_INI_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                                'population_params_default.ini')
+from posydon.utils.ini_defaults import DEFAULT_INI_PATH
 
 BINARYPROPERTIES_DTYPES = {
     'binary_index' : 'int64',

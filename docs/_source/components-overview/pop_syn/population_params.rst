@@ -56,6 +56,11 @@ To read only your own file without the defaults, pass ``use_defaults=False``
 to :func:`~posydon.popsyn.io.simprop_kwargs_from_ini` or
 :func:`~posydon.popsyn.io.binarypop_kwargs_from_ini`.
 
+The same default file also provides the default values of the step classes
+and of :class:`~posydon.popsyn.binarypopulation.BinaryPopulation`, so a step
+created directly in Python has the same defaults as one created from an ini
+file.
+
 
 Environment Variables
 ---------------------
