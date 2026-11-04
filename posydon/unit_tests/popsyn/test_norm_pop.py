@@ -5,6 +5,7 @@ __authors__ = [
 ]
 
 import os
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -19,30 +20,86 @@ from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.utils.common_functions import orbital_period_from_separation
-from posydon.utils.posydonwarning import UnsupportedModelWarning
+from posydon.utils.posydonwarning import ValueWarning
 
 
 # Dummy IMF to simulate a valid IMF pdf
-class DummyIMF:
+class DummyIMF(IMFs.IMFBase):
     def __init__(self, m_min, m_max):
         self.m_min = m_min
         self.m_max = m_max
+    def imf(self, m):
+        return 1.0
+    def rvs(self, size=1, rng=None):
+        raise NotImplementedError
     def pdf(self, m):
         # returns a constant value for testing
         return 0.5
 
+
+class FlatIMF(IMFs.IMFBase):
+    '''Test-only flat IMF, normalised on [m_min, m_max].'''
+    def imf(self, m):
+        return np.ones_like(np.asarray(m, dtype=float))
+    def rvs(self, size=1, rng=None):
+        raise NotImplementedError
+
+
+@fixture(autouse=True)
+def register_test_imfs(monkeypatch):
+    '''Make the test-only IMFs available as primary_mass_scheme names.'''
+    monkeypatch.setattr(IMFs, 'FlatIMF', FlatIMF, raising=False)
+    monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
+
+
 class TestGetIMFPdf:
-    def test_invalid_imf_returns_constant(self):
+    @mark.parametrize('scheme', ['NonExistentIMF', '', 'IMFBase', 'np',
+                                 'Pwarn', 'quad'])
+    def test_invalid_imf_raises(self, scheme):
+        # Unknown names, the abstract base class, and module attributes that
+        # are not IMF classes must not silently fall back to another IMF.
         kwargs = {
-            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_scheme': scheme,
             'primary_mass_min': 1,
             'primary_mass_max': 100
         }
+        with pytest.raises(ValueError, match="primary_mass_scheme"):
+            norm_pop.get_IMF_pdf(kwargs)
+
+    def test_missing_imf_scheme_raises(self):
+        kwargs = {'primary_mass_min': 1, 'primary_mass_max': 100}
+        with pytest.raises(ValueError, match="primary_mass_scheme"):
+            norm_pop.get_IMF_pdf(kwargs)
+
+    def test_imf_constructor_error_propagates(self, monkeypatch):
+        # An AttributeError raised inside a valid IMF must not be mistaken
+        # for an unknown scheme.
+        class BrokenIMF(IMFs.IMFBase):
+            def __init__(self, m_min, m_max):
+                raise AttributeError("broken IMF")
+            def imf(self, m):
+                return 1.0
+            def rvs(self, size=1, rng=None):
+                raise NotImplementedError
+
+        monkeypatch.setattr(IMFs, 'BrokenIMF', BrokenIMF, raising=False)
+        kwargs = {
+            'primary_mass_scheme': 'BrokenIMF',
+            'primary_mass_min': 1,
+            'primary_mass_max': 100
+        }
+        with pytest.raises(AttributeError, match="broken IMF"):
+            norm_pop.get_IMF_pdf(kwargs)
+
+    @mark.parametrize('scheme', ['Salpeter', 'Kroupa1993', 'Kroupa2001'])
+    def test_sampler_imfs_supported(self, scheme):
+        kwargs = {
+            'primary_mass_scheme': scheme,
+            'primary_mass_min': 7,
+            'primary_mass_max': 140
+        }
         pdf_func = norm_pop.get_IMF_pdf(kwargs)
-        m_test = np.array([1, 10, 50])
-        result = pdf_func(m_test)
-        expected = np.ones_like(m_test) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
-        assert np.allclose(result, expected)
+        assert np.isclose(quad(pdf_func, 7, 140)[0], 1.0)
 
 
     def test_valid_imf_returns_dummy_pdf(self, monkeypatch):
@@ -63,11 +120,15 @@ class TestGetIMFPdf:
 
     def test_imf_with_scheme_kwargs(self, monkeypatch):
         # Create a test IMF class that uses scheme kwargs
-        class SchemeKwargsIMF:
+        class SchemeKwargsIMF(IMFs.IMFBase):
             def __init__(self, m_min, m_max, custom_param=None):
                 self.m_min = m_min
                 self.m_max = m_max
                 self.custom_param = custom_param
+            def imf(self, m):
+                return 1.0
+            def rvs(self, size=1, rng=None):
+                raise NotImplementedError
             def pdf(self, m):
                 # Return custom_param if set, otherwise 1
                 return self.custom_param if self.custom_param is not None else 1
@@ -101,6 +162,8 @@ class TestGetMassRatioPdf:
     def test_flat_mass_ratio_pdf(self):
         # kwargs without q_min and q_max to trigger flat_mass_ratio branch
         kwargs = {
+            'primary_mass_min': 5,
+            'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'secondary_mass_min': 5,
             'secondary_mass_max': 50
@@ -135,18 +198,15 @@ class TestGetMassRatioPdf:
         result = q_pdf(0.5*(kwargs['q_max']+1.0), None)
         assert np.all(result == 0)
 
-    def test_invalid_mass_ratio_scheme(self):
+    @mark.parametrize('scheme', ['invalid', 'q=1', ''])
+    def test_invalid_mass_ratio_scheme(self, scheme):
+        # Unsupported schemes (including the sampler's 'q=1') must raise
+        # instead of silently reweighting with a flat mass-ratio PDF.
         kwargs = {
-            'secondary_mass_scheme': 'invalid'
+            'secondary_mass_scheme': scheme
         }
-
-        with pytest.warns(UnsupportedModelWarning) as warning_info:
-            q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
-
-        assert ("The secondary_mass_scheme is not defined use a flat mass ratio"
-                " distribution in (0,1]." in str(warning_info[0].message))
-        results = q_pdf(0.4)
-        assert np.all(results == 1)
+        with pytest.raises(ValueError, match="secondary_mass_scheme"):
+            norm_pop.get_mass_ratio_pdf(kwargs)
 
     def test_power_law_mass_ratio_pdf(self):
         """Test that power_law_mass_ratio scheme returns correct PDF values."""
@@ -173,6 +233,93 @@ class TestGetMassRatioPdf:
         # Default q_min=0.05, q_max=1.0; value inside range should be positive
         result = q_pdf(0.5, None)
         assert result > 0
+
+    @mark.parametrize('given', [{'q_min': 0.1}, {'q_max': 0.9}])
+    def test_flat_mass_ratio_single_q_bound_raises(self, given):
+        # Only one fixed bound is ambiguous between the m1-dependent and
+        # the fixed-bounds flat mass ratio.
+        kwargs = {
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+            **given,
+        }
+        missing = 'q_max' if 'q_min' in given else 'q_min'
+        with pytest.raises(KeyError, match=missing):
+            norm_pop.get_mass_ratio_pdf(kwargs)
+
+    def test_primary_mass_min_below_secondary_mass_min_raises(self):
+        # The sampler rejects primaries lighter than secondary_mass_min.
+        kwargs = {
+            'primary_mass_min': 0.1,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+        }
+        with pytest.raises(ValueError, match="secondary_mass_min"):
+            norm_pop.get_mass_ratio_pdf(kwargs)
+
+    def test_flat_mass_ratio_pdf_outside_primary_range(self):
+        # Evaluating at m1 outside the primary mass range (e.g. simulated
+        # systems outside the requested population) gives zero, not inf/nan.
+        kwargs = {
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 1,
+            'secondary_mass_max': 140,
+        }
+        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        # m1 = 1 = secondary_mass_min: empty range (width 0)
+        # m1 = 0.5: negative width
+        result = q_pdf(np.array([0.5, 1.0]), np.array([1.0, 0.5]))
+        assert np.all(result == 0)
+
+
+class TestGetMassRatioBounds:
+    def test_m1_dependent_bounds(self):
+        kwargs = {
+            'primary_mass_min': 5,
+            'primary_mass_max': 100,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 5,
+            'secondary_mass_max': 50,
+        }
+        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
+        m1 = np.array([5., 10., 100.])
+        assert np.allclose(q_lower(m1), [1.0, 0.5, 0.05])
+        assert np.allclose(q_upper(m1), [1.0, 1.0, 0.5])
+
+    @mark.parametrize('kwargs, q_min, q_max', [
+        ({'secondary_mass_scheme': 'flat_mass_ratio',
+          'q_min': 0.2, 'q_max': 0.8}, 0.2, 0.8),
+        ({'secondary_mass_scheme': 'power_law_mass_ratio',
+          'mass_ratio_slope': 1.0}, 0.05, 1.0),
+        ({'secondary_mass_scheme': 'power_law_mass_ratio',
+          'mass_ratio_slope': 1.0, 'q_min': 0.3}, 0.3, 1.0),
+    ])
+    def test_fixed_bounds(self, kwargs, q_min, q_max):
+        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
+        for m1 in (1., 50.):
+            assert q_lower(m1) == q_min
+            assert q_upper(m1) == q_max
+
+    @mark.parametrize('scheme', ['power_law_mass_ratio', 'flat_mass_ratio'])
+    def test_fixed_bounds_q_min_greater_than_q_max(self, scheme):
+        kwargs = {'secondary_mass_scheme': scheme, 'mass_ratio_slope': 0.0,
+                  'q_min': 0.8, 'q_max': 0.2}
+        with pytest.raises(ValueError, match="q_min must be less than q_max"):
+            norm_pop.get_mass_ratio_bounds(kwargs)
+
+    @mark.parametrize('scheme', ['invalid', 'q=1', None])
+    def test_unsupported_scheme(self, scheme):
+        with pytest.raises(ValueError, match="secondary_mass_scheme"):
+            norm_pop.get_mass_ratio_bounds(
+                {'secondary_mass_scheme': scheme})
+
 
 class TestGetBinaryFractionPdf:
 
@@ -292,7 +439,7 @@ class TestGetMeanMass:
     def test_q_min_greater_than_q_max_error(self):
         # Test the validation error when q_min > q_max
         params = {
-            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_scheme': 'FlatIMF',
             'primary_mass_min': 1,
             'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
@@ -311,15 +458,16 @@ class TestGetMeanMass:
 
         assert "q_min must be less than q_max" in str(excinfo.value)
 
-    def test_q_min_greater_than_q_max_computed_error(self):
-        # Test the validation error when computed q_min > q_max
-        # This happens when secondary_mass_min/primary_mass_min > secondary_mass_max/primary_mass_max
+    def test_empty_mass_ratio_range_error(self):
+        # m1-dependent bounds: q lies in (m2_min/m1, min(m2_max/m1, 1)].
+        # With secondary_mass_min >= secondary_mass_max the range is empty
+        # for every m1.
         params = {
-            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_scheme': 'FlatIMF',
             'primary_mass_min': 5,
             'primary_mass_max': 10,
-            'secondary_mass_min': 4,  # 4/5 = 0.8
-            'secondary_mass_max': 6,  # 6/10 = 0.6, so q_min (0.8) > q_max (0.6)
+            'secondary_mass_min': 4,
+            'secondary_mass_max': 3,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,
@@ -334,32 +482,107 @@ class TestGetMeanMass:
 
         assert "q_min must be less than q_max" in str(excinfo.value)
 
-    def test_mean_mass_without_q_bounds(self):
-        # Test the branch where q_min and q_max are computed from secondary masses
+    @mark.parametrize('imf, m1_min, m1_max, m2_min, m2_max, f_b', [
+        # m2_min/m1_min > m2_max/m1_max, but every m1 has a valid q range;
+        # the sampler accepts this setup, so it must not raise.
+        ('FlatIMF', 5, 10, 4, 6, 0.5),
+        # typical simulation setup (base_simulation_kwargs)
+        ('Salpeter', 7, 140, 0.35, 140, 1.0),
+        # m2_max inside the primary mass range
+        ('Salpeter', 7, 140, 0.35, 50, 1.0),
+        # default population parameters in SyntheticPopulation
+        ('Kroupa2001', 0.01, 200, 0.0005, 200, 0.7),
+    ])
+    def test_mean_mass_flat_mass_ratio_analytic(self, imf, m1_min, m1_max,
+                                                m2_min, m2_max, f_b):
+        # flat_mass_ratio without q_min/q_max: q ~ U(m2_min/m1,
+        # min(m2_max/m1, 1)], i.e. m2 ~ U(m2_min, min(m2_max, m1)], so
+        # E[m2 | m1] = (m2_min + min(m2_max, m1)) / 2.
         params = {
-            'primary_mass_scheme': 'NonExistentIMF',
-            'primary_mass_min': 10,
-            'primary_mass_max': 20,
-            'secondary_mass_min': 5,
-            'secondary_mass_max': 15,
+            'primary_mass_scheme': imf,
+            'primary_mass_min': m1_min,
+            'primary_mass_max': m1_max,
+            'secondary_mass_min': m2_min,
+            'secondary_mass_max': m2_max,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
-            'binary_fraction_const': 0.5,
+            'binary_fraction_const': f_b,
             'orbital_scheme': 'period',
             'orbital_period_scheme': 'Sana+12_period_extended',
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
         }
+        imf_pdf = getattr(IMFs, imf)(m_min=m1_min, m_max=m1_max).pdf
+        points = [m for m in (0.08, 0.5, m2_max) if m1_min < m < m1_max]
+        E_m1 = quad(lambda m: m * imf_pdf(m), m1_min, m1_max,
+                    points=points, limit=200)[0]
+        E_m2 = quad(lambda m: imf_pdf(m) * 0.5 * (m2_min + min(m2_max, m)),
+                    m1_min, m1_max, points=points, limit=200)[0]
+        expected = E_m1 + f_b * E_m2
 
-        mean_mass = norm_pop.get_mean_mass(params)
-        assert mean_mass > 0
+        assert np.isclose(norm_pop.get_mean_mass(params), expected, rtol=1e-3)
+
+    @mark.parametrize('extra, q_min, q_max', [
+        # no bounds given: PowerLawMassRatio defaults to q in (0.05, 1]
+        ({}, 0.05, 1.0),
+        # secondary_mass_min/max are not used by power_law_mass_ratio
+        ({'secondary_mass_min': 3.5, 'secondary_mass_max': 20}, 0.05, 1.0),
+        # explicit bounds
+        ({'q_min': 0.2, 'q_max': 0.6}, 0.2, 0.6),
+    ])
+    def test_mean_mass_power_law_mass_ratio_analytic(self, extra,
+                                                     q_min, q_max):
+        alpha = 1.0
+        params = {
+            'primary_mass_scheme': 'Salpeter',
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'power_law_mass_ratio',
+            'mass_ratio_slope': alpha,
+            'binary_fraction_scheme': 'const',
+            'binary_fraction_const': 0.6,
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'Sana+12_period_extended',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6000,
+            **extra,
+        }
+        imf_pdf = IMFs.Salpeter(m_min=7, m_max=140).pdf
+        E_m1 = quad(lambda m: m * imf_pdf(m), 7, 140)[0]
+        E_q = (quad(lambda q: q**(alpha + 1), q_min, q_max)[0]
+               / quad(lambda q: q**alpha, q_min, q_max)[0])
+        expected = E_m1 * (1 + 0.6 * E_q)
+
+        assert np.isclose(norm_pop.get_mean_mass(params), expected, rtol=1e-4)
+
+    def test_mean_mass_matches_sampler(self):
+        # The normalisation must agree with what the sampler actually draws.
+        params = {'number_of_binaries': 100000,
+                  'primary_mass_scheme': 'Salpeter',
+                  'primary_mass_min': 7,
+                  'primary_mass_max': 140,
+                  'secondary_mass_scheme': 'flat_mass_ratio',
+                  'secondary_mass_min': 0.35,
+                  'secondary_mass_max': 140,
+                  'binary_fraction_scheme': 'const',
+                  'binary_fraction_const': 0.7,
+                  'orbital_scheme': 'period',
+                  'orbital_period_scheme': 'Sana+12_period_extended',
+                  'orbital_period_min': 0.35,
+                  'orbital_period_max': 6e3,
+                  'eccentricity_scheme': 'zero'}
+        sample = pop_data(params.copy())
+        sampled_mean = (sample['S1_mass_i'] + sample['S2_mass_i']).mean()
+        # statistical error on the sampled mean is ~0.3%
+        assert np.isclose(norm_pop.get_mean_mass(params), sampled_mean,
+                          rtol=0.01)
 
 
 class TestGetPdf:
     def test_single_star_pdf(self):
-        # Using fallback IMF (non-existent) -> IMF_pdf returns normalized value.
+        # Using the test-only FlatIMF -> IMF_pdf returns a normalised constant.
         kwargs = {
-            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_scheme': 'FlatIMF',
             'primary_mass_min': 1,
             'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
@@ -383,7 +606,7 @@ class TestGetPdf:
     def test_binary_pdf(self):
         # Using alternative mass ratio branch (q_min and q_max provided)
         kwargs = {
-            'primary_mass_scheme': 'NonExistentIMF',
+            'primary_mass_scheme': 'FlatIMF',
             'primary_mass_min': 1,
             'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
@@ -837,6 +1060,52 @@ class TestReweighting():
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
         assert np.allclose(weights, 1/M_sim)
+
+    @mark.parametrize('pop_m1_max', [140, 250])
+    def test_systems_outside_simulation_warn(self, base_simulation_kwargs,
+                                             pop_m1_max):
+        '''Systems with zero simulation probability get weight 0 and one
+        warning with their count. With pop_m1_max=140 the population PDF is
+        zero too (0/0 = nan), with 250 it is not (x/0 = inf).'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        # two systems above the simulated primary_mass_max of 140 Msun
+        data.loc[[0, 1], 'S1_mass_i'] = 200.
+        data.loc[[0, 1], 'S2_mass_i'] = 100.
+        data.loc[[0, 1], 'state_i'] = 'detached'
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = pop_m1_max
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with pytest.warns(ValueWarning,
+                          match="2 of 1000 systems lie outside the "
+                                "sampled parameter space"):
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights[:2] == 0)
+        assert np.all(weights[2:] > 0)
+
+    def test_narrower_population_does_not_warn(self, base_simulation_kwargs):
+        '''Systems outside the requested population (but inside the
+        simulation) get weight 0 without the outside-simulation warning.'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = 20
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error", category=ValueWarning,
+                                    message=r"\d+ of \d+ systems lie outside")
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        outside_population = data['S1_mass_i'] > 20
+        assert np.any(outside_population)
+        assert np.all(weights[outside_population] == 0)
+        assert np.all(weights[~outside_population] > 0)
 
 
     def test_mass_ratio_extension(self,
