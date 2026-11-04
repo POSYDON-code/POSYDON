@@ -192,8 +192,6 @@ def generate_orbital_separations(number_of_binaries=1,
         raise ValueError("You must provide an allowed "
                          "orbital separation scheme.")
 
-    # the separation distribution behind the period distribution used to
-    # reweight populations sampled in separation
     sep_dist = get_orbital_distribution({
         'orbital_scheme': 'separation',
         'orbital_separation_scheme': orbital_separation_scheme,
@@ -289,7 +287,7 @@ def generate_primary_masses(number_of_binaries=1,
     # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545 (alpha = 2.7)
     # Kroupa P., 2001, MNRAS, 322, 231
     # Scheme parameters, e.g. kwargs['Salpeter'] = {'alpha': 2.3}, are
-    # passed on to the IMF, as in the reweighting.
+    # passed on to the IMF.
     imf = get_IMF_distribution({
         **kwargs,
         'primary_mass_scheme': primary_mass_scheme,
@@ -344,8 +342,7 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        # q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)]; the same
-        # distribution is used by norm_pop to normalise the population
+        # q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)]
         q_dist = get_mass_ratio_distribution({
             'secondary_mass_scheme': secondary_mass_scheme,
             'secondary_mass_min': secondary_mass_min,

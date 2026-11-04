@@ -1851,9 +1851,6 @@ class PeriodFromSeparation:
 
         dN/dlog10(P) = (2/3) dN/dlog10(a).
 
-    This allows populations sampled in separation to be reweighted together
-    with populations sampled in period.
-
     Parameters
     ----------
     separation : LogUniform or LogNormalSeparation

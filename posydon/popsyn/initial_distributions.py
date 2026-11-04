@@ -114,7 +114,7 @@ def get_mass_ratio_distribution(kwargs):
                                  q_max=kwargs.get('q_max', 1.0))
     else:
         raise ValueError(f"The secondary_mass_scheme '{scheme}' is not "
-                         "supported for normalisation. Supported schemes: "
+                         "supported. Supported schemes: "
                          "['flat_mass_ratio', 'power_law_mass_ratio']")
 
 def get_binary_fraction_distribution(kwargs):
