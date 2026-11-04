@@ -2,24 +2,13 @@
 
 Boundary convention
 -------------------
-The distributions are used both to sample a population (`rvs`) and to
-reweight it (`pdf`, see `posydon.popsyn.norm_pop`). Every sample must
-therefore lie where the PDF is non-zero.
+PDFs include both bounds, [min, max], as in `scipy.stats`. Samples exclude
+the upper bound, [min, max), because numpy draws uniform numbers in [0, 1).
+A single point has zero probability, so this does not change the
+distribution.
 
-- Continuous distributions (periods, separations, eccentricities, and the
-  IMFs in `posydon.popsyn.IMFs`): the PDF is defined on the closed interval
-  [min, max], as in `scipy.stats`. Samples are drawn with numpy's uniform
-  generator, which returns values in [0, 1), so samples lie in [min, max).
-  The upper bound has zero probability, so this does not change the
-  distribution, and every sample lies inside the PDF's interval.
-- Mass ratio distributions (`MassRatioDistribution` subclasses) follow the
-  same convention, [q_lower, q_upper] for the PDF and [q_lower, q_upper)
-  for the samples, with one exception: q = 0 is not a physical mass ratio.
-  The PDF is zero at q = 0 and the samplers never return it; a sample of
-  exactly 0 (only possible for q_lower = 0) is redrawn.
-
-Transformed samples (e.g. 10**x for log-uniform distributions) can differ
-from the bounds by floating-point rounding; samples are not clipped.
+The mass ratio distributions exclude q = 0, because it is unphysical: the
+PDF is zero at q = 0 and the samplers never return it.
 """
 
 __authors__ = [
