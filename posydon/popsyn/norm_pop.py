@@ -31,7 +31,9 @@ def get_pdf(kwargs, mass_pdf=False):
     Returns
     -------
     pdf_function : function
-        Function that returns a probability density function
+        Function `pdf_function(m1, q=0, P=nan, binary=False)` that returns
+        the probability density. The defaults match single stars in the
+        population data: no companion (q = 0) and no period (P = nan).
     """
 
     IMF_pdf = get_IMF_distribution(kwargs).pdf
@@ -40,7 +42,7 @@ def get_pdf(kwargs, mass_pdf=False):
     period_pdf = get_orbital_distribution(kwargs).pdf_per_dex
 
     if mass_pdf:
-        pdf_function = lambda m1, q=0, P=0, binary=False: (
+        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
             np.where(# binaries
                      np.asarray(binary),
                      (f_b_pdf(np.asarray(binary))
@@ -52,7 +54,7 @@ def get_pdf(kwargs, mass_pdf=False):
                     )
         )
     else:
-        pdf_function = lambda m1, q=0, P=0, binary=False: (
+        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
             np.where(
                 np.asarray(binary),
                 # binaries
@@ -95,7 +97,7 @@ def get_mean_mass(params):
     # binary integration (quad requires scalar integrands)
     I_bin = dblquad(
         lambda q, m: np.asarray((m + m * q)
-                                * PDF(m, q, P=0, binary=True)).item(),
+                                * PDF(m, q, binary=True)).item(),
         m1_min, m1_max,
         lambda m: float(q_dist.support(m)[0]),
         lambda m: float(q_dist.support(m)[1]),

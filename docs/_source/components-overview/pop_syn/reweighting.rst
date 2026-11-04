@@ -68,6 +68,11 @@ several distribution families. The table below summarizes the main options.
      - This is currently implemented as a constant binary fraction and is used
        to distinguish single-star and binary PDFs.
 
+.. note::
+
+   The eccentricity is not reweighted. The simulation and the target
+   population must use the same eccentricity distribution.
+
 How the weights are computed
 ---------------------------
 

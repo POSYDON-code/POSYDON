@@ -299,8 +299,8 @@ def pop_data(kwargs):
             pop_data['S2_mass_i'])
     pop_data['state_i'] = 'detached'
     mask = pd.isna(pop_data['S2_mass_i'])
-    pop_data['state_i'][mask] = 'initially_single_star'
-    pop_data['S2_mass_i'][mask] = 0
+    pop_data.loc[mask, 'state_i'] = 'initially_single_star'
+    pop_data.loc[mask, 'S2_mass_i'] = 0
     return pop_data
 
 class TestReweighting():

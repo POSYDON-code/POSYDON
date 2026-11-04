@@ -192,17 +192,6 @@ def generate_orbital_separations(number_of_binaries=1,
         raise ValueError("You must provide an allowed "
                          "orbital separation scheme.")
 
-    if orbital_separation_scheme == 'log_normal':
-        if orbital_separation_max < orbital_separation_min:
-            raise ValueError("`orbital_separation_max` must be "
-                             "larger than the orbital_separation_min.")
-        if (log_orbital_separation_mean is None
-                or log_orbital_separation_sigma is None):
-            raise ValueError(
-                "For the `log_normal separation` scheme you must give "
-                "`log_orbital_separation_mean`, "
-                "`log_orbital_separation_sigma`.")
-
     # the separation distribution behind the period distribution used to
     # reweight populations sampled in separation
     sep_dist = get_orbital_distribution({

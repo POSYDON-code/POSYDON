@@ -1729,8 +1729,11 @@ class LogNormalSeparation:
         Raises
         ------
         ValueError
-            If min is not positive, max <= min, or sigma <= 0.
+            If mean or sigma is None, min is not positive, max <= min, or
+            sigma <= 0.
         """
+        if mean is None or sigma is None:
+            raise ValueError("mean and sigma must be given")
         if min <= 0:
             raise ValueError("min must be positive")
         if max <= min:

@@ -231,8 +231,8 @@ def get_orbital_distribution(kwargs):
             )
         elif kwargs['orbital_separation_scheme'] == 'log_normal':
             separation = LogNormalSeparation(
-                mean=kwargs['log_orbital_separation_mean'],
-                sigma=kwargs['log_orbital_separation_sigma'],
+                mean=kwargs.get('log_orbital_separation_mean'),
+                sigma=kwargs.get('log_orbital_separation_sigma'),
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )

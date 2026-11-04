@@ -134,7 +134,7 @@ class TestFunctions:
 
     def test_generate_orbital_separations(self):
         # missing log_normal params
-        with raises(ValueError, match="For the `log_normal separation` scheme you must give"):
+        with raises(ValueError, match="mean and sigma must be given"):
             totest.generate_orbital_separations(orbital_separation_scheme='log_normal')
 
         # bad input: min > max (raised by LogUniform distribution class)
@@ -143,7 +143,7 @@ class TestFunctions:
                                                 orbital_separation_max=1.)
 
         # bad input: min > max with log_normal
-        with raises(ValueError, match="`orbital_separation_max` must be"):
+        with raises(ValueError, match="max must be greater than min"):
             totest.generate_orbital_separations(
                 orbital_separation_scheme='log_normal',
                 log_orbital_separation_mean=1.0,

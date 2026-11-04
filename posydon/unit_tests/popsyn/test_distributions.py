@@ -1358,6 +1358,12 @@ class TestLogNormalSeparation:
         with pytest.raises(ValueError, match="sigma must be positive"):
             LogNormalSeparation(mean=1.0, sigma=-0.5, min=10.0, max=1000.0)
 
+        with pytest.raises(ValueError, match="mean and sigma must be given"):
+            LogNormalSeparation(mean=None, sigma=0.5, min=10.0, max=1000.0)
+
+        with pytest.raises(ValueError, match="mean and sigma must be given"):
+            LogNormalSeparation(mean=1.0, sigma=None, min=10.0, max=1000.0)
+
     def test_repr(self, custom_lognormal):
         """Test string representation."""
         rep_str = custom_lognormal.__repr__()
