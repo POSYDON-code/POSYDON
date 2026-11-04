@@ -250,15 +250,9 @@ class FlatMassRatio(MassRatioDistribution):
 
 
 class ConditionalFlatMassRatio(MassRatioDistribution):
-    """Flat mass ratio distribution with primary-mass dependent bounds.
+    """Flat mass ratio distribution with bounds set by the secondary mass.
 
-    The secondary mass is limited to [m2_min, m2_max] and q = m2/m1 to 1,
-    which gives for each primary mass m1
-
-        q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)], q > 0.
-
-    This is the `flat_mass_ratio` scheme of the population sampler when the
-    secondary mass bounds are given.
+    q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)]
 
     Parameters
     ----------
@@ -271,16 +265,10 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
     ------
     ValueError
         If m2_min < 0 or m2_min >= m2_max.
-
-    Examples
-    --------
-    >>> dist = ConditionalFlatMassRatio(m2_min=0.35, m2_max=150)
-    >>> dist.support(m1=7.0)
-    (0.05, 1.0)
     """
 
     def __init__(self, m2_min, m2_max):
-        """Initialize the m1-dependent flat mass ratio distribution.
+        """Initialize the conditional flat mass ratio distribution.
 
         Parameters
         ----------
@@ -288,6 +276,11 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
             Minimum secondary mass [Msun]. Must be >= 0.
         m2_max : float
             Maximum secondary mass [Msun]. Must be larger than m2_min.
+
+        Raises
+        ------
+        ValueError
+            If m2_min < 0 or m2_min >= m2_max.
         """
         if m2_min < 0:
             raise ValueError("m2_min must be >= 0")
@@ -308,7 +301,7 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
                 f"<p>m2_max = {self.m2_max}</p>")
 
     def support(self, m1):
-        """Bounds (q_lower, q_upper) of the mass ratio for primary mass m1.
+        """Lower and upper bound of q for primary mass m1.
 
         Parameters
         ----------
@@ -317,29 +310,27 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
 
         Returns
         -------
-        tuple of float or ndarray
-            q_lower = max(m2_min/m1, 0) and q_upper = min(m2_max/m1, 1).
-            If q_upper <= q_lower, no companion is possible for that m1.
+        tuple
+            (max(m2_min/m1, 0), min(m2_max/m1, 1)).
         """
         m1 = np.asarray(m1, dtype=float)
         return (np.maximum(self.m2_min / m1, 0.0),
                 np.minimum(self.m2_max / m1, 1.0))
 
     def pdf(self, q, m1):
-        """Probability density function of q given the primary mass m1.
+        """Probability density of q given the primary mass m1.
 
         Parameters
         ----------
         q : float or array_like
             Mass ratio(s).
         m1 : float or array_like
-            Primary mass(es) [Msun], broadcastable against q.
+            Primary mass(es) [Msun].
 
         Returns
         -------
         ndarray
-            Probability density at mass ratio q, zero outside the support
-            (including primary masses without a possible companion).
+            Probability density at q, zero outside the bounds.
         """
         q, m1 = np.broadcast_arrays(np.asarray(q, dtype=float),
                                     np.asarray(m1, dtype=float))
@@ -351,8 +342,6 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
 
     def rvs(self, m1, rng=None):
         """Draw one mass ratio for each primary mass.
-
-        Samples lie in [q_lower(m1), q_upper(m1)) and are never 0.
 
         Parameters
         ----------
@@ -369,8 +358,7 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         Raises
         ------
         ValueError
-            If no companion is possible for some primary mass, i.e.
-            m1 <= m2_min.
+            If m1 <= m2_min for some primary mass.
         """
         if rng is None:
             rng = np.random.default_rng()
@@ -570,6 +558,11 @@ class ConstantBinaryFraction:
         ----------
         f_b : float
             Binary fraction. Must be in [0, 1].
+
+        Raises
+        ------
+        ValueError
+            If f_b is not in [0, 1].
         """
         if not (0 <= f_b <= 1):
             raise ValueError("f_b must be in [0, 1]")
