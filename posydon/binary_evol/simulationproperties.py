@@ -301,7 +301,7 @@ class SimulationProperties:
 
     @classmethod
     def from_ini(cls, path, metallicity = None, load_steps=False, RNG=np.random.default_rng(),
-                 verbose=False, **override_sim_kwargs):
+                 verbose=False, use_defaults=True, **override_sim_kwargs):
         """Create a SimulationProperties instance from an inifile.
 
         Parameters
@@ -326,6 +326,11 @@ class SimulationProperties:
         verbose : bool
             Print useful info.
 
+        use_defaults : bool
+            If True (default), the inifile is stacked on top of the default
+            inifile, see `posydon.popsyn.io.parse_inifile`. Use False for a
+            resolved inifile, which already contains all parameters.
+
         **override_sim_kwargs
             Additional keyword arguments that override values specified
             in the .ini file when constructing the SimulationProperties
@@ -337,7 +342,7 @@ class SimulationProperties:
             A new instance of SimulationProperties.
         """
 
-        sim_kwargs = simprop_kwargs_from_ini(path)
+        sim_kwargs = simprop_kwargs_from_ini(path, use_defaults=use_defaults)
 
         sim_kwargs = {**sim_kwargs, **override_sim_kwargs}
 

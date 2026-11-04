@@ -19,7 +19,7 @@ from posydon.CLI.io import (
     print_separator_line,
     print_success,
 )
-from posydon.popsyn.io import binarypop_kwargs_from_ini
+from posydon.popsyn.io import RESOLVED_INI_SUFFIX, binarypop_kwargs_from_ini
 from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
@@ -54,8 +54,12 @@ def get_ini_file(args):
     if not ini_files:
         raise FileNotFoundError("No INI file found in the run folder.")
 
+    # the resolved ini file written by the setup contains all parameters
+    resolved = [f for f in ini_files if f.endswith(RESOLVED_INI_SUFFIX)]
+    if len(ini_files) > 1 and len(resolved) == 1:
+        selected_ini = resolved[0]
     # Handle multiple INI files
-    if len(ini_files) > 1:
+    elif len(ini_files) > 1:
         print("Multiple INI files found:\n")
         for idx, file in enumerate(ini_files):
             print(f"{idx}: {file}")

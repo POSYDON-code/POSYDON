@@ -451,6 +451,67 @@ def parse_inifile(path, verbose=False, use_defaults=True):
     return parser
 
 
+RESOLVED_INI_SUFFIX = '_resolved.ini'
+
+
+def resolved_inifile_name(path):
+    """Return the name of the resolved inifile for an inifile.
+
+    Parameters
+    ----------
+    path : str
+        Path to the user inifile, e.g. 'population_params.ini'.
+
+    Returns
+    -------
+    str
+        The file name, e.g. 'population_params_resolved.ini'.
+    """
+    stem = os.path.splitext(os.path.basename(path))[0]
+    return stem + RESOLVED_INI_SUFFIX
+
+
+def write_resolved_inifile(path, output_path, verbose=False):
+    """Write the complete set of parameters of a run to one inifile.
+
+    The given inifile(s) are stacked on top of the default inifile, see
+    `parse_inifile`, and the result is written to `output_path`. The
+    resolved file contains every parameter, so reading it with
+    `use_defaults=False` gives the same parameters even if the defaults of
+    POSYDON change later.
+
+    Parameters
+    ----------
+    path : str or list like
+        Path to the user inifile(s).
+    output_path : str
+        Path of the resolved inifile to write.
+    verbose : bool
+        Print helpful info.
+
+    Returns
+    -------
+    str
+        The output path.
+    """
+    from posydon import __version__
+
+    parser = parse_inifile(path, verbose=verbose)
+    sources = [path] if isinstance(path, str) else list(path)
+    with open(output_path, 'w') as f:
+        f.write("# Resolved POSYDON population inifile: all parameters of the run.\n")
+        f.write(f"# POSYDON version: {__version__}\n")
+        f.write(f"# Default inifile: {DEFAULT_INI_PATH}\n")
+        for source in sources:
+            f.write(f"# User inifile: {os.path.abspath(source)}\n")
+        f.write("# Do not edit; change the user inifile and run the setup "
+                "again.\n\n")
+        parser.write(f)
+    if verbose:  # pragma: no cover
+        print(f'Wrote resolved inifile: {output_path}')
+    return output_path
+
+
 def simprop_kwargs_from_ini(path, only=None, verbose=False, use_defaults=True):
     """Convert an inifile into kwargs for the SimulationProperties class.
 

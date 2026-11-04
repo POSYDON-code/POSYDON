@@ -16,7 +16,9 @@ from posydon.popsyn.io import (
     DEFAULT_INI_PATH,
     binarypop_kwargs_from_ini,
     parse_inifile,
+    resolved_inifile_name,
     simprop_kwargs_from_ini,
+    write_resolved_inifile,
 )
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
@@ -137,7 +139,14 @@ def setup_popsyn_function(args):
     # validate the ini file
     validate_ini_file(args.ini_file)
 
-    synpop_params = binarypop_kwargs_from_ini(args.ini_file)
+    # write all parameters of the run (defaults + user ini file) to one file;
+    # the jobs read this file, so later changes of the defaults or of the
+    # user ini file do not change the run
+    resolved_ini = os.path.abspath(resolved_inifile_name(args.ini_file))
+    write_resolved_inifile(args.ini_file, resolved_ini)
+    print(f"Wrote the resolved ini file with all parameters: {resolved_ini}")
+
+    synpop_params = binarypop_kwargs_from_ini(resolved_ini, use_defaults=False)
     # warn if mass ratio q = M2/M1 could fall below 0.05
     if synpop_params['secondary_mass_scheme'] == 'flat_mass_ratio':
         q_min_possible = (synpop_params['secondary_mass_min']
@@ -161,7 +170,7 @@ def setup_popsyn_function(args):
                          " decrease the job array length")
 
     # create the run_metallicity and merge_metallicity scripts
-    create_python_scripts(args.ini_file)
+    create_python_scripts(resolved_ini)
 
     for met in metallicities:
         # create log directory

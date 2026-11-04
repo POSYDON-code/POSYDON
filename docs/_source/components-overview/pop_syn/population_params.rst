@@ -61,6 +61,17 @@ and of :class:`~posydon.popsyn.binarypopulation.BinaryPopulation`, so a step
 created directly in Python has the same defaults as one created from an ini
 file.
 
+Resolved ini file
+~~~~~~~~~~~~~~~~~
+
+``posydon-popsyn setup population_params.ini`` writes
+``population_params_resolved.ini`` next to the job scripts. It contains every
+parameter of the run: the defaults combined with your file. The jobs read this
+resolved file without the defaults, so the run does not change if you edit
+your ini file or update POSYDON after the setup. Keep it together with the
+population output as the record of how the population was run. You can also
+write it yourself with :func:`~posydon.popsyn.io.write_resolved_inifile`.
+
 
 Environment Variables
 ---------------------

@@ -14,6 +14,16 @@ import posydon.CLI.popsyn.setup as totest
 from posydon.utils.posydonwarning import StepWarning
 
 
+from posydon.popsyn.io import write_resolved_inifile
+
+
+@pytest.fixture(autouse=True)
+def mock_write_resolved():
+    """Do not write resolved ini files from mocked (non-existing) ini files."""
+    with patch('posydon.CLI.popsyn.setup.write_resolved_inifile') as mock:
+        yield mock
+
+
 class TestSNModelValidation:
     """Test class for SN model validation functions."""
 
@@ -241,7 +251,10 @@ class TestSetupPopsynFunction:
 
         # Verify calls
         mock_validate.assert_called_once_with(mock_args.ini_file)
-        mock_python_scripts.assert_called_once_with(mock_args.ini_file)
+        resolved_ini = os.path.abspath("test_resolved.ini")
+        mock_python_scripts.assert_called_once_with(resolved_ini)
+        mock_binarypop.assert_called_once_with(resolved_ini,
+                                               use_defaults=False)
         assert mock_slurm_scripts.call_count == len(metallicities)
         mock_bash_submit_script.assert_called_once()
 
@@ -412,4 +425,41 @@ class TestIntegration:
             mock_bash.assert_called_once()
         finally:
             os.chdir(original_dir)
+
+
+class TestResolvedIni:
+    """The setup writes all parameters of the run to one resolved ini file."""
+
+    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
+    def test_setup_writes_resolved_ini(self, mock_bash, mock_slurm,
+                                       tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        monkeypatch.setattr(totest, 'write_resolved_inifile',
+                            write_resolved_inifile)
+        user_ini = tmp_path / "my_run.ini"
+        user_ini.write_text("[BinaryPopulation_options]\n"
+                            "  number_of_binaries = 100\n"
+                            "[step_CE]\n"
+                            "  common_envelope_efficiency = 0.5\n")
+        args = MagicMock()
+        args.ini_file = str(user_ini)
+        args.job_array = 10
+
+        totest.setup_popsyn_function(args)
+
+        resolved = tmp_path / "my_run_resolved.ini"
+        assert resolved.is_file()
+        # the resolved file alone gives the same parameters as the user ini
+        # file stacked on the defaults
+        from posydon.popsyn.io import simprop_kwargs_from_ini
+        assert totest.binarypop_kwargs_from_ini(str(resolved),
+                                                use_defaults=False) \
+            == totest.binarypop_kwargs_from_ini(str(user_ini))
+        sim = simprop_kwargs_from_ini(str(resolved), use_defaults=False)
+        assert sim['step_CE'][1]['common_envelope_efficiency'] == 0.5
+        assert sim['step_CE'] == simprop_kwargs_from_ini(str(user_ini))['step_CE']
+        # the job scripts read the resolved file without the defaults
+        run_script = (tmp_path / "run_metallicity.py").read_text()
+        assert f"'{resolved}', use_defaults=False" in run_script
 

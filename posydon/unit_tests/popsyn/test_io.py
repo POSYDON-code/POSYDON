@@ -37,6 +37,8 @@ class TestElements:
                     'parse_inifile', 'simprop_kwargs_from_ini',
                     'binarypop_kwargs_from_ini', 'DEFAULT_INI_PATH',
                     '_new_parser', '_changes_import',
+                    'RESOLVED_INI_SUFFIX', 'resolved_inifile_name',
+                    'write_resolved_inifile',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
                     'ConfigParser', 'ast', 'importlib', 'os', 'errno',
@@ -341,6 +343,32 @@ class TestFunctions:
         # without defaults only the user inifile is read
         parser = totest.parse_inifile(user_ini, use_defaults=False)
         assert parser.sections() == ["step_SN", "my_section"]
+
+    def test_resolved_inifile_name(self):
+        assert totest.resolved_inifile_name('dir/run.ini') == 'run_resolved.ini'
+        assert totest.resolved_inifile_name('params') == 'params_resolved.ini'
+
+    def test_write_resolved_inifile(self, monkeypatch, tmp_path):
+        monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
+        user_ini = os.path.join(tmp_path, "user.ini")
+        with open(user_ini, "w") as f:
+            f.write("[BinaryPopulation_options]\nnumber_of_binaries = 42\n"
+                    "[step_CE]\nimport = None\n"
+                    "absolute_import = ['my_step.py', 'MyStep']\n")
+        resolved = os.path.join(tmp_path, "user_resolved.ini")
+        assert totest.write_resolved_inifile([user_ini], resolved) == resolved
+
+        text = open(resolved).read()
+        assert text.startswith("# Resolved POSYDON population inifile")
+        assert f"# User inifile: {user_ini}" in text
+        assert "# POSYDON version:" in text
+
+        stacked = totest.parse_inifile(user_ini)
+        alone = totest.parse_inifile(resolved, use_defaults=False)
+        assert {s: dict(stacked[s]) for s in stacked.sections()} == \
+            {s: dict(alone[s]) for s in alone.sections()}
+        assert totest.binarypop_kwargs_from_ini(resolved, use_defaults=False) \
+            == totest.binarypop_kwargs_from_ini(user_ini)
 
     def test_short_inifile_gives_full_kwargs(self, monkeypatch, tmp_path):
         monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
