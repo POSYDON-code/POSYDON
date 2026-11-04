@@ -160,6 +160,8 @@ class TestGetMassRatioPdf:
     def test_flat_mass_ratio_pdf(self):
         # kwargs without q_min and q_max to trigger flat_mass_ratio branch
         kwargs = {
+            'primary_mass_min': 5,
+            'primary_mass_max': 100,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'secondary_mass_min': 5,
             'secondary_mass_max': 50
@@ -229,6 +231,93 @@ class TestGetMassRatioPdf:
         # Default q_min=0.05, q_max=1.0; value inside range should be positive
         result = q_pdf(0.5, None)
         assert result > 0
+
+    @mark.parametrize('given', [{'q_min': 0.1}, {'q_max': 0.9}])
+    def test_flat_mass_ratio_single_q_bound_raises(self, given):
+        # Only one fixed bound is ambiguous between the m1-dependent and
+        # the fixed-bounds flat mass ratio.
+        kwargs = {
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+            **given,
+        }
+        missing = 'q_max' if 'q_min' in given else 'q_min'
+        with pytest.raises(KeyError, match=missing):
+            norm_pop.get_mass_ratio_pdf(kwargs)
+
+    def test_primary_mass_min_below_secondary_mass_min_raises(self):
+        # The sampler rejects primaries lighter than secondary_mass_min.
+        kwargs = {
+            'primary_mass_min': 0.1,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 0.35,
+            'secondary_mass_max': 140,
+        }
+        with pytest.raises(ValueError, match="secondary_mass_min"):
+            norm_pop.get_mass_ratio_pdf(kwargs)
+
+    def test_flat_mass_ratio_pdf_outside_primary_range(self):
+        # Evaluating at m1 outside the primary mass range (e.g. simulated
+        # systems outside the requested population) gives zero, not inf/nan.
+        kwargs = {
+            'primary_mass_min': 7,
+            'primary_mass_max': 140,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 1,
+            'secondary_mass_max': 140,
+        }
+        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        # m1 = 1 = secondary_mass_min: empty range (width 0)
+        # m1 = 0.5: negative width
+        result = q_pdf(np.array([0.5, 1.0]), np.array([1.0, 0.5]))
+        assert np.all(result == 0)
+
+
+class TestGetMassRatioBounds:
+    def test_m1_dependent_bounds(self):
+        kwargs = {
+            'primary_mass_min': 5,
+            'primary_mass_max': 100,
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'secondary_mass_min': 5,
+            'secondary_mass_max': 50,
+        }
+        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
+        m1 = np.array([5., 10., 100.])
+        assert np.allclose(q_lower(m1), [1.0, 0.5, 0.05])
+        assert np.allclose(q_upper(m1), [1.0, 1.0, 0.5])
+
+    @mark.parametrize('kwargs, q_min, q_max', [
+        ({'secondary_mass_scheme': 'flat_mass_ratio',
+          'q_min': 0.2, 'q_max': 0.8}, 0.2, 0.8),
+        ({'secondary_mass_scheme': 'power_law_mass_ratio',
+          'mass_ratio_slope': 1.0}, 0.05, 1.0),
+        ({'secondary_mass_scheme': 'power_law_mass_ratio',
+          'mass_ratio_slope': 1.0, 'q_min': 0.3}, 0.3, 1.0),
+    ])
+    def test_fixed_bounds(self, kwargs, q_min, q_max):
+        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
+        for m1 in (1., 50.):
+            assert q_lower(m1) == q_min
+            assert q_upper(m1) == q_max
+
+    @mark.parametrize('scheme', ['power_law_mass_ratio', 'flat_mass_ratio'])
+    def test_fixed_bounds_q_min_greater_than_q_max(self, scheme):
+        kwargs = {'secondary_mass_scheme': scheme, 'mass_ratio_slope': 0.0,
+                  'q_min': 0.8, 'q_max': 0.2}
+        with pytest.raises(ValueError, match="q_min must be less than q_max"):
+            norm_pop.get_mass_ratio_bounds(kwargs)
+
+    @mark.parametrize('scheme', ['invalid', 'q=1', None])
+    def test_unsupported_scheme(self, scheme):
+        with pytest.raises(ValueError, match="secondary_mass_scheme"):
+            norm_pop.get_mass_ratio_bounds(
+                {'secondary_mass_scheme': scheme})
+
 
 class TestGetBinaryFractionPdf:
 
@@ -369,14 +458,14 @@ class TestGetMeanMass:
 
     def test_empty_mass_ratio_range_error(self):
         # m1-dependent bounds: q lies in (m2_min/m1, min(m2_max/m1, 1)].
-        # With secondary_mass_min >= primary_mass_max no primary mass can
-        # host a companion, so the range is empty for every m1.
+        # With secondary_mass_min >= secondary_mass_max the range is empty
+        # for every m1.
         params = {
             'primary_mass_scheme': 'FlatIMF',
             'primary_mass_min': 5,
             'primary_mass_max': 10,
-            'secondary_mass_min': 12,
-            'secondary_mass_max': 20,
+            'secondary_mass_min': 4,
+            'secondary_mass_max': 3,
             'secondary_mass_scheme': 'flat_mass_ratio',
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.5,

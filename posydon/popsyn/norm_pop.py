@@ -93,46 +93,49 @@ def get_mass_ratio_bounds(kwargs):
     -------
     q_lower, q_upper : function
         Functions of m1 that return the lower and upper bound of q.
-        `q_upper(m1) >= q_lower(m1)` always holds; if no companion
-        is possible for m1, both bounds are equal.
 
     Raises
     ------
+    KeyError
+        If only one of `q_min` and `q_max` is given for `flat_mass_ratio`.
     ValueError
-        If the mass ratio range is empty for all primary masses or if the
-        `secondary_mass_scheme` is not supported.
+        If the `secondary_mass_scheme` is not supported, if
+        `primary_mass_min` is below `secondary_mass_min` (as in the sampler),
+        or if the mass ratio range is empty.
     '''
     scheme = kwargs.get('secondary_mass_scheme')
-    if (scheme == 'flat_mass_ratio'
-        and ('q_min' not in kwargs and 'q_max' not in kwargs)):
-        # bounds depend on m1: q in (m2_min/m1, min(m2_max/m1, 1)]
-        m2_min = kwargs['secondary_mass_min']
-        m2_max = kwargs['secondary_mass_max']
-        if (m2_min >= m2_max) or (m2_min >= kwargs['primary_mass_max']):
-            raise ValueError("q_min must be less than q_max for some primary "
-                             "masses; check secondary_mass_min/max and "
-                             "primary_mass_max.")
-        q_lower = lambda m1: np.maximum(m2_min / m1, 0.0)
-        q_upper = lambda m1: np.maximum(np.minimum(m2_max / m1, 1.0),
-                                        q_lower(m1))
-        return q_lower, q_upper
-
     if scheme == 'flat_mass_ratio':
+        has_q_min, has_q_max = 'q_min' in kwargs, 'q_max' in kwargs
+        if has_q_min != has_q_max:
+            missing = 'q_max' if has_q_min else 'q_min'
+            raise KeyError(f"flat_mass_ratio requires both q_min and q_max "
+                           f"or neither of them, but {missing} is missing.")
+        if not has_q_min:
+            # bounds depend on m1: q in (m2_min/m1, min(m2_max/m1, 1)]
+            m2_min = kwargs['secondary_mass_min']
+            m2_max = kwargs['secondary_mass_max']
+            if kwargs['primary_mass_min'] < m2_min:
+                raise ValueError("`secondary_mass_min` is larger than "
+                                 "`primary_mass_min`.")
+            if m2_min >= m2_max:
+                raise ValueError("q_min must be less than q_max; "
+                                 "`secondary_mass_min` must be less than "
+                                 "`secondary_mass_max`.")
+            q_lower = lambda m1: np.maximum(m2_min / m1, 0.0)
+            q_upper = lambda m1: np.minimum(m2_max / m1, 1.0)
+            return q_lower, q_upper
         q_min, q_max = kwargs['q_min'], kwargs['q_max']
     elif scheme == 'power_law_mass_ratio':
         q_min = kwargs.get('q_min', 0.05)
         q_max = kwargs.get('q_max', 1.0)
     else:
-        _raise_unsupported_mass_ratio_scheme(scheme)
+        raise ValueError(f"The secondary_mass_scheme '{scheme}' is not "
+                         "supported for normalisation. Supported schemes: "
+                         "['flat_mass_ratio', 'power_law_mass_ratio']")
 
     if q_min > q_max:
         raise ValueError("q_min must be less than q_max")
     return (lambda m1: q_min), (lambda m1: q_max)
-
-def _raise_unsupported_mass_ratio_scheme(scheme):
-    raise ValueError(f"The secondary_mass_scheme '{scheme}' is not "
-                     "supported for normalisation. Supported schemes: "
-                     "['flat_mass_ratio', 'power_law_mass_ratio']")
 
 def get_mass_ratio_pdf(kwargs):
     """Function that returns the mass ratio PDF function
@@ -140,7 +143,7 @@ def get_mass_ratio_pdf(kwargs):
     Supported schemes:
     - `flat_mass_ratio` for `secondary_mass_scheme`
         Requires either of the following parameter sets:
-        - `secondary_mass_min` and `secondary_mass_max`
+        - `secondary_mass_min`, `secondary_mass_max` and `primary_mass_min`
           (q bounds depend on m1, as in the sampler)
         - `q_min` and `q_max` (fixed q bounds)
     - `power_law_mass_ratio` for `secondary_mass_scheme`
@@ -162,27 +165,37 @@ def get_mass_ratio_pdf(kwargs):
     Raises
     ------
     ValueError
-        If the `secondary_mass_scheme` is not supported
-        (e.g. the sampler's `q=1`).
+        If the `secondary_mass_scheme` is not supported (such as the
+        sampler's `q=1`) or the q bounds are invalid.
+    KeyError
+        If only one of `q_min` and `q_max` is given for `flat_mass_ratio`.
     """
     scheme = kwargs.get('secondary_mass_scheme')
-    if (scheme == 'flat_mass_ratio'
-        and ('q_min' not in kwargs and 'q_max' not in kwargs)):
-        # flat mass ratio, where bounds are dependent on m1 and min/max m2:
-        # q in (max(m2_min/m1, 0), min(m2_max/m1, 1)]
-        def q_pdf(q, m1):
-            m1 = np.atleast_1d(m1)
-            minimum = np.maximum(kwargs['secondary_mass_min'] / m1, 0.0)
-            maximum = np.minimum(kwargs['secondary_mass_max'] / m1, 1.0)
-            width = maximum - minimum
-            valid = (q > minimum) & (q <= maximum) & (width > 0)
-            return np.where(valid, 1 / np.where(width > 0, width, 1.0), 0.0)
-    elif scheme == 'flat_mass_ratio':
-        # flat mass ratio, where bounds are given
-        q_dist = FlatMassRatio(q_min=kwargs['q_min'], q_max=kwargs['q_max'])
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
+    if scheme == 'flat_mass_ratio':
+        # validates the parameters (e.g. only one of q_min/q_max given)
+        # and gives the support of the PDF
+        q_lower, q_upper = get_mass_ratio_bounds(kwargs)
+        if 'q_min' not in kwargs:
+            # bounds are dependent on m1 and min/max m2:
+            # q in (max(m2_min/m1, 0), min(m2_max/m1, 1)]
+            def q_pdf(q, m1):
+                m1 = np.atleast_1d(m1)
+                minimum = q_lower(m1)
+                maximum = q_upper(m1)
+                width = maximum - minimum
+                # m1 outside the primary mass range can give an empty range
+                valid = (q > minimum) & (q <= maximum) & (width > 0)
+                return np.where(valid,
+                                1 / np.where(width > 0, width, 1.0),
+                                0.0)
+        else:
+            # bounds are given
+            q_dist = FlatMassRatio(q_min=kwargs['q_min'],
+                                   q_max=kwargs['q_max'])
+            q_pdf = lambda q, m1=None: q_dist.pdf(q)
 
     elif scheme == 'power_law_mass_ratio':
+        # PowerLawMassRatio validates q_min/q_max itself
         q_dist = PowerLawMassRatio(
             alpha=kwargs['mass_ratio_slope'],
             q_min=kwargs.get('q_min', 0.05),
@@ -191,7 +204,10 @@ def get_mass_ratio_pdf(kwargs):
         q_pdf = lambda q, m1=None: q_dist.pdf(q)
 
     else:
-        _raise_unsupported_mass_ratio_scheme(scheme)
+        raise ValueError(f"The secondary_mass_scheme '{scheme}' is not "
+                         "supported for normalisation. Supported schemes: "
+                         "['flat_mass_ratio', 'power_law_mass_ratio']")
+
     return q_pdf
 
 def get_binary_fraction_pdf(kwargs):
@@ -351,14 +367,20 @@ def get_mean_mass(params):
     m1_max = params['primary_mass_max']
     q_lower, q_upper = get_mass_ratio_bounds(params)
 
-    # binary integration
-    I_bin = dblquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
-                    m1_min, m1_max,
-                    q_lower, q_upper
-                    )[0]
+    # binary integration (quad requires scalar integrands)
+    I_bin = dblquad(
+        lambda q, m: np.asarray((m + m * q)
+                                * PDF(m, q, P=0, binary=True)).item(),
+        m1_min, m1_max,
+        lambda m: np.asarray(q_lower(m)).item(),
+        lambda m: np.asarray(q_upper(m)).item(),
+    )[0]
 
     # single star integration
-    I_single = quad(lambda m: m * PDF(m, binary=False), m1_min, m1_max)[0]
+    I_single = quad(
+        lambda m: np.asarray(m * PDF(m, binary=False)).item(),
+        m1_min, m1_max,
+    )[0]
 
     mean_mass = I_bin + I_single
     return mean_mass
