@@ -368,7 +368,7 @@ class TestGetBinaryFractionDistribution:
                            match="Binary fraction scheme not recognized"):
             norm_pop.calculate_model_weights(None, 1.0, params, params)
 
-class TestGetPeriodPdf:
+class TestGetOrbitalDistribution:
     def test_sana12_period_extended(self):
         kwargs = {
             'orbital_scheme': 'period',
@@ -376,7 +376,7 @@ class TestGetPeriodPdf:
             'orbital_period_min': 0.35,
             'orbital_period_max': 6000,
         }
-        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        period_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         # Test that the function is callable and returns sensible values
         result = period_pdf_func(10.0, 15.0)  # P=10 days, m1=15 Msun
         assert isinstance(result, (float, np.ndarray))
@@ -390,7 +390,7 @@ class TestGetPeriodPdf:
             'orbital_period_max': 3e6,
             'power_law_slope': -0.55,
         }
-        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        period_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         # Test that the function is callable and returns sensible values
         result = period_pdf_func(100.0, 20.0)  # P=100 days, m1=20 Msun
         assert isinstance(result, (float, np.ndarray))
@@ -407,7 +407,7 @@ class TestGetPeriodPdf:
             'orbital_period_max': 3e6,
             'power_law_slope': -0.55,
         }
-        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        period_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         result = period_pdf_func(100.0, 20.0, 1.0)
         assert np.all(result > 0)
         # (log10 P)^-0.55 shape per dex
@@ -426,7 +426,7 @@ class TestGetPeriodPdf:
             'orbital_period_max': 3e6,
             'power_law_slope': -0.55,
         }
-        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        period_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         integral, _ = quad(lambda logP: period_pdf_func(10**logP, m1, 1.0),
                            np.log10(1.4), np.log10(3e6))
         assert np.isclose(integral, 1.0)
@@ -438,7 +438,7 @@ class TestGetPeriodPdf:
             'orbital_separation_min': 1.0,
             'orbital_separation_max': 1000.0,
         }
-        separation_pdf_func = norm_pop.get_period_pdf(kwargs)
+        separation_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         result = separation_pdf_func(10.0, 15.0, 0.8)  # a=10 Rsun, m1=15 Msun
         assert isinstance(result, (float, np.ndarray))
         assert np.all(result >= 0)
@@ -452,11 +452,62 @@ class TestGetPeriodPdf:
             'orbital_separation_min': a_min,
             'orbital_separation_max': a_max,
         }
-        separation_pdf_func = norm_pop.get_period_pdf(kwargs)
+        separation_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
         logP_min = np.log10(orbital_period_from_separation(a_min, m1, q*m1))
         logP_max = np.log10(orbital_period_from_separation(a_max, m1, q*m1))
         integral, _ = quad(lambda logP: separation_pdf_func(10**logP, m1, q),
                            logP_min, logP_max)
+        assert np.isclose(integral, 1.0)
+
+    @mark.parametrize("kwargs, expected", [
+        ({'orbital_scheme': 'period',
+          'orbital_period_scheme': 'Sana+12_period_extended',
+          'orbital_period_min': 0.35, 'orbital_period_max': 6000},
+         distributions.Sana12Period),
+        ({'orbital_scheme': 'period', 'orbital_period_scheme': 'power_law',
+          'orbital_period_min': 1.4, 'orbital_period_max': 3e6,
+          'power_law_slope': -0.55},
+         distributions.PowerLawPeriod),
+        ({'orbital_scheme': 'period', 'orbital_period_scheme': 'log_power_law',
+          'orbital_period_min': 1.4, 'orbital_period_max': 3e6,
+          'power_law_slope': -0.55},
+         distributions.LogPowerLawPeriod),
+    ])
+    def test_period_scheme_to_class(self, kwargs, expected):
+        assert type(norm_pop.get_orbital_distribution(kwargs)) is expected
+
+    @mark.parametrize("scheme, separation_class, extra", [
+        ('log_uniform', distributions.LogUniform, {}),
+        ('log_normal', distributions.LogNormalSeparation,
+         {'log_orbital_separation_mean': 2.0,
+          'log_orbital_separation_sigma': 0.5}),
+    ])
+    def test_separation_scheme_to_class(self, scheme, separation_class,
+                                        extra):
+        orbit = norm_pop.get_orbital_distribution({
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': scheme,
+            'orbital_separation_min': 5.0,
+            'orbital_separation_max': 1e5, **extra})
+        assert isinstance(orbit, distributions.PeriodFromSeparation)
+        assert type(orbit.separation) is separation_class
+
+    @mark.parametrize("m1, q", [(10.0, 1.0), (30.0, 0.5), (100.0, 0.1)])
+    def test_log_normal_separation_normalised_in_logP(self, m1, q):
+        a_min, a_max = 5.0, 1e5
+        kwargs = {
+            'orbital_scheme': 'separation',
+            'orbital_separation_scheme': 'log_normal',
+            'orbital_separation_min': a_min,
+            'orbital_separation_max': a_max,
+            'log_orbital_separation_mean': 2.0,
+            'log_orbital_separation_sigma': 0.5,
+        }
+        separation_pdf_func = norm_pop.get_orbital_distribution(kwargs).pdf_per_dex
+        logP_min = np.log10(orbital_period_from_separation(a_min, m1, q*m1))
+        logP_max = np.log10(orbital_period_from_separation(a_max, m1, q*m1))
+        integral, _ = quad(lambda logP: separation_pdf_func(10**logP, m1, q),
+                           logP_min, logP_max, limit=200)
         assert np.isclose(integral, 1.0)
 
     def test_invalid_period_scheme(self):
@@ -467,7 +518,7 @@ class TestGetPeriodPdf:
             'orbital_period_max': 6000,
         }
         with pytest.raises(ValueError) as excinfo:
-            norm_pop.get_period_pdf(kwargs)
+            norm_pop.get_orbital_distribution(kwargs)
 
         assert "Orbital period scheme not recognized" in str(excinfo.value)
 
@@ -476,7 +527,7 @@ class TestGetPeriodPdf:
         }
 
         with pytest.raises(ValueError) as excinfo:
-            norm_pop.get_period_pdf(kwargs)
+            norm_pop.get_orbital_distribution(kwargs)
 
         assert "Orbital scheme not recognized" in str(excinfo.value)
 
@@ -485,7 +536,7 @@ class TestGetPeriodPdf:
             'orbital_separation_scheme': 'invalid_scheme',
         }
         with pytest.raises(ValueError) as excinfo:
-            norm_pop.get_period_pdf(kwargs)
+            norm_pop.get_orbital_distribution(kwargs)
 
         assert "Orbital separation scheme not recognized" in str(excinfo.value)
 
@@ -1223,6 +1274,26 @@ class TestOrbitalSchemeReweighting():
     def test_period_to_separation(self, base_simulation_kwargs,
                                   separation_kwargs):
         # P in [0.35, 6000] d covers a in [20, 2000] Rsun for all masses
+        separation_kwargs['orbital_separation_min'] = 20.0
+        separation_kwargs['orbital_separation_max'] = 2e3
+        check_reweighting(base_simulation_kwargs, separation_kwargs)
+
+    def test_log_normal_separation_to_period(self, separation_kwargs,
+                                             base_simulation_kwargs):
+        separation_kwargs['orbital_separation_scheme'] = 'log_normal'
+        separation_kwargs['log_orbital_separation_mean'] = 2.5
+        separation_kwargs['log_orbital_separation_sigma'] = 1.0
+        # a in [5, 1e5] Rsun covers P in [1, 3000] d for all masses
+        base_simulation_kwargs['orbital_period_min'] = 1.0
+        base_simulation_kwargs['orbital_period_max'] = 3e3
+        check_reweighting(separation_kwargs, base_simulation_kwargs)
+
+    def test_period_to_log_normal_separation(self, base_simulation_kwargs,
+                                             separation_kwargs):
+        # P in [0.35, 6000] d covers a in [20, 2000] Rsun for all masses
+        separation_kwargs['orbital_separation_scheme'] = 'log_normal'
+        separation_kwargs['log_orbital_separation_mean'] = 2.5
+        separation_kwargs['log_orbital_separation_sigma'] = 0.5
         separation_kwargs['orbital_separation_min'] = 20.0
         separation_kwargs['orbital_separation_max'] = 2e3
         check_reweighting(base_simulation_kwargs, separation_kwargs)

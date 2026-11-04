@@ -29,6 +29,8 @@ import numpy as np
 from scipy.integrate import quad
 from scipy.stats import truncnorm
 
+from posydon.utils.common_functions import orbital_separation_from_period
+
 
 def per_dex_to_linear(pdf_per_dex, x):
     """Convert a probability density per dex to one per unit x.
@@ -774,7 +776,7 @@ class Sana12Period():
         return result
 
 
-    def pdf_per_dex(self, p, m1):
+    def pdf_per_dex(self, p, m1, q=None):
         '''Probability density per dex of the Sana12 period distribution.
         Conditional on m1.
 
@@ -786,6 +788,8 @@ class Sana12Period():
             Period(s).
         m1 : float or array_like
             Mass value(s). Single value or an array of the same length as p.
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -809,7 +813,7 @@ class Sana12Period():
                              * self.norm(m1[valid]))
         return pdf_values
 
-    def pdf(self, p, m1):
+    def pdf(self, p, m1, q=None):
         '''Probability density function of the Sana12 period distribution.
         Conditional on m1.
 
@@ -821,6 +825,8 @@ class Sana12Period():
             Period(s).
         m1 : float or array_like
             Mass value(s). Single value or an array of the same length as p.
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -1005,7 +1011,7 @@ class PowerLawPeriod():
 
         return result
 
-    def pdf_per_dex(self, p):
+    def pdf_per_dex(self, p, m1=None, q=None):
         """Probability density per dex of the power law period distribution.
 
         Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P).
@@ -1014,6 +1020,9 @@ class PowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -1030,7 +1039,7 @@ class PowerLawPeriod():
 
         return pdf_values
 
-    def pdf(self, p):
+    def pdf(self, p, m1=None, q=None):
         """Probability density function of the power law period distribution.
 
         Normalised in linear P space to 1, i.e. this returns dP/dP.
@@ -1039,6 +1048,9 @@ class PowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -1191,7 +1203,7 @@ class LogPowerLawPeriod():
 
         return result
 
-    def pdf_per_dex(self, p):
+    def pdf_per_dex(self, p, m1=None, q=None):
         """Probability density per dex of the log power law period
         distribution.
 
@@ -1201,6 +1213,9 @@ class LogPowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -1216,7 +1231,7 @@ class LogPowerLawPeriod():
 
         return pdf_values
 
-    def pdf(self, p):
+    def pdf(self, p, m1=None, q=None):
         """Probability density function of the log power law period
         distribution.
 
@@ -1226,6 +1241,9 @@ class LogPowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -1775,8 +1793,12 @@ class LogNormalSeparation:
                 f"<p>min = {self.min} R☉</p>"
                 f"<p>max = {self.max} R☉</p>")
 
-    def pdf(self, a):
-        """Probability density function of the log-normal separation distribution.
+    def pdf_per_dex(self, a):
+        """Probability density per dex of the log-normal separation
+        distribution.
+
+        Normalised in log10(a) space to 1, i.e. this returns dP/dlog10(a):
+        the truncated normal distribution in log10(a).
 
         Parameters
         ----------
@@ -1786,23 +1808,39 @@ class LogNormalSeparation:
         Returns
         -------
         float or ndarray
-            Probability density at separation a.
+            Probability density per unit log10(a) at separation a.
         """
         a = np.asarray(a)
         valid = (a > 0) & (a >= self.min) & (a <= self.max)
         pdf_values = np.zeros_like(a, dtype=float)
 
-        log_a = np.log10(a[valid])
-        # PDF of truncnorm in log space, transformed to linear space
-        # pdf(a) = pdf_log(log a) * |d(log a)/da| = pdf_log(log a) / (a * ln(10))
         pdf_values[valid] = truncnorm.pdf(
-            log_a,
+            np.log10(a[valid]),
             self.a_low, self.a_high,
             loc=self.mean,
             scale=self.sigma
-        ) / (a[valid] * np.log(10))
+        )
 
         return pdf_values
+
+    def pdf(self, a):
+        """Probability density function of the log-normal separation
+        distribution.
+
+        Normalised in linear a space to 1, i.e. this returns dP/da.
+
+        Parameters
+        ----------
+        a : float or array_like
+            Orbital separation(s) in solar radii.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit a (in solar radii) at separation a.
+        """
+        a = np.asarray(a, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(a), a)
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the log-normal separation distribution.
@@ -1833,3 +1871,92 @@ class LogNormalSeparation:
 
         # Convert back to linear space
         return 10**log_separations
+
+
+class PeriodFromSeparation:
+    """Orbital period distribution implied by a separation distribution.
+
+    For given masses, Kepler's third law gives a ∝ P^(2/3), so
+    dlog10(a)/dlog10(P) = 2/3 and
+
+        dN/dlog10(P) = (2/3) dN/dlog10(a).
+
+    This allows populations sampled in separation to be reweighted together
+    with populations sampled in period.
+
+    Parameters
+    ----------
+    separation : LogUniform or LogNormalSeparation
+        Separation distribution in solar radii, with `pdf_per_dex(a)`.
+
+    Examples
+    --------
+    >>> dist = PeriodFromSeparation(LogUniform(min=5.0, max=1e5))
+    >>> pdf = dist.pdf_per_dex(10.0, m1=15.0, q=0.8)
+    """
+
+    def __init__(self, separation):
+        """Initialize the period distribution from a separation distribution.
+
+        Parameters
+        ----------
+        separation : LogUniform or LogNormalSeparation
+            Separation distribution in solar radii, with `pdf_per_dex(a)`.
+        """
+        self.separation = separation
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"PeriodFromSeparation({self.separation!r})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return ("<h3>Period from Separation Distribution</h3>"
+                + self.separation._repr_html_())
+
+    def pdf_per_dex(self, p, m1, q):
+        """Probability density per dex of the orbital period.
+
+        Normalised in log10(P) space to 1 for given masses, i.e. this
+        returns dP/dlog10(P).
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) in days.
+        m1 : float or array_like
+            Primary mass(es) in solar masses.
+        q : float or array_like
+            Mass ratio(s) m2/m1.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
+        """
+        m1 = np.asarray(m1, dtype=float)
+        a = orbital_separation_from_period(p, m1, np.asarray(q) * m1)
+        return 2. / 3. * self.separation.pdf_per_dex(a)
+
+    def pdf(self, p, m1, q):
+        """Probability density function of the orbital period.
+
+        Normalised in linear P space to 1 for given masses, i.e. this
+        returns dP/dP.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) in days.
+        m1 : float or array_like
+            Primary mass(es) in solar masses.
+        q : float or array_like
+            Mass ratio(s) m2/m1.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit P (in days) at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(p, m1, q), p)

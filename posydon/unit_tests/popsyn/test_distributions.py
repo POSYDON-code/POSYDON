@@ -17,12 +17,17 @@ from posydon.popsyn.distributions import (
     LogPowerLawPeriod,
     LogUniform,
     PowerLawMassRatio,
+    PeriodFromSeparation,
     PowerLawPeriod,
     Sana12Period,
     ThermalEccentricity,
     UniformEccentricity,
     ZeroEccentricity,
     per_dex_to_linear,
+)
+from posydon.utils.common_functions import (
+    orbital_period_from_separation,
+    orbital_separation_from_period,
 )
 
 
@@ -1748,3 +1753,89 @@ class TestConstantBinaryFraction:
         np.testing.assert_allclose(dist.pdf([True, False, True]),
                                    [f_b, 1 - f_b, f_b])
         assert np.isclose(dist.pdf(True) + dist.pdf(False), 1.0)
+
+
+class TestLogNormalSeparationPerDex:
+    """pdf_per_dex of LogNormalSeparation and its relation to pdf."""
+
+    @pytest.fixture
+    def dist(self):
+        return LogNormalSeparation(mean=2.0, sigma=0.5, min=5.0, max=1e5)
+
+    def test_pdf_per_dex_normalised_in_log(self, dist):
+        integral, _ = quad(lambda loga: dist.pdf_per_dex(10**loga),
+                           np.log10(dist.min), np.log10(dist.max))
+        assert np.isclose(integral, 1.0)
+
+    def test_pdf_is_per_dex_converted(self, dist):
+        a = np.array([1.0, 5.0, 100.0, 1e4, 1e5, 2e5])
+        np.testing.assert_allclose(
+            dist.pdf(a), per_dex_to_linear(dist.pdf_per_dex(a), a))
+
+    def test_pdf_per_dex_outside_range(self, dist):
+        np.testing.assert_array_equal(
+            dist.pdf_per_dex(np.array([1.0, 2e5, np.nan])), [0.0, 0.0, 0.0])
+
+
+class TestPeriodFromSeparation:
+    """Test class for PeriodFromSeparation."""
+
+    @pytest.fixture(params=['log_uniform', 'log_normal'])
+    def separation(self, request):
+        if request.param == 'log_uniform':
+            return LogUniform(min=5.0, max=1e5)
+        return LogNormalSeparation(mean=2.0, sigma=0.5, min=5.0, max=1e5)
+
+    def test_repr(self):
+        dist = PeriodFromSeparation(LogUniform(min=5.0, max=1e5))
+        assert repr(dist) == "PeriodFromSeparation(LogUniform(min=5.0, max=100000.0))"
+
+    def test_repr_html(self, separation):
+        html = PeriodFromSeparation(separation)._repr_html_()
+        assert "Period from Separation Distribution" in html
+        assert separation._repr_html_() in html
+
+    def test_pdf_per_dex_jacobian(self, separation):
+        # dN/dlog10(P) = (2/3) dN/dlog10(a) at a = a(P, m1, m2)
+        dist = PeriodFromSeparation(separation)
+        P = np.array([1.0, 10.0, 100.0, 1e3])
+        m1, q = 20.0, 0.5
+        a = orbital_separation_from_period(P, m1, q * m1)
+        np.testing.assert_allclose(dist.pdf_per_dex(P, m1, q),
+                                   2. / 3. * separation.pdf_per_dex(a))
+
+    @pytest.mark.parametrize("m1, q", [(10.0, 1.0), (100.0, 0.1)])
+    def test_normalised(self, separation, m1, q):
+        dist = PeriodFromSeparation(separation)
+        P_min = orbital_period_from_separation(separation.min, m1, q * m1)
+        P_max = orbital_period_from_separation(separation.max, m1, q * m1)
+        per_dex = quad(lambda logP: dist.pdf_per_dex(10**logP, m1, q),
+                       np.log10(P_min), np.log10(P_max), limit=200)[0]
+        linear = quad(lambda P: dist.pdf(P, m1, q), P_min, P_max,
+                      points=np.logspace(np.log10(P_min), np.log10(P_max),
+                                         20)[1:-1],
+                      limit=500)[0]
+        assert np.isclose(per_dex, 1.0)
+        assert np.isclose(linear, 1.0, rtol=1e-4)
+
+    def test_single_stars_zero(self, separation):
+        # single stars have no period (NaN) and no companion (q = 0)
+        dist = PeriodFromSeparation(separation)
+        assert dist.pdf_per_dex(np.nan, 10.0, 0.0) == 0
+
+
+class TestCommonOrbitalSignature:
+    """All period distributions accept pdf(P, m1, q) and
+    pdf_per_dex(P, m1, q); unused arguments are ignored."""
+
+    @pytest.mark.parametrize("dist", [
+        Sana12Period(p_min=1.4, p_max=3e3),
+        PowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e3),
+        LogPowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e3),
+    ])
+    def test_extra_arguments_ignored(self, dist):
+        P = np.array([2.0, 50.0, 1e3])
+        m1 = np.full(3, 20.0)
+        np.testing.assert_allclose(dist.pdf_per_dex(P, m1, 0.5),
+                                   dist.pdf_per_dex(P, m1))
+        np.testing.assert_allclose(dist.pdf(P, m1, 0.5), dist.pdf(P, m1))

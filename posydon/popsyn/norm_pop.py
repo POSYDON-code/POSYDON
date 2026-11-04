@@ -14,13 +14,14 @@ from posydon.popsyn.distributions import (
     ConditionalFlatMassRatio,
     ConstantBinaryFraction,
     FlatMassRatio,
+    LogNormalSeparation,
     LogPowerLawPeriod,
     LogUniform,
     PowerLawMassRatio,
+    PeriodFromSeparation,
     PowerLawPeriod,
     Sana12Period,
 )
-from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -170,20 +171,23 @@ def get_binary_fraction_distribution(kwargs):
         raise ValueError(f"Binary fraction scheme not recognized: '{scheme}'. "
                          "Supported schemes: ['const']")
 
-def get_period_pdf(kwargs):
-    '''get the period pdf function
+def get_orbital_distribution(kwargs):
+    '''get the orbital period distribution
 
-    All returned period PDFs are probability densities per dex,
-    i.e. normalised to 1 in log10(P) space, such that they can be
-    compared between schemes.
+    All returned distributions have `pdf_per_dex(P, m1, q)`, the probability
+    density per dex, i.e. normalised to 1 in log10(P) space, such that they
+    can be compared between schemes.
 
     Supported schemes:
     - `period` for `orbital_scheme` with `orbital_period_scheme`:
         - `Sana+12_period_extended`
         - `power_law`: dN/dlog10(P) ∝ P^`power_law_slope`
         - `log_power_law`: dN/dlog10(P) ∝ (log10(P))^`power_law_slope`
-    - `separation` for `orbital_scheme` with `orbital_separation_scheme`:
+    - `separation` for `orbital_scheme` with `orbital_separation_scheme`,
+      converted to a period distribution with `PeriodFromSeparation`:
         - `log_uniform`
+        - `log_normal` with `log_orbital_separation_mean` and
+          `log_orbital_separation_sigma`
 
     Parameters
     ----------
@@ -192,55 +196,49 @@ def get_period_pdf(kwargs):
 
     Returns
     -------
-    pdf : function
-        Function that returns the period PDF per dex, which expects the
-        following parameters; P, m1, q
+    orbital_dist : object
+        Period distribution with `pdf_per_dex(P, m1, q)`.
     '''
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
-            period = Sana12Period(
+            return Sana12Period(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
             )
-            period_pdf = lambda P, m1, q=None: period.pdf_per_dex(P, m1)
         elif kwargs['orbital_period_scheme'] == 'power_law':
-            period = PowerLawPeriod(
+            return PowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
                 slope=kwargs['power_law_slope'],
             )
-            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
         elif kwargs['orbital_period_scheme'] == 'log_power_law':
-            period = LogPowerLawPeriod(
+            return LogPowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
                 slope=kwargs['power_law_slope'],
             )
-            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
         else:
             raise ValueError("Orbital period scheme not recognized")
     elif (kwargs['orbital_scheme'] == 'separation'):
         if kwargs['orbital_separation_scheme'] == 'log_uniform':
-            separation_log_uniform = LogUniform(
+            separation = LogUniform(
                 min=kwargs['orbital_separation_min'],
                 max=kwargs['orbital_separation_max'],
             )
-            # Since the outer function is set in PDF(P) and inner as P(a),
-            # we need to do a change of variables in log10 space.
-            # PDF(log10 P) = PDF(log10 a) * |dlog10(a)/dlog10(P)|
-            # a scales as P^(2/3), so dlog10(a)/dlog10(P) = 2/3
-            # PDF(log10 P) = (2/3) * log_uniform.pdf_per_dex(a)
-            period_pdf = lambda P, m1, q: separation_log_uniform.pdf_per_dex(
-                orbital_separation_from_period(P, m1, q*m1)
-            ) * 2./3.
+        elif kwargs['orbital_separation_scheme'] == 'log_normal':
+            separation = LogNormalSeparation(
+                mean=kwargs['log_orbital_separation_mean'],
+                sigma=kwargs['log_orbital_separation_sigma'],
+                min=kwargs['orbital_separation_min'],
+                max=kwargs['orbital_separation_max'],
+            )
         else:
             raise ValueError("Orbital separation scheme not recognized")
+        return PeriodFromSeparation(separation)
     else:
         raise ValueError("Orbital scheme not recognized. "
                          "Please specify either 'period' or 'separation' "
                          "and a valid scheme for that orbital scheme.")
-
-    return period_pdf
 
 def get_pdf(kwargs, mass_pdf=False):
     """Function that builds a PDF function given the simulation parameters
@@ -263,7 +261,7 @@ def get_pdf(kwargs, mass_pdf=False):
     IMF_pdf = get_IMF_distribution(kwargs).pdf
     q_pdf = get_mass_ratio_distribution(kwargs).pdf
     f_b_pdf = get_binary_fraction_distribution(kwargs).pdf
-    period_pdf = get_period_pdf(kwargs)
+    period_pdf = get_orbital_distribution(kwargs).pdf_per_dex
 
     if mass_pdf:
         pdf_function = lambda m1, q=0, P=0, binary=False: (
@@ -377,6 +375,7 @@ def calculate_model_weights(pop_data,
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     population_parameters : dict
         Dictionary containing the population parameters, which is the requested population to which we want to reweight the simulation. This is used to calculate the PDF of the requested population.
@@ -396,6 +395,7 @@ def calculate_model_weights(pop_data,
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     Returns
     -------
