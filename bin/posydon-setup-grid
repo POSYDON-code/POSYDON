@@ -55,7 +55,7 @@ def parse_commandline():
 
 
 def subprocessPopen_call(args):
-    """Wrapper for subprocess.Popen. The output is a proc object""
+    """Wrapper for subprocess.Popen. The output is a proc object"""
 
     proc = subprocess.Popen(args,
                             stdin=subprocess.PIPE,
