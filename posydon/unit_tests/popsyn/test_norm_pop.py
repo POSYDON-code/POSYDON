@@ -5,6 +5,7 @@ __authors__ = [
 ]
 
 import os
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -19,6 +20,7 @@ from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.utils.common_functions import orbital_period_from_separation
+from posydon.utils.posydonwarning import ValueWarning
 
 
 # Dummy IMF to simulate a valid IMF pdf
@@ -1058,6 +1060,52 @@ class TestReweighting():
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
         assert np.allclose(weights, 1/M_sim)
+
+    @mark.parametrize('pop_m1_max', [140, 250])
+    def test_systems_outside_simulation_warn(self, base_simulation_kwargs,
+                                             pop_m1_max):
+        '''Systems with zero simulation probability get weight 0 and one
+        warning with their count. With pop_m1_max=140 the population PDF is
+        zero too (0/0 = nan), with 250 it is not (x/0 = inf).'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        # two systems above the simulated primary_mass_max of 140 Msun
+        data.loc[[0, 1], 'S1_mass_i'] = 200.
+        data.loc[[0, 1], 'S2_mass_i'] = 100.
+        data.loc[[0, 1], 'state_i'] = 'detached'
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = pop_m1_max
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with pytest.warns(ValueWarning,
+                          match="2 of 1000 systems have zero probability "
+                                "under the simulation parameters"):
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights[:2] == 0)
+        assert np.all(weights[2:] > 0)
+
+    def test_narrower_population_does_not_warn(self, base_simulation_kwargs):
+        '''Systems outside the requested population (but inside the
+        simulation) get weight 0 without the outside-simulation warning.'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = 20
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error", category=ValueWarning,
+                                    message=r"\d+ of \d+ systems have zero")
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        outside_population = data['S1_mass_i'] > 20
+        assert np.any(outside_population)
+        assert np.all(weights[outside_population] == 0)
+        assert np.all(weights[~outside_population] > 0)
 
 
     def test_mass_ratio_extension(self,

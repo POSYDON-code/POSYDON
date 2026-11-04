@@ -18,6 +18,7 @@ from posydon.popsyn.distributions import (
     Sana12Period,
 )
 from posydon.utils.common_functions import orbital_separation_from_period
+from posydon.utils.posydonwarning import Pwarn
 
 
 def get_IMF_pdf(kwargs):
@@ -483,7 +484,16 @@ def calculate_model_weights(pop_data,
                          P=pop_data['orbital_period_i'],
                          binary=binary_mask)
 
-    output = (weight_pop / weight_sim) * factor
-    output[np.isnan(output)] = 0.0
-    output[np.isinf(output)] = 0.0
+    # Systems with zero probability under the simulation parameters give
+    # inf/nan; they lie outside the simulated parameter space and get weight 0.
+    with np.errstate(divide='ignore', invalid='ignore'):
+        output = (weight_pop / weight_sim) * factor
+    outside = ~np.isfinite(output)
+    if np.any(outside):
+        Pwarn(f"{np.count_nonzero(outside)} of {len(output)} systems have "
+              "zero probability under the simulation parameters, i.e. they "
+              "lie outside the simulated parameter space. Their weights are "
+              "set to 0. Check that the simulation parameters match the "
+              "sampled population.", "ValueWarning")
+        output[outside] = 0.0
     return output
