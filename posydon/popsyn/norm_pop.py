@@ -212,16 +212,15 @@ def calculate_model_weights(pop_data,
                          P=pop_data['orbital_period_i'],
                          binary=binary_mask)
 
-    # Systems with zero probability under the simulation parameters give
-    # inf/nan; they lie outside the simulated parameter space and get weight 0.
+    # Systems outside the sampled parameter space have zero probability
+    # under the simulation parameters (inf/nan); they get weight 0.
     with np.errstate(divide='ignore', invalid='ignore'):
         output = (weight_pop / weight_sim) * factor
     outside = ~np.isfinite(output)
     if np.any(outside):
-        Pwarn(f"{np.count_nonzero(outside)} of {len(output)} systems have "
-              "zero probability under the simulation parameters, i.e. they "
-              "lie outside the simulated parameter space. Their weights are "
-              "set to 0. Check that the simulation parameters match the "
-              "sampled population.", "ValueWarning")
+        Pwarn(f"{np.count_nonzero(outside)} of {len(output)} systems lie "
+              "outside the sampled parameter space. This should not happen; "
+              "please check that this is expected. Their weights are set "
+              "to 0.", "ValueWarning")
         output[outside] = 0.0
     return output

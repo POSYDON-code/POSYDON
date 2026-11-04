@@ -671,8 +671,8 @@ class TestReweighting():
         M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
 
         with pytest.warns(ValueWarning,
-                          match="2 of 1000 systems have zero probability "
-                                "under the simulation parameters"):
+                          match="2 of 1000 systems lie outside the "
+                                "sampled parameter space"):
             weights = norm_pop.calculate_model_weights(
                 data, M_sim, base_simulation_kwargs, population_kwargs)
 
@@ -691,7 +691,7 @@ class TestReweighting():
 
         with warnings.catch_warnings():
             warnings.filterwarnings("error", category=ValueWarning,
-                                    message=r"\d+ of \d+ systems have zero")
+                                    message=r"\d+ of \d+ systems lie outside")
             weights = norm_pop.calculate_model_weights(
                 data, M_sim, base_simulation_kwargs, population_kwargs)
 
