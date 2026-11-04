@@ -11,6 +11,7 @@ import pytest
 
 # import the module which will be tested
 import posydon.CLI.popsyn.setup as totest
+from posydon.utils.posydonwarning import StepWarning
 
 
 class TestSNModelValidation:
@@ -81,9 +82,11 @@ class TestIniFileValidation:
         with pytest.raises(FileNotFoundError, match="File .* not found"):
             totest.validate_ini_file("/nonexistent/file.ini")
 
+    @patch('posydon.CLI.popsyn.setup.check_flow_steps')
     @patch('posydon.CLI.popsyn.setup.check_SN_MODEL_validity')
     @patch('os.path.exists')
-    def test_validate_ini_file_invalid_sn_model(self, mock_exists, mock_check_sn):
+    def test_validate_ini_file_invalid_sn_model(self, mock_exists, mock_check_sn,
+                                                mock_check_flow):
         """Test that ValueError is raised when SN model is invalid."""
         mock_exists.return_value = True
         mock_check_sn.return_value = False
@@ -91,15 +94,84 @@ class TestIniFileValidation:
         with pytest.raises(ValueError, match="The step_SN MODEL is not valid"):
             totest.validate_ini_file("test.ini")
 
+    @patch('posydon.CLI.popsyn.setup.check_flow_steps')
     @patch('posydon.CLI.popsyn.setup.check_SN_MODEL_validity')
     @patch('os.path.exists')
-    def test_validate_ini_file_success(self, mock_exists, mock_check_sn):
+    def test_validate_ini_file_success(self, mock_exists, mock_check_sn,
+                                       mock_check_flow):
         """Test that validation passes with valid file and model."""
         mock_exists.return_value = True
         mock_check_sn.return_value = True
 
         # Should not raise any exception
         totest.validate_ini_file("test.ini")
+        mock_check_flow.assert_called_once_with("test.ini")
+
+
+DEFAULT_INI = os.path.join(os.path.dirname(totest.__file__), '..', '..',
+                           'popsyn', 'population_params_default.ini')
+
+
+def _flow(*step_names):
+    """Return a flow-chart function whose flow uses the given steps."""
+    def flow_function():
+        return {(i, None, None, None): name
+                for i, name in enumerate(step_names)}
+    return flow_function
+
+
+class TestFlowStepCheck:
+    """Test class for the check of the flow against the configured steps."""
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    def test_no_flow_section(self, mock_simprop):
+        mock_simprop.return_value = {'step_end': (None, {})}
+        with pytest.raises(ValueError, match=r"no \[flow\] section"):
+            totest.check_flow_steps("test.ini")
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    def test_missing_step_raises(self, mock_simprop):
+        mock_simprop.return_value = {
+            'flow': (_flow('step_end', 'step_HMS_HMS_RLO'), {}),
+            'step_end': (None, {}),
+        }
+        with pytest.raises(ValueError, match="step_HMS_HMS_RLO"):
+            totest.check_flow_steps("test.ini")
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    def test_unused_step_warns(self, mock_simprop):
+        mock_simprop.return_value = {
+            'flow': (_flow('step_end'), {}),
+            'step_end': (None, {}),
+            'step_ce': (None, {}),
+            'HMS_HMS_path': '/some/path',
+        }
+        with pytest.warns(StepWarning, match="step_ce"):
+            totest.check_flow_steps("test.ini")
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    def test_matching_steps_pass(self, mock_simprop, recwarn):
+        mock_simprop.return_value = {
+            'flow': (_flow('step_end', 'step_SN'), {}),
+            'step_end': (None, {}),
+            'step_SN': (None, {}),
+        }
+        totest.check_flow_steps("test.ini")
+        assert not [w for w in recwarn if "never uses" in str(w.message)]
+
+    def test_default_ini_matches_default_flow(self, recwarn):
+        totest.check_flow_steps(DEFAULT_INI)
+        assert not [w for w in recwarn if "never uses" in str(w.message)]
+
+    def test_eccentric_flow_needs_HMS_HMS_RLO_step(self, tmp_path):
+        override = tmp_path / "eccentric_flow.ini"
+        override.write_text(
+            "[flow]\n"
+            "  import = ['posydon.binary_evol.flow_chart', "
+            "'initial_eccentricity_flow_chart']\n"
+            "  absolute_import = None\n")
+        with pytest.raises(ValueError, match="step_HMS_HMS_RLO"):
+            totest.check_flow_steps([DEFAULT_INI, str(override)])
 
 
 class TestSetupPopsynFunction:
@@ -294,6 +366,7 @@ class TestIntegration:
 
         # Setup mocks
         mock_simprop.return_value = {
+            'flow': (lambda: {('a', 'b', 'c', 'd'): 'step_SN'}, {}),
             'step_SN': (None, {'use_interp_values': False})
         }
         mock_binarypop.return_value = {
@@ -327,3 +400,4 @@ class TestIntegration:
             mock_bash.assert_called_once()
         finally:
             os.chdir(original_dir)
+

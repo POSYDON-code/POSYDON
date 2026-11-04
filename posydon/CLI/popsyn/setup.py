@@ -48,6 +48,45 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     else:
         return True
 
+def check_flow_steps(ini_file):
+    '''Checks that the flow and the configured steps match
+
+    Every step the flow chart can send a binary to must have a section in the
+    ini file. Steps that are configured but never reached by the flow raise a
+    warning, since they usually point to a typo in a section name.
+
+    Parameters
+    ----------
+    ini_file : str
+        the path to the ini file
+
+    Raises
+    ------
+    ValueError
+        if the ini file has no [flow] section, or if the flow references
+        steps that are not configured in the ini file
+    '''
+    simprop_kwargs = simprop_kwargs_from_ini(ini_file)
+    if 'flow' not in simprop_kwargs:
+        raise ValueError("The ini file has no [flow] section.")
+
+    flow_function, flow_kwargs = simprop_kwargs['flow']
+    flow_steps = set(flow_function(**flow_kwargs).values())
+    configured_steps = {key for key in simprop_kwargs
+                        if key.startswith('step_')}
+
+    missing_steps = sorted(flow_steps - configured_steps)
+    if missing_steps:
+        raise ValueError("The flow uses steps that are not configured in the "
+                         f"ini file: {missing_steps}. Add a section for each "
+                         "of them.")
+
+    unused_steps = sorted(configured_steps - flow_steps)
+    if unused_steps:
+        Pwarn(f"The ini file configures steps that the flow never uses: "
+              f"{unused_steps}. Check the section names for typos.",
+              "StepWarning")
+
 def validate_ini_file(ini_file):
     '''Validates the ini file for population synthesis
 
@@ -61,10 +100,13 @@ def validate_ini_file(ini_file):
     FileNotFoundError
         if the ini file does not exist
     ValueError
-        if the step_SN MODEL is not valid for this script
+        if the step_SN MODEL is not valid for this script, or if the flow
+        and the configured steps do not match
     '''
     if not os.path.exists(ini_file):
         raise FileNotFoundError(f'File {ini_file} not found')
+
+    check_flow_steps(ini_file)
 
     if not check_SN_MODEL_validity(ini_file):
         raise ValueError("The step_SN MODEL is not valid for this script. "
