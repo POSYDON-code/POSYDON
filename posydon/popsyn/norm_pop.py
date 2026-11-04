@@ -5,240 +5,24 @@ __authors__ = [
 ]
 
 import numpy as np
-from scipy.integrate import dblquad, nquad, quad
+from scipy.integrate import dblquad, quad
 
-import posydon.popsyn.IMFs as IMFs
-from posydon.popsyn import independent_sample
-from posydon.popsyn.distributions import (
-    FlatMassRatio,
-    LogPowerLawPeriod,
-    LogUniform,
-    PowerLawMassRatio,
-    PowerLawPeriod,
-    Sana12Period,
+from posydon.popsyn.initial_distributions import (
+    get_binary_fraction_distribution,
+    get_IMF_distribution,
+    get_mass_ratio_distribution,
+    get_orbital_distribution,
 )
-from posydon.utils import constants as const
-from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.utils.posydonwarning import Pwarn
 
 
-def get_IMF_pdf(kwargs):
-    '''get the IMF pdf function
-
-    Supported schemes based on the IMF module:
-    Additional parameters can be passed to the scheme
-    by adding them to the kwargs dictionary with the scheme name as the key
-    Example:
-
-    ```
-    kwargs = {
-        'primary_mass_scheme': 'Salpeter',
-        'primary_mass_min': 0.1,
-        'primary_mass_max': 100,
-        'Salpeter': {'alpha': 2.35}
-    }
-    ```
-
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the parameters.
-        `primary_mass_scheme`, `primary_mass_min`, `primary_mass_max` are required.
-        Additional parameters are required depending on the scheme.
-
-    Returns
-    -------
-    IMF_pdf : function
-        Function that returns the IMF PDF
-    '''
-
-    primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
-    scheme_kwargs = kwargs.get(primary_mass_scheme, {})
-    try:
-        # dynamically retrieve the IMF class from the IMFs module
-        imf_class = getattr(IMFs, primary_mass_scheme)
-        imf = imf_class(m_min=kwargs['primary_mass_min'],
-                        m_max=kwargs['primary_mass_max'],
-                        **scheme_kwargs)
-        IMF_pdf = imf.pdf
-    except AttributeError:
-        # if not found, default to a flat distribution
-        IMF_pdf = lambda m1: np.ones_like(m1) / (kwargs['primary_mass_max'] - kwargs['primary_mass_min'])
-        Pwarn(f"The primary_mass_scheme '{primary_mass_scheme}' is not recognized. "
-              "Using a flat mass distribution instead.", "UnsupportedModelWarning")
-
-    return IMF_pdf
-
-def get_mass_ratio_pdf(kwargs):
-    """Function that returns the mass ratio PDF function
-
-    Supported schemes:
-    - `flat_mass_ratio` for `secondary_mass_scheme`
-        Requires the following parameters:
-        - `secondary_mass_min`
-        - `secondary_mass_max`
-    - `power_law_mass_ratio` for `secondary_mass_scheme`
-        Requires the following parameters:
-        - `mass_ratio_slope`: exponent alpha in q^alpha
-        - `q_min` (optional, default 0.05)
-        - `q_max` (optional, default 1.0)
-
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the simulation parameters
-
-    Returns
-    -------
-    pdf : function
-        Function that returns the mass ratio PDF
-    """
-    if (kwargs['secondary_mass_scheme'] == 'flat_mass_ratio'
-        and ('q_min' not in kwargs and 'q_max' not in kwargs)):
-        # flat mass ratio, where bounds are dependent on m1 and min/max m2
-        # and q_min = 0.05, q_max = 1
-        def get_pdf_for_m1(m1):
-            m1 = np.atleast_1d(m1)
-            minimum = np.max(
-                [kwargs['secondary_mass_min'] / m1, np.zeros(len(m1))],
-                axis=0)
-
-            maximum = np.min(
-                [kwargs['secondary_mass_max'] / m1, np.ones(len(m1))],
-                axis=0)
-
-            # Use FlatMassRatio distribution class
-            q_dist = lambda q: np.where((q > minimum) & (q <= maximum),
-                                        1/(maximum - minimum),
-                                        0)
-            return q_dist
-        q_pdf = lambda q, m1: get_pdf_for_m1(m1)(q)
-    elif kwargs['secondary_mass_scheme'] == 'flat_mass_ratio':
-        # flat mass ratio, where bounds are given
-        from posydon.popsyn.distributions import FlatMassRatio
-        q_dist = FlatMassRatio(q_min=kwargs['q_min'], q_max=kwargs['q_max'])
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
-
-    elif kwargs['secondary_mass_scheme'] == 'power_law_mass_ratio':
-        from posydon.popsyn.distributions import PowerLawMassRatio
-        q_dist = PowerLawMassRatio(
-            alpha=kwargs['mass_ratio_slope'],
-            q_min=kwargs.get('q_min', 0.05),
-            q_max=kwargs.get('q_max', 1.0),
-        )
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
-
-    else:
-        # default to a flat distribution
-        Pwarn("The secondary_mass_scheme is not defined use a flat mass ratio "
-              "distribution in (0,1].", "UnsupportedModelWarning")
-        from posydon.popsyn.distributions import FlatMassRatio
-        q_dist = FlatMassRatio(q_min=0.0, q_max=1.0)
-        q_pdf = lambda q, m1=None: q_dist.pdf(q)
-    return q_pdf
-
-def get_binary_fraction_pdf(kwargs):
-    '''get the binary fraction pdf function
-
-    Supported schemes:
-    - `const` with `binary_fraction_const`
-        requires the following parameters to be present:
-        - `binary_fraction_const`
-
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the parameters
-
-    Returns
-    -------
-    pdf : function
-        Function that returns the binary fraction PDF
-    '''
-    if kwargs['binary_fraction_scheme'] == 'const':
-        f_b = kwargs['binary_fraction_const']
-        binary_fraction_pdf = lambda binary: np.where(np.asarray(binary),
-                                                      f_b,
-                                                      1-f_b)
-    else:
-        raise ValueError("Binary fraction scheme not recognized")
-
-    return binary_fraction_pdf
-
-def get_period_pdf(kwargs):
-    '''get the period pdf function
-
-    All returned period PDFs are probability densities per dex,
-    i.e. normalised to 1 in log10(P) space, such that they can be
-    compared between schemes.
-
-    Supported schemes:
-    - `period` for `orbital_scheme` with `orbital_period_scheme`:
-        - `Sana+12_period_extended`
-        - `power_law`: dN/dlog10(P) ∝ P^`power_law_slope`
-        - `log_power_law`: dN/dlog10(P) ∝ (log10(P))^`power_law_slope`
-    - `separation` for `orbital_scheme` with `orbital_separation_scheme`:
-        - `log_uniform`
-
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the simulation parameters
-
-    Returns
-    -------
-    pdf : function
-        Function that returns the period PDF per dex, which expects the
-        following parameters; P, m1, q
-    '''
-    if (kwargs['orbital_scheme'] == 'period'):
-        if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
-            period = Sana12Period(
-                p_min=kwargs['orbital_period_min'],
-                p_max=kwargs['orbital_period_max'],
-            )
-            period_pdf = lambda P, m1, q=None: period.pdf_per_dex(P, m1)
-        elif kwargs['orbital_period_scheme'] == 'power_law':
-            period = PowerLawPeriod(
-                p_min=kwargs['orbital_period_min'],
-                p_max=kwargs['orbital_period_max'],
-                slope=kwargs['power_law_slope'],
-            )
-            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
-        elif kwargs['orbital_period_scheme'] == 'log_power_law':
-            period = LogPowerLawPeriod(
-                p_min=kwargs['orbital_period_min'],
-                p_max=kwargs['orbital_period_max'],
-                slope=kwargs['power_law_slope'],
-            )
-            period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
-        else:
-            raise ValueError("Orbital period scheme not recognized")
-    elif (kwargs['orbital_scheme'] == 'separation'):
-        if kwargs['orbital_separation_scheme'] == 'log_uniform':
-            separation_log_uniform = LogUniform(
-                min=kwargs['orbital_separation_min'],
-                max=kwargs['orbital_separation_max'],
-            )
-            # Since the outer function is set in PDF(P) and inner as P(a),
-            # we need to do a change of variables in log10 space.
-            # PDF(log10 P) = PDF(log10 a) * |dlog10(a)/dlog10(P)|
-            # a scales as P^(2/3), so dlog10(a)/dlog10(P) = 2/3
-            # PDF(log10 P) = (2/3) * log_uniform.pdf_per_dex(a)
-            period_pdf = lambda P, m1, q: separation_log_uniform.pdf_per_dex(
-                orbital_separation_from_period(P, m1, q*m1)
-            ) * 2./3.
-        else:
-            raise ValueError("Orbital separation scheme not recognized")
-    else:
-        raise ValueError("Orbital scheme not recognized. "
-                         "Please specify either 'period' or 'separation' "
-                         "and a valid scheme for that orbital scheme.")
-
-    return period_pdf
-
 def get_pdf(kwargs, mass_pdf=False):
     """Function that builds a PDF function given the simulation parameters
+
+    The orbital part is a density per dex in the period, dN/dlog10(P), for
+    every orbital scheme; separation distributions are converted to periods
+    with `PeriodFromSeparation`. Using the same measure for all schemes lets
+    the PDFs of the simulation and the target population be compared.
 
     Parameters
     ----------
@@ -252,16 +36,18 @@ def get_pdf(kwargs, mass_pdf=False):
     Returns
     -------
     pdf_function : function
-        Function that returns a probability density function
+        Function `pdf_function(m1, q=0, P=nan, binary=False)` that returns
+        the probability density. The defaults match single stars in the
+        population data: no companion (q = 0) and no period (P = nan).
     """
 
-    IMF_pdf = get_IMF_pdf(kwargs)
-    q_pdf = get_mass_ratio_pdf(kwargs)
-    f_b_pdf = get_binary_fraction_pdf(kwargs)
-    period_pdf = get_period_pdf(kwargs)
+    IMF_pdf = get_IMF_distribution(kwargs).pdf
+    q_pdf = get_mass_ratio_distribution(kwargs).pdf
+    f_b_pdf = get_binary_fraction_distribution(kwargs).pdf
+    period_pdf = get_orbital_distribution(kwargs).pdf_per_dex
 
     if mass_pdf:
-        pdf_function = lambda m1, q=0, P=0, binary=False: (
+        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
             np.where(# binaries
                      np.asarray(binary),
                      (f_b_pdf(np.asarray(binary))
@@ -273,7 +59,7 @@ def get_pdf(kwargs, mass_pdf=False):
                     )
         )
     else:
-        pdf_function = lambda m1, q=0, P=0, binary=False: (
+        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
             np.where(
                 np.asarray(binary),
                 # binaries
@@ -307,33 +93,26 @@ def get_mean_mass(params):
 
     PDF = get_pdf(params, mass_pdf=True)
 
-    # integration bounds
+    # integration bounds; the q bounds are the support of the
+    # mass ratio distribution, which can depend on m1
     m1_min = params['primary_mass_min']
     m1_max = params['primary_mass_max']
+    q_dist = get_mass_ratio_distribution(params)
 
-    if 'q_min' in params:
-        q_min = params['q_min']
-    else:
-        q_min = np.max([params['secondary_mass_min']/params['primary_mass_min'],
-                        0])
-
-    if 'q_max' in params:
-        q_max = params['q_max']
-    else:
-        q_max = np.min([params['secondary_mass_max']/params['primary_mass_max'],
-                        1])
-    if q_min > q_max:
-        raise ValueError("q_min must be less than q_max")
-
-    # binary integration
-    I_bin = dblquad(lambda q, m: (m + m * q) * PDF(m, q, P=0, binary=True),
-                    m1_min, m1_max,
-                    q_min, q_max
-                    )[0]
-
+    # binary integration (quad requires scalar integrands)
+    I_bin = dblquad(
+        lambda q, m: np.asarray((m + m * q)
+                                * PDF(m, q, binary=True)).item(),
+        m1_min, m1_max,
+        lambda m: float(q_dist.support(m)[0]),
+        lambda m: float(q_dist.support(m)[1]),
+    )[0]
 
     # single star integration
-    I_single = quad(lambda m: m * PDF(m, False), m1_min, m1_max)[0]
+    I_single = quad(
+        lambda m: np.asarray(m * PDF(m, binary=False)).item(),
+        m1_min, m1_max,
+    )[0]
 
     mean_mass = I_bin + I_single
     return mean_mass
@@ -369,15 +148,17 @@ def calculate_model_weights(pop_data,
         - `primary_mass_min`
         - `primary_mass_max`
         - `secondary_mass_scheme`
-        - `secondary_mass_min`
-        - `secondary_mass_max`
+        - `secondary_mass_min` and `secondary_mass_max`, or `q_min` and
+          `q_max`, if `secondary_mass_scheme` is `flat_mass_ratio`
+        - `mass_ratio_slope` (and optionally `q_min`, `q_max`) if
+          `secondary_mass_scheme` is `power_law_mass_ratio`
         - `binary_fraction_scheme`
         - `binary_fraction_const`
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
-        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     population_parameters : dict
         Dictionary containing the population parameters, which is the requested population to which we want to reweight the simulation. This is used to calculate the PDF of the requested population.
@@ -387,15 +168,17 @@ def calculate_model_weights(pop_data,
         - `primary_mass_min`
         - `primary_mass_max`
         - `secondary_mass_scheme`
-        - `secondary_mass_min`
-        - `secondary_mass_max`
+        - `secondary_mass_min` and `secondary_mass_max`, or `q_min` and
+          `q_max`, if `secondary_mass_scheme` is `flat_mass_ratio`
+        - `mass_ratio_slope` (and optionally `q_min`, `q_max`) if
+          `secondary_mass_scheme` is `power_law_mass_ratio`
         - `binary_fraction_scheme`
         - `binary_fraction_const`
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
-        - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
+        - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     Returns
     -------
@@ -405,8 +188,8 @@ def calculate_model_weights(pop_data,
 
     """
 
-    f_b_sim = simulation_parameters['binary_fraction_const']
-    f_b_pop = population_parameters['binary_fraction_const']
+    f_b_sim = get_binary_fraction_distribution(simulation_parameters).f_b
+    f_b_pop = get_binary_fraction_distribution(population_parameters).f_b
     if (f_b_sim == 1) and (f_b_pop == 0):
         raise ValueError("No single stars simulated, but requested")
     if (f_b_sim == 0) and (f_b_pop == 1):
@@ -434,7 +217,15 @@ def calculate_model_weights(pop_data,
                          P=pop_data['orbital_period_i'],
                          binary=binary_mask)
 
-    output = (weight_pop / weight_sim) * factor
-    output[np.isnan(output)] = 0.0
-    output[np.isinf(output)] = 0.0
+    # Systems outside the sampled parameter space have zero probability
+    # under the simulation parameters (inf/nan); they get weight 0.
+    with np.errstate(divide='ignore', invalid='ignore'):
+        output = (weight_pop / weight_sim) * factor
+    outside = ~np.isfinite(output)
+    if np.any(outside):
+        Pwarn(f"{np.count_nonzero(outside)} of {len(output)} systems lie "
+              "outside the sampled parameter space. This should not happen; "
+              "please check that this is expected. Their weights are set "
+              "to 0.", "ValueWarning")
+        output[outside] = 0.0
     return output

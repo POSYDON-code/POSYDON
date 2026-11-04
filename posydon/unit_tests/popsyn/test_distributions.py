@@ -7,13 +7,16 @@ used in population synthesis.
 import numpy as np
 import pytest
 from scipy.integrate import quad
-from scipy.stats import loguniform
+from scipy.stats import kstest, loguniform
 
 from posydon.popsyn.distributions import (
+    ConditionalFlatMassRatio,
+    ConstantBinaryFraction,
     FlatMassRatio,
     LogNormalSeparation,
     LogPowerLawPeriod,
     LogUniform,
+    PeriodFromSeparation,
     PowerLawMassRatio,
     PowerLawPeriod,
     Sana12Period,
@@ -21,6 +24,10 @@ from posydon.popsyn.distributions import (
     UniformEccentricity,
     ZeroEccentricity,
     per_dex_to_linear,
+)
+from posydon.utils.common_functions import (
+    orbital_period_from_separation,
+    orbital_separation_from_period,
 )
 
 
@@ -150,7 +157,7 @@ class TestFlatMassRatio:
         q_values = np.linspace(custom_flat_ratio.q_min, custom_flat_ratio.q_max, 10)
         pdf_values = custom_flat_ratio.pdf(q_values)
         expected_pdf = custom_flat_ratio.norm * np.ones_like(q_values)
-        expected_pdf[0] = 0.0  # q_values[0] is equal to q_min, which is outside the valid range
+        # q_values[0] is q_min, which is included
         np.testing.assert_allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, custom_flat_ratio):
@@ -1351,6 +1358,12 @@ class TestLogNormalSeparation:
         with pytest.raises(ValueError, match="sigma must be positive"):
             LogNormalSeparation(mean=1.0, sigma=-0.5, min=10.0, max=1000.0)
 
+        with pytest.raises(ValueError, match="mean and sigma must be given"):
+            LogNormalSeparation(mean=None, sigma=0.5, min=10.0, max=1000.0)
+
+        with pytest.raises(ValueError, match="mean and sigma must be given"):
+            LogNormalSeparation(mean=1.0, sigma=None, min=10.0, max=1000.0)
+
     def test_repr(self, custom_lognormal):
         """Test string representation."""
         rep_str = custom_lognormal.__repr__()
@@ -1523,12 +1536,12 @@ class TestPowerLawMassRatio:
             custom_power_law_mass_ratio.pdf(q_above), np.zeros_like(q_above)
         )
 
-    def test_pdf_at_q_min_excluded(self, custom_power_law_mass_ratio):
-        """Test that q_min itself is excluded (open lower bound)."""
+    def test_pdf_at_q_min_included(self, custom_power_law_mass_ratio):
+        """Test that q_min itself is included (closed lower bound)."""
         pdf_at_qmin = custom_power_law_mass_ratio.pdf(
             np.array([custom_power_law_mass_ratio.q_min])
         )
-        assert pdf_at_qmin[0] == 0.0
+        assert pdf_at_qmin[0] > 0.0
 
     def test_normalization_integral(self, custom_power_law_mass_ratio):
         """Test that the PDF integrates to 1 over the valid range."""
@@ -1560,3 +1573,275 @@ class TestPowerLawMassRatio:
         dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=1.0)
         integral, _ = quad(dist.pdf, dist.q_min, dist.q_max)
         np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+
+class TestConditionalFlatMassRatio:
+    """Test class for ConditionalFlatMassRatio distribution."""
+
+    @pytest.fixture
+    def q_dist(self):
+        return ConditionalFlatMassRatio(m2_min=0.35, m2_max=50)
+
+    @pytest.mark.parametrize('m2_min, m2_max, match', [
+        (-1.0, 10.0, "m2_min must be >= 0"),
+        (5.0, 5.0, "m2_min must be less than m2_max"),
+        (6.0, 5.0, "m2_min must be less than m2_max"),
+    ])
+    def test_initialization_invalid_parameters(self, m2_min, m2_max, match):
+        with pytest.raises(ValueError, match=match):
+            ConditionalFlatMassRatio(m2_min=m2_min, m2_max=m2_max)
+
+    def test_repr(self, q_dist):
+        assert repr(q_dist) == "ConditionalFlatMassRatio(m2_min=0.35, m2_max=50)"
+
+    def test_repr_html(self, q_dist):
+        html = q_dist._repr_html_()
+        assert "Conditional Flat Mass Ratio Distribution" in html
+        assert "m2_min = 0.35" in html
+        assert "m2_max = 50" in html
+
+    def test_support(self, q_dist):
+        # q_lower = m2_min/m1; q_upper = min(m2_max/m1, 1)
+        q_lower, q_upper = q_dist.support(np.array([7., 35., 100.]))
+        np.testing.assert_allclose(q_lower, [0.05, 0.01, 0.0035])
+        np.testing.assert_allclose(q_upper, [1.0, 1.0, 0.5])
+
+    @pytest.mark.parametrize('m1', [0.5, 7., 35., 100.])
+    def test_pdf_normalised_on_support(self, q_dist, m1):
+        q_lower, q_upper = q_dist.support(m1)
+        integral = quad(lambda q: q_dist.pdf(q, m1), q_lower, q_upper)[0]
+        assert np.isclose(integral, 1.0)
+
+    def test_pdf_values(self, q_dist):
+        # m1 = 100: q in [0.35/100, 0.5], pdf = 1/(0.5 - 0.35/100)
+        q_lower, _ = q_dist.support(100.)
+        q = np.array([0.003, q_lower, 0.2, 0.5, 0.6])
+        expected = np.array([0.0, 1, 1, 1, 0.0]) / (0.5 - q_lower)
+        np.testing.assert_allclose(q_dist.pdf(q, 100.), expected)
+
+    def test_pdf_broadcasting(self, q_dist):
+        # one q per m1
+        pdf = q_dist.pdf(np.array([0.5, 0.5]), np.array([7., 100.]))
+        np.testing.assert_allclose(pdf, [1 / 0.95, 1 / (0.5 - 0.0035)])
+
+    @pytest.mark.parametrize('m1', [0.35, 0.2])
+    def test_pdf_without_possible_companion(self, q_dist, m1):
+        # m1 <= m2_min: empty support, the pdf is zero (and finite)
+        pdf = q_dist.pdf(np.array([0.5, 1.0]), m1)
+        np.testing.assert_array_equal(pdf, [0.0, 0.0])
+
+    def test_rvs_within_support(self, q_dist):
+        m1 = np.array([7., 35., 100.] * 1000)
+        q = q_dist.rvs(m1=m1, rng=np.random.default_rng(42))
+        assert q.shape == m1.shape
+        assert np.all(q_dist.in_support(q, m1))
+
+    def test_rvs_scalar_m1_without_rng(self, q_dist):
+        q = q_dist.rvs(m1=10.)
+        assert q.shape == (1,)
+        assert q_dist.in_support(q, 10.)
+
+    def test_rvs_without_possible_companion(self, q_dist):
+        with pytest.raises(ValueError, match="No valid mass ratio"):
+            q_dist.rvs(m1=np.array([10., 0.35]))
+
+
+@pytest.fixture(params=['flat', 'flat_q_min_0', 'power_law_-1',
+                        'power_law_1.5', 'conditional',
+                        'conditional_m2_min_0'])
+def mass_ratio_case(request):
+    """(pdf, rvs, q_lower, q_upper) of each mass ratio distribution, with
+    m1 fixed to 10 Msun for the m1-dependent one."""
+    if request.param == 'flat':
+        dist = FlatMassRatio(q_min=0.1, q_max=0.8)
+    elif request.param == 'flat_q_min_0':
+        dist = FlatMassRatio(q_min=0.0, q_max=1.0)
+    elif request.param == 'power_law_-1':
+        dist = PowerLawMassRatio(alpha=-1.0, q_min=0.1, q_max=0.9)
+    elif request.param == 'power_law_1.5':
+        dist = PowerLawMassRatio(alpha=1.5, q_min=0.0, q_max=1.0)
+    else:
+        m2_min = 0.0 if request.param == 'conditional_m2_min_0' else 1.0
+        dist = ConditionalFlatMassRatio(m2_min=m2_min, m2_max=8.0)
+        q_lower, q_upper = dist.support(10.)
+        return (lambda q: dist.pdf(q, 10.),
+                lambda size, rng: dist.rvs(m1=np.full(size, 10.), rng=rng),
+                float(q_lower), float(q_upper))
+    q_lower, q_upper = dist.support()
+    return dist.pdf, (lambda size, rng: dist.rvs(size=size, rng=rng)), \
+        q_lower, q_upper
+
+
+class ZeroFirstRNG:
+    """Random generator whose first uniform draw is the lower bound (u = 0),
+    the only way to sample exactly q = 0."""
+
+    def __init__(self, seed):
+        self._rng = np.random.default_rng(seed)
+        self.calls = 0
+
+    def uniform(self, low=0.0, high=1.0, size=None):
+        self.calls += 1
+        out = np.array(self._rng.uniform(low, high, size), dtype=float)
+        if self.calls == 1:
+            out[...] = np.broadcast_to(low, out.shape)
+        return out
+
+
+class TestMassRatioSupportConvention:
+    """All mass ratio distributions use [q_lower, q_upper] for the PDF and
+    [q_lower, q_upper) for the samples, like the other distributions, but
+    always exclude q = 0."""
+
+    def test_pdf_includes_bounds(self, mass_ratio_case):
+        pdf, _, q_lower, q_upper = mass_ratio_case
+        if q_lower > 0:
+            assert pdf(q_lower) > 0
+        assert pdf(q_upper) > 0
+
+    def test_q_zero_excluded(self, mass_ratio_case):
+        pdf, _, _, _ = mass_ratio_case
+        assert pdf(0.0) == 0
+
+    def test_pdf_normalised(self, mass_ratio_case):
+        pdf, _, q_lower, q_upper = mass_ratio_case
+        assert np.isclose(quad(pdf, q_lower, q_upper)[0], 1.0)
+
+    def test_rvs_in_support(self, mass_ratio_case):
+        _, rvs, q_lower, q_upper = mass_ratio_case
+        q = rvs(10000, np.random.default_rng(1))
+        assert np.all(q >= q_lower)
+        assert np.all(q <= q_upper)
+        assert np.all(q > 0)
+
+    def test_rvs_never_zero(self, mass_ratio_case):
+        # the first draw is u = 0, i.e. q = q_lower; for q_lower = 0 the
+        # samplers must redraw it
+        _, rvs, q_lower, _ = mass_ratio_case
+        rng = ZeroFirstRNG(3)
+        q = rvs(5, rng)
+        assert len(q) == 5
+        assert np.all(q > 0)
+        if q_lower > 0:
+            assert q[0] == q_lower
+            assert rng.calls == 1
+        else:
+            assert rng.calls == 2
+
+    def test_rvs_follow_pdf(self, mass_ratio_case):
+        pdf, rvs, q_lower, _ = mass_ratio_case
+        q = rvs(2000, np.random.default_rng(2))
+        cdf = lambda x: np.array([quad(pdf, q_lower, xi)[0]
+                                  for xi in np.atleast_1d(x)])
+        assert kstest(q, cdf).pvalue > 0.01
+
+
+class TestConstantBinaryFraction:
+    """Test class for ConstantBinaryFraction."""
+
+    @pytest.mark.parametrize('f_b', [-0.1, 1.1])
+    def test_initialization_invalid(self, f_b):
+        with pytest.raises(ValueError, match="f_b must be in"):
+            ConstantBinaryFraction(f_b=f_b)
+
+    def test_repr(self):
+        assert repr(ConstantBinaryFraction(f_b=0.7)) == \
+            "ConstantBinaryFraction(f_b=0.7)"
+
+    def test_repr_html(self):
+        html = ConstantBinaryFraction(f_b=0.7)._repr_html_()
+        assert "Constant Binary Fraction" in html
+        assert "f_b = 0.7" in html
+
+    @pytest.mark.parametrize('f_b', [0.0, 0.7, 1.0])
+    def test_pdf(self, f_b):
+        dist = ConstantBinaryFraction(f_b=f_b)
+        np.testing.assert_allclose(dist.pdf([True, False, True]),
+                                   [f_b, 1 - f_b, f_b])
+        assert np.isclose(dist.pdf(True) + dist.pdf(False), 1.0)
+
+
+class TestLogNormalSeparationPerDex:
+    """pdf_per_dex of LogNormalSeparation and its relation to pdf."""
+
+    @pytest.fixture
+    def dist(self):
+        return LogNormalSeparation(mean=2.0, sigma=0.5, min=5.0, max=1e5)
+
+    def test_pdf_per_dex_normalised_in_log(self, dist):
+        integral, _ = quad(lambda loga: dist.pdf_per_dex(10**loga),
+                           np.log10(dist.min), np.log10(dist.max))
+        assert np.isclose(integral, 1.0)
+
+    def test_pdf_is_per_dex_converted(self, dist):
+        a = np.array([1.0, 5.0, 100.0, 1e4, 1e5, 2e5])
+        np.testing.assert_allclose(
+            dist.pdf(a), per_dex_to_linear(dist.pdf_per_dex(a), a))
+
+    def test_pdf_per_dex_outside_range(self, dist):
+        np.testing.assert_array_equal(
+            dist.pdf_per_dex(np.array([1.0, 2e5, np.nan])), [0.0, 0.0, 0.0])
+
+
+class TestPeriodFromSeparation:
+    """Test class for PeriodFromSeparation."""
+
+    @pytest.fixture(params=['log_uniform', 'log_normal'])
+    def separation(self, request):
+        if request.param == 'log_uniform':
+            return LogUniform(min=5.0, max=1e5)
+        return LogNormalSeparation(mean=2.0, sigma=0.5, min=5.0, max=1e5)
+
+    def test_repr(self):
+        dist = PeriodFromSeparation(LogUniform(min=5.0, max=1e5))
+        assert repr(dist) == "PeriodFromSeparation(LogUniform(min=5.0, max=100000.0))"
+
+    def test_repr_html(self, separation):
+        html = PeriodFromSeparation(separation)._repr_html_()
+        assert "Period from Separation Distribution" in html
+        assert separation._repr_html_() in html
+
+    def test_pdf_per_dex_jacobian(self, separation):
+        # dN/dlog10(P) = (2/3) dN/dlog10(a) at a = a(P, m1, m2)
+        dist = PeriodFromSeparation(separation)
+        P = np.array([1.0, 10.0, 100.0, 1e3])
+        m1, q = 20.0, 0.5
+        a = orbital_separation_from_period(P, m1, q * m1)
+        np.testing.assert_allclose(dist.pdf_per_dex(P, m1, q),
+                                   2. / 3. * separation.pdf_per_dex(a))
+
+    @pytest.mark.parametrize("m1, q", [(10.0, 1.0), (100.0, 0.1)])
+    def test_normalised(self, separation, m1, q):
+        dist = PeriodFromSeparation(separation)
+        P_min = orbital_period_from_separation(separation.min, m1, q * m1)
+        P_max = orbital_period_from_separation(separation.max, m1, q * m1)
+        per_dex = quad(lambda logP: dist.pdf_per_dex(10**logP, m1, q),
+                       np.log10(P_min), np.log10(P_max), limit=200)[0]
+        linear = quad(lambda P: dist.pdf(P, m1, q), P_min, P_max,
+                      points=np.logspace(np.log10(P_min), np.log10(P_max),
+                                         20)[1:-1],
+                      limit=500)[0]
+        assert np.isclose(per_dex, 1.0)
+        assert np.isclose(linear, 1.0, rtol=1e-4)
+
+    def test_single_stars_zero(self, separation):
+        # single stars have no period (NaN) and no companion (q = 0)
+        dist = PeriodFromSeparation(separation)
+        assert dist.pdf_per_dex(np.nan, 10.0, 0.0) == 0
+
+
+class TestCommonOrbitalSignature:
+    """All period distributions accept pdf(P, m1, q) and
+    pdf_per_dex(P, m1, q); unused arguments are ignored."""
+
+    @pytest.mark.parametrize("dist", [
+        Sana12Period(p_min=1.4, p_max=3e3),
+        PowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e3),
+        LogPowerLawPeriod(slope=-0.55, p_min=1.4, p_max=3e3),
+    ])
+    def test_extra_arguments_ignored(self, dist):
+        P = np.array([2.0, 50.0, 1e3])
+        m1 = np.full(3, 20.0)
+        np.testing.assert_allclose(dist.pdf_per_dex(P, m1, 0.5),
+                                   dist.pdf_per_dex(P, m1))
+        np.testing.assert_allclose(dist.pdf(P, m1, 0.5), dist.pdf(P, m1))
