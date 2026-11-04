@@ -77,7 +77,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
 
     For star formation (and single-star grids) a list is read as one inlist
     per step and a string is layered onto every step.
-    
+
     Parameters
     ----------
 
