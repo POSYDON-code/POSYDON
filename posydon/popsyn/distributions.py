@@ -48,19 +48,14 @@ def per_dex_to_linear(pdf_per_dex, x):
 
 
 class MassRatioDistribution:
-    """Shared support convention of the mass ratio distributions.
+    """Base class of the mass ratio distributions, which exclude q = 0.
 
-    Like the other distributions, the PDF of the mass ratio q = m2/m1 is
-    defined on the closed interval [q_lower, q_upper] and samples lie in
-    [q_lower, q_upper). In addition, q = 0 is never a valid mass ratio: the
-    PDF is zero at q = 0 and the samplers never return it.
-
-    Subclasses with fixed bounds set `q_min` and `q_max`; subclasses whose
-    bounds depend on the primary mass override `support`.
+    Subclasses set `q_min` and `q_max`, or override `support` if the
+    bounds depend on the primary mass.
     """
 
     def support(self, m1=None):
-        """Bounds (q_lower, q_upper) of the mass ratio.
+        """Lower and upper bound of q.
 
         Parameters
         ----------
@@ -70,12 +65,12 @@ class MassRatioDistribution:
         Returns
         -------
         tuple
-            Lower and upper bound of q (both included, except q = 0).
+            (q_lower, q_upper).
         """
         return self.q_min, self.q_max
 
     def in_support(self, q, m1=None):
-        """Whether q lies in [q_lower, q_upper] and q > 0.
+        """Whether q lies within the bounds and is not 0.
 
         Parameters
         ----------
@@ -87,6 +82,7 @@ class MassRatioDistribution:
         Returns
         -------
         bool or ndarray of bool
+            True where q is a valid mass ratio.
         """
         q_lower, q_upper = self.support(m1)
         q = np.asarray(q, dtype=float)
@@ -94,24 +90,7 @@ class MassRatioDistribution:
 
     @staticmethod
     def _redraw_zeros(q, redraw):
-        """Replace samples with q = 0 by new draws.
-
-        A sample of exactly 0 is only possible if q_lower = 0 and the
-        uniform random number is exactly 0. Redrawing it leaves the
-        distribution unchanged.
-
-        Parameters
-        ----------
-        q : ndarray
-            Samples, modified in place.
-        redraw : callable
-            redraw(mask) returns new samples for the entries in mask.
-
-        Returns
-        -------
-        ndarray
-            Samples without q = 0.
-        """
+        """Redraw samples of exactly q = 0, using redraw(mask)."""
         zero = q == 0
         while np.any(zero):
             q[zero] = redraw(zero)
