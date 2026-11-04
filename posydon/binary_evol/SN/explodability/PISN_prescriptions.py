@@ -23,6 +23,14 @@ class PISN_check_base(ABC):
     def __call__(self,star):
         raise NotImplementedError
 
+    def is_above_gap(self,star):
+        """True if the star is above the pair-instability gap.
+
+        Such stars collapse directly into a BH (explosion outcome
+        "BH_direct"), whatever the CCSN mechanism.
+        """
+        return False
+
     def __repr__(self):
         return "Prescription_PISN was initialised with the {option} prescription".format(option=self.PISN_option)
 
@@ -33,8 +41,12 @@ class PISN_check_Marchant19(PISN_check_base):
             return "PPISN"
         if m_He_core > 61.10 and m_He_core < 124.12:
             return "PISN"
-        # above the gap (m_He_core >= 124.12) the star is a CCSN, as on main
         return None
+
+    def is_above_gap(self,star):
+        # direct collapse to a BH above the gap, see table 1 of Marchant et
+        # al. (2019)
+        return star.he_core_mass >= 124.12
 
 class PISN_check_Hendriks23(PISN_check_base):
     def __init__(self,**kwargs):
@@ -47,8 +59,12 @@ class PISN_check_Hendriks23(PISN_check_base):
         m_CO_core = star.co_core_mass
         if m_CO_core >= self.m_CO_core_PISN_min and m_CO_core <= self.m_CO_core_PISN_max:
             return "PPISN"
-        # above the gap the star is a CCSN, as on main
         return None
+
+    def is_above_gap(self,star):
+        # "For CO core masses greater than 114 Msun we assume direct collapse
+        # to a BH" (Hendriks et al. 2023)
+        return star.co_core_mass > self.m_CO_core_PISN_max
 
 class PISN_check_constant(PISN_check_base):
     def __init__(self,**kwargs):

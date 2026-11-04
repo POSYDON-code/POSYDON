@@ -13,8 +13,6 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def get_remnant_mass_prescription(**kwargs):
-    # For now the remnant mass is selected by the mechanism, as on main.
-    # A separate option will be added when the configuration changes.
     option = kwargs['mechanism']
     if option in REMNANT_MASS_PRESCRIPTIONS:
         return REMNANT_MASS_PRESCRIPTIONS[option](**kwargs)
@@ -29,8 +27,6 @@ def get_remnant_mass_prescription(**kwargs):
     )
 
 
-# Remnant state implied by each outcome of the explosion criterion.
-# None: no criterion was applied, the state follows from the remnant mass.
 STATE_FROM_EXPLOSION = {
     "NS": "NS",
     "BH_fallback": "BH",
@@ -38,9 +34,9 @@ STATE_FROM_EXPLOSION = {
     None: None,
 }
 
-
-# ECSN remnants do not depend on the CCSN mechanism: the proto-NS is the
-# whole remnant and there is no fallback, as in Giacobbo & Mapelli (2020).
+# NS masses from ECSNe are computed separately from those in the CCSN 
+# mechanism. The whole remnant is treated as a PNS, and there is no
+# fallback (following Giacobbo & Mapelli 2020).
 def ECSN_mass_Tauris(star):
     return star.co_core_mass, 0.0, "NS"
 
@@ -58,8 +54,20 @@ ECSN_MASS_OPTIONS = {
     None:ECSN_mass_No_ECSN,
 }
 
+class PPISN_Mass_Base(ABC):
+    """Mass left after pulsational pair instability (PPI)."""
+    def __init__(self,remnant_mass,**kwargs):
+        # the remnant-mass prescription, for PPI prescriptions that need it
+        self.remnant_mass = remnant_mass
+
+    @abstractmethod
+    def __call__(self,star,explosion):
+        """Return the mass left after the pulses, nan if the star is disrupted."""
+        raise NotImplementedError
+
 def PISN_mass_Marchant(star):
-    """Mass left after pulsational pair instability, from Marchant+19.
+    """
+    Mass left after pulsational pair instability, from Marchant+19.
 
     8th-order polynomial fit of the BH masses in table 1 of Marchant et al.
     (2019), see the COSMIC paper (Breivik et al. 2020). Valid for the PPISN
@@ -81,25 +89,15 @@ def PISN_mass_Marchant(star):
         - 4.13587235e-8 * m_He_core ** 8.0
     )
 
-class PPISN_Mass_Base(ABC):
-    """Mass left after pulsational pair instability (PPI)."""
-    def __init__(self,remnant_mass,**kwargs):
-        # the remnant-mass prescription, for PPI prescriptions that need it
-        self.remnant_mass = remnant_mass
-
-    @abstractmethod
-    def __call__(self,star,explosion):
-        """Return the mass left after the pulses, nan if the star is disrupted."""
-        raise NotImplementedError
-
-
 class PPISN_Mass_Marchant19(PPISN_Mass_Base):
     def __call__(self,star,explosion):
         return PISN_mass_Marchant(star)
 
 
 class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
-    """Hendriks et al. (2023), MNRAS, 526, 4130.
+    """
+    Mass left after pulsational pair instability from 
+    Hendriks et al. (2023), MNRAS, 526, 4130.
 
     The pulses remove delta_M_PPI (Eq. 6) from the star, then the
     remnant-mass prescription is applied to what is left. A remnant below
@@ -130,8 +128,8 @@ class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
         stripped_star.co_core_mass = min(star.co_core_mass, m_after_pulses)
         # NOTE: uses the explosion outcome of the original star; on main an
         # engine re-decides for the stripped star (to revisit with engines)
-        m_rembar, _, _ = self.remnant_mass._get_rem_mass_CCSN(stripped_star,
-                                                              explosion)
+        m_rembar, _, _ = self.remnant_mass._get_rem_mass_core_collapse(
+            stripped_star, explosion)
         if m_rembar < 10.0:
             return np.nan
         return m_rembar
@@ -188,7 +186,7 @@ class Remnant_Mass_Base(ABC):
         elif SN_type=="ECSN":
             return (SN_type, *self._get_rem_mass_ECSN(star))
         elif SN_type=="CCSN":
-            return (SN_type, *self._get_rem_mass_CCSN(star,explosion))
+            return (SN_type, *self._get_rem_mass_core_collapse(star,explosion))
         elif SN_type=="PPISN":
             return self._get_rem_mass_PPISN(star,explosion)
         elif SN_type=="PISN":
@@ -197,36 +195,49 @@ class Remnant_Mass_Base(ABC):
             raise ValueError(f"Invalid SN type {SN_type!r} passed during remnant mass calculation")
 
     def _get_rem_mass_PPISN(self,star,explosion):
-        """Pulsational pair instability: pulses remove mass before collapse.
+        """
+        Pulsational pair instability pulses remove mass before collapse.
 
         The CCSN remnant mass is capped at the mass left after the pulses.
         If the cap does not reduce it, the star is labelled CCSN, and if the
-        pulses disrupt the star it is labelled PISN, as on main.
+        pulses disrupt the star it is labelled PISN.
         """
-        m_rembar, f_fb, state = self._get_rem_mass_CCSN(star,explosion)
+        m_rembar, f_fb, state = self._get_rem_mass_core_collapse(star,explosion)
         m_after_pulses = self._mass_after_pulses(star,explosion)
         if np.isnan(m_after_pulses):
-            # the pulses disrupt the star: a PISN after all
+            # the pulses disrupt the star, label changes to a PISN
             return "PISN", np.nan, f_fb, "massless_remnant"
         if m_rembar > m_after_pulses:
             return "PPISN", m_after_pulses, f_fb, state
         return "CCSN", m_rembar, f_fb, state
 
     def _get_rem_mass_PISN(self,star,explosion):
-        """Pair-instability SN: the star is disrupted, no remnant is left."""
-        # f_fb is kept from the CCSN prescription, as on main, where it is
-        # stored even for disrupted stars
-        _, f_fb, _ = self._get_rem_mass_CCSN(star,explosion)
+        """Pair-instability SNe disrupt the star, leaving no remnant behind"""
+        # f_fb is kept from the CCSN prescription
+        _, f_fb, _ = self._get_rem_mass_core_collapse(star,explosion)
         return np.nan, f_fb, "massless_remnant"
 
     def _m_collapsing(self,star):
-        """Mass that collapses: the whole star, or only its He core."""
+        """Choose the mass that collapses. Either the whole star, or only its He core"""
         if self.conserve_hydrogen_envelope:
             return star.mass
         return star.he_core_mass
 
     def _get_rem_mass_direct_collapse(self,star):
+        """Failed explosion: the whole collapsing mass forms a BH."""
         return self._m_collapsing(star), 1.0, "BH"
+
+    def _get_rem_mass_core_collapse(self,star,explosion):
+        """
+        Return (m_rembar, f_fb, state) after the core collapse of the star.
+
+        A failed explosion ("BH_direct", e.g. above the pair-instability gap)
+        is a direct collapse for every mechanism; otherwise the mechanism's
+        CCSN prescription applies.
+        """
+        if explosion == "BH_direct":
+            return self._get_rem_mass_direct_collapse(star)
+        return self._get_rem_mass_CCSN(star,explosion)
 
     def _get_rem_mass_ECSN(self,star):
         return ECSN_MASS_OPTIONS[self.ECSN_option](star)
@@ -291,7 +302,7 @@ class Remnant_Mass_Fryer_delayed(Remnant_Mass_Fryer12):
             b = -11.0 * a + 1.0
             return (a * m_CO + b) * m_outside_proto
         else:
-            return m_outside_proto                      # f_fb = 1
+            return m_outside_proto
 
 
 class Remnant_Mass_Fryer_rapid(Remnant_Mass_Fryer12):
@@ -309,13 +320,13 @@ class Remnant_Mass_Fryer_rapid(Remnant_Mass_Fryer12):
         elif m_CO < 6.0:
             return 0.286 * m_CO - 0.514
         elif m_CO < 7.0:
-            return m_outside_proto                      # f_fb = 1
+            return m_outside_proto
         elif m_CO < 11.0:
             a = 0.25 - 1.275 / m_outside_proto
             b = -11.0 * a + 1.0
             return (a * m_CO + b) * m_outside_proto
         else:
-            return m_outside_proto                      # f_fb = 1
+            return m_outside_proto
 
 
 
@@ -349,7 +360,6 @@ REMNANT_MASS_PRESCRIPTIONS = {
 }
 
 
-# DAVID (2026.09.15): Add functionality for checking if WD, ECSN, PISN or CCSN
 def WD_mass(star):
     m_co_core = star.co_core_mass
     m_He_core = star.he_core_mass

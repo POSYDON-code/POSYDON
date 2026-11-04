@@ -13,7 +13,7 @@ SN_MECHANISMS = [
 ]
 
 # Deprecated mechanisms, with the settings that reproduce them. They still
-# work, but raise a DeprecationWarning and will be removed in the future.
+# work, but raise a DeprecationWarning and might be removed in the future.
 DEPRECATED_MECHANISMS = {
     "direct_he_core": {"mechanism": "direct",
                        "conserve_hydrogen_envelope": False},
@@ -44,8 +44,9 @@ def replace_deprecated_mechanism(config):
     new_config.update(replacement)
     return new_config
 
-# Possible outcomes of an explosion criterion:
-#   "NS"          : successful explosion leaving a neutron star
+# Possible outcomes of the explosion criteria:
+#   "NS"          : successful explosion, creates a neutron star
+#                   (Note that this does not mean NSs don't experience fallback)
 #   "BH_fallback" : successful explosion, black hole formed by fallback
 #   "BH_direct"   : failed explosion, direct collapse to a black hole
 #   None          : no criterion; the remnant mass decides NS vs BH
@@ -67,10 +68,11 @@ class CCSN_check_base(ABC):
 
 
 class CCSN_check_mass_based(CCSN_check_base):
-    """No explosion criterion: NS vs BH is decided by the remnant mass.
+    """
+    NS vs BH is decided directly by the remnant mass prescription.
 
-    Used by mechanisms whose remnant mass prescription sets the outcome on
-    its own (Fryer+12, direct collapse): the remnant is a BH if its mass
+    Used by mechanisms where the remnant mass prescription sets the outcome on
+    its own (Fryer+12, direct collapse). The remnant is a BH if its mass
     exceeds max_NS_mass, and a NS otherwise.
     """
     def __call__(self,star):
