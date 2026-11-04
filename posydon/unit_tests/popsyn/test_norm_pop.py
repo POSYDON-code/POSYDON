@@ -5,6 +5,7 @@ __authors__ = [
 ]
 
 import os
+import warnings
 
 import numpy as np
 import pandas as pd
@@ -19,6 +20,7 @@ from posydon.config import PATH_TO_POSYDON
 from posydon.popsyn import distributions, norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.utils.common_functions import orbital_period_from_separation
+from posydon.utils.posydonwarning import ValueWarning
 
 
 # Dummy IMF to simulate a valid IMF pdf
@@ -156,7 +158,7 @@ class TestGetIMFPdf:
 
 
 
-class TestGetMassRatioPdf:
+class TestGetMassRatioDistribution:
     def test_flat_mass_ratio_pdf(self):
         # kwargs without q_min and q_max to trigger flat_mass_ratio branch
         kwargs = {
@@ -166,7 +168,7 @@ class TestGetMassRatioPdf:
             'secondary_mass_min': 5,
             'secondary_mass_max': 50
         }
-        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        q_pdf = norm_pop.get_mass_ratio_distribution(kwargs).pdf
         # For m1 = 10, minimum = max(5/10, 0.05) = 0.5 and
         # maximum = min(50/10, 1) = 1, so pdf = 1/(1-0.5) = 2.
         m1_val = 10
@@ -187,7 +189,7 @@ class TestGetMassRatioPdf:
             'q_min': 0.2,
             'q_max': 0.8,
         }
-        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        q_pdf = norm_pop.get_mass_ratio_distribution(kwargs).pdf
         # In alternative branch, pdf returns 1/(q_max-q_min) for q in [q_min,q_max]
         result = q_pdf(0.5*(kwargs['q_min']+kwargs['q_max']), None)
         assert np.all(result == 1.0/(kwargs['q_max']-kwargs['q_min']))
@@ -204,7 +206,7 @@ class TestGetMassRatioPdf:
             'secondary_mass_scheme': scheme
         }
         with pytest.raises(ValueError, match="secondary_mass_scheme"):
-            norm_pop.get_mass_ratio_pdf(kwargs)
+            norm_pop.get_mass_ratio_distribution(kwargs)
 
     def test_power_law_mass_ratio_pdf(self):
         """Test that power_law_mass_ratio scheme returns correct PDF values."""
@@ -214,7 +216,7 @@ class TestGetMassRatioPdf:
             'q_min': 0.1,
             'q_max': 0.9,
         }
-        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        q_pdf = norm_pop.get_mass_ratio_distribution(kwargs).pdf
         # alpha=0 gives a flat distribution over (0.1, 0.9]
         result_in = q_pdf(0.5, None)
         assert result_in > 0
@@ -227,7 +229,7 @@ class TestGetMassRatioPdf:
             'secondary_mass_scheme': 'power_law_mass_ratio',
             'mass_ratio_slope': 1.0,
         }
-        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        q_pdf = norm_pop.get_mass_ratio_distribution(kwargs).pdf
         # Default q_min=0.05, q_max=1.0; value inside range should be positive
         result = q_pdf(0.5, None)
         assert result > 0
@@ -246,7 +248,7 @@ class TestGetMassRatioPdf:
         }
         missing = 'q_max' if 'q_min' in given else 'q_min'
         with pytest.raises(KeyError, match=missing):
-            norm_pop.get_mass_ratio_pdf(kwargs)
+            norm_pop.get_mass_ratio_distribution(kwargs)
 
     def test_primary_mass_min_below_secondary_mass_min_raises(self):
         # The sampler rejects primaries lighter than secondary_mass_min.
@@ -258,7 +260,7 @@ class TestGetMassRatioPdf:
             'secondary_mass_max': 140,
         }
         with pytest.raises(ValueError, match="secondary_mass_min"):
-            norm_pop.get_mass_ratio_pdf(kwargs)
+            norm_pop.get_mass_ratio_distribution(kwargs)
 
     def test_flat_mass_ratio_pdf_outside_primary_range(self):
         # Evaluating at m1 outside the primary mass range (e.g. simulated
@@ -270,14 +272,12 @@ class TestGetMassRatioPdf:
             'secondary_mass_min': 1,
             'secondary_mass_max': 140,
         }
-        q_pdf = norm_pop.get_mass_ratio_pdf(kwargs)
+        q_pdf = norm_pop.get_mass_ratio_distribution(kwargs).pdf
         # m1 = 1 = secondary_mass_min: empty range (width 0)
         # m1 = 0.5: negative width
         result = q_pdf(np.array([0.5, 1.0]), np.array([1.0, 0.5]))
         assert np.all(result == 0)
 
-
-class TestGetMassRatioDistribution:
     @mark.parametrize('kwargs, expected', [
         ({'secondary_mass_scheme': 'flat_mass_ratio',
           'primary_mass_min': 7, 'primary_mass_max': 140,
@@ -1067,6 +1067,52 @@ class TestReweighting():
         assert len(weights) == len(base_pop_data)
         assert np.all(weights >= 0)
         assert np.allclose(weights, 1/M_sim)
+
+    @mark.parametrize('pop_m1_max', [140, 250])
+    def test_systems_outside_simulation_warn(self, base_simulation_kwargs,
+                                             pop_m1_max):
+        '''Systems with zero simulation probability get weight 0 and one
+        warning with their count. With pop_m1_max=140 the population PDF is
+        zero too (0/0 = nan), with 250 it is not (x/0 = inf).'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        # two systems above the simulated primary_mass_max of 140 Msun
+        data.loc[[0, 1], 'S1_mass_i'] = 200.
+        data.loc[[0, 1], 'S2_mass_i'] = 100.
+        data.loc[[0, 1], 'state_i'] = 'detached'
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = pop_m1_max
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with pytest.warns(ValueWarning,
+                          match="2 of 1000 systems have zero probability "
+                                "under the simulation parameters"):
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        assert np.all(np.isfinite(weights))
+        assert np.all(weights[:2] == 0)
+        assert np.all(weights[2:] > 0)
+
+    def test_narrower_population_does_not_warn(self, base_simulation_kwargs):
+        '''Systems outside the requested population (but inside the
+        simulation) get weight 0 without the outside-simulation warning.'''
+        base_simulation_kwargs['number_of_binaries'] = 1000
+        data = pop_data(base_simulation_kwargs.copy())
+        population_kwargs = base_simulation_kwargs.copy()
+        population_kwargs['primary_mass_max'] = 20
+        M_sim = data['S1_mass_i'].sum() + data['S2_mass_i'].sum()
+
+        with warnings.catch_warnings():
+            warnings.filterwarnings("error", category=ValueWarning,
+                                    message=r"\d+ of \d+ systems have zero")
+            weights = norm_pop.calculate_model_weights(
+                data, M_sim, base_simulation_kwargs, population_kwargs)
+
+        outside_population = data['S1_mass_i'] > 20
+        assert np.any(outside_population)
+        assert np.all(weights[outside_population] == 0)
+        assert np.all(weights[~outside_population] > 0)
 
 
     def test_mass_ratio_extension(self,

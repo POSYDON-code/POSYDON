@@ -12,10 +12,11 @@ therefore lie where the PDF is non-zero.
   generator, which returns values in [0, 1), so samples lie in [min, max).
   The upper bound has zero probability, so this does not change the
   distribution, and every sample lies inside the PDF's interval.
-- Mass ratio distributions (`MassRatioDistribution` subclasses): q = 0 is
-  not a physical mass ratio, so both the PDF and the samples use
-  (q_lower, q_upper], excluding the lower and including the upper bound.
-  Samples are drawn as q_upper - u * (q_upper - q_lower) with u in [0, 1).
+- Mass ratio distributions (`MassRatioDistribution` subclasses) follow the
+  same convention, [q_lower, q_upper] for the PDF and [q_lower, q_upper)
+  for the samples, with one exception: q = 0 is not a physical mass ratio.
+  The PDF is zero at q = 0 and the samplers never return it; a sample of
+  exactly 0 (only possible for q_lower = 0) is redrawn.
 
 Transformed samples (e.g. 10**x for log-uniform distributions) can differ
 from the bounds by floating-point rounding; samples are not clipped.
@@ -32,9 +33,10 @@ from scipy.stats import truncnorm
 class MassRatioDistribution:
     """Shared support convention of the mass ratio distributions.
 
-    The mass ratio q = m2/m1 lies in (q_lower, q_upper]: the lower bound is
-    excluded, so q = 0 is never a valid mass ratio, and the upper bound is
-    included. Both `pdf` and `rvs` of the subclasses use this interval.
+    Like the other distributions, the PDF of the mass ratio q = m2/m1 is
+    defined on the closed interval [q_lower, q_upper] and samples lie in
+    [q_lower, q_upper). In addition, q = 0 is never a valid mass ratio: the
+    PDF is zero at q = 0 and the samplers never return it.
 
     Subclasses with fixed bounds set `q_min` and `q_max`; subclasses whose
     bounds depend on the primary mass override `support`.
@@ -51,12 +53,12 @@ class MassRatioDistribution:
         Returns
         -------
         tuple
-            Lower (excluded) and upper (included) bound of q.
+            Lower and upper bound of q (both included, except q = 0).
         """
         return self.q_min, self.q_max
 
     def in_support(self, q, m1=None):
-        """Whether q lies in (q_lower, q_upper].
+        """Whether q lies in [q_lower, q_upper] and q > 0.
 
         Parameters
         ----------
@@ -71,17 +73,33 @@ class MassRatioDistribution:
         """
         q_lower, q_upper = self.support(m1)
         q = np.asarray(q, dtype=float)
-        return (q > q_lower) & (q <= q_upper)
+        return (q > 0) & (q >= q_lower) & (q <= q_upper)
 
     @staticmethod
-    def _uniform_in_support(q_lower, q_upper, size, rng):
-        """Draw uniformly from (q_lower, q_upper].
+    def _redraw_zeros(q, redraw):
+        """Replace samples with q = 0 by new draws.
 
-        rng.uniform draws u from [0, 1), so q_upper - u * (q_upper - q_lower)
-        excludes the lower bound and includes the upper bound.
+        A sample of exactly 0 is only possible if q_lower = 0 and the
+        uniform random number is exactly 0. Redrawing it leaves the
+        distribution unchanged.
+
+        Parameters
+        ----------
+        q : ndarray
+            Samples, modified in place.
+        redraw : callable
+            redraw(mask) returns new samples for the entries in mask.
+
+        Returns
+        -------
+        ndarray
+            Samples without q = 0.
         """
-        u = rng.uniform(size=size)
-        return q_upper - u * (q_upper - q_lower)
+        zero = q == 0
+        while np.any(zero):
+            q[zero] = redraw(zero)
+            zero = q == 0
+        return q
 
 
 class FlatMassRatio(MassRatioDistribution):
@@ -89,7 +107,8 @@ class FlatMassRatio(MassRatioDistribution):
 
     A uniform distribution for mass ratios q = m2/m1 within specified bounds.
     This distribution assigns equal probability to all mass ratios within the
-    given range (q_min, q_max], exclusive bottom, inclusive top.
+    given range [q_min, q_max]; q = 0 is excluded (see
+    `MassRatioDistribution`).
 
     Parameters
     ----------
@@ -211,7 +230,7 @@ class FlatMassRatio(MassRatioDistribution):
     def rvs(self, size=1, rng=None):
         """Draw random samples from the flat mass ratio distribution.
 
-        Samples lie in (q_min, q_max], like the PDF.
+        Samples lie in [q_min, q_max) and are never 0.
 
         Parameters
         ----------
@@ -228,7 +247,10 @@ class FlatMassRatio(MassRatioDistribution):
         if rng is None:
             rng = np.random.default_rng()
 
-        return self._uniform_in_support(self.q_min, self.q_max, size, rng)
+        q = np.asarray(rng.uniform(self.q_min, self.q_max, size=size))
+        return self._redraw_zeros(
+            q, lambda zero: rng.uniform(self.q_min, self.q_max,
+                                        size=np.count_nonzero(zero)))
 
 
 class ConditionalFlatMassRatio(MassRatioDistribution):
@@ -237,7 +259,7 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
     The secondary mass is limited to [m2_min, m2_max] and q = m2/m1 to 1,
     which gives for each primary mass m1
 
-        q | m1 ~ U(max(m2_min/m1, 0), min(m2_max/m1, 1)].
+        q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)], q > 0.
 
     This is the `flat_mass_ratio` scheme of the population sampler when the
     secondary mass bounds are given.
@@ -300,9 +322,8 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         Returns
         -------
         tuple of float or ndarray
-            q_lower = max(m2_min/m1, 0) (excluded) and
-            q_upper = min(m2_max/m1, 1) (included). If q_upper <= q_lower,
-            no companion is possible for that m1.
+            q_lower = max(m2_min/m1, 0) and q_upper = min(m2_max/m1, 1).
+            If q_upper <= q_lower, no companion is possible for that m1.
         """
         m1 = np.asarray(m1, dtype=float)
         return (np.maximum(self.m2_min / m1, 0.0),
@@ -327,14 +348,15 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         q, m1 = np.broadcast_arrays(np.asarray(q, dtype=float),
                                     np.asarray(m1, dtype=float))
         q_lower, q_upper = self.support(m1)
-        valid = self.in_support(q, m1)
         width = q_upper - q_lower
+        # width <= 0: no companion possible for this m1
+        valid = self.in_support(q, m1) & (width > 0)
         return np.divide(1.0, width, out=np.zeros_like(width), where=valid)
 
     def rvs(self, m1, rng=None):
         """Draw one mass ratio for each primary mass.
 
-        Samples lie in (q_lower(m1), q_upper(m1)], like the PDF.
+        Samples lie in [q_lower(m1), q_upper(m1)) and are never 0.
 
         Parameters
         ----------
@@ -361,14 +383,16 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         if np.any(q_upper <= q_lower):
             raise ValueError("No valid mass ratio for primary masses "
                              "m1 <= m2_min.")
-        return self._uniform_in_support(q_lower, q_upper, m1.shape, rng)
+        q = rng.uniform(q_lower, q_upper)
+        return self._redraw_zeros(
+            q, lambda zero: rng.uniform(q_lower[zero], q_upper[zero]))
 
 
 class PowerLawMassRatio(MassRatioDistribution):
     """Power law mass ratio distribution for binary star systems.
 
     A distribution where the PDF follows q^alpha within specified bounds
-    (q_min, q_max], exclusive bottom, inclusive top.
+    [q_min, q_max]; q = 0 is excluded (see `MassRatioDistribution`).
 
     Parameters
     ----------
@@ -488,8 +512,8 @@ class PowerLawMassRatio(MassRatioDistribution):
     def rvs(self, size=1, rng=None):
         """Draw random samples from the power law mass ratio distribution.
 
-        Uses the analytic inverse CDF; samples lie in (q_min, q_max], like
-        the PDF.
+        Uses the analytic inverse CDF; samples lie in [q_min, q_max) and
+        are never 0.
 
         Parameters
         ----------
@@ -506,12 +530,17 @@ class PowerLawMassRatio(MassRatioDistribution):
         if rng is None:
             rng = np.random.default_rng()
 
-        # v = 1 - u lies in (0, 1], so the samples lie in (q_min, q_max]
-        v = 1.0 - rng.uniform(size=size)
+        q = np.asarray(self._inverse_cdf(rng.uniform(size=size)))
+        return self._redraw_zeros(
+            q, lambda zero: self._inverse_cdf(
+                rng.uniform(size=np.count_nonzero(zero))))
+
+    def _inverse_cdf(self, u):
+        """Mass ratio at cumulative probability u in [0, 1]."""
         if np.isclose(self.alpha, -1.0):
-            return self.q_min * (self.q_max / self.q_min)**v
+            return self.q_min * (self.q_max / self.q_min)**u
         a1 = self.alpha + 1.0
-        return (self.q_min**a1 + v * (self.q_max**a1 - self.q_min**a1))**(1.0 / a1)
+        return (self.q_min**a1 + u * (self.q_max**a1 - self.q_min**a1))**(1.0 / a1)
 
 
 class Sana12Period():

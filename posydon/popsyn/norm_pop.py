@@ -19,6 +19,7 @@ from posydon.popsyn.distributions import (
     Sana12Period,
 )
 from posydon.utils.common_functions import orbital_separation_from_period
+from posydon.utils.posydonwarning import Pwarn
 
 
 def get_IMF_pdf(kwargs):
@@ -137,23 +138,6 @@ def get_mass_ratio_distribution(kwargs):
                          "supported for normalisation. Supported schemes: "
                          "['flat_mass_ratio', 'power_law_mass_ratio']")
 
-def get_mass_ratio_pdf(kwargs):
-    """Function that returns the mass ratio PDF function
-
-    See `get_mass_ratio_distribution` for the supported schemes.
-
-    Parameters
-    ----------
-    kwargs : dict
-        Dictionary containing the simulation parameters
-
-    Returns
-    -------
-    pdf : function
-        Function `pdf(q, m1=None)` that returns the mass ratio PDF
-    """
-    return get_mass_ratio_distribution(kwargs).pdf
-
 def get_binary_fraction_pdf(kwargs):
     '''get the binary fraction pdf function
 
@@ -254,7 +238,7 @@ def get_pdf(kwargs, mass_pdf=False):
     """
 
     IMF_pdf = get_IMF_pdf(kwargs)
-    q_pdf = get_mass_ratio_pdf(kwargs)
+    q_pdf = get_mass_ratio_distribution(kwargs).pdf
     f_b_pdf = get_binary_fraction_pdf(kwargs)
     period_pdf = get_period_pdf(kwargs)
 
@@ -427,7 +411,16 @@ def calculate_model_weights(pop_data,
                          P=pop_data['orbital_period_i'],
                          binary=binary_mask)
 
-    output = (weight_pop / weight_sim) * factor
-    output[np.isnan(output)] = 0.0
-    output[np.isinf(output)] = 0.0
+    # Systems with zero probability under the simulation parameters give
+    # inf/nan; they lie outside the simulated parameter space and get weight 0.
+    with np.errstate(divide='ignore', invalid='ignore'):
+        output = (weight_pop / weight_sim) * factor
+    outside = ~np.isfinite(output)
+    if np.any(outside):
+        Pwarn(f"{np.count_nonzero(outside)} of {len(output)} systems have "
+              "zero probability under the simulation parameters, i.e. they "
+              "lie outside the simulated parameter space. Their weights are "
+              "set to 0. Check that the simulation parameters match the "
+              "sampled population.", "ValueWarning")
+        output[outside] = 0.0
     return output

@@ -117,7 +117,7 @@ class TestFlatMassRatio:
         q_values = np.linspace(custom_flat_ratio.q_min, custom_flat_ratio.q_max, 10)
         pdf_values = custom_flat_ratio.pdf(q_values)
         expected_pdf = custom_flat_ratio.norm * np.ones_like(q_values)
-        expected_pdf[0] = 0.0  # q_values[0] is equal to q_min, which is outside the valid range
+        # q_values[0] is q_min, which is included
         np.testing.assert_allclose(pdf_values, expected_pdf)
 
     def test_pdf_outside_range(self, custom_flat_ratio):
@@ -1302,12 +1302,12 @@ class TestPowerLawMassRatio:
             custom_power_law_mass_ratio.pdf(q_above), np.zeros_like(q_above)
         )
 
-    def test_pdf_at_q_min_excluded(self, custom_power_law_mass_ratio):
-        """Test that q_min itself is excluded (open lower bound)."""
+    def test_pdf_at_q_min_included(self, custom_power_law_mass_ratio):
+        """Test that q_min itself is included (closed lower bound)."""
         pdf_at_qmin = custom_power_law_mass_ratio.pdf(
             np.array([custom_power_law_mass_ratio.q_min])
         )
-        assert pdf_at_qmin[0] == 0.0
+        assert pdf_at_qmin[0] > 0.0
 
     def test_normalization_integral(self, custom_power_law_mass_ratio):
         """Test that the PDF integrates to 1 over the valid range."""
@@ -1379,10 +1379,10 @@ class TestConditionalFlatMassRatio:
         assert np.isclose(integral, 1.0)
 
     def test_pdf_values(self, q_dist):
-        # m1 = 100: q in (0.35/100, 0.5], pdf = 1/(0.5 - 0.35/100)
+        # m1 = 100: q in [0.35/100, 0.5], pdf = 1/(0.5 - 0.35/100)
         q_lower, _ = q_dist.support(100.)
-        q = np.array([q_lower, 0.2, 0.5, 0.6])
-        expected = np.array([0.0, 1, 1, 0.0]) / (0.5 - q_lower)
+        q = np.array([0.003, q_lower, 0.2, 0.5, 0.6])
+        expected = np.array([0.0, 1, 1, 1, 0.0]) / (0.5 - q_lower)
         np.testing.assert_allclose(q_dist.pdf(q, 100.), expected)
 
     def test_pdf_broadcasting(self, q_dist):
@@ -1413,7 +1413,8 @@ class TestConditionalFlatMassRatio:
 
 
 @pytest.fixture(params=['flat', 'flat_q_min_0', 'power_law_-1',
-                        'power_law_1.5', 'conditional'])
+                        'power_law_1.5', 'conditional',
+                        'conditional_m2_min_0'])
 def mass_ratio_case(request):
     """(pdf, rvs, q_lower, q_upper) of each mass ratio distribution, with
     m1 fixed to 10 Msun for the m1-dependent one."""
@@ -1426,7 +1427,8 @@ def mass_ratio_case(request):
     elif request.param == 'power_law_1.5':
         dist = PowerLawMassRatio(alpha=1.5, q_min=0.0, q_max=1.0)
     else:
-        dist = ConditionalFlatMassRatio(m2_min=1.0, m2_max=8.0)
+        m2_min = 0.0 if request.param == 'conditional_m2_min_0' else 1.0
+        dist = ConditionalFlatMassRatio(m2_min=m2_min, m2_max=8.0)
         q_lower, q_upper = dist.support(10.)
         return (lambda q: dist.pdf(q, 10.),
                 lambda size, rng: dist.rvs(m1=np.full(size, 10.), rng=rng),
@@ -1436,13 +1438,31 @@ def mass_ratio_case(request):
         q_lower, q_upper
 
 
-class TestMassRatioSupportConvention:
-    """All mass ratio distributions use q in (q_lower, q_upper], for both
-    the PDF and the samples."""
+class ZeroFirstRNG:
+    """Random generator whose first uniform draw is the lower bound (u = 0),
+    the only way to sample exactly q = 0."""
 
-    def test_pdf_excludes_lower_includes_upper(self, mass_ratio_case):
+    def __init__(self, seed):
+        self._rng = np.random.default_rng(seed)
+        self.calls = 0
+
+    def uniform(self, low=0.0, high=1.0, size=None):
+        self.calls += 1
+        out = np.array(self._rng.uniform(low, high, size), dtype=float)
+        if self.calls == 1:
+            out[...] = np.broadcast_to(low, out.shape)
+        return out
+
+
+class TestMassRatioSupportConvention:
+    """All mass ratio distributions use [q_lower, q_upper] for the PDF and
+    [q_lower, q_upper) for the samples, like the other distributions, but
+    always exclude q = 0."""
+
+    def test_pdf_includes_bounds(self, mass_ratio_case):
         pdf, _, q_lower, q_upper = mass_ratio_case
-        assert pdf(q_lower) == 0
+        if q_lower > 0:
+            assert pdf(q_lower) > 0
         assert pdf(q_upper) > 0
 
     def test_q_zero_excluded(self, mass_ratio_case):
@@ -1456,8 +1476,23 @@ class TestMassRatioSupportConvention:
     def test_rvs_in_support(self, mass_ratio_case):
         _, rvs, q_lower, q_upper = mass_ratio_case
         q = rvs(10000, np.random.default_rng(1))
-        assert np.all(q > q_lower)
+        assert np.all(q >= q_lower)
         assert np.all(q <= q_upper)
+        assert np.all(q > 0)
+
+    def test_rvs_never_zero(self, mass_ratio_case):
+        # the first draw is u = 0, i.e. q = q_lower; for q_lower = 0 the
+        # samplers must redraw it
+        _, rvs, q_lower, _ = mass_ratio_case
+        rng = ZeroFirstRNG(3)
+        q = rvs(5, rng)
+        assert len(q) == 5
+        assert np.all(q > 0)
+        if q_lower > 0:
+            assert q[0] == q_lower
+            assert rng.calls == 1
+        else:
+            assert rng.calls == 2
 
     def test_rvs_follow_pdf(self, mass_ratio_case):
         pdf, rvs, q_lower, _ = mass_ratio_case
