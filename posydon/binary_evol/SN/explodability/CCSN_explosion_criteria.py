@@ -1,108 +1,99 @@
-import numpy as np
 from abc import ABC, abstractmethod
 
-from posydon.utils.common_functions import (  # CO_radius,; calculate_Patton20_values_at_He_depl,; inspiral_timescale_from_separation,; orbital_period_from_separation,; rotate,; separation_evol_wind_loss,; set_binary_to_failed,
-    is_number,
-)
-from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
 
-SN_MECHANISM = [
+SN_MECHANISMS = [
     "Fryer+12-rapid",
     "Fryer+12-delayed",
     "direct",
-    "direct_he_core",
     "Sukhbold+16-engine",
     "Patton&Sukhbold20-engine",
     "Couch+20-engine",
     "Maltsev+25-engine",
 ]
 
-def get_CCSN_prescription(**kwargs):
-    option = kwargs['mechanism']
-    if option=="Fryer+12-rapid":
-        return CCSN_check_Fryer12_rapid(**kwargs)
-    elif option=="Fryer+12-delayed":
-        return CCSN_check_Fryer12_delayed(**kwargs)
-    elif option=="direct":
-        return CCSN_check_direct(**kwargs)
-    elif option=="direct_he_core":
-        return CCSN_check_direct_he_core(**kwargs)
-    elif option=="Sukhbold+16-engine":
-        return CCSN_check_Sukhbold16(**kwargs)
-    elif option=="Patton&Sukhbold20-engine":
-        return CCSN_check_Patton20(**kwargs)
-    elif option=="Couch+20-engine":
-        return CCSN_check_Couch_20(**kwargs)
-    elif option=="Maltsev+25-engine":
-        return CCSN_check_Maltsev_25(**kwargs)
-    else:
+# Deprecated mechanisms, with the settings that reproduce them. They still
+# work, but raise a DeprecationWarning and will be removed in the future.
+DEPRECATED_MECHANISMS = {
+    "direct_he_core": {"mechanism": "direct",
+                       "conserve_hydrogen_envelope": False},
+}
+
+
+def replace_deprecated_mechanism(config):
+    """Return config with a deprecated mechanism replaced by its equivalent.
+
+    Configurations with any other mechanism are returned unchanged.
+    """
+    option = config['mechanism']
+    if option not in DEPRECATED_MECHANISMS:
+        return config
+    replacement = DEPRECATED_MECHANISMS[option]
+    settings = ", ".join(f"{key}={value!r}"
+                         for key, value in replacement.items())
+    conflicts = {key: config[key] for key, value in replacement.items()
+                 if key != 'mechanism' and config[key] != value}
+    if conflicts:
         raise ValueError(
-            f"Invalid option {option} given to mechanism (i.e. the CCSN prescription). \n" + 
-            "Valid options are {valid_options}.".format(
-                valid_options="".join([x+", " for x in SN_MECHANISM[:-1]])+"or "+SN_MECHANISM[-1]
-            )
+            f"mechanism={option!r} is equivalent to {settings}, so it "
+            f"cannot be combined with {conflicts}."
         )
+    Pwarn(f"mechanism={option!r} is deprecated and will be removed in a "
+          f"future release. Use {settings} instead.", "DeprecationWarning")
+    new_config = config.copy()
+    new_config.update(replacement)
+    return new_config
+
+# Possible outcomes of an explosion criterion:
+#   "NS"          : successful explosion leaving a neutron star
+#   "BH_fallback" : successful explosion, black hole formed by fallback
+#   "BH_direct"   : failed explosion, direct collapse to a black hole
+#   None          : no criterion; the remnant mass decides NS vs BH
+EXPLOSION_OUTCOMES = ("NS", "BH_fallback", "BH_direct", None)
 
 
 class CCSN_check_base(ABC):
     def __init__(self,**kwargs):
         self.mechanism = kwargs['mechanism']
-    def __call__(self,star,**kwargs):
-        raise ModelError("In step_SN, the explosion criterion is undefined")
+        self.verbose = kwargs['verbose']
 
-class CCSN_check_Fryer12_rapid(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-rapid"
-    def __call__(self,star,**kwargs):
-        return
+    @abstractmethod
+    def __call__(self,star):
+        """Return one of EXPLOSION_OUTCOMES for a star classified as CCSN."""
+        raise NotImplementedError
 
-class CCSN_check_Fryer12_delayed(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-rapid"
-    def __call__(self,star,**kwargs):
-        return
+    def __repr__(self):
+        return f"{type(self).__name__}(mechanism={self.mechanism!r})"
 
-class CCSN_check_direct(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
 
-class CCSN_check_direct_he_core(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
+class CCSN_check_mass_based(CCSN_check_base):
+    """No explosion criterion: NS vs BH is decided by the remnant mass.
 
-class CCSN_check_Sukhbold16(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
+    Used by mechanisms whose remnant mass prescription sets the outcome on
+    its own (Fryer+12, direct collapse): the remnant is a BH if its mass
+    exceeds max_NS_mass, and a NS otherwise.
+    """
+    def __call__(self,star):
+        return None
 
-class CCSN_check_Patton20(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
 
-class CCSN_check_Couch_20(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
+CCSN_EXPLOSION_CRITERIA = {
+    "Fryer+12-rapid": CCSN_check_mass_based,
+    "Fryer+12-delayed": CCSN_check_mass_based,
+    "direct": CCSN_check_mass_based,
+}
 
-class CCSN_check_Maltsev_25(CCSN_check_base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
-        self.expl_crit_name = "Fryer+12-delayed"
-    def __call__(self,star,**kwargs):
-        return
+
+def get_CCSN_prescription(**kwargs):
+    option = kwargs['mechanism']
+    if option in CCSN_EXPLOSION_CRITERIA:
+        return CCSN_EXPLOSION_CRITERIA[option](**kwargs)
+    if option in SN_MECHANISMS:
+        raise NotImplementedError(
+            f"The explosion criterion for mechanism {option!r} has not been "
+            "ported to the new step_SN structure yet."
+        )
+    raise ValueError(
+        f"Invalid option {option!r} given to mechanism (i.e. the CCSN "
+        f"prescription). Valid options are: {', '.join(SN_MECHANISMS)}."
+    )

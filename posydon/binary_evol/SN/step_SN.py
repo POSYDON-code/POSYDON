@@ -21,8 +21,15 @@ __credits__ = [
 
 
 ####################################################################################################
+import numpy as np
+
+from posydon.binary_evol.flow_chart import (
+    STAR_STATES_CC,
+)
+
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     get_CCSN_prescription,
+    replace_deprecated_mechanism,
 )
 from posydon.binary_evol.SN.explodability.ECSN_prescriptions import (
     get_ECSN_prescription,
@@ -31,6 +38,9 @@ from posydon.binary_evol.SN.explodability.PISN_prescriptions import (
     get_PISN_prescription,
 )
 from posydon.binary_evol.SN.kicks.kick_prescriptions import get_kick_prescription
+from posydon.binary_evol.SN.remnant_mass.remnant_finaliser import (
+    Remnant_Finaliser,
+)
 from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import (
     get_remnant_mass_prescription,
 )
@@ -67,18 +77,23 @@ class StepSN(object):
             raise ValueError(f"Invalid arguments passed to step_NS: {unknown_kwargs}")
         config = self.DEFAULT_KWARGS.copy()
         config.update(kwargs)
+        config = replace_deprecated_mechanism(config)
         if config["RNG"] is None:
             config["RNG"] = np.random.default_rng()
         for key, value in config.items():
             setattr(self, key, value)
 
-        self._explosion_checksget_ECSN_prescription = (
+        self._SN_type_checks = (
             get_ECSN_prescription(**config),     # -> "WD" | "ECSN" | None
             get_PISN_prescription(**config),     # -> "PISN" | "PPISN" | None
-            get_CCSN_prescription(**config),     # -> "CCSN"
+            lambda star: "CCSN",                 # everything else
         )
-        self._get_remnant_mass = get_remnant_mass_prescription(**kwargs)
-        self._get_kick = get_kick_prescription(**kwargs)
+        # -> "NS" | "BH_fallback" | "BH_direct" | None
+        self._explosion_criterion = get_CCSN_prescription(**config)
+        self._get_remnant_mass = get_remnant_mass_prescription(**config)
+        # turns (SN_type, m_rembar, f_fb, state) into the final remnant
+        self._update_params = Remnant_Finaliser(**config)
+        self._get_kick = get_kick_prescription(**config)
 
     def __call__(self,binary):
         dying_star,other_star = self._select_dying_star(binary)
@@ -105,13 +120,18 @@ class StepSN(object):
             )
 
     def collapse_star(self,star):
-        outcome = self.collapse_outcome(star)
-        m_rem, f_fb = self._remnant_mass(star, outcome)
-        self._update_params(star, outcome, m_rem, f_fb)
+        if star.state not in STAR_STATES_CC:
+            return f"The star cannot collapse: star state {star.state}."
+        SN_type = self.collapse_outcome(star)
+        explosion = (self._explosion_criterion(star)
+                     if SN_type in ("CCSN", "PPISN") else None)
+        SN_type, m_rembar, f_fb, state = self._get_remnant_mass(star, SN_type, explosion)
+        # returns an error message if the collapse fails, else None
+        return self._update_params(star, SN_type, m_rembar, f_fb, state)
 
     def collapse_outcome(self,star):
         # David: make easier to read
-        return next(outcome for outcome in (check(star) for check in self._explosion_checks)
+        return next(outcome for outcome in (check(star) for check in self._SN_type_checks)
                     if outcome is not None)
 
     def _reset_other_star_properties(self, star):

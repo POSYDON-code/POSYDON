@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+import numbers
 
 def get_PISN_prescription(**kwargs):
     option = kwargs['PISN']
@@ -6,6 +7,8 @@ def get_PISN_prescription(**kwargs):
         return PISN_check_Marchant19(**kwargs)
     elif option=="Hendriks+23":
         return PISN_check_Hendriks23(**kwargs)
+    elif isinstance(option,numbers.Real) and not isinstance(option,bool):
+        return PISN_check_constant(**kwargs)
     elif option is None:
         return PISN_check_None(**kwargs)
     else:
@@ -30,8 +33,7 @@ class PISN_check_Marchant19(PISN_check_base):
             return "PPISN"
         if m_He_core > 61.10 and m_He_core < 124.12:
             return "PISN"
-        if m_He_core>=124.12:
-            return "direct_collapse"
+        # above the gap (m_He_core >= 124.12) the star is a CCSN, as on main
         return None
 
 class PISN_check_Hendriks23(PISN_check_base):
@@ -45,8 +47,16 @@ class PISN_check_Hendriks23(PISN_check_base):
         m_CO_core = star.co_core_mass
         if m_CO_core >= self.m_CO_core_PISN_min and m_CO_core <= self.m_CO_core_PISN_max:
             return "PPISN"
-        if m_CO_core>self.m_CO_core_PISN_max:
-            return "direct_collapse"
+        # above the gap the star is a CCSN, as on main
+        return None
+
+class PISN_check_constant(PISN_check_base):
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.PISN_option = float(kwargs['PISN'])
+    def __call__(self,star):
+        if star.he_core_mass>self.PISN_option:
+            return "PPISN"
         return None
 
 class PISN_check_None(PISN_check_base):

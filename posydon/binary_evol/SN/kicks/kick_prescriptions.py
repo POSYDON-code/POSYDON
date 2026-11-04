@@ -4,6 +4,11 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES
 
 # DAVID (2026.09.15): make sure that WDs have 0 kicks.
 
+
+def get_kick_prescription(**kwargs):
+    """Placeholder until the kick module is split and ported."""
+    return None
+
 def orbital_kick(binary,verbose):
     """Do the orbital kick.
 
@@ -355,18 +360,7 @@ def set_kick(
             binary.state = "detached"
 
         binary.event = None
-        b
-    # generate random point in the orbit where the kick happens
-    if not star_that_explodes.natal_kick_mean_anomaly is None:
-        mean_anomaly = star_that_explodes.natal_kick_mean_anomaly
-        # check that ONLY one value is passed and is of type float
-        if not isinstance(mean_anomaly, float):
-            raise ValueError("mean_anomaly must be a single float value."
-                             f"\n mean_anomaly = {mean_anomaly}")
-    else:
-        mean_anomaly = RNG.uniform(0, 2 * np.pi)
-        star_that_explodes.natal_kick_mean_anomaly = mean_anomaly
-    returninary.time = binary.time_history[-1]
+        binary.time = binary.time_history[-1]
         binary.eccentricity = binary.eccentricity_history[-1]
         # TODO: in feature we will make the orbital period a callable
         # property
