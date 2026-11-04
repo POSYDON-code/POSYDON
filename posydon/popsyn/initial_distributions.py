@@ -1,11 +1,8 @@
-"""Build the initial-condition distributions from population parameters.
+"""Build the initial-condition distributions from the population parameters.
 
-These factories are the single place where the population parameters
-(e.g. `primary_mass_scheme`, `orbital_period_min`) are turned into
-distribution objects. They are used both by the population sampler
-(`posydon.popsyn.independent_sample`) and by the normalisation and
-reweighting of populations (`posydon.popsyn.norm_pop`), so that a
-population is reweighted with the same distributions it was sampled from.
+The population sampler (`independent_sample`) and the reweighting
+(`norm_pop`) both use these functions, so a population is reweighted with
+the distributions it was sampled from.
 """
 
 __authors__ = [
@@ -30,43 +27,30 @@ from posydon.popsyn.distributions import (
 
 
 def get_IMF_distribution(kwargs):
-    '''get the IMF distribution
+    '''Get the IMF from `primary_mass_scheme`.
 
-    Supported schemes are the (non-abstract) IMF classes in the IMFs module,
-    e.g. `Salpeter`, `Kroupa1993`, `Kroupa2001`, `Chabrier2003`.
-    Additional parameters can be passed to the scheme
-    by adding them to the kwargs dictionary with the scheme name as the key
-    Example:
-
-    ```
-    kwargs = {
-        'primary_mass_scheme': 'Salpeter',
-        'primary_mass_min': 0.1,
-        'primary_mass_max': 100,
-        'Salpeter': {'alpha': 2.35}
-    }
-    ```
+    Any concrete IMF class in `posydon.popsyn.IMFs` is supported. Its
+    parameters can be given under the scheme name, e.g.
+    `kwargs['Salpeter'] = {'alpha': 2.35}`.
 
     Parameters
     ----------
     kwargs : dict
-        Dictionary containing the parameters.
-        `primary_mass_scheme`, `primary_mass_min`, `primary_mass_max` are required.
-        Additional parameters are required depending on the scheme.
+        Population parameters, including `primary_mass_scheme`,
+        `primary_mass_min` and `primary_mass_max`.
 
     Returns
     -------
-    imf : IMFs.IMFBase
-        IMF distribution with `pdf(m1)`.
+    IMFs.IMFBase
+        The IMF.
 
     Raises
     ------
     ValueError
-        If `primary_mass_scheme` is not an IMF class of the IMFs module.
+        If `primary_mass_scheme` is not an IMF class.
     '''
 
     primary_mass_scheme = kwargs.get('primary_mass_scheme', '')
-    # dynamically retrieve the IMF class from the IMFs module
     imf_class = (getattr(IMFs, primary_mass_scheme, None)
                  if isinstance(primary_mass_scheme, str) else None)
     if not _is_IMF_class(imf_class):
@@ -87,42 +71,31 @@ def _is_IMF_class(obj):
             and not inspect.isabstract(obj))
 
 def get_mass_ratio_distribution(kwargs):
-    """Build the mass ratio distribution from the simulation parameters
-
-    The same distribution classes are used by the population sampler, so
-    the PDF, its support and the sampled mass ratios agree.
+    """Get the mass ratio distribution from `secondary_mass_scheme`.
 
     Supported schemes:
-    - `flat_mass_ratio` for `secondary_mass_scheme`
-        Requires either of the following parameter sets:
-        - `secondary_mass_min`, `secondary_mass_max` and `primary_mass_min`
-          (q bounds depend on m1, as in the sampler)
-        - `q_min` and `q_max` (fixed q bounds)
-    - `power_law_mass_ratio` for `secondary_mass_scheme`
-        Requires the following parameters:
-        - `mass_ratio_slope`: exponent alpha in q^alpha
-        - `q_min` (optional, default 0.05)
-        - `q_max` (optional, default 1.0)
+    - `flat_mass_ratio`: with `secondary_mass_min` and `secondary_mass_max`
+      (bounds depend on m1, as in the sampler), or with `q_min` and `q_max`.
+    - `power_law_mass_ratio`: with `mass_ratio_slope` and optional `q_min`
+      (default 0.05) and `q_max` (default 1.0).
 
     Parameters
     ----------
     kwargs : dict
-        Dictionary containing the simulation parameters
+        Population parameters.
 
     Returns
     -------
-    q_dist : MassRatioDistribution
-        Distribution with `pdf(q, m1)` and `support(m1)`.
+    MassRatioDistribution
+        The mass ratio distribution.
 
     Raises
     ------
     KeyError
         If only one of `q_min` and `q_max` is given for `flat_mass_ratio`.
     ValueError
-        If the `secondary_mass_scheme` is not supported (such as the
-        sampler's `q=1`), if `primary_mass_min` is below
-        `secondary_mass_min` (as in the sampler), or if the bounds are
-        invalid.
+        If the scheme is not supported, or if `primary_mass_min` is below
+        `secondary_mass_min`.
     """
     scheme = kwargs.get('secondary_mass_scheme')
     if scheme == 'flat_mass_ratio':
@@ -145,28 +118,24 @@ def get_mass_ratio_distribution(kwargs):
                          "['flat_mass_ratio', 'power_law_mass_ratio']")
 
 def get_binary_fraction_distribution(kwargs):
-    '''get the binary fraction distribution
+    '''Get the binary fraction from `binary_fraction_scheme`.
 
-    Supported schemes:
-    - `const` with `binary_fraction_const`
-        requires the following parameters to be present:
-        - `binary_fraction_const`
+    Only `const`, with `binary_fraction_const`, is supported.
 
     Parameters
     ----------
     kwargs : dict
-        Dictionary containing the parameters
+        Population parameters.
 
     Returns
     -------
-    f_b_dist : ConstantBinaryFraction
-        Binary fraction distribution with `pdf(binary)` and `f_b`.
+    ConstantBinaryFraction
+        The binary fraction.
 
     Raises
     ------
     ValueError
-        If the `binary_fraction_scheme` is not supported (such as the
-        sampler's `Moe+17-massdependent`).
+        If the scheme is not supported.
     '''
     scheme = kwargs.get('binary_fraction_scheme')
     if scheme == 'const':
@@ -176,32 +145,33 @@ def get_binary_fraction_distribution(kwargs):
                          "Supported schemes: ['const']")
 
 def get_orbital_distribution(kwargs):
-    '''get the orbital period distribution
+    '''Get the orbital period distribution from `orbital_scheme`.
 
-    All returned distributions have `pdf_per_dex(P, m1, q)`, the probability
-    density per dex, i.e. normalised to 1 in log10(P) space, such that they
-    can be compared between schemes.
+    All returned distributions provide `pdf_per_dex(P, m1, q)`.
 
     Supported schemes:
-    - `period` for `orbital_scheme` with `orbital_period_scheme`:
-        - `Sana+12_period_extended`
-        - `power_law`: dN/dlog10(P) ∝ P^`power_law_slope`
-        - `log_power_law`: dN/dlog10(P) ∝ (log10(P))^`power_law_slope`
-    - `separation` for `orbital_scheme` with `orbital_separation_scheme`,
-      converted to a period distribution with `PeriodFromSeparation`:
-        - `log_uniform`
-        - `log_normal` with `log_orbital_separation_mean` and
-          `log_orbital_separation_sigma`
+    - `period`, with `orbital_period_min`, `orbital_period_max` and
+      `orbital_period_scheme`: `Sana+12_period_extended`, `power_law` or
+      `log_power_law` (both with `power_law_slope`).
+    - `separation`, with `orbital_separation_min`, `orbital_separation_max`
+      and `orbital_separation_scheme`: `log_uniform` or `log_normal` (with
+      `log_orbital_separation_mean` and `log_orbital_separation_sigma`),
+      converted to periods with `PeriodFromSeparation`.
 
     Parameters
     ----------
     kwargs : dict
-        Dictionary containing the simulation parameters
+        Population parameters.
 
     Returns
     -------
-    orbital_dist : object
-        Period distribution with `pdf_per_dex(P, m1, q)`.
+    object
+        The orbital period distribution.
+
+    Raises
+    ------
+    ValueError
+        If a scheme is not recognized.
     '''
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
