@@ -12,7 +12,12 @@ from posydon.CLI.io import (
     create_slurm_scripts,
 )
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
-from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
+from posydon.popsyn.io import (
+    DEFAULT_INI_PATH,
+    binarypop_kwargs_from_ini,
+    parse_inifile,
+    simprop_kwargs_from_ini,
+)
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
 
@@ -52,7 +57,8 @@ def check_flow_steps(ini_file):
     '''Checks that the flow and the configured steps match
 
     Every step the flow chart can send a binary to must have a section in the
-    ini file. Steps that are configured but never reached by the flow raise a
+    ini file (or in the default ini file it is stacked on). Step sections that
+    are neither used by the flow nor part of the default ini file raise a
     warning, since they usually point to a typo in a section name.
 
     Parameters
@@ -75,13 +81,16 @@ def check_flow_steps(ini_file):
     configured_steps = {key for key in simprop_kwargs
                         if key.startswith('step_')}
 
+    default_steps = set(parse_inifile(DEFAULT_INI_PATH,
+                                      use_defaults=False).sections())
+
     missing_steps = sorted(flow_steps - configured_steps)
     if missing_steps:
         raise ValueError("The flow uses steps that are not configured in the "
                          f"ini file: {missing_steps}. Add a section for each "
                          "of them.")
 
-    unused_steps = sorted(configured_steps - flow_steps)
+    unused_steps = sorted(configured_steps - flow_steps - default_steps)
     if unused_steps:
         Pwarn(f"The ini file configures steps that the flow never uses: "
               f"{unused_steps}. Check the section names for typos.",

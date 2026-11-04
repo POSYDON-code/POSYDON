@@ -1099,8 +1099,9 @@ def get_formation_times(N_binaries, star_formation="constant", **kwargs): # prag
         burst_time = kwargs.get("burst_time", 0.0)
         return np.ones(N_binaries) * burst_time
 
-    max_time_default = kwargs.get("max_simulation_time", age_of_universe)
-    max_time = kwargs.get("max_time", max_time_default)
+    max_time = kwargs.get("max_time")
+    if max_time is None:
+        max_time = kwargs.get("max_simulation_time", age_of_universe)
 
     if scenario == "constant":
         min_time = kwargs.get("min_time", 0.0)

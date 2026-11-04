@@ -15,16 +15,16 @@ The initialization of the BinaryPopulation object
 -------------------------------------------------
 
 To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics.
-The easiest way is to load in the parameters from the default population ``ini`` file.
+The easiest way is to load the parameters from a population ``ini`` file.
+Your file is read on top of the default population ``ini`` file, so it only
+needs the parameters you want to change
+(see :ref:`the configuration guide <pop-params-guide>`):
 
-.. code-block:: python
+.. code-block:: ini
 
-  import os
-  import shutil
-  from posydon.config import PATH_TO_POSYDON
-
-  path_to_params = os.path.join(PATH_TO_POSYDON, "posydon/popsyn/population_params_default.ini")
-  shutil.copyfile(path_to_params, './population_params.ini')
+  [BinaryPopulation_options]
+    metallicities = [1.]
+    number_of_binaries = 10
 
 
 Here's an example of how to initialize a ``BinaryPopulation`` object:

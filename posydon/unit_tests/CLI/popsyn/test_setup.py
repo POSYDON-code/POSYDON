@@ -159,6 +159,18 @@ class TestFlowStepCheck:
         totest.check_flow_steps("test.ini")
         assert not [w for w in recwarn if "never uses" in str(w.message)]
 
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    def test_unused_default_step_does_not_warn(self, mock_simprop, recwarn):
+        # default sections are always stacked in, so a flow that skips one of
+        # them (here step_dco) is fine
+        mock_simprop.return_value = {
+            'flow': (_flow('step_end'), {}),
+            'step_end': (None, {}),
+            'step_dco': (None, {}),
+        }
+        totest.check_flow_steps("test.ini")
+        assert not [w for w in recwarn if "never uses" in str(w.message)]
+
     def test_default_ini_matches_default_flow(self, recwarn):
         totest.check_flow_steps(DEFAULT_INI)
         assert not [w for w in recwarn if "never uses" in str(w.message)]

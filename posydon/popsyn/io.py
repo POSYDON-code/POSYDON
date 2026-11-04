@@ -18,6 +18,11 @@ from configparser import ConfigParser
 import numpy as np
 import pandas as pd
 
+# The packaged default inifile. User inifiles are stacked on top of it, so a
+# user only has to give the values that differ from the defaults.
+DEFAULT_INI_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                'population_params_default.ini')
+
 BINARYPROPERTIES_DTYPES = {
     'binary_index' : 'int64',
     # The state and event of the system. For more information, see
@@ -345,7 +350,35 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
 
 
 
-def parse_inifile(path, verbose=False):
+def _new_parser():
+    """Return a ConfigParser which keeps the case of the keys."""
+    parser = ConfigParser()
+    parser.optionxform = lambda option: option
+    return parser
+
+
+def _changes_import(default_section, user_section):
+    """Check whether a user section imports another class than the default.
+
+    Parameters
+    ----------
+    default_section, user_section : configparser.SectionProxy
+        The same section in the default and in the user inifile.
+
+    Returns
+    -------
+    bool
+        True if `import` or `absolute_import` differs between the sections.
+    """
+    for key in ('import', 'absolute_import'):
+        default_value = ast.literal_eval(default_section.get(key, 'None'))
+        user_value = ast.literal_eval(user_section.get(key, repr(default_value)))
+        if user_value != default_value:
+            return True
+    return False
+
+
+def parse_inifile(path, verbose=False, use_defaults=True):
     """Parse an inifile for evolving binary populations.
 
     Parameters
@@ -356,6 +389,13 @@ def parse_inifile(path, verbose=False):
         to last.
     verbose : bool
         Print helpful info.
+    use_defaults : bool
+        If True (default), the packaged default inifile
+        (`DEFAULT_INI_PATH`) is read first and the given inifile(s)
+        are stacked on top of it. Hence, an inifile only needs to
+        contain the values that differ from the defaults. A section
+        which changes `import` or `absolute_import`, i.e. which uses
+        another class, replaces the default section instead.
 
     Returns
     -------
@@ -363,9 +403,7 @@ def parse_inifile(path, verbose=False):
         An instance of ConfigParser.
 
     """
-    parser = ConfigParser()
-    # Keys do not become lowercase by default
-    parser.optionxform = lambda option: option
+    parser = _new_parser()
 
     if isinstance(path, str):
         path = os.path.abspath(path)
@@ -391,7 +429,22 @@ def parse_inifile(path, verbose=False):
         raise ValueError("Path must be a string or list of strings. Given {}".
                          format(path))
 
-    files_read = parser.read(path)
+    if use_defaults:
+        parser.read(DEFAULT_INI_PATH)
+        files_read = []
+        for user_path in ([path] if isinstance(path, str) else path):
+            user_parser = _new_parser()
+            user_parser.read(user_path)
+            # a section that swaps in another class does not inherit the
+            # settings of the class it replaces
+            for section in user_parser.sections():
+                if (parser.has_section(section)
+                        and _changes_import(parser[section],
+                                            user_parser[section])):
+                    parser.remove_section(section)
+            files_read += parser.read(user_path)
+    else:
+        files_read = parser.read(path)
     # Catch silent errors from configparser.read
     if len(files_read) == 0:  # pragma: no cover
         raise ValueError("No files were read successfully. Given {}.".
@@ -399,7 +452,7 @@ def parse_inifile(path, verbose=False):
     return parser
 
 
-def simprop_kwargs_from_ini(path, only=None, verbose=False):
+def simprop_kwargs_from_ini(path, only=None, verbose=False, use_defaults=True):
     """Convert an inifile into kwargs for the SimulationProperties class.
 
     Parameters
@@ -416,12 +469,16 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
     verbose : bool
         Print helpful info.
 
+    use_defaults : bool
+        If True (default), stack the inifile(s) on top of the
+        packaged default inifile. See `parse_inifile`.
+
     Returns
     -------
     parser_dict : <class, dict>
         The inifile converted to the kwargs.
     """
-    parser = parse_inifile(path, verbose=verbose)
+    parser = parse_inifile(path, verbose=verbose, use_defaults=use_defaults)
     parser_dict = {}
     for section in parser:
         # skip default section
@@ -501,7 +558,7 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
     return parser_dict
 
 
-def binarypop_kwargs_from_ini(path, verbose=False):
+def binarypop_kwargs_from_ini(path, verbose=False, use_defaults=True):
     """Convert an inifile into kwargs for the BinaryPopulation class.
 
     Parameters
@@ -514,12 +571,16 @@ def binarypop_kwargs_from_ini(path, verbose=False):
     verbose : bool
         Print helpful info.
 
+    use_defaults : bool
+        If True (default), stack the inifile(s) on top of the
+        packaged default inifile. See `parse_inifile`.
+
     Returns
     -------
     parser_dict : <class, dict>
         The inifile converted to the kwargs.
     """
-    parser = parse_inifile(path, verbose=verbose)
+    parser = parse_inifile(path, verbose=verbose, use_defaults=use_defaults)
 
     # make sure the inifile has all of these sections
     for sect_name in ['BinaryPopulation_options', 'BinaryStar_output',

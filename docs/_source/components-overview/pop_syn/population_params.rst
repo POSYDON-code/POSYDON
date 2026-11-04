@@ -14,6 +14,49 @@ This documentation provides a detailed overview of the configuration options ava
     of each parameter for their science case.
 
 
+Default values and your own ini file
+------------------------------------
+
+POSYDON ships a default file, ``posydon/popsyn/population_params_default.ini``,
+which defines every parameter described on this page. Your own
+``population_params.ini`` is read on top of this default file, so it only has
+to contain the parameters you want to change. Every parameter you leave out
+keeps its default value. For example, this is a complete ini file:
+
+.. code-block:: ini
+
+    [BinaryPopulation_options]
+      metallicities = [0.1, 1.]
+      number_of_binaries = 100000
+
+    [step_CE]
+      common_envelope_efficiency = 0.5
+
+    [step_SN]
+      mechanism = 'Sukhbold+16-engine'
+      engine = 'N20'
+
+The rules for combining the two files are:
+
+* A parameter in your file replaces the default value of that parameter.
+* A list, such as ``only_select_columns`` or ``scalar_names``, is replaced as
+  a whole; it is not appended to the default list.
+* A section in your file that changes ``import`` or ``absolute_import`` uses
+  a different class for that step or flow. It then replaces the default
+  section completely, so the settings of the default class are not passed to
+  your class. Only the parameters in your section are used.
+* Sections that only appear in your file, such as a new step, are added.
+
+``posydon-popsyn setup`` checks that every step used by the flow chart is
+defined, and warns about step sections that are neither used by the flow
+chart nor part of the default file, which usually means a typo in the section
+name.
+
+To read only your own file without the defaults, pass ``use_defaults=False``
+to :func:`~posydon.popsyn.io.simprop_kwargs_from_ini` or
+:func:`~posydon.popsyn.io.binarypop_kwargs_from_ini`.
+
+
 Environment Variables
 ---------------------
 
@@ -261,6 +304,16 @@ It evolves the binary object in isolation until Roche lobe overflow occurs.
     - | If true, append quantities achieved from track matching to the binary history.
     - ``True``
 
+  * - ``dt``
+    - | Fixed time step (in years) at which the history is saved.
+      | If ``None``, ``n_o_steps_history`` is used.
+    - ``None``
+
+  * - ``n_o_steps_history``
+    - | Number of steps saved in the history. If both ``dt`` and
+      | ``n_o_steps_history`` are ``None``, the solver steps are saved.
+    - ``None``
+
   * - ``verbose``
     - | Enables verbose mode.
     - ``False``
@@ -355,6 +408,16 @@ This means that this step uses the single stars loaded by the detached step.
     - | If true, append quantities achieved from track matching to the binary history.
     - ``True``
 
+  * - ``dt``
+    - | Fixed time step (in years) at which the history is saved.
+      | If ``None``, ``n_o_steps_history`` is used.
+    - ``None``
+
+  * - ``n_o_steps_history``
+    - | Number of steps saved in the history. If both ``dt`` and
+      | ``n_o_steps_history`` are ``None``, the solver steps are saved.
+    - ``None``
+
   * - ``verbose``
     - | Enables verbose mode.
     - ``False``
@@ -378,6 +441,16 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``import``
     - | The import path for the step and the name of the step class.
     - ``['posydon.binary_evol.DT.step_merged', 'MergedStep']``
+
+  * - ``dt``
+    - | Fixed time step (in years) at which the history is saved.
+      | If ``None``, ``n_o_steps_history`` is used.
+    - ``None``
+
+  * - ``n_o_steps_history``
+    - | Number of steps saved in the history. If both ``dt`` and
+      | ``n_o_steps_history`` are ``None``, the solver steps are saved.
+    - ``None``
 
 Step Initially Single
 ~~~~~~~~~~~~~~~~~~~~~
@@ -427,6 +500,16 @@ This means that this step uses the single stars loaded by the detached step.
   * - ``record_matching``
     - | If true, append quantities achieved from track matching to the binary history.
     - ``True``
+
+  * - ``dt``
+    - | Fixed time step (in years) at which the history is saved.
+      | If ``None``, ``n_o_steps_history`` is used.
+    - ``None``
+
+  * - ``n_o_steps_history``
+    - | Number of steps saved in the history. If both ``dt`` and
+      | ``n_o_steps_history`` are ``None``, the solver steps are saved.
+    - ``None``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -515,6 +598,13 @@ If the energy budget is less than the binding energy, the system is merged.
       * ``'two_phases_stableMT'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second have a stable and fully non-conservative mass transfer from the core to the companion until stripped to the core defined in MESA; in the case of a double CE redirect to ``'two_phases_windloss'``
       * ``'two_phases_windloss'`` : first lose mass till the variable core definition (see ``core_definition_H_fraction``/``core_definition_He_fraction``) with the given ``prescription``; second lose the mass remaining mass above the core defined in MESA as a fast wind
     - ``'two_phases_stableMT'``
+
+  * - ``mass_loss_during_CEE_merged``
+    - | If ``False``, a star that merged during common envelope loses no mass
+      | in this step. If ``True``, mass is removed following the alpha-lambda
+      | prescription, assuming a final separation where the inner core starts
+      | Roche-lobe overflow.
+    - ``False``
 
   * - ``verbose``
     - | Enables verbose mode.
@@ -699,6 +789,15 @@ The merger time due to gravitational wave emission is calculated.
     - | The number of steps interval for the double compact object evolution.
     - ``None``
 
+  * - ``dt``
+    - | Fixed time step (in years) at which the history is saved.
+      | If ``None``, ``n_o_steps_history`` is used.
+    - ``None``
+
+  * - ``verbose``
+    - | Enables verbose mode.
+    - ``False``
+
 Step End
 ~~~~~~~~
 
@@ -871,6 +970,26 @@ It also contains which sampling distributions to use for the initial conditions 
       * ``'custom_log10_histogram'``: sample from a custom log10 histogram rate over time
     - ``'burst'``
 
+  * - ``burst_time``
+    - | Time of the star formation burst (in years).
+      | Used only for ``star_formation = 'burst'``.
+    - ``0.0``
+
+  * - ``min_time``
+    - | Start of the star formation (in years).
+      | Used only for ``star_formation = 'constant'``.
+    - ``0.0``
+
+  * - ``max_time``
+    - | End of the star formation (in years). Used for all ``star_formation``
+      | options except ``'burst'``. If ``None``, ``max_simulation_time`` is used.
+    - ``None``
+
+  * - ``custom_ages_file``
+    - | Path to a file with the binary ages. Used only for the ``'custom_*'``
+      | ``star_formation`` options.
+    - ``None``
+
   * - ``max_simulation_time``
     - | Maximum simulation time (in years).
     - ``13.8e9``
@@ -943,7 +1062,7 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Maximum orbital period (in days).
     - ``6000.0``
 
-  * - ``#orbital_separation_scheme``
+  * - ``orbital_separation_scheme``
     - | Used only for ``orbital_scheme = 'separation'``.
       | Options:
 
@@ -951,19 +1070,21 @@ It also contains which sampling distributions to use for the initial conditions 
       * ``'log_normal'``: log-normal distribution
     - ``'log_uniform'``
 
-  * - ``#orbital_separation_min``
+  * - ``orbital_separation_min``
     - | Minimum orbital separation (in solar radii).
+      | Used only for ``orbital_scheme = 'separation'``.
     - ``5.0``
 
-  * - ``#orbital_separation_max``
+  * - ``orbital_separation_max``
     - | Maximum orbital separation (in solar radii).
+      | Used only for ``orbital_scheme = 'separation'``.
     - ``1e5``
 
-  * - ``#log_orbital_separation_mean``
+  * - ``log_orbital_separation_mean``
     - | Used only for ``orbital_separation_scheme = 'log_normal'``.
     - ``None``
 
-  * - ``#log_orbital_separation_sigma``
+  * - ``log_orbital_separation_sigma``
     - | Used only for ``orbital_separation_scheme = 'log_normal'``.
     - ``None``
 
