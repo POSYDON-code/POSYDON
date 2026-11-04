@@ -7,8 +7,10 @@ used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
 import numpy as np
 import pytest
 from scipy.integrate import quad
+from scipy.stats import kstest
 
 from posydon.popsyn.distributions import (
+    ConditionalFlatMassRatio,
     FlatMassRatio,
     LogNormalSeparation,
     LogUniform,
@@ -1337,3 +1339,129 @@ class TestPowerLawMassRatio:
         dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=1.0)
         integral, _ = quad(dist.pdf, dist.q_min, dist.q_max)
         np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+
+class TestConditionalFlatMassRatio:
+    """Test class for ConditionalFlatMassRatio distribution."""
+
+    @pytest.fixture
+    def q_dist(self):
+        return ConditionalFlatMassRatio(m2_min=0.35, m2_max=50)
+
+    @pytest.mark.parametrize('m2_min, m2_max, match', [
+        (-1.0, 10.0, "m2_min must be >= 0"),
+        (5.0, 5.0, "m2_min must be less than m2_max"),
+        (6.0, 5.0, "m2_min must be less than m2_max"),
+    ])
+    def test_initialization_invalid_parameters(self, m2_min, m2_max, match):
+        with pytest.raises(ValueError, match=match):
+            ConditionalFlatMassRatio(m2_min=m2_min, m2_max=m2_max)
+
+    def test_repr(self, q_dist):
+        assert repr(q_dist) == "ConditionalFlatMassRatio(m2_min=0.35, m2_max=50)"
+
+    def test_repr_html(self, q_dist):
+        html = q_dist._repr_html_()
+        assert "Conditional Flat Mass Ratio Distribution" in html
+        assert "m2_min = 0.35" in html
+        assert "m2_max = 50" in html
+
+    def test_support(self, q_dist):
+        # q_lower = m2_min/m1; q_upper = min(m2_max/m1, 1)
+        q_lower, q_upper = q_dist.support(np.array([7., 35., 100.]))
+        np.testing.assert_allclose(q_lower, [0.05, 0.01, 0.0035])
+        np.testing.assert_allclose(q_upper, [1.0, 1.0, 0.5])
+
+    @pytest.mark.parametrize('m1', [0.5, 7., 35., 100.])
+    def test_pdf_normalised_on_support(self, q_dist, m1):
+        q_lower, q_upper = q_dist.support(m1)
+        integral = quad(lambda q: q_dist.pdf(q, m1), q_lower, q_upper)[0]
+        assert np.isclose(integral, 1.0)
+
+    def test_pdf_values(self, q_dist):
+        # m1 = 100: q in (0.35/100, 0.5], pdf = 1/(0.5 - 0.35/100)
+        q_lower, _ = q_dist.support(100.)
+        q = np.array([q_lower, 0.2, 0.5, 0.6])
+        expected = np.array([0.0, 1, 1, 0.0]) / (0.5 - q_lower)
+        np.testing.assert_allclose(q_dist.pdf(q, 100.), expected)
+
+    def test_pdf_broadcasting(self, q_dist):
+        # one q per m1
+        pdf = q_dist.pdf(np.array([0.5, 0.5]), np.array([7., 100.]))
+        np.testing.assert_allclose(pdf, [1 / 0.95, 1 / (0.5 - 0.0035)])
+
+    @pytest.mark.parametrize('m1', [0.35, 0.2])
+    def test_pdf_without_possible_companion(self, q_dist, m1):
+        # m1 <= m2_min: empty support, the pdf is zero (and finite)
+        pdf = q_dist.pdf(np.array([0.5, 1.0]), m1)
+        np.testing.assert_array_equal(pdf, [0.0, 0.0])
+
+    def test_rvs_within_support(self, q_dist):
+        m1 = np.array([7., 35., 100.] * 1000)
+        q = q_dist.rvs(m1=m1, rng=np.random.default_rng(42))
+        assert q.shape == m1.shape
+        assert np.all(q_dist.in_support(q, m1))
+
+    def test_rvs_scalar_m1_without_rng(self, q_dist):
+        q = q_dist.rvs(m1=10.)
+        assert q.shape == (1,)
+        assert q_dist.in_support(q, 10.)
+
+    def test_rvs_without_possible_companion(self, q_dist):
+        with pytest.raises(ValueError, match="No valid mass ratio"):
+            q_dist.rvs(m1=np.array([10., 0.35]))
+
+
+@pytest.fixture(params=['flat', 'flat_q_min_0', 'power_law_-1',
+                        'power_law_1.5', 'conditional'])
+def mass_ratio_case(request):
+    """(pdf, rvs, q_lower, q_upper) of each mass ratio distribution, with
+    m1 fixed to 10 Msun for the m1-dependent one."""
+    if request.param == 'flat':
+        dist = FlatMassRatio(q_min=0.1, q_max=0.8)
+    elif request.param == 'flat_q_min_0':
+        dist = FlatMassRatio(q_min=0.0, q_max=1.0)
+    elif request.param == 'power_law_-1':
+        dist = PowerLawMassRatio(alpha=-1.0, q_min=0.1, q_max=0.9)
+    elif request.param == 'power_law_1.5':
+        dist = PowerLawMassRatio(alpha=1.5, q_min=0.0, q_max=1.0)
+    else:
+        dist = ConditionalFlatMassRatio(m2_min=1.0, m2_max=8.0)
+        q_lower, q_upper = dist.support(10.)
+        return (lambda q: dist.pdf(q, 10.),
+                lambda size, rng: dist.rvs(m1=np.full(size, 10.), rng=rng),
+                float(q_lower), float(q_upper))
+    q_lower, q_upper = dist.support()
+    return dist.pdf, (lambda size, rng: dist.rvs(size=size, rng=rng)), \
+        q_lower, q_upper
+
+
+class TestMassRatioSupportConvention:
+    """All mass ratio distributions use q in (q_lower, q_upper], for both
+    the PDF and the samples."""
+
+    def test_pdf_excludes_lower_includes_upper(self, mass_ratio_case):
+        pdf, _, q_lower, q_upper = mass_ratio_case
+        assert pdf(q_lower) == 0
+        assert pdf(q_upper) > 0
+
+    def test_q_zero_excluded(self, mass_ratio_case):
+        pdf, _, _, _ = mass_ratio_case
+        assert pdf(0.0) == 0
+
+    def test_pdf_normalised(self, mass_ratio_case):
+        pdf, _, q_lower, q_upper = mass_ratio_case
+        assert np.isclose(quad(pdf, q_lower, q_upper)[0], 1.0)
+
+    def test_rvs_in_support(self, mass_ratio_case):
+        _, rvs, q_lower, q_upper = mass_ratio_case
+        q = rvs(10000, np.random.default_rng(1))
+        assert np.all(q > q_lower)
+        assert np.all(q <= q_upper)
+
+    def test_rvs_follow_pdf(self, mass_ratio_case):
+        pdf, rvs, q_lower, _ = mass_ratio_case
+        q = rvs(2000, np.random.default_rng(2))
+        cdf = lambda x: np.array([quad(pdf, q_lower, xi)[0]
+                                  for xi in np.atleast_1d(x)])
+        assert kstest(q, cdf).pvalue > 0.01

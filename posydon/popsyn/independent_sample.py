@@ -357,16 +357,11 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        # Calculate mass ratio bounds for each primary mass
-        q_min = np.maximum(secondary_mass_min / primary_masses, 0.0)
-        q_max = np.minimum(secondary_mass_max / primary_masses, 1.0)
-
-        # Sample mass ratios using the distribution class
-        # For mass-dependent bounds, we need to sample individually
-        mass_ratios = np.zeros(number_of_binaries)
-        for i in range(number_of_binaries):
-            q_dist = distributions.FlatMassRatio(q_min=q_min[i], q_max=q_max[i])
-            mass_ratios[i] = q_dist.rvs(size=1, rng=RNG)[0]
+        # q | m1 ~ U(max(m2_min/m1, 0), min(m2_max/m1, 1)]; the same
+        # distribution is used by norm_pop to normalise the population
+        q_dist = distributions.ConditionalFlatMassRatio(
+            m2_min=secondary_mass_min, m2_max=secondary_mass_max)
+        mass_ratios = q_dist.rvs(m1=primary_masses, rng=RNG)
 
         secondary_masses = primary_masses * mass_ratios
 

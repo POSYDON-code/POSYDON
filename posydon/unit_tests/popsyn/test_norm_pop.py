@@ -16,7 +16,7 @@ import posydon.popsyn.IMFs as IMFs
 from posydon.config import PATH_TO_POSYDON
 
 # file to test
-from posydon.popsyn import norm_pop
+from posydon.popsyn import distributions, norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
 from posydon.utils.common_functions import orbital_period_from_separation
 
@@ -277,45 +277,54 @@ class TestGetMassRatioPdf:
         assert np.all(result == 0)
 
 
-class TestGetMassRatioBounds:
-    def test_m1_dependent_bounds(self):
-        kwargs = {
-            'primary_mass_min': 5,
-            'primary_mass_max': 100,
-            'secondary_mass_scheme': 'flat_mass_ratio',
-            'secondary_mass_min': 5,
-            'secondary_mass_max': 50,
-        }
-        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
-        m1 = np.array([5., 10., 100.])
-        assert np.allclose(q_lower(m1), [1.0, 0.5, 0.05])
-        assert np.allclose(q_upper(m1), [1.0, 1.0, 0.5])
-
-    @mark.parametrize('kwargs, q_min, q_max', [
+class TestGetMassRatioDistribution:
+    @mark.parametrize('kwargs, expected', [
         ({'secondary_mass_scheme': 'flat_mass_ratio',
-          'q_min': 0.2, 'q_max': 0.8}, 0.2, 0.8),
+          'primary_mass_min': 7, 'primary_mass_max': 140,
+          'secondary_mass_min': 0.35, 'secondary_mass_max': 140},
+         distributions.ConditionalFlatMassRatio),
+        ({'secondary_mass_scheme': 'flat_mass_ratio',
+          'q_min': 0.2, 'q_max': 0.8},
+         distributions.FlatMassRatio),
         ({'secondary_mass_scheme': 'power_law_mass_ratio',
-          'mass_ratio_slope': 1.0}, 0.05, 1.0),
-        ({'secondary_mass_scheme': 'power_law_mass_ratio',
-          'mass_ratio_slope': 1.0, 'q_min': 0.3}, 0.3, 1.0),
+          'mass_ratio_slope': 1.0},
+         distributions.PowerLawMassRatio),
     ])
-    def test_fixed_bounds(self, kwargs, q_min, q_max):
-        q_lower, q_upper = norm_pop.get_mass_ratio_bounds(kwargs)
-        for m1 in (1., 50.):
-            assert q_lower(m1) == q_min
-            assert q_upper(m1) == q_max
+    def test_scheme_to_class(self, kwargs, expected):
+        q_dist = norm_pop.get_mass_ratio_distribution(kwargs)
+        assert type(q_dist) is expected
+
+    def test_m1_dependent_parameters(self):
+        q_dist = norm_pop.get_mass_ratio_distribution({
+            'secondary_mass_scheme': 'flat_mass_ratio',
+            'primary_mass_min': 5, 'primary_mass_max': 100,
+            'secondary_mass_min': 5, 'secondary_mass_max': 50})
+        q_lower, q_upper = q_dist.support(np.array([5., 10., 100.]))
+        assert np.allclose(q_lower, [1.0, 0.5, 0.05])
+        assert np.allclose(q_upper, [1.0, 1.0, 0.5])
+
+    @mark.parametrize('extra, q_min, q_max', [
+        ({}, 0.05, 1.0),
+        ({'q_min': 0.3}, 0.3, 1.0),
+        ({'q_max': 0.6}, 0.05, 0.6),
+    ])
+    def test_power_law_default_bounds(self, extra, q_min, q_max):
+        q_dist = norm_pop.get_mass_ratio_distribution({
+            'secondary_mass_scheme': 'power_law_mass_ratio',
+            'mass_ratio_slope': 1.0, **extra})
+        assert q_dist.support() == (q_min, q_max)
 
     @mark.parametrize('scheme', ['power_law_mass_ratio', 'flat_mass_ratio'])
     def test_fixed_bounds_q_min_greater_than_q_max(self, scheme):
         kwargs = {'secondary_mass_scheme': scheme, 'mass_ratio_slope': 0.0,
                   'q_min': 0.8, 'q_max': 0.2}
         with pytest.raises(ValueError, match="q_min must be less than q_max"):
-            norm_pop.get_mass_ratio_bounds(kwargs)
+            norm_pop.get_mass_ratio_distribution(kwargs)
 
     @mark.parametrize('scheme', ['invalid', 'q=1', None])
     def test_unsupported_scheme(self, scheme):
         with pytest.raises(ValueError, match="secondary_mass_scheme"):
-            norm_pop.get_mass_ratio_bounds(
+            norm_pop.get_mass_ratio_distribution(
                 {'secondary_mass_scheme': scheme})
 
 
@@ -478,7 +487,7 @@ class TestGetMeanMass:
         with pytest.raises(ValueError) as excinfo:
             norm_pop.get_mean_mass(params)
 
-        assert "q_min must be less than q_max" in str(excinfo.value)
+        assert "m2_min must be less than m2_max" in str(excinfo.value)
 
     @mark.parametrize('imf, m1_min, m1_max, m2_min, m2_max, f_b', [
         # m2_min/m1_min > m2_max/m1_max, but every m1 has a valid q range;

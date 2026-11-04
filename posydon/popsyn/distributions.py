@@ -1,4 +1,25 @@
-"""Period and mass ratio distributions module for POSYDON."""
+"""Period and mass ratio distributions module for POSYDON.
+
+Boundary convention
+-------------------
+The distributions are used both to sample a population (`rvs`) and to
+reweight it (`pdf`, see `posydon.popsyn.norm_pop`). Every sample must
+therefore lie where the PDF is non-zero.
+
+- Continuous distributions (periods, separations, eccentricities, and the
+  IMFs in `posydon.popsyn.IMFs`): the PDF is defined on the closed interval
+  [min, max], as in `scipy.stats`. Samples are drawn with numpy's uniform
+  generator, which returns values in [0, 1), so samples lie in [min, max).
+  The upper bound has zero probability, so this does not change the
+  distribution, and every sample lies inside the PDF's interval.
+- Mass ratio distributions (`MassRatioDistribution` subclasses): q = 0 is
+  not a physical mass ratio, so both the PDF and the samples use
+  (q_lower, q_upper], excluding the lower and including the upper bound.
+  Samples are drawn as q_upper - u * (q_upper - q_lower) with u in [0, 1).
+
+Transformed samples (e.g. 10**x for log-uniform distributions) can differ
+from the bounds by floating-point rounding; samples are not clipped.
+"""
 
 __authors__ = [
     "Max Briel <max.briel@gmail.com>"
@@ -8,7 +29,62 @@ from scipy.integrate import quad
 from scipy.stats import truncnorm
 
 
-class FlatMassRatio:
+class MassRatioDistribution:
+    """Shared support convention of the mass ratio distributions.
+
+    The mass ratio q = m2/m1 lies in (q_lower, q_upper]: the lower bound is
+    excluded, so q = 0 is never a valid mass ratio, and the upper bound is
+    included. Both `pdf` and `rvs` of the subclasses use this interval.
+
+    Subclasses with fixed bounds set `q_min` and `q_max`; subclasses whose
+    bounds depend on the primary mass override `support`.
+    """
+
+    def support(self, m1=None):
+        """Bounds (q_lower, q_upper) of the mass ratio.
+
+        Parameters
+        ----------
+        m1 : float or array_like, optional
+            Primary mass(es). Unused for fixed bounds.
+
+        Returns
+        -------
+        tuple
+            Lower (excluded) and upper (included) bound of q.
+        """
+        return self.q_min, self.q_max
+
+    def in_support(self, q, m1=None):
+        """Whether q lies in (q_lower, q_upper].
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused for fixed bounds.
+
+        Returns
+        -------
+        bool or ndarray of bool
+        """
+        q_lower, q_upper = self.support(m1)
+        q = np.asarray(q, dtype=float)
+        return (q > q_lower) & (q <= q_upper)
+
+    @staticmethod
+    def _uniform_in_support(q_lower, q_upper, size, rng):
+        """Draw uniformly from (q_lower, q_upper].
+
+        rng.uniform draws u from [0, 1), so q_upper - u * (q_upper - q_lower)
+        excludes the lower bound and includes the upper bound.
+        """
+        u = rng.uniform(size=size)
+        return q_upper - u * (q_upper - q_lower)
+
+
+class FlatMassRatio(MassRatioDistribution):
     """Flat mass ratio distribution for binary star systems.
 
     A uniform distribution for mass ratios q = m2/m1 within specified bounds.
@@ -111,27 +187,31 @@ class FlatMassRatio:
         """
         return 1.0
 
-    def pdf(self, q):
+    def pdf(self, q, m1=None):
         """Probability density function of the flat mass ratio distribution.
 
         Parameters
         ----------
         q : float or array_like
             Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
         float or ndarray
             Probability density at mass ratio q.
         """
-        q = np.asarray(q)
-        valid = (q > self.q_min) & (q <= self.q_max)
+        q = np.asarray(q, dtype=float)
+        valid = self.in_support(q)
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.flat_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the flat mass ratio distribution.
+
+        Samples lie in (q_min, q_max], like the PDF.
 
         Parameters
         ----------
@@ -148,10 +228,143 @@ class FlatMassRatio:
         if rng is None:
             rng = np.random.default_rng()
 
-        return rng.uniform(self.q_min, self.q_max, size=size)
+        return self._uniform_in_support(self.q_min, self.q_max, size, rng)
 
 
-class PowerLawMassRatio:
+class ConditionalFlatMassRatio(MassRatioDistribution):
+    """Flat mass ratio distribution with primary-mass dependent bounds.
+
+    The secondary mass is limited to [m2_min, m2_max] and q = m2/m1 to 1,
+    which gives for each primary mass m1
+
+        q | m1 ~ U(max(m2_min/m1, 0), min(m2_max/m1, 1)].
+
+    This is the `flat_mass_ratio` scheme of the population sampler when the
+    secondary mass bounds are given.
+
+    Parameters
+    ----------
+    m2_min : float
+        Minimum secondary mass [Msun]. Must be >= 0.
+    m2_max : float
+        Maximum secondary mass [Msun]. Must be larger than m2_min.
+
+    Raises
+    ------
+    ValueError
+        If m2_min < 0 or m2_min >= m2_max.
+
+    Examples
+    --------
+    >>> dist = ConditionalFlatMassRatio(m2_min=0.35, m2_max=150)
+    >>> dist.support(m1=7.0)
+    (0.05, 1.0)
+    """
+
+    def __init__(self, m2_min, m2_max):
+        """Initialize the m1-dependent flat mass ratio distribution.
+
+        Parameters
+        ----------
+        m2_min : float
+            Minimum secondary mass [Msun]. Must be >= 0.
+        m2_max : float
+            Maximum secondary mass [Msun]. Must be larger than m2_min.
+        """
+        if m2_min < 0:
+            raise ValueError("m2_min must be >= 0")
+        if m2_min >= m2_max:
+            raise ValueError("m2_min must be less than m2_max")
+        self.m2_min = m2_min
+        self.m2_max = m2_max
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return (f"ConditionalFlatMassRatio(m2_min={self.m2_min}, "
+                f"m2_max={self.m2_max})")
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return (f"<h3>Conditional Flat Mass Ratio Distribution</h3>"
+                f"<p>m2_min = {self.m2_min}</p>"
+                f"<p>m2_max = {self.m2_max}</p>")
+
+    def support(self, m1):
+        """Bounds (q_lower, q_upper) of the mass ratio for primary mass m1.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        tuple of float or ndarray
+            q_lower = max(m2_min/m1, 0) (excluded) and
+            q_upper = min(m2_max/m1, 1) (included). If q_upper <= q_lower,
+            no companion is possible for that m1.
+        """
+        m1 = np.asarray(m1, dtype=float)
+        return (np.maximum(self.m2_min / m1, 0.0),
+                np.minimum(self.m2_max / m1, 1.0))
+
+    def pdf(self, q, m1):
+        """Probability density function of q given the primary mass m1.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+        m1 : float or array_like
+            Primary mass(es) [Msun], broadcastable against q.
+
+        Returns
+        -------
+        ndarray
+            Probability density at mass ratio q, zero outside the support
+            (including primary masses without a possible companion).
+        """
+        q, m1 = np.broadcast_arrays(np.asarray(q, dtype=float),
+                                    np.asarray(m1, dtype=float))
+        q_lower, q_upper = self.support(m1)
+        valid = self.in_support(q, m1)
+        width = q_upper - q_lower
+        return np.divide(1.0, width, out=np.zeros_like(width), where=valid)
+
+    def rvs(self, m1, rng=None):
+        """Draw one mass ratio for each primary mass.
+
+        Samples lie in (q_lower(m1), q_upper(m1)], like the PDF.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            One mass ratio per primary mass.
+
+        Raises
+        ------
+        ValueError
+            If no companion is possible for some primary mass, i.e.
+            m1 <= m2_min.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+        m1 = np.atleast_1d(np.asarray(m1, dtype=float))
+        q_lower, q_upper = self.support(m1)
+        if np.any(q_upper <= q_lower):
+            raise ValueError("No valid mass ratio for primary masses "
+                             "m1 <= m2_min.")
+        return self._uniform_in_support(q_lower, q_upper, m1.shape, rng)
+
+
+class PowerLawMassRatio(MassRatioDistribution):
     """Power law mass ratio distribution for binary star systems.
 
     A distribution where the PDF follows q^alpha within specified bounds
@@ -251,27 +464,32 @@ class PowerLawMassRatio:
         """
         return np.asarray(q, dtype=float)**self.alpha
 
-    def pdf(self, q):
+    def pdf(self, q, m1=None):
         """Probability density function of the power law mass ratio distribution.
 
         Parameters
         ----------
         q : float or array_like
             Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
         float or ndarray
             Probability density at mass ratio q.
         """
-        q = np.asarray(q)
-        valid = (q > self.q_min) & (q <= self.q_max)
+        q = np.asarray(q, dtype=float)
+        valid = self.in_support(q)
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.power_law_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, rng=None):
         """Draw random samples from the power law mass ratio distribution.
+
+        Uses the analytic inverse CDF; samples lie in (q_min, q_max], like
+        the PDF.
 
         Parameters
         ----------
@@ -288,10 +506,12 @@ class PowerLawMassRatio:
         if rng is None:
             rng = np.random.default_rng()
 
-        from posydon.utils.common_functions import inverse_sampler
-        q_grid = np.linspace(self.q_min, self.q_max, n_points)
-        pdf_values = self.power_law_mass_ratio(q_grid)
-        return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
+        # v = 1 - u lies in (0, 1], so the samples lie in (q_min, q_max]
+        v = 1.0 - rng.uniform(size=size)
+        if np.isclose(self.alpha, -1.0):
+            return self.q_min * (self.q_max / self.q_min)**v
+        a1 = self.alpha + 1.0
+        return (self.q_min**a1 + v * (self.q_max**a1 - self.q_min**a1))**(1.0 / a1)
 
 
 class Sana12Period():

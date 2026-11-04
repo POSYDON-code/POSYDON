@@ -1,4 +1,9 @@
-"""Initial Mass Functions (IMFs) module for POSYDON."""
+"""Initial Mass Functions (IMFs) module for POSYDON.
+
+The PDFs are defined on the closed interval [m_min, m_max], and samples lie
+in [m_min, m_max); see the boundary convention in
+`posydon.popsyn.distributions`.
+"""
 
 __authors__ = [
     "Max Briel <max.briel@gmail.com>"
