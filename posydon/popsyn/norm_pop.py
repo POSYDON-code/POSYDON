@@ -19,6 +19,11 @@ from posydon.utils.posydonwarning import Pwarn
 def get_pdf(kwargs, mass_pdf=False):
     """Function that builds a PDF function given the simulation parameters
 
+    The orbital part is a density per dex in the period, dN/dlog10(P), for
+    every orbital scheme; separation distributions are converted to periods
+    with `PeriodFromSeparation`. Using the same measure for all schemes lets
+    the PDFs of the simulation and the target population be compared.
+
     Parameters
     ----------
     kwargs : dict
