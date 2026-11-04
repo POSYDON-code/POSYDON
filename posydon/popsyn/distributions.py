@@ -1060,15 +1060,19 @@ class PowerLawPeriod():
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p), p)
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None, m1=None):
         """Draw random samples from the power law period distribution.
 
         Parameters
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of grid points for the inverse sampling (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -1253,7 +1257,7 @@ class LogPowerLawPeriod():
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p), p)
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None, m1=None):
         """Draw random samples from the log power law period distribution.
 
         Parameters
@@ -1264,6 +1268,8 @@ class LogPowerLawPeriod():
             Number of grid points for the inverse sampling (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------

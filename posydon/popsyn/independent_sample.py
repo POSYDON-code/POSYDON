@@ -16,7 +16,13 @@ __authors__ = [
 import numpy as np
 from scipy.stats import truncnorm
 
-from posydon.popsyn import IMFs, distributions
+from posydon.popsyn import distributions
+from posydon.popsyn.initial_distributions import (
+    get_binary_fraction_distribution,
+    get_IMF_distribution,
+    get_mass_ratio_distribution,
+    get_orbital_distribution,
+)
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
 
@@ -125,20 +131,23 @@ def generate_orbital_periods(primary_masses,
                              orbital_period_max=10**3.5,
                              orbital_period_scheme='Sana+12_period_extended',
                              **kwargs):
-    """Randomly generate orbital periods for a sample of binaries."""
+    """Randomly generate orbital periods for a sample of binaries.
+
+    Supports the period schemes of `get_orbital_distribution`, e.g.
+    'Sana+12_period_extended' (Sana H., et al., 2012, Science, 337, 444),
+    'power_law' and 'log_power_law' (with `power_law_slope`).
+    """
     RNG = kwargs.get('RNG', np.random.default_rng())
 
-    # Check inputs
-
-    # Sana H., et al., 2012, Science, 337, 444
-    if orbital_period_scheme == 'Sana+12_period_extended':
-        period_dist = distributions.Sana12Period(
-            p_min=orbital_period_min,
-            p_max=orbital_period_max
-        )
-        orbital_periods = period_dist.rvs(size=number_of_binaries, m1=primary_masses, rng=RNG)
-    else:
-        raise ValueError("You must provide an allowed orbital period scheme.")
+    period_dist = get_orbital_distribution({
+        'orbital_scheme': 'period',
+        'orbital_period_scheme': orbital_period_scheme,
+        'orbital_period_min': orbital_period_min,
+        'orbital_period_max': orbital_period_max,
+        'power_law_slope': kwargs.get('power_law_slope'),
+    })
+    orbital_periods = period_dist.rvs(size=number_of_binaries,
+                                      m1=primary_masses, rng=RNG)
 
     return orbital_periods
 
@@ -183,18 +192,10 @@ def generate_orbital_separations(number_of_binaries=1,
         raise ValueError("You must provide an allowed "
                          "orbital separation scheme.")
 
-    if orbital_separation_scheme == 'log_uniform':
-        sep_dist = distributions.LogUniform(
-            min=orbital_separation_min,
-            max=orbital_separation_max
-        )
-        orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
-
-    if orbital_separation_max < orbital_separation_min:
-        raise ValueError("`orbital_separation_max` must be "
-                         "larger than the orbital_separation_min.")
-
-    elif orbital_separation_scheme == 'log_normal':
+    if orbital_separation_scheme == 'log_normal':
+        if orbital_separation_max < orbital_separation_min:
+            raise ValueError("`orbital_separation_max` must be "
+                             "larger than the orbital_separation_min.")
         if (log_orbital_separation_mean is None
                 or log_orbital_separation_sigma is None):
             raise ValueError(
@@ -202,16 +203,17 @@ def generate_orbital_separations(number_of_binaries=1,
                 "`log_orbital_separation_mean`, "
                 "`log_orbital_separation_sigma`.")
 
-        sep_dist = distributions.LogNormalSeparation(
-            mean=log_orbital_separation_mean,
-            sigma=log_orbital_separation_sigma,
-            min=orbital_separation_min,
-            max=orbital_separation_max
-        )
-        orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
-
-    else:  # pragma: no cover
-        pass
+    # the separation distribution behind the period distribution used to
+    # reweight populations sampled in separation
+    sep_dist = get_orbital_distribution({
+        'orbital_scheme': 'separation',
+        'orbital_separation_scheme': orbital_separation_scheme,
+        'orbital_separation_min': orbital_separation_min,
+        'orbital_separation_max': orbital_separation_max,
+        'log_orbital_separation_mean': log_orbital_separation_mean,
+        'log_orbital_separation_sigma': log_orbital_separation_sigma,
+    }).separation
+    orbital_separations = sep_dist.rvs(size=number_of_binaries, rng=RNG)
 
     return orbital_separations
 
@@ -294,22 +296,18 @@ def generate_primary_masses(number_of_binaries=1,
     if primary_mass_scheme not in primary_mass_scheme_options:
         raise ValueError("You must provide an allowed primary mass scheme.")
 
-    # Salpeter E. E., 1955, ApJ, 121, 161
-    if primary_mass_scheme == 'Salpeter':
-        imf = IMFs.Salpeter(alpha=2.35, m_min=primary_mass_min, m_max=primary_mass_max)
-        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
-
-    # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545
-    elif primary_mass_scheme == 'Kroupa1993':
-        imf = IMFs.Kroupa1993(alpha=2.7, m_min=primary_mass_min, m_max=primary_mass_max)
-        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
-
+    # Salpeter E. E., 1955, ApJ, 121, 161 (default alpha = 2.35)
+    # Kroupa P., Tout C. A., Gilmore G., 1993, MNRAS, 262, 545 (alpha = 2.7)
     # Kroupa P., 2001, MNRAS, 322, 231
-    elif primary_mass_scheme == 'Kroupa2001':
-        imf = IMFs.Kroupa2001(m_min=primary_mass_min, m_max=primary_mass_max)
-        primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
-    else: # pragma: no cover
-        pass
+    # Scheme parameters, e.g. kwargs['Salpeter'] = {'alpha': 2.3}, are
+    # passed on to the IMF, as in the reweighting.
+    imf = get_IMF_distribution({
+        **kwargs,
+        'primary_mass_scheme': primary_mass_scheme,
+        'primary_mass_min': primary_mass_min,
+        'primary_mass_max': primary_mass_max,
+    })
+    primary_masses = imf.rvs(size=number_of_binaries, rng=RNG)
 
     return primary_masses
 
@@ -357,10 +355,14 @@ def generate_secondary_masses(primary_masses,
 
     # Generate secondary masses
     if secondary_mass_scheme == 'flat_mass_ratio':
-        # q | m1 ~ U(max(m2_min/m1, 0), min(m2_max/m1, 1)]; the same
+        # q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)]; the same
         # distribution is used by norm_pop to normalise the population
-        q_dist = distributions.ConditionalFlatMassRatio(
-            m2_min=secondary_mass_min, m2_max=secondary_mass_max)
+        q_dist = get_mass_ratio_distribution({
+            'secondary_mass_scheme': secondary_mass_scheme,
+            'secondary_mass_min': secondary_mass_min,
+            'secondary_mass_max': secondary_mass_max,
+            'primary_mass_min': np.min(primary_masses),
+        })
         mass_ratios = q_dist.rvs(m1=primary_masses, rng=RNG)
 
         secondary_masses = primary_masses * mass_ratios
@@ -403,7 +405,10 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
         raise ValueError("You must provide an allowed binary fraction scheme.")
 
     if binary_fraction_scheme == 'const':
-        binary_fraction = binary_fraction_const
+        binary_fraction = get_binary_fraction_distribution({
+            'binary_fraction_scheme': binary_fraction_scheme,
+            'binary_fraction_const': binary_fraction_const,
+        }).f_b
 
     elif binary_fraction_scheme == 'Moe+17-massdependent':
         binary_fraction[(m1 > 16)] = 0.94

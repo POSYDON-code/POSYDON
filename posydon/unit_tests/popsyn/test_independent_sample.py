@@ -29,7 +29,10 @@ class TestElements:
                     'generate_primary_masses','generate_secondary_masses',\
                     'generate_binary_fraction','__authors__',\
                     'np','truncnorm','rejection_sampler',\
-                    'IMFs','distributions','Moe_17_PsandQs',\
+                    'distributions','Moe_17_PsandQs',\
+                    'get_binary_fraction_distribution',\
+                    'get_IMF_distribution','get_mass_ratio_distribution',\
+                    'get_orbital_distribution',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
         totest_elements = set(dir(totest))
@@ -108,7 +111,7 @@ class TestFunctions:
             totest.generate_orbital_periods(np.array([1.]),
                                             orbital_period_min=10.,
                                             orbital_period_max=1.)
-        with raises(ValueError, match="You must provide an allowed orbital period scheme."):
+        with raises(ValueError, match="Orbital period scheme not recognized"):
             totest.generate_orbital_periods(np.array([1.]),
                                             orbital_period_scheme='test')
         # examples
@@ -116,6 +119,18 @@ class TestFunctions:
                  (1.0,12,approx(3.4380527315000666,abs=6e-12))]
         for (m,r,p) in tests:
             assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
+
+    def test_generate_orbital_periods_power_laws(self):
+        # schemes of the shared factory, not only Sana+12, can be sampled
+        m1 = np.full(1000, 20.)
+        for scheme in ['power_law', 'log_power_law']:
+            periods = totest.generate_orbital_periods(
+                m1, number_of_binaries=1000,
+                orbital_period_scheme=scheme, power_law_slope=-0.55,
+                orbital_period_min=1.4, orbital_period_max=3e3,
+                RNG=np.random.default_rng(seed=42))
+            assert len(periods) == 1000
+            assert np.all((periods >= 1.4) & (periods <= 3e3))
 
     def test_generate_orbital_separations(self):
         # missing log_normal params
