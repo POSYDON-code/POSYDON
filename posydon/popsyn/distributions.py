@@ -3,11 +3,11 @@
 Boundary convention
 -------------------
 PDFs include both bounds, [min, max], as in `scipy.stats`. Samples exclude
-the upper bound, [min, max), because numpy draws uniform numbers in [0, 1).
-A single point has zero probability, so this does not change the
-distribution.
+the upper bound, [min, max), because numpy draws uniform numbers in [0, 1),
+as `scipy.stats` does too. A single point has zero probability, so this does
+not change the distribution.
 
-The mass ratio distributions exclude q = 0, because it is unphysical: the
+The mass ratio distributions exclude q = 0, because it is unphysical. The
 PDF is zero at q = 0 and the samplers never return it.
 """
 
