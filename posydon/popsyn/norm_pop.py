@@ -12,6 +12,7 @@ from scipy.integrate import dblquad, quad
 import posydon.popsyn.IMFs as IMFs
 from posydon.popsyn.distributions import (
     ConditionalFlatMassRatio,
+    ConstantBinaryFraction,
     FlatMassRatio,
     LogUniform,
     PowerLawMassRatio,
@@ -22,8 +23,8 @@ from posydon.utils.common_functions import orbital_separation_from_period
 from posydon.utils.posydonwarning import Pwarn
 
 
-def get_IMF_pdf(kwargs):
-    '''get the IMF pdf function
+def get_IMF_distribution(kwargs):
+    '''get the IMF distribution
 
     Supported schemes are the (non-abstract) IMF classes in the IMFs module,
     e.g. `Salpeter`, `Kroupa1993`, `Kroupa2001`, `Chabrier2003`.
@@ -49,8 +50,8 @@ def get_IMF_pdf(kwargs):
 
     Returns
     -------
-    IMF_pdf : function
-        Function that returns the IMF PDF
+    imf : IMFs.IMFBase
+        IMF distribution with `pdf(m1)`.
 
     Raises
     ------
@@ -69,10 +70,9 @@ def get_IMF_pdf(kwargs):
                          f"is not recognized. Supported schemes: {supported}")
 
     scheme_kwargs = kwargs.get(primary_mass_scheme, {})
-    imf = imf_class(m_min=kwargs['primary_mass_min'],
-                    m_max=kwargs['primary_mass_max'],
-                    **scheme_kwargs)
-    return imf.pdf
+    return imf_class(m_min=kwargs['primary_mass_min'],
+                     m_max=kwargs['primary_mass_max'],
+                     **scheme_kwargs)
 
 def _is_IMF_class(obj):
     '''Check whether obj is a concrete IMF class from the IMFs module.'''
@@ -138,8 +138,8 @@ def get_mass_ratio_distribution(kwargs):
                          "supported for normalisation. Supported schemes: "
                          "['flat_mass_ratio', 'power_law_mass_ratio']")
 
-def get_binary_fraction_pdf(kwargs):
-    '''get the binary fraction pdf function
+def get_binary_fraction_distribution(kwargs):
+    '''get the binary fraction distribution
 
     Supported schemes:
     - `const` with `binary_fraction_const`
@@ -153,18 +153,21 @@ def get_binary_fraction_pdf(kwargs):
 
     Returns
     -------
-    pdf : function
-        Function that returns the binary fraction PDF
-    '''
-    if kwargs['binary_fraction_scheme'] == 'const':
-        f_b = kwargs['binary_fraction_const']
-        binary_fraction_pdf = lambda binary: np.where(np.asarray(binary),
-                                                      f_b,
-                                                      1-f_b)
-    else:
-        raise ValueError("Binary fraction scheme not recognized")
+    f_b_dist : ConstantBinaryFraction
+        Binary fraction distribution with `pdf(binary)` and `f_b`.
 
-    return binary_fraction_pdf
+    Raises
+    ------
+    ValueError
+        If the `binary_fraction_scheme` is not supported (such as the
+        sampler's `Moe+17-massdependent`).
+    '''
+    scheme = kwargs.get('binary_fraction_scheme')
+    if scheme == 'const':
+        return ConstantBinaryFraction(f_b=kwargs['binary_fraction_const'])
+    else:
+        raise ValueError(f"Binary fraction scheme not recognized: '{scheme}'. "
+                         "Supported schemes: ['const']")
 
 def get_period_pdf(kwargs):
     '''get the period pdf function
@@ -237,9 +240,9 @@ def get_pdf(kwargs, mass_pdf=False):
         Function that returns a probability density function
     """
 
-    IMF_pdf = get_IMF_pdf(kwargs)
+    IMF_pdf = get_IMF_distribution(kwargs).pdf
     q_pdf = get_mass_ratio_distribution(kwargs).pdf
-    f_b_pdf = get_binary_fraction_pdf(kwargs)
+    f_b_pdf = get_binary_fraction_distribution(kwargs).pdf
     period_pdf = get_period_pdf(kwargs)
 
     if mass_pdf:
@@ -382,8 +385,8 @@ def calculate_model_weights(pop_data,
 
     """
 
-    f_b_sim = simulation_parameters['binary_fraction_const']
-    f_b_pop = population_parameters['binary_fraction_const']
+    f_b_sim = get_binary_fraction_distribution(simulation_parameters).f_b
+    f_b_pop = get_binary_fraction_distribution(population_parameters).f_b
     if (f_b_sim == 1) and (f_b_pop == 0):
         raise ValueError("No single stars simulated, but requested")
     if (f_b_sim == 0) and (f_b_pop == 1):

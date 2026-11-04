@@ -11,6 +11,7 @@ from scipy.stats import kstest
 
 from posydon.popsyn.distributions import (
     ConditionalFlatMassRatio,
+    ConstantBinaryFraction,
     FlatMassRatio,
     LogNormalSeparation,
     LogUniform,
@@ -1500,3 +1501,28 @@ class TestMassRatioSupportConvention:
         cdf = lambda x: np.array([quad(pdf, q_lower, xi)[0]
                                   for xi in np.atleast_1d(x)])
         assert kstest(q, cdf).pvalue > 0.01
+
+
+class TestConstantBinaryFraction:
+    """Test class for ConstantBinaryFraction."""
+
+    @pytest.mark.parametrize('f_b', [-0.1, 1.1])
+    def test_initialization_invalid(self, f_b):
+        with pytest.raises(ValueError, match="f_b must be in"):
+            ConstantBinaryFraction(f_b=f_b)
+
+    def test_repr(self):
+        assert repr(ConstantBinaryFraction(f_b=0.7)) == \
+            "ConstantBinaryFraction(f_b=0.7)"
+
+    def test_repr_html(self):
+        html = ConstantBinaryFraction(f_b=0.7)._repr_html_()
+        assert "Constant Binary Fraction" in html
+        assert "f_b = 0.7" in html
+
+    @pytest.mark.parametrize('f_b', [0.0, 0.7, 1.0])
+    def test_pdf(self, f_b):
+        dist = ConstantBinaryFraction(f_b=f_b)
+        np.testing.assert_allclose(dist.pdf([True, False, True]),
+                                   [f_b, 1 - f_b, f_b])
+        assert np.isclose(dist.pdf(True) + dist.pdf(False), 1.0)

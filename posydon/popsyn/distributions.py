@@ -543,6 +543,66 @@ class PowerLawMassRatio(MassRatioDistribution):
         return (self.q_min**a1 + u * (self.q_max**a1 - self.q_min**a1))**(1.0 / a1)
 
 
+
+class ConstantBinaryFraction:
+    """Constant binary fraction.
+
+    A fraction f_b of all systems are binaries and 1 - f_b are single stars,
+    independent of the stellar properties.
+
+    Parameters
+    ----------
+    f_b : float
+        Binary fraction. Must be in [0, 1].
+
+    Raises
+    ------
+    ValueError
+        If f_b is not in [0, 1].
+
+    Examples
+    --------
+    >>> dist = ConstantBinaryFraction(f_b=0.7)
+    >>> dist.pdf([True, False])
+    array([0.7, 0.3])
+    """
+
+    def __init__(self, f_b):
+        """Initialize the constant binary fraction.
+
+        Parameters
+        ----------
+        f_b : float
+            Binary fraction. Must be in [0, 1].
+        """
+        if not (0 <= f_b <= 1):
+            raise ValueError("f_b must be in [0, 1]")
+        self.f_b = f_b
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"ConstantBinaryFraction(f_b={self.f_b})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return (f"<h3>Constant Binary Fraction</h3>"
+                f"<p>f_b = {self.f_b}</p>")
+
+    def pdf(self, binary):
+        """Probability of a system being a binary or a single star.
+
+        Parameters
+        ----------
+        binary : bool or array_like of bool
+            True for binaries, False for single stars.
+
+        Returns
+        -------
+        ndarray
+            f_b for binaries and 1 - f_b for single stars.
+        """
+        return np.where(np.asarray(binary), self.f_b, 1 - self.f_b)
+
 class Sana12Period():
     """Period distribution from Sana et al. (2012).
 

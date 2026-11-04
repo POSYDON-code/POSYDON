@@ -52,7 +52,7 @@ def register_test_imfs(monkeypatch):
     monkeypatch.setattr(IMFs, 'DummyIMF', DummyIMF, raising=False)
 
 
-class TestGetIMFPdf:
+class TestGetIMFDistribution:
     @mark.parametrize('scheme', ['NonExistentIMF', '', 'IMFBase', 'np',
                                  'Pwarn', 'quad'])
     def test_invalid_imf_raises(self, scheme):
@@ -64,12 +64,12 @@ class TestGetIMFPdf:
             'primary_mass_max': 100
         }
         with pytest.raises(ValueError, match="primary_mass_scheme"):
-            norm_pop.get_IMF_pdf(kwargs)
+            norm_pop.get_IMF_distribution(kwargs)
 
     def test_missing_imf_scheme_raises(self):
         kwargs = {'primary_mass_min': 1, 'primary_mass_max': 100}
         with pytest.raises(ValueError, match="primary_mass_scheme"):
-            norm_pop.get_IMF_pdf(kwargs)
+            norm_pop.get_IMF_distribution(kwargs)
 
     def test_imf_constructor_error_propagates(self, monkeypatch):
         # An AttributeError raised inside a valid IMF must not be mistaken
@@ -89,7 +89,7 @@ class TestGetIMFPdf:
             'primary_mass_max': 100
         }
         with pytest.raises(AttributeError, match="broken IMF"):
-            norm_pop.get_IMF_pdf(kwargs)
+            norm_pop.get_IMF_distribution(kwargs)
 
     @mark.parametrize('scheme', ['Salpeter', 'Kroupa1993', 'Kroupa2001'])
     def test_sampler_imfs_supported(self, scheme):
@@ -98,7 +98,7 @@ class TestGetIMFPdf:
             'primary_mass_min': 7,
             'primary_mass_max': 140
         }
-        pdf_func = norm_pop.get_IMF_pdf(kwargs)
+        pdf_func = norm_pop.get_IMF_distribution(kwargs).pdf
         assert np.isclose(quad(pdf_func, 7, 140)[0], 1.0)
 
 
@@ -111,7 +111,7 @@ class TestGetIMFPdf:
             'primary_mass_min': 1,
             'primary_mass_max': 100
         }
-        pdf_func = norm_pop.get_IMF_pdf(kwargs)
+        pdf_func = norm_pop.get_IMF_distribution(kwargs).pdf
         m_test = np.array([1, 10, 50])
         result = pdf_func(m_test)
         # Expect DummyIMF.pdf to return 0.5 regardless of m1
@@ -148,7 +148,7 @@ class TestGetIMFPdf:
         }
 
         # Get the PDF function
-        pdf_func = norm_pop.get_IMF_pdf(kwargs)
+        pdf_func = norm_pop.get_IMF_distribution(kwargs).pdf
 
         # Test that the custom parameter was used
         m_test = np.array([1, 10, 50])
@@ -328,14 +328,14 @@ class TestGetMassRatioDistribution:
                 {'secondary_mass_scheme': scheme})
 
 
-class TestGetBinaryFractionPdf:
+class TestGetBinaryFractionDistribution:
 
     def test_const_binary_fraction_pdf(self):
         kwargs = {
             'binary_fraction_scheme': 'const',
             'binary_fraction_const': 0.7
         }
-        pdf_func = norm_pop.get_binary_fraction_pdf(kwargs)
+        pdf_func = norm_pop.get_binary_fraction_distribution(kwargs).pdf
         # For binary stars, expected = 0.7
         result = pdf_func(True)
         assert np.allclose(result, np.asarray(0.7))
@@ -343,14 +343,30 @@ class TestGetBinaryFractionPdf:
         result = pdf_func(False)
         assert np.allclose(result, np.asarray(0.3))
 
-    def test_invalid_binary_fraction_scheme(self):
+    def test_returns_constant_binary_fraction(self):
+        f_b_dist = norm_pop.get_binary_fraction_distribution(
+            {'binary_fraction_scheme': 'const', 'binary_fraction_const': 0.7})
+        assert isinstance(f_b_dist, distributions.ConstantBinaryFraction)
+        assert f_b_dist.f_b == 0.7
+
+    @mark.parametrize('scheme', ['invalid', 'Moe+17-massdependent', None])
+    def test_invalid_binary_fraction_scheme(self, scheme):
         kwargs = {
-            'binary_fraction_scheme': 'invalid'
+            'binary_fraction_scheme': scheme
         }
         with pytest.raises(ValueError) as excinfo:
-            norm_pop.get_binary_fraction_pdf(kwargs)
+            norm_pop.get_binary_fraction_distribution(kwargs)
 
         assert "Binary fraction scheme not recognized" in str(excinfo.value)
+
+    def test_unsupported_scheme_in_model_weights(self):
+        # the sampler supports Moe+17-massdependent, but the reweighting
+        # does not; this must be a clear ValueError, not a KeyError for the
+        # missing binary_fraction_const
+        params = {'binary_fraction_scheme': 'Moe+17-massdependent'}
+        with pytest.raises(ValueError,
+                           match="Binary fraction scheme not recognized"):
+            norm_pop.calculate_model_weights(None, 1.0, params, params)
 
 class TestGetPeriodPdf:
     def test_sana12_period_extended(self):
