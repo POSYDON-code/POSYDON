@@ -676,6 +676,8 @@ class PowerLawPeriod():
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of points in logP grid (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
 
