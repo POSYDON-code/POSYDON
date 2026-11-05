@@ -17,7 +17,7 @@ import warnings
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
-from pytest import approx, fixture, raises, warns
+from pytest import approx, fixture, mark, raises, warns
 
 warnings.simplefilter("always")
 import os
@@ -365,6 +365,80 @@ class TestHistory:
         assert "val" in rep
         assert "<table" in html
 
+    @mark.parametrize("pytables_index", [True, False])
+    def test_select_indices_many(self, tmp_path, pytables_index):
+        # 100 binaries with 2 history rows each
+        idx = np.repeat(np.arange(100), 2)
+        df = pd.DataFrame({"a": np.arange(200.0), "b": np.arange(200.0) ** 2},
+                          index=pd.Index(idx, name="binary_index"))
+        file_path = os.path.join(tmp_path, "test_many.h5")
+        df.to_hdf(file_path, key="history", format="table",
+                  index=pytables_index)
+        hist = totest.History(str(file_path), chunksize=7)
+
+        def expected(sel, columns=None):
+            out = df[df.index.isin(sel)]
+            return out if columns is None else out[columns]
+
+        for sel in [[3, 97, 50],                         # few, scattered
+                    list(range(10, 60)),                 # many, contiguous
+                    list(range(99, 0, -3)) + [7, 7, 7]]: # many, scattered,
+                                                         # unsorted, repeated
+            pd.testing.assert_frame_equal(hist[sel], expected(sel))
+            pd.testing.assert_frame_equal(hist[np.array(sel)], expected(sel))
+        pd.testing.assert_frame_equal(hist.select_indices(sel, columns=["b"]),
+                                      expected(sel, ["b"]))
+        # indices that are not in the file
+        out = hist.select_indices([500, 600, *range(200, 240)])
+        assert out.empty and list(out.columns) == ["a", "b"]
+        pd.testing.assert_frame_equal(hist.select_indices([5, 500]),
+                                      expected([5]))
+
+    def test_select_indices_after_append(self, tmp_path):
+        df = pd.DataFrame({"a": np.arange(6.0)},
+                          index=pd.Index(np.repeat(np.arange(3), 2),
+                                         name="binary_index"))
+        file_path = os.path.join(tmp_path, "test_append.h5")
+        df.to_hdf(file_path, key="history", format="table")
+        hist = totest.History(str(file_path))
+        pd.testing.assert_frame_equal(hist.select_indices([0, 1, 2, 3]), df)
+        # the cached 'index' column must be reloaded after rows are added
+        more = pd.DataFrame({"a": [6.0, 7.0]},
+                            index=pd.Index([3, 3], name="binary_index"))
+        more.to_hdf(file_path, key="history", format="table", append=True)
+        pd.testing.assert_frame_equal(hist.select_indices([0, 1, 2, 3]),
+                                      pd.concat([df, more]))
+
+    def test_select_indices_from_lengths(self, tmp_path, monkeypatch):
+        # binaries with different history lengths
+        idx = [0, 0, 1, 2, 2, 2, 3, 4, 4]
+        df = pd.DataFrame({"a": np.arange(9.0)},
+                          index=pd.Index(idx, name="binary_index"))
+        file_path = os.path.join(tmp_path, "test_lengths.h5")
+        df.to_hdf(file_path, key="history", format="table")
+        hist = totest.History(str(file_path))
+
+        # the rows are located from the lengths: the 'index' column is not read
+        def fail(*args, **kwargs):
+            raise AssertionError("the 'index' column should not be read")
+        monkeypatch.setattr(totest.pd.HDFStore, "select_column", fail)
+        for sel in ([2], [0, 2, 4], [1, 2, 3], [4, 0, 4]):
+            pd.testing.assert_frame_equal(hist.select_indices(sel),
+                                          df[df.index.isin(sel)])
+
+    @mark.parametrize("idx", [[2, 2, 0, 0, 1, 1],    # not sorted
+                              [0, 1, 0, 1, 2, 2]])   # not contiguous
+    def test_select_indices_fallback(self, tmp_path, idx):
+        # rows not stored in the order of history_lengths
+        df = pd.DataFrame({"a": np.arange(6.0)},
+                          index=pd.Index(idx, name="binary_index"))
+        file_path = os.path.join(tmp_path, "test_fallback.h5")
+        df.to_hdf(file_path, key="history", format="table")
+        hist = totest.History(str(file_path))
+        for sel in ([0], [1, 2], [0, 1, 2]):
+            pd.testing.assert_frame_equal(hist.select_indices(sel),
+                                          df[df.index.isin(sel)])
+
 class TestOneline:
 
     def test_init(self, tmp_path):
@@ -470,6 +544,20 @@ class TestOneline:
 
         with raises(ValueError, match="elements in list are not integers"):
             one[[1.1, 2.2]]
+
+    def test_select_indices_many(self, tmp_path):
+        df = pd.DataFrame({"a": np.arange(100.0)},
+                          index=pd.Index(np.arange(100), name="index"))
+        file_path = os.path.join(tmp_path, "test_many_oneline.h5")
+        df.to_hdf(file_path, key="oneline", format="table")
+        one = totest.Oneline(str(file_path), chunksize=7)
+        sel = list(range(99, 0, -3))
+        mask = df.index.isin(sel)
+        expected = df[mask]
+        pd.testing.assert_frame_equal(one[sel], expected)
+        pd.testing.assert_frame_equal(one[np.array(sel)], expected)
+        pd.testing.assert_frame_equal(one[mask], expected)
+        pd.testing.assert_frame_equal(one[pd.DataFrame({"m": mask})], expected)
 
 class TestPopulationIO:
 
