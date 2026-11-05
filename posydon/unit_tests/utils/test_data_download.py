@@ -24,7 +24,7 @@ from unittest.mock import patch
 
 from pytest import approx, fixture, raises, warns
 
-from posydon.utils.posydonwarning import ReplaceValueWarning
+from posydon.utils.posydonwarning import MissingFilesWarning, ReplaceValueWarning
 
 
 # define test classes collecting several test functions
@@ -779,6 +779,37 @@ class TestFunctions:
             assert self.kwargs['MD5_check'] == True
             assert self.kwargs['verbose'] == False
             assert self.kwargs['force'] == False
+            # test warning about a missing file
+            self.kwargs = None
+            with warns(MissingFilesWarning, match="Unable to find test.txt. "
+                       "Attempting to download the POSYDON data set 'Test' "
+                       "from Zenodo."):
+                totest.data_download(set_name='Test', missing_file='test.txt')
+            assert self.kwargs['dataset'] == 'Test'
+            # test confirmation prompt
+            for answer in ['y', ' Yes ']:
+                self.kwargs = None
+                mp.setattr("builtins.input", lambda prompt: answer)
+                totest.data_download(set_name='Test', confirm=True)
+                assert self.kwargs['dataset'] == 'Test'
+                assert "About to download POSYDON data set 'Test' from "\
+                       + "Zenodo.\n" == capsys.readouterr().out
+            def mock_input_EOF(prompt):
+                raise EOFError
+            for mock_input in [lambda prompt: 'n', lambda prompt: '',
+                               mock_input_EOF]:
+                self.kwargs = None
+                mp.setattr("builtins.input", mock_input)
+                totest.data_download(set_name='Test', confirm=True)
+                assert self.kwargs is None
+                assert "Download cancelled.\n" in capsys.readouterr().out
+                with warns(MissingFilesWarning, match="Unable to find "
+                           "test.txt."):
+                    with raises(FileNotFoundError, match="test.txt is "
+                                "missing and the download was cancelled."):
+                        totest.data_download(set_name='Test', confirm=True,
+                                             missing_file='test.txt')
+                assert self.kwargs is None
 
     def test_get_posydon_data(self, monkeypatch):
         def mock_parse_commandline():
