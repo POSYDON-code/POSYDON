@@ -1,0 +1,24 @@
+posydon.CLI
+===========
+
+.. automodule:: posydon.CLI
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   posydon.CLI.popsyn
+
+
+
+posydon.CLI.io
+--------------
+
+.. automodule:: posydon.CLI.io
+   :members:
+   :show-inheritance:
+   :undoc-members:

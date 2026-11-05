@@ -1,0 +1,14 @@
+posydon.active\_learning
+========================
+
+.. automodule:: posydon.active_learning
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
+
+.. toctree::
+   :maxdepth: 2
+   :titlesonly:
+
+   posydon.active_learning.psy_cris

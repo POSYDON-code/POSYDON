@@ -1,0 +1,7 @@
+posydon\_setup\_pipeline
+========================
+
+.. automodule:: posydon_setup_pipeline
+   :members:
+   :show-inheritance:
+   :undoc-members:
