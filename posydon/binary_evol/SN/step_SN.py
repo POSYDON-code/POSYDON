@@ -27,7 +27,6 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_CC,
     STAR_STATES_CO,
 )
-
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     get_CCSN_prescription,
     replace_deprecated_mechanism,
@@ -133,8 +132,8 @@ class StepSN(object):
             return binary.star_2, binary.star_1
         else:
             raise ValueError(
-                "Invalid call of step_SN: \n" + 
-                "Called during binary event {event}".format(event=binary.event) + 
+                "Invalid call of step_SN: \n" +
+                "Called during binary event {event}".format(event=binary.event) +
                 "Step_SN should only be called if binary event is CC1 or CC2"
             )
 

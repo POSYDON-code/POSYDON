@@ -35,7 +35,7 @@ STATE_FROM_EXPLOSION = {
     None: None,
 }
 
-# NS masses from ECSNe are computed separately from those in the CCSN 
+# NS masses from ECSNe are computed separately from those in the CCSN
 # mechanism. The whole remnant is treated as a PNS, and there is no
 # fallback (following Giacobbo & Mapelli 2020).
 def ECSN_mass_Tauris(star):
@@ -97,7 +97,7 @@ class PPISN_Mass_Marchant19(PPISN_Mass_Base):
 
 class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
     """
-    Mass left after pulsational pair instability from 
+    Mass left after pulsational pair instability from
     Hendriks et al. (2023), MNRAS, 526, 4130.
 
     The pulses remove delta_M_PPI (Eq. 6) from the star, then the

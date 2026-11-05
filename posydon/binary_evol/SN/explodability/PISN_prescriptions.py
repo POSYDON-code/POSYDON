@@ -1,5 +1,6 @@
-from abc import ABC, abstractmethod
 import numbers
+from abc import ABC, abstractmethod
+
 
 def get_PISN_prescription(**kwargs):
     option = kwargs['PISN']
