@@ -1,5 +1,8 @@
 from abc import ABC, abstractmethod
 
+from sklearn.neighbors import KNeighborsClassifier
+
+from posydon.binary_evol.SN.engine_data import SUKHBOLD16_NS, Sukhbold16_table
 from posydon.utils.posydonwarning import Pwarn
 
 SN_MECHANISMS = [
@@ -79,10 +82,42 @@ class CCSN_check_mass_based(CCSN_check_base):
         return None
 
 
+class CCSN_check_Sukhbold16(CCSN_check_base):
+    """
+    Explosion outcome from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
+
+    A k-nearest-neighbours classifier, trained on the He core masses of the
+    models of the chosen engine, predicts "NS" for a successful explosion or
+    "BH_direct" for a failed one. With n_neighbors = 1 the star gets the
+    outcome of the model with the closest He core mass. The most massive
+    model (He core 14.61 Msun) forms a BH for every engine, so every star
+    above the tables does too.
+    """
+    n_neighbors = 1
+
+    def __init__(self,**kwargs):
+        super().__init__(**kwargs)
+        self.engine = kwargs['engine']
+        table = Sukhbold16_table(self.engine)
+        self._classifier = KNeighborsClassifier(self.n_neighbors,
+                                                weights="distance")
+        self._classifier.fit(table[["He_c_mass"]].to_numpy(),
+                             table["stellar_state"].to_numpy())
+
+    def __call__(self,star):
+        state = self._classifier.predict([[star.he_core_mass]])[0]
+        return "NS" if state == SUKHBOLD16_NS else "BH_direct"
+
+    def __repr__(self):
+        return (f"{type(self).__name__}(mechanism={self.mechanism!r}, "
+                f"engine={self.engine!r})")
+
+
 CCSN_EXPLOSION_CRITERIA = {
     "Fryer+12-rapid": CCSN_check_mass_based,
     "Fryer+12-delayed": CCSN_check_mass_based,
     "direct": CCSN_check_mass_based,
+    "Sukhbold+16-engine": CCSN_check_Sukhbold16,
 }
 
 
