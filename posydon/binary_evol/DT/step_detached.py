@@ -75,6 +75,23 @@ def event(terminal, direction=0):
         return f
     return dec
 
+class ODEEvaluationLimitError(RuntimeError):
+    """Raised when an ODE solve exceeds `ode_max_nfev` evaluations."""
+
+
+def _limit_evaluations(fun, max_nfev):
+    """Wrap `fun` so that it raises after `max_nfev` calls."""
+    count = [0]
+
+    def limited(t, y):
+        count[0] += 1
+        if count[0] > max_nfev:
+            raise ODEEvaluationLimitError(
+                f"exceeded {max_nfev} right-hand-side evaluations")
+        return fun(t, y)
+    return limited
+
+
 class detached_step:
     """
     Evolve a detached binary.
@@ -138,6 +155,26 @@ class detached_step:
         The TrackMatcher object performs functions related to matching
         binary stellar evolution components to single star evolution models.
 
+    ode_method : str
+        Integration method passed to ``scipy.integrate.solve_ivp`` for the
+        orbital and spin equations (default: 'Radau').
+
+    ode_rtol, ode_atol : float
+        Relative and absolute tolerances passed to ``solve_ivp`` (defaults:
+        1e-3 and 1e-6, i.e. SciPy's own defaults).
+
+    ode_fallback_method : str
+        Method used to retry the integration if the first attempt raises an
+        exception (default: 'RK45'). The retry uses the same tolerances.
+
+    ode_max_nfev : int or None
+        If set, the first attempt is abandoned after this many evaluations of
+        the right-hand side and the integration is retried with
+        `ode_fallback_method`. Useful with an explicit `ode_method` (e.g.
+        'RK45'), which can need very many small steps on stiff systems; the
+        retry with an implicit method (e.g. 'Radau') then handles them.
+        None (default) means no limit.
+
     verbose : bool
         True if we want to print stuff.
 
@@ -174,6 +211,11 @@ class detached_step:
                       "metallicity": None,
                       "track_matcher": None,
                       "RNG": np.random.default_rng(),
+                      "ode_method": "Radau",
+                      "ode_rtol": 1e-3,
+                      "ode_atol": 1e-6,
+                      "ode_fallback_method": "RK45",
+                      "ode_max_nfev": None,
                       "verbose": False}
 
     def __init__(self, **kwargs):
@@ -497,26 +539,26 @@ class detached_step:
             of the stars evolution through the detached step.
 
         """
+        ivp_kwargs = dict(events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
+                                  self.evo.ev_max_time1, self.evo.ev_max_time2],
+                          t_span=(binary.time, self.max_time),
+                          y0=[binary.separation, binary.eccentricity,
+                              secondary.omega0, primary.omega0],
+                          rtol=self.ode_rtol, atol=self.ode_atol,
+                          dense_output=True)
+
+        fun = self.evo
+        if self.ode_max_nfev is not None:
+            fun = _limit_evaluations(self.evo, self.ode_max_nfev)
+
         try:
-            res = solve_ivp(self.evo,
-                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
-                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
-                            method="Radau",
-                            t_span=(binary.time, self.max_time),
-                            y0=[binary.separation, binary.eccentricity,
-                                secondary.omega0, primary.omega0],
-                            dense_output=True)
+            res = solve_ivp(fun, method=self.ode_method, **ivp_kwargs)
         except Exception as e:
             if self.verbose:
-                print(f"RK45 failed with error {e}, trying with 'RK45' method.")
-            res = solve_ivp(self.evo,
-                            events=[self.evo.ev_rlo1, self.evo.ev_rlo2,
-                                    self.evo.ev_max_time1, self.evo.ev_max_time2],
-                            method="RK45",
-                            t_span=(binary.time, self.max_time),
-                            y0=[binary.separation, binary.eccentricity,
-                                secondary.omega0, primary.omega0],
-                            dense_output=True)
+                print(f"{self.ode_method} failed with error {e}, trying with "
+                      f"'{self.ode_fallback_method}' method.")
+            res = solve_ivp(self.evo, method=self.ode_fallback_method,
+                            **ivp_kwargs)
 
         if res.status == -1:
             failed_state = binary.state
