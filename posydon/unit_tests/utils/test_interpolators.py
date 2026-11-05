@@ -257,6 +257,23 @@ class TestSingleStarInterpolator:
         assert np.allclose(res["c"], -0.5)
         assert np.allclose(res["d"], 3.0)
 
+    def test_call_array_time(self, SSI_full_combinations):
+        # array input takes the general (non-scalar) branch
+        ts = np.array([0.25, 0.75])
+        res = SSI_full_combinations(ts)
+        for key in ["a", "b", "c", "d"]:
+            assert res[key].shape == (2,)
+            for j, t in enumerate(ts):
+                assert res[key][j] == SSI_full_combinations(t)[key]
+        # a length-1 array gives scalars, as before
+        res1 = SSI_full_combinations(np.array([0.25]))
+        res0 = SSI_full_combinations(0.25)
+        assert list(res1) == list(res0)
+        for key in res0:
+            assert np.ndim(res1[key]) == 0
+            assert res1[key] == res0[key]
+            assert type(res1[key]) is type(res0[key])
+
     def test_values_2D_branch(self,SSI_2D_coverage):
         res = SSI_2D_coverage(0.5)
         assert set(res.keys()) == {"a", "b"}

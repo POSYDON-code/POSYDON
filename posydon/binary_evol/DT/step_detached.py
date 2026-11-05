@@ -773,6 +773,15 @@ class detached_step:
                 if len(history) > 1:
                     getattr(obj, key + "_history").extend(history)
 
+def _non_negative(value):
+    """Return `value` clipped below at 0.0 (NaN is passed through).
+
+    Equivalent to `np.max([value, 0])` for a float, including NaN
+    propagation, and maps -0.0 to 0.0.
+    """
+    return value if (value > 0.0 or value != value) else 0.0
+
+
 class detached_evolution:
     """
     ODE system describing the evolution of a detached binary.
@@ -1161,9 +1170,11 @@ class detached_evolution:
             self.secondary.latest[key] = secondary_data[key]
 
         # update omega, a, e, based on current diffeq solution
-        y[0] = np.max([y[0], 0])  # We limit separation to non-negative values
+        # (_non_negative(v) gives the same value as np.max([v, 0]) without
+        # building an array; this runs on every right-hand-side evaluation)
+        y[0] = _non_negative(y[0])  # We limit separation to non-negative values
         self.a = y[0]
-        y[1] = np.max([y[1], 0])  # We limit eccentricity to non-negative values
+        y[1] = _non_negative(y[1])  # We limit eccentricity to non-negative values
         self.e = y[1]
         if self.e > 0 and self.e < 10.0 ** (-3):
             # we force a negligible eccentricity to become 0
@@ -1174,9 +1185,9 @@ class detached_evolution:
                     "computational stability")
 
         # update omega
-        y[2] = np.max([y[2], 0])  # We limit omega spin to non-negative values
+        y[2] = _non_negative(y[2])  # We limit omega spin to non-negative values
         self.secondary.latest["omega"] = y[2]  # in rad/yr
-        y[3] = np.max([y[3], 0])
+        y[3] = _non_negative(y[3])
         self.primary.latest["omega"] = y[3]
 
         # store current time

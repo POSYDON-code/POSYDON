@@ -329,6 +329,8 @@ class GRIDInterpolator():
         Contains valid keys for accessing the data.
     """
 
+    _GET_CACHE_SIZE = 512   # masses cached by get()
+
     def __init__(self, path, verbose=False):
         """Initialize the GRIDInterpolator."""
         self.path = path
@@ -574,52 +576,80 @@ class GRIDInterpolator():
             The interpolated ZAMS time-series specified by `key`
             associated with the initial mass `M_new`.
 
+        Notes
+        -----
+        Track matching calls this method many times with the same `M_new`
+        and different keys. The bracketing grid masses, the interpolation
+        weight and the ZAMS index depend only on `M_new` (and the track
+        length), so they are cached per mass; only the requested column is
+        blended on each call. The arithmetic per output element is unchanged.
+
         """
-        if M_new in self.grid_mass:
+        cache = self.__dict__.setdefault("_get_cache", {})
+        try:
+            entry = cache.get(M_new)
+        except TypeError:           # unhashable input, e.g. a 0-d array
+            entry, cache = None, {}
+        if entry is None:
+            if M_new in self.grid_mass:
+                entry = [True, None]
+            else:
+                mass_low = np.max(self.grid_mass[M_new > self.grid_mass])
+                mass_high = np.min(self.grid_mass[M_new < self.grid_mass])
+                weight = (M_new - mass_low) / (mass_high - mass_low)
+                entry = [False, mass_low, mass_high, weight, {}]
+            if len(cache) >= self._GET_CACHE_SIZE:
+                cache.clear()
+            try:
+                cache[M_new] = entry
+            except TypeError:
+                pass
+
+        if entry[0]:                # M_new is a grid mass
             try:
                 kvalue = self.grid_data[M_new][key]
             except KeyError:
                 self.load_grid(M_new)
                 kvalue = self.grid_data[M_new][key]
+            if entry[1] is None:
+                log_L = self.grid_data[M_new]['log_L']
+                log_LH = self.grid_data[M_new]['log_LH']
+                entry[1] = np.argmax(np.log10(0.99) + log_L <= log_LH)
+            i_zams = entry[1]
+            if key == 'age':
+                kvalue = kvalue - kvalue[i_zams]
+            return kvalue[i_zams:]
 
-            log_L = self.grid_data[M_new]['log_L']
-            log_LH = self.grid_data[M_new]['log_LH']
+        _, mass_low, mass_high, weight, i_zams_by_cut = entry
+        try:
+            kvalue_low = self.grid_data[mass_low][key]
+        except KeyError:
+            self.load_grid(mass_low)
+            kvalue_low = self.grid_data[mass_low][key]
+        try:
+            kvalue_high = self.grid_data[mass_high][key]
+        except KeyError:
+            self.load_grid(mass_high)
+            kvalue_high = self.grid_data[mass_high][key]
+
+        i_cut = min(len(kvalue_low), len(kvalue_high))
+        i_zams = i_zams_by_cut.get(i_cut)
+        if i_zams is None:
+            log_L_low = self.grid_data[mass_low]['log_L'][:i_cut]
+            log_L_high = self.grid_data[mass_high]['log_L'][:i_cut]
+            log_LH_low = self.grid_data[mass_low]['log_LH'][:i_cut]
+            log_LH_high = self.grid_data[mass_high]['log_LH'][:i_cut]
+            log_L = log_L_low + weight * (log_L_high - log_L_low)
+            log_LH = log_LH_low + weight * (log_LH_high - log_LH_low)
             i_zams = np.argmax(np.log10(0.99) + log_L <= log_LH)
-        else:
-            mass_low = np.max(self.grid_mass[M_new > self.grid_mass])
-            mass_high = np.min(self.grid_mass[M_new < self.grid_mass])
-            weight = (M_new - mass_low) / (mass_high - mass_low)
+            i_zams_by_cut[i_cut] = i_zams
 
-            try:
-                kvalue_low = self.grid_data[mass_low][key]
-            except KeyError:
-                self.load_grid(mass_low)
-                kvalue_low = self.grid_data[mass_low][key]
-            try:
-                kvalue_high = self.grid_data[mass_high][key]
-            except KeyError:
-                self.load_grid(mass_high)
-                kvalue_high = self.grid_data[mass_high][key]
-
-            i_cut = min(len(kvalue_low), len(kvalue_high))
-            kvalue = kvalue_low[:i_cut] + weight * (kvalue_high[:i_cut]
-                                                    - kvalue_low[:i_cut])
-            log_L_low = self.grid_data[mass_low]['log_L']
-            log_L_high = self.grid_data[mass_high]['log_L']
-
-            log_LH_low = self.grid_data[mass_low]['log_LH']
-            log_LH_high = self.grid_data[mass_high]['log_LH']
-
-            log_L = log_L_low[:i_cut] + weight * (log_L_high[:i_cut]
-                                                  - log_L_low[:i_cut])
-            log_LH = log_LH_low[:i_cut] + weight * (log_LH_high[:i_cut]
-                                                    - log_LH_low[:i_cut])
-            i_zams = np.argmax(np.log10(0.99) + log_L <= log_LH)
-
+        # identical to blending [:i_cut] and then slicing [i_zams:]
+        low = kvalue_low[i_zams:i_cut]
+        kvalue = low + weight * (kvalue_high[i_zams:i_cut] - low)
         if key == 'age':
-            kvalue = kvalue - kvalue[i_zams]
-
-        return kvalue[i_zams:]
+            kvalue = kvalue - kvalue[0]
+        return kvalue
 
     def get_final_values(self, key, M_new):
         if M_new in self.grid_mass:
