@@ -53,8 +53,30 @@ def parse_commandline():
 
     return args
 
+
+def subprocessPopen_call(args):
+    """Wrapper for subprocess.Popen. The output is a proc object"""
+
+    proc = subprocess.Popen(args,
+                            stdin=subprocess.PIPE,
+                            stdout=subprocess.PIPE,
+                            stderr=subprocess.PIPE,
+    )
+    return proc
+
+
 def find_inlist_from_scenario(source, gitcommit, system_type):
     """Dynamically find the inlists the user wants to from the supplied info
+
+    The scenario's inlists are stored under `*_scenario` keys of
+    `mesa_inlists`, and never under `*_user` keys, so the user inlists given in
+    the .ini are kept in every scenario. `construct_static_inlist` merges the
+    inlists in dictionary order (later keys win), so the resulting layering is
+
+        *_mesa_defaults -> *_posydon_defaults -> *_scenario -> *_user
+
+    For star formation (and single-star grids) a list is read as one inlist
+    per step and a string is layered onto every step.
 
     Parameters
     ----------
@@ -65,6 +87,12 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
 
         system_type:
     """
+    # Set aside the user inlists from the .ini; they are put back at the end
+    # of the dictionary, after everything the scenario adds, so they are
+    # applied last
+    user_inlists = {k: mesa_inlists.pop(k) for k in list(mesa_inlists)
+                    if k.endswith('_user')}
+
     # note the directory we are in now
     where_am_i_now = os.getcwd()
     print("We are going to dynamically fetch the posydon inlists based on your scenario")
@@ -74,11 +102,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         if not os.path.isdir('{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])):
             print("We are clonining the repo for you")
             # Determine location of executables
-            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git', '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])],
-                                         stdin = subprocess.PIPE,
-                                         stdout = subprocess.PIPE,
-                                         stderr = subprocess.PIPE
-                                     )
+            proc = subprocessPopen_call(['git', 'clone', 'https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git', '{0}/.posydon_mesa_inlists'.format(os.environ['HOME'])])
             (clone, err) = proc.communicate()
         else:
             Pwarn("git repository is already there, using that",
@@ -103,11 +127,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
         if not os.path.isdir('{0}/.user_mesa_inlists'.format(os.environ['HOME'])):
             print("We are clonining the repo for you")
             # Determine location of executables
-            proc = subprocess.Popen(['git', 'clone', 'https://github.com/POSYDON-code/USER-MESA-INLISTS.git', '{0}/.user_mesa_inlists'.format(os.environ['HOME'])],
-                                         stdin = subprocess.PIPE,
-                                         stdout = subprocess.PIPE,
-                                         stderr = subprocess.PIPE
-                                     )
+            proc = subprocessPopen_call(['git', 'clone', 'https://github.com/POSYDON-code/USER-MESA-INLISTS.git', '{0}/.user_mesa_inlists'.format(os.environ['HOME'])])
             (clone, err) = proc.communicate()
         else:
             Pwarn("git repository is already there, using that",
@@ -123,11 +143,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
     os.chdir(inlists_dir)
     print("checking out branch: {0}".format(branch))
 
-    proc = subprocess.Popen(['git', 'checkout', '{0}'.format(branch)],
-                                 stdin = subprocess.PIPE,
-                                 stdout = subprocess.PIPE,
-                                 stderr = subprocess.PIPE
-                             )
+    proc = subprocessPopen_call(['git', 'checkout', '{0}'.format(branch)])
     proc.wait()
 
     print("For posterity we are pulling (specifically needed if you already have the repo clone)")
@@ -140,11 +156,7 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
 
     print("checking out commit/tag: {0}".format(githash))
 
-    proc = subprocess.Popen(['git', 'checkout', '{0}'.format(githash)],
-                                 stdin = subprocess.PIPE,
-                                 stdout = subprocess.PIPE,
-                                 stderr = subprocess.PIPE
-                             )
+    proc = subprocessPopen_call(['git', 'checkout', '{0}'.format(githash)])
     proc.wait()
 
     # if this is looking at posydon defaults, all posydon defaults build from default common inlists
@@ -154,41 +166,26 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
               "We are populating the posydon inlists in the following directory: "
               "{1}".format(system_type, inlists_location_common))
 
-        inlist1 = os.path.join(inlists_location_common, 'binary', 'inlist1')
-        if os.path.isfile(inlist1):
-            with open(inlist1) as f:
-                # check if we also need to find the location of the zams.data file
-                for line in f.readlines():
-                    if 'zams_filename' in line:
-                        print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename'] for star 1")
-                        zams_filename_1 = os.path.split(line.split("'")[1])[1]
-                        zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename_1)
-                        if os.path.isfile(zams_file_path):
-                            print("Verified locations of ZAMS data file, {0}".format(zams_file_path))
-                            mesa_inlists['zams_filename_1'] = "{0}".format(zams_file_path)
-            print("Running Single Grid: Setting mesa_star1_extras to {0}/binary/src/run_star_extras.f".format(inlists_location_common))
-
-        inlist2 = os.path.join(inlists_location_common, 'binary', 'inlist2')
-        if os.path.isfile(inlist2):
-            with open(inlist2) as f:
-                # check if we also need to find the location of the zams.data file
-                for line in f.readlines():
-                    if 'zams_filename' in line:
-                        print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename'] for star 2")
-                        zams_filename_2 = os.path.split(line.split("'")[1])[1]
-                        zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename_2)
-                        if os.path.isfile(zams_file_path):
-                            print("Verified locations of ZAMS data file, {0}".format(zams_file_path))
-                            mesa_inlists['zams_filename_2'] = "{0}".format(zams_file_path)
-            print("Running Single Grid: Setting mesa_star2_extras to {0}/binary/src/run_star_extras.f".format(inlists_location_common))
-
+        for inlist in ['inlist1', 'inlist2']:
+            inlist_path = os.path.join(inlists_location_common, 'binary', inlist)
+            if os.path.isfile(inlist_path):
+                with open(inlist_path) as f:
+                    # check if we also need to find the location of the zams.data file
+                    for line in f.readlines():
+                        if 'zams_filename' in line:
+                            print("ZAMS_FILENAME detected, setting mesa_inlists['zams_filename'] for star {0}".format(inlist[-1]))
+                            zams_filename = os.path.split(line.split("'")[1])[1]
+                            zams_file_path = os.path.join(inlists_dir, 'r11701', "ZAMS_models", zams_filename)
+                            if os.path.isfile(zams_file_path):
+                                print("Verified locations of ZAMS data file, {0}".format(zams_file_path))
+                                mesa_inlists['zams_filename_{0}'.format(inlist[-1])] = "{0}".format(zams_file_path)
+                print("Running Single Grid: Setting mesa_star{0}_extras to {1}/binary/src/run_star_extras.f".format(inlist[-1], inlists_location_common))
 
         print("Updating inifile values")
         # binary inlists
-        mesa_inlists['star1_controls_posydon_defaults'] = '{0}/binary/inlist1'.format(inlists_location_common)
-        mesa_inlists['star1_job_posydon_defaults'] = '{0}/binary/inlist1'.format(inlists_location_common)
-        mesa_inlists['star2_controls_posydon_defaults'] = '{0}/binary/inlist2'.format(inlists_location_common)
-        mesa_inlists['star2_job_posydon_defaults'] = '{0}/binary/inlist2'.format(inlists_location_common)
+        for i in ['1', '2']:
+            mesa_inlists['star{0}_controls_posydon_defaults'.format(i)] = '{0}/binary/inlist{1}'.format(inlists_location_common, i)
+            mesa_inlists['star{0}_job_posydon_defaults'.format(i)] = '{0}/binary/inlist{1}'.format(inlists_location_common, i)
         mesa_inlists['binary_controls_posydon_defaults'] = '{0}/binary/inlist_project'.format(inlists_location_common)
         mesa_inlists['binary_job_posydon_defaults'] = '{0}/binary/inlist_project'.format(inlists_location_common)
 
@@ -211,21 +208,16 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                   "We are populating the user inlists in the following directory: "
                   "{1}".format(system_type, inlists_location))
 
-            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist1")):
-                mesa_inlists['star1_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
-                mesa_inlists['star1_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
-
-            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist2")):
-                mesa_inlists['star2_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
-                mesa_inlists['star2_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
+            for i in ['1', '2']:
+                path = os.path.join(inlists_location, "binary", "inlist{0}".format(i))
+                if os.path.isfile(path):
+                    mesa_inlists['star{0}_controls_scenario'.format(i)] = path
+                    mesa_inlists['star{0}_job_scenario'.format(i)] = path
 
             # check for star formation parameters
             if os.path.isdir(os.path.join(inlists_location, "star1_formation")):
                 # We are making star1 so we can unset the zams file we were going to use for star1
                 print("We are making star1 so we can unset the zams file we were going to use for star1")
-                # print()
-                # print("HERE")
-                # print()
                 mesa_inlists['zams_filename_1'] = None
 
                 # Figure out how many user star1 formation steps there are and layer the posydon default inlists on all of them
@@ -238,8 +230,8 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                     mesa_inlists['star1_formation_controls_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
                     mesa_inlists['star1_formation_job_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
 
-                mesa_inlists['star1_formation_controls_user'] = star1_formation_scenario
-                mesa_inlists['star1_formation_job_user'] = star1_formation_scenario
+                mesa_inlists['star1_formation_controls_scenario'] = star1_formation_scenario
+                mesa_inlists['star1_formation_job_scenario'] = star1_formation_scenario
 
         elif system_type != "HMS-HMS" and not mesa_inlists['single_star_grid']:
             inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
@@ -247,70 +239,42 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
                   "We are populating the user inlists in the following directory: "
                   "{1}".format(system_type, inlists_location))
 
-            # determine where the binary inlist(s) are
-            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist_project")):
-                mesa_inlists['binary_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist_project"))
-                mesa_inlists['binary_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist_project"))
-
-            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist1")):
-                mesa_inlists['star1_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
-                mesa_inlists['star1_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist1"))
-
-            if os.path.isfile(os.path.join(inlists_location, "binary", "inlist2")):
-                mesa_inlists['star2_controls_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
-                mesa_inlists['star2_job_user'] = '{0}'.format(os.path.join(inlists_location, "binary", "inlist2"))
-
-            if os.path.isfile(os.path.join(inlists_location, "history_columns.list")):
-                mesa_inlists['star_history_columns'] = os.path.join(inlists_location, "history_columns.list")
-
-            if os.path.isfile(os.path.join(inlists_location, "binary_history_columns.list")):
-                mesa_inlists['binary_history_columns'] = os.path.join(inlists_location, "binary_history_columns.list")
-
-            if os.path.isfile(os.path.join(inlists_location, "profile_columns.list")):
-                mesa_inlists['profile_columns'] = os.path.join(inlists_location, "profile_columns.list")
-
-            if os.path.isfile(os.path.join(inlists_location, "src", "run_binary_extras.f")):
-                mesa_extras['user_binary_extras'] = '{0}'.format(os.path.join(inlists_location, "src", "run_binary_extras.f"))
-
-            if os.path.isfile(os.path.join(inlists_location, "src", "run_star_extras.f")):
-                mesa_extras['user_star_binary_extras'] = '{0}'.format(os.path.join(inlists_location, "src", "run_star_extras.f"))
+            # determine where the user inlists, column lists, and extras are located
+            user_files = [
+                (mesa_inlists, ['binary_controls_scenario', 'binary_job_scenario'], ("binary", "inlist_project")),
+                (mesa_inlists, ['star1_controls_scenario', 'star1_job_scenario'], ("binary", "inlist1")),
+                (mesa_inlists, ['star2_controls_scenario', 'star2_job_scenario'], ("binary", "inlist2")),
+                (mesa_inlists, ['star_history_columns'], ("history_columns.list",)),
+                (mesa_inlists, ['binary_history_columns'], ("binary_history_columns.list",)),
+                (mesa_inlists, ['profile_columns'], ("profile_columns.list",)),
+                (mesa_extras, ['user_binary_extras'], ("src", "run_binary_extras.f")),
+                (mesa_extras, ['user_star_binary_extras'], ("src", "run_star_extras.f")),
+            ]
+            for target, keys, path_parts in user_files:
+                path = os.path.join(inlists_location, *path_parts)
+                if os.path.isfile(path):
+                    for key in keys:
+                        target[key] = path
 
             # check for star formation parameters
-            if os.path.isdir(os.path.join(inlists_location, "star1_formation")):
-                # We are making star1 so we can unset the zams file we were going to use for star1
-                print("We are making star1 so we can unset the zams file we were going to use for star1")
-                mesa_inlists['zams_filename_1'] = None
+            for i in ['1', '2']:
+                if os.path.isdir(os.path.join(inlists_location, "star{0}_formation".format(i))):
+                    # We are making star{i} so we can unset the zams file we were going to use for star{i}
+                    print("We are making star{0} so we can unset the zams file we were going to use for star{0}".format(i))
+                    mesa_inlists['zams_filename_{0}'.format(i)] = None
 
-                # Figure out how many user star1 formation steps there are and layer the posydon default inlists on all of them
-                star1_formation_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
-                print("These are the user we are using to make star1: {0}".format(star1_formation_scenario))
-                print("We are going to add a layer of posydon default common inlists to these user steps: {0}".format('{0}/binary/inlist1'.format(inlists_location_common)))
-                mesa_inlists['star1_formation_controls_posydon_defaults'] = []
-                mesa_inlists['star1_formation_job_posydon_defaults'] = []
-                for i in range(len(star1_formation_scenario)):
-                    mesa_inlists['star1_formation_controls_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
-                    mesa_inlists['star1_formation_job_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
+                    # Figure out how many user star{i} formation steps there are and layer the posydon default inlists on all of them
+                    star_formation_scenario = sorted(glob.glob(os.path.join(inlists_location, "star{0}_formation".format(i), "*step*")))
+                    print("These are the user we are using to make star{0}: {1}".format(i, star_formation_scenario))
+                    print("We are going to add a layer of posydon default common inlists to these user steps: {0}".format('{0}/binary/inlist1'.format(inlists_location_common)))
+                    mesa_inlists['star{0}_formation_controls_posydon_defaults'.format(i)] = []
+                    mesa_inlists['star{0}_formation_job_posydon_defaults'.format(i)] = []
+                    for j in range(len(star_formation_scenario)):
+                        mesa_inlists['star{0}_formation_controls_posydon_defaults'.format(i)].append('{0}/binary/inlist1'.format(inlists_location_common))
+                        mesa_inlists['star{0}_formation_job_posydon_defaults'.format(i)].append('{0}/binary/inlist1'.format(inlists_location_common))
 
-                mesa_inlists['star1_formation_controls_user'] = star1_formation_scenario
-                mesa_inlists['star1_formation_job_user'] = star1_formation_scenario
-
-            if os.path.isdir(os.path.join(inlists_location, "star2_formation")):
-                # We are making star2 so we can unset the zams file we were going to use for star2
-                print("We are making star2 so we can unset the zams file we were going to use for star2")
-                mesa_inlists['zams_filename_2'] = None
-
-                # Figure out how many user star2 formation steps there are and layer the posydon default inlists on all of them
-                star2_formation_scenario = sorted(glob.glob(os.path.join(inlists_location, "star2_formation", "*step*")))
-                print("These are the user we are using to make star2: {0}".format(star2_formation_scenario))
-                print("We are going to add a layer of posydon default common inlists to these user steps: {0}".format('{0}/binary/inlist1'.format(inlists_location_common)))
-                mesa_inlists['star2_formation_controls_posydon_defaults'] = []
-                mesa_inlists['star2_formation_job_posydon_defaults'] = []
-                for i in range(len(star2_formation_scenario)):
-                    mesa_inlists['star2_formation_controls_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
-                    mesa_inlists['star2_formation_job_posydon_defaults'].append('{0}/binary/inlist1'.format(inlists_location_common))
-
-                mesa_inlists['star2_formation_controls_user'] = star2_formation_scenario
-                mesa_inlists['star2_formation_job_user'] = star2_formation_scenario
+                    mesa_inlists['star{0}_formation_controls_scenario'.format(i)] = star_formation_scenario
+                    mesa_inlists['star{0}_formation_job_scenario'.format(i)] = star_formation_scenario
 
         if system_type == "HMS-HMS" and mesa_inlists['single_star_grid']:
             print("You want a single star HMS grid, this means that we need to make a user inlist on the fly with a single line "
@@ -323,14 +287,15 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
-
                 f.write(b'\n\n')
-
                 f.write(b"""
-        / ! end of star1_controls namelist
+                         / ! end of star1_controls namelist
+                         """)
 
-        """)
-            mesa_inlists['star1_controls_special'] = special_single_star_user_inlist
+            # A single string is layered onto the (only) step, so the special
+            # inlist is applied together with any star1_controls_user from the .ini
+            mesa_inlists['star1_controls_scenario'] = special_single_star_user_inlist
+
         elif system_type == "CO-He_star" and mesa_inlists['single_star_grid']:
             inlists_location = '{0}/{1}/{2}/'.format(inlists_dir, 'r11701', system_type)
             print("Based on system_type {0} "
@@ -344,8 +309,6 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             # Find the user single star controls
             single_star_scenario = sorted(glob.glob(os.path.join(inlists_location, "star1_formation", "*step*")))
             print("These are the user inlists used in the single star grid: {0}".format(single_star_scenario))
-            mesa_inlists['star1_controls_user'] = single_star_scenario
-            mesa_inlists['star1_job_user'] = single_star_scenario
             print("You want a single star He grid, "
                   "this means that we need to make the inlist that will be used to evolve the system "
                   "and make sure we layer on the line "
@@ -358,21 +321,31 @@ def find_inlist_from_scenario(source, gitcommit, system_type):
             with open(special_single_star_user_inlist, 'wb') as f:
                 f.write(b'&controls\n\n')
                 f.write('\t{0} = {1}\n'.format("x_logical_ctrl(1)", ".true.").encode('utf-8'))
-
                 f.write(b'\n\n')
                 f.write(b"""
-        / ! end of star1_controls namelist
-
-        """)
+                         / ! end of star1_controls namelist
+                         """)
                 f.write(b'&star_job\n\n')
                 f.write(b"""
-        / / ! end of star_job namelist
+                         / / ! end of star_job namelist
+                         """)
 
-        """)
-            mesa_inlists['star1_controls_special'].append(special_single_star_user_inlist)
+            # A list is read as one inlist per step: the He-star formation
+            # steps, then a final step that evolves the star with
+            # x_logical_ctrl(1)=.true. Any star1_*_user from the .ini stays a
+            # string and so is layered onto every one of these steps.
+            single_star_steps = single_star_scenario + [special_single_star_user_inlist]
+            mesa_inlists['star1_controls_scenario'] = single_star_steps
+            mesa_inlists['star1_job_scenario'] = single_star_steps
 
     # change back to where I was
     os.chdir(where_am_i_now)
+
+    # Put the user inlists from the .ini back, last, so they override the
+    # MESA defaults, the POSYDON defaults and the scenario inlists
+    for k, v in user_inlists.items():
+        if v is not None:
+            mesa_inlists[k] = v
 
     return
 
@@ -563,6 +536,8 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
             final_star1_formation_controls = {}
             final_star1_formation_job = {}
             for k, v in step_inlists.items():
+                # a None entry in a per-step list means: nothing from this key in this step
+                if v is None: continue
                 if ('star1_formation_controls' in k) or ('star1_controls' in k):
                     section = '&controls'
                     controls_dict = utils.clean_inlist_file(v, section=section)
@@ -674,6 +649,8 @@ def construct_static_inlist(mesa_inlists, grid_parameters, working_directory=os.
             final_star2_formation_controls = {}
             final_star2_formation_job = {}
             for k, v in step_inlists.items():
+                # a None entry in a per-step list means: nothing from this key in this step
+                if v is None: continue
                 if 'star2_formation_controls' in k:
                     section = '&controls'
                     controls_dict = utils.clean_inlist_file(v, section=section)
@@ -992,11 +969,7 @@ if __name__ == '__main__':
                           "before you can run a grid os MESA runs")
 
     # Determine location of executables
-    proc = subprocess.Popen(['which', 'posydon-run-grid'],
-                                 stdin = subprocess.PIPE,
-                                 stdout = subprocess.PIPE,
-                                 stderr = subprocess.PIPE
-                             )
+    proc = subprocessPopen_call(['which', 'posydon-run-grid'])
     (path_to_run_grid_exec, err) = proc.communicate()
     if not path_to_run_grid_exec:
         raise ValueError('Cannot locate posydon-run-grid executable in your path')
