@@ -48,12 +48,14 @@ several distribution families. The table below summarizes the main options.
        secondary-mass range or from explicit mass-ratio bounds.
    * - Orbital period
      - ``period`` with ``Sana+12_period_extended``, ``power_law`` or
-       ``log_power_law``; or ``separation`` with ``log_uniform``
+       ``log_power_law``; or ``separation`` with ``log_uniform`` or
+       ``log_normal``
      - For ``period``: ``orbital_period_min`` and ``orbital_period_max``. For
        ``Sana+12_period_extended`` no additional parameters are needed. For
        ``power_law`` and ``log_power_law``: ``power_law_slope``. For
        ``separation``: ``orbital_separation_min`` and
-       ``orbital_separation_max``.
+       ``orbital_separation_max``; for ``log_normal`` also
+       ``log_orbital_separation_mean`` and ``log_orbital_separation_sigma``.
      - Periods are interpreted in days. ``power_law`` follows
        :math:`dN/d\log_{10}P \propto P^{\rm slope}`, while ``log_power_law``
        follows :math:`dN/d\log_{10}P \propto (\log_{10}P)^{\rm slope}` and
@@ -65,6 +67,11 @@ several distribution families. The table below summarizes the main options.
      - ``binary_fraction_scheme``, ``binary_fraction_const``
      - This is currently implemented as a constant binary fraction and is used
        to distinguish single-star and binary PDFs.
+
+.. note::
+
+   The eccentricity is not reweighted. The simulation and the target
+   population must use the same eccentricity distribution.
 
 How the weights are computed
 ---------------------------

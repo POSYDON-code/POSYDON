@@ -1,4 +1,15 @@
-"""Period and mass ratio distributions module for POSYDON."""
+"""Period and mass ratio distributions module for POSYDON.
+
+Boundary convention
+-------------------
+PDFs include both bounds, [min, max], as in `scipy.stats`. Samples exclude
+the upper bound, [min, max), because numpy draws uniform numbers in [0, 1),
+as `scipy.stats` does too. A single point has zero probability, so this does
+not change the distribution.
+
+The mass ratio distributions exclude q = 0, because it is unphysical. The
+PDF is zero at q = 0 and the samplers never return it.
+"""
 
 __authors__ = [
     "Max Briel <max.briel@gmail.com>"
@@ -6,6 +17,8 @@ __authors__ = [
 import numpy as np
 from scipy.integrate import quad
 from scipy.stats import truncnorm
+
+from posydon.utils.common_functions import orbital_separation_from_period
 
 
 def per_dex_to_linear(pdf_per_dex, x):
@@ -34,12 +47,64 @@ def per_dex_to_linear(pdf_per_dex, x):
     return pdf_values
 
 
-class FlatMassRatio:
+class MassRatioDistribution:
+    """Base class of the mass ratio distributions, which exclude q = 0.
+
+    Subclasses set `q_min` and `q_max`, or override `support` if the
+    bounds depend on the primary mass.
+    """
+
+    def support(self, m1=None):
+        """Lower and upper bound of q.
+
+        Parameters
+        ----------
+        m1 : float or array_like, optional
+            Primary mass(es). Unused for fixed bounds.
+
+        Returns
+        -------
+        tuple
+            (q_lower, q_upper).
+        """
+        return self.q_min, self.q_max
+
+    def in_support(self, q, m1=None):
+        """Whether q lies within the bounds and is not 0.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused for fixed bounds.
+
+        Returns
+        -------
+        bool or ndarray of bool
+            True where q is a valid mass ratio.
+        """
+        q_lower, q_upper = self.support(m1)
+        q = np.asarray(q, dtype=float)
+        return (q > 0) & (q >= q_lower) & (q <= q_upper)
+
+    @staticmethod
+    def _redraw_zeros(q, redraw):
+        """Redraw samples of exactly q = 0, using redraw(mask)."""
+        zero = q == 0
+        while np.any(zero):
+            q[zero] = redraw(zero)
+            zero = q == 0
+        return q
+
+
+class FlatMassRatio(MassRatioDistribution):
     """Flat mass ratio distribution for binary star systems.
 
     A uniform distribution for mass ratios q = m2/m1 within specified bounds.
     This distribution assigns equal probability to all mass ratios within the
-    given range (q_min, q_max], exclusive bottom, inclusive top.
+    given range [q_min, q_max]; q = 0 is excluded (see
+    `MassRatioDistribution`).
 
     Parameters
     ----------
@@ -137,27 +202,31 @@ class FlatMassRatio:
         """
         return 1.0
 
-    def pdf(self, q):
+    def pdf(self, q, m1=None):
         """Probability density function of the flat mass ratio distribution.
 
         Parameters
         ----------
         q : float or array_like
             Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
         float or ndarray
             Probability density at mass ratio q.
         """
-        q = np.asarray(q)
-        valid = (q > self.q_min) & (q <= self.q_max)
+        q = np.asarray(q, dtype=float)
+        valid = self.in_support(q)
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.flat_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the flat mass ratio distribution.
+
+        Samples lie in [q_min, q_max) and are never 0.
 
         Parameters
         ----------
@@ -174,14 +243,140 @@ class FlatMassRatio:
         if rng is None:
             rng = np.random.default_rng()
 
-        return rng.uniform(self.q_min, self.q_max, size=size)
+        q = np.asarray(rng.uniform(self.q_min, self.q_max, size=size))
+        return self._redraw_zeros(
+            q, lambda zero: rng.uniform(self.q_min, self.q_max,
+                                        size=np.count_nonzero(zero)))
 
 
-class PowerLawMassRatio:
+class ConditionalFlatMassRatio(MassRatioDistribution):
+    """Flat mass ratio distribution with bounds set by the secondary mass.
+
+    q | m1 ~ U[max(m2_min/m1, 0), min(m2_max/m1, 1)]
+
+    Parameters
+    ----------
+    m2_min : float
+        Minimum secondary mass [Msun]. Must be >= 0.
+    m2_max : float
+        Maximum secondary mass [Msun]. Must be larger than m2_min.
+
+    Raises
+    ------
+    ValueError
+        If m2_min < 0 or m2_min >= m2_max.
+    """
+
+    def __init__(self, m2_min, m2_max):
+        """Initialize the conditional flat mass ratio distribution.
+
+        Parameters
+        ----------
+        m2_min : float
+            Minimum secondary mass [Msun]. Must be >= 0.
+        m2_max : float
+            Maximum secondary mass [Msun]. Must be larger than m2_min.
+
+        Raises
+        ------
+        ValueError
+            If m2_min < 0 or m2_min >= m2_max.
+        """
+        if m2_min < 0:
+            raise ValueError("m2_min must be >= 0")
+        if m2_min >= m2_max:
+            raise ValueError("m2_min must be less than m2_max")
+        self.m2_min = m2_min
+        self.m2_max = m2_max
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return (f"ConditionalFlatMassRatio(m2_min={self.m2_min}, "
+                f"m2_max={self.m2_max})")
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return (f"<h3>Conditional Flat Mass Ratio Distribution</h3>"
+                f"<p>m2_min = {self.m2_min}</p>"
+                f"<p>m2_max = {self.m2_max}</p>")
+
+    def support(self, m1):
+        """Lower and upper bound of q for primary mass m1.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        tuple
+            (max(m2_min/m1, 0), min(m2_max/m1, 1)).
+        """
+        m1 = np.asarray(m1, dtype=float)
+        return (np.maximum(self.m2_min / m1, 0.0),
+                np.minimum(self.m2_max / m1, 1.0))
+
+    def pdf(self, q, m1):
+        """Probability density of q given the primary mass m1.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        ndarray
+            Probability density at q, zero outside the bounds.
+        """
+        q, m1 = np.broadcast_arrays(np.asarray(q, dtype=float),
+                                    np.asarray(m1, dtype=float))
+        q_lower, q_upper = self.support(m1)
+        width = q_upper - q_lower
+        # width <= 0: no companion possible for this m1
+        valid = self.in_support(q, m1) & (width > 0)
+        return np.divide(1.0, width, out=np.zeros_like(width), where=valid)
+
+    def rvs(self, m1, rng=None):
+        """Draw one mass ratio for each primary mass.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            One mass ratio per primary mass.
+
+        Raises
+        ------
+        ValueError
+            If m1 <= m2_min for some primary mass.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+        m1 = np.atleast_1d(np.asarray(m1, dtype=float))
+        q_lower, q_upper = self.support(m1)
+        if np.any(q_upper <= q_lower):
+            raise ValueError("No valid mass ratio for primary masses "
+                             "m1 <= m2_min.")
+        q = rng.uniform(q_lower, q_upper)
+        return self._redraw_zeros(
+            q, lambda zero: rng.uniform(q_lower[zero], q_upper[zero]))
+
+
+class PowerLawMassRatio(MassRatioDistribution):
     """Power law mass ratio distribution for binary star systems.
 
     A distribution where the PDF follows q^alpha within specified bounds
-    (q_min, q_max], exclusive bottom, inclusive top.
+    [q_min, q_max]; q = 0 is excluded (see `MassRatioDistribution`).
 
     Parameters
     ----------
@@ -277,27 +472,32 @@ class PowerLawMassRatio:
         """
         return np.asarray(q, dtype=float)**self.alpha
 
-    def pdf(self, q):
+    def pdf(self, q, m1=None):
         """Probability density function of the power law mass ratio distribution.
 
         Parameters
         ----------
         q : float or array_like
             Mass ratio(s).
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
         float or ndarray
             Probability density at mass ratio q.
         """
-        q = np.asarray(q)
-        valid = (q > self.q_min) & (q <= self.q_max)
+        q = np.asarray(q, dtype=float)
+        valid = self.in_support(q)
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.power_law_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, rng=None):
         """Draw random samples from the power law mass ratio distribution.
+
+        Uses the analytic inverse CDF; samples lie in [q_min, q_max) and
+        are never 0.
 
         Parameters
         ----------
@@ -314,11 +514,83 @@ class PowerLawMassRatio:
         if rng is None:
             rng = np.random.default_rng()
 
-        from posydon.utils.common_functions import inverse_sampler
-        q_grid = np.linspace(self.q_min, self.q_max, n_points)
-        pdf_values = self.power_law_mass_ratio(q_grid)
-        return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
+        q = np.asarray(self._inverse_cdf(rng.uniform(size=size)))
+        return self._redraw_zeros(
+            q, lambda zero: self._inverse_cdf(
+                rng.uniform(size=np.count_nonzero(zero))))
 
+    def _inverse_cdf(self, u):
+        """Mass ratio at cumulative probability u in [0, 1]."""
+        if np.isclose(self.alpha, -1.0):
+            return self.q_min * (self.q_max / self.q_min)**u
+        a1 = self.alpha + 1.0
+        return (self.q_min**a1 + u * (self.q_max**a1 - self.q_min**a1))**(1.0 / a1)
+
+
+
+class ConstantBinaryFraction:
+    """Constant binary fraction.
+
+    A fraction f_b of all systems are binaries and 1 - f_b are single stars,
+    independent of the stellar properties.
+
+    Parameters
+    ----------
+    f_b : float
+        Binary fraction. Must be in [0, 1].
+
+    Raises
+    ------
+    ValueError
+        If f_b is not in [0, 1].
+
+    Examples
+    --------
+    >>> dist = ConstantBinaryFraction(f_b=0.7)
+    >>> dist.pdf([True, False])
+    array([0.7, 0.3])
+    """
+
+    def __init__(self, f_b):
+        """Initialize the constant binary fraction.
+
+        Parameters
+        ----------
+        f_b : float
+            Binary fraction. Must be in [0, 1].
+
+        Raises
+        ------
+        ValueError
+            If f_b is not in [0, 1].
+        """
+        if not (0 <= f_b <= 1):
+            raise ValueError("f_b must be in [0, 1]")
+        self.f_b = f_b
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"ConstantBinaryFraction(f_b={self.f_b})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return (f"<h3>Constant Binary Fraction</h3>"
+                f"<p>f_b = {self.f_b}</p>")
+
+    def pdf(self, binary):
+        """Probability of a system being a binary or a single star.
+
+        Parameters
+        ----------
+        binary : bool or array_like of bool
+            True for binaries, False for single stars.
+
+        Returns
+        -------
+        ndarray
+            f_b for binaries and 1 - f_b for single stars.
+        """
+        return np.where(np.asarray(binary), self.f_b, 1 - self.f_b)
 
 class Sana12Period():
     """Period distribution from Sana et al. (2012).
@@ -465,7 +737,7 @@ class Sana12Period():
         return result
 
 
-    def pdf_per_dex(self, p, m1):
+    def pdf_per_dex(self, p, m1, q=None):
         '''Probability density per dex of the Sana12 period distribution.
         Conditional on m1.
 
@@ -477,6 +749,8 @@ class Sana12Period():
             Period(s).
         m1 : float or array_like
             Mass value(s). Single value or an array of the same length as p.
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -500,7 +774,7 @@ class Sana12Period():
                              * self.norm(m1[valid]))
         return pdf_values
 
-    def pdf(self, p, m1):
+    def pdf(self, p, m1, q=None):
         '''Probability density function of the Sana12 period distribution.
         Conditional on m1.
 
@@ -512,6 +786,8 @@ class Sana12Period():
             Period(s).
         m1 : float or array_like
             Mass value(s). Single value or an array of the same length as p.
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -696,7 +972,7 @@ class PowerLawPeriod():
 
         return result
 
-    def pdf_per_dex(self, p):
+    def pdf_per_dex(self, p, m1=None, q=None):
         """Probability density per dex of the power law period distribution.
 
         Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P).
@@ -705,6 +981,9 @@ class PowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -721,7 +1000,7 @@ class PowerLawPeriod():
 
         return pdf_values
 
-    def pdf(self, p):
+    def pdf(self, p, m1=None, q=None):
         """Probability density function of the power law period distribution.
 
         Normalised in linear P space to 1, i.e. this returns dP/dP.
@@ -730,6 +1009,9 @@ class PowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -739,15 +1021,19 @@ class PowerLawPeriod():
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p), p)
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None, m1=None):
         """Draw random samples from the power law period distribution.
 
         Parameters
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : int, optional
+            Number of grid points for the inverse sampling (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -882,7 +1168,7 @@ class LogPowerLawPeriod():
 
         return result
 
-    def pdf_per_dex(self, p):
+    def pdf_per_dex(self, p, m1=None, q=None):
         """Probability density per dex of the log power law period
         distribution.
 
@@ -892,6 +1178,9 @@ class LogPowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -907,7 +1196,7 @@ class LogPowerLawPeriod():
 
         return pdf_values
 
-    def pdf(self, p):
+    def pdf(self, p, m1=None, q=None):
         """Probability density function of the log power law period
         distribution.
 
@@ -917,6 +1206,9 @@ class LogPowerLawPeriod():
         ----------
         p : float or array_like
             Period(s).
+        m1, q : float or array_like, optional
+            Primary mass(es) and mass ratio(s). Unused, accepted for a
+            common interface.
 
         Returns
         -------
@@ -926,7 +1218,7 @@ class LogPowerLawPeriod():
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p), p)
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, n_points=1000, rng=None, m1=None):
         """Draw random samples from the log power law period distribution.
 
         Parameters
@@ -937,6 +1229,8 @@ class LogPowerLawPeriod():
             Number of grid points for the inverse sampling (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -1435,8 +1729,11 @@ class LogNormalSeparation:
         Raises
         ------
         ValueError
-            If min is not positive, max <= min, or sigma <= 0.
+            If mean or sigma is None, min is not positive, max <= min, or
+            sigma <= 0.
         """
+        if mean is None or sigma is None:
+            raise ValueError("mean and sigma must be given")
         if min <= 0:
             raise ValueError("min must be positive")
         if max <= min:
@@ -1466,8 +1763,12 @@ class LogNormalSeparation:
                 f"<p>min = {self.min} R☉</p>"
                 f"<p>max = {self.max} R☉</p>")
 
-    def pdf(self, a):
-        """Probability density function of the log-normal separation distribution.
+    def pdf_per_dex(self, a):
+        """Probability density per dex of the log-normal separation
+        distribution.
+
+        Normalised in log10(a) space to 1, i.e. this returns dP/dlog10(a):
+        the truncated normal distribution in log10(a).
 
         Parameters
         ----------
@@ -1477,23 +1778,39 @@ class LogNormalSeparation:
         Returns
         -------
         float or ndarray
-            Probability density at separation a.
+            Probability density per unit log10(a) at separation a.
         """
         a = np.asarray(a)
         valid = (a > 0) & (a >= self.min) & (a <= self.max)
         pdf_values = np.zeros_like(a, dtype=float)
 
-        log_a = np.log10(a[valid])
-        # PDF of truncnorm in log space, transformed to linear space
-        # pdf(a) = pdf_log(log a) * |d(log a)/da| = pdf_log(log a) / (a * ln(10))
         pdf_values[valid] = truncnorm.pdf(
-            log_a,
+            np.log10(a[valid]),
             self.a_low, self.a_high,
             loc=self.mean,
             scale=self.sigma
-        ) / (a[valid] * np.log(10))
+        )
 
         return pdf_values
+
+    def pdf(self, a):
+        """Probability density function of the log-normal separation
+        distribution.
+
+        Normalised in linear a space to 1, i.e. this returns dP/da.
+
+        Parameters
+        ----------
+        a : float or array_like
+            Orbital separation(s) in solar radii.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit a (in solar radii) at separation a.
+        """
+        a = np.asarray(a, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(a), a)
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the log-normal separation distribution.
@@ -1524,3 +1841,89 @@ class LogNormalSeparation:
 
         # Convert back to linear space
         return 10**log_separations
+
+
+class PeriodFromSeparation:
+    """Orbital period distribution implied by a separation distribution.
+
+    For given masses, Kepler's third law gives a ∝ P^(2/3), so
+    dlog10(a)/dlog10(P) = 2/3 and
+
+        dN/dlog10(P) = (2/3) dN/dlog10(a).
+
+    Parameters
+    ----------
+    separation : LogUniform or LogNormalSeparation
+        Separation distribution in solar radii, with `pdf_per_dex(a)`.
+
+    Examples
+    --------
+    >>> dist = PeriodFromSeparation(LogUniform(min=5.0, max=1e5))
+    >>> pdf = dist.pdf_per_dex(10.0, m1=15.0, q=0.8)
+    """
+
+    def __init__(self, separation):
+        """Initialize the period distribution from a separation distribution.
+
+        Parameters
+        ----------
+        separation : LogUniform or LogNormalSeparation
+            Separation distribution in solar radii, with `pdf_per_dex(a)`.
+        """
+        self.separation = separation
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"PeriodFromSeparation({self.separation!r})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return ("<h3>Period from Separation Distribution</h3>"
+                + self.separation._repr_html_())
+
+    def pdf_per_dex(self, p, m1, q):
+        """Probability density per dex of the orbital period.
+
+        Normalised in log10(P) space to 1 for given masses, i.e. this
+        returns dP/dlog10(P).
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) in days.
+        m1 : float or array_like
+            Primary mass(es) in solar masses.
+        q : float or array_like
+            Mass ratio(s) m2/m1.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
+        """
+        m1 = np.asarray(m1, dtype=float)
+        a = orbital_separation_from_period(p, m1, np.asarray(q) * m1)
+        return 2. / 3. * self.separation.pdf_per_dex(a)
+
+    def pdf(self, p, m1, q):
+        """Probability density function of the orbital period.
+
+        Normalised in linear P space to 1 for given masses, i.e. this
+        returns dP/dP.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) in days.
+        m1 : float or array_like
+            Primary mass(es) in solar masses.
+        q : float or array_like
+            Mass ratio(s) m2/m1.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit P (in days) at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(p, m1, q), p)
