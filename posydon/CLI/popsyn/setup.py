@@ -8,8 +8,11 @@ import os
 
 from posydon.CLI.io import (
     create_bash_submit_script,
+    create_job_scripts,
     create_python_scripts,
-    create_slurm_scripts,
+    scheduler_from_args,
+    submit_script_name,
+    write_run_settings,
 )
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
 from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
@@ -109,6 +112,9 @@ def setup_popsyn_function(args):
                          " length. Please increase the number of binaries or"
                          " decrease the job array length")
 
+    # job scheduler (e.g. SLURM) writing the job scripts
+    scheduler = scheduler_from_args(args)
+
     # create the run_metallicity and merge_metallicity scripts
     create_python_scripts(args.ini_file)
 
@@ -117,8 +123,12 @@ def setup_popsyn_function(args):
         str_met = convert_metallicity_to_string(met)
         os.makedirs(f'{str_met}_logs', exist_ok=True)
 
-        # create SLURM array submission script for this metallicity
-        create_slurm_scripts(met, args)
+        # create the job array and merge scripts for this metallicity
+        create_job_scripts(met, args, scheduler)
+
+    # save the job settings for `posydon-popsyn check`
+    write_run_settings(args, scheduler)
 
     # create bash submission script for all metallicities at once
-    create_bash_submit_script('slurm_submit.sh', metallicities)
+    create_bash_submit_script(submit_script_name(scheduler), metallicities,
+                              scheduler=scheduler)
