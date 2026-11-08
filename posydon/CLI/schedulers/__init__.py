@@ -20,11 +20,13 @@ __authors__ = [
 ]
 
 from posydon.CLI.schedulers.base import ArraySpec, JobSpec, Scheduler
+from posydon.CLI.schedulers.pbs import PBSScheduler
 from posydon.CLI.schedulers.slurm import SlurmScheduler
 
 # registry of the available scheduler backends
 SCHEDULERS = {
     SlurmScheduler.name: SlurmScheduler,
+    PBSScheduler.name: PBSScheduler,
 }
 DEFAULT_SCHEDULER = 'slurm'
 
@@ -112,6 +114,7 @@ def parse_option_strings(option_strings):
 
 
 __all__ = ['ArraySpec', 'JobSpec', 'Scheduler', 'SlurmScheduler',
+           'PBSScheduler',
            'SCHEDULERS', 'DEFAULT_SCHEDULER', 'get_scheduler',
            'normalize_scheduler_name', 'parse_option_strings',
            'scheduler_names', 'scheduler_options_from_mapping']

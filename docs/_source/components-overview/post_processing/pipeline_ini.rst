@@ -21,7 +21,7 @@ The content of the :samp:`ini` file is described :ref:`below
 check:
 
 1. \*.csv
-2. \*.slurm
+2. \*.slurm (or the extension of another :ref:`job scheduler <job_schedulers>`, e.g. \*.pbs)
 
 Additionally, it will prepare a :samp:`logs` directory (it may create a save
 of some old logs) and create a shell script :samp:`run_pipeline.sh` to submit
@@ -58,6 +58,10 @@ example to show the supported key words:
         MAILTYPE = 'ALL'
         EMAIL = 'matthias.kruckow@unige.ch'
         GROUP = 'GL_S_Astro_POSYDON'
+
+To use another job scheduler than SLURM, e.g. PBS, add
+:samp:`SCHEDULER = 'pbs'` and its options (e.g. :samp:`SELECT` and
+:samp:`FILESYSTEMS`) to this section, see :ref:`job_schedulers`.
 
 The last one :samp:`GROUP` is a bit special. If it is set, ownership
 of all the files created by the pipeline will be assigned to :samp:`GROUP`.

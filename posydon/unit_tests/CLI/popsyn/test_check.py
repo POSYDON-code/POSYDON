@@ -1169,3 +1169,17 @@ class TestSchedulerSupport:
         (tmp_path / "popsyn_jobs.json").write_text(
             '{"scheduler": "slurm", "scheduler_options": {"exclude": "n1"}}')
         assert totest.get_run_scheduler(args).settings['exclude'] == 'n1'
+
+    def test_pbs_walltime_message(self, tmp_path, capsys):
+        log_file = tmp_path / "log.out"
+        log_file.write_text("=>> PBS: job killed: walltime 86410 exceeded "
+                            "limit 86400\n")
+        totest.read_batch_log_file(str(log_file), 1, "1e+00", 1)
+        assert "Wall time exceeded" in capsys.readouterr().out
+
+    @patch('subprocess.run')
+    def test_submit_pbs_job(self, mock_run, capsys):
+        mock_run.side_effect = FileNotFoundError()
+        assert totest.submit_job("a.pbs", totest.get_scheduler('pbs')) is False
+        assert "qsub command not found. Is PBS installed?" in \
+            capsys.readouterr().out

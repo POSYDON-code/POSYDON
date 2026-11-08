@@ -35,7 +35,7 @@ RESCUE_SCRIPT_PATTERN = "{met}_Zsun_rescue.slurm"
 RESUBMIT_SCRIPT = "resubmit_slurm.sh"
 
 # Messages written by the schedulers when the walltime is exceeded
-TIME_LIMIT_MESSAGES = ("DUE TO TIME LIMIT",)
+TIME_LIMIT_MESSAGES = ("DUE TO TIME LIMIT", "job killed: walltime")
 
 def get_ini_file(args):
     '''Find and select the INI file for the population synthesis run.

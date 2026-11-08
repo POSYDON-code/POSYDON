@@ -35,7 +35,7 @@ class TestElements:
                     'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES',
                     'clean_binary_history_df', 'clean_binary_oneline_df',
                     'parse_inifile', 'simprop_kwargs_from_ini',
-                    'binarypop_kwargs_from_ini',
+                    'binarypop_kwargs_from_ini', 'get_job_array_environment',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
                     'ConfigParser', 'ast', 'importlib', 'os', 'errno',
@@ -359,6 +359,28 @@ class TestFunctions:
         assert simkwargs['HMS_HMS'] == '/path/to/grid'
 
 
+    def test_get_job_array_environment(self, monkeypatch):
+        # nothing set
+        assert totest.get_job_array_environment({}) == {
+            'JOB_ID': None, 'TASK_ID': None, 'TASK_MIN': None,
+            'TASK_COUNT': None}
+        # SLURM takes precedence over POSYDON variables
+        env = {'SLURM_ARRAY_JOB_ID': '1', 'SLURM_ARRAY_TASK_ID': '2',
+               'SLURM_ARRAY_TASK_MIN': '0', 'SLURM_ARRAY_TASK_COUNT': '4',
+               'POSYDON_ARRAY_JOB_ID': '9'}
+        assert totest.get_job_array_environment(env) == {
+            'JOB_ID': '1', 'TASK_ID': '2', 'TASK_MIN': '0',
+            'TASK_COUNT': '4'}
+        # POSYDON variables only, incomplete
+        assert totest.get_job_array_environment(
+            {'POSYDON_ARRAY_JOB_ID': '9', 'POSYDON_ARRAY_TASK_ID': '1'}) == {
+            'JOB_ID': '9', 'TASK_ID': '1', 'TASK_MIN': None,
+            'TASK_COUNT': None}
+        # default: os.environ
+        for prefix in ['SLURM_ARRAY_', 'POSYDON_ARRAY_']:
+            monkeypatch.delenv(prefix + 'JOB_ID', raising=False)
+        assert totest.get_job_array_environment()['JOB_ID'] is None
+
     def test_binarypop_kwargs_from_ini(self,monkeypatch,binpop_ini,
                                        binpop_ini_mpi,binpop_ini_stars):
         # bad configuration: MPI and job array
@@ -391,6 +413,17 @@ class TestFunctions:
         monkeypatch.delenv('SLURM_ARRAY_TASK_ID', raising=False)
         monkeypatch.delenv('SLURM_ARRAY_TASK_MIN', raising=False)
         monkeypatch.delenv('SLURM_ARRAY_TASK_COUNT', raising=False)
+        # example: PBS job via POSYDON's task runner
+        monkeypatch.setenv("POSYDON_ARRAY_JOB_ID", "789")
+        monkeypatch.setenv("POSYDON_ARRAY_TASK_ID", "3")
+        monkeypatch.setenv("POSYDON_ARRAY_TASK_MIN", "0")
+        monkeypatch.setenv("POSYDON_ARRAY_TASK_COUNT", "8")
+        binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
+        assert binkwargs["JOB_ID"] == 789
+        assert binkwargs["RANK"] == 3
+        assert binkwargs["size"] == 8
+        for var in ['JOB_ID', 'TASK_ID', 'TASK_MIN', 'TASK_COUNT']:
+            monkeypatch.delenv('POSYDON_ARRAY_' + var, raising=False)
         binkwargs = totest.binarypop_kwargs_from_ini(binpop_ini)
         assert binkwargs['RANK'] is None
         assert binkwargs['size'] is None

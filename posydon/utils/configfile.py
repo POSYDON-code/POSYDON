@@ -230,7 +230,7 @@ class ConfigFile:
 
 # names of the inifile section with the job scheduler settings (first found
 # is used)
-SCHEDULER_SECTIONS = ('slurm', 'scheduler')
+SCHEDULER_SECTIONS = ('slurm', 'pbs', 'scheduler')
 
 
 def parse_inifile(inifile):

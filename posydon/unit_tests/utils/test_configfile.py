@@ -112,6 +112,11 @@ class TestFunctions:
             test_file.write(content.replace("[slurm]", "[scheduler]"))
         rp, s, mi, me = totest.parse_inifile(other_ini_path)
         assert s['test_exception'] == ["ast.parse('X=1'", "mode='eval')"]
+        # [pbs] section
+        with open(other_ini_path, "w") as test_file:
+            test_file.write(content.replace("[slurm]", "[pbs]"))
+        rp, s, mi, me = totest.parse_inifile(other_ini_path)
+        assert s['test_exception'] == ["ast.parse('X=1'", "mode='eval')"]
         # no scheduler section
         with open(other_ini_path, "w") as test_file:
             test_file.write(content.replace("[slurm]", "[other]"))

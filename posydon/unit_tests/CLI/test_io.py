@@ -1159,3 +1159,59 @@ class TestSchedulerIndependentFunctions:
             scheduler=get_scheduler('slurm'))
         assert "resubmit=$(sbatch --parsable 1e+00_Zsun_rescue.slurm)" in \
             open(result).read()
+
+
+class TestPBSPopulationRun:
+    """A population run with the PBS scheduler."""
+
+    @pytest.fixture
+    def args(self):
+        args = MagicMock()
+        args.job_array = 50
+        args.walltime = "12:00:00"
+        args.merge_walltime = "01:00:00"
+        args.mem_per_cpu = "9G"
+        args.partition = "workq"
+        args.account = "SkAI"
+        args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = None
+        args.scheduler = 'pbs'
+        args.scheduler_option = ["select=system=crux",
+                                 "filesystems=home:eagle"]
+        return args
+
+    def test_setup_and_rescue(self, args, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        scheduler = totest.scheduler_from_args(args)
+        array_script, merge_script = totest.create_job_scripts(
+            1.0, args, scheduler, path_to_posydon="/p",
+            path_to_posydon_data="/d")
+        assert array_script == "1e+00_Zsun_pbs_array.pbs"
+        content = open(array_script).read()
+        assert "#PBS -l select=2:system=crux" in content
+        assert "--nranks 50 --ntasks 50 --task-count 50" in content
+        assert "python ./merge_metallicity.py 1.0" in open(merge_script).read()
+        totest.write_run_settings(args, scheduler, path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        totest.create_bash_submit_script("pbs_submit.sh", [1.0],
+                                         scheduler=scheduler)
+        assert ("merge=$(qsub -W depend=afterok:${array} "
+                "1e+00_Zsun_merge_popsyn.pbs)") in open("pbs_submit.sh").read()
+
+        rescue_args = MagicMock()
+        rescue_args.run_folder = str(tmp_path)
+        for name in ['walltime', 'mem_per_cpu', 'partition', 'account',
+                     'email', 'max_concurrent_jobs']:
+            setattr(rescue_args, name, None)
+        rescue_args.exclude = "n1"
+        with pytest.warns(Warning, match="'exclude' is not supported"):
+            rescue = totest.create_batch_rescue_script(
+                rescue_args, {'metallicity': 1.0, 'missing_indices': [23, 7]})
+        assert rescue == str(tmp_path / "1e+00_Zsun_rescue.pbs")
+        content = open(rescue).read()
+        assert "#PBS -l filesystems=home:eagle" in content
+        assert "--nranks 2 --task-ids 7,23 --task-count 50" in content
+        resubmit = totest.create_bash_submit_rescue_script(
+            str(tmp_path), [rescue], scheduler=scheduler)
+        assert resubmit.endswith("resubmit_pbs.sh")
