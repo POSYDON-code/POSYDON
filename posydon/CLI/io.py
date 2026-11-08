@@ -4,9 +4,17 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
 
+import json
 import os
 import textwrap
 
+from posydon.CLI.schedulers import (
+    ArraySpec,
+    JobSpec,
+    get_scheduler,
+    normalize_scheduler_name,
+    parse_option_strings,
+)
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
@@ -158,264 +166,184 @@ def create_merge_script(ini_file):
     with open(filename, mode='w') as file:
         file.write(create_merge_script_text(ini_file))
 
-def create_slurm_array(metallicity,
-                        job_array_length,
-                        partition,
-                        email,
-                        walltime,
-                        account,
-                        mem_per_cpu,
-                        max_concurrent_jobs,
-                        exclude,
-                        path_to_posydon,
-                        path_to_posydon_data):
-    '''Creates the slurm array script for population synthesis job arrays.
+## Scheduler independent job descriptions ##
 
-    Creates a SLURM submission script file named
-    "{str_met}_Zsun_slurm_array.slurm" where str_met is the metallicity
-    converted to string format.
+# Settings of a population run, used by `posydon-popsyn check` for rescues
+RUN_SETTINGS_FILE = 'popsyn_jobs.json'
+RUN_SETTINGS_KEYS = ('job_array', 'walltime', 'merge_walltime', 'mem_per_cpu',
+                     'partition', 'account', 'email', 'max_concurrent_jobs',
+                     'path_to_posydon', 'path_to_posydon_data')
+
+
+def array_script_name(str_met, scheduler):
+    """File name of the job array script, e.g. "1e+00_Zsun_slurm_array.slurm"."""
+    return scheduler.file_name(f"{str_met}_Zsun_{scheduler.name}_array")
+
+
+def merge_script_name(str_met, scheduler):
+    """File name of the merge job script."""
+    return scheduler.file_name(f"{str_met}_Zsun_merge_popsyn")
+
+
+def rescue_script_name(str_met, scheduler):
+    """File name of the rescue job script."""
+    return scheduler.file_name(f"{str_met}_Zsun_rescue")
+
+
+def submit_script_name(scheduler):
+    """File name of the bash script submitting all jobs of a run."""
+    return f"{scheduler.name}_submit.sh"
+
+
+def resubmit_script_name(scheduler):
+    """File name of the bash script submitting the rescue jobs."""
+    return f"resubmit_{scheduler.name}.sh"
+
+
+def popsyn_array_job(metallicity, job_array_length, walltime, mem_per_cpu,
+                     partition, account, email, max_concurrent_jobs,
+                     path_to_posydon, path_to_posydon_data, task_ids=None):
+    '''Job running the population synthesis of one metallicity as an array.
 
     Parameters
     ----------
     metallicity : float
-        The metallicity in solar units (e.g., 0.02 for Z=0.02)
+        The metallicity in solar units
     job_array_length : int
-        The length of the job array (number of jobs)
-    partition : str, optional
-        SLURM partition to submit the job to
-    email : str, optional
-        Email address for job notifications
+        The length of the job array (number of tasks)
     walltime : str
-        Time limit for the job in SLURM format (e.g., "24:00:00")
-    account : str, optional
-        SLURM account to charge the job to
+        Time limit of each task
     mem_per_cpu : str
-        Memory per CPU allocation (e.g., "4G")
+        Memory per CPU (e.g. "4G")
+    partition : str or None
+        Queue/partition
+    account : str or None
+        Account to charge
+    email : str or None
+        Email address for notifications on failure
+    max_concurrent_jobs : int or None
+        Maximum number of tasks running at the same time
     path_to_posydon : str
         Path to the POSYDON installation
     path_to_posydon_data : str
         Path to the POSYDON_DATA directory
+    task_ids : list of int, optional
+        Only run these tasks (rescue job); the array size stays
+        `job_array_length`
+
+    Returns
+    -------
+    JobSpec
     '''
     str_met = convert_metallicity_to_string(metallicity)
-    job_array_length = job_array_length - 1  # 0 already included
+    rescue = task_ids is not None
+    name = f"{str_met}_popsyn_rescue" if rescue else f"{str_met}_popsyn"
+    prefix = "rescue" if rescue else "popsyn"
+    return JobSpec(
+        name=name, walltime=walltime, mem_per_cpu=mem_per_cpu,
+        account=account, queue=partition, email=email, mail_type="FAIL",
+        output=f"./{str_met}_logs/{prefix}_job.out",
+        setup=[f"export PATH_TO_POSYDON={path_to_posydon}",
+               f"export PATH_TO_POSYDON_DATA={path_to_posydon_data}"],
+        array=ArraySpec(
+            command=f"python ./run_metallicity.py {metallicity}",
+            n_tasks=None if rescue else job_array_length,
+            task_ids=task_ids, task_count=job_array_length,
+            max_concurrent=max_concurrent_jobs,
+            log_file=f"./{str_met}_logs/{prefix}_{{job_id}}_{{task_id}}.out"))
 
-    # Build optional SBATCH directives
-    optional_directives = []
-    if account is not None:
-        optional_directives.append(f"#SBATCH --account={account}")
-    if partition is not None:
-        optional_directives.append(f"#SBATCH --partition={partition}")
-    if email is not None:
-        optional_directives.extend([
-            "#SBATCH --mail-type=FAIL",
-            f"#SBATCH --mail-user={email}"
-        ])
-    if exclude is not None:
-        optional_directives.append(f"#SBATCH --exclude={exclude}")
 
-    optional_section = "\n".join(optional_directives)
-    if optional_section:
-        optional_section += "\n"
+def popsyn_merge_job(metallicity, merge_walltime, mem_per_cpu, partition,
+                     account, email, path_to_posydon, path_to_posydon_data):
+    '''Job merging the array results of one metallicity.
 
-    if max_concurrent_jobs is not None:
-        job_array_length = f"{job_array_length}%{max_concurrent_jobs}"
+    See `popsyn_array_job` for the parameters.
 
-    text_pre = textwrap.dedent(f'''\
-        #!/bin/bash
-        #SBATCH --array=0-{job_array_length}
-        #SBATCH --job-name={str_met}_popsyn
-        #SBATCH --output=./{str_met}_logs/popsyn_%A_%a.out
-        #SBATCH --time={walltime}
-        #SBATCH --mem-per-cpu={mem_per_cpu}
-    ''')
-
-    text_post = textwrap.dedent(f'''\
-        export PATH_TO_POSYDON={path_to_posydon}
-        export PATH_TO_POSYDON_DATA={path_to_posydon_data}
-        srun python ./run_metallicity.py {metallicity}
-    ''')
-
-    text = text_pre + optional_section + text_post
-
-    filename = f"{str_met}_Zsun_slurm_array.slurm"
-    if os.path.exists(filename): # pragma: no cover
-        Pwarn('Replace ' + filename, "OverwriteWarning")
-    with open(filename, mode='w') as file:
-        file.write(text)
-
-def create_slurm_merge(metallicity,
-                       partition,
-                       email,
-                       merge_walltime,
-                       account,
-                       mem_per_cpu,
-                       path_to_posydon,
-                       path_to_posydon_data):
-    '''Creates the slurm submit script for merging population synthesis results.
-
-    Creates a SLURM submission script file named
-    "{str_met}_Zsun_merge_popsyn.slurm" where str_met is the metallicity
-    converted to string format.
-
-    Parameters
-    ----------
-    metallicity : float
-        The metallicity in solar units (e.g., 0.02 for Z=0.02)
-    partition : str, optional
-        SLURM partition to submit the job to
-    email : str, optional
-        Email address for job notifications
-    merge_walltime : str
-        Time limit for the merge job in SLURM format (e.g., "12:00:00")
-    account : str, optional
-        SLURM account to charge the job to
-    mem_per_cpu : str
-        Memory per CPU allocation (e.g., "4G")
-    path_to_posydon : str
-        Path to the POSYDON installation
-    path_to_posydon_data : str
-        Path to the POSYDON_DATA directory
+    Returns
+    -------
+    JobSpec
     '''
     str_met = convert_metallicity_to_string(metallicity)
-
     # Override walltime for debug-cpu partition
     if partition == 'debug-cpu':
         merge_walltime = '00:14:00'
+    return JobSpec(
+        name=f"{str_met}_Zsun_merge", walltime=merge_walltime,
+        mem_per_cpu=mem_per_cpu, account=account, queue=partition,
+        email=email, mail_type="FAIL",
+        output=f"./{str_met}_logs/popsyn_merge.out",
+        setup=[f"export PATH_TO_POSYDON={path_to_posydon}",
+               f"export PATH_TO_POSYDON_DATA={path_to_posydon_data}"],
+        launched_command=f"python ./merge_metallicity.py {metallicity}")
 
-    # Build optional SBATCH directives
-    optional_directives = []
-    if account is not None:
-        optional_directives.append(f"#SBATCH --account={account}")
-    if partition is not None:
-        optional_directives.append(f"#SBATCH --partition={partition}")
-    if email is not None:
-        optional_directives.extend([
-            "#SBATCH --mail-type=FAIL",
-            f"#SBATCH --mail-user={email}"
-        ])
 
-    optional_section = "\n".join(optional_directives)
-    if optional_section:
-        optional_section += "\n"
+def _valid_option(args, name, types=(str, int, float)):
+    '''Get an option from `args` if it is set to a value of `types`.'''
+    value = getattr(args, name, None)
+    if isinstance(value, bool) or not isinstance(value, types):
+        return None
+    return value
 
-    text_pre = textwrap.dedent(f'''\
-        #!/bin/bash
-        #SBATCH --job-name={str_met}_Zsun_merge
-        #SBATCH --output=./{str_met}_logs/popsyn_merge.out
-        #SBATCH --mem-per-cpu={mem_per_cpu}
-        #SBATCH --time={merge_walltime}
-    ''')
-    text_post = textwrap.dedent(f'''\
-        export PATH_TO_POSYDON={path_to_posydon}
-        export PATH_TO_POSYDON_DATA={path_to_posydon_data}
-        srun python ./merge_metallicity.py {metallicity}
-    ''')
 
-    text = text_pre + optional_section + text_post
-
-    filename = f'{str_met}_Zsun_merge_popsyn.slurm'
-    if os.path.exists(filename): # pragma: no cover
-        Pwarn('Replace ' + filename, "OverwriteWarning")
-    with open(filename, mode='w') as file:
-        file.write(text)
-
-## Rescue Script Creation Functions
-
-def create_slurm_rescue(metallicity,
-                        missing_indices,
-                        job_array_length,
-                        partition,
-                        email,
-                        walltime,
-                        account,
-                        mem_per_cpu,
-                        max_concurrent_jobs,
-                        exclude,
-                        path_to_posydon,
-                        path_to_posydon_data):
-    '''Creates the slurm rescue script for resubmitting failed population synthesis jobs.
-
-    Creates a SLURM submission script file named
-    "{str_met}_Zsun_rescue.slurm" where str_met is the metallicity
-    converted to string format.
+def scheduler_from_args(args, name=None):
+    '''Create the scheduler selected by the command line arguments.
 
     Parameters
     ----------
-    metallicity : float
-        The metallicity in solar units (e.g., 0.02 for Z=0.02)
-    missing_indices : list of int
-        List of failed job indices to resubmit
-    job_array_length : int
-        The original length of the job array (number of jobs)
-    partition : str, optional
-        SLURM partition to submit the job to
-    email : str, optional
-        Email address for job notifications
-    walltime : str
-        Time limit for the job in SLURM format (e.g., "24:00:00")
-    account : str, optional
-        SLURM account to charge the job to
-    mem_per_cpu : str
-        Memory per CPU allocation (e.g., "4G")
-    path_to_posydon : str
-        Path to the POSYDON installation
-    path_to_posydon_data : str
-        Path to the POSYDON_DATA directory
+    args : argparse.Namespace
+        Uses `scheduler`, `scheduler_option` (list of "KEY=VALUE") and
+        `exclude`, if present.
+    name : str, optional
+        Scheduler to use instead of `args.scheduler`.
+
+    Returns
+    -------
+    Scheduler
     '''
-    str_met = convert_metallicity_to_string(metallicity)
-
-    # Format job array string for SBATCH
-    job_array_str = ','.join(map(str, sorted(missing_indices)))
-
-    # Build optional SBATCH directives
-    optional_directives = []
-    if account is not None:
-        optional_directives.append(f"#SBATCH --account={account}")
-    if partition is not None:
-        optional_directives.append(f"#SBATCH --partition={partition}")
-    if email is not None:
-        optional_directives.extend([
-            "#SBATCH --mail-type=FAIL",
-            f"#SBATCH --mail-user={email}"
-        ])
+    if name is None:
+        name = normalize_scheduler_name(_valid_option(args, 'scheduler'))
+    option_strings = getattr(args, 'scheduler_option', None)
+    if not isinstance(option_strings, (list, tuple)):
+        option_strings = []
+    options = parse_option_strings(option_strings)
+    exclude = _valid_option(args, 'exclude', (str,))
     if exclude is not None:
-        optional_directives.append(f"#SBATCH --exclude={exclude}")
+        options['exclude'] = exclude
+    return get_scheduler(name, **options)
 
-    optional_section = "\n".join(optional_directives)
-    if optional_section:
-        optional_section += "\n"
 
-    if max_concurrent_jobs is not None:
-        job_array_str = f"{job_array_str}%{max_concurrent_jobs}"
+def scheduler_for_run(args, settings=None):
+    '''The scheduler of an existing population run.
 
-    text_pre = textwrap.dedent(f'''\
-        #!/bin/bash
-        #SBATCH --array={job_array_str}
-        #SBATCH --job-name={str_met}_popsyn_rescue
-        #SBATCH --output=./{str_met}_logs/rescue_%A_%a.out
-        #SBATCH --time={walltime}
-        #SBATCH --mem-per-cpu={mem_per_cpu}
-    ''')
+    The scheduler is `args.scheduler` if given, otherwise the one saved in
+    the run's settings, otherwise SLURM (runs set up with older versions).
+    Options saved in the settings are used if the scheduler is the same, and
+    options given in `args` override them.
 
-    text_post = textwrap.dedent(f'''
-        export PATH_TO_POSYDON={path_to_posydon}
-        export PATH_TO_POSYDON_DATA={path_to_posydon_data}
+    Parameters
+    ----------
+    args : argparse.Namespace
+        Command line arguments (`scheduler`, `scheduler_option`, `exclude`)
+    settings : dict, optional
+        The run settings (see `read_run_settings`)
 
-        export SLURM_ARRAY_TASK_COUNT={job_array_length}
-        export SLURM_ARRAY_TASK_MIN=0
+    Returns
+    -------
+    Scheduler
+    '''
+    settings = settings or {}
+    name = normalize_scheduler_name(_valid_option(args, 'scheduler'),
+                                    default=None)
+    if name is None:
+        name = normalize_scheduler_name(settings.get('scheduler'))
+    options = {}
+    if name == settings.get('scheduler'):
+        options.update(settings.get('scheduler_options') or {})
+    options.update(scheduler_from_args(args, name).given_options())
+    return get_scheduler(name, **options)
 
-        srun python ./run_metallicity.py {metallicity}
-    ''')
 
-    text = text_pre + optional_section + text_post
-
-    filename = f'{str_met}_Zsun_rescue.slurm'
-    if os.path.exists(filename): # pragma: no cover
-        Pwarn('Replace ' + filename, "OverwriteWarning")
-    with open(filename, mode='w') as file:
-        file.write(text)
-
-## Main Functions for Population Synthesis Setup ##
+## Population Synthesis Script Creation ##
 
 def create_python_scripts(ini_file):
     '''Creates the run and merge scripts for population synthesis.
@@ -429,8 +357,205 @@ def create_python_scripts(ini_file):
     create_merge_script(ini_file)
     print("Created run script and merge script")
 
-def create_slurm_scripts(metallicity, args): # pragma: no cover
-    '''Creates the slurm scripts for population synthesis.
+
+def create_job_scripts(metallicity, args, scheduler,
+                       path_to_posydon=PATH_TO_POSYDON,
+                       path_to_posydon_data=None):
+    '''Creates the job array and merge scripts for one metallicity.
+
+    Parameters
+    ----------
+    metallicity : float
+        The metallicity in solar units (e.g., 0.02 for Z=0.02)
+    args : argparse.Namespace
+        the arguments passed to `posydon-popsyn setup`
+    scheduler : Scheduler
+        The job scheduler backend
+    path_to_posydon : str
+        Path to the POSYDON installation
+    path_to_posydon_data : str, optional
+        Path to the POSYDON_DATA directory (default: from the config)
+
+    Returns
+    -------
+    tuple of str
+        The paths of the array and merge scripts
+    '''
+    if path_to_posydon_data is None:
+        path_to_posydon_data = os.path.dirname(PATH_TO_POSYDON_DATA)
+    str_met = convert_metallicity_to_string(metallicity)
+    array_job = popsyn_array_job(
+        metallicity, args.job_array, args.walltime, args.mem_per_cpu,
+        args.partition, args.account, args.email, args.max_concurrent_jobs,
+        path_to_posydon, path_to_posydon_data)
+    merge_job = popsyn_merge_job(
+        metallicity, args.merge_walltime, args.mem_per_cpu, args.partition,
+        args.account, args.email, path_to_posydon, path_to_posydon_data)
+    array_script = scheduler.write(array_job,
+                                   array_script_name(str_met, scheduler))
+    merge_script = scheduler.write(merge_job,
+                                   merge_script_name(str_met, scheduler))
+    print(f"{scheduler.name.upper()} script created for metallicity {str_met}")
+    return array_script, merge_script
+
+
+def write_run_settings(args, scheduler, folder='.',
+                       path_to_posydon=PATH_TO_POSYDON,
+                       path_to_posydon_data=None):
+    '''Save the job settings of a population run for later rescues.
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        the arguments passed to `posydon-popsyn setup`
+    scheduler : Scheduler
+        The job scheduler backend
+    folder : str
+        The run folder
+    path_to_posydon, path_to_posydon_data : str
+        Paths written into the job scripts
+
+    Returns
+    -------
+    str
+        Path to the settings file
+    '''
+    if path_to_posydon_data is None:
+        path_to_posydon_data = os.path.dirname(PATH_TO_POSYDON_DATA)
+    settings = {key: _valid_option(args, key) for key in RUN_SETTINGS_KEYS}
+    settings['path_to_posydon'] = path_to_posydon
+    settings['path_to_posydon_data'] = path_to_posydon_data
+    settings['scheduler'] = scheduler.name
+    settings['scheduler_options'] = scheduler.given_options()
+    path = os.path.join(folder, RUN_SETTINGS_FILE)
+    with open(path, 'w') as f:
+        json.dump(settings, f, indent=2, sort_keys=True)
+    return path
+
+
+def read_run_settings(run_folder):
+    '''Read the job settings saved by `write_run_settings`.
+
+    Returns
+    -------
+    dict or None
+        The settings, or None if the run folder has no settings file (e.g.
+        runs set up with older POSYDON versions)
+    '''
+    path = os.path.join(run_folder, RUN_SETTINGS_FILE)
+    if not os.path.isfile(path):
+        return None
+    with open(path, 'r') as f:
+        return json.load(f)
+
+
+def create_bash_submit_script(filename, metallicities, scheduler=None):
+    '''Creates the bash script submitting all jobs of a population run.
+
+    Parameters
+    ----------
+    filename : str
+        The name of the bash submission script to create
+    metallicities : list of float
+        The list of metallicities in solar units
+    scheduler : Scheduler, optional
+        The job scheduler backend (default: SLURM)
+    '''
+    if scheduler is None:
+        scheduler = get_scheduler('slurm')
+    if os.path.exists(filename): # pragma: no cover
+        Pwarn('Replace '+filename, "OverwriteWarning")
+    with open(filename, mode='w') as file:
+        file.write('#!/bin/bash\n')
+        for met in metallicities:
+            str_met = convert_metallicity_to_string(met)
+            file.write(scheduler.submit_line(
+                'array', array_script_name(str_met, scheduler)))
+            file.write("echo '"+str_met+" job array submitted as '${array}\n")
+            file.write(scheduler.submit_line(
+                'merge', merge_script_name(str_met, scheduler),
+                after='array'))
+            file.write("echo '"+str_met+" merge job submitted as '${merge}\n")
+
+    print_success("Setup complete. You can now submit the jobs using "
+                  f"'./{os.path.basename(filename)}'")
+
+
+## SLURM specific wrappers (kept for backwards compatibility) ##
+
+def create_slurm_array(metallicity,
+                       job_array_length,
+                       partition,
+                       email,
+                       walltime,
+                       account,
+                       mem_per_cpu,
+                       max_concurrent_jobs,
+                       exclude,
+                       path_to_posydon,
+                       path_to_posydon_data):
+    '''Creates the SLURM array script "{str_met}_Zsun_slurm_array.slurm".
+
+    See `popsyn_array_job` for the parameters; `exclude` is a comma
+    separated list of nodes to exclude.
+    '''
+    scheduler = get_scheduler('slurm', exclude=exclude)
+    job = popsyn_array_job(metallicity, job_array_length, walltime,
+                           mem_per_cpu, partition, account, email,
+                           max_concurrent_jobs, path_to_posydon,
+                           path_to_posydon_data)
+    str_met = convert_metallicity_to_string(metallicity)
+    scheduler.write(job, array_script_name(str_met, scheduler))
+
+
+def create_slurm_merge(metallicity,
+                       partition,
+                       email,
+                       merge_walltime,
+                       account,
+                       mem_per_cpu,
+                       path_to_posydon,
+                       path_to_posydon_data):
+    '''Creates the SLURM merge script "{str_met}_Zsun_merge_popsyn.slurm".
+
+    See `popsyn_merge_job` for the parameters.
+    '''
+    scheduler = get_scheduler('slurm')
+    job = popsyn_merge_job(metallicity, merge_walltime, mem_per_cpu,
+                           partition, account, email, path_to_posydon,
+                           path_to_posydon_data)
+    str_met = convert_metallicity_to_string(metallicity)
+    scheduler.write(job, merge_script_name(str_met, scheduler))
+
+
+def create_slurm_rescue(metallicity,
+                        missing_indices,
+                        job_array_length,
+                        partition,
+                        email,
+                        walltime,
+                        account,
+                        mem_per_cpu,
+                        max_concurrent_jobs,
+                        exclude,
+                        path_to_posydon,
+                        path_to_posydon_data):
+    '''Creates the SLURM rescue script "{str_met}_Zsun_rescue.slurm".
+
+    See `popsyn_array_job` for the parameters; only the tasks in
+    `missing_indices` are run.
+    '''
+    scheduler = get_scheduler('slurm', exclude=exclude)
+    job = popsyn_array_job(metallicity, job_array_length, walltime,
+                           mem_per_cpu, partition, account, email,
+                           max_concurrent_jobs, path_to_posydon,
+                           path_to_posydon_data, task_ids=missing_indices)
+    str_met = convert_metallicity_to_string(metallicity)
+    scheduler.write(job, rescue_script_name(str_met, scheduler))
+
+
+def create_slurm_scripts(metallicity, args):
+    '''Creates the SLURM scripts for population synthesis.
 
     Parameters
     ----------
@@ -439,49 +564,58 @@ def create_slurm_scripts(metallicity, args): # pragma: no cover
     args : argparse.Namespace
         the arguments passed to the function
     '''
-    create_slurm_array(metallicity, args.job_array, args.partition, args.email,
-                       args.walltime, args.account, args.mem_per_cpu,
-                       args.max_concurrent_jobs, args.exclude,
-                       PATH_TO_POSYDON,
-                       os.path.dirname(PATH_TO_POSYDON_DATA))
+    create_job_scripts(metallicity, args, scheduler_from_args(args, 'slurm'))
 
-    create_slurm_merge(metallicity, args.partition, args.email,
-                       args.merge_walltime, args.account, args.mem_per_cpu,
-                       PATH_TO_POSYDON,
-                       os.path.dirname(PATH_TO_POSYDON_DATA))
-
-    print(f"SLURM script created for metallicity {convert_metallicity_to_string(metallicity)}")
-
-def create_bash_submit_script(filename, metallicities):
-    '''Creates the bash submission script for all SLURM jobs.
-
-    Parameters
-    ----------
-    filename : str
-        The name of the bash submission script to create
-    metallicities : list of float
-        The list of metallicities in solar units
-    '''
-
-    if os.path.exists(filename): # pragma: no cover
-        Pwarn('Replace '+filename, "OverwriteWarning")
-    with open(filename, mode='w') as file:
-        file.write('#!/bin/bash\n')
-        for met in metallicities:
-            str_met = convert_metallicity_to_string(met)
-            file.write("array=$(sbatch --parsable "
-                       f"{str_met}_Zsun_slurm_array.slurm)\n")
-            file.write("echo '"+str_met+" job array submitted as '${array}\n")
-            file.write("merge=$(sbatch --parsable --dependency=afterok:${array} "
-                       "--kill-on-invalid-dep=yes "
-                       f'{str_met}_Zsun_merge_popsyn.slurm)\n')
-            file.write("echo '"+str_met+" merge job submitted as '${merge}\n")
-
-    print_success("Setup complete. You can now submit the jobs using './slurm_submit.sh'")
 
 ## Main functions for rescue
+
+def _legacy_slurm_settings(run_folder, str_met):
+    """Read the settings of a run without settings file from its SLURM
+    array script (runs set up with older POSYDON versions)."""
+    slurm_script = os.path.join(run_folder, f'{str_met}_Zsun_slurm_array.slurm')
+    with open(slurm_script, 'r') as f:
+        lines = f.readlines()
+
+    settings = {key: None for key in RUN_SETTINGS_KEYS}
+    settings['scheduler'] = 'slurm'
+    settings['scheduler_options'] = {}
+    for line in lines:
+        if line.startswith('#SBATCH --array='):
+            array_range = line.split('=')[1].strip()
+            if '%' in array_range:
+                tmp_array_range = array_range.split('%')[0]
+                settings['max_concurrent_jobs'] = int(array_range.split('%')[1])
+            else:
+                tmp_array_range = array_range
+            if '-' in tmp_array_range:
+                start, end = map(int, tmp_array_range.split('-'))
+                settings['job_array'] = end - start + 1
+        elif line.startswith("#SBATCH --time="):
+            settings['walltime'] = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --mem-per-cpu="):
+            settings['mem_per_cpu'] = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --partition="):
+            settings['partition'] = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --account="):
+            settings['account'] = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --mail-user="):
+            settings['email'] = line.split('=')[1].strip()
+        elif line.startswith("#SBATCH --exclude="):
+            settings['scheduler_options']['exclude'] = \
+                line.split('=')[1].strip()
+        elif line.startswith("export PATH_TO_POSYDON="):
+            settings['path_to_posydon'] = line.split('=')[1].strip()
+        elif line.startswith("export PATH_TO_POSYDON_DATA="):
+            settings['path_to_posydon_data'] = line.split('=')[1].strip()
+    return settings
+
+
 def create_batch_rescue_script(args, batch_status):
     """Generate a script to resubmit failed runs.
+
+    The settings of the original run are read from its settings file
+    (`RUN_SETTINGS_FILE`) or, for older runs, from its SLURM array script.
+    Arguments given on the command line override them.
 
     Parameters
     ----------
@@ -500,7 +634,6 @@ def create_batch_rescue_script(args, batch_status):
     run_folder = args.run_folder
     metallicity = batch_status['metallicity']
     str_met = convert_metallicity_to_string(metallicity)
-    slurm_script = os.path.join(run_folder, f'{str_met}_Zsun_slurm_array.slurm')
 
     # Extract missing indices from batch_status
     missing_indices = batch_status.get('missing_indices', [])
@@ -510,114 +643,64 @@ def create_batch_rescue_script(args, batch_status):
                          "Please run the check function to resubmit the merge jobs.\n\n"
                          "posydon-popsyn check <run_folder>\n")
 
-    # Parse the current slurm array script
-    with open(slurm_script, 'r') as f:
-        lines = f.readlines()
-
-    # Extract parameters from the current script
-    job_array_length = None
-    account = None
-    partition = None
-    email = None
-    walltime = None
-    mem_per_cpu = None
-    path_to_posydon = None
-    path_to_posydon_data = None
-    max_concurrent_jobs = None
-    exclude = None
-
-    for line in lines:
-        if line.startswith('#SBATCH --array='):
-            array_range = line.split('=')[1].strip()
-            if '%' in array_range:
-                tmp_array_range = array_range.split('%')[0]
-                max_concurrent_jobs = int(array_range.split('%')[1])
-            else:
-                tmp_array_range = array_range
-            if '-' in tmp_array_range:
-                start, end = map(int, tmp_array_range.split('-'))
-                job_array_length = end - start + 1
-        elif line.startswith("#SBATCH --time="):
-            walltime = line.split('=')[1].strip()
-        elif line.startswith("#SBATCH --mem-per-cpu="):
-            mem_per_cpu = line.split('=')[1].strip()
-        elif line.startswith("#SBATCH --partition="):
-            partition = line.split('=')[1].strip()
-        elif line.startswith("#SBATCH --account="):
-            account = line.split('=')[1].strip()
-        elif line.startswith("#SBATCH --mail-user="):
-            email = line.split('=')[1].strip()
-        elif line.startswith("#SBATCH --exclude="):
-            exclude = line.split('=')[1].strip()
-        elif line.startswith("export PATH_TO_POSYDON="):
-            path_to_posydon = line.split('=')[1].strip()
-        elif line.startswith("export PATH_TO_POSYDON_DATA="):
-            path_to_posydon_data = line.split('=')[1].strip()
+    settings = read_run_settings(run_folder)
+    if settings is None:
+        settings = _legacy_slurm_settings(run_folder, str_met)
 
     # Override with command-line arguments if provided
-    if args.walltime is not None:
-        walltime = args.walltime
-    if args.mem_per_cpu is not None:
-        mem_per_cpu = args.mem_per_cpu
-    if args.partition is not None:
-        partition = args.partition
-    if args.account is not None:
-        account = args.account
-    if args.email is not None:
-        email = args.email
-    if args.max_concurrent_jobs is not None:
-        max_concurrent_jobs = args.max_concurrent_jobs
-    if args.exclude is not None:
-        exclude = args.exclude
+    for key in ('walltime', 'mem_per_cpu', 'partition', 'account', 'email',
+                'max_concurrent_jobs'):
+        value = _valid_option(args, key)
+        if value is not None:
+            settings[key] = value
 
-    # Create the rescue script
-    create_slurm_rescue(
-        metallicity=metallicity,
-        missing_indices=missing_indices,
-        job_array_length=job_array_length,
-        partition=partition,
-        email=email,
-        walltime=walltime,
-        account=account,
-        mem_per_cpu=mem_per_cpu,
-        max_concurrent_jobs=max_concurrent_jobs,
-        exclude=exclude,
-        path_to_posydon=path_to_posydon,
-        path_to_posydon_data=path_to_posydon_data
-    )
+    scheduler = scheduler_for_run(args, settings)
 
-    rescue_script = os.path.join(run_folder, f'{str_met}_Zsun_rescue.slurm')
+    job = popsyn_array_job(
+        metallicity, settings['job_array'], settings['walltime'],
+        settings['mem_per_cpu'], settings['partition'], settings['account'],
+        settings['email'], settings['max_concurrent_jobs'],
+        settings['path_to_posydon'], settings['path_to_posydon_data'],
+        task_ids=sorted(missing_indices))
+    rescue_script = os.path.join(run_folder,
+                                 rescue_script_name(str_met, scheduler))
+    scheduler.write(job, rescue_script)
     print_success(f"Rescue script generated: {rescue_script}")
     return rescue_script
 
-def create_bash_submit_rescue_script(filename, rescue_scripts):
+
+def create_bash_submit_rescue_script(filename, rescue_scripts, scheduler=None):
     """Generate a bash script to submit rescue scripts.
 
     Parameters
     ----------
     filename : str
-        The name of the bash submission script to create
+        The run folder in which to create the bash submission script
     rescue_scripts : list of str
         The list of rescue script paths
-    """
-    MERGE_SCRIPT_PATTERN = "{met}_Zsun_merge_popsyn.slurm"
-    RESUBMIT_SCRIPT = "resubmit_slurm.sh"
+    scheduler : Scheduler, optional
+        The job scheduler backend (default: SLURM)
 
-    # Generate a resubmit_slurm.sh script
+    Returns
+    -------
+    str
+        Path to the generated script
+    """
+    if scheduler is None:
+        scheduler = get_scheduler('slurm')
+
+    # Generate a resubmit script
     print("GENERATING A RESUBMIT SCRIPT ....................\n")
-    resubmit_sh_file = os.path.join(filename, RESUBMIT_SCRIPT)
+    resubmit_sh_file = os.path.join(filename, resubmit_script_name(scheduler))
     with open(resubmit_sh_file, 'w') as f:
         f.write("#!/bin/bash\n")
         for script in rescue_scripts:
             script_basename = os.path.basename(script)
             met = script_basename.split('_')[0]
-            merge_script = MERGE_SCRIPT_PATTERN.format(met=met)
-            f.write(f'resubmit=$(sbatch --parsable {script_basename})\n')
+            f.write(scheduler.submit_line('resubmit', script_basename))
             f.write("echo 'Rescue script submitted as '${resubmit}\n")
-            f.write("merge=$(sbatch --parsable "
-                    "--dependency=afterok:${resubmit} "
-                    "--kill-on-invalid-dep=yes "
-                    f"{merge_script})\n")
+            f.write(scheduler.submit_line(
+                'merge', merge_script_name(met, scheduler), after='resubmit'))
             f.write("echo 'Merge job submitted as '${merge}\n")
 
     print(f"Rescue scripts ready to be resubmitted by 'sh {resubmit_sh_file}'")

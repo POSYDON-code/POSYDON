@@ -228,6 +228,11 @@ class ConfigFile:
         return len(self.entries)
 
 
+# names of the inifile section with the job scheduler settings (first found
+# is used)
+SCHEDULER_SECTIONS = ('slurm', 'scheduler')
+
+
 def parse_inifile(inifile):
     """Parse an inifile and return dicts of each section."""
     binOps = {
@@ -294,6 +299,15 @@ def parse_inifile(inifile):
     run_parameters = dictionary['run_parameters']
     mesa_inlists = dictionary['mesa_inlists']
     mesa_extras = dictionary['mesa_extras']
-    slurm = dictionary['slurm']
+    # job scheduler settings, in a section named after the scheduler (e.g.
+    # [slurm]) or [scheduler]
+    for section in SCHEDULER_SECTIONS:
+        if section in dictionary:
+            slurm = dictionary[section]
+            break
+    else:
+        raise KeyError("The inifile needs a section with the job scheduler "
+                       "settings: one of " + ", ".join(
+                           f"[{section}]" for section in SCHEDULER_SECTIONS))
 
     return run_parameters, slurm, mesa_inlists, mesa_extras
