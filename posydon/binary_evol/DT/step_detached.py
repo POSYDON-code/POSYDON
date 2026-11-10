@@ -927,7 +927,7 @@ class detached_evolution:
 
         # 95% filling of the RL is enough to assume beginning of RLO,
         # as we do in CO-HMS_RLO grid
-        RL_diff = result_secondary["R"] - 0.95*RL
+        RL_diff = result_secondary["R"] - 0.9999*RL
         return RL_diff
 
     # detects primary RLO
@@ -973,7 +973,7 @@ class detached_evolution:
         ecc = y[1]
 
         RL = roche_lobe_radius(pri_mass, sec_mass, (1 - ecc) * sep)
-        RL_diff = result_primary["R"] - 0.95*RL
+        RL_diff = result_primary["R"] - 0.9999*RL
         return RL_diff
 
     # detects secondary RLO via relative difference btwn. R and R_RL
