@@ -284,7 +284,7 @@ class MergedStep(IsolatedStep):
                                         - rel_mass_lost_HMS_HMS * total_mass * X_initial) / merged_star.mass
                     # NOTE: Y_initial is the bulk ZAMS He fraction (He3 + He4), but here it is
                     # combined with total_mass_he4 only. Strictly, Eq. 8 of Schneider+2016 needs
-                    # total_mass_he3 + total_mass_he4. The current grids do not output 
+                    # total_mass_he3 + total_mass_he4. The current grids do not output
                     # total_mass_he3, and the effect is ~0.01%, so this is left as is (see PR #902 on Github).
                     Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4
                                         - rel_mass_lost_HMS_HMS * total_mass * Y_initial) / merged_star.mass
