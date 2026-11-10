@@ -87,15 +87,16 @@ class TestSlurmSubmission:
 
     def test_submit_line(self):
         scheduler = SlurmScheduler()
+        fail = ' || {{ echo "Submission of {0} failed" >&2; exit 1; }}\n'
         assert scheduler.submit_line("A", "a.slurm") == \
-            "A=$(sbatch --parsable a.slurm)\n"
+            "A=$(sbatch --parsable a.slurm)" + fail.format("a.slurm")
         assert scheduler.submit_line("B", "b.slurm", after="A") == (
             "B=$(sbatch --parsable --dependency=afterok:${A} "
-            "--kill-on-invalid-dep=yes b.slurm)\n")
+            "--kill-on-invalid-dep=yes b.slurm)" + fail.format("b.slurm"))
         assert scheduler.submit_line("C", "c.slurm", after=["A", "B"],
                                      condition='any') == (
             "C=$(sbatch --parsable --dependency=afterany:${A}:${B} "
-            "--kill-on-invalid-dep=yes c.slurm)\n")
+            "--kill-on-invalid-dep=yes c.slurm)" + fail.format("c.slurm"))
         with pytest.raises(ValueError):
             scheduler.submit_line("C", "c.slurm", condition='notok')
 

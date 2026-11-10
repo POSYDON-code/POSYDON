@@ -100,6 +100,14 @@ class PBSScheduler(Scheduler):
     export_env : bool
         Export the environment of qsub to the job ("-V"), as SLURM does by
         default (default: True).
+    rerunnable : bool
+        Write "-r y" (True) or "-r n" (False); not set by default. A
+        rerunnable job is restarted from the beginning after e.g. being
+        preempted.
+    task_stats : str
+        Directory in which the task runner records the start, end, CPU time
+        and peak memory of each array task (see
+        `posydon.CLI.schedulers.task_stats`); off by default.
     """
 
     name = 'pbs'
@@ -115,6 +123,8 @@ class PBSScheduler(Scheduler):
         'memory_per_node': (str, '256G', "memory of a node"),
         'launcher': (str, DEFAULT_LAUNCHER, "launcher template"),
         'export_env': (bool, True, "export the environment of qsub (-V)"),
+        'rerunnable': (bool, None, "rerun the job after e.g. preemption"),
+        'task_stats': (str, None, "directory for per-task statistics"),
     }
 
     def tasks_per_node(self, job):
@@ -164,6 +174,8 @@ class PBSScheduler(Scheduler):
             d.append(f"-q {job.queue}")
         if self.settings['export_env']:
             d.append("-V")
+        if self.settings['rerunnable'] is not None:
+            d.append("-r y" if self.settings['rerunnable'] else "-r n")
         d.append("-j oe")
         if job.output is not None:
             # PBS has no job ID pattern for output file names
@@ -209,6 +221,8 @@ class PBSScheduler(Scheduler):
         runner += ["--task-count", str(array.size)]
         if array.log_file is not None:
             runner += ["--log", array.log_file]
+        if self.settings['task_stats']:
+            runner += ["--stats", self.settings['task_stats']]
         runner_text = " ".join(shlex.quote(part) for part in runner + ["--"])
         # {task_id} and {job_id} are replaced by the task runner, $VARIABLES
         # by the shell
@@ -231,7 +245,8 @@ class PBSScheduler(Scheduler):
         if after:
             ids = ":".join("${" + var + "}" for var in after)
             dependency = f"-W depend=after{condition}:{ids} "
-        return f"{variable}=$(qsub {dependency}{script})\n"
+        return (f"{variable}=$(qsub {dependency}{script})"
+                + self._on_failure(script) + "\n")
 
     def mpi_launcher(self, n_ranks, ranks_per_node=None, cpus_per_rank=1):
         """MPI launch inside PBS jobs, using the launcher template."""

@@ -36,7 +36,9 @@ The general job settings (account, queue/partition, walltime, email) keep
 their usual names for every scheduler. Generated files use the scheduler's
 extension, e.g. ``step_1.slurm`` or ``step_1.pbs``, and the submission
 scripts (``slurm_submit.sh``/``pbs_submit.sh``, ``run_grid.sh`` and
-``run_pipeline.sh``) chain the jobs with the scheduler's dependencies.
+``run_pipeline.sh``) chain the jobs with the scheduler's dependencies. They
+stop with an error message as soon as a submission fails, so no job is
+submitted without the jobs it depends on.
 
 ``posydon-popsyn setup`` saves the job settings of a run in
 ``popsyn_jobs.json``. ``posydon-popsyn check`` uses this file to create rescue
@@ -119,6 +121,104 @@ activated. The scripts change into the submission directory when they start.
      - Value of ``-l place=`` (default: ``scatter``).
    * - ``export_env``
      - Export the environment of ``qsub`` (default: ``True``).
+   * - ``rerunnable``
+     - ``True`` writes ``#PBS -r y``, ``False`` writes ``#PBS -r n``; not set
+       by default. A rerunnable job is restarted **from the beginning**, e.g.
+       after being preempted (see below).
+   * - ``task_stats``
+     - Directory in which each array task's start, end, CPU time and peak
+       memory are recorded (see :ref:`task_stats`). Off by default.
+
+Make sure ``mpiexec`` is the right one
+--------------------------------------
+
+The default ``launcher`` uses the first ``mpiexec`` in your ``PATH``. Installing
+``mpi4py`` with conda usually installs conda's own MPI (e.g. Open MPI) into
+the environment, whose ``mpiexec`` then comes before the system's. On ALCF
+systems the job fails with ``An unrecognized option was included on the
+mpiexec command line: --ppn``. Check with ``which -a mpiexec`` and, if needed,
+give the system's launcher with its full path, e.g. on Crux:
+
+.. code-block:: bash
+
+    --scheduler_option "launcher=/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth"
+
+(or ``launcher=...`` in the grid ini, ``LAUNCHER = '...'`` in the pipeline's
+``[account]`` section). The path may change when the system is updated.
+
+
+ALCF Crux queues
+----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 12 12 58
+
+   * - Queue
+     - Nodes per job
+     - Walltime
+     - Notes
+   * - ``debug``
+     - 1-4
+     - 2 h
+     - 1 running and 1 queued job per user, so dependent jobs (e.g. the popsyn
+       merge job) can't be queued at the same time; submit them later (e.g.
+       with ``posydon-popsyn check``)
+   * - ``workq-route``
+     - 1-176
+     - 24 h
+     - Routes to ``workq``: 20 jobs queued or running and 10 running per
+       project; use it for production runs
+   * - ``preemptable``
+     - 1-10
+     - 72 h
+     - Up to 20 jobs per project; jobs can be **killed without warning** when
+       jobs are submitted to ``demand``
+   * - ``demand``
+     - 1-64
+     - 1 h
+     - By request only
+
+Check the current limits with ``qstat -Qf <queue>``.
+
+Preemption and reruns
+---------------------
+
+A preempted job is killed as a whole: all its nodes and all array tasks
+packed into it. With ``rerunnable=True`` PBS restarts the job script **from
+the beginning**, so every task of the job is run again:
+
+- MESA grids: set ``skip_finished_runs=True`` in the ``[run_parameters]``
+  section of the grid ini. ``posydon-run-grid`` then skips grid points whose
+  directory already contains a finished MESA run (one with a termination
+  code), instead of deleting and rerunning them. Unfinished runs start from
+  the beginning.
+- Population synthesis: don't make the jobs rerunnable; after a kill,
+  ``posydon-popsyn check`` creates a rescue job for the missing batches only.
+
+Smaller jobs (fewer nodes) lose less when they are killed.
+
+
+.. _task_stats:
+
+Per-task statistics
+-------------------
+
+The scheduler's own accounting can't show the resources of the individual
+tasks of a packed job. With the PBS option ``task_stats=<directory>``, the
+task runner records the start, end, exit code, CPU time and peak memory
+(including child processes, e.g. MESA) of every task, one CSV file per rank.
+Tasks that were still running when the job was killed have a start but no
+end. Summarize them with:
+
+.. code-block:: bash
+
+    python -m posydon.CLI.schedulers.task_stats <directory> --cpus-per-task 4
+
+which prints the numbers of finished, failed and unfinished tasks, the
+distribution of run times and peak memory, and a suggested ``tasks_per_node``
+for the measured peak memory.
+
 
 ALCF Crux examples
 ------------------
@@ -151,7 +251,15 @@ in the grid ini file:
     ; PBS options
     select=system=crux
     filesystems=home:eagle
+    tasks_per_node=32
     max_nodes=8
+    ; optional: record run times and memory per grid point
+    task_stats=stats
+
+    [run_parameters]
+    ...
+    ; e.g. for rerunnable jobs: keep grid points that already finished
+    skip_finished_runs=True
 
 Post-processing pipeline, in the ``[account]`` section:
 
@@ -170,7 +278,8 @@ Post-processing pipeline, in the ``[account]`` section:
 .. note::
 
     On ALCF Crux, ``workq`` jobs are limited to 24 hours, so MESA runs that
-    need longer will not finish within a single job.
+    need longer will not finish within a single job. The ``preemptable`` queue
+    allows 72 hours, with the risks described above.
 
 
 Adding a scheduler

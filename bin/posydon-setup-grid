@@ -1031,6 +1031,9 @@ if __name__ == '__main__':
     if 'keep_photos' not in run_parameters.keys():
         run_parameters['keep_photos'] = False
 
+    if 'skip_finished_runs' not in run_parameters.keys():
+        run_parameters['skip_finished_runs'] = False
+
     if ((not os.path.isfile(run_parameters['grid'])) and (not os.path.isdir(run_parameters['grid']))):
         raise ValueError("Supplied grid does not exist, please check your path and try again")
 
@@ -1163,6 +1166,9 @@ if __name__ == '__main__':
     if scheduler is not None:
         # end of the job, replaced by the scheduler (e.g. $SLURM_JOB_END_TIME)
         command_line += ' --job_end {job_end}'
+    if run_parameters['skip_finished_runs'] and slurm['job_array']:
+        # keep finished grid points when a job is rerun
+        command_line += ' --skip-finished'
     if 'work_dir' in slurm.keys() and not(slurm['work_dir'] == ''):
         command_line += ' --temporary-directory '+slurm['work_dir']
 

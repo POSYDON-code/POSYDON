@@ -28,7 +28,9 @@ import argparse
 import os
 import subprocess
 import sys
+import time
 
+from posydon.CLI.schedulers.task_stats import StatsWriter
 from posydon.CLI.schedulers.utils import replace_placeholders
 
 # environment variables in which MPI launchers store the rank of a process
@@ -122,7 +124,24 @@ def parse_task_ids(text):
     return ids
 
 
-def run_task(command, task_id, job_id, task_count, log_file=None):
+def _execute(cmd, env, stdout=None):
+    """Run `cmd` and return its exit code and resource usage.
+
+    The resource usage (from os.wait4) covers the command and the child
+    processes it waited for, e.g. MESA started by posydon-run-grid.
+    """
+    if stdout is None:
+        process = subprocess.Popen(cmd, env=env)
+    else:
+        process = subprocess.Popen(cmd, env=env, stdout=stdout,
+                                   stderr=subprocess.STDOUT)
+    _, status, usage = os.wait4(process.pid, 0)
+    process.returncode = os.waitstatus_to_exitcode(status)
+    return process.returncode, usage
+
+
+def run_task(command, task_id, job_id, task_count, log_file=None,
+             return_usage=False):
     """Run the command of a single array task.
 
     Parameters
@@ -137,11 +156,13 @@ def run_task(command, task_id, job_id, task_count, log_file=None):
         Total number of tasks of the array.
     log_file : str or None
         Log file pattern; None writes to the inherited stdout/stderr.
+    return_usage : bool
+        If True, also return the resource usage of the task.
 
     Returns
     -------
-    int
-        The return code of the command.
+    int or tuple (int, resource.struct_rusage)
+        The return code of the command (and its resource usage).
     """
     env = os.environ.copy()
     env['POSYDON_ARRAY_JOB_ID'] = str(job_id)
@@ -151,14 +172,17 @@ def run_task(command, task_id, job_id, task_count, log_file=None):
     fields = {'task_id': int(task_id), 'job_id': job_id}
     cmd = [replace_placeholders(part, **fields) for part in command]
     if log_file is None:
-        return subprocess.call(cmd, env=env)
-    log_path = replace_placeholders(log_file, **fields)
-    log_dir = os.path.dirname(log_path)
-    if log_dir:
-        os.makedirs(log_dir, exist_ok=True)
-    with open(log_path, 'w') as log:
-        return subprocess.call(cmd, env=env, stdout=log,
-                               stderr=subprocess.STDOUT)
+        code, usage = _execute(cmd, env)
+    else:
+        log_path = replace_placeholders(log_file, **fields)
+        log_dir = os.path.dirname(log_path)
+        if log_dir:
+            os.makedirs(log_dir, exist_ok=True)
+        with open(log_path, 'w') as log:
+            code, usage = _execute(cmd, env, stdout=log)
+    if return_usage:
+        return code, usage
+    return code
 
 
 def parse_args(argv=None):
@@ -180,6 +204,10 @@ def parse_args(argv=None):
                         help='value of POSYDON_ARRAY_TASK_COUNT')
     parser.add_argument('--log', default=None,
                         help='log file pattern using {task_id}/{job_id}')
+    parser.add_argument('--stats', default=None, metavar='DIR',
+                        help='record start, end, CPU time and peak memory '
+                             'of each task in DIR (see '
+                             'posydon.CLI.schedulers.task_stats)')
     parser.add_argument('command', nargs=argparse.REMAINDER,
                         help='command to run (after "--")')
     args = parser.parse_args(argv)
@@ -196,7 +224,7 @@ def main(argv=None):
     rank = args.rank if args.rank is not None else get_rank()
     if rank is None:
         if args.nranks > 1:
-            print("pbs_task_runner: cannot determine the MPI rank; "
+            print("task_runner: cannot determine the MPI rank; "
                   "use --rank or launch with mpiexec.", file=sys.stderr)
             return 1
         rank = 0
@@ -206,13 +234,21 @@ def main(argv=None):
     else:
         task_count = args.task_count or args.ntasks
     job_id = get_job_id()
+    stats = None
+    if args.stats is not None:
+        stats = StatsWriter(args.stats, job_id, rank)
     failed = 0
     for task_id in get_my_tasks(rank, args.nranks, ntasks=args.ntasks,
                                 task_ids=args.task_ids):
-        code = run_task(args.command, task_id, job_id, task_count,
-                        log_file=args.log)
+        if stats is not None:
+            stats.start(task_id)
+        start = time.time()
+        code, usage = run_task(args.command, task_id, job_id, task_count,
+                               log_file=args.log, return_usage=True)
+        if stats is not None:
+            stats.end(task_id, time.time() - start, code, usage)
         if code != 0:
-            print(f"pbs_task_runner: task {task_id} failed with exit code "
+            print(f"task_runner: task {task_id} failed with exit code "
                   f"{code}", file=sys.stderr)
             failed += 1
     return 1 if failed else 0

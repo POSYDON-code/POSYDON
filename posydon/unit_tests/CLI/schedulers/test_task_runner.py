@@ -137,3 +137,28 @@ def test_shell_braces_are_kept(tmp_path):
                            log_file=log)
     assert code == 0
     assert open(log).read().strip() == "${FILE} 005"
+
+
+class TestStatistics:
+
+    ALLOCATE = [sys.executable, "-c",
+                "import sys; b = bytearray(int(sys.argv[1]) * 1024**2); "
+                "sys.exit(int(sys.argv[2]))"]
+
+    def test_run_task_usage(self, tmp_path):
+        code, usage = totest.run_task(self.ALLOCATE + ["100", "0"], 0, "1", 1,
+                                      log_file=str(tmp_path / "x.out"),
+                                      return_usage=True)
+        assert code == 0
+        assert usage.ru_maxrss > 100 * 1024     # KB
+
+    def test_main_writes_stats(self, tmp_path, clean_env):
+        stats_dir = str(tmp_path / "stats")
+        clean_env.setenv('PBS_JOBID', '55.server')
+        assert totest.main(["--nranks", "1", "--ntasks", "2", "--stats",
+                            stats_dir, "--log", str(tmp_path / "t_{task_id}"),
+                            "--"] + self.ALLOCATE + ["{task_id}", "0"]) == 0
+        lines = open(f"{stats_dir}/stats_55_rank0.csv").read().splitlines()
+        assert lines[0].startswith("event,job_id,task_id")
+        assert [line.split(",")[0] for line in lines[1:]] == \
+            ["start", "end", "start", "end"]

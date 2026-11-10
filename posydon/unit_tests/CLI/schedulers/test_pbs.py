@@ -98,6 +98,24 @@ class TestPBSDirectives:
         assert "#PBS -l select=2:system=crux" in scheduler.directives(job)
 
 
+class TestPBSNewOptions:
+
+    def test_rerunnable(self):
+        job = JobSpec(name="a")
+        assert "#PBS -r y" in totest.PBSScheduler(rerunnable=True)\
+            .directives(job)
+        assert "#PBS -r n" in totest.PBSScheduler(rerunnable="no")\
+            .directives(job)
+        assert not any("-r " in line for line in
+                       totest.PBSScheduler().directives(job))
+
+    def test_task_stats(self):
+        job = JobSpec(name="a", array=ArraySpec(command="run", n_tasks=2))
+        assert "--stats stats/run1 --" in \
+            totest.PBSScheduler(task_stats="stats/run1").body(job)[-1]
+        assert "--stats" not in totest.PBSScheduler().body(job)[-1]
+
+
 class TestPBSBody:
 
     def test_array_body(self):
@@ -144,14 +162,34 @@ class TestPBSSubmission:
 
     def test_submit_line(self):
         scheduler = totest.PBSScheduler()
-        assert scheduler.submit_line("A", "a.pbs") == "A=$(qsub a.pbs)\n"
+        fail = ' || {{ echo "Submission of {0} failed" >&2; exit 1; }}\n'
+        assert scheduler.submit_line("A", "a.pbs") == \
+            "A=$(qsub a.pbs)" + fail.format("a.pbs")
         assert scheduler.submit_line("B", "b.pbs", after="A") == \
-            "B=$(qsub -W depend=afterok:${A} b.pbs)\n"
+            "B=$(qsub -W depend=afterok:${A} b.pbs)" + fail.format("b.pbs")
         assert scheduler.submit_line("C", "c.pbs", after=["A", "B"],
                                      condition="any") == \
-            "C=$(qsub -W depend=afterany:${A}:${B} c.pbs)\n"
+            "C=$(qsub -W depend=afterany:${A}:${B} c.pbs)" \
+            + fail.format("c.pbs")
         assert scheduler.submit_command("a.pbs") == ["qsub", "a.pbs"]
         assert scheduler.file_name("cleanup") == "cleanup.pbs"
+
+    def test_submission_script_stops_on_failure(self, tmp_path):
+        """A failed submission stops the bash script."""
+        import subprocess
+        scheduler = totest.PBSScheduler()
+        fake = tmp_path / "qsub"
+        fake.write_text("#!/bin/bash\nexit 1\n")
+        fake.chmod(0o755)
+        script = tmp_path / "submit.sh"
+        script.write_text("#!/bin/bash\n" + scheduler.submit_line("A", "a.pbs")
+                          + "echo reached\n")
+        result = subprocess.run(["bash", str(script)], capture_output=True,
+                                text=True,
+                                env={"PATH": f"{tmp_path}:/usr/bin:/bin"})
+        assert result.returncode == 1
+        assert "reached" not in result.stdout
+        assert "Submission of a.pbs failed" in result.stderr
 
     def test_mpi_launcher(self):
         scheduler = totest.PBSScheduler()

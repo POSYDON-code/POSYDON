@@ -233,6 +233,10 @@ class Scheduler(ABC):
     def submit_line(self, variable, script, after=None, condition='ok'):
         """Bash line submitting `script` and storing its job ID.
 
+        If the submission fails, the line stops the bash script with an
+        error message (so later jobs are not submitted without their
+        dependency).
+
         Parameters
         ----------
         variable : str
@@ -261,6 +265,12 @@ class Scheduler(ABC):
         if isinstance(after, str):
             return [after]
         return list(after)
+
+    @staticmethod
+    def _on_failure(script):
+        """Bash code stopping a submission script if a submission failed."""
+        return (f' || {{ echo "Submission of {script} failed" >&2; '
+                'exit 1; }')
 
     @staticmethod
     def _check_condition(condition):

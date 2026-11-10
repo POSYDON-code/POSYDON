@@ -350,3 +350,8 @@ This section designates the run parameters for a grid.
     grid = {PATH_TO_GRID}
 
 The :samp:`grid` specifies where to find the csv file to read the runs from.
+
+Optionally, :samp:`skip_finished_runs = True` makes job array runs skip grid
+points whose output directory already contains a finished MESA run, instead of
+deleting and rerunning them. This is useful when a job is run again, e.g. a
+rerunnable job after preemption (see :ref:`job_schedulers`).

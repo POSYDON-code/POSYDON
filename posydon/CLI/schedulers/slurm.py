@@ -124,7 +124,8 @@ class SlurmScheduler(Scheduler):
             ids = ":".join("${" + var + "}" for var in after)
             dependency = (f"--dependency=after{condition}:{ids} "
                           "--kill-on-invalid-dep=yes ")
-        return f"{variable}=$(sbatch --parsable {dependency}{script})\n"
+        return (f"{variable}=$(sbatch --parsable {dependency}{script})"
+                + self._on_failure(script) + "\n")
 
     def mpi_launcher(self, n_ranks, ranks_per_node=None, cpus_per_rank=1):
         """MPI launch used inside SLURM jobs."""
