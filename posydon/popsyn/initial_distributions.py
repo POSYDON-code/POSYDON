@@ -151,7 +151,8 @@ def get_orbital_distribution(kwargs):
 
     Supported schemes:
     - `period`, with `orbital_period_min`, `orbital_period_max` and
-      `orbital_period_scheme`: `Sana+12_period_extended`, `power_law` or
+      `orbital_period_scheme`: `Sana+12_period_extended` (optionally with
+      `sana_period_slope` and `sana_period_mbreak`), `power_law` or
       `log_power_law` (both with `power_law_slope`).
     - `separation`, with `orbital_separation_min`, `orbital_separation_max`
       and `orbital_separation_scheme`: `log_uniform` or `log_normal` (with
@@ -178,6 +179,8 @@ def get_orbital_distribution(kwargs):
             return Sana12Period(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
+                slope=kwargs.get('sana_period_slope', 0.55),
+                mbreak=kwargs.get('sana_period_mbreak', 15),
             )
         elif kwargs['orbital_period_scheme'] == 'power_law':
             return PowerLawPeriod(

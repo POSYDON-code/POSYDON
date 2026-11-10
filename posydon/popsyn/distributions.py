@@ -603,12 +603,23 @@ class Sana12Period():
     For low-mass primaries: flat distribution in log period
     For high-mass primaries: power law with slope -0.55 and a break at log P = 0.15
 
+    The slope and the mass break can be changed to describe other power laws
+    in log10(P) that are flat below log P = 0.15, e.g. slope=-0.1 and mbreak=0
+    for dN/dlog10(P) ∝ (log10(P))^0.1 for all primary masses.
+
     Parameters
     ----------
     p_min : float, optional
         Minimum period in days (default: 0.35).
     p_max : float, optional
         Maximum period in days (default: 6000).
+    slope : float, optional
+        Negative of the power law exponent in log10(P) above log P = 0.15
+        for primaries above `mbreak`, i.e. dN/dlog10(P) ∝ (log10(P))^-slope
+        (default: 0.55).
+    mbreak : float, optional
+        Primary mass in Msun separating the log-flat (m1 <= mbreak) and the
+        power law (m1 > mbreak) regimes (default: 15).
 
     Attributes
     ----------
@@ -624,7 +635,7 @@ class Sana12Period():
     (https://ui.adsabs.harvard.edu/abs/2021A%26A...647A.153B/abstract)
     """
 
-    def __init__(self, p_min=0.35, p_max=6e3):
+    def __init__(self, p_min=0.35, p_max=6e3, slope=0.55, mbreak=15):
         """Initialize the Sana12 period distribution.
 
         Parameters
@@ -633,6 +644,11 @@ class Sana12Period():
             Minimum period in days (default: 0.35).
         p_max : float, optional
             Maximum period in days (default: 6000).
+        slope : float, optional
+            Negative of the power law exponent in log10(P) for m1 > mbreak
+            (default: 0.55).
+        mbreak : float, optional
+            Mass break in Msun (default: 15).
 
         Raises
         ------
@@ -645,11 +661,12 @@ class Sana12Period():
             raise ValueError("p_max must be greater than p_min")
         self.p_min = p_min
         self.p_max = p_max
-        self.mbreak = 15
-        self.slope = 0.55  # Set slope before normalization calculations
+        self.mbreak = mbreak
+        self.slope = slope  # Set slope before normalization calculations
 
-        # mass boundary is at 15 Msun
-        self.low_mass_norm = self._calculate_normalization(self.mbreak-1)
+        # flat in log10(P) below the mass break
+        self.low_mass_norm = 1.0 / (np.log10(self.p_max)
+                                    - np.log10(self.p_min))
         self.high_mass_norm = self._calculate_normalization(self.mbreak+1)
         self.norm = lambda m1: np.where(m1 <= self.mbreak,
                                         self.low_mass_norm,
@@ -657,7 +674,8 @@ class Sana12Period():
 
     def __repr__(self):
         """Return string representation of the distribution."""
-        return f"Sana12Period(p_min={self.p_min}, p_max={self.p_max})"
+        return (f"Sana12Period(p_min={self.p_min}, p_max={self.p_max}, "
+                f"slope={self.slope}, mbreak={self.mbreak})")
 
     def _repr_html_(self):
         """Return HTML representation for Jupyter notebooks."""
