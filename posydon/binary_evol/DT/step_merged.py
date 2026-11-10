@@ -282,6 +282,10 @@ class MergedStep(IsolatedStep):
                     # <X> = (M_H,1 + M_H,2 - phi*(M_1 + M_2)*X_0) / M_merged
                     X_average_merged = (star_base.total_mass_h1 + comp.total_mass_h1
                                         - rel_mass_lost_HMS_HMS * total_mass * X_initial) / merged_star.mass
+                    # NOTE: Y_initial is the bulk ZAMS He fraction (He3 + He4), but here it is
+                    # combined with total_mass_he4 only. Strictly, Eq. 8 of Schneider+2016 needs
+                    # total_mass_he3 + total_mass_he4. The current grids do not output 
+                    # total_mass_he3, and the effect is ~0.01%, so this is left as is (see PR #902 on Github).
                     Y_average_merged = (star_base.total_mass_he4 + comp.total_mass_he4
                                         - rel_mass_lost_HMS_HMS * total_mass * Y_initial) / merged_star.mass
 
@@ -305,6 +309,7 @@ class MergedStep(IsolatedStep):
                 else:
                     # Mix central and surface abundances of the two stars with
                     # mass-weighted averages based on the total masses of the two stars.
+                    # He3 is not mixed here; it is negligible (see NOTE on Y_initial above).
                     parameters_to_mix = ["center_h1", "center_he4",  "center_c12",  "center_n14",  "center_o16",
                                         "surface_h1", "surface_he4", "surface_c12", "surface_n14", "surface_o16"]
 
