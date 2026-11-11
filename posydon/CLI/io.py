@@ -82,7 +82,7 @@ def create_merge_script_text(ini_file):
             parser = argparse.ArgumentParser()
             parser.add_argument("metallicity", type=float)
             args = parser.parse_args()
-            ini_kw = binarypop_kwargs_from_ini("{ini_file}")
+            ini_kw = binarypop_kwargs_from_ini("{ini_file}", use_defaults=False)
             ini_kw["metallicity"] = args.metallicity
             str_met = convert_metallicity_to_string(args.metallicity)
             ini_kw["temp_directory"] = str_met + "_Zsun_" + ini_kw["temp_directory"]
@@ -110,11 +110,11 @@ def create_run_script_text(ini_file):
             parser = argparse.ArgumentParser()
             parser.add_argument('metallicity', type=float)
             args = parser.parse_args()
-            ini_kw = binarypop_kwargs_from_ini('{ini_file}')
+            ini_kw = binarypop_kwargs_from_ini('{ini_file}', use_defaults=False)
             ini_kw['metallicity'] = args.metallicity
             str_met = convert_metallicity_to_string(args.metallicity)
             ini_kw['temp_directory'] = str_met+'_Zsun_' + ini_kw['temp_directory']
-            sim_props = SimulationProperties.from_ini('{ini_file}')
+            sim_props = SimulationProperties.from_ini('{ini_file}', use_defaults=False)
             synpop = BinaryPopulation(population_properties=sim_props, **ini_kw)
             synpop.evolve()
     ''')

@@ -45,6 +45,7 @@ from posydon.binary_evol.flow_chart import (
     STAR_STATES_POST_HeMS,
 )
 from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.track_match import MATCHER_ONLY_KWARGS
 from posydon.config import PATH_TO_POSYDON, PATH_TO_POSYDON_DATA
 from posydon.utils import common_functions as cf
 from posydon.utils import constants as const
@@ -54,6 +55,7 @@ from posydon.utils.common_functions import (
     check_state_of_star,
 )
 from posydon.utils.constants import Zsun
+from posydon.utils.ini_defaults import section_defaults
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -124,25 +126,13 @@ class StepCEE(object):
     .. [2] De Kool, M. (1990). Common envelope evolution and double cores of
         planetary nebulae. The Astrophysical Journal, 358, 189-195.
     """
-    DEFAULT_KWARGS = {"prescription": 'alpha-lambda',
-                      "common_envelope_efficiency": 1.0,
-                      "common_envelope_lambda_default": 0.5,
-                      "common_envelope_option_for_lambda": 'lambda_from_grid_final_values',
-                      "common_envelope_option_for_HG_star": "optimistic",
-                      "common_envelope_alpha_thermal": 1.0,
-                      "core_definition_H_fraction": 0.3,     # with 0.01 no CE BBHs
-                      "core_definition_He_fraction": 0.1,
-                      "CEE_tolerance_err": 0.001,
-                      "verbose": False,
-                      "common_envelope_option_after_succ_CEE": 'two_phases_stableMT',
-                      "mass_loss_during_CEE_merged": False,
-                      # If False, then no mass loss from this step for a merged star
-                      # If True, then we remove mass according to the alpha-lambda prescription
-                      # assuming a final separation where the inner core RLOF starts.
-                      # "one_phase_variable_core_definition" for core_definition_H_fraction=0.01
-                      "metallicity": None,
-                      "track_matcher": None
-                      }
+    # parameters set at run time, which are not in the inifile; all other
+    # defaults come from the [step_CE] section of the default inifile, except
+    # the settings that are handed to the TrackMatcher
+    DEFAULT_KWARGS = {"metallicity": None,
+                      "track_matcher": None,
+                      **section_defaults('step_CE',
+                                         exclude=MATCHER_ONLY_KWARGS)}
 
 
     def __init__(self, **kwargs):
