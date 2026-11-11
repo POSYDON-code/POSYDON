@@ -64,6 +64,22 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     else:
         return True
 
+def _step_sections(ini_file):
+    '''Return the names of all step sections in the ini file(s)
+
+    Parameters
+    ----------
+    ini_file : str or list of str
+        the path(s) to the ini file(s)
+
+    Returns
+    -------
+    set of str
+        the section names starting with 'step_', with or without an import
+    '''
+    return {section for section in parse_inifile(ini_file).sections()
+            if section.startswith('step_')}
+
 def check_flow_steps(ini_file):
     '''Checks that the flow and the configured steps match
 
@@ -101,7 +117,10 @@ def check_flow_steps(ini_file):
                          f"ini file: {missing_steps}. Add a section for each "
                          "of them.")
 
-    unused_steps = sorted(configured_steps - flow_steps - default_steps)
+    # simprop_kwargs only holds sections with an import key; a misspelled
+    # section that only sets parameters is found in the ini file itself
+    unused_steps = sorted((configured_steps | _step_sections(ini_file))
+                          - flow_steps - default_steps)
     if unused_steps:
         Pwarn(f"The ini file configures steps that the flow never uses: "
               f"{unused_steps}. Check the section names for typos.",

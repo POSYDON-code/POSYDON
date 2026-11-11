@@ -176,6 +176,15 @@ def _flow(*step_names):
 class TestFlowStepCheck:
     """Test class for the check of the flow against the configured steps."""
 
+    @pytest.fixture(autouse=True)
+    def no_sections_for_mocked_ini(self):
+        """The mocked 'test.ini' does not exist, so it has no sections."""
+        real_step_sections = totest._step_sections
+        with patch('posydon.CLI.popsyn.setup._step_sections',
+                   side_effect=lambda ini: (set() if ini == "test.ini"
+                                            else real_step_sections(ini))):
+            yield
+
     @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
     def test_no_flow_section(self, mock_simprop):
         mock_simprop.return_value = {'step_end': (None, {})}
@@ -223,6 +232,15 @@ class TestFlowStepCheck:
         }
         totest.check_flow_steps("test.ini")
         assert not [w for w in recwarn if "never uses" in str(w.message)]
+
+    def test_misspelled_section_without_import_warns(self, tmp_path):
+        # a typo in a section that only sets parameters, e.g. step_SNN for
+        # step_SN, has no import and must still be found
+        ini_file = tmp_path / "typo.ini"
+        ini_file.write_text("[step_SNN]\n"
+                            "  mechanism = 'Fryer+12-delayed'\n")
+        with pytest.warns(StepWarning, match="step_SNN"):
+            totest.check_flow_steps(str(ini_file))
 
     def test_default_ini_matches_default_flow(self, recwarn):
         totest.check_flow_steps(DEFAULT_INI)
