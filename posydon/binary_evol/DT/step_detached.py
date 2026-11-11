@@ -547,7 +547,9 @@ class detached_step:
             evolution in years. This is a float unless the
             user specifies a timestep (see `n_o_steps_history`
             or `dt`) to use via the simulation properties ini
-            file, in which case it is an array.
+            file, in which case it is an array. The `output_times`
+            parameter in the simulation properties ini file is also
+            taken into account here.
 
         """
 
@@ -563,6 +565,8 @@ class detached_step:
                 t = np.hstack([t, self.res.t[-1]])
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
+
+        
 
         return t
 
