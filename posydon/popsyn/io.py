@@ -499,13 +499,12 @@ def write_resolved_inifile(path, output_path, verbose=False):
     parser = parse_inifile(path, verbose=verbose)
     sources = [path] if isinstance(path, str) else list(path)
     with open(output_path, 'w') as f:
-        f.write("# Resolved POSYDON population inifile: all parameters of the run.\n")
         f.write(f"# POSYDON version: {__version__}\n")
-        f.write(f"# Default inifile: {DEFAULT_INI_PATH}\n")
+        f.write(f"# Default ini file: {DEFAULT_INI_PATH}\n")
         for source in sources:
-            f.write(f"# User inifile: {os.path.abspath(source)}\n")
-        f.write("# Do not edit; change the user inifile and run the setup "
-                "again.\n\n")
+            f.write(f"# User ini file: {os.path.abspath(source)}\n")
+        f.write("# To change this run, edit the user ini file and run the "
+                "setup again.\n\n")
         parser.write(f)
     if verbose:  # pragma: no cover
         print(f'Wrote resolved inifile: {output_path}')

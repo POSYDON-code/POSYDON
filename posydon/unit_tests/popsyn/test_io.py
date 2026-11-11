@@ -359,9 +359,15 @@ class TestFunctions:
         assert totest.write_resolved_inifile([user_ini], resolved) == resolved
 
         text = open(resolved).read()
-        assert text.startswith("# Resolved POSYDON population inifile")
-        assert f"# User inifile: {user_ini}" in text
-        assert "# POSYDON version:" in text
+        assert text.startswith("# POSYDON version:")
+        assert f"# Default ini file: {totest.DEFAULT_INI_PATH}" in text
+        assert os.path.isabs(totest.DEFAULT_INI_PATH)
+        assert f"# User ini file: {user_ini}" in text
+
+        # a relative path to the user ini file is written as absolute path
+        monkeypatch.chdir(tmp_path)
+        totest.write_resolved_inifile("user.ini", resolved)
+        assert f"# User ini file: {user_ini}\n" in open(resolved).read()
 
         stacked = totest.parse_inifile(user_ini)
         alone = totest.parse_inifile(resolved, use_defaults=False)
