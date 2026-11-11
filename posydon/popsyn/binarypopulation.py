@@ -151,6 +151,8 @@ class BinaryPopulation:
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
+        self.population_properties.output_times = self.kwargs.get(
+            'output_times') # years
 
         self.history_verbose = self.kwargs.get("history_verbose", False)
 

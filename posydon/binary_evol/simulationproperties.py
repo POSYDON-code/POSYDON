@@ -185,6 +185,8 @@ class SimulationProperties:
         # Limits on simulation
         if not hasattr(self, 'max_simulation_time'):
             self.max_simulation_time = age_of_universe
+        if not hasattr(self, 'output_times'):
+            self.output_times = None
         if not hasattr(self, 'end_events'):
             self.end_events = []
         if not hasattr(self, 'end_states'):
@@ -224,6 +226,44 @@ class SimulationProperties:
         # (intended keys are metallicities):
         self.grids_Hrich = {}
         self.grids_strippedHe = {}
+
+
+    @property
+    def output_times(self):
+        """Sorted and cleaned list of output times in years
+        """
+        return self._output_times
+
+    @output_times.setter
+    def output_times(self, times):
+        """Setter that ensures output_times is a sorted, unique, flattened, and finite array of floats.
+            Empty list if None.
+        """
+        if times is None:
+            times = []
+        times = np.unique(np.asarray(times, dtype=float).ravel())
+        if not np.all(np.isfinite(times)):
+            raise ValueError("`output_times` contains non-finite values.")
+        self._output_times = times
+
+    def output_times_between(self, t_start, t_end):
+        """
+        Get the output times inside an evolution step (excluding boundary to avoid duplicate rows.
+
+        Parameters
+        ----------
+        t_start : float
+            Time in years at the beginning of the step.
+        t_end : float
+            Time in years at the end of the step.
+
+        Returns
+        ----------
+        numpy.ndarray
+            The sorted output times between t_start and t_end, excluding the boundaries.
+        """
+        times = self.output_times
+        return times[(times > t_start) & (times < t_end)]
 
     def set_path(self, path_name, path_str):
         """
@@ -884,12 +924,15 @@ class TimingHooks(EvolveHooks):
     def post_step(self, binary, step_name):
         """Record the duration of the step."""
 
-        binary.step_times.append(time.time() - self.step_start_time)
+        step_time = time.time() - self.step_start_time
 
-        if len(binary.event_history) > len(binary.step_times):
-            diff = len(binary.event_history) - len(binary.step_times)
-            binary.step_times += [None] * (diff)
-        elif len(binary.event_history) < len(binary.step_times):
+        # step time on the step's last row, None on extra (output_times) rows
+        # ex: if step_time = 0.5 and output_times = [0.1, 0.2, 0.3], then
+        # step_times = [None, None, None, 0.5]
+        diff = len(binary.event_history) - len(binary.step_times) - 1
+        binary.step_times += [None] * diff + [step_time]
+
+        if len(binary.event_history) < len(binary.step_times):
             last_items = len(binary.event_history)
             binary.step_times = binary.step_times[-(last_items - 1):]
 
@@ -926,14 +969,12 @@ class StepNamesHooks(EvolveHooks):
     def post_step(self, binary, step_name):
         """Record the step name."""
 
-        binary.step_names.append(step_name)
+        # All rows of the step, including output_times rows, get the step name.
         len_binary_hist = len(binary.event_history)
+        diff = len_binary_hist - len(binary.step_names)
+        binary.step_names += [step_name] * max(diff, 1)
         len_step_names = len(binary.step_names)
-        diff = len_binary_hist - len_step_names
-
-        if len_binary_hist > len_step_names:
-            binary.step_names += [None] * (diff)
-        elif len_binary_hist < len_step_names:
+        if len_binary_hist < len_step_names:
             binary.step_names = binary.step_names[-(len_binary_hist - 1):]
 
         return binary

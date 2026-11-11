@@ -157,6 +157,69 @@ def _collect_sn_model_values(sn_row, star_idx):
         'he4_mass_ej':     sn_row[f'{prefix}he4_mass_ej'],
     }
 
+def resample_histories(run, ages):
+    """Linearly interpolate the histories of a run in a grid to given ages
+    for (output_times).
+
+    Parameters
+    ----------
+    run: PSyRunView
+        A run in a grid.
+    ages: array-like
+        The ages in years of the rows in the histories.
+
+    Returns
+    -------
+    binary_history: record array
+        The binary history table at the requested ages.
+    star_histories: list
+        The histories of the two stars
+    """
+    histories = [run.binary_history, run.history1, run.history2]
+    # History length of binary and stars may differ
+    length = min(len(hist) for hist in histories if hist is not None)
+    age = histories[0]['age'][:length]
+    for i, hist in enumerate(histories):
+        if hist is not None:
+            resampled = np.empty(len(ages), dtype=hist.dtype)
+            for col in hist.dtype.names:
+                resampled[col] = np.interp(ages, age, hist[col][:length])
+            histories[i] = resampled
+    return histories[0], histories[1:]
+
+
+def _get_state(binary):
+    """Helper function to get the current attributes of a binary and its stars
+
+    Parameters
+    ----------
+    binary: BinaryStar
+
+    Returns
+    -------
+    list of tuple
+        Object and a dictionary of its attributes which can be passed
+        to `_set_state` to restore the state.
+    """
+    # only keep attributes that do not end with '_history'
+    return [(obj, {key: value for key, value in vars(obj).items() if not key.endswith('_history')})
+            for obj in [binary, binary.star_1, binary.star_2]]
+
+
+def _set_state(state):
+    """Helper function to restore the attributes of a binary and its stars
+
+    Parameters
+    ----------
+    state: list of tuple
+        return value of `_get_state`.
+    """
+    for obj, attrs in state:
+        for key in list(vars(obj)):
+            if not key.endswith('_history') and key not in attrs:
+                delattr(obj, key)
+        vars(obj).update(attrs)
+
 
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
@@ -378,6 +441,21 @@ class MesaGridStep:
             binary.state = 'initial_RLOF'
             return
 
+        # requested output times reached during this step
+        t_end = binary.time + max_MESA_sim_time
+        if self.stop_method == 'stop_at_max_time':
+            t_end = min(t_end, binary.properties.max_simulation_time)
+        output_times = binary.properties.output_times_between(binary.time, t_end)
+
+        if len(output_times) > 0:
+            # rows are read from NN tracks, so re-run NN evaluation for non-NN interpolation methods
+            if self.interpolation_method != 'nearest_neighbour':
+                self.closest_binary, self.nearest_neighbour_distance, \
+                    self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
+            # Save state before step to restore it when appending output_times rows
+            state_before_step = _get_state(binary)
+            n_rows_before_step = len(binary.event_history)
+
         step_will_exceed_max_time = (binary.time+max_MESA_sim_time
                                     > binary.properties.max_simulation_time)
         if (step_will_exceed_max_time
@@ -429,6 +507,22 @@ class MesaGridStep:
                              star_1_CO=self.star_1_CO,
                              star_2_CO=self.star_2_CO)
 
+        output_times = output_times[output_times < binary.time]
+        if len(output_times) > 0 and binary.state != 'initial_RLOF':
+            self.append_output_time_rows(binary, output_times, state_before_step)
+            if self.track_interpolation:
+                # The rows of the track interpolation are in history as well and need to be sorted
+                # with the exact output_times rows
+                order = np.argsort(binary.time_history[n_rows_before_step:],
+                                   kind='stable') + n_rows_before_step
+                for obj, properties in [(binary, BINARYPROPERTIES),
+                                           (binary.star_1, STARPROPERTIES),
+                                           (binary.star_2, STARPROPERTIES)]:
+                    for key in properties:
+                        history = getattr(obj, key + "_history")
+                        history[n_rows_before_step:] = [history[i]
+                                                        for i in order]
+
         if self.flip_stars_before_step:
             flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
@@ -440,6 +534,45 @@ class MesaGridStep:
             print(f"End of step MESA (grid={self.grid_type}):\n", binary)
 
         return
+
+    def append_output_time_rows(self, binary, times, state_before_step):
+        """ Append rows at requested times inside this step to the history
+        Values taken from NN tracks.
+
+        Parameters
+        ----------
+        binary: BinaryStar
+            The binary at end of the step
+        times: np.ndarray
+            The sorted times in years of the new rows
+        state_before_step: list of tuple
+            The state of the binary and its stars before the step, as returned
+            by `_get_state`.
+        """
+        if self.closest_binary.binary_history is None:
+            return
+        state_after_step = _get_state(binary)
+        settings = (self.save_initial_conditions, self.flush_history, self.flush_entries)
+        n_rows = len(binary.time_history)
+        try:
+            _set_state(state_before_step)
+            # update_properties_NN takes last row of track, so add duplicate of last row
+            ages = np.append(times, times[-1]) - binary.time
+            self.save_initial_conditions = False
+            self.flush_history = False
+            self.update_properties_NN(star_1_CO=self.star_1_CO,
+                                     star_2_CO=self.star_2_CO,
+                                        track_interpolation=True,
+                                        histories=resample_histories(self.closest_binary, ages))
+        finally:
+            (self.save_initial_conditions, self.flush_history, self.flush_entries) = settings
+            _set_state(state_after_step)
+        if len(binary.time_history) - n_rows == len(times):
+            # the exact times and no events
+            binary.time_history[n_rows:] = times.tolist()
+            binary.event_history[n_rows:] = [None] * len(times)
+
+
 
     def step(self, binary, interp_method=None):
         """Take the step by calling the appropriate interpolator."""
@@ -471,7 +604,7 @@ class MesaGridStep:
             raise ValueError('Single star_type = %s unknown!' % star_type)
 
     def update_properties_NN(self, star_1_CO=False, star_2_CO=False,
-                             track_interpolation=False):
+                             track_interpolation=False, histories=None):
         """Update properites according to nearest neighbour interpolation.
 
         Parameters
@@ -489,8 +622,11 @@ class MesaGridStep:
         stars = [binary.star_1, binary.star_2]
         stars_CO = [star_1_CO, star_2_CO]
         cb = self.closest_binary
-        cb_bh = cb.binary_history
-        cb_hs = [cb.history1, cb.history2]
+        if histories is None:
+            cb_bh = cb.binary_history
+            cb_hs = [cb.history1, cb.history2]
+        else:
+            cb_bh, cb_hs = histories
         cb_fps = [cb.final_profile1, cb.final_profile2]
 
         if (cb_bh['age'].size <= 1 or cb_bh['star_1_mass'].size <= 1):
