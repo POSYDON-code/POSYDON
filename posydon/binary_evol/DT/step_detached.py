@@ -45,7 +45,6 @@ from posydon.binary_evol.flow_chart import (
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.binary_evol.track_match import MATCHER_ONLY_KWARGS
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.ini_defaults import section_defaults
 
 #from posydon.interpolation.data_scaling import DataScaler
 from posydon.utils.common_functions import (
@@ -56,6 +55,7 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
     zero_negative_values,
 )
+from posydon.utils.ini_defaults import section_defaults
 from posydon.utils.key_library import (
     DEFAULT_TRANSLATED_KEYS,
     DEFAULT_TRANSLATION,

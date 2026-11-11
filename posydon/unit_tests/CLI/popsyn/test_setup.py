@@ -12,10 +12,8 @@ import pytest
 # import the module which will be tested
 import posydon.CLI.popsyn.setup as totest
 from posydon.binary_evol.SN.step_SN import StepSN
-from posydon.utils.posydonwarning import StepWarning
-
-
 from posydon.popsyn.io import write_resolved_inifile
+from posydon.utils.posydonwarning import StepWarning
 
 
 @pytest.fixture(autouse=True)
@@ -523,4 +521,3 @@ class TestResolvedIni:
         # the job scripts read the resolved file without the defaults
         run_script = (tmp_path / "run_metallicity.py").read_text()
         assert f"'{resolved}', use_defaults=False" in run_script
-
