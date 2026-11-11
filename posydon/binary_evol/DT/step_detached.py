@@ -735,7 +735,7 @@ class detached_step:
                 setattr(obj, key, current)
 
                 # only update history if there are intermediate times.
-                # last entry is appended to history in BinaryStar.run_step() 
+                # last entry is appended to history in BinaryStar.run_step()
                 if len(history) > 1:
                     getattr(obj, key + "_history").extend(history[:-1])
 

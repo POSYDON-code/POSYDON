@@ -158,9 +158,9 @@ def _collect_sn_model_values(sn_row, star_idx):
     }
 
 def resample_histories(run, ages):
-    """Linearly interpolate the histories of a run in a grid to given ages 
+    """Linearly interpolate the histories of a run in a grid to given ages
     for (output_times).
-    
+
     Parameters
     ----------
     run: PSyRunView
@@ -202,7 +202,7 @@ def _get_state(binary):
         to `_set_state` to restore the state.
     """
     # only keep attributes that do not end with '_history'
-    return [(obj, {key: value for key, value in vars(obj).items() if not key.endswith('_history')}) 
+    return [(obj, {key: value for key, value in vars(obj).items() if not key.endswith('_history')})
             for obj in [binary, binary.star_1, binary.star_2]]
 
 
@@ -219,7 +219,7 @@ def _set_state(state):
             if not key.endswith('_history') and key not in attrs:
                 delattr(obj, key)
         vars(obj).update(attrs)
-                
+
 
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
@@ -513,7 +513,7 @@ class MesaGridStep:
             if self.track_interpolation:
                 # The rows of the track interpolation are in history as well and need to be sorted
                 # with the exact output_times rows
-                order = np.argsort(binary.time_history[n_rows_before_step:], 
+                order = np.argsort(binary.time_history[n_rows_before_step:],
                                    kind='stable') + n_rows_before_step
                 for obj, properties in [(binary, BINARYPROPERTIES),
                                            (binary.star_1, STARPROPERTIES),
@@ -572,7 +572,7 @@ class MesaGridStep:
             binary.time_history[n_rows:] = times.tolist()
             binary.event_history[n_rows:] = [None] * len(times)
 
-            
+
 
     def step(self, binary, interp_method=None):
         """Take the step by calling the appropriate interpolator."""
