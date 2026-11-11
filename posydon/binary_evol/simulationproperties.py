@@ -230,13 +230,13 @@ class SimulationProperties:
 
     @property
     def output_times(self):
-        """Sorted and cleaned list of output times in years 
+        """Sorted and cleaned list of output times in years
         """
         return self._output_times
 
     @output_times.setter
     def output_times(self, times):
-        """Setter that ensures output_times is a sorted, unique, flattened, and finite array of floats. 
+        """Setter that ensures output_times is a sorted, unique, flattened, and finite array of floats.
             Empty list if None.
         """
         if times is None:
@@ -256,7 +256,7 @@ class SimulationProperties:
             Time in years at the beginning of the step.
         t_end : float
             Time in years at the end of the step.
-        
+
         Returns
         ----------
         numpy.ndarray

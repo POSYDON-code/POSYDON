@@ -566,7 +566,7 @@ class detached_step:
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
 
-        
+
 
         return t
 
