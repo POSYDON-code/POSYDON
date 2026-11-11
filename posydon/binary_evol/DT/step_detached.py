@@ -566,7 +566,11 @@ class detached_step:
         else:  # self.dt is None and self.n_o_steps_history is None
             t = np.array([self.res.t[-1]])
 
+        # Add output_times from simulation properties if they are set
+        output_times = binary.properties.output_times_between(binary.time, self.res.t[-1])
 
+        if len(output_times) > 0:
+            t = np.union1d(t, output_times)
 
         return t
 
@@ -640,7 +644,10 @@ class detached_step:
             interp1d = result_interp_primary if obj == primary else result_interp_secondary
 
             for key in prop:
-                if key in ["event",
+                if key == "event":
+                    # no events in intermediate times
+                    history = [None] * (len(t) - 1) + [getattr(obj, key)]
+                elif key in [
                            "mass_transfer_case",
                            "nearest_neighbour_distance",
                            "state", "metallicity", "V_sys"]:
@@ -727,11 +734,10 @@ class detached_step:
 
                 setattr(obj, key, current)
 
-                # only update history if dt or n_o_steps_history is set
-                # such that history has more than one entry.
-                # Otherwise, this is updated later in BinaryStar.run_step()
+                # only update history if there are intermediate times.
+                # last entry is appended to history in BinaryStar.run_step() 
                 if len(history) > 1:
-                    getattr(obj, key + "_history").extend(history)
+                    getattr(obj, key + "_history").extend(history[:-1])
 
     def update_co_stars(self, t, primary, secondary):
 
@@ -775,7 +781,7 @@ class detached_step:
                 current = history[-1]
                 setattr(obj, key, current)
                 if len(history) > 1:
-                    getattr(obj, key + "_history").extend(history)
+                    getattr(obj, key + "_history").extend(history[:-1])
 
 class detached_evolution:
     """

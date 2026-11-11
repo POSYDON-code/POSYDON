@@ -35,9 +35,10 @@ class IsolatedStep(detached_step):
             and isolated star is treated as a extremely far away binary for the purpose of keeping the same code structure
             put period at extreme, and initiate detached step with one star (and one non-evolving compact object),
             with no orbital changes apart from spin change due to winds and deformation
+            accounts for rows in the event history that are not part of the step (output_times)
 
         """
-
+        n_rows = len(binary.event_history)
         self.initialize_isolated_binary_orbit(binary)
 
         if binary.state == 'initially_single_star' or binary.state == 'merged':
@@ -56,6 +57,10 @@ class IsolatedStep(detached_step):
         super().__call__(binary)
 
         self.re_erase_isolated_binary_orbit(binary)
+        # as well as in the rows added to history that are not part of the step (output_times)
+        for key in ["orbital_period", "eccentricity", "separation"]:
+            history = getattr(binary, key + "_history")
+            history[n_rows:] = [np.nan] * (len(history) - n_rows)
 
 
     def initialize_isolated_binary_orbit(self,binary):
