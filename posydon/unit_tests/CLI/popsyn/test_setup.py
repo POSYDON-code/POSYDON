@@ -11,6 +11,7 @@ import pytest
 
 # import the module which will be tested
 import posydon.CLI.popsyn.setup as totest
+from posydon.binary_evol.SN.step_SN import StepSN
 from posydon.utils.posydonwarning import StepWarning
 
 
@@ -33,7 +34,7 @@ class TestSNModelValidation:
         """Test that function returns True when use_interp_values is False."""
         # Setup mock to return use_interp_values=False
         mock_simprop.return_value = {
-            'step_SN': (None, {'use_interp_values': False})
+            'step_SN': (StepSN, {'use_interp_values': False})
         }
 
         result = totest.check_SN_MODEL_validity("test.ini")
@@ -47,7 +48,7 @@ class TestSNModelValidation:
         """Test that function returns True when model is valid."""
         # Setup mocks
         mock_simprop.return_value = {
-            'step_SN': (None, {'use_interp_values': True, 'model': 'valid_model'})
+            'step_SN': (StepSN, {'use_interp_values': True, 'model': 'valid_model'})
         }
         mock_get_sn_name.return_value = "VALID_MODEL"
 
@@ -61,7 +62,7 @@ class TestSNModelValidation:
         """Test that function returns False when model is invalid."""
         # Setup mocks
         mock_simprop.return_value = {
-            'step_SN': (None, {'use_interp_values': True, 'model': 'invalid_model'})
+            'step_SN': (StepSN, {'use_interp_values': True, 'model': 'invalid_model'})
         }
         mock_get_sn_name.return_value = None
 
@@ -74,7 +75,7 @@ class TestSNModelValidation:
         """Test that verbose mode is called on failure."""
         # Setup mocks
         mock_simprop.return_value = {
-            'step_SN': (None, {'use_interp_values': True, 'model': 'invalid_model'})
+            'step_SN': (StepSN, {'use_interp_values': True, 'model': 'invalid_model'})
         }
         mock_get_sn_name.return_value = None
 
@@ -82,6 +83,48 @@ class TestSNModelValidation:
         assert result is False
         # Should be called twice: once normal, once with verbose=True
         assert mock_get_sn_name.call_count == 2
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
+    def test_check_SN_MODEL_validity_custom_class(self, mock_get_sn_name,
+                                                  mock_simprop):
+        """A class that is not a StepSN skips the SN model check."""
+        class CustomSN:
+            pass
+
+        mock_simprop.return_value = {'step_SN': (CustomSN, {'kick': 1.0})}
+        assert totest.check_SN_MODEL_validity("test.ini") is True
+        mock_get_sn_name.assert_not_called()
+
+    @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
+    @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
+    def test_check_SN_MODEL_validity_subclass_uses_defaults(
+            self, mock_get_sn_name, mock_simprop):
+        """A StepSN subclass is checked with its defaults plus the section."""
+        class MySN(StepSN):
+            pass
+
+        mock_simprop.return_value = {'step_SN': (MySN, {'engine': 'N20'})}
+        mock_get_sn_name.return_value = "VALID_MODEL"
+        assert totest.check_SN_MODEL_validity("test.ini") is True
+        checked_model = mock_get_sn_name.call_args[0][0]
+        assert checked_model['engine'] == 'N20'
+        for key in ('use_interp_values', 'mechanism'):
+            assert checked_model[key] == StepSN.DEFAULT_KWARGS[key]
+
+    def test_validate_ini_file_with_custom_SN_step(self, tmp_path):
+        """A [step_SN] section with another class passes the setup checks."""
+        (tmp_path / "my_SN.py").write_text(
+            "class MySNStep:\n"
+            "    def __init__(self, **kwargs):\n"
+            "        pass\n")
+        ini_file = tmp_path / "population_params.ini"
+        ini_file.write_text(
+            "[step_SN]\n"
+            "  import = None\n"
+            f"  absolute_import = ['{tmp_path / 'my_SN.py'}', 'MySNStep']\n"
+            "  kick_scale = 100.0\n")
+        totest.validate_ini_file(str(ini_file))
 
 
 class TestIniFileValidation:
@@ -392,7 +435,7 @@ class TestIntegration:
         # Setup mocks
         mock_simprop.return_value = {
             'flow': (lambda: {('a', 'b', 'c', 'd'): 'step_SN'}, {}),
-            'step_SN': (None, {'use_interp_values': False})
+            'step_SN': (StepSN, {'use_interp_values': False})
         }
         mock_binarypop.return_value = {
             'metallicities': [1.0],

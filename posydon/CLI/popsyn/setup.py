@@ -37,11 +37,20 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     Returns
     -------
     bool
-        True if the model is valid or use_interp_values=False, False otherwise
+        True if the model is valid, use_interp_values=False, or [step_SN]
+        uses a class that is not a StepSN; False otherwise
     '''
+    # imported here, since the step classes are only needed for this check
+    from posydon.binary_evol.SN.step_SN import StepSN
 
-    simprop_kwargs = simprop_kwargs_from_ini(ini_file)
-    step_SN_MODEL = simprop_kwargs['step_SN'][1]
+    SN_class, SN_kwargs = simprop_kwargs_from_ini(ini_file)['step_SN']
+    # the SN model check only applies to POSYDON's SN step; a custom class
+    # does not use the SN models of the grids
+    if not (isinstance(SN_class, type) and issubclass(SN_class, StepSN)):
+        return True
+    # check the values the step runs with: a section, which swaps in a
+    # subclass of StepSN, only lists some keys and the class fills in the rest
+    step_SN_MODEL = {**SN_class.DEFAULT_KWARGS, **SN_kwargs}
     # always allow the use of non-interpolation values
     if step_SN_MODEL['use_interp_values'] == False:
         return True
