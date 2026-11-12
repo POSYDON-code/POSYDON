@@ -2,7 +2,11 @@ from abc import ABC, abstractmethod
 
 from sklearn.neighbors import KNeighborsClassifier
 
-from posydon.binary_evol.SN.engine_data import SUKHBOLD16_NS, Sukhbold16_table
+from posydon.binary_evol.SN.engine_data import (
+    NS_STATE,
+    Sukhbold16_table,
+    Couch20_table
+    )
 from posydon.utils.posydonwarning import Pwarn
 
 SN_MECHANISMS = [
@@ -82,35 +86,63 @@ class CCSN_check_mass_based(CCSN_check_base):
         return None
 
 
-class CCSN_check_Sukhbold16(CCSN_check_base):
+class CCSN_check_from_tables(CCSN_check_base):
     """
-    Explosion outcome from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
+    A general class for CCSN explosion outcomes that are taken from data tables
+    with pre-computed core-collapse models. Currently applied to the mechanisms
+    of Sukhbold et al. 2016 and Couch et al. 2020.
 
-    A k-nearest-neighbours classifier, trained on the He core masses of the
-    models of the chosen engine, predicts "NS" for a successful explosion or
-    "BH_direct" for a failed one. With n_neighbors = 1 the star gets the
-    outcome of the model with the closest He core mass. The most massive
-    model (He core 14.61 Msun) forms a BH for every engine, so every star
-    above the tables does too.
+    Includes a kNN classifier (where n_neighbors = 1 is the default value to better
+    capture the intrinsic nonlinearity of the problem), and predicts the outcome as 
+    "NS" for successful SNe, "BH_direct" for direct collapse, or "BH_fallback" in
+    cases where fallback SNe that form BHs are included.
     """
-    n_neighbors = 1
-
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         self.engine = kwargs['engine']
-        table = Sukhbold16_table(self.engine)
+        self.n_neighbors = kwargs['n_neighbors']
+        table = self._table()
         self._classifier = KNeighborsClassifier(self.n_neighbors,
                                                 weights="distance")
         self._classifier.fit(table[["He_c_mass"]].to_numpy(),
                              table["stellar_state"].to_numpy())
 
+    @abstractmethod
+    def _table(self):
+        """Return the models, with columns 'He_c_mass' and 'stellar_state'."""
+        raise NotImplementedError
+
     def __call__(self,star):
         state = self._classifier.predict([[star.he_core_mass]])[0]
-        return "NS" if state == SUKHBOLD16_NS else "BH_direct"
+        return "NS" if state == NS_STATE else "BH_direct"
 
     def __repr__(self):
         return (f"{type(self).__name__}(mechanism={self.mechanism!r}, "
                 f"engine={self.engine!r})")
+
+
+class CCSN_check_Sukhbold16(CCSN_check_from_tables):
+    """
+    Explosion outcome from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
+
+    The most massive model (He core 14.61 Msun) forms a BH for every engine, so 
+    every star with He core mass above that limit does too.
+    """
+    def _table(self):
+        return Sukhbold16_table(self.engine)
+
+
+class CCSN_check_Couch20(CCSN_check_from_tables):
+    """
+    Explosion outcome from the models of Couch, Warren & O'Connor (2020),
+    ApJ, 890, 127, for the turbulence strength given by the option engine.
+
+    For turbulence strengths of 1.2 and above the heaviest model (He core
+    14.68 Msun) explodes, so every star with He core mass above that limit
+    does too. For 1.3 and 1.4, all models form NSs.
+    """
+    def _table(self):
+        return Couch20_table(self.engine)
 
 
 CCSN_EXPLOSION_CRITERIA = {
@@ -118,6 +150,7 @@ CCSN_EXPLOSION_CRITERIA = {
     "Fryer+12-delayed": CCSN_check_mass_based,
     "direct": CCSN_check_mass_based,
     "Sukhbold+16-engine": CCSN_check_Sukhbold16,
+    "Couch+20-engine": CCSN_check_Couch20,
 }
 
 

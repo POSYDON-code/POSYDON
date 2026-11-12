@@ -36,6 +36,7 @@ DEFAULT_SN_MODEL = {
     "use_core_masses": True,
     "allow_spin_None" : False,
     "approx_at_he_depletion": False,
+    "n_neighbors":1,
     }
 
 # pre-defined supernova models values not changed to the default model are put
@@ -57,6 +58,8 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
+
     },
     "SN_MODEL_v2_02": {
 #        "mechanism": "Fryer+12-delayed",
@@ -74,6 +77,8 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
+
     },
     "SN_MODEL_v2_03": {
 #        "mechanism": "Fryer+12-delayed",
@@ -91,6 +96,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_04": {
 #        "mechanism": "Fryer+12-delayed",
@@ -108,6 +114,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_05": {
         "mechanism": "Fryer+12-rapid",
@@ -125,6 +132,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_06": {
         "mechanism": "Fryer+12-rapid",
@@ -142,6 +150,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_07": {
         "mechanism": "Fryer+12-rapid",
@@ -159,6 +168,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_08": {
         "mechanism": "Fryer+12-rapid",
@@ -176,6 +186,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_09": {
         "mechanism": "Sukhbold+16-engine",
@@ -193,6 +204,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_10": {
         "mechanism": "Sukhbold+16-engine",
@@ -210,6 +222,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_11": {
         "mechanism": "Sukhbold+16-engine",
@@ -227,6 +240,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_12": {
         "mechanism": "Sukhbold+16-engine",
@@ -244,6 +258,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_13": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -261,6 +276,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_14": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -278,6 +294,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_15": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -295,6 +312,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_16": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -312,6 +330,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_17": {
         "mechanism": "Sukhbold+16-engine",
@@ -329,6 +348,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_18": {
         "mechanism": "Sukhbold+16-engine",
@@ -346,7 +366,8 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
-    },
+#        "n_neighbors":1,
+   },
     "SN_MODEL_v2_19": {
         "mechanism": "Sukhbold+16-engine",
         "engine": "W20",
@@ -363,6 +384,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_20": {
         "mechanism": "Sukhbold+16-engine",
@@ -380,6 +402,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_21": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -397,6 +420,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_22": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -414,6 +438,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_23": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -431,6 +456,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     "SN_MODEL_v2_24": {
         "mechanism": "Patton&Sukhbold20-engine",
@@ -448,6 +474,7 @@ SN_MODELS = {
         "use_core_masses": False,
 #        "allow_spin_None" : False,
 #        "approx_at_he_depletion": False,
+#        "n_neighbors":1,
     },
     #"SN_MODEL_v2_25": {
     #    "mechanism": "Maltsev+25-engine",

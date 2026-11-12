@@ -5,7 +5,7 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 import posydon.utils.constants as const
-from posydon.binary_evol.SN.engine_data import SUKHBOLD16_NS, Sukhbold16_table
+from posydon.binary_evol.SN.engine_data import NS_STATE, Sukhbold16_table
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     SN_MECHANISMS,
 )
@@ -331,28 +331,51 @@ class Remnant_Mass_Fryer_rapid(Remnant_Mass_Fryer12):
 
 
 
-class Remnant_Mass_Sukhbold16(Remnant_Mass_Base):
-    """Remnant mass from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
+class Remnant_Mass_from_tables(Remnant_Mass_Base):
+    """
+    Remnant mass for the mechanisms where the value can be inferred from
+    tables of pre-computed models.
+    """
+    def _get_rem_mass_CCSN(self,star,explosion):
+        if explosion != "NS":
+            raise ValueError(f"Unexpected explosion outcome {explosion!r} "
+                             f"for {type(self).__name__}.")
+        return float(self._NS_mass(star)), 0.0, "NS"
 
-    A NS gets the remnant mass of the tables at its He core mass, linearly
-    interpolated and constant beyond the tabulated range. BHs only come from
-    failed explosions ("BH_direct"), so the whole collapsing mass forms the BH
-    (in the tables, the BH mass equals the He core mass).
+    @abstractmethod
+    def _NS_mass(self,star):
+        """Baryonic mass of the NS formed by a successful explosion."""
+        raise NotImplementedError
+
+
+class Remnant_Mass_Sukhbold16(Remnant_Mass_from_tables):
+    """
+    Remnant mass from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
     """
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
         table = Sukhbold16_table(kwargs['engine'])
-        NS = table[table["stellar_state"] == SUKHBOLD16_NS]
+        NS = table[table["stellar_state"] == NS_STATE]
         self._NS_He_core_mass = NS["He_c_mass"].to_numpy()
-        self._NS_mass = NS["Rem_mass"].to_numpy()
+        self._NS_remnant_mass = NS["Rem_mass"].to_numpy()
 
-    def _get_rem_mass_CCSN(self,star,explosion):
-        if explosion != "NS":
-            raise ValueError(f"Unexpected explosion outcome {explosion!r} "
-                             "for the Sukhbold+16 remnant mass.")
-        m_rembar = np.interp(star.he_core_mass, self._NS_He_core_mass,
-                             self._NS_mass)
-        return float(m_rembar), 0.0, "NS"
+    def _NS_mass(self,star):
+        return np.interp(star.he_core_mass, self._NS_He_core_mass,
+                         self._NS_remnant_mass)
+
+
+class Remnant_Mass_Couch20(Remnant_Mass_from_tables):
+    """
+    Couch et al. (2020) do not give values for remnant masses, so by default
+    every NS is given a baryonic mass of 1.4 Msun as a placeholder value.
+    """
+    NS_baryonic_mass = 1.4
+
+    def _NS_mass(self,star):
+        return self.NS_baryonic_mass
+
+
+
 
 class Remnant_Mass_Patton20(Remnant_Mass_Base):
     def __init__(self,**kwargs):
@@ -378,6 +401,7 @@ REMNANT_MASS_PRESCRIPTIONS = {
     "Fryer+12-delayed": Remnant_Mass_Fryer_delayed,
     "direct": Remnant_Mass_direct,
     "Sukhbold+16-engine": Remnant_Mass_Sukhbold16,
+    "Couch+20-engine": Remnant_Mass_Couch20,
 }
 
 
