@@ -20,7 +20,32 @@ from posydon.popsyn import IMFs, distributions
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
 
-_gen_Moe_17_PsandQs = None
+# Moe_17_PsandQs generators, keyed on (orbital_period_min, orbital_period_max)
+_gen_Moe_17_PsandQs = {}
+
+
+def get_Moe_17_PsandQs_generator(orbital_period_min=10**0.15,
+                                 orbital_period_max=1e8):
+    """Return a cached Moe_17_PsandQs generator for a period range.
+
+    The generator only depends on the period range; the random-number
+    generator is passed on each call.
+
+    Parameters
+    ----------
+    orbital_period_min, orbital_period_max : float
+        Period range in days.
+
+    Returns
+    -------
+    Moe_17_PsandQs
+        The generator for this period range.
+    """
+    key = (float(orbital_period_min), float(orbital_period_max))
+    if key not in _gen_Moe_17_PsandQs:
+        _gen_Moe_17_PsandQs[key] = Moe_17_PsandQs(
+            orbital_period_min=key[0], orbital_period_max=key[1])
+    return _gen_Moe_17_PsandQs[key]
 
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
@@ -45,23 +70,21 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
-    global _gen_Moe_17_PsandQs
-
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs): # pragma: no cover
-    # this requires an integration test with actual external datafiles. No unit test
-        # initialize generator for Moe+17-PsandQs
-        if _gen_Moe_17_PsandQs is None:
-            _gen_Moe_17_PsandQs = Moe_17_PsandQs(**kwargs)
-        # use same defaults as generate_primary_masses
-        M1_min = kwargs.get("primary_mass_min", 7)
-        M1_max = kwargs.get("primary_mass_max", 120)
-        # generate samples
-        m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
-         = _gen_Moe_17_PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
-                               all_binaries=False)
+    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
+        if orbital_scheme != 'period':
+            raise ValueError("The Moe+17-PsandQs distributions generate "
+                             "orbital periods; use orbital_scheme='period'.")
+        RNG = kwargs.get('RNG', np.random.default_rng())
+        generator = get_Moe_17_PsandQs_generator(
+            orbital_period_min=kwargs.get('orbital_period_min', 10**0.15),
+            orbital_period_max=kwargs.get('orbital_period_max', 1e8))
+        # binaries and single stars, with the mass-dependent binary fraction
+        # of Moe & Di Stefano (2017)
+        m2_set, orbital_scheme_set, eccentricity_set = generator(
+            m1_set, all_binaries=False, RNG=RNG)
 
         ecc_scheme = kwargs.get('eccentricity_scheme', 'zero')
         if ecc_scheme != 'Moe+17-PsandQs':
@@ -69,6 +92,7 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
             # set value of eccentricity_scheme
             kwargs['eccentricity_scheme'] = ecc_scheme
             eccentricity_set = generate_eccentricities(**kwargs)
+            eccentricity_set[np.isnan(m2_set)] = np.nan
     else:
 
         # Generate secondary masses
