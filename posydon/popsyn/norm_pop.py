@@ -5,7 +5,7 @@ __authors__ = [
 ]
 
 import numpy as np
-from scipy.integrate import dblquad, quad
+from scipy.integrate import quad
 
 from posydon.popsyn.initial_distributions import (
     get_binary_fraction_distribution,
@@ -19,10 +19,19 @@ from posydon.utils.posydonwarning import Pwarn
 def get_pdf(kwargs, mass_pdf=False):
     """Function that builds a PDF function given the simulation parameters
 
+    The PDF is
+
+    - binaries: f_b(m1) * IMF(m1) * p(q | m1, P) * p(log10 P | m1, q)
+    - single stars: (1 - f_b(m1)) * IMF(m1)
+
     The orbital part is a density per dex in the period, dN/dlog10(P), for
     every orbital scheme; separation distributions are converted to periods
     with `PeriodFromSeparation`. Using the same measure for all schemes lets
     the PDFs of the simulation and the target population be compared.
+
+    For Moe & Di Stefano (2017), the mass ratio depends on the period, and
+    the period distribution is normalised to 1 for binaries, so the product
+    is `Moe_17_PsandQs.pdf` and the binary fraction is counted once.
 
     Parameters
     ----------
@@ -31,7 +40,8 @@ def get_pdf(kwargs, mass_pdf=False):
     mass_pdf : bool, optional
         If True, the PDF will return the mass distribution only.
         If False, it will return the full PDF including mass ratio, binary fraction,
-        and period distributions. Default is False.
+        and period distributions. Default is False. Not available if the mass
+        ratio depends on the period (Moe & Di Stefano 2017).
 
     Returns
     -------
@@ -42,43 +52,38 @@ def get_pdf(kwargs, mass_pdf=False):
     """
 
     IMF_pdf = get_IMF_distribution(kwargs).pdf
-    q_pdf = get_mass_ratio_distribution(kwargs).pdf
+    q_dist = get_mass_ratio_distribution(kwargs)
     f_b_pdf = get_binary_fraction_distribution(kwargs).pdf
     period_pdf = get_orbital_distribution(kwargs).pdf_per_dex
 
-    if mass_pdf:
-        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
-            np.where(# binaries
-                     np.asarray(binary),
-                     (f_b_pdf(np.asarray(binary))
-                      * IMF_pdf(np.asarray(m1))
-                      * q_pdf(np.asarray(q), np.asarray(m1))),
-                     # single stars
-                     (f_b_pdf(np.asarray(binary))
-                      * IMF_pdf(np.asarray(m1)))
-                    )
-        )
-    else:
-        pdf_function = lambda m1, q=0, P=np.nan, binary=False: (
-            np.where(
-                np.asarray(binary),
-                # binaries
-                (f_b_pdf(np.asarray(binary))
-                * IMF_pdf(np.asarray(m1))
-                * q_pdf(np.asarray(q), np.asarray(m1))
-                * period_pdf(np.asarray(P), np.asarray(m1), np.asarray(q))),
-                # single stars
-                (f_b_pdf(np.asarray(binary))
-                * IMF_pdf(np.asarray(m1)))
-            )
-        )
+    if mass_pdf and q_dist.depends_on_period:
+        raise ValueError("The mass ratio distribution depends on the "
+                         "period; use mass_pdf=False.")
+
+    def pdf_function(m1, q=0, P=np.nan, binary=False):
+        m1, q, P, binary = np.broadcast_arrays(
+            np.asarray(m1, dtype=float), np.asarray(q, dtype=float),
+            np.asarray(P, dtype=float), np.asarray(binary, dtype=bool))
+        # the binary part is also evaluated for single stars (q = 0,
+        # P = nan), where it is not used
+        with np.errstate(invalid='ignore', divide='ignore'):
+            orbit = q_dist.pdf(q, m1, P)
+            if not mass_pdf:
+                orbit = orbit * period_pdf(P, m1, q)
+        return f_b_pdf(binary, m1) * IMF_pdf(m1) * np.where(binary, orbit, 1.0)
+
     return pdf_function
 
 def get_mean_mass(params):
     '''Calculate the mean mass of the population
 
-    Integrates the mass distribution to calculate the mean mass of
-    the population
+    Integrates the mass distribution to calculate the mean (initial) mass of
+    a system, single or binary:
+
+        mean_mass = int IMF(m1) m1 (1 + f_b(m1) E[q | m1]) dm1
+
+    where E[q | m1] is the mean of the mass ratio distribution, over its
+    support (`MassRatioDistribution.mean`).
 
     Parameters
     ----------
@@ -90,32 +95,76 @@ def get_mean_mass(params):
     mean_mass : float
         Mean mass of the population
     '''
-
-    PDF = get_pdf(params, mass_pdf=True)
-
-    # integration bounds; the q bounds are the support of the
-    # mass ratio distribution, which can depend on m1
-    m1_min = params['primary_mass_min']
-    m1_max = params['primary_mass_max']
+    IMF_pdf = get_IMF_distribution(params).pdf
+    f_b_dist = get_binary_fraction_distribution(params)
     q_dist = get_mass_ratio_distribution(params)
 
-    # binary integration (quad requires scalar integrands)
-    I_bin = dblquad(
-        lambda q, m: np.asarray((m + m * q)
-                                * PDF(m, q, binary=True)).item(),
-        m1_min, m1_max,
-        lambda m: float(q_dist.support(m)[0]),
-        lambda m: float(q_dist.support(m)[1]),
-    )[0]
+    m1_min = params['primary_mass_min']
+    m1_max = params['primary_mass_max']
+    points = [m for m in getattr(f_b_dist, 'breakpoints', ())
+              if m1_min < m < m1_max] or None
 
-    # single star integration
-    I_single = quad(
-        lambda m: np.asarray(m * PDF(m, binary=False)).item(),
-        m1_min, m1_max,
-    )[0]
+    # quad requires scalar integrands
+    def integrand(m1):
+        return np.asarray(IMF_pdf(m1) * m1
+                          * (1 + f_b_dist.binary_fraction(m1)
+                             * q_dist.mean(m1))).item()
 
-    mean_mass = I_bin + I_single
-    return mean_mass
+    return quad(integrand, m1_min, m1_max, points=points, limit=200)[0]
+
+def check_binary_fraction_coverage(simulation_parameters,
+                                   population_parameters, n_m1=2000):
+    """Check that the simulation covers the binary fraction of the population
+
+    The check is done on a grid of primary masses in the overlap of the two
+    primary-mass ranges. Where the population requests only binaries but the
+    simulation has none (f_b,pop = 1, f_b,sim = 0), or only single stars but
+    the simulation has no single stars (f_b,pop = 0, f_b,sim = 1), no system
+    can be reweighted and an error is raised. Where the population requests
+    binaries or single stars of which the simulation has none, while the
+    other kind is covered, those systems are missing from the weights and a
+    warning is issued.
+
+    Parameters
+    ----------
+    simulation_parameters, population_parameters : dict
+        Parameters of the simulation and of the requested population.
+    n_m1 : int, optional
+        Number of grid points in log10(m1).
+
+    Raises
+    ------
+    ValueError
+        If, for some primary masses, the simulation has no system of the kind
+        requested by the population.
+    """
+    f_b_sim = get_binary_fraction_distribution(simulation_parameters)
+    f_b_pop = get_binary_fraction_distribution(population_parameters)
+    m_lo = max(simulation_parameters['primary_mass_min'],
+               population_parameters['primary_mass_min'])
+    m_hi = min(simulation_parameters['primary_mass_max'],
+               population_parameters['primary_mass_max'])
+    if m_lo > m_hi:
+        return
+    m1 = np.geomspace(m_lo, m_hi, n_m1)
+    f_sim = f_b_sim.binary_fraction(m1)
+    f_pop = f_b_pop.binary_fraction(m1)
+    no_bin = (f_sim == 0) & (f_pop > 0)
+    no_single = (f_sim == 1) & (f_pop < 1)
+
+    def mass_range(mask):
+        return f"{m1[mask].min():.3g}-{m1[mask].max():.3g} Msun"
+
+    for missing, uncovered, kind in [(no_single, f_pop == 0, "single stars"),
+                                     (no_bin, f_pop == 1, "binaries")]:
+        if np.any(missing & uncovered):
+            raise ValueError(f"No {kind} simulated, but requested for "
+                             "primary masses "
+                             f"{mass_range(missing & uncovered)}.")
+        if np.any(missing):
+            Pwarn(f"No {kind} simulated, but requested for primary masses "
+                  f"{mass_range(missing)}; they are missing from the "
+                  "weights.", "InappropriateValueWarning")
 
 def calculate_model_weights(pop_data,
                             M_sim,
@@ -159,6 +208,11 @@ def calculate_model_weights(pop_data,
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
         - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
+        For Moe & Di Stefano (2017) (`secondary_mass_scheme`,
+        `orbital_period_scheme` or `eccentricity_scheme` set to
+        'Moe+17-PsandQs'), the binary fraction, mass ratio and period come
+        from `Moe_17_PsandQs`; only `orbital_period_min` and
+        `orbital_period_max` are needed besides the primary mass settings.
 
     population_parameters : dict
         Dictionary containing the population parameters, which is the requested population to which we want to reweight the simulation. This is used to calculate the PDF of the requested population.
@@ -179,6 +233,11 @@ def calculate_model_weights(pop_data,
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
         - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
         - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
+        For Moe & Di Stefano (2017) (`secondary_mass_scheme`,
+        `orbital_period_scheme` or `eccentricity_scheme` set to
+        'Moe+17-PsandQs'), the binary fraction, mass ratio and period come
+        from `Moe_17_PsandQs`; only `orbital_period_min` and
+        `orbital_period_max` are needed besides the primary mass settings.
 
     Returns
     -------
@@ -188,12 +247,8 @@ def calculate_model_weights(pop_data,
 
     """
 
-    f_b_sim = get_binary_fraction_distribution(simulation_parameters).f_b
-    f_b_pop = get_binary_fraction_distribution(population_parameters).f_b
-    if (f_b_sim == 1) and (f_b_pop == 0):
-        raise ValueError("No single stars simulated, but requested")
-    if (f_b_sim == 0) and (f_b_pop == 1):
-        raise ValueError("No binaries simulated, but requested")
+    check_binary_fraction_coverage(simulation_parameters,
+                                   population_parameters)
 
     # build the pdf functions
     PDF_sim = get_pdf(simulation_parameters, mass_pdf=False)

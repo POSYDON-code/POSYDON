@@ -51,8 +51,39 @@ class MassRatioDistribution:
     """Base class of the mass ratio distributions, which exclude q = 0.
 
     Subclasses set `q_min` and `q_max`, or override `support` if the
-    bounds depend on the primary mass.
+    bounds depend on the primary mass. `pdf(q, m1, p)` accepts the primary
+    mass and the orbital period; distributions that depend on the period set
+    `depends_on_period = True`.
     """
+
+    depends_on_period = False
+
+    def mean(self, m1=None):
+        """Mean mass ratio, E[q | m1].
+
+        Integrates q * pdf(q, m1) numerically over `support(m1)`. Requires a
+        distribution that does not depend on the period.
+
+        Parameters
+        ----------
+        m1 : float or array_like, optional
+            Primary mass(es). Unused for fixed bounds.
+
+        Returns
+        -------
+        float or ndarray
+            Mean mass ratio; 0 where the support is empty.
+        """
+        def mean_for_m1(m):
+            m = None if m is None else float(m)
+            q_lower, q_upper = (float(b) for b in self.support(m))
+            if q_upper <= q_lower:
+                return 0.0
+            return quad(lambda q: q * float(self.pdf(q, m)),
+                        q_lower, q_upper)[0]
+        if m1 is None:
+            return mean_for_m1(None)
+        return np.vectorize(mean_for_m1, otypes=[float])(m1)
 
     def support(self, m1=None):
         """Lower and upper bound of q.
@@ -202,7 +233,7 @@ class FlatMassRatio(MassRatioDistribution):
         """
         return 1.0
 
-    def pdf(self, q, m1=None):
+    def pdf(self, q, m1=None, p=None):
         """Probability density function of the flat mass ratio distribution.
 
         Parameters
@@ -211,6 +242,8 @@ class FlatMassRatio(MassRatioDistribution):
             Mass ratio(s).
         m1 : float or array_like, optional
             Primary mass(es). Unused, accepted for a common interface.
+        p : float or array_like, optional
+            Orbital period(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -222,6 +255,21 @@ class FlatMassRatio(MassRatioDistribution):
         pdf_values = np.zeros_like(q, dtype=float)
         pdf_values[valid] = self.flat_mass_ratio(q[valid]) * self.norm
         return pdf_values
+
+    def mean(self, m1=None):
+        """Mean mass ratio, (q_min + q_max) / 2.
+
+        Parameters
+        ----------
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
+
+        Returns
+        -------
+        float or ndarray
+            Mean mass ratio, with the shape of m1.
+        """
+        return np.full(np.shape(m1), 0.5 * (self.q_min + self.q_max))
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the flat mass ratio distribution.
@@ -317,7 +365,7 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         return (np.maximum(self.m2_min / m1, 0.0),
                 np.minimum(self.m2_max / m1, 1.0))
 
-    def pdf(self, q, m1):
+    def pdf(self, q, m1, p=None):
         """Probability density of q given the primary mass m1.
 
         Parameters
@@ -326,6 +374,8 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
             Mass ratio(s).
         m1 : float or array_like
             Primary mass(es) [Msun].
+        p : float or array_like, optional
+            Orbital period(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -339,6 +389,22 @@ class ConditionalFlatMassRatio(MassRatioDistribution):
         # width <= 0: no companion possible for this m1
         valid = self.in_support(q, m1) & (width > 0)
         return np.divide(1.0, width, out=np.zeros_like(width), where=valid)
+
+    def mean(self, m1):
+        """Mean mass ratio for primary mass m1, the centre of the bounds.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        ndarray
+            Mean mass ratio; 0 where no companion is possible.
+        """
+        q_lower, q_upper = self.support(m1)
+        return np.where(q_upper > q_lower, 0.5 * (q_lower + q_upper), 0.0)
 
     def rvs(self, m1, rng=None):
         """Draw one mass ratio for each primary mass.
@@ -472,7 +538,7 @@ class PowerLawMassRatio(MassRatioDistribution):
         """
         return np.asarray(q, dtype=float)**self.alpha
 
-    def pdf(self, q, m1=None):
+    def pdf(self, q, m1=None, p=None):
         """Probability density function of the power law mass ratio distribution.
 
         Parameters
@@ -481,6 +547,8 @@ class PowerLawMassRatio(MassRatioDistribution):
             Mass ratio(s).
         m1 : float or array_like, optional
             Primary mass(es). Unused, accepted for a common interface.
+        p : float or array_like, optional
+            Orbital period(s). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -577,13 +645,30 @@ class ConstantBinaryFraction:
         return (f"<h3>Constant Binary Fraction</h3>"
                 f"<p>f_b = {self.f_b}</p>")
 
-    def pdf(self, binary):
+    def binary_fraction(self, m1=None):
+        """Binary fraction for primary mass(es) m1.
+
+        Parameters
+        ----------
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
+
+        Returns
+        -------
+        ndarray
+            f_b, with the shape of m1.
+        """
+        return np.full(np.shape(m1), self.f_b, dtype=float)
+
+    def pdf(self, binary, m1=None):
         """Probability of a system being a binary or a single star.
 
         Parameters
         ----------
         binary : bool or array_like of bool
             True for binaries, False for single stars.
+        m1 : float or array_like, optional
+            Primary mass(es). Unused, accepted for a common interface.
 
         Returns
         -------
@@ -1927,3 +2012,225 @@ class PeriodFromSeparation:
         """
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p, m1, q), p)
+
+
+class Moe17BinaryFraction:
+    """Mass-dependent binary fraction of Moe & Di Stefano (2017).
+
+    Wraps `Moe_17_PsandQs.binary_fraction`: the fraction of primaries with
+    an inner binary companion in the period range of the model.
+
+    Parameters
+    ----------
+    model : Moe_17_PsandQs
+        The Moe & Di Stefano (2017) model.
+    """
+
+    # kinks of the binary fraction in m1 [Msun]: the low-mass scaling
+    # (M_min, 0.8) and the mass interpolation of the fits
+    _kinks = (0.8, 1.2, 3.0, 3.5, 6.0, 6.5, 7.0, 40.0)
+
+    def __init__(self, model):
+        """Initialize the binary fraction from a Moe_17_PsandQs model."""
+        self.model = model
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"Moe17BinaryFraction({self.model!r})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return ("<h3>Moe & Di Stefano (2017) Binary Fraction</h3>"
+                + self.model._repr_html_())
+
+    @property
+    def breakpoints(self):
+        """Primary masses [Msun] where the binary fraction has kinks."""
+        return (self.model.M_min,) + self._kinks
+
+    def binary_fraction(self, m1):
+        """Binary fraction for primary mass(es) m1.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        ndarray
+            Binary fraction, between 0 and 1.
+        """
+        return self.model.binary_fraction(m1)
+
+    def pdf(self, binary, m1):
+        """Probability of a system being a binary or a single star.
+
+        Parameters
+        ----------
+        binary : bool or array_like of bool
+            True for binaries, False for single stars.
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        ndarray
+            f_b(m1) for binaries and 1 - f_b(m1) for single stars.
+        """
+        f_b = self.binary_fraction(m1)
+        return np.where(np.asarray(binary), f_b, 1 - f_b)
+
+
+class Moe17MassRatio(MassRatioDistribution):
+    """Mass ratio distribution of Moe & Di Stefano (2017).
+
+    p(q | m1, P), which depends on the orbital period. Wraps
+    `Moe_17_PsandQs.q_pdf`; sampling is done jointly with the period by
+    `Moe_17_PsandQs`.
+
+    Parameters
+    ----------
+    model : Moe_17_PsandQs
+        The Moe & Di Stefano (2017) model.
+    """
+
+    depends_on_period = True
+
+    def __init__(self, model):
+        """Initialize the mass ratio distribution from a Moe_17_PsandQs."""
+        self.model = model
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"Moe17MassRatio({self.model!r})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return ("<h3>Moe & Di Stefano (2017) Mass Ratio Distribution</h3>"
+                + self.model._repr_html_())
+
+    def support(self, m1):
+        """Lower and upper bound of q for primary mass m1.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        tuple
+            (max(0.1, M_min/m1), 1); empty for m1 <= M_min.
+        """
+        q_lower = self.model._q_lower(np.asarray(m1, dtype=float))
+        return q_lower, np.ones_like(q_lower)
+
+    def pdf(self, q, m1, p):
+        """Probability density of q given m1 and the orbital period.
+
+        Parameters
+        ----------
+        q : float or array_like
+            Mass ratio(s).
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+        p : float or array_like
+            Orbital period(s) [days].
+
+        Returns
+        -------
+        ndarray
+            Probability density at q, normalised to 1 over q.
+        """
+        return self.model.q_pdf(m1, p, q)
+
+    def mean(self, m1):
+        """Mean mass ratio of the binaries, averaged over the periods.
+
+        Parameters
+        ----------
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+
+        Returns
+        -------
+        ndarray
+            E[q | m1, binary]; 0 where the binary fraction is 0.
+        """
+        return self.model.mean_q(m1)
+
+
+class Moe17Period:
+    """Orbital period distribution of Moe & Di Stefano (2017).
+
+    p(log10 P | m1, binary): the inner-binary period distribution of
+    `Moe_17_PsandQs.logP_pdf`, divided by the binary fraction so that it is
+    normalised to 1 for every m1 with binaries. Sampling is done jointly with
+    the mass ratio by `Moe_17_PsandQs`.
+
+    Parameters
+    ----------
+    model : Moe_17_PsandQs
+        The Moe & Di Stefano (2017) model.
+    """
+
+    def __init__(self, model):
+        """Initialize the period distribution from a Moe_17_PsandQs."""
+        self.model = model
+
+    def __repr__(self):
+        """Return string representation of the distribution."""
+        return f"Moe17Period({self.model!r})"
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks."""
+        return ("<h3>Moe & Di Stefano (2017) Period Distribution</h3>"
+                + self.model._repr_html_())
+
+    def pdf_per_dex(self, p, m1, q=None):
+        """Probability density per dex of the orbital period.
+
+        Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P).
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) [days].
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
+
+        Returns
+        -------
+        ndarray
+            Probability density per unit log10(P) at period p; 0 where the
+            binary fraction is 0.
+        """
+        f_b = self.model.binary_fraction(m1)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            dens = self.model.logP_pdf(m1, p) / f_b
+        return np.where(f_b > 0, dens, 0.0)
+
+    def pdf(self, p, m1, q=None):
+        """Probability density function of the orbital period.
+
+        Normalised in linear P space to 1, i.e. this returns dP/dP.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Orbital period(s) [days].
+        m1 : float or array_like
+            Primary mass(es) [Msun].
+        q : float or array_like, optional
+            Mass ratio(s). Unused, accepted for a common interface.
+
+        Returns
+        -------
+        ndarray
+            Probability density per unit P (in days) at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(p, m1), p)

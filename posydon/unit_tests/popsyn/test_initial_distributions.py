@@ -13,7 +13,9 @@ import posydon.popsyn.IMFs as IMFs
 
 # file to test
 from posydon.popsyn import distributions, initial_distributions
+from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import orbital_period_from_separation
+from posydon.utils.posydonwarning import InappropriateValueWarning
 
 
 # Dummy IMF to simulate a valid IMF pdf
@@ -523,3 +525,79 @@ class TestGetOrbitalDistribution:
             initial_distributions.get_orbital_distribution(kwargs)
 
         assert "Orbital separation scheme not recognized" in str(excinfo.value)
+
+
+class TestMoe17PsandQs:
+
+    @fixture
+    def moe_kwargs(self):
+        return {'secondary_mass_scheme': 'Moe+17-PsandQs',
+                'orbital_scheme': 'period',
+                'orbital_period_scheme': 'Moe+17-PsandQs',
+                'orbital_period_min': 10**0.15,
+                'orbital_period_max': 1e4}
+
+    def test_use_Moe_17_PsandQs(self):
+        use = initial_distributions.use_Moe_17_PsandQs
+        assert use(secondary_mass_scheme='Moe+17-PsandQs') is True
+        assert use(orbital_scheme='period',
+                   orbital_period_scheme='Moe+17-PsandQs') is True
+        assert use(eccentricity_scheme='Moe+17-PsandQs') is True
+        assert use(secondary_mass_scheme='flat_mass_ratio',
+                   orbital_scheme='period',
+                   orbital_period_scheme='Sana+12_period_extended',
+                   eccentricity_scheme='zero') is False
+
+    def test_get_Moe_17_PsandQs_generator(self):
+        get = initial_distributions.get_Moe_17_PsandQs_generator
+        gen = get(10**0.15, 1e6)
+        assert isinstance(gen, Moe_17_PsandQs)
+        assert gen.orbital_period_max == pytest.approx(1e6)
+        # cached per period range
+        assert get(10**0.15, 1e6) is gen
+        assert get(10**0.15, 1e7) is not gen
+
+    def test_get_Moe_17_PsandQs(self, moe_kwargs):
+        model = initial_distributions.get_Moe_17_PsandQs(moe_kwargs)
+        assert model.orbital_period_min == pytest.approx(10**0.15)
+        assert model.orbital_period_max == pytest.approx(1e4)
+        assert initial_distributions.get_Moe_17_PsandQs(moe_kwargs) is model
+        # period range from the population defaults
+        defaults = initial_distributions.default_kwargs
+        initial_distributions._gen_Moe_17_PsandQs.clear()
+        with pytest.warns(InappropriateValueWarning, match="exceeds 1"):
+            model = initial_distributions.get_Moe_17_PsandQs(
+                {'secondary_mass_scheme': 'Moe+17-PsandQs'})
+        assert model.orbital_period_min == defaults['orbital_period_min']
+        assert model.orbital_period_max == defaults['orbital_period_max']
+        with pytest.raises(ValueError, match="orbital_scheme='period'"):
+            initial_distributions.get_Moe_17_PsandQs(
+                dict(moe_kwargs, orbital_scheme='separation'))
+
+    def test_distributions(self, moe_kwargs):
+        model = initial_distributions.get_Moe_17_PsandQs(moe_kwargs)
+        # binary_fraction_* and the other schemes are ignored
+        kwargs = dict(moe_kwargs, binary_fraction_scheme='const',
+                      binary_fraction_const=0.3)
+        for get, cls in [
+                (initial_distributions.get_binary_fraction_distribution,
+                 distributions.Moe17BinaryFraction),
+                (initial_distributions.get_mass_ratio_distribution,
+                 distributions.Moe17MassRatio),
+                (initial_distributions.get_orbital_distribution,
+                 distributions.Moe17Period)]:
+            dist = get(kwargs)
+            assert isinstance(dist, cls)
+            assert dist.model is model
+        # the eccentricity scheme alone selects Moe as well
+        ecc_only = {'secondary_mass_scheme': 'flat_mass_ratio',
+                    'secondary_mass_min': 0.5, 'secondary_mass_max': 100,
+                    'primary_mass_min': 1.0,
+                    'orbital_scheme': 'period',
+                    'orbital_period_scheme': 'Sana+12_period_extended',
+                    'orbital_period_min': 10**0.15,
+                    'orbital_period_max': 1e4,
+                    'eccentricity_scheme': 'Moe+17-PsandQs'}
+        assert isinstance(
+            initial_distributions.get_mass_ratio_distribution(ecc_only),
+            distributions.Moe17MassRatio)

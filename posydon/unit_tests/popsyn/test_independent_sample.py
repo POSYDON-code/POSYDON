@@ -2,7 +2,8 @@
 """
 
 __authors__ = [
-    "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
+    "Elizabeth Teng <elizabethteng@u.northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 # import the module which will be tested
@@ -15,7 +16,11 @@ np = totest.np
 # module you like to test
 import re
 
-from pytest import approx, raises
+from pytest import approx, raises, warns
+
+from posydon.popsyn import initial_distributions
+from posydon.popsyn.defaults import default_kwargs
+from posydon.utils.posydonwarning import InappropriateValueWarning
 
 
 # define test classes collecting several test functions
@@ -24,15 +29,17 @@ class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['generate_independent_samples', 'use_Moe_17_PsandQs', \
-                    '_gen_Moe_17_PsandQs','generate_orbital_periods', \
+                    'get_Moe_17_PsandQs', \
+                    'generate_orbital_periods', \
                     'generate_orbital_separations', 'generate_eccentricities',\
                     'generate_primary_masses','generate_secondary_masses',\
                     'generate_binary_fraction','__authors__',\
                     'np','truncnorm','rejection_sampler',\
-                    'distributions','Moe_17_PsandQs',\
+                    'distributions',\
                     'get_binary_fraction_distribution',\
                     'get_IMF_distribution','get_mass_ratio_distribution',\
                     'get_orbital_distribution',\
+                    'Pwarn','_IGNORED_BY_MOE_17_PSANDQS',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
         totest_elements = set(dir(totest))
@@ -82,24 +89,69 @@ class TestFunctions:
         assert len(orb_p) == 1
         assert all(np.isfinite(m1_p))
 
-    def test_use_Moe_17_PsandQs(self):
+    def test_generate_independent_samples_Moe(self):
+        kwargs = dict(number_of_binaries=2000, primary_mass_min=7.0,
+                      primary_mass_max=150.0,
+                      secondary_mass_scheme='Moe+17-PsandQs',
+                      orbital_period_scheme='Moe+17-PsandQs',
+                      eccentricity_scheme='Moe+17-PsandQs',
+                      orbital_period_min=10**0.15, orbital_period_max=1e4)
+        # the Moe distributions provide periods only
+        with raises(ValueError, match="use orbital_scheme='period'"):
+            totest.generate_independent_samples(
+                'separation', RNG=np.random.default_rng(seed=1), **kwargs)
+        # the same seed gives the same population
+        a = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1), **kwargs)
+        b = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1), **kwargs)
+        for x, y in zip(a, b):
+            assert np.array_equal(x, y, equal_nan=True)
+        P, ecc, m1, m2 = a
+        single = np.isnan(m2)
+        assert 0 < single.sum() < len(m1)
+        assert np.array_equal(single, np.isnan(P))
+        assert np.array_equal(single, np.isnan(ecc))
+        assert np.nanmax(P) <= 1e4
+        assert np.all(m2[~single] >= 0.1 * m1[~single])
+        # a different period range uses a different generator
+        P_wide, *_ = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1),
+            **dict(kwargs, orbital_period_max=1e8))
+        assert np.nanmax(P_wide) > 1e4
+        # eccentricities from another scheme; single stars stay NaN
+        P, ecc, m1, m2 = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1),
+            **dict(kwargs, eccentricity_scheme='zero'))
+        assert np.array_equal(np.isnan(ecc), np.isnan(m2))
+        assert np.all(ecc[~np.isnan(m2)] == 0.0)
 
-        # returns True for Moe+17-PsandQs secondary_mass_scheme
-        assert totest.use_Moe_17_PsandQs(secondary_mass_scheme='Moe+17-PsandQs') is True
+    def test_generate_independent_samples_Moe_ignored_settings(self):
+        kwargs = dict(number_of_binaries=100, primary_mass_min=7.0,
+                      primary_mass_max=150.0,
+                      secondary_mass_scheme='Moe+17-PsandQs',
+                      orbital_period_min=10**0.15, orbital_period_max=1e4,
+                      binary_fraction_scheme='const', binary_fraction_const=1,
+                      secondary_mass_min=0.5)
+        with warns(InappropriateValueWarning,
+                   match="binary_fraction_scheme, binary_fraction_const, "
+                         "secondary_mass_min have no effect"):
+            totest.generate_independent_samples(
+                'period', RNG=np.random.default_rng(seed=1), **kwargs)
 
-        # returns True for Moe+17-PsandQs orbital_period_scheme with period scheme
-        assert totest.use_Moe_17_PsandQs(
-            orbital_scheme='period',
-            orbital_period_scheme='Moe+17-PsandQs') is True
-
-        # returns True for Moe+17-PsandQs eccentricity_scheme
-        assert totest.use_Moe_17_PsandQs(eccentricity_scheme='Moe+17-PsandQs') is True
-        # returns False for non-Moe schemes
-        assert totest.use_Moe_17_PsandQs(
-            secondary_mass_scheme='flat_mass_ratio',
-            orbital_scheme='period',
-            orbital_period_scheme='Sana+12_period_extended',
-            eccentricity_scheme='zero') is False
+    def test_generate_independent_samples_Moe_default_periods(self):
+        # without a period range, the population defaults are used
+        initial_distributions._gen_Moe_17_PsandQs.clear()
+        with warns(InappropriateValueWarning, match="exceeds 1"):
+            P, *_ = totest.generate_independent_samples(
+                'period', number_of_binaries=500, primary_mass_min=7.0,
+                primary_mass_max=150.0,
+                secondary_mass_scheme='Moe+17-PsandQs',
+                RNG=np.random.default_rng(seed=2))
+        key = (float(default_kwargs['orbital_period_min']),
+               float(default_kwargs['orbital_period_max']))
+        assert list(initial_distributions._gen_Moe_17_PsandQs) == [key]
+        assert np.nanmin(P) >= key[0] and np.nanmax(P) <= key[1]
 
     def test_generate_orbital_periods(self):
         # missing argument
@@ -261,13 +313,8 @@ class TestFunctions:
             binary_fraction_scheme='const',
             m1=10.) == 0.7
 
-        # Moe+17-massdependent scheme
-        tests_moe = [(np.array([1.]), 0.4),
-                     (np.array([3.]), 0.59),
-                     (np.array([8.]), 0.76),
-                     (np.array([10.]), 0.84),
-                     (np.array([18.]), 0.94)]
-        for (m1, f) in tests_moe:
-            result = totest.generate_binary_fraction(
-                binary_fraction_scheme='Moe+17-massdependent', m1=m1)
-            assert result[0] == f
+        # the step-function Moe+17 scheme was removed
+        with raises(ValueError, match="allowed binary fraction scheme"):
+            totest.generate_binary_fraction(
+                binary_fraction_scheme='Moe+17-massdependent',
+                m1=np.array([10.]))

@@ -16,6 +16,9 @@ from posydon.popsyn.distributions import (
     LogNormalSeparation,
     LogPowerLawPeriod,
     LogUniform,
+    Moe17BinaryFraction,
+    Moe17MassRatio,
+    Moe17Period,
     PeriodFromSeparation,
     PowerLawMassRatio,
     PowerLawPeriod,
@@ -25,6 +28,7 @@ from posydon.popsyn.distributions import (
     ZeroEccentricity,
     per_dex_to_linear,
 )
+from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import (
     orbital_period_from_separation,
     orbital_separation_from_period,
@@ -1760,6 +1764,14 @@ class TestConstantBinaryFraction:
                                    [f_b, 1 - f_b, f_b])
         assert np.isclose(dist.pdf(True) + dist.pdf(False), 1.0)
 
+    def test_binary_fraction(self):
+        dist = ConstantBinaryFraction(f_b=0.6)
+        assert dist.binary_fraction() == 0.6
+        np.testing.assert_allclose(dist.binary_fraction([1.0, 10.0]), 0.6)
+        # m1 is accepted and ignored
+        np.testing.assert_allclose(dist.pdf([True, False], [1.0, 2.0]),
+                                   [0.6, 0.4])
+
 
 class TestLogNormalSeparationPerDex:
     """pdf_per_dex of LogNormalSeparation and its relation to pdf."""
@@ -1845,3 +1857,119 @@ class TestCommonOrbitalSignature:
         np.testing.assert_allclose(dist.pdf_per_dex(P, m1, 0.5),
                                    dist.pdf_per_dex(P, m1))
         np.testing.assert_allclose(dist.pdf(P, m1, 0.5), dist.pdf(P, m1))
+
+
+class TestMassRatioMean:
+    """E[q | m1] of the mass ratio distributions."""
+
+    def test_flat(self):
+        dist = FlatMassRatio(q_min=0.2, q_max=0.6)
+        assert np.isclose(dist.mean(), 0.4)
+        np.testing.assert_allclose(dist.mean([1.0, 5.0]), 0.4)
+
+    def test_conditional_flat(self):
+        dist = ConditionalFlatMassRatio(m2_min=0.5, m2_max=10.0)
+        m1 = np.array([0.4, 2.0, 20.0])
+        # no companion possible for m1 < m2_min
+        np.testing.assert_allclose(dist.mean(m1),
+                                   [0.0, 0.5 * (0.25 + 1.0), 0.5 * 0.525])
+
+    @pytest.mark.parametrize("alpha", [-1.0, 0.0, 1.5])
+    def test_power_law_numerical(self, alpha):
+        dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=0.9)
+        expected = (quad(lambda q: q**(alpha + 1), 0.1, 0.9)[0]
+                    / quad(lambda q: q**alpha, 0.1, 0.9)[0])
+        assert np.isclose(dist.mean(), expected)
+        np.testing.assert_allclose(dist.mean([1.0, 30.0]), expected)
+
+    def test_generic_mean_empty_support(self):
+        # the generic integration returns 0 for an empty support
+        class Empty(PowerLawMassRatio):
+            def support(self, m1=None):
+                return 0.5, 0.5
+        assert Empty(alpha=0.0, q_min=0.1, q_max=0.9).mean(3.0) == 0.0
+
+    @pytest.mark.parametrize("dist", [
+        FlatMassRatio(q_min=0.1, q_max=0.9),
+        PowerLawMassRatio(alpha=0.5),
+        ConditionalFlatMassRatio(m2_min=0.5, m2_max=10.0),
+    ])
+    def test_period_argument_ignored(self, dist):
+        q = np.array([0.2, 0.5, 0.95])
+        m1 = np.full(3, 5.0)
+        np.testing.assert_allclose(dist.pdf(q, m1, np.full(3, 10.0)),
+                                   dist.pdf(q, m1))
+        assert not dist.depends_on_period
+
+
+class TestMoe17Distributions:
+    """Moe & Di Stefano (2017) wrappers around Moe_17_PsandQs."""
+
+    @pytest.fixture(scope="class")
+    def model(self):
+        return Moe_17_PsandQs(orbital_period_min=10**0.15,
+                              orbital_period_max=1e4)
+
+    def test_repr(self, model):
+        for cls, name in [(Moe17BinaryFraction, "Binary Fraction"),
+                          (Moe17MassRatio, "Mass Ratio"),
+                          (Moe17Period, "Period")]:
+            dist = cls(model)
+            assert repr(dist).startswith(cls.__name__ + "(")
+            assert name in dist._repr_html_()
+
+    def test_binary_fraction(self, model):
+        dist = Moe17BinaryFraction(model)
+        m1 = np.array([0.05, 1.0, 10.0, 30.0])
+        f_b = model.binary_fraction(m1)
+        np.testing.assert_allclose(dist.binary_fraction(m1), f_b)
+        np.testing.assert_allclose(dist.pdf(m1 > 5, m1),
+                                   np.where(m1 > 5, f_b, 1 - f_b))
+        assert dist.breakpoints[0] == model.M_min
+        assert 40.0 in dist.breakpoints
+
+    def test_mass_ratio(self, model):
+        dist = Moe17MassRatio(model)
+        assert dist.depends_on_period
+        q_lo, q_hi = dist.support(np.array([0.5, 10.0]))
+        np.testing.assert_allclose(q_lo, [0.16, 0.1])
+        np.testing.assert_allclose(q_hi, 1.0)
+        q, P = np.array([0.2, 0.5, 0.97]), np.array([5.0, 300.0, 2e3])
+        np.testing.assert_allclose(dist.pdf(q, 10.0, P),
+                                   model.q_pdf(10.0, P, q))
+        np.testing.assert_allclose(dist.mean([1.0, 10.0]),
+                                   model.mean_q([1.0, 10.0]))
+
+    def test_period(self, model):
+        dist = Moe17Period(model)
+        P = np.array([0.5, 5.0, 300.0, 2e3, 2e4])
+        expected = model.logP_pdf(10.0, P) / model.binary_fraction(10.0)
+        np.testing.assert_allclose(dist.pdf_per_dex(P, 10.0), expected)
+        # q is accepted and ignored
+        np.testing.assert_allclose(dist.pdf_per_dex(P, 10.0, 0.5), expected)
+        np.testing.assert_allclose(dist.pdf(P, 10.0),
+                                   per_dex_to_linear(expected, P))
+        # no binaries: 0, not a division by f_b = 0
+        assert dist.pdf_per_dex(10.0, 0.05) == 0.0
+
+    @pytest.mark.parametrize("m1", [0.5, 10.0, 30.0])
+    def test_period_normalised(self, model, m1):
+        dist = Moe17Period(model)
+        per_dex = quad(lambda lp: dist.pdf_per_dex(10**lp, m1),
+                       model.lp_min, model.lp_max, limit=200)[0]
+        linear = quad(lambda p: dist.pdf(p, m1), model.orbital_period_min,
+                      model.orbital_period_max, limit=500,
+                      points=[10, 100, 1e3])[0]
+        assert np.isclose(per_dex, 1.0, atol=1e-3)
+        assert np.isclose(linear, 1.0, atol=1e-3)
+
+    def test_joint_is_model_pdf(self, model):
+        # f_b * p(q | m1, P) * p(log10 P | m1) is Moe_17_PsandQs.pdf
+        f_b, q_dist, P_dist = (Moe17BinaryFraction(model),
+                               Moe17MassRatio(model), Moe17Period(model))
+        m1 = np.array([2.0, 8.0, 15.0, 30.0])
+        q = np.array([0.15, 0.5, 0.97, 0.3])
+        P = np.array([3.0, 30.0, 2e3, 600.0])
+        joint = (f_b.binary_fraction(m1) * q_dist.pdf(q, m1, P)
+                 * P_dist.pdf_per_dex(P, m1))
+        np.testing.assert_allclose(joint, model.pdf(m1, P, q))
