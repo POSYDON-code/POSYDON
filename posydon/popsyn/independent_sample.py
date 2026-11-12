@@ -17,10 +17,42 @@ import numpy as np
 from scipy.stats import truncnorm
 
 from posydon.popsyn import IMFs, distributions
+from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
+from posydon.utils.posydonwarning import Pwarn
 
-_gen_Moe_17_PsandQs = None
+# population settings that have no effect when the Moe+17-PsandQs
+# distributions are used
+_IGNORED_BY_MOE_17_PSANDQS = ('binary_fraction_scheme', 'binary_fraction_const',
+                              'secondary_mass_min', 'secondary_mass_max')
+
+# Moe_17_PsandQs generators, keyed on (orbital_period_min, orbital_period_max)
+_gen_Moe_17_PsandQs = {}
+
+
+def get_Moe_17_PsandQs_generator(orbital_period_min=10**0.15,
+                                 orbital_period_max=1e8):
+    """Return a cached Moe_17_PsandQs generator for a period range.
+
+    The generator only depends on the period range; the random-number
+    generator is passed on each call.
+
+    Parameters
+    ----------
+    orbital_period_min, orbital_period_max : float
+        Period range in days.
+
+    Returns
+    -------
+    Moe_17_PsandQs
+        The generator for this period range.
+    """
+    key = (float(orbital_period_min), float(orbital_period_max))
+    if key not in _gen_Moe_17_PsandQs:
+        _gen_Moe_17_PsandQs[key] = Moe_17_PsandQs(
+            orbital_period_min=key[0], orbital_period_max=key[1])
+    return _gen_Moe_17_PsandQs[key]
 
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
@@ -45,23 +77,29 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         Randomly drawn secondary masses
 
     """
-    global _gen_Moe_17_PsandQs
-
     # Generate primary masses
     m1_set = generate_primary_masses(**kwargs)
 
-    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs): # pragma: no cover
-    # this requires an integration test with actual external datafiles. No unit test
-        # initialize generator for Moe+17-PsandQs
-        if _gen_Moe_17_PsandQs is None:
-            _gen_Moe_17_PsandQs = Moe_17_PsandQs(**kwargs)
-        # use same defaults as generate_primary_masses
-        M1_min = kwargs.get("primary_mass_min", 7)
-        M1_max = kwargs.get("primary_mass_max", 120)
-        # generate samples
-        m2_set, orbital_scheme_set, eccentricity_set, metallicity_set\
-         = _gen_Moe_17_PsandQs(m1_set, M_min=M1_min, M_max=M1_max,
-                               all_binaries=False)
+    if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
+        if orbital_scheme != 'period':
+            raise ValueError("The Moe+17-PsandQs distributions generate "
+                             "orbital periods; use orbital_scheme='period'.")
+        ignored = [k for k in _IGNORED_BY_MOE_17_PSANDQS if k in kwargs]
+        if ignored:
+            Pwarn("The Moe+17-PsandQs distributions set the binary fraction "
+                  "and the secondary masses themselves; the settings "
+                  f"{', '.join(ignored)} have no effect.",
+                  "InappropriateValueWarning")
+        RNG = kwargs.get('RNG', np.random.default_rng())
+        generator = get_Moe_17_PsandQs_generator(
+            orbital_period_min=kwargs.get(
+                'orbital_period_min', default_kwargs['orbital_period_min']),
+            orbital_period_max=kwargs.get(
+                'orbital_period_max', default_kwargs['orbital_period_max']))
+        # binaries and single stars, with the mass-dependent binary fraction
+        # of Moe & Di Stefano (2017)
+        m2_set, orbital_scheme_set, eccentricity_set = generator(
+            m1_set, all_binaries=False, RNG=RNG)
 
         ecc_scheme = kwargs.get('eccentricity_scheme', 'zero')
         if ecc_scheme != 'Moe+17-PsandQs':
@@ -69,6 +107,7 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
             # set value of eccentricity_scheme
             kwargs['eccentricity_scheme'] = ecc_scheme
             eccentricity_set = generate_eccentricities(**kwargs)
+            eccentricity_set[np.isnan(m2_set)] = np.nan
     else:
 
         # Generate secondary masses
@@ -378,9 +417,10 @@ def generate_secondary_masses(primary_masses,
 def generate_binary_fraction(m1=None, binary_fraction_const=1,
                              binary_fraction_scheme='const', **kwargs):
     """
-    Getting the binary fraction depending on the scheme. The two possible
-    option are a constant binary fraction and a binary fraction based on the
-    values given in Moe and Di Stefano (2017).
+    Getting the binary fraction depending on the scheme. Only a constant
+    binary fraction is supported; the mass-dependent binary fraction of Moe
+    and Di Stefano (2017) is part of the Moe+17-PsandQs distributions (see
+    ``Moe_17_PsandQs.binary_fraction``).
 
     Parameters:
     --------------------
@@ -395,7 +435,7 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
     binary fraction: int
 
     """
-    binary_fraction_scheme_options = ['const','Moe+17-massdependent']
+    binary_fraction_scheme_options = ['const']
 
     if m1 is None:
         raise ValueError("There was not a primary mass provided in the inputs. Unable to return a binary fraction")
@@ -409,13 +449,6 @@ def generate_binary_fraction(m1=None, binary_fraction_const=1,
 
     if binary_fraction_scheme == 'const':
         binary_fraction = binary_fraction_const
-
-    elif binary_fraction_scheme == 'Moe+17-massdependent':
-        binary_fraction[(m1 > 16)] = 0.94
-        binary_fraction[(m1 <= 16) & (m1 > 9)] = 0.84
-        binary_fraction[(m1 <= 9) & (m1 > 5)] = 0.76
-        binary_fraction[(m1 <= 5) & (m1 > 2)] = 0.59
-        binary_fraction[(m1 <= 2)] = 0.4
 
     else:  # pragma: no cover
         pass
