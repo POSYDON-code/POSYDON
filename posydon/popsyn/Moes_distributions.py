@@ -275,6 +275,7 @@ class Moe_17_PsandQs():
             [np.geomspace(M1_MIN, M1_MAX, n_M1_table), kinks]))
         lp = np.linspace(self.lp_min, self.lp_max, n_logP_table)
         g = inner_binary_density(m[:, None], lp[None, :])
+        self._n_logP_table = n_logP_table
         self._lm_table = np.log10(m)
         self._fbin_raw_table = np.trapz(g, lp, axis=1)
         self._gmax_table = g.max(axis=1)
@@ -348,6 +349,51 @@ class Moe_17_PsandQs():
         large = c * _powint(np.clip(q_lo, Q_SPLIT, 1.0), 1.0, gl)
         twin = w_t * (1.0 - np.clip(q_lo, Q_TWIN, 1.0)) / (1.0 - Q_TWIN)
         return (small, large, twin), (w_t, gs, gl, c)
+
+    def _q_first_moments(self, m, lp, q_lo, shape):
+        """First moments in q of the three q components above q_lo.
+
+        Counterpart of ``_q_masses``; ``shape`` is its second return value.
+        """
+        w_t, gs, gl, c = shape
+        small = (c * Q_SPLIT**(gl - gs)
+                 * _powint(np.minimum(q_lo, Q_SPLIT), Q_SPLIT, gs + 1.0))
+        large = c * _powint(np.clip(q_lo, Q_SPLIT, 1.0), 1.0, gl + 1.0)
+        q_t = np.clip(q_lo, Q_TWIN, 1.0)
+        twin = w_t * 0.5 * (1.0 - q_t**2) / (1.0 - Q_TWIN)
+        return small, large, twin
+
+    def mean_q(self, M1):
+        """Mean mass ratio of the binaries, E[q | M1, binary].
+
+        The mean of q over ``pdf`` at fixed M1, i.e. averaged over the period
+        distribution in the period range. It is 0 where the binary fraction
+        is 0.
+
+        Parameters
+        ----------
+        M1 : float or ndarray
+            Primary mass(es) in Msun.
+
+        Returns
+        -------
+        ndarray
+            Mean mass ratio, of the shape of M1.
+        """
+        M1 = np.asarray(M1, dtype=float)
+        lp = np.linspace(self.lp_min, self.lp_max, self._n_logP_table)
+        m1 = M1[..., None]
+        q_lo = self._q_lower(m1)
+        masses, shape = self._q_masses(self._m_stats(m1), lp, q_lo)
+        moments = self._q_first_moments(self._m_stats(m1), lp, q_lo, shape)
+        norm = sum(masses)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            mean_q_P = np.where(norm > 0.0, sum(moments) / norm, 0.0)
+        g = self.logP_pdf(m1, 10**lp)
+        weight = np.trapz(g, lp, axis=-1)
+        with np.errstate(invalid='ignore', divide='ignore'):
+            out = np.trapz(g * mean_q_P, lp, axis=-1) / weight
+        return np.where(weight > 0.0, out, 0.0)
 
     def logP_pdf(self, M1, P):
         """Binary period density per decade, p(log10 P, binary | M1).

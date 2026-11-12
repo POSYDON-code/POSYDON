@@ -19,12 +19,12 @@ from pytest import approx, fixture, raises, warns
 from posydon.utils.posydonwarning import InappropriateValueWarning
 
 
-def _integrate_pdf(model, M1, n_lp=801, n_q=901):
-    """Integrate model.pdf over log10(P) and q on a grid."""
+def _integrate_pdf(model, M1, n_lp=801, n_q=901, q_power=0):
+    """Integrate q**q_power * model.pdf over log10(P) and q on a grid."""
     lp = np.linspace(model.lp_min, model.lp_max, n_lp)
     q = np.linspace(totest.Q_MIN, 1.0, n_q)
     L, Q = np.meshgrid(lp, q, indexing='ij')
-    dens = model.pdf(M1, 10**L, Q)
+    dens = model.pdf(M1, 10**L, Q) * Q**q_power
     return np.trapz(np.trapz(dens, q, axis=1), lp)
 
 
@@ -43,7 +43,8 @@ class TestElements:
                     'is_circular', 'f_logP_q03', 'q_components', 'q_factor',
                     'prob_inner_binary', 'f_logP_q01',
                     'inner_binary_density']
-        totest_elements = set(dir(totest))
+        # created when other tests trigger a warning in this module
+        totest_elements = set(dir(totest)) - {'__warningregistry__'}
         missing_in_test = set(elements) - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
                                           +f"{totest.__name__}: "\
@@ -260,6 +261,23 @@ class TestMoe17PsandQs:
                 model.binary_fraction(M1), abs=1e-3)
         # capped: integrates to 1, not to the raw frequency
         assert _integrate_pdf(model_short, 40.0) == approx(1.0, abs=1e-3)
+
+    def test_mean_q(self, model, model_short):
+        for m, M1 in [(model, 0.3), (model, 1.0), (model, 7.0),
+                      (model, 100.0), (model_short, 40.0)]:
+            expected = (_integrate_pdf(m, M1, n_q=3601, q_power=1)
+                        / _integrate_pdf(m, M1, n_q=3601))
+            assert m.mean_q(M1) == approx(expected, abs=1e-3)
+        # vectorised; 0 where there are no binaries
+        mq = model.mean_q(np.array([0.05, 1.0, 7.0]))
+        assert mq.shape == (3,)
+        assert mq[0] == 0.0
+        assert mq[1:] == approx([model.mean_q(1.0), model.mean_q(7.0)])
+        # the mean of q drawn by the sampler
+        M1 = np.full(200000, 10.0)
+        M2, P, e = model(M1, RNG=np.random.default_rng(1))
+        q = M2[np.isfinite(M2)] / 10.0
+        assert q.mean() == approx(model.mean_q(10.0), abs=3e-3)
 
     def test_logP_pdf_support(self, model):
         assert model.logP_pdf(10.0, 1.0) == approx(0.0)

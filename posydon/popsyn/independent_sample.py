@@ -17,14 +17,14 @@ import numpy as np
 from scipy.stats import truncnorm
 
 from posydon.popsyn import distributions
-from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.initial_distributions import (
     get_binary_fraction_distribution,
     get_IMF_distribution,
     get_mass_ratio_distribution,
+    get_Moe_17_PsandQs,
     get_orbital_distribution,
+    use_Moe_17_PsandQs,
 )
-from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
 from posydon.utils.common_functions import rejection_sampler
 from posydon.utils.posydonwarning import Pwarn
 
@@ -32,34 +32,6 @@ from posydon.utils.posydonwarning import Pwarn
 # distributions are used
 _IGNORED_BY_MOE_17_PSANDQS = ('binary_fraction_scheme', 'binary_fraction_const',
                               'secondary_mass_min', 'secondary_mass_max')
-
-# Moe_17_PsandQs generators, keyed on (orbital_period_min, orbital_period_max)
-_gen_Moe_17_PsandQs = {}
-
-
-def get_Moe_17_PsandQs_generator(orbital_period_min=10**0.15,
-                                 orbital_period_max=1e8):
-    """Return a cached Moe_17_PsandQs generator for a period range.
-
-    The generator only depends on the period range; the random-number
-    generator is passed on each call.
-
-    Parameters
-    ----------
-    orbital_period_min, orbital_period_max : float
-        Period range in days.
-
-    Returns
-    -------
-    Moe_17_PsandQs
-        The generator for this period range.
-    """
-    key = (float(orbital_period_min), float(orbital_period_max))
-    if key not in _gen_Moe_17_PsandQs:
-        _gen_Moe_17_PsandQs[key] = Moe_17_PsandQs(
-            orbital_period_min=key[0], orbital_period_max=key[1])
-    return _gen_Moe_17_PsandQs[key]
-
 
 def generate_independent_samples(orbital_scheme='period', **kwargs):
     """Randomly generate a population of binaries at ZAMS.
@@ -87,9 +59,9 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
     m1_set = generate_primary_masses(**kwargs)
 
     if use_Moe_17_PsandQs(orbital_scheme=orbital_scheme, **kwargs):
-        if orbital_scheme != 'period':
-            raise ValueError("The Moe+17-PsandQs distributions generate "
-                             "orbital periods; use orbital_scheme='period'.")
+        # raises for orbital_scheme='separation'
+        generator = get_Moe_17_PsandQs(
+            dict(kwargs, orbital_scheme=orbital_scheme))
         ignored = [k for k in _IGNORED_BY_MOE_17_PSANDQS if k in kwargs]
         if ignored:
             Pwarn("The Moe+17-PsandQs distributions set the binary fraction "
@@ -97,11 +69,6 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
                   f"{', '.join(ignored)} have no effect.",
                   "InappropriateValueWarning")
         RNG = kwargs.get('RNG', np.random.default_rng())
-        generator = get_Moe_17_PsandQs_generator(
-            orbital_period_min=kwargs.get(
-                'orbital_period_min', default_kwargs['orbital_period_min']),
-            orbital_period_max=kwargs.get(
-                'orbital_period_max', default_kwargs['orbital_period_max']))
         # binaries and single stars, with the mass-dependent binary fraction
         # of Moe & Di Stefano (2017)
         m2_set, orbital_scheme_set, eccentricity_set = generator(
@@ -143,25 +110,6 @@ def generate_independent_samples(orbital_scheme='period', **kwargs):
         m2_set[idx] = np.nan
 
     return orbital_scheme_set, eccentricity_set, m1_set, m2_set
-
-
-def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
-                       orbital_period_scheme='', eccentricity_scheme='',
-                       **kwargs):
-    """Check whether Moe & Di Stefano (2017) [1]_ should be used for the
-    initial sampling.
-
-    References
-    ----------
-    .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
-        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,
-        <i>The Astrophysical Journal Supplement Series</i>, vol. 230, no. 2,
-        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.
-    """
-    return ((secondary_mass_scheme=='Moe+17-PsandQs')
-            or ((orbital_scheme=='period')
-                and (orbital_period_scheme=='Moe+17-PsandQs'))
-            or (eccentricity_scheme=='Moe+17-PsandQs'))
 
 
 def generate_orbital_periods(primary_masses,

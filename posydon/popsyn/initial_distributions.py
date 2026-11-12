@@ -12,6 +12,7 @@ __authors__ = [
 import inspect
 
 import posydon.popsyn.IMFs as IMFs
+from posydon.popsyn.defaults import default_kwargs
 from posydon.popsyn.distributions import (
     ConditionalFlatMassRatio,
     ConstantBinaryFraction,
@@ -19,11 +20,91 @@ from posydon.popsyn.distributions import (
     LogNormalSeparation,
     LogPowerLawPeriod,
     LogUniform,
+    Moe17BinaryFraction,
+    Moe17MassRatio,
+    Moe17Period,
     PeriodFromSeparation,
     PowerLawMassRatio,
     PowerLawPeriod,
     Sana12Period,
 )
+from posydon.popsyn.Moes_distributions import Moe_17_PsandQs
+
+# Moe_17_PsandQs models, keyed on (orbital_period_min, orbital_period_max)
+_gen_Moe_17_PsandQs = {}
+
+
+def use_Moe_17_PsandQs(secondary_mass_scheme='', orbital_scheme='',
+                       orbital_period_scheme='', eccentricity_scheme='',
+                       **kwargs):
+    """Check whether Moe & Di Stefano (2017) [1]_ should be used.
+
+    If any of the mass ratio, period or eccentricity schemes is
+    'Moe+17-PsandQs', the binary fraction, mass ratio and period (and the
+    eccentricity, if requested) all come from `Moe_17_PsandQs`.
+
+    References
+    ----------
+    .. [1] Moe, M. and Di Stefano, R., “Mind Your Ps and Qs: The Interrelation
+        between Period (P) and Mass-ratio (Q) Distributions of Binary Stars”,
+        <i>The Astrophysical Journal Supplement Series</i>, vol. 230, no. 2,
+        Art. no. 15, IOP, 2017. doi:10.3847/1538-4365/aa6fb6.
+    """
+    return ((secondary_mass_scheme=='Moe+17-PsandQs')
+            or ((orbital_scheme=='period')
+                and (orbital_period_scheme=='Moe+17-PsandQs'))
+            or (eccentricity_scheme=='Moe+17-PsandQs'))
+
+def get_Moe_17_PsandQs_generator(orbital_period_min=10**0.15,
+                                 orbital_period_max=1e8):
+    """Return a cached Moe_17_PsandQs model for a period range.
+
+    The model only depends on the period range; the random-number
+    generator is passed on each call.
+
+    Parameters
+    ----------
+    orbital_period_min, orbital_period_max : float
+        Period range in days.
+
+    Returns
+    -------
+    Moe_17_PsandQs
+        The model for this period range.
+    """
+    key = (float(orbital_period_min), float(orbital_period_max))
+    if key not in _gen_Moe_17_PsandQs:
+        _gen_Moe_17_PsandQs[key] = Moe_17_PsandQs(
+            orbital_period_min=key[0], orbital_period_max=key[1])
+    return _gen_Moe_17_PsandQs[key]
+
+def get_Moe_17_PsandQs(kwargs):
+    """Get the Moe_17_PsandQs model for the population parameters.
+
+    Parameters
+    ----------
+    kwargs : dict
+        Population parameters. `orbital_period_min` and
+        `orbital_period_max` default to the population defaults.
+
+    Returns
+    -------
+    Moe_17_PsandQs
+        The cached model for the period range.
+
+    Raises
+    ------
+    ValueError
+        If `orbital_scheme` is not 'period'.
+    """
+    if kwargs.get('orbital_scheme', 'period') != 'period':
+        raise ValueError("The Moe+17-PsandQs distributions generate "
+                         "orbital periods; use orbital_scheme='period'.")
+    return get_Moe_17_PsandQs_generator(
+        orbital_period_min=kwargs.get('orbital_period_min',
+                                      default_kwargs['orbital_period_min']),
+        orbital_period_max=kwargs.get('orbital_period_max',
+                                      default_kwargs['orbital_period_max']))
 
 
 def get_IMF_distribution(kwargs):
@@ -78,6 +159,8 @@ def get_mass_ratio_distribution(kwargs):
       (bounds depend on m1, as in the sampler), or with `q_min` and `q_max`.
     - `power_law_mass_ratio`: with `mass_ratio_slope` and optional `q_min`
       (default 0.05) and `q_max` (default 1.0).
+    - Moe & Di Stefano (2017), if `use_Moe_17_PsandQs`: `Moe17MassRatio`,
+      which depends on the period.
 
     Parameters
     ----------
@@ -97,6 +180,8 @@ def get_mass_ratio_distribution(kwargs):
         If the scheme is not supported, or if `primary_mass_min` is below
         `secondary_mass_min`.
     """
+    if use_Moe_17_PsandQs(**kwargs):
+        return Moe17MassRatio(get_Moe_17_PsandQs(kwargs))
     scheme = kwargs.get('secondary_mass_scheme')
     if scheme == 'flat_mass_ratio':
         if 'q_min' in kwargs or 'q_max' in kwargs:
@@ -120,7 +205,14 @@ def get_mass_ratio_distribution(kwargs):
 def get_binary_fraction_distribution(kwargs):
     '''Get the binary fraction from `binary_fraction_scheme`.
 
-    Only `const`, with `binary_fraction_const`, is supported.
+    Supported schemes:
+    - `const`, with `binary_fraction_const`.
+    - Moe & Di Stefano (2017), if `use_Moe_17_PsandQs`: the mass-dependent
+      `Moe17BinaryFraction`; `binary_fraction_scheme` and
+      `binary_fraction_const` are ignored, as in the sampler.
+
+    All returned distributions provide `binary_fraction(m1)` and
+    `pdf(binary, m1)`.
 
     Parameters
     ----------
@@ -129,7 +221,7 @@ def get_binary_fraction_distribution(kwargs):
 
     Returns
     -------
-    ConstantBinaryFraction
+    ConstantBinaryFraction or Moe17BinaryFraction
         The binary fraction.
 
     Raises
@@ -137,6 +229,8 @@ def get_binary_fraction_distribution(kwargs):
     ValueError
         If the scheme is not supported.
     '''
+    if use_Moe_17_PsandQs(**kwargs):
+        return Moe17BinaryFraction(get_Moe_17_PsandQs(kwargs))
     scheme = kwargs.get('binary_fraction_scheme')
     if scheme == 'const':
         return ConstantBinaryFraction(f_b=kwargs['binary_fraction_const'])
@@ -157,6 +251,9 @@ def get_orbital_distribution(kwargs):
       and `orbital_separation_scheme`: `log_uniform` or `log_normal` (with
       `log_orbital_separation_mean` and `log_orbital_separation_sigma`),
       converted to periods with `PeriodFromSeparation`.
+    - Moe & Di Stefano (2017), if `use_Moe_17_PsandQs`: `Moe17Period`, the
+      period distribution of the binaries, with `orbital_period_min` and
+      `orbital_period_max`.
 
     Parameters
     ----------
@@ -173,6 +270,8 @@ def get_orbital_distribution(kwargs):
     ValueError
         If a scheme is not recognized.
     '''
+    if use_Moe_17_PsandQs(**kwargs):
+        return Moe17Period(get_Moe_17_PsandQs(kwargs))
     if (kwargs['orbital_scheme'] == 'period'):
         if kwargs['orbital_period_scheme'] == 'Sana+12_period_extended':
             return Sana12Period(
