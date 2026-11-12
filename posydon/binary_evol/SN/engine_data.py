@@ -4,8 +4,8 @@ They are shared by the explosion criteria and the remnant-mass prescriptions,
 and each table is read only once per process.
 """
 
-import os
 import json
+import os
 from functools import lru_cache
 
 import numpy as np

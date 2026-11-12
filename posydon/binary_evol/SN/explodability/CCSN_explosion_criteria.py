@@ -2,11 +2,7 @@ from abc import ABC, abstractmethod
 
 from sklearn.neighbors import KNeighborsClassifier
 
-from posydon.binary_evol.SN.engine_data import (
-    NS_STATE,
-    Sukhbold16_table,
-    Couch20_table
-    )
+from posydon.binary_evol.SN.engine_data import NS_STATE, Couch20_table, Sukhbold16_table
 from posydon.utils.posydonwarning import Pwarn
 
 SN_MECHANISMS = [
@@ -93,7 +89,7 @@ class CCSN_check_from_tables(CCSN_check_base):
     of Sukhbold et al. 2016 and Couch et al. 2020.
 
     Includes a kNN classifier (where n_neighbors = 1 is the default value to better
-    capture the intrinsic nonlinearity of the problem), and predicts the outcome as 
+    capture the intrinsic nonlinearity of the problem), and predicts the outcome as
     "NS" for successful SNe, "BH_direct" for direct collapse, or "BH_fallback" in
     cases where fallback SNe that form BHs are included.
     """
@@ -125,7 +121,7 @@ class CCSN_check_Sukhbold16(CCSN_check_from_tables):
     """
     Explosion outcome from the tables of Sukhbold et al. (2016), ApJ, 821, 38.
 
-    The most massive model (He core 14.61 Msun) forms a BH for every engine, so 
+    The most massive model (He core 14.61 Msun) forms a BH for every engine, so
     every star with He core mass above that limit does too.
     """
     def _table(self):
