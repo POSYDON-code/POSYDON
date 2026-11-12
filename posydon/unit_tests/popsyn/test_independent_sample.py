@@ -2,7 +2,8 @@
 """
 
 __authors__ = [
-    "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
+    "Elizabeth Teng <elizabethteng@u.northwestern.edu>",
+    "Max Briel <max.briel@gmail.com>",
 ]
 
 # import the module which will be tested
@@ -24,7 +25,8 @@ class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
         elements = ['generate_independent_samples', 'use_Moe_17_PsandQs', \
-                    '_gen_Moe_17_PsandQs','generate_orbital_periods', \
+                    '_gen_Moe_17_PsandQs','get_Moe_17_PsandQs_generator', \
+                    'generate_orbital_periods', \
                     'generate_orbital_separations', 'generate_eccentricities',\
                     'generate_primary_masses','generate_secondary_masses',\
                     'generate_binary_fraction','__authors__',\
@@ -81,6 +83,51 @@ class TestFunctions:
         assert isinstance(orb_p, np.ndarray)
         assert len(orb_p) == 1
         assert all(np.isfinite(m1_p))
+
+    def test_generate_independent_samples_Moe(self):
+        kwargs = dict(number_of_binaries=2000, primary_mass_min=7.0,
+                      primary_mass_max=150.0,
+                      secondary_mass_scheme='Moe+17-PsandQs',
+                      orbital_period_scheme='Moe+17-PsandQs',
+                      eccentricity_scheme='Moe+17-PsandQs',
+                      orbital_period_min=10**0.15, orbital_period_max=1e4)
+        # the Moe distributions provide periods only
+        with raises(ValueError, match="use orbital_scheme='period'"):
+            totest.generate_independent_samples(
+                'separation', RNG=np.random.default_rng(seed=1), **kwargs)
+        # the same seed gives the same population
+        a = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1), **kwargs)
+        b = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1), **kwargs)
+        for x, y in zip(a, b):
+            assert np.array_equal(x, y, equal_nan=True)
+        P, ecc, m1, m2 = a
+        single = np.isnan(m2)
+        assert 0 < single.sum() < len(m1)
+        assert np.array_equal(single, np.isnan(P))
+        assert np.array_equal(single, np.isnan(ecc))
+        assert np.nanmax(P) <= 1e4
+        assert np.all(m2[~single] >= 0.1 * m1[~single])
+        # a different period range uses a different generator
+        P_wide, *_ = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1),
+            **dict(kwargs, orbital_period_max=1e8))
+        assert np.nanmax(P_wide) > 1e4
+        # eccentricities from another scheme; single stars stay NaN
+        P, ecc, m1, m2 = totest.generate_independent_samples(
+            'period', RNG=np.random.default_rng(seed=1),
+            **dict(kwargs, eccentricity_scheme='zero'))
+        assert np.array_equal(np.isnan(ecc), np.isnan(m2))
+        assert np.all(ecc[~np.isnan(m2)] == 0.0)
+
+    def test_get_Moe_17_PsandQs_generator(self):
+        gen = totest.get_Moe_17_PsandQs_generator(10**0.15, 1e6)
+        assert isinstance(gen, totest.Moe_17_PsandQs)
+        assert gen.orbital_period_max == approx(1e6)
+        # cached per period range
+        assert totest.get_Moe_17_PsandQs_generator(10**0.15, 1e6) is gen
+        assert totest.get_Moe_17_PsandQs_generator(10**0.15, 1e7) is not gen
 
     def test_use_Moe_17_PsandQs(self):
 
