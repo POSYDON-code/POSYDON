@@ -302,8 +302,8 @@ class TestMoe17PsandQs:
     def test_call_bad_input(self, model):
         with raises(ValueError, match="must all be finite"):
             model(np.array([np.nan]))
-        with raises(ValueError, match="must exceed M_min"):
-            model(0.05)
+        with raises(ValueError, match="must be positive"):
+            model(np.array([0.0, 10.0]))
 
     def test_call_output(self, model):
         M1 = np.full(20000, 10.0)
@@ -363,6 +363,43 @@ class TestMoe17PsandQs:
         M2, _, _ = model(np.full(100, 0.0801),
                          RNG=np.random.default_rng(seed=6))
         assert np.all(np.isnan(M2))
+
+    def test_call_below_M_min(self, model):
+        # primaries at or below M_min are single stars, not an error
+        M1 = np.array([0.05, 0.08, 10.0])
+        M2, P, e = model(np.tile(M1, 2000), RNG=np.random.default_rng(seed=8))
+        single = np.isnan(M2).reshape(-1, 3)
+        assert np.all(single[:, :2])
+        assert not np.all(single[:, 2])
+        # all_binaries: they stay single, with a warning
+        with warns(InappropriateValueWarning, match="2 of 3 primaries"):
+            M2, P, e = model(M1, all_binaries=True,
+                             RNG=np.random.default_rng(seed=9))
+        assert np.all(np.isnan(M2[:2])) and np.isfinite(M2[2])
+        assert np.all(np.isnan(P[:2])) and np.all(np.isnan(e[:2]))
+
+    def test_call_no_inner_binary_density(self):
+        # 40 Msun: prob_inner_binary = 0 above log10(P) ~ 4.2, so there is no
+        # inner binary in 1e5-1e8 d; this used to loop forever
+        model = totest.Moe_17_PsandQs(orbital_period_min=1e5,
+                                      orbital_period_max=1e8)
+        assert model.binary_fraction(40.0) == approx(0.0)
+        with warns(InappropriateValueWarning, match="1 of 2 primaries"):
+            M2, P, e = model(np.array([40.0, 1.0]), all_binaries=True,
+                             RNG=np.random.default_rng(seed=10))
+        assert np.isnan(M2[0]) and np.isnan(P[0]) and np.isnan(e[0])
+        assert P[1] >= 1e5
+        M2, _, _ = model(np.full(100, 40.0),
+                         RNG=np.random.default_rng(seed=11))
+        assert np.all(np.isnan(M2))
+
+    def test_q_pdf_below_M_min_no_warning(self, model):
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("error")
+            dens = model.q_pdf(np.array([0.05, 0.08]), 10.0, 0.5)
+            assert np.all(dens == 0.0)
+            assert model.pdf(0.05, 10.0, 0.5, e=0.1) == 0.0
 
     def test_call_capped(self, model_short):
         """With the binary fraction capped, long periods are still drawn."""
