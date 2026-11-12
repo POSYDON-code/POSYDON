@@ -461,7 +461,10 @@ The code uses **inverse-transform sampling**: if $F$ is the CDF of $x$ and $u\si
 $x=F^{-1}(u)$ has density $F'$. Every CDF is written down analytically, at the drawn
 $(M_1,P)$ of each system; there are no grids. `__call__` first decides which systems
 are binaries ($u<f_\mathrm{bin}(M_1)$, or all of them with `all_binaries=True`). It
-then draws $\log P$, then $q$ and $e$ given that period.
+then draws $\log P$, then $q$ and $e$ given that period. Primaries with
+$M_1\le M_\mathrm{min}$ (no companion of at least $M_\mathrm{min}$ with $q\le1$), and
+primaries with no inner-binary density anywhere in the period range, are always single;
+with `all_binaries=True` they stay single and a warning is raised.
 
 **The basic piece: a truncated power law** (`_powinv`). For $p(x)\propto x^\gamma$ on
 $[a,b]$, with $k=\gamma+1$:
@@ -598,6 +601,7 @@ introduced several problems:
 | Moe with `orbital_scheme='separation'` | periods in days were returned as separations in R☉ | `ValueError` |
 | Moe periods with a non-Moe `eccentricity_scheme` | single stars got an eccentricity | NaN for single stars |
 | A metallicity was drawn per system (and discarded) | extra random numbers | removed |
+| Step-function `binary_fraction_scheme='Moe+17-massdependent'` | a second, inconsistent "Moe+17" binary fraction | removed; use `secondary_mass_scheme='Moe+17-PsandQs'` |
 
 The method signatures changed:
 - `__call__(M1, all_binaries=False, RNG=None)` returns `(M2, P, e)`.

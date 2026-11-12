@@ -219,7 +219,9 @@ class Moe_17_PsandQs():
     has a log10(P) distribution, and q and e distributions conditional on
     (M1, P). Primaries outside 0.8-40 Msun use the statistics of 0.8 or
     40 Msun; below 0.8 Msun the binary fraction is scaled down to zero at
-    ``M_min`` and q is truncated at ``M_min / M1``.
+    ``M_min`` and q is truncated at ``M_min / M1``. Primaries with
+    M1 <= ``M_min`` cannot have a companion of at least ``M_min`` with q <= 1
+    and are always single stars.
 
     References
     ----------
@@ -332,13 +334,20 @@ class Moe_17_PsandQs():
         return np.maximum(Q_MIN, self.M_min / M1)
 
     def _q_masses(self, m, lp, q_lo):
-        """Masses of the three q components above q_lo (q_lo >= 0.1)."""
+        """Masses of the three q components above q_lo (q_lo >= 0.1).
+
+        Returns
+        -------
+        (small, large, twin), (w_t, gs, gl, c)
+            Component masses above q_lo, and the shape parameters of
+            ``q_components`` so that callers do not evaluate it twice.
+        """
         _, _, w_t, gs, gl, c = q_components(m, lp)
         small = (c * Q_SPLIT**(gl - gs)
                  * _powint(np.minimum(q_lo, Q_SPLIT), Q_SPLIT, gs))
         large = c * _powint(np.clip(q_lo, Q_SPLIT, 1.0), 1.0, gl)
         twin = w_t * (1.0 - np.clip(q_lo, Q_TWIN, 1.0)) / (1.0 - Q_TWIN)
-        return small, large, twin
+        return (small, large, twin), (w_t, gs, gl, c)
 
     def logP_pdf(self, M1, P):
         """Binary period density per decade, p(log10 P, binary | M1).
@@ -358,13 +367,16 @@ class Moe_17_PsandQs():
                                         np.log10(P), np.asarray(q, dtype=float))
         m = self._m_stats(M1)
         q_lo = self._q_lower(M1)
-        _, _, w_t, gs, gl, c = q_components(m, lp)
-        with np.errstate(invalid='ignore', divide='ignore'):
+        masses, (w_t, gs, gl, c) = self._q_masses(m, lp, q_lo)
+        norm = sum(masses)
+        # norm is 0 for M1 <= M_min (q_lo >= 1); those are masked to 0 below
+        with np.errstate(invalid='ignore', divide='ignore', over='ignore'):
             dens = np.where(q < Q_SPLIT, c * Q_SPLIT**(gl - gs) * q**gs,
                             c * q**gl + np.where(q >= Q_TWIN,
                                                  w_t / (1.0 - Q_TWIN), 0.0))
-        norm = sum(self._q_masses(m, lp, q_lo))
-        return np.where((q >= q_lo) & (q <= 1.0), dens / norm, 0.0)
+            out = dens / norm
+        ok = (q >= q_lo) & (q <= 1.0) & (norm > 0.0)
+        return np.where(ok, out, 0.0)
 
     def e_pdf(self, M1, P, e):
         """Eccentricity density p(e | M1, P, binary), normalised to 1.
@@ -415,12 +427,17 @@ class Moe_17_PsandQs():
 
     # ---- sampler ----------------------------------------------------------
     def _sample_logP(self, M1, rng):
-        """Rejection sampling of log10(P) from inner_binary_density."""
+        """Rejection sampling of log10(P) from inner_binary_density.
+
+        Returns NaN for primaries whose inner-binary density is zero over the
+        whole period range (no inner binary possible), instead of looping
+        forever.
+        """
         m = self._m_stats(M1)
         envelope = 1.02 * np.interp(np.log10(m), self._lm_table,
                                     self._gmax_table)
-        lp_out = np.empty(M1.shape)
-        todo = np.arange(M1.size)
+        lp_out = np.full(M1.shape, np.nan)
+        todo = np.flatnonzero(envelope > 0.0)
         while todo.size > 0:
             lp = rng.uniform(self.lp_min, self.lp_max, todo.size)
             g = inner_binary_density(m[todo], lp)
@@ -436,8 +453,7 @@ class Moe_17_PsandQs():
         """Mixture sampling of q: choose a component, invert its CDF."""
         m = self._m_stats(M1)
         q_lo = self._q_lower(M1)
-        w_s, w_l, w_t = self._q_masses(m, lp, q_lo)
-        _, _, _, gs, gl, _ = q_components(m, lp)
+        (w_s, w_l, w_t), (_, gs, gl, _) = self._q_masses(m, lp, q_lo)
         u = rng.random(M1.size) * (w_s + w_l + w_t)
         v = rng.random(M1.size)
         lo_twin = np.clip(q_lo, Q_TWIN, 1.0)
@@ -468,10 +484,13 @@ class Moe_17_PsandQs():
         Parameters
         ----------
         M1 : float or ndarray of float
-            Mass(es) of the primary in Msun; must exceed ``M_min``.
+            Mass(es) of the primary in Msun; must be positive. Primaries with
+            M1 <= ``M_min`` are single stars.
         all_binaries : bool (default: False)
-            If True, every primary gets a companion; the period distribution
-            is then normalised to 1.
+            If True, every primary that can have an inner companion gets one;
+            the period distribution is then normalised to 1. Primaries with
+            M1 <= ``M_min``, or without any inner-binary density in the
+            period range, stay single (with a warning).
         RNG : numpy.random.Generator or None (default: None)
             Random-number generator; ``self.RNG`` if None.
 
@@ -485,19 +504,31 @@ class Moe_17_PsandQs():
         M1 = np.atleast_1d(np.asarray(M1, dtype=float))
         if not np.all(np.isfinite(M1)):
             raise ValueError("Primary masses M1 must all be finite.")
-        if np.any(M1 <= self.M_min):
-            raise ValueError(f"Primary masses M1 must exceed M_min = "
-                             f"{self.M_min} Msun.")
+        if np.any(M1 <= 0.0):
+            raise ValueError("Primary masses M1 must be positive.")
+        # no companion of at least M_min with q <= 1 is possible
+        can_pair = M1 > self.M_min
         if all_binaries:
-            is_binary = np.ones(M1.size, dtype=bool)
+            is_binary = can_pair.copy()
         else:
             is_binary = rng.random(M1.size) < self.binary_fraction(M1)
         M2 = np.full(M1.size, np.nan)
         P = np.full(M1.size, np.nan)
         e = np.full(M1.size, np.nan)
-        m_bin = M1[is_binary]
-        lp = self._sample_logP(m_bin, rng)
-        M2[is_binary] = m_bin * self._sample_q(m_bin, lp, rng)
-        P[is_binary] = 10**lp
-        e[is_binary] = self._sample_e(m_bin, lp, rng)
+        idx = np.flatnonzero(is_binary)
+        lp = self._sample_logP(M1[idx], rng)
+        # no inner-binary density anywhere in the period range: single star
+        has_P = np.isfinite(lp)
+        idx, lp = idx[has_P], lp[has_P]
+        if all_binaries and idx.size < M1.size:
+            Pwarn(f"{M1.size - idx.size} of {M1.size} primaries cannot have "
+                  "an inner companion (M1 <= M_min or no inner-binary density "
+                  f"in {self.orbital_period_min:g}-"
+                  f"{self.orbital_period_max:g} d) and are returned as single "
+                  "stars despite all_binaries=True.",
+                  "InappropriateValueWarning")
+        m_bin = M1[idx]
+        M2[idx] = m_bin * self._sample_q(m_bin, lp, rng)
+        P[idx] = 10**lp
+        e[idx] = self._sample_e(m_bin, lp, rng)
         return M2, P, e

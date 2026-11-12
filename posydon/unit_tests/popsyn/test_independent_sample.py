@@ -16,7 +16,9 @@ np = totest.np
 # module you like to test
 import re
 
-from pytest import approx, raises
+from pytest import approx, raises, warns
+
+from posydon.utils.posydonwarning import InappropriateValueWarning
 
 
 # define test classes collecting several test functions
@@ -35,6 +37,7 @@ class TestElements:
                     'get_binary_fraction_distribution',\
                     'get_IMF_distribution','get_mass_ratio_distribution',\
                     'get_orbital_distribution',\
+                    'default_kwargs','Pwarn','_IGNORED_BY_MOE_17_PSANDQS',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__']
         totest_elements = set(dir(totest))
@@ -120,6 +123,33 @@ class TestFunctions:
             **dict(kwargs, eccentricity_scheme='zero'))
         assert np.array_equal(np.isnan(ecc), np.isnan(m2))
         assert np.all(ecc[~np.isnan(m2)] == 0.0)
+
+    def test_generate_independent_samples_Moe_ignored_settings(self):
+        kwargs = dict(number_of_binaries=100, primary_mass_min=7.0,
+                      primary_mass_max=150.0,
+                      secondary_mass_scheme='Moe+17-PsandQs',
+                      orbital_period_min=10**0.15, orbital_period_max=1e4,
+                      binary_fraction_scheme='const', binary_fraction_const=1,
+                      secondary_mass_min=0.5)
+        with warns(InappropriateValueWarning,
+                   match="binary_fraction_scheme, binary_fraction_const, "
+                         "secondary_mass_min have no effect"):
+            totest.generate_independent_samples(
+                'period', RNG=np.random.default_rng(seed=1), **kwargs)
+
+    def test_generate_independent_samples_Moe_default_periods(self):
+        # without a period range, the population defaults are used
+        totest._gen_Moe_17_PsandQs.clear()
+        with warns(InappropriateValueWarning, match="exceeds 1"):
+            P, *_ = totest.generate_independent_samples(
+                'period', number_of_binaries=500, primary_mass_min=7.0,
+                primary_mass_max=150.0,
+                secondary_mass_scheme='Moe+17-PsandQs',
+                RNG=np.random.default_rng(seed=2))
+        key = (float(totest.default_kwargs['orbital_period_min']),
+               float(totest.default_kwargs['orbital_period_max']))
+        assert list(totest._gen_Moe_17_PsandQs) == [key]
+        assert np.nanmin(P) >= key[0] and np.nanmax(P) <= key[1]
 
     def test_get_Moe_17_PsandQs_generator(self):
         gen = totest.get_Moe_17_PsandQs_generator(10**0.15, 1e6)
@@ -308,13 +338,8 @@ class TestFunctions:
             binary_fraction_scheme='const',
             m1=10.) == 0.7
 
-        # Moe+17-massdependent scheme
-        tests_moe = [(np.array([1.]), 0.4),
-                     (np.array([3.]), 0.59),
-                     (np.array([8.]), 0.76),
-                     (np.array([10.]), 0.84),
-                     (np.array([18.]), 0.94)]
-        for (m1, f) in tests_moe:
-            result = totest.generate_binary_fraction(
-                binary_fraction_scheme='Moe+17-massdependent', m1=m1)
-            assert result[0] == f
+        # the step-function Moe+17 scheme was removed
+        with raises(ValueError, match="allowed binary fraction scheme"):
+            totest.generate_binary_fraction(
+                binary_fraction_scheme='Moe+17-massdependent',
+                m1=np.array([10.]))
