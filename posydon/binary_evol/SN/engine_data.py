@@ -10,16 +10,19 @@ from functools import lru_cache
 
 import numpy as np
 import pandas as pd
+from sklearn.neighbors import KNeighborsRegressor
 
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.utils.data_download import data_download
 from posydon.utils.interpolators import interp1d
 
 PATH_TO_SUKHBOLD16 = os.path.join(PATH_TO_POSYDON_DATA, "Sukhbold+16")
-SUKHBOLD16_ENGINES = ("N20", "S19.8", "W15", "W18", "W20")
-
+PATH_TO_PATTON20 = os.path.join(PATH_TO_POSYDON_DATA, "Patton+Sukhbold20")
 PATH_TO_COUCH20 = os.path.join(PATH_TO_POSYDON_DATA, "Couch+2020")
+
+SUKHBOLD16_ENGINES = ("N20", "S19.8", "W15", "W18", "W20")
 COUCH20_TURBULENCE = ("1.0", "1.2", "1.23", "1.25", "1.27", "1.3", "1.4")
+PATTON20_QUANTITIES = ("M4", "mu4", "Xi", "sc", "Xi_1p5", "Xi_1p75", "Xi_2p0", "Xi_2p25")
 
 # code for remnant types in the tables of Sukhbold et al. (2016)
 NS_STATE = 13
@@ -36,7 +39,8 @@ def _auxiliary_file(filename):
 
 @lru_cache(maxsize=None)
 def Sukhbold16_table(engine):
-    """Return the NS and BH models of Sukhbold et al. (2016) for an engine.
+    """
+    Return the NS and BH models of Sukhbold et al. (2016) for an engine.
 
     BHs formed by fallback are left out, so every BH in the table comes from
     a failed explosion. The rows are sorted by He core mass ('He_c_mass');
@@ -59,8 +63,56 @@ def Sukhbold16_table(engine):
 
 
 @lru_cache(maxsize=None)
+def Patton20_table(quantity):
+    """
+    Return the pre-computed properties of pre-SN models of Patton & Sukhbold
+    (2020), MNRAS, 499, 2803.
+
+    Patton & Sukhbold evolved a grid of CO cores (without envelopes) to core
+    collapse using the KEPLER stellar evolution code. Their grid covers CO
+    core masses in the range of 2.5 - 10.0 solar masses, and with carbon mass
+    fractions at core He depletion between 0.05 and 0.5. For each model, the
+    values of M4, mu4, xi_2.5 and central entropy sc are given, so that the
+    explodability criterion of Ertl et al. (2016) can be applied.
+
+    The quantities "Xi_1p5","Xi_1p75","Xi_2p0","Xi_2p25" were computed from
+    the KEPLER models, and can be used to model NS masses according to
+    Boccioli & Fragione (2024).
+    """
+    if quantity not in PATTON20_QUANTITIES:
+        raise ValueError(
+            f"Invalid quantity {quantity!r} of the Patton & Sukhbold (2020) "
+            f"models. Valid quantities are: {', '.join(PATTON20_QUANTITIES)}."
+        )
+    filename = os.path.join(PATH_TO_PATTON20, f"Kepler_{quantity}_table.dat")
+    data = pd.read_csv(_auxiliary_file(filename), comment="#", sep=r"\s+",
+                       index_col=0)
+    table = data.stack().reset_index()
+    table.columns = ["X_C", "M_CO", quantity]
+    table["M_CO"] = table["M_CO"].astype(float)
+    return table
+
+
+@lru_cache(maxsize=None)
+def Patton20_CO_core_map(quantity, n_neighbors):
+    """
+    Return pre-SN variables for POSYDON models by matching their properties at core
+    helium depletion to the models of Patton & Sukhbold 2020, and using their pre-SN
+    properties.
+
+    A kNN regressor takes X_C and M_CO, and returns one of the possible pre-computed
+    values from the Patton & Sukhbold models.
+    """
+    table = Patton20_table(quantity)
+    regressor = KNeighborsRegressor(n_neighbors, weights="distance")
+    return regressor.fit(table[["X_C", "M_CO"]].to_numpy(),
+                         table[quantity].to_numpy())
+
+
+@lru_cache(maxsize=None)
 def Couch20_table(turbulence):
-    """Return the models of Couch et al. (2020) for a turbulence strength.
+    """
+    Return the models of Couch et al. (2020) for a turbulence strength.
 
     A model without explosion energy ('Eexp' = 0) forms a BH, the others a
     NS. The Couch+20 data has no He core masses; they come from the table of
