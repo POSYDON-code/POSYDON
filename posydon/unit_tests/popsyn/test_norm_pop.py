@@ -19,16 +19,16 @@ from posydon.config import PATH_TO_POSYDON
 # file to test
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.popsyn.initial_distributions import (
+    get_IMF_distribution,
+    get_Moe_17_PsandQs,
+)
 from posydon.unit_tests.popsyn.test_initial_distributions import (  # noqa: F401
     DummyIMF,
     FlatIMF,
     register_test_imfs,
 )
 from posydon.utils.common_functions import orbital_period_from_separation
-from posydon.popsyn.initial_distributions import (
-    get_IMF_distribution,
-    get_Moe_17_PsandQs,
-)
 from posydon.utils.posydonwarning import InappropriateValueWarning, ValueWarning
 
 
