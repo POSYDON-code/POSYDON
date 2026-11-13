@@ -106,7 +106,8 @@ These will not be used in a standard run of the ``BinaryPopulation`` class, but 
    * - ``comm``
      - MPI communicator object (only when running with MPI)
    * - ``JOB_ID``
-     - Job array ID for parallel processing (only when using job arrays)
+     - Job array ID for parallel processing (only when using job arrays; read from
+       ``SLURM_ARRAY_*`` or the scheduler independent ``POSYDON_ARRAY_*`` environment variables)
    * - ``rank``
      - Process rank for parallel processing (set when using MPI or job arrays)
    * - ``size``
@@ -169,7 +170,7 @@ Within this folder, a batch will write ``dump_rate`` binaries to a temporary fil
 ``{dump_rate}_evolution.batch``. At the end of the evolution, these files will be merged into a single HDF5 file:
 ``evolution.combined.h5``.
 
-If you're running with SLURM or MPI, all different processes will write to the
+If you're running with a job scheduler (SLURM, PBS) or MPI, all different processes will write to the
 same folder, with different batch indicators for each process: ``{dump_rate}_evolution.batch.{rank}.h5``.
 
 .. note::

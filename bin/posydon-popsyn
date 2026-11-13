@@ -10,6 +10,7 @@
 # Author: Max Briel
 
 import argparse
+from posydon.CLI.schedulers import scheduler_names
 from posydon.CLI.popsyn.setup import setup_popsyn_function
 from posydon.CLI.popsyn.check import check_popsyn_function
 from posydon.utils.posydonwarning import Pwarn
@@ -26,6 +27,28 @@ def rescue_popsyn_function(args):
         "DeprecationWarning"
     )
     check_popsyn_function(args)
+
+
+def add_scheduler_arguments(parser, default_scheduler=None):
+    """Add the options selecting and configuring the job scheduler."""
+    if default_scheduler is None:
+        scheduler_help = ('the job scheduler of the run (default: the one '
+                          'used to set up the run)')
+    else:
+        scheduler_help = 'the job scheduler to create job scripts for'
+    parser.add_argument(
+        '--scheduler',
+        help=scheduler_help,
+        choices=scheduler_names(),
+        default=default_scheduler)
+    parser.add_argument(
+        '--scheduler_option',
+        help='an option of the job scheduler as KEY=VALUE; can be given '
+             'several times (see the documentation for the options of each '
+             'scheduler)',
+        metavar='KEY=VALUE',
+        action='append',
+        default=None)
 
 
 if __name__ == '__main__':
@@ -49,23 +72,24 @@ if __name__ == '__main__':
         default=10)
     setup_parser.add_argument(
         '--email',
-        help='an email for the slurm scripts',
+        help='an email for the job scripts',
         default=None)
     setup_parser.add_argument(
-        '--partition',
-        help='what cluster partition you want to run the script on',
+        '--partition', '--queue',
+        dest='partition',
+        help='what cluster partition or queue you want to run the script on',
         default=None)
     setup_parser.add_argument(
         '--walltime',
-        help='the walltime for the population synthesis in SLURM format',
+        help='the walltime for the population synthesis (e.g. 23:00:00)',
         default='23:00:00')
     setup_parser.add_argument(
         '--merge_walltime',
-        help='the walltime for the merge script in SLURM format',
+        help='the walltime for the merge script (e.g. 23:00:00)',
         default='12:00:00')
     setup_parser.add_argument(
         '--mem_per_cpu',
-        help='the memory per cpu per job array in SLURM format',
+        help='the memory per cpu per job array (e.g. 9G)',
         default='9G')
     setup_parser.add_argument(
         '--account',
@@ -78,9 +102,11 @@ if __name__ == '__main__':
         default=None)
     setup_parser.add_argument(
         '--exclude',
-        help='a comma-separated list of nodes to exclude when submitting the job',
+        help='a comma-separated list of nodes to exclude when submitting the '
+             'job (SLURM only; same as --scheduler_option exclude=...)',
         type=str,
         default=None)
+    add_scheduler_arguments(setup_parser, default_scheduler='slurm')
     setup_parser.set_defaults(func=setup_popsyn_function)
 
     # Check the run subcommand
@@ -98,23 +124,24 @@ if __name__ == '__main__':
         default=None)
     check_parser.add_argument(
         '--email',
-        help='an email for the slurm scripts',
+        help='an email for the job scripts',
         default=None)
     check_parser.add_argument(
-        '--partition',
-        help='what cluster partition you want to run the script on',
+        '--partition', '--queue',
+        dest='partition',
+        help='what cluster partition or queue you want to run the script on',
         default=None)
     check_parser.add_argument(
         '--walltime',
-        help='the walltime you would like to use in SLURM format',
+        help='the walltime you would like to use (e.g. 23:00:00)',
         default=None)
     check_parser.add_argument(
         '--merge_walltime',
-        help='the walltime you would like to use for the merge script in SLURM format',
+        help='the walltime you would like to use for the merge script (e.g. 23:00:00)',
         default=None)
     check_parser.add_argument(
         '--mem_per_cpu',
-        help='the memory per cpu you would like to use in SLURM format',
+        help='the memory per cpu you would like to use (e.g. 9G)',
         default=None)
     check_parser.add_argument(
         '--account',
@@ -127,9 +154,11 @@ if __name__ == '__main__':
         default=None)
     check_parser.add_argument(
         '--exclude',
-        help='a comma-separated list of nodes to exclude when submitting the job',
+        help='a comma-separated list of nodes to exclude when submitting the '
+             'job (SLURM only; same as --scheduler_option exclude=...)',
         type=str,
         default=None)
+    add_scheduler_arguments(check_parser)
     check_parser.set_defaults(func=check_popsyn_function)
 
     # Rescue the run subcommand (DEPRECATED)
@@ -147,23 +176,24 @@ if __name__ == '__main__':
         default=None)
     rescue_parser.add_argument(
         '--email',
-        help='an email for the slurm scripts',
+        help='an email for the job scripts',
         default=None)
     rescue_parser.add_argument(
-        '--partition',
-        help='what cluster partition you want to run the script on',
+        '--partition', '--queue',
+        dest='partition',
+        help='what cluster partition or queue you want to run the script on',
         default=None)
     rescue_parser.add_argument(
         '--walltime',
-        help='the walltime you would like to use in SLURM format',
+        help='the walltime you would like to use (e.g. 23:00:00)',
         default=None)
     rescue_parser.add_argument(
         '--merge_walltime',
-        help='the walltime you would like to use for the merge script in SLURM format',
+        help='the walltime you would like to use for the merge script (e.g. 23:00:00)',
         default=None)
     rescue_parser.add_argument(
         '--mem_per_cpu',
-        help='the memory per cpu you would like to use in SLURM format',
+        help='the memory per cpu you would like to use (e.g. 9G)',
         default=None)
     rescue_parser.add_argument(
         '--account',
@@ -176,9 +206,11 @@ if __name__ == '__main__':
         default=None)
     rescue_parser.add_argument(
         '--exclude',
-        help='a comma-separated list of nodes to exclude when submitting the job',
+        help='a comma-separated list of nodes to exclude when submitting the '
+             'job (SLURM only; same as --scheduler_option exclude=...)',
         type=str,
         default=None)
+    add_scheduler_arguments(rescue_parser)
     rescue_parser.set_defaults(func=rescue_popsyn_function)
 
     args = parser.parse_args()

@@ -12,6 +12,7 @@ import pytest
 
 # import the module which will be tested
 import posydon.CLI.io as totest
+from posydon.CLI.schedulers import get_scheduler
 from posydon.utils.common_functions import convert_metallicity_to_string
 
 
@@ -1040,3 +1041,177 @@ class TestRescueScriptFunctions:
             assert "#SBATCH --exclude=badnode01" in content
         finally:
             os.chdir(original_dir)
+
+
+class TestSchedulerIndependentFunctions:
+    """Tests of the scheduler independent job creation."""
+
+    @pytest.fixture
+    def setup_args(self):
+        """Arguments of `posydon-popsyn setup`."""
+        args = MagicMock()
+        args.job_array = 10
+        args.walltime = "10:00:00"
+        args.merge_walltime = "01:00:00"
+        args.mem_per_cpu = "8G"
+        args.partition = "part"
+        args.account = "acc"
+        args.email = "me@x.edu"
+        args.max_concurrent_jobs = None
+        args.exclude = None
+        args.scheduler = 'slurm'
+        args.scheduler_option = ["exclude=n1"]
+        return args
+
+    def test_script_names(self):
+        scheduler = get_scheduler('slurm')
+        assert totest.array_script_name("1e+00", scheduler) == \
+            "1e+00_Zsun_slurm_array.slurm"
+        assert totest.merge_script_name("1e+00", scheduler) == \
+            "1e+00_Zsun_merge_popsyn.slurm"
+        assert totest.rescue_script_name("1e+00", scheduler) == \
+            "1e+00_Zsun_rescue.slurm"
+        assert totest.submit_script_name(scheduler) == "slurm_submit.sh"
+        assert totest.resubmit_script_name(scheduler) == "resubmit_slurm.sh"
+
+    def test_scheduler_from_args(self, setup_args):
+        scheduler = totest.scheduler_from_args(setup_args)
+        assert scheduler.name == 'slurm'
+        assert scheduler.settings['exclude'] == 'n1'
+        setup_args.exclude = "n2"
+        assert totest.scheduler_from_args(setup_args).settings['exclude'] \
+            == 'n2'
+        # MagicMock attributes are ignored
+        assert totest.scheduler_from_args(MagicMock()).given_options() == {}
+
+    def test_create_job_scripts_and_settings(self, setup_args, tmp_path,
+                                             monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        scheduler = totest.scheduler_from_args(setup_args)
+        array_script, merge_script = totest.create_job_scripts(
+            1.0, setup_args, scheduler, path_to_posydon="/p",
+            path_to_posydon_data="/d")
+        content = open(array_script).read()
+        assert "#SBATCH --array=0-9" in content
+        assert "#SBATCH --exclude=n1" in content
+        assert "srun python ./run_metallicity.py 1.0" in content
+        assert "srun python ./merge_metallicity.py 1.0" in \
+            open(merge_script).read()
+        # default POSYDON_DATA path
+        totest.create_job_scripts(0.1, setup_args, scheduler)
+        assert os.path.exists("1e-01_Zsun_slurm_array.slurm")
+
+        path = totest.write_run_settings(setup_args, scheduler,
+                                         path_to_posydon="/p")
+        settings = totest.read_run_settings(str(tmp_path))
+        assert path == os.path.join('.', totest.RUN_SETTINGS_FILE)
+        assert settings['scheduler'] == 'slurm'
+        assert settings['scheduler_options'] == {'exclude': 'n1'}
+        assert settings['job_array'] == 10
+        assert settings['max_concurrent_jobs'] is None
+        assert settings['path_to_posydon'] == "/p"
+        assert totest.read_run_settings(str(tmp_path / "nothing")) is None
+
+    def test_create_slurm_scripts(self, setup_args, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        setup_args.scheduler = None
+        totest.create_slurm_scripts(1.0, setup_args)
+        assert os.path.exists("1e+00_Zsun_slurm_array.slurm")
+        assert os.path.exists("1e+00_Zsun_merge_popsyn.slurm")
+
+    def test_scheduler_for_run(self, setup_args):
+        args = MagicMock()
+        settings = {'scheduler': 'slurm', 'scheduler_options':
+                    {'exclude': 'n1'}}
+        assert totest.scheduler_for_run(args).name == 'slurm'
+        scheduler = totest.scheduler_for_run(args, settings)
+        assert scheduler.settings['exclude'] == 'n1'
+        args.scheduler = 'slurm'
+        args.scheduler_option = ["exclude=n9"]
+        assert totest.scheduler_for_run(args, settings).settings['exclude'] \
+            == 'n9'
+
+    def test_rescue_from_settings_file(self, setup_args, tmp_path,
+                                       monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        scheduler = totest.scheduler_from_args(setup_args)
+        totest.write_run_settings(setup_args, scheduler, path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        args = MagicMock()
+        args.run_folder = str(tmp_path)
+        args.walltime = "02:00:00"
+        for name in ['mem_per_cpu', 'partition', 'account', 'email',
+                     'max_concurrent_jobs', 'exclude']:
+            setattr(args, name, None)
+        result = totest.create_batch_rescue_script(
+            args, {'metallicity': 1.0, 'missing_indices': {4, 2}})
+        content = open(result).read()
+        assert "#SBATCH --array=2,4" in content
+        assert "#SBATCH --time=02:00:00" in content
+        assert "#SBATCH --mem-per-cpu=8G" in content
+        assert "#SBATCH --exclude=n1" in content
+        assert "export SLURM_ARRAY_TASK_COUNT=10" in content
+        assert "export PATH_TO_POSYDON=/p" in content
+
+    def test_resubmit_script_with_scheduler(self, tmp_path):
+        result = totest.create_bash_submit_rescue_script(
+            str(tmp_path), [str(tmp_path / "1e+00_Zsun_rescue.slurm")],
+            scheduler=get_scheduler('slurm'))
+        assert "resubmit=$(sbatch --parsable 1e+00_Zsun_rescue.slurm)" in \
+            open(result).read()
+
+
+class TestPBSPopulationRun:
+    """A population run with the PBS scheduler."""
+
+    @pytest.fixture
+    def args(self):
+        args = MagicMock()
+        args.job_array = 50
+        args.walltime = "12:00:00"
+        args.merge_walltime = "01:00:00"
+        args.mem_per_cpu = "9G"
+        args.partition = "workq"
+        args.account = "SkAI"
+        args.email = None
+        args.max_concurrent_jobs = None
+        args.exclude = None
+        args.scheduler = 'pbs'
+        args.scheduler_option = ["select=system=crux",
+                                 "filesystems=home:eagle"]
+        return args
+
+    def test_setup_and_rescue(self, args, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        scheduler = totest.scheduler_from_args(args)
+        array_script, merge_script = totest.create_job_scripts(
+            1.0, args, scheduler, path_to_posydon="/p",
+            path_to_posydon_data="/d")
+        assert array_script == "1e+00_Zsun_pbs_array.pbs"
+        content = open(array_script).read()
+        assert "#PBS -l select=2:system=crux" in content
+        assert "--nranks 50 --ntasks 50 --task-count 50" in content
+        assert "python ./merge_metallicity.py 1.0" in open(merge_script).read()
+        totest.write_run_settings(args, scheduler, path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        totest.create_bash_submit_script("pbs_submit.sh", [1.0],
+                                         scheduler=scheduler)
+        assert ("merge=$(qsub -W depend=afterok:${array} "
+                "1e+00_Zsun_merge_popsyn.pbs)") in open("pbs_submit.sh").read()
+
+        rescue_args = MagicMock()
+        rescue_args.run_folder = str(tmp_path)
+        for name in ['walltime', 'mem_per_cpu', 'partition', 'account',
+                     'email', 'max_concurrent_jobs']:
+            setattr(rescue_args, name, None)
+        rescue_args.exclude = "n1"
+        with pytest.warns(Warning, match="'exclude' is not supported"):
+            rescue = totest.create_batch_rescue_script(
+                rescue_args, {'metallicity': 1.0, 'missing_indices': [23, 7]})
+        assert rescue == str(tmp_path / "1e+00_Zsun_rescue.pbs")
+        content = open(rescue).read()
+        assert "#PBS -l filesystems=home:eagle" in content
+        assert "--nranks 2 --task-ids 7,23 --task-count 50" in content
+        resubmit = totest.create_bash_submit_rescue_script(
+            str(tmp_path), [rescue], scheduler=scheduler)
+        assert resubmit.endswith("resubmit_pbs.sh")

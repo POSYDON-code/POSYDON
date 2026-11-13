@@ -925,7 +925,7 @@ class TestHandleBatchesComplete:
         assert "Merge jobs not resubmitted" in captured.out
 
     @patch('posydon.CLI.popsyn.check.get_user_confirmation')
-    @patch('posydon.CLI.popsyn.check.submit_slurm_job')
+    @patch('posydon.CLI.popsyn.check.submit_job')
     def test_handle_batches_complete_user_confirms(
         self, mock_submit, mock_confirm, mock_args, tmp_path, capsys
     ):
@@ -1131,3 +1131,55 @@ class TestCheckPopsynFunction:
         captured = capsys.readouterr()
         assert "Please submit the rescue scripts" in captured.out
         assert "sh resubmit_slurm.sh" in captured.out
+
+
+class TestSchedulerSupport:
+    """Tests of the scheduler independent parts of the check function."""
+
+    def test_expected_batch_count_from_settings(self, tmp_path):
+        settings_file = tmp_path / "popsyn_jobs.json"
+        settings_file.write_text('{"job_array": 12, "scheduler": "slurm"}')
+        assert totest.get_expected_batch_count(str(tmp_path), "1e+00") == 12
+        settings_file.write_text('{"job_array": null}')
+        assert totest.get_expected_batch_count(str(tmp_path), "1e+00") is None
+
+    def test_select_job_id_skips_other_logs(self, tmp_path):
+        log_dir = tmp_path / "1e+00_logs"
+        log_dir.mkdir()
+        (log_dir / "popsyn_merge.out").write_text("")
+        assert totest.select_job_id(str(tmp_path), "1e+00") is None
+        (log_dir / "popsyn_4242_3.out").write_text("")
+        assert totest.select_job_id(str(tmp_path), "1e+00") == 4242
+
+    @patch('subprocess.run')
+    def test_submit_job(self, mock_run, capsys):
+        scheduler = totest.get_scheduler('slurm')
+        mock_run.return_value = MagicMock(stdout="123\n")
+        assert totest.submit_job("a.slurm", scheduler) is True
+        assert mock_run.call_args[0][0] == ['sbatch', 'a.slurm']
+        mock_run.side_effect = FileNotFoundError()
+        assert totest.submit_job("a.slurm", scheduler) is False
+        assert "sbatch command not found. Is SLURM installed?" in \
+            capsys.readouterr().out
+
+    def test_get_run_scheduler(self, tmp_path):
+        args = MagicMock()
+        args.run_folder = str(tmp_path)
+        assert totest.get_run_scheduler(args).name == 'slurm'
+        (tmp_path / "popsyn_jobs.json").write_text(
+            '{"scheduler": "slurm", "scheduler_options": {"exclude": "n1"}}')
+        assert totest.get_run_scheduler(args).settings['exclude'] == 'n1'
+
+    def test_pbs_walltime_message(self, tmp_path, capsys):
+        log_file = tmp_path / "log.out"
+        log_file.write_text("=>> PBS: job killed: walltime 86410 exceeded "
+                            "limit 86400\n")
+        totest.read_batch_log_file(str(log_file), 1, "1e+00", 1)
+        assert "Wall time exceeded" in capsys.readouterr().out
+
+    @patch('subprocess.run')
+    def test_submit_pbs_job(self, mock_run, capsys):
+        mock_run.side_effect = FileNotFoundError()
+        assert totest.submit_job("a.pbs", totest.get_scheduler('pbs')) is False
+        assert "qsub command not found. Is PBS installed?" in \
+            capsys.readouterr().out

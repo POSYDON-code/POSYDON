@@ -28,7 +28,7 @@ class TestElements:
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
                     'ast', 'configparser', 'copy', 'json', 'np', 'operator',\
-                    'os', 'parse_inifile'}
+                    'os', 'parse_inifile', 'SCHEDULER_SECTIONS'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -104,6 +104,24 @@ class TestFunctions:
                       'test_BinOp'.lower(): 11}
         assert me == {'MESA_DIR'.lower(): os.environ['MESA_DIR'],\
                       'test_else'.lower(): "print('1')"}
+        # [scheduler] instead of [slurm] section
+        with open(ini_path, "r") as test_file:
+            content = test_file.read()
+        other_ini_path = os.path.join(os.path.dirname(ini_path), "other.ini")
+        with open(other_ini_path, "w") as test_file:
+            test_file.write(content.replace("[slurm]", "[scheduler]"))
+        rp, s, mi, me = totest.parse_inifile(other_ini_path)
+        assert s['test_exception'] == ["ast.parse('X=1'", "mode='eval')"]
+        # [pbs] section
+        with open(other_ini_path, "w") as test_file:
+            test_file.write(content.replace("[slurm]", "[pbs]"))
+        rp, s, mi, me = totest.parse_inifile(other_ini_path)
+        assert s['test_exception'] == ["ast.parse('X=1'", "mode='eval')"]
+        # no scheduler section
+        with open(other_ini_path, "w") as test_file:
+            test_file.write(content.replace("[slurm]", "[other]"))
+        with raises(KeyError, match="section with the job scheduler"):
+            totest.parse_inifile(other_ini_path)
         with monkeypatch.context() as mp:
             # replace parse to check recursion of _eval
             mp.setattr(totest.ast, "parse", mock_parse)

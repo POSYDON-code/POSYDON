@@ -15,20 +15,27 @@ from posydon.CLI.io import (
     clear_previous_lines,
     create_bash_submit_rescue_script,
     create_batch_rescue_script,
+    merge_script_name,
     print_error,
     print_separator_line,
     print_success,
+    read_run_settings,
+    scheduler_for_run,
 )
+from posydon.CLI.schedulers import get_scheduler
 from posydon.popsyn.io import binarypop_kwargs_from_ini
 from posydon.popsyn.synthetic_population import Population
 from posydon.utils.common_functions import convert_metallicity_to_string
 from posydon.utils.posydonwarning import Pwarn
 
-# File naming patterns
+# File naming patterns of SLURM runs (see posydon.CLI.io for all schedulers)
 MERGE_SCRIPT_PATTERN = "{met}_Zsun_merge_popsyn.slurm"
 ARRAY_SCRIPT_PATTERN = "{met}_Zsun_slurm_array.slurm"
 RESCUE_SCRIPT_PATTERN = "{met}_Zsun_rescue.slurm"
 RESUBMIT_SCRIPT = "resubmit_slurm.sh"
+
+# Messages written by the schedulers when the walltime is exceeded
+TIME_LIMIT_MESSAGES = ("DUE TO TIME LIMIT", "job killed: walltime")
 
 def get_ini_file(args):
     '''Find and select the INI file for the population synthesis run.
@@ -301,7 +308,8 @@ def check_run_status(run_folder, metallicities, number_of_binaries):
 # Check individual batch for reasons of the failed runs
 
 def get_expected_batch_count(run_folder, str_met):
-    """Parse SLURM script to get expected batch count.
+    """Get the expected batch count from the run settings or, for older
+    runs, by parsing the SLURM array script.
 
     Parameters
     ----------
@@ -315,6 +323,11 @@ def get_expected_batch_count(run_folder, str_met):
     int or None
         Expected batch count, or None if not found
     """
+    settings = read_run_settings(run_folder)
+    if settings is not None:
+        count = settings.get('job_array')
+        return int(count) if count is not None else None
+
     slurm_script = os.path.join(run_folder, ARRAY_SCRIPT_PATTERN.format(met=str_met))
 
     if not os.path.exists(slurm_script):
@@ -426,12 +439,16 @@ def select_job_id(run_folder, str_met):
         print("This may indicate that the jobs were never submitted or the log directory is missing.")
         return None
 
-    # Extract unique job IDs
+    # Extract unique job IDs (skip other logs, e.g. popsyn_merge.out)
     jobIDs = [
-        int(os.path.basename(job).split('_')[1].split('.')[0])
+        os.path.basename(job).split('_')[1].split('.')[0]
         for job in jobIDs
     ]
-    jobIDs = np.unique(jobIDs)
+    jobIDs = np.unique([int(job) for job in jobIDs if job.isdigit()])
+
+    if len(jobIDs) == 0:
+        print("\n\033[33mNo task log files found. Cannot determine failure reasons.\033[0m")
+        return None
 
     # If multiple job IDs, let user select
     if len(jobIDs) > 1:
@@ -488,7 +505,7 @@ def read_batch_log_file(log_file_path, batch_index, str_met, jobID):
         # Check for time limit exceeded
         if len(lines) >= 3:
             last_3_lines = [line.strip() for line in lines[-3:]]
-            if "DUE TO TIME LIMIT" in str(last_3_lines):
+            if any(msg in str(last_3_lines) for msg in TIME_LIMIT_MESSAGES):
                 print(f"Batch {batch_index}: Wall time exceeded")
             else:
                 print(f"{str_met}_logs/popsyn_{jobID}_{batch_index}.out:")
@@ -497,7 +514,7 @@ def read_batch_log_file(log_file_path, batch_index, str_met, jobID):
         else:
             # File has fewer than 3 lines
             print(f"Batch {batch_index}: File contains {len(lines)} line(s):")
-            if "DUE TO TIME LIMIT" in lines[0]:
+            if any(msg in lines[0] for msg in TIME_LIMIT_MESSAGES):
                 print("  Wall time exceeded")
             else:
                 print(f"{str_met}_logs/popsyn_{jobID}_{batch_index}.out:")
@@ -667,24 +684,25 @@ def get_user_confirmation(prompt, valid_yes=None, valid_no=None):
         print_error(f"Unrecognized input '{choice}'. Treating as 'no'.")
         return False
 
-def submit_slurm_job(script_path):
-    """Submit a SLURM job and handle errors.
+def submit_job(script_path, scheduler):
+    """Submit a job script and handle errors.
 
     Parameters
     ----------
     script_path : str
-        Path to the SLURM script to submit
-    description : str, optional
-        Description of the job for error messages
+        Path to the job script to submit
+    scheduler : Scheduler
+        The job scheduler backend
 
     Returns
     -------
     bool
         True if submission succeeded, False otherwise
     """
+    command = scheduler.submit_command(script_path)
     try:
         result = subprocess.run(
-            ['sbatch', script_path],
+            command,
             check=True,
             capture_output=True,
             text=True
@@ -696,8 +714,35 @@ def submit_slurm_job(script_path):
         print_error(f"Failed to submit job: {e.stderr.strip()}")
         return False
     except FileNotFoundError:
-        print_error("sbatch command not found. Is SLURM installed?")
+        print_error(f"{command[0]} command not found. "
+                    f"Is {scheduler.name.upper()} installed?")
         return False
+
+def submit_slurm_job(script_path):
+    """Submit a SLURM job and handle errors.
+
+    Parameters
+    ----------
+    script_path : str
+        Path to the SLURM script to submit
+
+    Returns
+    -------
+    bool
+        True if submission succeeded, False otherwise
+    """
+    return submit_job(script_path, get_scheduler('slurm'))
+
+def get_run_scheduler(args):
+    """Get the scheduler of the population run in `args.run_folder`.
+
+    See `posydon.CLI.io.scheduler_for_run`.
+
+    Returns
+    -------
+    Scheduler
+    """
+    return scheduler_for_run(args, read_run_settings(args.run_folder))
 
 def handle_batches_complete(args, missing_files, batch_status):
     """Handle the case where all batch files are complete.
@@ -726,14 +771,15 @@ def handle_batches_complete(args, missing_files, batch_status):
         print("Please resubmit the merge jobs to generate the population files.")
 
         if get_user_confirmation("Would you like to resubmit the merge jobs? (yes/no): "):
+            scheduler = get_run_scheduler(args)
             all_succeeded = True
             for met in missing_files:
                 str_met = convert_metallicity_to_string(met)
                 script_path = os.path.join(
                     args.run_folder,
-                    MERGE_SCRIPT_PATTERN.format(met=str_met)
+                    merge_script_name(str_met, scheduler)
                 )
-                if not submit_slurm_job(script_path): #pragma: no cover
+                if not submit_job(script_path, scheduler): #pragma: no cover
                     all_succeeded = False
 
             if all_succeeded:
@@ -807,6 +853,7 @@ def check_popsyn_function(args):
     if get_user_confirmation("Do you want to create rescue scripts for the incomplete batches? "
                           "(yes/no): "):
         # Create rescue scripts
+        scheduler = get_run_scheduler(args)
         rescue_scripts = []
         for _, status in batch_status.items():
             print_separator_line()
@@ -814,7 +861,8 @@ def check_popsyn_function(args):
             rescue_scripts.append(create_batch_rescue_script(args, status))
             print_separator_line()
 
-        resubmit_sh_file = create_bash_submit_rescue_script(args.run_folder, rescue_scripts)
+        resubmit_sh_file = create_bash_submit_rescue_script(
+            args.run_folder, rescue_scripts, scheduler=scheduler)
 
         if get_user_confirmation("Do you want to submit the rescue scripts now? (yes/no): "):
             os.system(f'sh {resubmit_sh_file}')
@@ -823,7 +871,7 @@ def check_popsyn_function(args):
         else:
             print("Please submit the rescue scripts using the following command:")
             print("\n")
-            print(f"sh {RESUBMIT_SCRIPT}")
+            print(f"sh {os.path.basename(resubmit_sh_file)}")
             print("\n")
             return 2
 

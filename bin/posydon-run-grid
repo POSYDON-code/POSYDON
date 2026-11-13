@@ -18,6 +18,7 @@ import pandas
 
 from posydon.active_learning.psy_cris.utils import parse_inifile
 from posydon.grids.psygrid import PSyGrid
+from posydon.grids.termination_flags import get_flag_from_MESA_output
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
 
@@ -132,6 +133,11 @@ def parse_commandline():
     parser.add_argument("--job_before_end", type=int, default=300,
                         help="Time span till end of job (in seconds)")
 
+    parser.add_argument("--skip-finished", action="store_true", default=False,
+                        help="Skip a grid point if its output directory "
+                        "already contains a finished MESA binary run (e.g. "
+                        "when a job is rerun after preemption)")
+
     args = parser.parse_args()
 
     if args.grid_type not in ['fixed', 'dynamic']:
@@ -172,8 +178,9 @@ def extract_mesa_results(final_dir):
 
     return df
 
-def create_working_directory(grid_param_dict, args):
-    """Function to build the directory name and make inlists for a given grid point
+def get_run_directories(grid_param_dict, args):
+    """Get the working and final directory of a grid point (without creating
+    them)
 
     Params:
         grid_param_dict:
@@ -181,6 +188,8 @@ def create_working_directory(grid_param_dict, args):
             and values the actual values for those parameters for this grid point
         args:
             The arguments passed to posydon-run-grid
+    Returns:
+        work_dir, final_dir
     """
     ############# set directories
     variable_names_to_log = ['initial_z', 'initial_period_in_days']
@@ -204,6 +213,32 @@ def create_working_directory(grid_param_dict, args):
     work_dir = os.path.join(temp_dir, directory_name_from_dict)
 
     final_dir = os.path.join(args.output_directory, directory_name_from_dict)
+
+    return work_dir, final_dir
+
+def run_is_finished(run_dir, outfile_name='out.txt'):
+    """Whether run_dir contains a MESA run that ended with a termination code
+
+    Runs stopped by the scheduler (e.g. at the walltime or by preemption)
+    have no termination code and are not considered finished.
+    """
+    for name in [outfile_name, outfile_name + '.gz']:
+        path = os.path.join(run_dir, name)
+        if os.path.isfile(path):
+            return get_flag_from_MESA_output(path) != "reach cluster timelimit"
+    return False
+
+def create_working_directory(grid_param_dict, args):
+    """Function to build the directory name and make inlists for a given grid point
+
+    Params:
+        grid_param_dict:
+            Dictionary with keys being the parameter names of the grid
+            and values the actual values for those parameters for this grid point
+        args:
+            The arguments passed to posydon-run-grid
+    """
+    work_dir, final_dir = get_run_directories(grid_param_dict, args)
 
     ############# check for existance of precomputed model
     if os.path.isdir(work_dir):
@@ -739,6 +774,15 @@ def run_grid_point(grid, star1_formation, star2_formation,
                    star2_binary_controls, star2_binary_job, args):
     """Execute the logic to run this MESA grid point
     """
+
+    # skip grid points which already finished (e.g. in a rerun job)
+    if args.skip_finished and args.grid_type == 'fixed':
+        _, final_dir = get_run_directories(grid_param_dict, args)
+        if run_is_finished(final_dir):
+            print("Grid point already finished in {0}, skipping it".format(
+                final_dir))
+            sys.stdout.flush()
+            return pandas.DataFrame()
 
     # based on the values create directory
     work_dir, final_dir = create_working_directory(grid_param_dict, args)

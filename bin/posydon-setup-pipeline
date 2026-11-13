@@ -16,6 +16,8 @@ import pandas as pd
 import numpy as np
 from pprint import pformat
 from posydon.popsyn.io import parse_inifile
+from posydon.CLI.schedulers import (ArraySpec, JobSpec, get_scheduler,
+                                    scheduler_options_from_mapping)
 from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import Pwarn
@@ -188,7 +190,8 @@ class PostProcessingPipeline:
     def create_csv_and_slurm_job_files(self):
         """Creates all files the pipeline needs."""
 
-        def expand_runfile(runfile, step_number='step_X', last_step=''):
+        def expand_runfile(runfile, step_number='step_X', last_step='',
+                           scheduler=None):
             """Add next entry to the script in runfile.
 
             Parameters
@@ -199,29 +202,26 @@ class PostProcessingPipeline:
                 String representation of the current step
             last_step : str
                 String representation of the last step
+            scheduler : Scheduler
+                The job scheduler backend (default: SLURM)
 
             Returns
             -------
             str
                 On success it returns step_number
             """
-
+            if scheduler is None:
+                scheduler = get_scheduler('slurm')
             if not runfile.writable():
                 raise PermissionError(f"Can't write to {runfile.name}")
-            if not os.path.isfile(f"{step_number}.slurm"):
-                raise FileNotFoundError(f"Can't find file {step_number}.slurm")
-            if last_step == '':
-                # if there was no previous step the current step has no
-                # dependency
-                runfile.write(f"ID{step_number}=$(sbatch --parsable "
-                              f"{step_number}.slurm)\n")
-            else:
-                # steps waiting for the previous step
-                runfile.write(f"ID{step_number}=$(sbatch --parsable "
-                              "--dependency=afterok:$""{"f"ID{last_step}""} "
-                              "--kill-on-invalid-dep=yes "
-                              f"{step_number}.slurm)\n")
-            runfile.write(f"echo '{step_number}.slurm submitted as '$"
+            job_file = scheduler.file_name(step_number)
+            if not os.path.isfile(job_file):
+                raise FileNotFoundError(f"Can't find file {job_file}")
+            # steps wait for the previous step (if there is one)
+            runfile.write(scheduler.submit_line(
+                f"ID{step_number}", job_file,
+                after=f"ID{last_step}" if last_step != '' else None))
+            runfile.write(f"echo '{job_file} submitted as '$"
                           "{"f"ID{step_number}""}"f"\n")
             return step_number
 
@@ -336,6 +336,12 @@ class PostProcessingPipeline:
             raise KeyError('pipeline setup not in pipeline_kwargs!')
         account_kwargs = self.pipeline_kwargs['account']
         setup_kwargs = self.pipeline_kwargs['pipeline setup']
+        # job scheduler (default: SLURM) and its options from the account
+        # section
+        scheduler_name = account_kwargs.get('SCHEDULER', 'slurm')
+        scheduler = get_scheduler(
+            scheduler_name,
+            **scheduler_options_from_mapping(scheduler_name, account_kwargs))
 
         # take verbose value from setup arguments
         if 'VERBOSE' in setup_kwargs.keys():
@@ -393,22 +399,24 @@ class PostProcessingPipeline:
                         job_name=step_number,
                         step_name=step_number,
                         PATH_TO_POSYDON=self.PATH_TO_POSYDON,
+                        scheduler=scheduler,
                         **{**step_kwargs, **setup_kwargs, **account_kwargs}
                     )
                     pipeline_steps.append(step_number)
                     # add job to the list in the runfile script
                     expand_runfile(runfile, step_number=step_number,
-                                   last_step=last_step)
+                                   last_step=last_step, scheduler=scheduler)
                     # remember that this step was done last
                     last_step = step_number
                     # add cleanup
                     if create_cleanup_slurm_job(job_name=step_number,\
-                        step_name=step_number,\
+                        step_name=step_number, scheduler=scheduler,\
                         **{**step_kwargs, **setup_kwargs, **account_kwargs}):
                         pipeline_steps.append(step_number+"_cleanup")
                         expand_runfile(runfile,
                                        step_number=step_number+"_cleanup",
-                                       last_step=last_step)
+                                       last_step=last_step,
+                                       scheduler=scheduler)
                     # try to load the profile interpolation module, because it
                     # will be needed when running step 5
                     if step_number == "step_5":
@@ -435,25 +443,29 @@ class PostProcessingPipeline:
                             job_name=sub_step_number,
                             step_name=step_number,
                             PATH_TO_POSYDON=self.PATH_TO_POSYDON,
+                            scheduler=scheduler,
                             **{**step_kwargs, **setup_kwargs, **account_kwargs}
                         )
                         pipeline_steps.append(sub_step_number)
                         # add job to the list in the runfile script
                         expand_runfile(runfile, step_number=sub_step_number,
-                                       last_step=last_step)
+                                       last_step=last_step,
+                                       scheduler=scheduler)
                         # add cleanup
                         if create_cleanup_slurm_job(job_name=sub_step_number,\
-                            step_name=step_number, **{**step_kwargs,\
-                                 **setup_kwargs, **account_kwargs}):
+                            step_name=step_number, scheduler=scheduler,\
+                            **{**step_kwargs, **setup_kwargs,\
+                               **account_kwargs}):
                             pipeline_steps.append(sub_step_number+"_cleanup")
                             expand_runfile(runfile,
                                 step_number=sub_step_number+"_cleanup",
-                                last_step=sub_step_number)
+                                last_step=sub_step_number,
+                                scheduler=scheduler)
                         # there are no dependencies supported on sub steps
                         # beside the cleanup
             # add cleanup for pipeline
             if create_cleanup_slurm_job(job_name='pipeline',\
-                step_name='pipeline',\
+                step_name='pipeline', scheduler=scheduler,\
                 **{**step_kwargs, **setup_kwargs, **account_kwargs}):
                 # create csv with all created files
                 df = pd.DataFrame()
@@ -468,22 +480,18 @@ class PostProcessingPipeline:
                 df.to_csv(os.path.join(PATH, 'pipeline_files.csv'),
                           header=False, index=False)
 
-                # add cleanup to run script
-                submission_line = "IDpipeline_cleanup=$(sbatch --parsable "
-                for i, step in enumerate(pipeline_steps):
-                    if i==0:
-                        submission_line += "--dependency="
-                    else:
-                        submission_line += ","
-                    submission_line += "afterany:$""{"f"ID{step}""}"
-                submission_line += " --kill-on-invalid-dep=yes "
-                submission_line += "pipeline_cleanup.slurm)\n"
+                # add cleanup to run script, waiting for all other jobs
+                cleanup_file = scheduler.file_name("pipeline_cleanup")
+                submission_line = scheduler.submit_line(
+                    "IDpipeline_cleanup", cleanup_file,
+                    after=[f"ID{step}" for step in pipeline_steps],
+                    condition='any')
                 if runfile.writable():
-                    if not os.path.isfile("pipeline_cleanup.slurm"):
+                    if not os.path.isfile(cleanup_file):
                         raise FileNotFoundError("Can't find file "
-                                                "pipeline_cleanup.slurm")
+                                                f"{cleanup_file}")
                     runfile.write(submission_line)
-                    runfile.write("echo 'pipeline_cleanup.slurm submitted as '"
+                    runfile.write(f"echo '{cleanup_file} submitted as '"
                                   "${IDpipeline_cleanup}\n")
                 else:
                     raise PermissionError(f"Can't write to {runfile.name}")
@@ -504,7 +512,7 @@ class PostProcessingPipeline:
             Pwarn("PATH not given, use current directory",
                   "ReplaceValueWarning")
             logs_path = os.path.join('.', 'logs')
-        # create logs in working dir to store all slurm outputs
+        # create logs in working dir to store all job outputs
         if not os.path.isdir(logs_path):
             os.makedirs(logs_path)
         # create sub directories for each step
@@ -530,8 +538,9 @@ def slurm_job(job_name,
               MAILTYPE=None,
               EMAIL=None,
               VERBOSE=False,
+              scheduler=None,
               **kwargs):
-    """Create slurm file.
+    """Create the job file of a step (e.g. step_1.slurm).
 
     Parameters
     ----------
@@ -546,23 +555,26 @@ def slurm_job(job_name,
     PATH : str
         Path of the working directory.
     ACCOUNT : str
-        The slurm account name. Passed to slurm's option '--account'.
+        The account name, e.g. passed to slurm's option '--account'.
     PARTITION : str
-        The slurm partition name. Passed to slurm's option '--partition'.
+        The partition/queue name, e.g. passed to slurm's option '--partition'.
     WALLTIME : str
-        Maximum time for the slurm job. Passed to slurm's option '--time'.
+        Maximum time for the job, e.g. passed to slurm's option '--time'.
     MAILTYPE : str
-        Specifier, which emails to send by slurm. Passed to slurm's option
+        Specifier, which emails to send, e.g. passed to slurm's option
         '--mail-type'. It requires EMAIL to be set, too.
     EMAIL : str
-        Email address to send mails to. Passed to slurm's option '--mail-user'.
-        It requires MAILTYPE to be set, too.
+        Email address to send mails to, e.g. passed to slurm's option
+        '--mail-user'. It requires MAILTYPE to be set, too.
     VERBOSE : bool
         Enables/Disables additional output.
+    scheduler : Scheduler
+        The job scheduler backend (default: SLURM).
     kwargs : dict
         Other parameters (all being ignored).
     """
-
+    if scheduler is None:
+        scheduler = get_scheduler('slurm')
     if not os.path.isdir(PATH_TO_GRIDS):
         raise NotADirectoryError(f"PATH_TO_GRIDS={PATH_TO_GRIDS} not found.")
     # get path to csv file
@@ -570,80 +582,66 @@ def slurm_job(job_name,
     if not os.path.isfile(path_to_csv_file):
         raise FileNotFoundError(f"Missing csv file: {path_to_csv_file}")
 
-    if os.path.exists(f'{job_name}.slurm'):
-        Pwarn(f'Replace {job_name}.slurm', "OverwriteWarning")
-    # create slurm file
-    with open(f'{job_name}.slurm', 'w') as f:
-        # get STEPID
-        if ('step' in job_name) and (len(job_name.split("_")) > 1):
-            STEPID = job_name.split("_")[1]
-            if (len(job_name.split("_")) > 2):
-                STEPID += job_name.split("_")[2]
-        elif job_name == 'rerun':
-            STEPID = 'R'
-        else:
-            Pwarn("No step ID detected, leave it empty", "ReplaceValueWarning")
-            STEPID = ''
-        # write slurm file content
-        f.write("#!/bin/bash\n")
-        if ACCOUNT is not None:
-            f.write(f"#SBATCH --account={ACCOUNT}\n")
-        if PARTITION is not None:
-            f.write(f"#SBATCH --partition={PARTITION}\n")
-        f.write("#SBATCH -N 1\n")
-        f.write("#SBATCH --cpus-per-task 1\n")
-        f.write("#SBATCH --ntasks-per-node 1\n")
-        if WALLTIME is not None:
-            f.write(f"#SBATCH --time={WALLTIME}\n")
-        f.write(f"#SBATCH --job-name=psygrid{STEPID}\n")
-        f.write("#SBATCH --mem-per-cpu=4G\n")
-        if ((EMAIL is not None) and (MAILTYPE is not None)):
-            f.write(f"#SBATCH --mail-type={MAILTYPE}\n")
-            f.write(f"#SBATCH --mail-user={EMAIL}\n")
-        # extract array size
-        if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_F',\
-            'rerun']) or ('plot' in job_name) or ('check' in job_name)):
-            df = pd.read_csv(path_to_csv_file)
-            N = df.shape[0]-1
-        elif job_name in ['step_2']:
-            df = pd.read_csv(path_to_csv_file)
-            N = df.shape[1]-1
-        else:
-            raise ValueError(f'This should never happen! job_name={job_name}')
-        if N<0:
-            raise ValueError(f'{job_name} has no jobs to run, please check '
-                             f'{path_to_csv_file}')
-        f.write(f"#SBATCH --array=0-{N}\n")
-        slurm_array = '$SLURM_ARRAY_TASK_ID'
-        # get logs path and set the output of the slurm job
-        if step_name in job_name:
-            path_to_logs = os.path.join(PATH, 'logs', step_name)
-        else:
-            path_to_logs = os.path.join(PATH, 'logs', job_name)
-        log_file_name = get_log_file_name(job_name=job_name,\
-                                          step_name=step_name)
-        f.write("#SBATCH --open-mode=truncate\n")
-        f.write(f"#SBATCH --output={path_to_logs}/{log_file_name}\n")
-        # set PATH_TO_POSYDON where needed
-        if job_name == 'step_3': # CALCULATE_EXTRA_VALUES
-            f.write(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}\n")
-        # reset display settings
-        if 'plot' in job_name: # PLOTS
-            f.write("unset DISPLAY\n")
-        # get path to run the pipeline
-        path_to_run_pipeline = os.path.join(PATH_TO_POSYDON, 'bin',
-                                            'posydon-run-pipeline')
-        if not os.path.isfile(path_to_run_pipeline):
-            raise FileNotFoundError("Pipeline's runfile not found at "
-                                    f"{path_to_run_pipeline}.")
-        # encode the verbose information for running the pipeline as a command
-        # line argument
-        if VERBOSE and 'check' not in job_name:
-            f.write(f"\nsrun python {path_to_run_pipeline} {PATH_TO_GRIDS} "
-                    f"{path_to_csv_file} {slurm_array} 1")
-        else:
-            f.write(f"\nsrun python {path_to_run_pipeline} {PATH_TO_GRIDS} "
-                    f"{path_to_csv_file} {slurm_array} 0")
+    # get STEPID
+    if ('step' in job_name) and (len(job_name.split("_")) > 1):
+        STEPID = job_name.split("_")[1]
+        if (len(job_name.split("_")) > 2):
+            STEPID += job_name.split("_")[2]
+    elif job_name == 'rerun':
+        STEPID = 'R'
+    else:
+        Pwarn("No step ID detected, leave it empty", "ReplaceValueWarning")
+        STEPID = ''
+    # extract array size
+    if ((job_name in ['step_1', 'step_3', 'step_4', 'step_5', 'step_F',\
+        'rerun']) or ('plot' in job_name) or ('check' in job_name)):
+        df = pd.read_csv(path_to_csv_file)
+        N = df.shape[0]-1
+    elif job_name in ['step_2']:
+        df = pd.read_csv(path_to_csv_file)
+        N = df.shape[1]-1
+    else:
+        raise ValueError(f'This should never happen! job_name={job_name}')
+    if N<0:
+        raise ValueError(f'{job_name} has no jobs to run, please check '
+                         f'{path_to_csv_file}')
+    # get logs path and set the output of the jobs
+    if step_name in job_name:
+        path_to_logs = os.path.join(PATH, 'logs', step_name)
+    else:
+        path_to_logs = os.path.join(PATH, 'logs', job_name)
+    log_file_name = get_log_file_name(job_name=job_name,\
+                                      step_name=step_name)
+    setup = []
+    # set PATH_TO_POSYDON where needed
+    if job_name == 'step_3': # CALCULATE_EXTRA_VALUES
+        setup.append(f"export PATH_TO_POSYDON={PATH_TO_POSYDON}")
+    # reset display settings
+    if 'plot' in job_name: # PLOTS
+        setup.append("unset DISPLAY")
+    # get path to run the pipeline
+    path_to_run_pipeline = os.path.join(PATH_TO_POSYDON, 'bin',
+                                        'posydon-run-pipeline')
+    if not os.path.isfile(path_to_run_pipeline):
+        raise FileNotFoundError("Pipeline's runfile not found at "
+                                f"{path_to_run_pipeline}.")
+    # encode the verbose information for running the pipeline as a command
+    # line argument
+    verbose_flag = 1 if (VERBOSE and 'check' not in job_name) else 0
+    job = JobSpec(
+        name=f"psygrid{STEPID}", account=ACCOUNT, queue=PARTITION, nodes=1,
+        tasks_per_node=1, cpus_per_task=1, walltime=WALLTIME,
+        mem_per_cpu="4G", email=EMAIL, mail_type=MAILTYPE,
+        truncate_output=True,
+        output=os.path.join(path_to_logs, f"job_{job_name}.out"),
+        setup=setup,
+        array=ArraySpec(
+            command=(f"python {path_to_run_pipeline} {PATH_TO_GRIDS} "
+                     f"{path_to_csv_file} {{task_id}} {verbose_flag}"),
+            n_tasks=N+1,
+            log_file=os.path.join(path_to_logs, log_file_name.replace(
+                "%4a", "{task_id:04d}"))))
+    scheduler.write(job, scheduler.file_name(job_name))
 
 
 def create_csv(GRID_TYPES=[],
@@ -1249,8 +1247,9 @@ def create_cleanup_slurm_job(job_name,
                              EMAIL=None,
                              GROUP=None,
                              VERBOSE=False,
+                             scheduler=None,
                              **kwargs):
-    """Create slurm file for cleanup job.
+    """Create the job file of a cleanup job (e.g. step_2_cleanup.slurm).
 
     Parameters
     ----------
@@ -1261,91 +1260,83 @@ def create_cleanup_slurm_job(job_name,
     PATH : str
         Path of the working directory.
     ACCOUNT : str
-        The slurm account name. Passed to slurm's option '--account'.
+        The account name, e.g. passed to slurm's option '--account'.
     PARTITION : str
-        The slurm partition name. Passed to slurm's option '--partition'.
+        The partition/queue name, e.g. passed to slurm's option '--partition'.
     WALLTIME : str
-        Maximum time for the slurm job. Passed to slurm's option '--time'.
+        Maximum time for the job, e.g. passed to slurm's option '--time'.
     MAILTYPE : str
-        Specifier, which emails to send by slurm. Passed to slurm's option
-        '--mail-type'. It requires EMAIL to be set, too.
+        Not used; cleanup jobs send mails on failure if EMAIL is set.
     EMAIL : str
-        Email address to send mails to. Passed to slurm's option '--mail-user'.
-        It requires MAILTYPE to be set, too.
+        Email address to send mails to on failure.
     GROUP : str
         Group name to get ownership and permissions on files created by the
         pipeline.
     VERBOSE : bool
         Enables/Disables additional output.
+    scheduler : Scheduler
+        The job scheduler backend (default: SLURM).
     kwargs : dict
         Other parameters (all being ignored).
+
+    Returns
+    -------
+    bool
+        True if a cleanup job was created.
     """
+    if not ((job_name == 'step_2') or (job_name == 'step_F') or
+            (job_name == 'rerun') or ('plot' in job_name) or
+            ('check' in job_name) or
+            ((job_name == 'pipeline') and (GROUP is not None))):
+        return False
+    if scheduler is None:
+        scheduler = get_scheduler('slurm')
+    if not os.path.isdir(PATH):
+        raise NotADirectoryError(f"PATH={PATH} not found.")
+    path_to_logs = os.path.join(PATH, 'logs', 'cleanup')
+    log_file_name = get_log_file_name(job_name="cleanup",\
+                                      step_name=job_name)
+    commands = []
+    # get logs path of the step
+    if step_name in job_name:
+        path_to_log_files = os.path.join(PATH, 'logs', step_name)
+    else:
+        path_to_log_files = os.path.join(PATH, 'logs', job_name)
     if ((job_name == 'step_2') or (job_name == 'step_F') or
         (job_name == 'rerun') or ('plot' in job_name) or
-        ('check' in job_name) or
-        ((job_name == 'pipeline') and (GROUP is not None))):
-        if not os.path.isdir(PATH):
-            raise NotADirectoryError(f"PATH={PATH} not found.")
-        if os.path.exists(f'{job_name}_cleanup.slurm'):
-            Pwarn(f'Replace {job_name}_cleanup.slurm', "OverwriteWarning")
-        with open(f'{job_name}_cleanup.slurm', 'w') as f:
-            # write slurm file content
-            f.write("#!/bin/bash\n")
-            if ACCOUNT is not None:
-                f.write(f"#SBATCH --account={ACCOUNT}\n")
-            if PARTITION is not None:
-                f.write(f"#SBATCH --partition={PARTITION}\n")
-            f.write("#SBATCH -N 1\n")
-            f.write("#SBATCH --cpus-per-task 1\n")
-            f.write("#SBATCH --ntasks-per-node 1\n")
-            if WALLTIME is not None:
-                f.write(f"#SBATCH --time={WALLTIME}\n")
-            f.write(f"#SBATCH --job-name=cleanup\n")
-            f.write("#SBATCH --mem-per-cpu=4G\n")
-            if (EMAIL is not None):
-                f.write(f"#SBATCH --mail-type=FAIL\n")
-                f.write(f"#SBATCH --mail-user={EMAIL}\n")
-            path_to_logs = os.path.join(PATH, 'logs', 'cleanup')
-            log_file_name = get_log_file_name(job_name="cleanup",\
-                                              step_name=job_name)
-            f.write("#SBATCH --open-mode=truncate\n")
-            f.write(f"#SBATCH --output={path_to_logs}/{log_file_name}\n")
-            # get logs path and set the output of the slurm job
-            if step_name in job_name:
-                path_to_log_files = os.path.join(PATH, 'logs', step_name)
-            else:
-                path_to_log_files = os.path.join(PATH, 'logs', job_name)
-            if ((job_name == 'step_2') or (job_name == 'step_F') or
-                (job_name == 'rerun') or ('plot' in job_name) or
-                ('check' in job_name)):
-                # combine logs
-                old_log_file_names = get_log_file_name(job_name=job_name,\
-                                                       step_name=step_name)
-                new_log_file_name = old_log_file_names.replace("_%4a", "s")
-                old_log_file_names = old_log_file_names.replace("_%4a", "_*")
-                f.write(f"\ncat {path_to_log_files}/{old_log_file_names} >"
+        ('check' in job_name)):
+        # combine logs
+        old_log_file_names = get_log_file_name(job_name=job_name,\
+                                               step_name=step_name)
+        new_log_file_name = old_log_file_names.replace("_%4a", "s")
+        old_log_file_names = old_log_file_names.replace("_%4a", "_*")
+        commands.append(f"cat {path_to_log_files}/{old_log_file_names} >"
                         f" {path_to_log_files}/{new_log_file_name}")
-                f.write(f"\nrm {path_to_log_files}/{old_log_file_names}")
-            # the overall cleanup of the pipeline
-            if (job_name == 'pipeline'):
-                if GROUP is not None:
-                    f.write(f"\necho \"Change group to {GROUP} and group "
-                            "permission to rwX at least for all files stated "
-                            f"in {PATH}/pipeline_files.csv\"")
-                    f.write(f"\nfor FILE in $(cat {PATH}/pipeline_files.csv); do")
-                    f.write(f"\n  chgrp -fR {GROUP} $""{FILE};")
-                    f.write("\n  chmod -fR g+rwX ${FILE};")
-                    f.write("\ndone")
-                    f.write(f"\necho \"Acting on {PATH} and all subdirectories"
-                            "/files in there\"")
-                    f.write(f"\necho \"Change group to {GROUP}\"")
-                    f.write(f"\nchgrp -fR {GROUP} {PATH}")
-                    f.write("\necho \"Change group permission to rwX at least\"")
-                    f.write(f"\nchmod -fR g+rwX {PATH}")
-                    f.write(f"\necho \"Done, check {PATH}:\"")
-                    f.write(f"\nls -al {PATH}")
-    else:
-        return False
+        commands.append(f"rm {path_to_log_files}/{old_log_file_names}")
+    # the overall cleanup of the pipeline
+    if (job_name == 'pipeline'):
+        commands += [
+            f"echo \"Change group to {GROUP} and group permission to rwX at "
+            f"least for all files stated in {PATH}/pipeline_files.csv\"",
+            f"for FILE in $(cat {PATH}/pipeline_files.csv); do",
+            f"  chgrp -fR {GROUP} $""{FILE};",
+            "  chmod -fR g+rwX ${FILE};",
+            "done",
+            f"echo \"Acting on {PATH} and all subdirectories/files in there\"",
+            f"echo \"Change group to {GROUP}\"",
+            f"chgrp -fR {GROUP} {PATH}",
+            "echo \"Change group permission to rwX at least\"",
+            f"chmod -fR g+rwX {PATH}",
+            f"echo \"Done, check {PATH}:\"",
+            f"ls -al {PATH}"]
+    job = JobSpec(
+        name="cleanup", account=ACCOUNT, queue=PARTITION, nodes=1,
+        tasks_per_node=1, cpus_per_task=1, walltime=WALLTIME,
+        mem_per_cpu="4G", email=EMAIL, mail_type="FAIL",
+        truncate_output=True,
+        output=os.path.join(path_to_logs, log_file_name),
+        commands=commands)
+    scheduler.write(job, scheduler.file_name(f"{job_name}_cleanup"))
     return True
 
 
