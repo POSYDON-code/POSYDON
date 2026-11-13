@@ -119,12 +119,18 @@ activated. The scripts change into the submission directory when they start.
      - Size of a node, used for the default ``tasks_per_node`` (default: 128
        and ``256G``, an ALCF Crux node).
    * - ``launcher``
-     - Launcher template with the fields ``{ntasks}``, ``{ppn}``, ``{depth}``
-       and ``{nodes}``. The default is ALCF's Cray PALS ``mpiexec``:
-       ``mpiexec -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``.
+     - Launcher template with the fields ``{mpiexec}``, ``{ntasks}``,
+       ``{ppn}``, ``{depth}`` and ``{nodes}``. The default is ALCF's Cray
+       PALS ``mpiexec``:
+       ``{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``.
+       ``{mpiexec}`` is the system's ``mpiexec`` (see below).
        ``{depth}`` is the number of cores per slot: the cores of a node
        divided evenly between the slots, but at least the cores per task.
        For Open MPI, e.g., use ``mpirun -np {ntasks} --map-by ppr:{ppn}:node``.
+   * - ``mpiexec_search``
+     - File pattern of the system's ``mpiexec`` (default:
+       ``/opt/cray/pals/*/bin/mpiexec``). Empty: use the ``mpiexec`` in
+       ``PATH``.
    * - ``place``
      - Value of ``-l place=`` (default: ``scatter``).
    * - ``export_env``
@@ -147,22 +153,29 @@ activated. The scripts change into the submission directory when they start.
        single small file; the directory can be deleted when no job is
        running.
 
-Make sure ``mpiexec`` is the right one
---------------------------------------
+Finding the system's ``mpiexec``
+--------------------------------
 
-The default ``launcher`` uses the first ``mpiexec`` in your ``PATH``. Installing
-``mpi4py`` with conda usually installs conda's own MPI (e.g. Open MPI) into
-the environment, whose ``mpiexec`` then comes before the system's. On ALCF
-systems the job fails with ``An unrecognized option was included on the
-mpiexec command line: --ppn``. Check with ``which -a mpiexec`` and, if needed,
-give the system's launcher with its full path, e.g. on Crux:
+Installing ``mpi4py`` with conda usually installs conda's own MPI (e.g. Open
+MPI) into the environment, whose ``mpiexec`` then comes first in your
+``PATH``. It doesn't understand the options of Cray's ``mpiexec``, and a job
+using it fails with ``An unrecognized option was included on the mpiexec
+command line: --ppn``.
+
+The job scripts therefore look for the system's ``mpiexec`` when they start,
+with the file pattern ``mpiexec_search`` (by default Cray PALS' on ALCF
+systems, ``/opt/cray/pals/*/bin/mpiexec``). If several versions are
+installed, the latest one is used, so the scripts keep working after a
+system update. If none is found, they use the ``mpiexec`` in ``PATH``.
+
+To use a specific launcher instead, give it in ``launcher``, e.g.
 
 .. code-block:: bash
 
     --scheduler_option "launcher=/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth"
 
 (or ``launcher=...`` in the grid ini, ``LAUNCHER = '...'`` in the pipeline's
-``[account]`` section). The path may change when the system is updated.
+``[account]`` section).
 
 
 ALCF Crux queues

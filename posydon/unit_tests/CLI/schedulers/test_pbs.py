@@ -10,6 +10,9 @@ import posydon.CLI.schedulers.pbs as totest
 from posydon.CLI.schedulers.base import ArraySpec, JobSpec
 
 CRUX = dict(select="system=crux", filesystems="home:eagle")
+SEARCH = ("POSYDON_MPIEXEC=$(ls /opt/cray/pals/*/bin/mpiexec 2>/dev/null "
+          "| sort -V | tail -n 1)")
+MPIEXEC = '"${POSYDON_MPIEXEC:-mpiexec}"'
 
 
 class TestHelpers:
@@ -128,7 +131,7 @@ class TestPBSWorkQueue:
         assert lines[-3] == \
             "export POSYDON_QUEUE_ID=${PBS_JOBID%%.*}_$(date +%s)"
         assert lines[-2] == "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}"
-        assert lines[-1].startswith("mpiexec -n 128 --ppn 64 --depth 2 ")
+        assert lines[-1].startswith(MPIEXEC + " -n 128 --ppn 64 --depth 2 ")
         assert "--nranks 128 --ntasks 1000 --task-count 1000 " \
             "--queue .task_queue -- run {task_id}" in lines[-1]
         scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2,
@@ -175,11 +178,12 @@ class TestPBSBody:
                           log_file="./logs/popsyn_{job_id}_{task_id}.out"))
         assert scheduler.body(job) == [
             'cd "${PBS_O_WORKDIR:-.}"',
+            SEARCH,
             "export POSYDON_JOB_END=$(( $(date +%s) + 3600 ))",
             "export A=${PBS_JOBID%%.*}",
             "export POSYDON_ARRAY_JOB_ID=${PBS_JOBID%%.*}",
             "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}",
-            "mpiexec -n 50 --ppn 28 --depth 4 --cpu-bind depth python -m "
+            MPIEXEC + " -n 50 --ppn 28 --depth 4 --cpu-bind depth python -m "
             "posydon.CLI.schedulers.task_runner --nranks 50 --ntasks 50 "
             "--task-count 50 --log './logs/popsyn_{job_id}_{task_id}.out' "
             "-- run --index {task_id} --end $POSYDON_JOB_END 'a b'"]
@@ -241,6 +245,72 @@ class TestPBSSubmission:
     def test_mpi_launcher(self):
         scheduler = totest.PBSScheduler()
         assert scheduler.mpi_launcher(16, 8, 4) == \
-            "mpiexec -n 16 --ppn 8 --depth 4 --cpu-bind depth"
+            MPIEXEC + " -n 16 --ppn 8 --depth 4 --cpu-bind depth"
         assert scheduler.mpi_launcher(4, cpus_per_rank=None) == \
+            MPIEXEC + " -n 4 --ppn 4 --depth 1 --cpu-bind depth"
+        assert totest.PBSScheduler(mpiexec_search="").mpi_launcher(4) == \
             "mpiexec -n 4 --ppn 4 --depth 1 --cpu-bind depth"
+
+
+class TestFindMpiexec:
+
+    def array_job(self):
+        return JobSpec(name="a", array=ArraySpec(command="run", n_tasks=2))
+
+    def test_search_line_only_when_used(self):
+        lines = totest.PBSScheduler().body(self.array_job())
+        assert lines[1] == SEARCH
+        assert lines[-1].startswith(MPIEXEC + " -n 2 ")
+        # MPI job using the launcher in its command (e.g. MESA grids)
+        scheduler = totest.PBSScheduler()
+        job = JobSpec(name="a", commands=[
+            scheduler.mpi_launcher(8) + " python -m mpi4py run.py"])
+        assert scheduler.body(job)[1] == SEARCH
+        # jobs without the launcher, or with an explicit mpiexec
+        assert SEARCH not in scheduler.body(JobSpec(name="a",
+                                                    commands=["echo"]))
+        explicit = totest.PBSScheduler(
+            launcher="/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn}")
+        lines = explicit.body(self.array_job())
+        assert SEARCH not in lines
+        assert lines[-1].startswith("/opt/cray/pals/1.8/bin/mpiexec -n 2 ")
+
+    def test_no_search(self):
+        lines = totest.PBSScheduler(mpiexec_search="").body(self.array_job())
+        assert not any("POSYDON_MPIEXEC" in line for line in lines)
+        assert lines[-1].startswith("mpiexec -n 2 ")
+
+    def test_custom_search(self):
+        scheduler = totest.PBSScheduler(mpiexec_search="/sw/mpi/*/mpiexec")
+        assert scheduler.body(self.array_job())[1] == (
+            "POSYDON_MPIEXEC=$(ls /sw/mpi/*/mpiexec 2>/dev/null | sort -V "
+            "| tail -n 1)")
+
+    def test_search_in_bash(self, tmp_path):
+        """The job script uses the latest system mpiexec, else PATH's."""
+        import subprocess
+
+        def fake(path, name):
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_text(f"#!/bin/bash\necho {name}\n")
+            path.chmod(0o755)
+
+        fake(tmp_path / "conda" / "bin" / "mpiexec", "conda")
+        pattern = str(tmp_path / "pals" / "*" / "bin" / "mpiexec")
+        scheduler = totest.PBSScheduler(mpiexec_search=pattern,
+                                        launcher="{mpiexec}")
+        script = "\n".join(scheduler.body(JobSpec(
+            name="a", commands=[scheduler.mpi_launcher(1)])))
+        env = {"PATH": f"{tmp_path / 'conda' / 'bin'}:/usr/bin:/bin"}
+
+        def run():
+            return subprocess.run(["bash", "-c", script], env=env,
+                                  capture_output=True, text=True,
+                                  cwd=tmp_path).stdout.strip()
+
+        assert run() == "conda"           # nothing found: mpiexec in PATH
+        for version in ("1.8", "1.10", "1.9.2"):
+            fake(tmp_path / "pals" / version / "bin" / "mpiexec",
+                 f"pals-{version}")
+        assert run() == "pals-1.10"       # latest version, not the last
+                                          # in alphabetical order

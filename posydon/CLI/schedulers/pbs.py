@@ -35,8 +35,16 @@ from posydon.CLI.schedulers.utils import (
 )
 
 # Default launcher: Cray PALS mpiexec as used on ALCF systems.
-DEFAULT_LAUNCHER = ("mpiexec -n {ntasks} --ppn {ppn} --depth {depth} "
+DEFAULT_LAUNCHER = ("{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} "
                     "--cpu-bind depth")
+
+# Where job scripts look for the system's mpiexec (Cray PALS on ALCF
+# systems). Python environments often bring their own MPI (e.g. Open MPI
+# with mpi4py from conda), whose mpiexec would otherwise come first in PATH.
+DEFAULT_MPIEXEC_SEARCH = '/opt/cray/pals/*/bin/mpiexec'
+
+# Shell variable holding the mpiexec found in the job script
+MPIEXEC_VARIABLE = 'POSYDON_MPIEXEC'
 
 # Shell expression giving the numeric part of the PBS job ID
 # (e.g. "12345.crux-pbs-01" -> "12345")
@@ -104,10 +112,16 @@ class PBSScheduler(Scheduler):
         Size of a node, used for the default `tasks_per_node` (default: 128
         cores and 256G, an ALCF Crux node).
     launcher : str
-        Launcher template with the fields {ntasks}, {ppn}, {depth} and
-        {nodes} (default: Cray PALS mpiexec). {depth} is the number of cores
+        Launcher template with the fields {mpiexec}, {ntasks}, {ppn},
+        {depth} and {nodes} (default: Cray PALS mpiexec). {mpiexec} is the
+        mpiexec found with `mpiexec_search`. {depth} is the number of cores
         per rank: the cores of a node divided evenly between its ranks, but
         at least the cores per task.
+    mpiexec_search : str
+        File pattern the job script uses to find the system's mpiexec when
+        it starts; the latest version found is used, otherwise the mpiexec
+        in PATH (default: "/opt/cray/pals/*/bin/mpiexec"; empty: always the
+        mpiexec in PATH).
     export_env : bool
         Export the environment of qsub to the job ("-V"), as SLURM does by
         default (default: True).
@@ -140,6 +154,8 @@ class PBSScheduler(Scheduler):
         'cores_per_node': (int, 128, "cores of a node"),
         'memory_per_node': (str, '256G', "memory of a node"),
         'launcher': (str, DEFAULT_LAUNCHER, "launcher template"),
+        'mpiexec_search': (str, DEFAULT_MPIEXEC_SEARCH,
+                           "file pattern of the system's mpiexec"),
         'export_env': (bool, True, "export the environment of qsub (-V)"),
         'rerunnable': (bool, None, "rerun the job after e.g. preemption"),
         'task_stats': (str, None, "directory for per-task statistics"),
@@ -233,7 +249,20 @@ class PBSScheduler(Scheduler):
             lines.append(self._fill(job.launched_command))
         if job.array is not None:
             lines += self.array_lines(job)
+        if any(f"${{{MPIEXEC_VARIABLE}" in line for line in lines):
+            lines.insert(1, self.mpiexec_search_line())
         return lines
+
+    def mpiexec(self):
+        """Value of the {mpiexec} launcher field."""
+        if self.settings['mpiexec_search']:
+            return f'"${{{MPIEXEC_VARIABLE}:-mpiexec}}"'
+        return "mpiexec"
+
+    def mpiexec_search_line(self):
+        """Shell line finding the latest system mpiexec."""
+        return (f"{MPIEXEC_VARIABLE}=$(ls {self.settings['mpiexec_search']} "
+                "2>/dev/null | sort -V | tail -n 1)")
 
     def depth(self, job, ppn):
         """Cores per rank: the cores of a node divided evenly between `ppn`
@@ -271,7 +300,8 @@ class PBSScheduler(Scheduler):
             part if re.fullmatch(r'[\w./:={}$%+,@-]+', part)
             else shlex.quote(part) for part in shlex.split(command))
         launcher = self.settings['launcher'].format(
-            ntasks=n_ranks, ppn=ppn, depth=depth, nodes=nodes)
+            mpiexec=self.mpiexec(), ntasks=n_ranks, ppn=ppn, depth=depth,
+            nodes=nodes)
         lines = [f"export POSYDON_ARRAY_JOB_ID={PBS_JOB_NUMBER}"]
         if dynamic:
             # unique for each run of the job (a rerun job keeps its ID)
@@ -296,5 +326,6 @@ class PBSScheduler(Scheduler):
         """MPI launch inside PBS jobs, using the launcher template."""
         ppn = ranks_per_node or n_ranks
         return self.settings['launcher'].format(
-            ntasks=n_ranks, ppn=ppn, depth=max(int(cpus_per_rank or 1), 1),
+            mpiexec=self.mpiexec(), ntasks=n_ranks, ppn=ppn,
+            depth=max(int(cpus_per_rank or 1), 1),
             nodes=max(math.ceil(n_ranks / ppn), 1))
