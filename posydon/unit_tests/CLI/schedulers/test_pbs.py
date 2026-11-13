@@ -116,6 +116,53 @@ class TestPBSNewOptions:
         assert "--stats" not in totest.PBSScheduler().body(job)[-1]
 
 
+class TestPBSWorkQueue:
+
+    def grid_job(self, n_tasks, cpus=2):
+        return JobSpec(name="a", cpus_per_task=cpus, array=ArraySpec(
+            command="run {task_id}", n_tasks=n_tasks))
+
+    def test_dynamic_queue(self):
+        scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2)
+        lines = scheduler.body(self.grid_job(1000))
+        assert lines[-3] == \
+            "export POSYDON_QUEUE_ID=${PBS_JOBID%%.*}_$(date +%s)"
+        assert lines[-2] == "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}"
+        assert lines[-1].startswith("mpiexec -n 128 --ppn 64 --depth 2 ")
+        assert "--nranks 128 --ntasks 1000 --task-count 1000 " \
+            "--queue .task_queue -- run {task_id}" in lines[-1]
+        scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2,
+                                        queue_dir="/eagle/q")
+        assert "--queue /eagle/q --" in scheduler.body(self.grid_job(1000))[-1]
+
+    def test_no_queue_needed(self):
+        # one rank per task: nothing to hand out
+        lines = totest.PBSScheduler(tasks_per_node=64).body(self.grid_job(64))
+        assert "--queue" not in lines[-1]
+        assert not any("POSYDON_QUEUE_ID" in line for line in lines)
+
+    def test_static_order(self):
+        scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2,
+                                        task_order="Static")
+        assert scheduler.settings['task_order'] == "static"
+        assert "--queue" not in scheduler.body(self.grid_job(1000))[-1]
+        with pytest.raises(ValueError, match="task_order"):
+            totest.PBSScheduler(task_order="random")
+
+    @pytest.mark.parametrize("ppn, cpus, depth", [
+        (56, 1, 2), (28, 1, 4), (64, 2, 2), (32, 4, 4), (16, 4, 8),
+        (128, 1, 1), (64, 4, 4)])
+    def test_depth(self, ppn, cpus, depth):
+        scheduler = totest.PBSScheduler(tasks_per_node=ppn)
+        assert scheduler.depth(JobSpec(name="a", cpus_per_task=cpus),
+                               ppn) == depth
+        lines = scheduler.body(self.grid_job(ppn, cpus))
+        assert f"--depth {depth} " in lines[-1]
+        # threads of a task: its cores, not the spacing
+        assert lines[-2] == \
+            f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{cpus}}}"
+
+
 class TestPBSBody:
 
     def test_array_body(self):
@@ -132,7 +179,7 @@ class TestPBSBody:
             "export A=${PBS_JOBID%%.*}",
             "export POSYDON_ARRAY_JOB_ID=${PBS_JOBID%%.*}",
             "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}",
-            "mpiexec -n 50 --ppn 28 --depth 1 --cpu-bind depth python -m "
+            "mpiexec -n 50 --ppn 28 --depth 4 --cpu-bind depth python -m "
             "posydon.CLI.schedulers.task_runner --nranks 50 --ntasks 50 "
             "--task-count 50 --log './logs/popsyn_{job_id}_{task_id}.out' "
             "-- run --index {task_id} --end $POSYDON_JOB_END 'a b'"]
@@ -143,7 +190,7 @@ class TestPBSBody:
         job = JobSpec(name="a", cpus_per_task=4, array=ArraySpec(
             command="run", task_ids=[7, 3], task_count=10, launched=False))
         assert scheduler.body(job)[-1] == (
-            "srun -n 2 -N 1 -c 4 python -m posydon.CLI.schedulers.task_runner"
+            "srun -n 2 -N 1 -c 64 python -m posydon.CLI.schedulers.task_runner"
             " --nranks 2 --task-ids 3,7 --task-count 10 -- run")
 
     def test_single_job_body(self):

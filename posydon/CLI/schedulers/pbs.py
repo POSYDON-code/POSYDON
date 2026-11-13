@@ -6,9 +6,15 @@ task into its own PBS job would occupy a full node for every single-core
 task. Array jobs are therefore "packed": a single PBS job requests enough
 nodes to run `tasks_per_node` tasks per node and starts them with the MPI
 launcher (`mpiexec`). Each launched process runs
-`python -m posydon.CLI.schedulers.task_runner`, which works out the array
-indices it is responsible for and runs the task command for each of them,
-with one log file per task, like a SLURM array task.
+`python -m posydon.CLI.schedulers.task_runner`, which runs the task command
+for its share of the array indices, with one log file per task, like a
+SLURM array task. If there are more tasks than ranks, a rank that becomes
+free takes the next task nobody has taken yet (a work queue, see
+`posydon.CLI.schedulers.task_queue`), so no rank sits idle while tasks are
+left.
+
+The ranks are spread evenly over the cores of a node (`--depth`), e.g. 56
+single-core tasks get 2 cores each, using both sockets of a node.
 """
 
 __authors__ = [
@@ -38,6 +44,9 @@ PBS_JOB_NUMBER = '${PBS_JOBID%%.*}'
 
 # Environment variable holding the end of the job (seconds since the epoch)
 JOB_END_VARIABLE = 'POSYDON_JOB_END'
+
+# Ways of assigning array tasks to the ranks of a packed job
+TASK_ORDERS = ('dynamic', 'static')
 
 
 def pbs_job_name(name):
@@ -96,7 +105,9 @@ class PBSScheduler(Scheduler):
         cores and 256G, an ALCF Crux node).
     launcher : str
         Launcher template with the fields {ntasks}, {ppn}, {depth} and
-        {nodes} (default: Cray PALS mpiexec).
+        {nodes} (default: Cray PALS mpiexec). {depth} is the number of cores
+        per rank: the cores of a node divided evenly between its ranks, but
+        at least the cores per task.
     export_env : bool
         Export the environment of qsub to the job ("-V"), as SLURM does by
         default (default: True).
@@ -108,6 +119,13 @@ class PBSScheduler(Scheduler):
         Directory in which the task runner records the start, end, CPU time
         and peak memory of each array task (see
         `posydon.CLI.schedulers.task_stats`); off by default.
+    task_order : str
+        "dynamic" (default): if there are more tasks than ranks, a free rank
+        takes the next task nobody has taken yet. "static": rank r runs the
+        tasks r, r+nranks, ... assigned at the start.
+    queue_dir : str
+        Directory of the dynamic task queues, on a shared file system
+        (default: ".task_queue" in the submission directory).
     """
 
     name = 'pbs'
@@ -125,7 +143,17 @@ class PBSScheduler(Scheduler):
         'export_env': (bool, True, "export the environment of qsub (-V)"),
         'rerunnable': (bool, None, "rerun the job after e.g. preemption"),
         'task_stats': (str, None, "directory for per-task statistics"),
+        'task_order': (str, 'dynamic', "'dynamic' or 'static' assignment "
+                       "of array tasks to ranks"),
+        'queue_dir': (str, '.task_queue', "directory of the task queues"),
     }
+
+    def __init__(self, **options):
+        super().__init__(**options)
+        self.settings['task_order'] = str(self.settings['task_order']).lower()
+        if self.settings['task_order'] not in TASK_ORDERS:
+            raise ValueError(f"task_order must be one of {TASK_ORDERS}, not "
+                             f"'{self.settings['task_order']}'.")
 
     def tasks_per_node(self, job):
         """Number of array tasks run on each node for `job`."""
@@ -207,11 +235,20 @@ class PBSScheduler(Scheduler):
             lines += self.array_lines(job)
         return lines
 
+    def depth(self, job, ppn):
+        """Cores per rank: the cores of a node divided evenly between `ppn`
+        ranks, but at least the cores per task."""
+        cpus = max(int(job.cpus_per_task or 1), 1)
+        return max(cpus, self.settings['cores_per_node'] // max(ppn, 1))
+
     def array_lines(self, job):
         """Lines launching the tasks of an array job."""
         array = job.array
         n_ranks, ppn, nodes = self.array_layout(job)
-        depth = max(int(job.cpus_per_task or 1), 1)
+        cpus = max(int(job.cpus_per_task or 1), 1)
+        depth = self.depth(job, ppn)
+        dynamic = (self.settings['task_order'] == 'dynamic'
+                   and n_ranks < len(array.ids))
         runner = ["python", "-m", "posydon.CLI.schedulers.task_runner",
                   "--nranks", str(n_ranks)]
         if array.is_range:
@@ -223,6 +260,8 @@ class PBSScheduler(Scheduler):
             runner += ["--log", array.log_file]
         if self.settings['task_stats']:
             runner += ["--stats", self.settings['task_stats']]
+        if dynamic:
+            runner += ["--queue", self.settings['queue_dir']]
         runner_text = " ".join(shlex.quote(part) for part in runner + ["--"])
         # {task_id} and {job_id} are replaced by the task runner, $VARIABLES
         # by the shell
@@ -233,9 +272,14 @@ class PBSScheduler(Scheduler):
             else shlex.quote(part) for part in shlex.split(command))
         launcher = self.settings['launcher'].format(
             ntasks=n_ranks, ppn=ppn, depth=depth, nodes=nodes)
-        return [f"export POSYDON_ARRAY_JOB_ID={PBS_JOB_NUMBER}",
-                f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{depth}}}",
-                f"{launcher} {runner_text} {command_text}"]
+        lines = [f"export POSYDON_ARRAY_JOB_ID={PBS_JOB_NUMBER}"]
+        if dynamic:
+            # unique for each run of the job (a rerun job keeps its ID)
+            lines.append("export POSYDON_QUEUE_ID="
+                         f"{PBS_JOB_NUMBER}_$(date +%s)")
+        lines += [f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{cpus}}}",
+                  f"{launcher} {runner_text} {command_text}"]
+        return lines
 
     def submit_line(self, variable, script, after=None, condition='ok'):
         """Bash line submitting `script` with qsub."""

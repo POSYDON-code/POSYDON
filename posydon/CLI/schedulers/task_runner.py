@@ -1,10 +1,9 @@
 """Run array tasks inside a packed PBS job.
 
 This module is started once per MPI rank by the job scripts that POSYDON
-writes for PBS (see `posydon.CLI.schedulers.pbs`). It emulates a SLURM job array task:
-each rank picks the array indices `rank, rank+nranks, rank+2*nranks, ...`
-and, for each of them, runs the given command with the environment
-variables
+writes for PBS (see `posydon.CLI.schedulers.pbs`). It emulates a SLURM job
+array task: each rank runs the given command for a share of the array
+indices, with the environment variables
 
 - POSYDON_ARRAY_JOB_ID: numeric part of the PBS job ID
 - POSYDON_ARRAY_TASK_ID: the array index
@@ -12,6 +11,11 @@ variables
 - POSYDON_ARRAY_TASK_MIN: 0
 
 and "{task_id}"/"{job_id}" in the command and log file name replaced.
+
+The indices are assigned either statically (rank r runs the indices
+`r, r+nranks, r+2*nranks, ...`) or, with `--queue DIR`, dynamically: a rank
+that becomes free takes the next index no other rank has taken yet (see
+`posydon.CLI.schedulers.task_queue`).
 
 Example::
 
@@ -30,6 +34,7 @@ import subprocess
 import sys
 import time
 
+from posydon.CLI.schedulers.task_queue import TaskQueue
 from posydon.CLI.schedulers.task_stats import StatsWriter
 from posydon.CLI.schedulers.utils import replace_placeholders
 
@@ -84,6 +89,25 @@ def get_job_id(environ=None):
     if pbs_job_id:
         return pbs_job_id.split('.')[0].split('[')[0]
     return "0"
+
+
+def get_queue_id(environ=None):
+    """Name of the task queue of this run of the job.
+
+    Parameters
+    ----------
+    environ : dict or None
+        Environment to search (default: os.environ).
+
+    Returns
+    -------
+    str
+        POSYDON_QUEUE_ID if set (the job scripts make it unique for each run
+        of a job), otherwise the job ID.
+    """
+    if environ is None:
+        environ = os.environ
+    return str(environ.get('POSYDON_QUEUE_ID') or get_job_id(environ))
 
 
 def get_my_tasks(rank, nranks, ntasks=None, task_ids=None):
@@ -208,6 +232,10 @@ def parse_args(argv=None):
                         help='record start, end, CPU time and peak memory '
                              'of each task in DIR (see '
                              'posydon.CLI.schedulers.task_stats)')
+    parser.add_argument('--queue', default=None, metavar='DIR',
+                        help='hand out the tasks dynamically, coordinated '
+                             'through a counter in DIR/<queue id> (on a '
+                             'shared file system)')
     parser.add_argument('command', nargs=argparse.REMAINDER,
                         help='command to run (after "--")')
     args = parser.parse_args(argv)
@@ -237,21 +265,39 @@ def main(argv=None):
     stats = None
     if args.stats is not None:
         stats = StatsWriter(args.stats, job_id, rank)
+    if args.queue is not None:
+        task_ids = (args.task_ids if args.task_ids is not None
+                    else list(range(args.ntasks)))
+        queue = TaskQueue(os.path.join(args.queue, get_queue_id()), task_ids,
+                          rank, args.nranks)
+        my_tasks = queue.tasks()
+    else:
+        my_tasks = get_my_tasks(rank, args.nranks, ntasks=args.ntasks,
+                                task_ids=args.task_ids)
     failed = 0
-    for task_id in get_my_tasks(rank, args.nranks, ntasks=args.ntasks,
-                                task_ids=args.task_ids):
-        if stats is not None:
-            stats.start(task_id)
-        start = time.time()
-        code, usage = run_task(args.command, task_id, job_id, task_count,
-                               log_file=args.log, return_usage=True)
-        if stats is not None:
-            stats.end(task_id, time.time() - start, code, usage)
-        if code != 0:
-            print(f"task_runner: task {task_id} failed with exit code "
-                  f"{code}", file=sys.stderr)
-            failed += 1
+    try:
+        for task_id in my_tasks:
+            failed += _run_one(args, task_id, job_id, task_count, stats)
+    except TimeoutError as error:
+        print(f"task_runner: {error}", file=sys.stderr)
+        return 1
     return 1 if failed else 0
+
+
+def _run_one(args, task_id, job_id, task_count, stats):
+    """Run one task; returns 1 if it failed, otherwise 0."""
+    if stats is not None:
+        stats.start(task_id)
+    start = time.time()
+    code, usage = run_task(args.command, task_id, job_id, task_count,
+                           log_file=args.log, return_usage=True)
+    if stats is not None:
+        stats.end(task_id, time.time() - start, code, usage)
+    if code != 0:
+        print(f"task_runner: task {task_id} failed with exit code {code}",
+              file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == '__main__':  # pragma: no cover

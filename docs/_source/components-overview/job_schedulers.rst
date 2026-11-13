@@ -82,8 +82,14 @@ POSYDON *packs* array tasks onto nodes instead:
   each array index assigned to it. It sets ``POSYDON_ARRAY_TASK_ID``,
   ``POSYDON_ARRAY_TASK_COUNT``, ``POSYDON_ARRAY_TASK_MIN`` and
   ``POSYDON_ARRAY_JOB_ID``, and writes one log file per task, as on SLURM.
-- If there are more tasks than slots, each slot runs its tasks one after
-  another. Choose the walltime accordingly.
+- If there are more tasks than slots, a slot that becomes free takes the
+  next task that no other slot has taken yet (a work queue). All slots stay
+  busy until the tasks run out, even if the tasks' run times differ a lot,
+  as for MESA runs. Choose the walltime accordingly (see
+  :ref:`large_grids`).
+- The slots are spread evenly over the cores of a node, e.g. 56
+  single-core tasks get 2 cores each, so both sockets of a node (and their
+  memory) are used.
 - The job fails if any task failed. This means jobs depending on it with
   ``afterok`` (e.g. the merge job of a population) only start when all tasks
   succeeded.
@@ -116,6 +122,8 @@ activated. The scripts change into the submission directory when they start.
      - Launcher template with the fields ``{ntasks}``, ``{ppn}``, ``{depth}``
        and ``{nodes}``. The default is ALCF's Cray PALS ``mpiexec``:
        ``mpiexec -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``.
+       ``{depth}`` is the number of cores per slot: the cores of a node
+       divided evenly between the slots, but at least the cores per task.
        For Open MPI, e.g., use ``mpirun -np {ntasks} --map-by ppr:{ppn}:node``.
    * - ``place``
      - Value of ``-l place=`` (default: ``scatter``).
@@ -128,6 +136,16 @@ activated. The scripts change into the submission directory when they start.
    * - ``task_stats``
      - Directory in which each array task's start, end, CPU time and peak
        memory are recorded (see :ref:`task_stats`). Off by default.
+   * - ``task_order``
+     - ``dynamic`` (default): with more tasks than slots, a free slot takes
+       the next task nobody has taken yet. ``static``: slot *r* runs the tasks
+       *r*, *r* + slots, ... assigned when the job starts.
+   * - ``queue_dir``
+     - Directory of the work queues (default: ``.task_queue`` in the
+       submission directory). It must be on a file system shared by all
+       nodes, e.g. Eagle. Each run of a job uses its own subdirectory with a
+       single small file; the directory can be deleted when no job is
+       running.
 
 Make sure ``mpiexec`` is the right one
 --------------------------------------
@@ -199,6 +217,32 @@ the beginning**, so every task of the job is run again:
 Smaller jobs (fewer nodes) lose less when they are killed.
 
 
+.. _large_grids:
+
+Large MESA grids
+----------------
+
+A MESA grid larger than one job can hold runs as a series of jobs:
+
+1. Set ``max_nodes`` to the job size you want, e.g. ``max_nodes=20`` with
+   ``tasks_per_node=64`` gives 1280 slots. Without ``max_nodes``, a job
+   would request a slot for every grid point.
+2. Set ``skip_finished_runs=True`` in the ``[run_parameters]`` section.
+3. Submit the grid job. Its slots work through the grid points in order
+   until the walltime ends; runs still going are killed.
+4. Submit the same job script again (e.g. ``qsub grid.pbs``). It skips the
+   grid points that have finished (within seconds each) and continues with
+   the killed and remaining ones. Repeat until all grid points are done.
+
+Runs that need longer than the walltime never finish this way; run them with
+a longer walltime (e.g. in ``preemptable``) or more threads per run.
+
+Two jobs running at the same time on the same grid would not know about
+each other's work and could run the same grid point twice, so submit the
+next job only after the previous one ended (e.g. with
+``qsub -W depend=afterany:<job ID> grid.pbs``).
+
+
 .. _task_stats:
 
 Per-task statistics
@@ -223,16 +267,21 @@ for the measured peak memory.
 ALCF Crux examples
 ------------------
 
-Population synthesis:
+Population synthesis, e.g. 1 million binaries per metallicity in 56 tasks
+on one node (each task needs about 3.6 GB):
 
 .. code-block:: bash
 
-    posydon-popsyn setup population_params.ini --job_array 200 \
+    posydon-popsyn setup population_params.ini --job_array 56 \
         --scheduler pbs --queue workq-route --account <PROJECT> \
         --scheduler_option select=system=crux \
         --scheduler_option filesystems=home:eagle \
-        --walltime 12:00:00 --merge_walltime 01:00:00 --mem_per_cpu 9G
+        --scheduler_option tasks_per_node=56 \
+        --walltime 04:00:00 --merge_walltime 06:00:00
     ./pbs_submit.sh
+
+Run populations from a directory on Eagle rather than from your home
+directory.
 
 MESA grid (``posydon-setup-grid --submission-type pbs --inifile grid.ini``),
 in the grid ini file:
@@ -242,23 +291,24 @@ in the grid ini file:
     [pbs]
     number_of_nodes=1
     number_of_mpi_tasks=1
-    number_of_cpus_per_task=4
+    number_of_cpus_per_task=2
     job_array=True
     partition=workq-route
     account={PROJECT}
     walltime='24:00:00'
     email={YOUR_EMAIL_ADDRESS}
-    ; PBS options
+    ; PBS options: 64 runs with 2 threads per node, 20 nodes per job
     select=system=crux
     filesystems=home:eagle
-    tasks_per_node=32
-    max_nodes=8
+    tasks_per_node=64
+    max_nodes=20
     ; optional: record run times and memory per grid point
     task_stats=stats
 
     [run_parameters]
     ...
-    ; e.g. for rerunnable jobs: keep grid points that already finished
+    ; keep grid points that already finished (for a series of jobs, or
+    ; rerunnable jobs)
     skip_finished_runs=True
 
 Post-processing pipeline, in the ``[account]`` section:

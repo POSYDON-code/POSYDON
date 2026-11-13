@@ -4,6 +4,7 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>",
 ]
 
+import os
 import sys
 
 import pytest
@@ -20,7 +21,8 @@ PRINT_ENV = [sys.executable, "-c",
 
 @pytest.fixture
 def clean_env(monkeypatch):
-    for var in totest.RANK_ENV_VARS + ('POSYDON_ARRAY_JOB_ID', 'PBS_JOBID'):
+    for var in totest.RANK_ENV_VARS + ('POSYDON_ARRAY_JOB_ID', 'PBS_JOBID',
+                                       'POSYDON_QUEUE_ID'):
         monkeypatch.delenv(var, raising=False)
     return monkeypatch
 
@@ -43,6 +45,14 @@ class TestHelpers:
         assert totest.get_job_id({'POSYDON_ARRAY_JOB_ID': '7',
                                   'PBS_JOBID': '1234.server'}) == "7"
         assert totest.get_job_id() == "0"
+
+    def test_get_queue_id(self, clean_env):
+        clean_env.delenv('POSYDON_QUEUE_ID', raising=False)
+        assert totest.get_queue_id({'POSYDON_QUEUE_ID': '12_1700000000',
+                                    'PBS_JOBID': '12.server'}) == \
+            "12_1700000000"
+        assert totest.get_queue_id({'PBS_JOBID': '12.server'}) == "12"
+        assert totest.get_queue_id() == "0"
 
     def test_get_my_tasks(self):
         assert totest.get_my_tasks(0, 3, ntasks=8) == [0, 3, 6]
@@ -137,6 +147,37 @@ def test_shell_braces_are_kept(tmp_path):
                            log_file=log)
     assert code == 0
     assert open(log).read().strip() == "${FILE} 005"
+
+
+class TestQueue:
+
+    def test_main_with_queue(self, tmp_path, clean_env):
+        log = str(tmp_path / "t_{task_id}.out")
+        queue_dir = str(tmp_path / "queue")
+        clean_env.setenv('POSYDON_QUEUE_ID', 'run1')
+        # ranks run one after another here: rank 0 takes its own task and
+        # then all tasks nobody has taken
+        assert totest.main(["--rank", "0", "--nranks", "2", "--ntasks", "5",
+                            "--queue", queue_dir, "--log", log, "--"]
+                           + PRINT_ENV) == 0
+        assert sorted(os.listdir(tmp_path)) == [
+            "queue", "t_0.out", "t_2.out", "t_3.out", "t_4.out"]
+        assert totest.main(["--rank", "1", "--nranks", "2", "--task-ids",
+                            "0-4", "--queue", queue_dir, "--log", log, "--"]
+                           + PRINT_ENV) == 0
+        assert (tmp_path / "t_1.out").exists()
+        assert os.listdir(tmp_path / "queue" / "run1") == ["next_5"]
+
+    def test_main_queue_timeout(self, tmp_path, clean_env, monkeypatch,
+                                capsys):
+        queue_class = totest.TaskQueue
+        monkeypatch.setattr(totest, "TaskQueue", lambda *args: queue_class(
+            *args, timeout=0, poll=0))
+        assert totest.main(["--rank", "1", "--nranks", "2", "--ntasks", "3",
+                            "--queue", str(tmp_path / "q"), "--log",
+                            str(tmp_path / "t_{task_id}"), "--", "true"]) == 1
+        assert "no task counter" in capsys.readouterr().err
+        assert (tmp_path / "t_1").exists()
 
 
 class TestStatistics:
