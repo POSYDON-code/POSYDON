@@ -99,6 +99,7 @@ ONELINE_MIN_ITEMSIZE = {'state_i': 30, 'state_f': 30,
                         'mt_history_CO_HMS_RLO' : 40, 'mt_history_CO_HeMS_RLO' : 40,
                         'cumulative_mt_case_HMS_HMS': 40, 'cumulative_mt_case_CO_HeMS': 40,
                         'cumulative_mt_case_CO_HMS_RLO': 40, 'cumulative_mt_case_CO_HeMS_RLO': 40,
+                        'S1_first_mt_case': 20, 'S2_first_mt_case': 20,
                         }
 
 # BinaryPopulation will enforce a constant metallicity accross all steps that

@@ -48,6 +48,7 @@ class TestElements:
                     'assign_core_collapse_quantities_none',\
                     'calculate_Patton20_values_at_He_depl',\
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
+                    'first_mt_case_from_cumulative',\
                     'post_process_grid', 'print_CC_quantities', 'tqdm',\
                     'get_SN_MODEL', 'H5_REC_STR_DTYPE', 'h5py',\
                     'recfunctions'}
@@ -325,7 +326,8 @@ class TestFunctions:
                 assert k in EXTRA_COLUMNS
                 assert len(EXTRA_COLUMNS[k]) == n_runs
                 for i in range(run_range[0], run_range[1]):
-                    if ((i == 0) and (k != "mt_history")):
+                    if ((i == 0) and
+                        (k not in ["mt_history", "first_mt_case"])):
                         # check missing run: all None
                         assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
                     elif (("S2_SN_MODEL" in k) and (i in [1, 2, 4, 6])):
@@ -346,16 +348,18 @@ class TestFunctions:
             n_runs : int
                 Count of runs.
             keys : list of str
-                List of keys in EXTRA_COLUMNS. All 'S2' and the 'mt_history'
-                will be checked for being not there.
+                List of keys in EXTRA_COLUMNS. All 'S2', 'first_mt_case' and
+                the 'mt_history' will be checked for being not there.
             """
             for k in keys:
-                if (('S2' in k) or (k == 'mt_history')):
+                if (('S2' in k) or (k in ['mt_history', 'first_mt_case'])):
                     assert k not in EXTRA_COLUMNS
-            check_EXTRA_COLUMNS(EXTRA_COLUMNS, n_runs,\
-                                [k for k in keys if (('S2' not in k)\
-                                                     and (k!='mt_history'))],\
-                                run_range=(1,6))
+            check_EXTRA_COLUMNS(
+                EXTRA_COLUMNS, n_runs,
+                [k for k in keys
+                 if (('S2' not in k)
+                     and (k not in ['mt_history', 'first_mt_case']))],
+                run_range=(1,6))
         def mock_check_state_of_star(star, i=None, star_CO=False):
             if star_CO:
                 raise TypeError("Testing exception.")
@@ -387,7 +391,7 @@ class TestFunctions:
         except: # skip test as test on load should fail
             assert "/" in grid_path
             return
-        keys = ['mt_history']
+        keys = ['mt_history', 'first_mt_case']
         for s in [1,2]:
             for q in ['avg_c_in_c_core_at_He_depletion',\
                       'co_core_mass_at_He_depletion', 'state',\
@@ -530,6 +534,33 @@ class TestFunctions:
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)
+
+    def test_post_process_grid_first_mt_case(self, grid_path, link_SN_data,
+                                             monkeypatch):
+        # the collapsing star needs the MT case of its own first MT episode
+        # as donor (e.g. for Maltsev+25-MCO-rapid) during the post-processing
+        recorded = []
+        def mock_collapse_star(SN, star):
+            recorded.append(star.first_mt_case)
+            for quantity in totest.CC_quantities:
+                setattr(star, quantity, None)
+        test_PSyGrid = PSyGrid()
+        test_PSyGrid.load(grid_path)
+        n_models = len(totest.SN_MODELS)
+        with monkeypatch.context() as mp:
+            mp.setattr(totest.StepSN, "collapse_star", mock_collapse_star)
+            with warns(POSYDONWarning):
+                totest.post_process_grid(test_PSyGrid)
+            # collapsing runs: TF2 = 'no_RLOF', 'case_A1', 'case_A1/A2',
+            # 'case_B1' (star 1 collapses in each)
+            assert recorded == (['no_RLOF'] * n_models
+                                + ['case_A'] * 2 * n_models
+                                + ['case_B'] * n_models)
+            recorded.clear()
+            with warns(POSYDONWarning):
+                totest.post_process_grid(test_PSyGrid, single_star=True)
+            assert len(recorded) > 0
+            assert set(recorded) == {'no_RLOF'}
 
     def test_from_run_metallicity(self, grid_path):
         # grids store the absolute Z, while the stars used during the
@@ -682,3 +713,33 @@ class TestFunctions:
 
         totest.add_post_processed_quantities(grid3, list(grid3.MESA_dirs),
                                              EXTRA_COLUMNS)
+
+    def test_add_post_processed_quantities_first_mt_case(self, grid_path):
+        """first_mt_case is written as a string column into final_values."""
+        from posydon.utils.common_functions import (
+            first_mt_case_from_cumulative,
+        )
+
+        grid = PSyGrid()
+        grid.load(grid_path)
+        n = grid.n_runs + 1  # total entries including run0
+
+        # Mirror the value post_process_grid derives from termination_flag_2.
+        first_mt = [
+            first_mt_case_from_cumulative(tf2)
+            for tf2 in grid.final_values["termination_flag_2"]
+        ]
+        EXTRA_COLUMNS = {"first_mt_case": first_mt}
+
+        totest.add_post_processed_quantities(grid, list(grid.MESA_dirs),
+                                             EXTRA_COLUMNS)
+
+        # Reload and inspect the stored schema.
+        with h5py.File(grid_path, 'r') as f:
+            fv = f['grid/final_values']
+            assert 'first_mt_case' in fv.dtype.names
+            # stored as bytes (S-dtype) for HDF5 compatibility
+            assert fv.dtype['first_mt_case'].kind == 'S'
+            stored = [v.decode('utf-8') if isinstance(v, bytes) else v
+                      for v in fv['first_mt_case']]
+            assert stored == first_mt
