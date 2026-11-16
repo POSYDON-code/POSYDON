@@ -250,6 +250,13 @@ A MESA grid larger than one job can hold runs as a series of jobs:
 Runs that need longer than the walltime never finish this way; run them with
 a longer walltime (e.g. in ``preemptable``) or more threads per run.
 
+A packed job ends only when its last run ends, and its nodes are charged
+until then. A few runs whose timesteps have collapsed can keep a job going
+for days after all other runs finished. Set ``max_run_time`` in the
+``[run_parameters]`` section (e.g. ``max_run_time='48:00:00'``) to stop such
+runs. Stopped runs count as finished for ``skip_finished_runs``, so later jobs
+don't run them again.
+
 Two jobs running at the same time on the same grid would not know about
 each other's work and could run the same grid point twice, so submit the
 next job only after the previous one ended (e.g. with
@@ -323,6 +330,8 @@ in the grid ini file:
     ; keep grid points that already finished (for a series of jobs, or
     ; rerunnable jobs)
     skip_finished_runs=True
+    ; stop runs taking longer than this (e.g. with collapsed timesteps)
+    max_run_time='48:00:00'
 
 Post-processing pipeline, in the ``[account]`` section:
 

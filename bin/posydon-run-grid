@@ -7,8 +7,10 @@ import itertools
 import os
 import random
 import shutil
+import signal
 import stat
 import string
+import subprocess
 import sys
 import time
 from collections import ChainMap
@@ -17,6 +19,7 @@ import numpy as np
 import pandas
 
 from posydon.active_learning.psy_cris.utils import parse_inifile
+from posydon.CLI.schedulers.utils import walltime_to_seconds
 from posydon.grids.psygrid import PSyGrid
 from posydon.grids.termination_flags import get_flag_from_MESA_output
 from posydon.utils import gridutils as utils
@@ -138,10 +141,25 @@ def parse_commandline():
                         "already contains a finished MESA binary run (e.g. "
                         "when a job is rerun after preemption)")
 
+    parser.add_argument("--max-run-time", default=None,
+                        help="Stop a MESA run after this time (e.g. "
+                        "48:00:00 or 1-00:00:00). The run ends without a "
+                        "termination code, like a run stopped at a cluster "
+                        "time limit, and counts as finished for "
+                        "--skip-finished")
+
     args = parser.parse_args()
 
     if args.grid_type not in ['fixed', 'dynamic']:
         raise parser.error("--run-type must be either fixed or dynamic")
+
+    if args.max_run_time is not None:
+        try:
+            args.max_run_time = walltime_to_seconds(args.max_run_time)
+        except ValueError:
+            raise parser.error("--max-run-time must be a time like 48:00:00 "
+                               "or 1-00:00:00, not {0}".format(
+                                   args.max_run_time))
 
     # if we are running a dynamic grid then these arguments are required otherwise
     # they are not
@@ -216,12 +234,19 @@ def get_run_directories(grid_param_dict, args):
 
     return work_dir, final_dir
 
+# file left in the run directory of a MESA run stopped at --max-run-time
+MAX_RUN_TIME_MARKER = '.max_run_time_reached'
+
 def run_is_finished(run_dir, outfile_name='out.txt'):
     """Whether run_dir contains a MESA run that ended with a termination code
 
     Runs stopped by the scheduler (e.g. at the walltime or by preemption)
-    have no termination code and are not considered finished.
+    have no termination code and are not considered finished. Runs stopped
+    at their maximum run time (--max-run-time) are considered finished:
+    running them again would stop them at the same point.
     """
+    if os.path.isfile(os.path.join(run_dir, MAX_RUN_TIME_MARKER)):
+        return True
     for name in [outfile_name, outfile_name + '.gz']:
         path = os.path.join(run_dir, name)
         if os.path.isfile(path):
@@ -500,6 +525,51 @@ def move_mesa_output(work_dir, final_dir, copyinstead=False):
 
     return
 
+def execute_with_time_limit(command, max_run_time, work_dir, grace=60):
+    """Run a shell command, stopping it after `max_run_time` seconds.
+
+    The command runs in its own process group, so that MESA (started by the
+    shell) is stopped with it: first with SIGTERM, after `grace` seconds
+    with SIGKILL. A stopped run leaves MAX_RUN_TIME_MARKER in `work_dir`.
+
+    Returns
+    -------
+    bool
+        True if the command was stopped at the time limit.
+    """
+    # bash, not sh: the command redirects its output with "&>"
+    shell = shutil.which('bash') or '/bin/sh'
+    process = subprocess.Popen(command, shell=True, executable=shell,
+                               start_new_session=True)
+    try:
+        process.wait(timeout=max_run_time)
+        return False
+    except subprocess.TimeoutExpired:
+        print("MESA run reached the maximum run time of {0} s, stopping "
+              "it".format(max_run_time))
+        sys.stdout.flush()
+        group = process.pid
+        os.killpg(group, signal.SIGTERM)
+        # wait for the whole process group (MESA may outlive the shell),
+        # then kill what is left
+        deadline = time.time() + grace
+        while time.time() < deadline:
+            process.poll()
+            try:
+                os.killpg(group, 0)
+            except ProcessLookupError:
+                break
+            time.sleep(min(1.0, grace))
+        else:
+            try:
+                os.killpg(group, signal.SIGKILL)
+            except ProcessLookupError:
+                pass
+        process.wait()
+        with open(os.path.join(work_dir, MAX_RUN_TIME_MARKER), 'w') as f:
+            f.write("{0}\n".format(max_run_time))
+        return True
+
 def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     """Provides minor utility for actually spawning the mesa job for each grid
 
@@ -515,6 +585,7 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
     keep_profiles = kwargs.pop('keep_profiles', False)
     keep_photos = kwargs.pop('keep_photos', False)
     keep_work_dir = kwargs.pop('keep_work_dir', False)
+    max_run_time = kwargs.pop('max_run_time', None)
 
     os.chdir(work_dir)
     if not work_dir == final_dir:
@@ -523,7 +594,12 @@ def run_mesa(mesa_executable, work_dir, final_dir, **kwargs):
         child_ID = 0.1
     if child_ID>0:
         #parent process: run MESA and do the clean up in the working directory
-        os.system("{0} &> {1}".format(mesa_executable, os.path.join(work_dir, outfile_name)))
+        command = "{0} &> {1}".format(mesa_executable,
+                                      os.path.join(work_dir, outfile_name))
+        if max_run_time is None:
+            os.system(command)
+        else:
+            execute_with_time_limit(command, max_run_time, work_dir)
 
         if not keep_profiles:
             if os.path.exists(os.path.join(work_dir, 'LOGS')):
@@ -824,7 +900,8 @@ def run_grid_point(grid, star1_formation, star2_formation,
     # run the binary exectuable
     run_mesa(args.mesa_binary_executable, work_dir, final_dir,
              keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
-             job_end=args.job_end, job_before_end=args.job_before_end)
+             job_end=args.job_end, job_before_end=args.job_before_end,
+             max_run_time=args.max_run_time)
 
     # find out what happened
     mesa_result = extract_mesa_results(final_dir)
@@ -962,7 +1039,8 @@ if __name__ == '__main__':
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
                      keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
                      job_end=args.job_end, job_before_end=args.job_before_end,
-                     keep_work_dir=index<last_step)
+                     keep_work_dir=index<last_step,
+                     max_run_time=args.max_run_time)
 
         sys.exit(0)
 

@@ -1034,6 +1034,9 @@ if __name__ == '__main__':
     if 'skip_finished_runs' not in run_parameters.keys():
         run_parameters['skip_finished_runs'] = False
 
+    if run_parameters.get('max_run_time') in (None, '', 'None'):
+        run_parameters['max_run_time'] = None
+
     if ((not os.path.isfile(run_parameters['grid'])) and (not os.path.isdir(run_parameters['grid']))):
         raise ValueError("Supplied grid does not exist, please check your path and try again")
 
@@ -1169,6 +1172,10 @@ if __name__ == '__main__':
     if run_parameters['skip_finished_runs'] and slurm['job_array']:
         # keep finished grid points when a job is rerun
         command_line += ' --skip-finished'
+    if run_parameters['max_run_time'] is not None:
+        # stop MESA runs taking longer (e.g. with collapsed timesteps)
+        command_line += ' --max-run-time {0}'.format(
+            str(run_parameters['max_run_time']).strip().strip("'\""))
     if 'work_dir' in slurm.keys() and not(slurm['work_dir'] == ''):
         command_line += ' --temporary-directory '+slurm['work_dir']
 

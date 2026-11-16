@@ -355,3 +355,10 @@ Optionally, :samp:`skip_finished_runs = True` makes job array runs skip grid
 points whose output directory already contains a finished MESA run, instead of
 deleting and rerunning them. This is useful when a job is run again, e.g. a
 rerunnable job after preemption (see :ref:`job_schedulers`).
+
+Optionally, :samp:`max_run_time = '48:00:00'` stops each MESA run after that
+time (formats as for walltimes, e.g. :samp:`'1-00:00:00'`). This is meant for
+runs whose timesteps have collapsed and that would otherwise keep their slot
+busy until the end of the job. A stopped run ends without a termination code,
+like a run stopped at a cluster's time limit, and with
+:samp:`skip_finished_runs = True` it counts as finished and is not run again.
