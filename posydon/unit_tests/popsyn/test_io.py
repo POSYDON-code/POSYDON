@@ -38,12 +38,12 @@ class TestElements:
                     'simprop_kwargs_from_parser',
                     'binarypop_kwargs_from_parser',
                     'binarypop_kwargs_from_ini', 'DEFAULT_INI_PATH',
-                    '_new_parser', '_changes_import',
+                    'new_parser', '_changes_import',
                     'RESOLVED_INI_SUFFIX', 'REPLACED_SECTIONS', 'resolved_inifile_name',
                     'write_resolved_inifile',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
-                    'ConfigParser', 'ast', 'importlib', 'os', 'errno',
+                    'ast', 'importlib', 'os', 'errno',
                     'pprint', 'np', 'pd',]
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements

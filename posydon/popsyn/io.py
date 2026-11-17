@@ -13,14 +13,13 @@ import errno
 import importlib
 import os
 import pprint
-from configparser import ConfigParser
 
 import numpy as np
 import pandas as pd
 
 # The packaged default inifile. User inifiles are stacked on top of it, so a
 # user only has to give the values that differ from the defaults.
-from posydon.utils.ini_defaults import DEFAULT_INI_PATH
+from posydon.utils.ini_defaults import DEFAULT_INI_PATH, new_parser
 
 BINARYPROPERTIES_DTYPES = {
     'binary_index' : 'int64',
@@ -356,13 +355,6 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
 REPLACED_SECTIONS = ('extra_hooks',)
 
 
-def _new_parser():
-    """Return a ConfigParser which keeps the case of the keys."""
-    parser = ConfigParser()
-    parser.optionxform = lambda option: option
-    return parser
-
-
 def _changes_import(default_section, user_section):
     """Check whether a user section imports another class than the default.
 
@@ -412,7 +404,7 @@ def parse_inifile(path, verbose=False, use_defaults=True):
         An instance of ConfigParser.
 
     """
-    parser = _new_parser()
+    parser = new_parser()
 
     if isinstance(path, str):
         path = os.path.abspath(path)
@@ -442,7 +434,7 @@ def parse_inifile(path, verbose=False, use_defaults=True):
         parser.read(DEFAULT_INI_PATH)
         files_read = []
         for user_path in ([path] if isinstance(path, str) else path):
-            user_parser = _new_parser()
+            user_parser = new_parser()
             user_parser.read(user_path)
             # a section that swaps in another class does not inherit the
             # settings of the class it replaces; the hooks section is

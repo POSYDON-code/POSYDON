@@ -30,6 +30,23 @@ DEFAULT_INI_PATH = os.path.join(
 IMPORT_KEYS = ('import', 'absolute_import')
 
 
+def new_parser():
+    """Return a ConfigParser for POSYDON inifiles.
+
+    All inifiles, the default one and the ones of the user, are read with
+    this parser, so they are read the same way.
+
+    Returns
+    -------
+    ConfigParser
+        A parser which keeps the case of the keys.
+    """
+    parser = ConfigParser()
+    # keys keep their case
+    parser.optionxform = lambda option: option
+    return parser
+
+
 @lru_cache(maxsize=None)
 def _read_default_sections():
     """Read the default inifile once and evaluate all its values.
@@ -39,9 +56,7 @@ def _read_default_sections():
     dict
         Maps each section name to a dict of its evaluated values.
     """
-    parser = ConfigParser()
-    # keys keep their case
-    parser.optionxform = lambda option: option
+    parser = new_parser()
     if not parser.read(DEFAULT_INI_PATH):
         raise FileNotFoundError(f"Default inifile not found: {DEFAULT_INI_PATH}")
     return {section: {key: ast.literal_eval(value)

@@ -37,13 +37,21 @@ from posydon.popsyn.io import DEFAULT_INI_PATH
 
 class TestElements:
     def test_dir(self):
-        elements = {'DEFAULT_INI_PATH', 'IMPORT_KEYS', 'section_defaults',
+        elements = {'DEFAULT_INI_PATH', 'IMPORT_KEYS', 'section_defaults', 'new_parser',
                     'default_section_names',
                     '_read_default_sections', '__authors__', '__builtins__',
                     '__cached__', '__doc__', '__file__', '__loader__',
                     '__name__', '__package__', '__spec__', 'ast', 'copy',
                     'os', 'ConfigParser', 'lru_cache'}
         assert set(dir(totest)) == elements
+
+    def test_new_parser_keeps_case(self):
+        parser = totest.new_parser()
+        parser.read_string("[Section]\nKey_Name = 1\n")
+        assert list(parser["Section"]) == ["Key_Name"]
+        # the population io reads the user inifiles with the same parser
+        from posydon.popsyn import io
+        assert io.new_parser is totest.new_parser
 
     def test_default_section_names(self):
         names = totest.default_section_names()
