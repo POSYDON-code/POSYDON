@@ -117,7 +117,7 @@ class TestSetupPopsynFunction:
         """Create mock command-line arguments."""
         args = MagicMock()
         args.ini_file = "test.ini"
-        args.job_array = 10
+        args.n_tasks = 10
         args.email = "test@example.com"
         args.partition = "normal"
         args.walltime = "24:00:00"
@@ -132,11 +132,11 @@ class TestSetupPopsynFunction:
         """Test that ValueError is raised when number of binaries is too small."""
         mock_binarypop.return_value = {
             'metallicities': [1.0],
-            'number_of_binaries': 5,  # Less than job_array (10)
+            'number_of_binaries': 5,  # Less than n_tasks (10)
             'secondary_mass_scheme': 'q=1'
         }
 
-        with pytest.raises(ValueError, match="number of binaries is less than the job array"):
+        with pytest.raises(ValueError, match="number of binaries is less than the number of tasks"):
             totest.setup_popsyn_function(mock_args)
 
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
@@ -205,7 +205,7 @@ class TestFlatMassRatioWarning:
         """Create mock command-line arguments."""
         args = MagicMock()
         args.ini_file = "test.ini"
-        args.job_array = 10
+        args.n_tasks = 10
         return args
 
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
@@ -312,7 +312,7 @@ class TestIntegration:
         # Create mock args
         args = MagicMock()
         args.ini_file = str(ini_file)
-        args.job_array = 10
+        args.n_tasks = 10
         args.email = None
         args.partition = None
         args.walltime = "24:00:00"

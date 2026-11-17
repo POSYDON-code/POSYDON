@@ -107,10 +107,10 @@ def setup_popsyn_function(args):
             )
 
     metallicities = synpop_params['metallicities']
-    if synpop_params['number_of_binaries'] / args.job_array < 1:
-        raise ValueError("The number of binaries is less than the job array"
-                         " length. Please increase the number of binaries or"
-                         " decrease the job array length")
+    if synpop_params['number_of_binaries'] / args.n_tasks < 1:
+        raise ValueError("The number of binaries is less than the number of"
+                         " tasks (--n_tasks). Please increase the number of"
+                         " binaries or decrease the number of tasks.")
 
     # job scheduler (e.g. SLURM) writing the job scripts
     scheduler = scheduler_from_args(args)

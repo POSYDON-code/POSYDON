@@ -333,7 +333,7 @@ gives 56 tasks per node):
 
 .. code-block:: bash
 
-    posydon-popsyn setup population_params.ini --job_array 56 --mem_per_cpu 4.5G \
+    posydon-popsyn setup population_params.ini --n_tasks 56 --mem_per_cpu 4.5G \
         --scheduler pbs --queue workq-route --account <PROJECT> \
         --scheduler_option site=crux \
         --walltime 04:00:00 --merge_walltime 02:00:00

@@ -325,7 +325,7 @@ def get_expected_batch_count(run_folder, str_met):
     """
     settings = read_run_settings(run_folder)
     if settings is not None:
-        count = settings.get('job_array')
+        count = settings.get('n_tasks')
         return int(count) if count is not None else None
 
     slurm_script = os.path.join(run_folder, ARRAY_SCRIPT_PATTERN.format(met=str_met))

@@ -953,7 +953,7 @@ class TestCheckPopsynFunction:
         """Create mock arguments."""
         args = MagicMock()
         args.run_folder = str(tmp_path)
-        args.job_array = 10
+        args.n_tasks = 10
         return args
 
     @patch('posydon.CLI.popsyn.check.get_run_configuration')
@@ -1138,9 +1138,12 @@ class TestSchedulerSupport:
 
     def test_expected_batch_count_from_settings(self, tmp_path):
         settings_file = tmp_path / "popsyn_jobs.json"
-        settings_file.write_text('{"job_array": 12, "scheduler": "slurm"}')
+        settings_file.write_text('{"n_tasks": 12, "scheduler": "slurm"}')
         assert totest.get_expected_batch_count(str(tmp_path), "1e+00") == 12
-        settings_file.write_text('{"job_array": null}')
+        # runs set up before --job_array was renamed to --n_tasks
+        settings_file.write_text('{"job_array": 8, "scheduler": "slurm"}')
+        assert totest.get_expected_batch_count(str(tmp_path), "1e+00") == 8
+        settings_file.write_text('{"n_tasks": null}')
         assert totest.get_expected_batch_count(str(tmp_path), "1e+00") is None
 
     def test_select_job_id_skips_other_logs(self, tmp_path):

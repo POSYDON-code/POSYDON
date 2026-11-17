@@ -606,7 +606,7 @@ class TestRescueScriptFunctions:
         """Create mock arguments."""
         args = MagicMock()
         args.run_folder = "/test/run_folder"
-        args.job_array = 10
+        args.n_tasks = 10
         args.walltime = "24:00:00"
         args.mem_per_cpu = "4G"
         args.partition = "normal"
@@ -1050,7 +1050,7 @@ class TestSchedulerIndependentFunctions:
     def setup_args(self):
         """Arguments of `posydon-popsyn setup`."""
         args = MagicMock()
-        args.job_array = 10
+        args.n_tasks = 10
         args.walltime = "10:00:00"
         args.merge_walltime = "01:00:00"
         args.mem_per_cpu = "8G"
@@ -1107,7 +1107,7 @@ class TestSchedulerIndependentFunctions:
         assert path == os.path.join('.', totest.RUN_SETTINGS_FILE)
         assert settings['scheduler'] == 'slurm'
         assert settings['scheduler_options'] == {'exclude': 'n1'}
-        assert settings['job_array'] == 10
+        assert settings['n_tasks'] == 10
         assert settings['max_concurrent_jobs'] is None
         assert settings['path_to_posydon'] == "/p"
         assert totest.read_run_settings(str(tmp_path / "nothing")) is None
@@ -1167,7 +1167,7 @@ class TestPBSPopulationRun:
     @pytest.fixture
     def args(self):
         args = MagicMock()
-        args.job_array = 50
+        args.n_tasks = 50
         args.walltime = "12:00:00"
         args.merge_walltime = "01:00:00"
         args.mem_per_cpu = "9G"

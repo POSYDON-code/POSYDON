@@ -66,8 +66,11 @@ if __name__ == '__main__':
         help='a population ini file for which you want to setup a population run',
         type=str)
     setup_parser.add_argument(
-        '-j', '--job_array',
-        help='the number of job in the job array you want to run',
+        '--n_tasks', '-j', '--job_array',
+        dest='n_tasks',
+        help='the number of tasks the population of each metallicity is '
+             'split into (a SLURM job array, or the tasks packed into a PBS '
+             'job); --job_array is the old name',
         type=int,
         default=10)
     setup_parser.add_argument(
@@ -118,8 +121,10 @@ if __name__ == '__main__':
         help='the folder where the population run is located',
         type=str)
     check_parser.add_argument(
-        '-j', '--job_array',
-        help='the number of job in the job array (used for rescue script generation)',
+        '--n_tasks', '-j', '--job_array',
+        dest='n_tasks',
+        help='the number of tasks of the run (used for rescue script '
+             'generation); --job_array is the old name',
         type=int,
         default=None)
     check_parser.add_argument(
@@ -170,8 +175,9 @@ if __name__ == '__main__':
         help='the folder where the population run is located',
         type=str)
     rescue_parser.add_argument(
-        '-j', '--job_array',
-        help='the number of job in the job array you want to run',
+        '--n_tasks', '-j', '--job_array',
+        dest='n_tasks',
+        help='the number of tasks of the run; --job_array is the old name',
         type=int,
         default=None)
     rescue_parser.add_argument(

@@ -170,7 +170,7 @@ def create_merge_script(ini_file):
 
 # Settings of a population run, used by `posydon-popsyn check` for rescues
 RUN_SETTINGS_FILE = 'popsyn_jobs.json'
-RUN_SETTINGS_KEYS = ('job_array', 'walltime', 'merge_walltime', 'mem_per_cpu',
+RUN_SETTINGS_KEYS = ('n_tasks', 'walltime', 'merge_walltime', 'mem_per_cpu',
                      'partition', 'account', 'email', 'max_concurrent_jobs',
                      'path_to_posydon', 'path_to_posydon_data')
 
@@ -385,7 +385,7 @@ def create_job_scripts(metallicity, args, scheduler,
         path_to_posydon_data = os.path.dirname(PATH_TO_POSYDON_DATA)
     str_met = convert_metallicity_to_string(metallicity)
     array_job = popsyn_array_job(
-        metallicity, args.job_array, args.walltime, args.mem_per_cpu,
+        metallicity, args.n_tasks, args.walltime, args.mem_per_cpu,
         args.partition, args.account, args.email, args.max_concurrent_jobs,
         path_to_posydon, path_to_posydon_data)
     merge_job = popsyn_merge_job(
@@ -446,7 +446,11 @@ def read_run_settings(run_folder):
     if not os.path.isfile(path):
         return None
     with open(path, 'r') as f:
-        return json.load(f)
+        settings = json.load(f)
+    # runs set up before the option was renamed from --job_array
+    if 'n_tasks' not in settings and 'job_array' in settings:
+        settings['n_tasks'] = settings.pop('job_array')
+    return settings
 
 
 def create_bash_submit_script(filename, metallicities, scheduler=None):
@@ -589,7 +593,7 @@ def _legacy_slurm_settings(run_folder, str_met):
                 tmp_array_range = array_range
             if '-' in tmp_array_range:
                 start, end = map(int, tmp_array_range.split('-'))
-                settings['job_array'] = end - start + 1
+                settings['n_tasks'] = end - start + 1
         elif line.startswith("#SBATCH --time="):
             settings['walltime'] = line.split('=')[1].strip()
         elif line.startswith("#SBATCH --mem-per-cpu="):
@@ -657,7 +661,7 @@ def create_batch_rescue_script(args, batch_status):
     scheduler = scheduler_for_run(args, settings)
 
     job = popsyn_array_job(
-        metallicity, settings['job_array'], settings['walltime'],
+        metallicity, settings['n_tasks'], settings['walltime'],
         settings['mem_per_cpu'], settings['partition'], settings['account'],
         settings['email'], settings['max_concurrent_jobs'],
         settings['path_to_posydon'], settings['path_to_posydon_data'],
