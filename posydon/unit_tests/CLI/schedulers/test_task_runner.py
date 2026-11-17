@@ -22,7 +22,8 @@ PRINT_ENV = [sys.executable, "-c",
 @pytest.fixture
 def clean_env(monkeypatch):
     for var in totest.RANK_ENV_VARS + ('POSYDON_ARRAY_JOB_ID', 'PBS_JOBID',
-                                       'POSYDON_QUEUE_ID'):
+                                       'POSYDON_QUEUE_ID', 'SLURM_JOB_ID',
+                                       'SLURM_ARRAY_JOB_ID'):
         monkeypatch.delenv(var, raising=False)
     return monkeypatch
 
@@ -44,6 +45,9 @@ class TestHelpers:
         assert totest.get_job_id({'PBS_JOBID': '99[2].server'}) == "99"
         assert totest.get_job_id({'POSYDON_ARRAY_JOB_ID': '7',
                                   'PBS_JOBID': '1234.server'}) == "7"
+        assert totest.get_job_id({'SLURM_JOB_ID': '12'}) == "12"
+        assert totest.get_job_id({'SLURM_JOB_ID': '12',
+                                  'SLURM_ARRAY_JOB_ID': '10'}) == "10"
         assert totest.get_job_id() == "0"
 
     def test_get_queue_id(self, clean_env):
@@ -203,3 +207,14 @@ class TestStatistics:
         assert lines[0].startswith("event,job_id,task_id")
         assert [line.split(",")[0] for line in lines[1:]] == \
             ["start", "end", "start", "end"]
+
+    def test_main_stats_name(self, tmp_path, clean_env):
+        # as in SLURM array tasks: one task, one file per task
+        stats_dir = str(tmp_path / "stats")
+        clean_env.setenv('SLURM_ARRAY_JOB_ID', '77')
+        assert totest.main(["--nranks", "1", "--rank", "0", "--task-ids",
+                            "3", "--stats", stats_dir, "--stats-name",
+                            "task3", "--"] + self.ALLOCATE + ["1", "0"]) == 0
+        lines = open(f"{stats_dir}/stats_77_task3.csv").read().splitlines()
+        assert [line.split(",")[:3] for line in lines[1:]] == \
+            [["start", "77", "3"], ["end", "77", "3"]]

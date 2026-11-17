@@ -2,8 +2,9 @@
 
 The task runner (`posydon.CLI.schedulers.task_runner`) can record, for each
 array task, when it started and ended, its exit code, CPU time and peak
-memory. Each rank writes its own CSV file (`stats_<jobid>_rank<rank>.csv`)
-in a statistics directory, so that many ranks never write to the same file.
+memory. Each rank of a packed PBS job (or each SLURM array task) writes its
+own CSV file (`stats_<jobid>_rank<rank>.csv`, `stats_<jobid>_task<id>.csv`)
+in a statistics directory, so that tasks never write to the same file.
 A "start" line is written when a task begins and an "end" line when it
 finishes, so tasks killed by the walltime or by preemption show up as
 unfinished.
@@ -46,15 +47,20 @@ class StatsWriter:
         The job ID.
     rank : int
         Rank of the task runner.
+    name : str, optional
+        Part of the file name identifying the writer (default:
+        "rank<rank>"); each writer of a job needs its own.
     """
 
-    def __init__(self, directory, job_id, rank):
+    def __init__(self, directory, job_id, rank, name=None):
         os.makedirs(directory, exist_ok=True)
         self.job_id = str(job_id)
         self.rank = int(rank)
         self.host = socket.gethostname()
+        if name is None:
+            name = f"rank{self.rank}"
         self.path = os.path.join(directory,
-                                 f"stats_{self.job_id}_rank{self.rank}.csv")
+                                 f"stats_{self.job_id}_{name}.csv")
 
     def _write(self, row):
         new_file = not os.path.exists(self.path)
@@ -126,7 +132,7 @@ def read_stats(directory, job_id=None):
         'max_rss_kb' (None if unknown, e.g. for unfinished tasks). If a task
         was run several times (e.g. a rerun job), its last run is used.
     """
-    pattern = f"stats_{job_id}_rank*.csv" if job_id else "stats_*_rank*.csv"
+    pattern = f"stats_{job_id}_*.csv" if job_id else "stats_*.csv"
     tasks = {}
     for path in sorted(glob.glob(os.path.join(directory, pattern))):
         with open(path, newline='') as f:

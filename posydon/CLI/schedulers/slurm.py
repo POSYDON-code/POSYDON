@@ -5,6 +5,7 @@ __authors__ = [
 ]
 
 import re
+import shlex
 
 from posydon.CLI.schedulers.base import Scheduler
 from posydon.CLI.schedulers.utils import replace_placeholders
@@ -32,6 +33,14 @@ class SlurmScheduler(Scheduler):
         Comma separated list of nodes to exclude.
     launcher : str
         Command prefix starting a task (default: "srun").
+    rerunnable : bool
+        Write "--requeue" (True) or "--no-requeue" (False); not set by
+        default (the cluster's default applies). A requeued array task is
+        restarted from the beginning, e.g. after being preempted.
+    task_stats : str
+        Directory in which the task runner records the start, end, CPU time
+        and peak memory of each array task (see
+        `posydon.CLI.schedulers.task_stats`), as for PBS; off by default.
     """
 
     name = 'slurm'
@@ -40,6 +49,8 @@ class SlurmScheduler(Scheduler):
     options = {
         'exclude': (str, None, "comma separated list of nodes to exclude"),
         'launcher': (str, 'srun', "command prefix starting a task"),
+        'rerunnable': (bool, None, "requeue the job after e.g. preemption"),
+        'task_stats': (str, None, "directory for per-task statistics"),
     }
 
     def directives(self, job):
@@ -86,6 +97,9 @@ class SlurmScheduler(Scheduler):
             d.append(f"--mail-user={job.email}")
         if self.settings['exclude'] is not None:
             d.append(f"--exclude={self.settings['exclude']}")
+        if self.settings['rerunnable'] is not None:
+            d.append("--requeue" if self.settings['rerunnable']
+                     else "--no-requeue")
         return ["#SBATCH " + directive for directive in d]
 
     def _fill(self, text, array):
@@ -110,10 +124,24 @@ class SlurmScheduler(Scheduler):
                          + self._fill(job.launched_command, is_array))
         if is_array:
             command = self._fill(job.array.command, True)
+            if self.settings['task_stats']:
+                command = self.stats_runner(job.array) + " " + command
             if job.array.launched:
                 command = f"{launcher} {command}"
             lines.append(command)
         return lines
+
+    def stats_runner(self, array):
+        """Task runner prefix recording the statistics of an array task
+        (one file per task)."""
+        runner = ["python", "-m", "posydon.CLI.schedulers.task_runner",
+                  "--nranks", "1", "--rank", "0",
+                  "--task-ids", "$SLURM_ARRAY_TASK_ID",
+                  "--task-count", str(array.size),
+                  "--stats", self.settings['task_stats'],
+                  "--stats-name", "task$SLURM_ARRAY_TASK_ID", "--"]
+        return " ".join(part if part.startswith(('$', 'task$'))
+                        else shlex.quote(part) for part in runner)
 
     def submit_line(self, variable, script, after=None, condition='ok'):
         """Bash line submitting `script` with sbatch."""

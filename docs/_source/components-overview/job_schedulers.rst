@@ -62,6 +62,15 @@ Each array task is a SLURM array task, started with ``srun``.
        is also available as ``--exclude``.
    * - ``launcher``
      - Command prefix starting a task (default: ``srun``).
+   * - ``rerunnable``
+     - Write ``--requeue`` (``True``) or ``--no-requeue`` (``False``); not
+       set by default, so the cluster's default applies. SLURM requeues the
+       array tasks that were killed (e.g. preempted), not the whole array;
+       a requeued task starts from the beginning.
+   * - ``task_stats``
+     - Directory in which the start, end, exit code, CPU time and peak
+       memory of every array task are recorded, as for PBS (see
+       :ref:`task_stats`). Off by default.
 
 
 PBS (e.g. ALCF Crux)
@@ -297,9 +306,11 @@ Per-task statistics
 -------------------
 
 The scheduler's own accounting can't show the resources of the individual
-tasks of a packed job. With the PBS option ``task_stats=<directory>``, the
+tasks of a packed job. With the option ``task_stats=<directory>``, the
 task runner records the start, end, exit code, CPU time and peak memory
-(including child processes, e.g. MESA) of every task, one CSV file per rank.
+(including child processes, e.g. MESA) of every task, one CSV file per rank
+(PBS) or per array task (SLURM). On SLURM, ``sacct`` shows much of this too;
+``task_stats`` gives the same files on both schedulers.
 Tasks that were still running when the job was killed have a start but no
 end. Summarize them with:
 

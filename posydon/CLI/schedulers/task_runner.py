@@ -3,7 +3,8 @@
 This module is started once per MPI rank by the job scripts that POSYDON
 writes for PBS (see `posydon.CLI.schedulers.pbs`). It emulates a SLURM job
 array task: each rank runs the given command for a share of the array
-indices, with the environment variables
+indices. (SLURM job scripts use it to record per-task statistics, for a
+single task each.) The commands get the environment variables
 
 - POSYDON_ARRAY_JOB_ID: numeric part of the PBS job ID
 - POSYDON_ARRAY_TASK_ID: the array index
@@ -78,7 +79,8 @@ def get_job_id(environ=None):
     -------
     str
         POSYDON_ARRAY_JOB_ID if set, otherwise the part of PBS_JOBID
-        before the first '.', otherwise "0".
+        before the first '.', otherwise SLURM_ARRAY_JOB_ID or SLURM_JOB_ID,
+        otherwise "0".
     """
     if environ is None:
         environ = os.environ
@@ -88,6 +90,9 @@ def get_job_id(environ=None):
     pbs_job_id = environ.get('PBS_JOBID')
     if pbs_job_id:
         return pbs_job_id.split('.')[0].split('[')[0]
+    for var in ('SLURM_ARRAY_JOB_ID', 'SLURM_JOB_ID'):
+        if environ.get(var):
+            return str(environ[var])
     return "0"
 
 
@@ -232,6 +237,9 @@ def parse_args(argv=None):
                         help='record start, end, CPU time and peak memory '
                              'of each task in DIR (see '
                              'posydon.CLI.schedulers.task_stats)')
+    parser.add_argument('--stats-name', default=None, metavar='NAME',
+                        help='statistics file stats_<job id>_NAME.csv '
+                             '(default: rank<rank>)')
     parser.add_argument('--queue', default=None, metavar='DIR',
                         help='hand out the tasks dynamically, coordinated '
                              'through a counter in DIR/<queue id> (on a '
@@ -264,7 +272,7 @@ def main(argv=None):
     job_id = get_job_id()
     stats = None
     if args.stats is not None:
-        stats = StatsWriter(args.stats, job_id, rank)
+        stats = StatsWriter(args.stats, job_id, rank, name=args.stats_name)
     if args.queue is not None:
         task_ids = (args.task_ids if args.task_ids is not None
                     else list(range(args.ntasks)))
