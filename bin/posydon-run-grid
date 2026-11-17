@@ -525,18 +525,66 @@ def move_mesa_output(work_dir, final_dir, copyinstead=False):
 
     return
 
+# prctl option making a process the "subreaper" of its descendants (Linux)
+PR_SET_CHILD_SUBREAPER = 36
+
+
+def become_subreaper():
+    """Adopt orphaned descendants (Linux; elsewhere nothing happens).
+
+    When a run is stopped, the shell running it can exit before MESA. MESA
+    would then be adopted (and waited for) by init, and its resource usage,
+    e.g. its peak memory, would be missing from this process's children.
+    As a subreaper, this process adopts such orphans instead, so it can wait
+    for them itself.
+
+    Returns
+    -------
+    bool
+        True if this process is now a subreaper.
+    """
+    try:
+        import ctypes
+        libc = ctypes.CDLL(None, use_errno=True)
+        return libc.prctl(PR_SET_CHILD_SUBREAPER, 1, 0, 0, 0) == 0
+    except (AttributeError, OSError):
+        return False
+
+
+def reap_group(group, block=False):
+    """Wait for the ended processes of process group `group` that are
+    children of this process.
+
+    Returns
+    -------
+    bool
+        False if no child of this process is left in the group.
+    """
+    while True:
+        try:
+            pid, _ = os.waitpid(-group, 0 if block else os.WNOHANG)
+        except ChildProcessError:
+            return False
+        if pid == 0:
+            return True
+
+
 def execute_with_time_limit(command, max_run_time, work_dir, grace=60):
     """Run a shell command, stopping it after `max_run_time` seconds.
 
     The command runs in its own process group, so that MESA (started by the
     shell) is stopped with it: first with SIGTERM, after `grace` seconds
     with SIGKILL. A stopped run leaves MAX_RUN_TIME_MARKER in `work_dir`.
+    All processes of the group are waited for by this process (see
+    `become_subreaper`), so that their resource usage (e.g. the peak memory
+    recorded by the task runner) includes MESA's.
 
     Returns
     -------
     bool
         True if the command was stopped at the time limit.
     """
+    become_subreaper()
     # bash, not sh: the command redirects its output with "&>"
     shell = shutil.which('bash') or '/bin/sh'
     process = subprocess.Popen(command, shell=True, executable=shell,
@@ -554,7 +602,8 @@ def execute_with_time_limit(command, max_run_time, work_dir, grace=60):
         # then kill what is left
         deadline = time.time() + grace
         while time.time() < deadline:
-            process.poll()
+            # ended processes stay in the group until waited for
+            reap_group(group)
             try:
                 os.killpg(group, 0)
             except ProcessLookupError:
@@ -565,6 +614,8 @@ def execute_with_time_limit(command, max_run_time, work_dir, grace=60):
                 os.killpg(group, signal.SIGKILL)
             except ProcessLookupError:
                 pass
+        reap_group(group, block=True)
+        # the shell may have been waited for above
         process.wait()
         with open(os.path.join(work_dir, MAX_RUN_TIME_MARKER), 'w') as f:
             f.write("{0}\n".format(max_run_time))
