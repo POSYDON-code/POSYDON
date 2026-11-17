@@ -56,11 +56,16 @@ mkdir -p ${LOG_DIR} ${BINARY_OUTPUT_DIR}
 echo "🔧 Initializing conda"
 CONDA_SH=""
 for candidate in \
+    "${CONDA_EXE:+$(dirname "$(dirname "$CONDA_EXE")")/etc/profile.d/conda.sh}" \
+    "${CONDA:+$CONDA/etc/profile.d/conda.sh}" \
     "$HOME/miniconda/etc/profile.d/conda.sh" \
     "$HOME/miniconda3/etc/profile.d/conda.sh" \
+    "$HOME/miniforge3/etc/profile.d/conda.sh" \
+    "$HOME/mambaforge/etc/profile.d/conda.sh" \
     "$HOME/anaconda3/etc/profile.d/conda.sh" \
+    "/opt/conda/etc/profile.d/conda.sh" \
     "/opt/homebrew/Caskroom/miniconda/base/etc/profile.d/conda.sh"; do
-    if [ -f "$candidate" ]; then
+    if [ -n "$candidate" ] && [ -f "$candidate" ]; then
         CONDA_SH="$candidate"
         break
     fi
