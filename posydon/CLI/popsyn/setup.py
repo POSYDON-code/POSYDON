@@ -13,7 +13,6 @@ from posydon.CLI.io import (
 )
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
 from posydon.popsyn.io import (
-    DEFAULT_INI_PATH,
     binarypop_kwargs_from_ini,
     parse_inifile,
     resolved_inifile_name,
@@ -21,6 +20,7 @@ from posydon.popsyn.io import (
     write_resolved_inifile,
 )
 from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.ini_defaults import default_section_names
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -108,8 +108,7 @@ def check_flow_steps(ini_file):
     configured_steps = {key for key in simprop_kwargs
                         if key.startswith('step_')}
 
-    default_steps = set(parse_inifile(DEFAULT_INI_PATH,
-                                      use_defaults=False).sections())
+    default_steps = default_section_names()
 
     missing_steps = sorted(flow_steps - configured_steps)
     if missing_steps:

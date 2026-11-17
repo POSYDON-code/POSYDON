@@ -38,11 +38,20 @@ from posydon.popsyn.io import DEFAULT_INI_PATH
 class TestElements:
     def test_dir(self):
         elements = {'DEFAULT_INI_PATH', 'IMPORT_KEYS', 'section_defaults',
+                    'default_section_names',
                     '_read_default_sections', '__authors__', '__builtins__',
                     '__cached__', '__doc__', '__file__', '__loader__',
                     '__name__', '__package__', '__spec__', 'ast', 'copy',
                     'os', 'ConfigParser', 'lru_cache'}
         assert set(dir(totest)) == elements
+
+    def test_default_section_names(self):
+        names = totest.default_section_names()
+        assert isinstance(names, frozenset)
+        assert {'flow', 'step_SN', 'step_end',
+                'BinaryPopulation_options'} <= names
+        # the names are the sections of the default inifile
+        assert names == set(totest._read_default_sections())
 
     def test_default_ini_path(self):
         assert os.path.isfile(totest.DEFAULT_INI_PATH)

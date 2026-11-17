@@ -49,6 +49,17 @@ def _read_default_sections():
             for section in parser.sections()}
 
 
+def default_section_names():
+    """Get the names of all sections of the default inifile.
+
+    Returns
+    -------
+    frozenset of str
+        The section names, e.g. 'step_SN' or 'BinaryPopulation_options'.
+    """
+    return frozenset(_read_default_sections())
+
+
 def section_defaults(section, exclude=()):
     """Get the default values of one section of the default inifile.
 
