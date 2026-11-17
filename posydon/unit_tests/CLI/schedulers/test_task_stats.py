@@ -79,27 +79,36 @@ class TestSummary:
 
     def test_suggest_tasks_per_node(self):
         # 2 GB * 1.3 = 2.6 GB -> 98 by memory, 128 by cores
-        assert totest.suggest_tasks_per_node(2 * 1024**2) == 98
-        assert totest.suggest_tasks_per_node(2 * 1024**2,
+        node = ("256G", 128)
+        assert totest.suggest_tasks_per_node(2 * 1024**2, *node) == 98
+        assert totest.suggest_tasks_per_node(2 * 1024**2, *node,
                                              cpus_per_task=4) == 32
-        assert totest.suggest_tasks_per_node(0) == 128
-        assert totest.suggest_tasks_per_node(1024**3) == 1
+        assert totest.suggest_tasks_per_node(0, *node) == 128
+        assert totest.suggest_tasks_per_node(1024**3, *node) == 1
 
     def test_format_summary(self, stats_dir):
         text = totest.format_summary(totest.summarize(
-            totest.read_stats(stats_dir, "7")))
+            totest.read_stats(stats_dir, "7")), "256G", 128)
         assert "tasks: 4  finished: 3  failed: 1  unfinished: 1" in text
         assert "max 0:01:10" in text
         assert "max 2.00" in text
         assert "suggested tasks_per_node: 98" in text
+
+    def test_format_summary_without_node_size(self, stats_dir):
+        text = totest.format_summary(totest.summarize(
+            totest.read_stats(stats_dir, "7")))
+        assert "give the size of a node" in text
 
 
 class TestMain:
 
     def test_main(self, stats_dir, capsys):
         assert totest.main([stats_dir, "--job", "7", "--cpus-per-task",
-                            "4"]) == 0
+                            "4", "--site", "crux"]) == 0
         assert "suggested tasks_per_node: 32" in capsys.readouterr().out
+        assert totest.main([stats_dir, "--job", "7", "--cores-per-node",
+                            "64", "--memory-per-node", "512G"]) == 0
+        assert "suggested tasks_per_node: 64" in capsys.readouterr().out
 
     def test_main_no_stats(self, tmp_path, capsys):
         assert totest.main([str(tmp_path)]) == 1

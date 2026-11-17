@@ -98,39 +98,67 @@ The job scripts export the environment of ``qsub`` (``-V``), as SLURM does
 by default, so submit them from a shell with your POSYDON environment
 activated. The scripts change into the submission directory when they start.
 
+To pack tasks, POSYDON needs the size of a node, and the job scripts need the
+system's MPI launcher and any site-specific resources. Nothing is assumed:
+give them as options, or name a known system with ``site``, which sets them
+all (options given explicitly take precedence):
+
+.. list-table:: Known sites (``site=...``)
+   :header-rows: 1
+   :widths: 15 85
+
+   * - Site
+     - Settings
+   * - ``crux``
+     - ALCF Crux: ``cores_per_node=128``, ``memory_per_node=256G``,
+       ``select=system=crux``, ``filesystems=home:eagle``,
+       ``launcher=pals``, ``chunk_resources=False`` (whole nodes)
+
 .. list-table:: PBS options
    :header-rows: 1
    :widths: 25 75
 
    * - Option
      - Description
+   * - ``site``
+     - A known system whose settings are used for the options not given (see
+       above).
    * - ``select``
      - Additional resources of each chunk in ``-l select=N:...``, e.g.
        ``system=crux``.
+   * - ``chunk_resources``
+     - Request the cores (``ncpus``), MPI ranks (``mpiprocs``) and, if the job
+       has a memory per core, memory (``mem``) of each chunk in ``-l select``,
+       as needed on systems that share nodes between jobs (default:
+       ``True``). Sites that allocate whole nodes don't need them
+       (``False`` for ``crux``).
    * - ``filesystems``
      - Value of ``-l filesystems=``, e.g. ``home:eagle`` (required at ALCF).
    * - ``tasks_per_node``
      - Array tasks per node. The default is the number that fits on a node,
-       given the cores and memory per task (e.g. 28 popsyn tasks with
-       ``--mem_per_cpu 9G``, 16 MESA runs with 4 cores and 4 GB per core).
+       given the cores and memory per task: the smaller of
+       ``cores_per_node`` / cores per task and ``memory_per_node`` / memory
+       per task (e.g. on Crux 56 popsyn tasks with ``--mem_per_cpu 4.5G``).
    * - ``max_nodes``
      - Maximum number of nodes of an array job.
    * - ``cores_per_node``, ``memory_per_node``
-     - Size of a node, used for the default ``tasks_per_node`` (default: 128
-       and ``256G``, an ALCF Crux node).
+     - Size of a node: physical cores and memory, e.g. ``128`` and ``256G``.
+       Needed when ``tasks_per_node`` is not given; the cores also spread the
+       slots over a node. No default: give them, or a ``site``.
    * - ``launcher``
-     - Launcher template with the fields ``{mpiexec}``, ``{ntasks}``,
-       ``{ppn}``, ``{depth}`` and ``{nodes}``. The default is ALCF's Cray
-       PALS ``mpiexec``:
-       ``{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``.
-       ``{mpiexec}`` is the system's ``mpiexec`` (see below).
-       ``{depth}`` is the number of cores per slot: the cores of a node
-       divided evenly between the slots, but at least the cores per task.
-       For Open MPI, e.g., use ``mpirun -np {ntasks} --map-by ppr:{ppn}:node``.
+     - ``pals`` (Cray PALS ``mpiexec``, the default), ``mpich`` (MPICH or
+       Intel MPI) or ``openmpi``, or a template with the fields
+       ``{mpiexec}``, ``{ntasks}``, ``{ppn}``, ``{depth}`` and ``{nodes}``.
+       ``pals`` is
+       ``{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``;
+       ``{mpiexec}`` is the system's ``mpiexec`` (see below), ``{depth}``
+       the number of cores per slot: the cores of a node divided evenly
+       between the slots, but at least the cores per task. The ``mpich``
+       and ``openmpi`` templates have not been tested yet.
    * - ``mpiexec_search``
-     - File pattern of the system's ``mpiexec`` (default:
-       ``/opt/cray/pals/*/bin/mpiexec``). Empty: use the ``mpiexec`` in
-       ``PATH``.
+     - File pattern of the system's ``mpiexec`` (default with ``pals``:
+       ``/opt/cray/pals/*/bin/mpiexec``; with other launchers: none). Empty:
+       use the ``mpiexec`` in ``PATH``.
    * - ``place``
      - Value of ``-l place=`` (default: ``scatter``).
    * - ``export_env``
@@ -163,8 +191,8 @@ using it fails with ``An unrecognized option was included on the mpiexec
 command line: --ppn``.
 
 The job scripts therefore look for the system's ``mpiexec`` when they start,
-with the file pattern ``mpiexec_search`` (by default Cray PALS' on ALCF
-systems, ``/opt/cray/pals/*/bin/mpiexec``). If several versions are
+with the file pattern ``mpiexec_search`` (with the ``pals`` launcher by
+default Cray PALS', ``/opt/cray/pals/*/bin/mpiexec``). If several versions are
 installed, the latest one is used, so the scripts keep working after a
 system update. If none is found, they use the ``mpiexec`` in ``PATH``.
 
@@ -277,27 +305,27 @@ end. Summarize them with:
 
 .. code-block:: bash
 
-    python -m posydon.CLI.schedulers.task_stats <directory> --cpus-per-task 4
+    python -m posydon.CLI.schedulers.task_stats <directory> --cpus-per-task 4 --site crux
 
 which prints the numbers of finished, failed and unfinished tasks, the
 distribution of run times and peak memory, and a suggested ``tasks_per_node``
-for the measured peak memory.
+for the measured peak memory (on other systems give the node size with
+``--cores-per-node`` and ``--memory-per-node`` instead of ``--site``).
 
 
 ALCF Crux examples
 ------------------
 
 Population synthesis, e.g. 1 million binaries per metallicity in 56 tasks
-on one node (each task needs about 3.6 GB):
+on one node (each task needs up to about 3.8 GB; ``--mem_per_cpu 4.5G``
+gives 56 tasks per node):
 
 .. code-block:: bash
 
-    posydon-popsyn setup population_params.ini --job_array 56 \
+    posydon-popsyn setup population_params.ini --job_array 56 --mem_per_cpu 4.5G \
         --scheduler pbs --queue workq-route --account <PROJECT> \
-        --scheduler_option select=system=crux \
-        --scheduler_option filesystems=home:eagle \
-        --scheduler_option tasks_per_node=56 \
-        --walltime 04:00:00 --merge_walltime 06:00:00
+        --scheduler_option site=crux \
+        --walltime 04:00:00 --merge_walltime 02:00:00
     ./pbs_submit.sh
 
 Run populations from a directory on Eagle rather than from your home
@@ -311,17 +339,19 @@ in the grid ini file:
     [pbs]
     number_of_nodes=1
     number_of_mpi_tasks=1
-    number_of_cpus_per_task=2
+    ; 64 runs with 4 threads per node: both hardware threads of every core
+    number_of_cpus_per_task=4
     job_array=True
-    partition=workq-route
+    partition=preemptable
     account={PROJECT}
-    walltime='24:00:00'
+    walltime='72:00:00'
     email={YOUR_EMAIL_ADDRESS}
-    ; PBS options: 64 runs with 2 threads per node, 20 nodes per job
-    select=system=crux
-    filesystems=home:eagle
+    site=crux
     tasks_per_node=64
-    max_nodes=20
+    ; about 500 grid points per node
+    max_nodes=8
+    ; rerun the job if it is preempted
+    rerunnable=True
     ; optional: record run times and memory per grid point
     task_stats=stats
 
@@ -344,14 +374,31 @@ Post-processing pipeline, in the ``[account]`` section:
         MAILTYPE = 'FAIL'
         EMAIL = 'me@university.edu'
         SCHEDULER = 'pbs'
-        SELECT = 'system=crux'
-        FILESYSTEMS = 'home:eagle'
+        SITE = 'crux'
 
 .. note::
 
     On ALCF Crux, ``workq`` jobs are limited to 24 hours, so MESA runs that
     need longer will not finish within a single job. The ``preemptable`` queue
     allows 72 hours, with the risks described above.
+
+
+Other PBS systems
+-----------------
+
+On a PBS system without a ``site`` entry, give the node size and, if it is
+not Cray PALS, the MPI launcher, e.g. for nodes with 64 cores and 512 GB
+and MPICH:
+
+.. code-block:: bash
+
+    --scheduler_option cores_per_node=64 --scheduler_option memory_per_node=512G \
+    --scheduler_option launcher=mpich
+
+With ``chunk_resources`` (the default), the jobs request the cores, ranks and
+memory they use, e.g. ``#PBS -l select=2:ncpus=64:mpiprocs=64:mem=256gb``, so
+they also work where nodes are shared between jobs. A system used often can
+get its own entry in ``SITES`` in ``posydon/CLI/schedulers/pbs.py``.
 
 
 Adding a scheduler

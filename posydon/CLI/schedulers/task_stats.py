@@ -27,6 +27,7 @@ import statistics
 import sys
 import time
 
+from posydon.CLI.schedulers.pbs import SITES
 from posydon.CLI.schedulers.utils import memory_to_gb
 
 STATS_FIELDS = ('event', 'job_id', 'task_id', 'rank', 'host', 'time',
@@ -171,8 +172,8 @@ def summarize(tasks):
     return summary
 
 
-def suggest_tasks_per_node(max_rss_kb, memory_per_node='256G',
-                           cores_per_node=128, cpus_per_task=1, safety=1.3):
+def suggest_tasks_per_node(max_rss_kb, memory_per_node, cores_per_node,
+                           cpus_per_task=1, safety=1.3):
     """Tasks per node fitting the largest measured peak memory.
 
     Parameters
@@ -206,9 +207,10 @@ def _hms(seconds):
     return f"{seconds // 3600}:{seconds % 3600 // 60:02d}:{seconds % 60:02d}"
 
 
-def format_summary(summary, memory_per_node='256G', cores_per_node=128,
+def format_summary(summary, memory_per_node=None, cores_per_node=None,
                    cpus_per_task=1, safety=1.3):
-    """Human readable summary (see `summarize`)."""
+    """Human readable summary (see `summarize`). The suggested tasks per
+    node needs the size of a node (`memory_per_node`, `cores_per_node`)."""
     lines = [f"tasks: {summary['tasks']}  finished: {summary['finished']}  "
              f"failed: {summary['failed']}  "
              f"unfinished: {summary['unfinished']}"]
@@ -223,10 +225,16 @@ def format_summary(summary, memory_per_node='256G', cores_per_node=128,
         lines.append(f"peak memory (GB): min {rss['min'] * to_gb:.2f}  "
                      f"median {rss['median'] * to_gb:.2f}  "
                      f"max {rss['max'] * to_gb:.2f}")
-        lines.append("suggested tasks_per_node: " + str(suggest_tasks_per_node(
-            rss['max'], memory_per_node, cores_per_node, cpus_per_task,
-            safety)) + f" (node: {cores_per_node} cores, {memory_per_node}; "
-            f"{cpus_per_task} core(s) per task; peak x {safety})")
+        if memory_per_node is None or cores_per_node is None:
+            lines.append("suggested tasks_per_node: give the size of a node "
+                         "(--site, or --cores-per-node and "
+                         "--memory-per-node)")
+        else:
+            lines.append("suggested tasks_per_node: " + str(
+                suggest_tasks_per_node(rss['max'], memory_per_node,
+                                       cores_per_node, cpus_per_task, safety))
+                + f" (node: {cores_per_node} cores, {memory_per_node}; "
+                f"{cpus_per_task} core(s) per task; peak x {safety})")
     return "\n".join(lines)
 
 
@@ -237,12 +245,20 @@ def main(argv=None):
         description='Summarize the per-task statistics of packed array jobs.')
     parser.add_argument('directory', help='statistics directory')
     parser.add_argument('--job', default=None, help='only this job ID')
-    parser.add_argument('--memory-per-node', default='256G')
-    parser.add_argument('--cores-per-node', type=int, default=128)
+    parser.add_argument('--site', default=None, choices=sorted(SITES),
+                        help='known system giving the size of a node')
+    parser.add_argument('--memory-per-node', default=None,
+                        help='memory of a node, e.g. 256G')
+    parser.add_argument('--cores-per-node', type=int, default=None)
     parser.add_argument('--cpus-per-task', type=int, default=1)
     parser.add_argument('--safety', type=float, default=1.3,
                         help='factor applied to the peak memory')
     args = parser.parse_args(argv)
+    site = SITES.get(args.site, {})
+    if args.memory_per_node is None:
+        args.memory_per_node = site.get('memory_per_node')
+    if args.cores_per_node is None:
+        args.cores_per_node = site.get('cores_per_node')
     tasks = read_stats(args.directory, job_id=args.job)
     if not tasks:
         print(f"No task statistics found in {args.directory}",

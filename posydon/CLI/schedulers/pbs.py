@@ -15,6 +15,10 @@ left.
 
 The ranks are spread evenly over the cores of a node (`--depth`), e.g. 56
 single-core tasks get 2 cores each, using both sockets of a node.
+
+Nothing here assumes a particular system: the size of a node, the MPI
+launcher and site specific resources are options. `site=<name>` sets them for
+a known system at once (see `SITES`, e.g. "crux" for ALCF Crux).
 """
 
 __authors__ = [
@@ -34,14 +38,42 @@ from posydon.CLI.schedulers.utils import (
     walltime_to_seconds,
 )
 
-# Default launcher: Cray PALS mpiexec as used on ALCF systems.
-DEFAULT_LAUNCHER = ("{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} "
-                    "--cpu-bind depth")
+# Launcher templates by name. {mpiexec} is the mpiexec found by the job
+# script (see `mpiexec_search`), {ntasks} the number of ranks, {ppn} the ranks
+# per node, {depth} the cores per rank and {nodes} the number of nodes.
+LAUNCHERS = {
+    # Cray PALS mpiexec (e.g. ALCF Crux, Polaris)
+    'pals': ("{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} "
+             "--cpu-bind depth"),
+    # MPICH / Intel MPI (Hydra process manager)
+    'mpich': "{mpiexec} -n {ntasks} -ppn {ppn} -bind-to core:{depth}",
+    # Open MPI
+    'openmpi': ("{mpiexec} -np {ntasks} --map-by ppr:{ppn}:node:PE={depth} "
+                "--bind-to core"),
+}
+DEFAULT_LAUNCHER = 'pals'
 
-# Where job scripts look for the system's mpiexec (Cray PALS on ALCF
-# systems). Python environments often bring their own MPI (e.g. Open MPI
-# with mpi4py from conda), whose mpiexec would otherwise come first in PATH.
-DEFAULT_MPIEXEC_SEARCH = '/opt/cray/pals/*/bin/mpiexec'
+# Where the job scripts look for Cray PALS' mpiexec (used with the "pals"
+# launcher unless `mpiexec_search` is given). Python environments often bring
+# their own MPI (e.g. Open MPI with mpi4py from conda), whose mpiexec would
+# otherwise come first in PATH.
+PALS_MPIEXEC_SEARCH = '/opt/cray/pals/*/bin/mpiexec'
+
+# Settings of known systems, used with the option `site=<name>`. Options
+# given explicitly take precedence.
+SITES = {
+    # ALCF Crux: whole nodes of 2x AMD EPYC 7742 (128 cores, 256 GB)
+    'crux': {
+        'cores_per_node': 128,
+        'memory_per_node': '256G',
+        'select': 'system=crux',
+        'filesystems': 'home:eagle',
+        'launcher': 'pals',
+        'mpiexec_search': PALS_MPIEXEC_SEARCH,
+        # ALCF allocates whole nodes; no per-chunk cores or memory requested
+        'chunk_resources': False,
+    },
+}
 
 # Shell variable holding the mpiexec found in the job script
 MPIEXEC_VARIABLE = 'POSYDON_MPIEXEC'
@@ -95,9 +127,17 @@ class PBSScheduler(Scheduler):
 
     Options
     -------
+    site : str
+        Name of a known system (see `SITES`, e.g. "crux") whose settings
+        (node size, launcher, resources) are used for the options not given.
     select : str
         Additional resources of each chunk in "-l select=N:...", e.g.
         "system=crux".
+    chunk_resources : bool
+        Request the cores ("ncpus"), MPI ranks ("mpiprocs") and, if known,
+        memory ("mem") of each chunk in "-l select", as needed on systems
+        that share nodes between jobs (default: True; False for sites that
+        allocate whole nodes, e.g. "crux").
     filesystems : str
         Value of "-l filesystems=" (required at ALCF, e.g. "home:eagle").
     place : str
@@ -109,19 +149,21 @@ class PBSScheduler(Scheduler):
         Maximum number of nodes of an array job; tasks beyond the available
         slots run one after another.
     cores_per_node, memory_per_node : int, str
-        Size of a node, used for the default `tasks_per_node` (default: 128
-        cores and 256G, an ALCF Crux node).
+        Size of a node (physical cores, memory), e.g. 128 and "256G". Needed
+        to work out `tasks_per_node` when it is not given; the cores also
+        spread the ranks over a node. No default: give them, or a `site`.
     launcher : str
-        Launcher template with the fields {mpiexec}, {ntasks}, {ppn},
-        {depth} and {nodes} (default: Cray PALS mpiexec). {mpiexec} is the
-        mpiexec found with `mpiexec_search`. {depth} is the number of cores
-        per rank: the cores of a node divided evenly between its ranks, but
-        at least the cores per task.
+        "pals" (Cray PALS mpiexec, the default), "mpich" (MPICH or Intel
+        MPI) or "openmpi", or a template with the fields {mpiexec},
+        {ntasks}, {ppn}, {depth} and {nodes}. {mpiexec} is the mpiexec found
+        with `mpiexec_search`. {depth} is the number of cores per rank: the
+        cores of a node divided evenly between its ranks, but at least the
+        cores per task.
     mpiexec_search : str
         File pattern the job script uses to find the system's mpiexec when
         it starts; the latest version found is used, otherwise the mpiexec
-        in PATH (default: "/opt/cray/pals/*/bin/mpiexec"; empty: always the
-        mpiexec in PATH).
+        in PATH (default: Cray PALS' "/opt/cray/pals/*/bin/mpiexec" with
+        the "pals" launcher; empty: always the mpiexec in PATH).
     export_env : bool
         Export the environment of qsub to the job ("-V"), as SLURM does by
         default (default: True).
@@ -146,16 +188,18 @@ class PBSScheduler(Scheduler):
     extension = 'pbs'
     submit_program = 'qsub'
     options = {
+        'site': (str, None, "known system whose settings to use"),
         'select': (str, None, "additional resources of each chunk"),
+        'chunk_resources': (bool, True, "request cores, ranks and memory "
+                            "of each chunk"),
         'filesystems': (str, None, "filesystems needed by the job"),
         'place': (str, 'scatter', "placement of the chunks"),
         'tasks_per_node': (int, None, "array tasks per node"),
         'max_nodes': (int, None, "maximum number of nodes of array jobs"),
-        'cores_per_node': (int, 128, "cores of a node"),
-        'memory_per_node': (str, '256G', "memory of a node"),
-        'launcher': (str, DEFAULT_LAUNCHER, "launcher template"),
-        'mpiexec_search': (str, DEFAULT_MPIEXEC_SEARCH,
-                           "file pattern of the system's mpiexec"),
+        'cores_per_node': (int, None, "cores of a node"),
+        'memory_per_node': (str, None, "memory of a node"),
+        'launcher': (str, DEFAULT_LAUNCHER, "launcher name or template"),
+        'mpiexec_search': (str, None, "file pattern of the system's mpiexec"),
         'export_env': (bool, True, "export the environment of qsub (-V)"),
         'rerunnable': (bool, None, "rerun the job after e.g. preemption"),
         'task_stats': (str, None, "directory for per-task statistics"),
@@ -166,6 +210,28 @@ class PBSScheduler(Scheduler):
 
     def __init__(self, **options):
         super().__init__(**options)
+        site = self.settings['site']
+        if site is not None:
+            site = str(site).strip().strip("'\"").lower()
+            if site not in SITES:
+                raise ValueError(f"Unknown site '{site}'; known sites: "
+                                 f"{sorted(SITES)}.")
+            self.settings['site'] = site
+            given = {key.lower() for key, value in options.items()
+                     if value is not None}
+            for key, value in SITES[site].items():
+                if key not in given:
+                    self.settings[key] = value
+        launcher = str(self.settings['launcher']).strip()
+        if '{' not in launcher:
+            if launcher.lower() not in LAUNCHERS:
+                raise ValueError(f"launcher must be one of {sorted(LAUNCHERS)}"
+                                 f" or a template, not '{launcher}'.")
+            launcher = LAUNCHERS[launcher.lower()]
+        self.settings['launcher'] = launcher
+        if self.settings['mpiexec_search'] is None:
+            self.settings['mpiexec_search'] = (
+                PALS_MPIEXEC_SEARCH if launcher == LAUNCHERS['pals'] else '')
         self.settings['task_order'] = str(self.settings['task_order']).lower()
         if self.settings['task_order'] not in TASK_ORDERS:
             raise ValueError(f"task_order must be one of {TASK_ORDERS}, not "
@@ -176,6 +242,15 @@ class PBSScheduler(Scheduler):
         if self.settings['tasks_per_node'] is not None:
             return max(int(self.settings['tasks_per_node']), 1)
         cpus = max(int(job.cpus_per_task or 1), 1)
+        needed = ['cores_per_node']
+        if job.mem_per_cpu is not None:
+            needed.append('memory_per_node')
+        missing = [key for key in needed if self.settings[key] is None]
+        if missing:
+            raise ValueError(
+                "The PBS scheduler needs the size of a node to pack array "
+                f"tasks onto nodes: give {' and '.join(missing)}, a site "
+                f"(known: {sorted(SITES)}), or tasks_per_node.")
         n_tasks = self.settings['cores_per_node'] // cpus
         if job.mem_per_cpu is not None:
             mem_per_task = memory_to_gb(job.mem_per_cpu) * cpus
@@ -198,11 +273,21 @@ class PBSScheduler(Scheduler):
 
     def directives(self, job):
         """#PBS lines for `job`."""
+        cpus = max(int(job.cpus_per_task or 1), 1)
         if job.array is not None:
-            nodes = self.array_layout(job)[2]
+            _, ranks, nodes = self.array_layout(job)
+            cores = ranks * self.depth(job, ranks)
+            mem_cores = ranks * cpus
         else:
             nodes = job.nodes or 1
+            ranks = max(int(job.tasks_per_node or 1), 1)
+            cores = mem_cores = ranks * cpus
         select = f"{int(nodes)}"
+        if self.settings['chunk_resources']:
+            select += f":ncpus={cores}:mpiprocs={ranks}"
+            if job.mem_per_cpu is not None:
+                mem = math.ceil(memory_to_gb(job.mem_per_cpu) * mem_cores)
+                select += f":mem={mem}gb"
         if self.settings['select']:
             select += ':' + self.settings['select'].lstrip(':')
         d = [f"-N {pbs_job_name(job.name)}", f"-l select={select}"]
@@ -268,6 +353,8 @@ class PBSScheduler(Scheduler):
         """Cores per rank: the cores of a node divided evenly between `ppn`
         ranks, but at least the cores per task."""
         cpus = max(int(job.cpus_per_task or 1), 1)
+        if self.settings['cores_per_node'] is None:
+            return cpus
         return max(cpus, self.settings['cores_per_node'] // max(ppn, 1))
 
     def array_lines(self, job):

@@ -9,7 +9,9 @@ import pytest
 import posydon.CLI.schedulers.pbs as totest
 from posydon.CLI.schedulers.base import ArraySpec, JobSpec
 
-CRUX = dict(select="system=crux", filesystems="home:eagle")
+CRUX = dict(site="crux")
+# a Crux-sized node without the site's other settings
+NODE = dict(cores_per_node=128, memory_per_node="256G", chunk_resources=False)
 SEARCH = ("POSYDON_MPIEXEC=$(ls /opt/cray/pals/*/bin/mpiexec 2>/dev/null "
           "| sort -V | tail -n 1)")
 MPIEXEC = '"${POSYDON_MPIEXEC:-mpiexec}"'
@@ -34,7 +36,7 @@ class TestHelpers:
 class TestTasksPerNode:
 
     def test_defaults(self):
-        scheduler = totest.PBSScheduler()
+        scheduler = totest.PBSScheduler(**NODE)
         assert scheduler.tasks_per_node(JobSpec(name="a")) == 128
         assert scheduler.tasks_per_node(
             JobSpec(name="a", cpus_per_task=4)) == 32
@@ -57,7 +59,7 @@ class TestTasksPerNode:
             JobSpec(name="a", mem_per_cpu="4G")) == 32
 
     def test_array_layout(self):
-        scheduler = totest.PBSScheduler()
+        scheduler = totest.PBSScheduler(**NODE)
         job = JobSpec(name="a", mem_per_cpu="9G",
                       array=ArraySpec(command="c", n_tasks=50))
         assert scheduler.array_layout(job) == (50, 28, 2)
@@ -65,10 +67,10 @@ class TestTasksPerNode:
         assert scheduler.array_layout(job) == (10, 10, 1)
         job = JobSpec(name="a", cpus_per_task=4, mem_per_cpu="4G",
                       array=ArraySpec(command="c", n_tasks=1000))
-        assert totest.PBSScheduler(max_nodes=4).array_layout(job) == \
-            (64, 16, 4)
-        assert totest.PBSScheduler(max_nodes=0).array_layout(job) == \
-            (16, 16, 1)
+        assert totest.PBSScheduler(max_nodes=4, **NODE).array_layout(job) \
+            == (64, 16, 4)
+        assert totest.PBSScheduler(max_nodes=0, **NODE).array_layout(job) \
+            == (16, 16, 1)
 
 
 class TestPBSDirectives:
@@ -90,7 +92,8 @@ class TestPBSDirectives:
             assert "#" not in line[1:]
 
     def test_minimal_directives(self):
-        scheduler = totest.PBSScheduler(place="", export_env="no")
+        scheduler = totest.PBSScheduler(place="", export_env="no",
+                                        chunk_resources=False)
         assert scheduler.directives(JobSpec(name="a", email="x")) == [
             "#PBS -N a", "#PBS -l select=1", "#PBS -j oe"]
 
@@ -114,9 +117,9 @@ class TestPBSNewOptions:
 
     def test_task_stats(self):
         job = JobSpec(name="a", array=ArraySpec(command="run", n_tasks=2))
-        assert "--stats stats/run1 --" in \
-            totest.PBSScheduler(task_stats="stats/run1").body(job)[-1]
-        assert "--stats" not in totest.PBSScheduler().body(job)[-1]
+        assert "--stats stats/run1 --" in totest.PBSScheduler(
+            task_stats="stats/run1", **NODE).body(job)[-1]
+        assert "--stats" not in totest.PBSScheduler(**NODE).body(job)[-1]
 
 
 class TestPBSWorkQueue:
@@ -156,7 +159,7 @@ class TestPBSWorkQueue:
         (56, 1, 2), (28, 1, 4), (64, 2, 2), (32, 4, 4), (16, 4, 8),
         (128, 1, 1), (64, 4, 4)])
     def test_depth(self, ppn, cpus, depth):
-        scheduler = totest.PBSScheduler(tasks_per_node=ppn)
+        scheduler = totest.PBSScheduler(tasks_per_node=ppn, cores_per_node=128)
         assert scheduler.depth(JobSpec(name="a", cpus_per_task=cpus),
                                ppn) == depth
         lines = scheduler.body(self.grid_job(ppn, cpus))
@@ -169,7 +172,7 @@ class TestPBSWorkQueue:
 class TestPBSBody:
 
     def test_array_body(self):
-        scheduler = totest.PBSScheduler()
+        scheduler = totest.PBSScheduler(**NODE)
         job = JobSpec(name="a", walltime="1:00:00", mem_per_cpu="9G",
                       setup=["export A={job_id}"],
                       array=ArraySpec(
@@ -190,7 +193,7 @@ class TestPBSBody:
 
     def test_rescue_body(self):
         scheduler = totest.PBSScheduler(
-            launcher="srun -n {ntasks} -N {nodes} -c {depth}")
+            launcher="srun -n {ntasks} -N {nodes} -c {depth}", **NODE)
         job = JobSpec(name="a", cpus_per_task=4, array=ArraySpec(
             command="run", task_ids=[7, 3], task_count=10, launched=False))
         assert scheduler.body(job)[-1] == (
@@ -258,7 +261,7 @@ class TestFindMpiexec:
         return JobSpec(name="a", array=ArraySpec(command="run", n_tasks=2))
 
     def test_search_line_only_when_used(self):
-        lines = totest.PBSScheduler().body(self.array_job())
+        lines = totest.PBSScheduler(**NODE).body(self.array_job())
         assert lines[1] == SEARCH
         assert lines[-1].startswith(MPIEXEC + " -n 2 ")
         # MPI job using the launcher in its command (e.g. MESA grids)
@@ -270,18 +273,21 @@ class TestFindMpiexec:
         assert SEARCH not in scheduler.body(JobSpec(name="a",
                                                     commands=["echo"]))
         explicit = totest.PBSScheduler(
-            launcher="/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn}")
+            launcher="/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn}",
+            **NODE)
         lines = explicit.body(self.array_job())
         assert SEARCH not in lines
         assert lines[-1].startswith("/opt/cray/pals/1.8/bin/mpiexec -n 2 ")
 
     def test_no_search(self):
-        lines = totest.PBSScheduler(mpiexec_search="").body(self.array_job())
+        lines = totest.PBSScheduler(mpiexec_search="", **NODE).body(
+            self.array_job())
         assert not any("POSYDON_MPIEXEC" in line for line in lines)
         assert lines[-1].startswith("mpiexec -n 2 ")
 
     def test_custom_search(self):
-        scheduler = totest.PBSScheduler(mpiexec_search="/sw/mpi/*/mpiexec")
+        scheduler = totest.PBSScheduler(mpiexec_search="/sw/mpi/*/mpiexec",
+                                        **NODE)
         assert scheduler.body(self.array_job())[1] == (
             "POSYDON_MPIEXEC=$(ls /sw/mpi/*/mpiexec 2>/dev/null | sort -V "
             "| tail -n 1)")
@@ -314,3 +320,93 @@ class TestFindMpiexec:
                  f"pals-{version}")
         assert run() == "pals-1.10"       # latest version, not the last
                                           # in alphabetical order
+
+
+class TestSitesAndPortability:
+
+    def test_crux_site(self):
+        scheduler = totest.PBSScheduler(site=" 'CRUX' ")
+        settings = scheduler.settings
+        assert settings['site'] == "crux"
+        assert (settings['cores_per_node'], settings['memory_per_node']) == \
+            (128, "256G")
+        assert (settings['select'], settings['filesystems']) == \
+            ("system=crux", "home:eagle")
+        assert settings['chunk_resources'] is False
+        assert settings['mpiexec_search'] == totest.PALS_MPIEXEC_SEARCH
+        job = JobSpec(name="a", mem_per_cpu="4.5G",
+                      array=ArraySpec(command="c", n_tasks=56))
+        assert "#PBS -l select=1:system=crux" in scheduler.directives(job)
+        assert "--ppn 56 --depth 2 " in scheduler.body(job)[-1]
+
+    def test_explicit_options_win(self):
+        scheduler = totest.PBSScheduler(site="crux", cores_per_node=64,
+                                        select="system=crux:foo=1")
+        assert scheduler.settings['cores_per_node'] == 64
+        assert scheduler.settings['select'] == "system=crux:foo=1"
+        assert scheduler.settings['memory_per_node'] == "256G"
+
+    def test_unknown_site(self):
+        with pytest.raises(ValueError, match="Unknown site 'nowhere'"):
+            totest.PBSScheduler(site="nowhere")
+
+    def test_node_size_needed(self):
+        job = JobSpec(name="a", array=ArraySpec(command="c", n_tasks=4))
+        with pytest.raises(ValueError, match="give cores_per_node, a site"):
+            totest.PBSScheduler().body(job)
+        job.mem_per_cpu = "4G"
+        with pytest.raises(ValueError, match="give memory_per_node, a site"):
+            totest.PBSScheduler(cores_per_node=64).body(job)
+        with pytest.raises(ValueError, match="cores_per_node and memory"):
+            totest.PBSScheduler().body(job)
+        # explicit tasks per node: no node size needed, no spreading
+        lines = totest.PBSScheduler(tasks_per_node=4).body(job)
+        assert "-n 4 --ppn 4 --depth 1 " in lines[-1]
+
+    def test_chunk_resources(self):
+        scheduler = totest.PBSScheduler(cores_per_node=64,
+                                        memory_per_node="512G",
+                                        select="model=x")
+        # array job: 64 single-core tasks with 4 GB each per node
+        job = JobSpec(name="a", mem_per_cpu="4G",
+                      array=ArraySpec(command="c", n_tasks=100))
+        assert "#PBS -l select=2:ncpus=64:mpiprocs=64:mem=256gb:model=x" in \
+            scheduler.directives(job)
+        # spread ranks: the chunk asks for the cores they are bound to
+        job = JobSpec(name="a", array=ArraySpec(command="c", n_tasks=16))
+        assert "#PBS -l select=1:ncpus=64:mpiprocs=16:model=x" in \
+            scheduler.directives(job)
+        # single job, e.g. a merge or an MPI job
+        job = JobSpec(name="a", nodes=2, tasks_per_node=8, cpus_per_task=2,
+                      mem_per_cpu="1.5G")
+        assert "#PBS -l select=2:ncpus=16:mpiprocs=8:mem=24gb:model=x" in \
+            scheduler.directives(job)
+        assert "#PBS -l select=1:ncpus=1:mpiprocs=1" in \
+            totest.PBSScheduler().directives(JobSpec(name="a"))
+        assert "#PBS -l select=1" in totest.PBSScheduler(
+            chunk_resources=False).directives(JobSpec(name="a"))
+
+    @pytest.mark.parametrize("name, start", [
+        ("pals", '"${POSYDON_MPIEXEC:-mpiexec}" -n 8 --ppn 4 --depth 2 '
+                 '--cpu-bind depth'),
+        ("MPICH", "mpiexec -n 8 -ppn 4 -bind-to core:2"),
+        ("openmpi", "mpiexec -np 8 --map-by ppr:4:node:PE=2 --bind-to core")])
+    def test_launchers(self, name, start):
+        scheduler = totest.PBSScheduler(launcher=name, tasks_per_node=4,
+                                        cores_per_node=8)
+        job = JobSpec(name="a", array=ArraySpec(command="c", n_tasks=8))
+        lines = scheduler.body(job)
+        assert lines[-1].startswith(start + " python -m ")
+        # only the PALS launcher looks for Cray's mpiexec by default
+        assert any("POSYDON_MPIEXEC=" in line for line in lines) == \
+            (name == "pals")
+
+    def test_launcher_search_and_errors(self):
+        scheduler = totest.PBSScheduler(launcher="mpich",
+                                        mpiexec_search="/opt/mpich/*/mpiexec",
+                                        tasks_per_node=2)
+        lines = scheduler.body(JobSpec(name="a", array=ArraySpec(
+            command="c", n_tasks=2)))
+        assert lines[1].startswith("POSYDON_MPIEXEC=$(ls /opt/mpich/*/mpiexec")
+        with pytest.raises(ValueError, match="launcher must be one of"):
+            totest.PBSScheduler(launcher="srun")

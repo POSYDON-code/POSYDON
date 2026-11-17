@@ -1177,8 +1177,7 @@ class TestPBSPopulationRun:
         args.max_concurrent_jobs = None
         args.exclude = None
         args.scheduler = 'pbs'
-        args.scheduler_option = ["select=system=crux",
-                                 "filesystems=home:eagle"]
+        args.scheduler_option = ["site=crux"]
         return args
 
     def test_setup_and_rescue(self, args, tmp_path, monkeypatch):
@@ -1190,6 +1189,7 @@ class TestPBSPopulationRun:
         assert array_script == "1e+00_Zsun_pbs_array.pbs"
         content = open(array_script).read()
         assert "#PBS -l select=2:system=crux" in content
+        assert "#PBS -l filesystems=home:eagle" in content
         assert "--nranks 50 --ntasks 50 --task-count 50" in content
         assert "python ./merge_metallicity.py 1.0" in open(merge_script).read()
         totest.write_run_settings(args, scheduler, path_to_posydon="/p",
