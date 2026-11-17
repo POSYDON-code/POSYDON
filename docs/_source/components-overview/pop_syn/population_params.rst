@@ -17,11 +17,11 @@ This documentation provides a detailed overview of the configuration options ava
 Default values and your own ini file
 ------------------------------------
 
-POSYDON ships a default file, ``posydon/popsyn/population_params_default.ini``,
-which defines every parameter described on this page. Your own
-``population_params.ini`` is read on top of this default file, so it only has
-to contain the parameters you want to change. Every parameter you leave out
-keeps its default value. For example, this is a complete ini file:
+POSYDON ships a default configuration file, ``posydon/popsyn/population_params_default.ini``,
+which defines every parameter described on this page.
+This is loaded in on top of your own population parameter file.
+If you're familiar with MESA, this works in a similar way to the MESA ``inlists``.
+For example, this is a complete ini file:
 
 .. code-block:: ini
 
@@ -39,25 +39,23 @@ keeps its default value. For example, this is a complete ini file:
 The rules for combining the two files are:
 
 * A parameter in your file replaces the default value of that parameter.
-* A list, such as ``only_select_columns`` or ``scalar_names``, is replaced as
-  a whole; it is not appended to the default list.
+* A list, such as ``only_select_columns`` or ``scalar_names``, is replaced completely.
 * A section in your file that changes ``import`` or ``absolute_import`` uses
-  a different class for that step or flow. It then replaces the default
-  section completely, so the settings of the default class are not passed to
-  your class. Only the parameters in your section are used.
+  a different class for that step or flow. As we do not know what parameters your
+  default step needs, no default parameters are passed to your class.
+  You will have to define all the parameters for your class in your configuration file.
 * Sections that only appear in your file, such as a new step, are added.
 
 ``posydon-popsyn setup`` checks that every step used by the flow chart is
 defined, and warns about step sections that are neither used by the flow
-chart nor part of the default file, which usually means a typo in the section
-name.
+chart nor part of the default file.
 
 To read only your own file without the defaults, pass ``use_defaults=False``
 to :func:`~posydon.popsyn.io.simprop_kwargs_from_ini` or
 :func:`~posydon.popsyn.io.binarypop_kwargs_from_ini`.
 
 The same default file also provides the default values of the step classes
-and of :class:`~posydon.popsyn.binarypopulation.BinaryPopulation`, so a step
+and of :class:`~posydon.popsyn.binarypopulation.BinaryPopulation`. As such a step
 created directly in Python has the same defaults as one created from an ini
 file.
 
@@ -65,12 +63,11 @@ Resolved ini file
 ~~~~~~~~~~~~~~~~~
 
 ``posydon-popsyn setup population_params.ini`` writes
-``population_params_resolved.ini`` next to the job scripts. It contains every
-parameter of the run: the defaults combined with your file. The jobs read this
-resolved file without the defaults, so the run does not change if you edit
-your ini file or update POSYDON after the setup. Keep it together with the
-population output as the record of how the population was run. You can also
-write it yourself with :func:`~posydon.popsyn.io.write_resolved_inifile`.
+``population_params_resolved.ini`` next to the job scripts. It contains the
+parameter of the run, which includes the defaults combined with your file.
+The population synthesis jobs read this resolved file directly for the runs.
+Keep it together with the population output as the record of how the population was run.
+You can also write it yourself with :func:`~posydon.popsyn.io.write_resolved_inifile`.
 
 
 Environment Variables

@@ -15,9 +15,8 @@ The initialization of the BinaryPopulation object
 -------------------------------------------------
 
 To create a ``BinaryPopulation`` object, you need to provide a set of parameters that define the population's characteristics.
-The easiest way is to load the parameters from a population ``ini`` file.
-Your file is read on top of the default population ``ini`` file, so it only
-needs the parameters you want to change
+The easiest way to do this is to load the parameters from a population ``ini`` file.
+Your file is read on top of the default population ``ini`` file, so you only need to include the parameters you want to change from the defaults.
 (see :ref:`the configuration guide <pop-params-guide>`):
 
 .. code-block:: ini
