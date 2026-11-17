@@ -44,6 +44,10 @@ The rules for combining the two files are:
   a different class for that step or flow. As we do not know what parameters your
   default step needs, no default parameters are passed to your class.
   You will have to define all the parameters for your class in your configuration file.
+* An ``[extra_hooks]`` section in your file replaces the default hooks completely.
+  Only the hooks listed in your file are loaded, and an empty ``[extra_hooks]``
+  section turns off all hooks. Without an ``[extra_hooks]`` section, the default
+  hooks (``TimingHooks`` and ``StepNamesHooks``) are used.
 * Sections that only appear in your file, such as a new step, are added.
 
 ``posydon-popsyn setup`` checks that every step used by the flow chart is
@@ -840,6 +844,11 @@ Extra Hooks
 It's possible to add custom hooks to the simulation steps.
 A few example hooks are provides: ``TimingHooks`` and ``StepNamesHooks`` (See :ref:`Custom Hooks <custom-hooks>` for more details)
 Each new hook has a unique import number, starting from 1.
+
+Unlike the other sections, ``[extra_hooks]`` is not combined with the default
+file: if your ini file has this section, only the hooks listed in it are
+loaded. To keep a default hook while adding your own, list it in your file as
+well. An empty ``[extra_hooks]`` section turns off all hooks.
 
 .. list-table::
   :widths: 10 80 10

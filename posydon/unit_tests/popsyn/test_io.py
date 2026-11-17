@@ -37,7 +37,7 @@ class TestElements:
                     'parse_inifile', 'simprop_kwargs_from_ini',
                     'binarypop_kwargs_from_ini', 'DEFAULT_INI_PATH',
                     '_new_parser', '_changes_import',
-                    'RESOLVED_INI_SUFFIX', 'resolved_inifile_name',
+                    'RESOLVED_INI_SUFFIX', 'REPLACED_SECTIONS', 'resolved_inifile_name',
                     'write_resolved_inifile',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
@@ -339,6 +339,29 @@ class TestFunctions:
         parser = totest.parse_inifile(same_ini)
         assert parser.get("step_CE", "common_envelope_efficiency") == "0.5"
         assert parser.has_option("step_CE", "prescription")
+
+        # [extra_hooks] in the user inifile replaces the default hooks
+        hooks_ini = os.path.join(tmp_path, "hooks.ini")
+        with open(hooks_ini, "w") as f:
+            f.write("[extra_hooks]\n"
+                    "import_1 = ['posydon.binary_evol.simulationproperties', "
+                    "'TimingHooks']\n"
+                    "absolute_import_1 = None\nkwargs_1 = {}\n")
+        parser = totest.parse_inifile(hooks_ini)
+        assert set(parser["extra_hooks"]) == {"import_1", "absolute_import_1",
+                                              "kwargs_1"}
+        simkwargs = totest.simprop_kwargs_from_ini(hooks_ini)
+        assert [cls.__name__ for cls, _ in simkwargs["extra_hooks"]] == \
+            ["TimingHooks"]
+        # ... an empty [extra_hooks] section turns off all hooks
+        no_hooks_ini = os.path.join(tmp_path, "no_hooks.ini")
+        with open(no_hooks_ini, "w") as f:
+            f.write("[extra_hooks]\n")
+        assert totest.simprop_kwargs_from_ini(no_hooks_ini)["extra_hooks"] \
+            == []
+        # ... and without an [extra_hooks] section the default hooks are used
+        assert set(totest.parse_inifile(user_ini)["extra_hooks"]) == \
+            set(default_parser["extra_hooks"])
 
         # without defaults only the user inifile is read
         parser = totest.parse_inifile(user_ini, use_defaults=False)

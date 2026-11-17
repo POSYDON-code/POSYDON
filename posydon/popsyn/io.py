@@ -349,6 +349,13 @@ def clean_binary_oneline_df(oneline_df, extra_binary_dtypes_user=None,
 
 
 
+# Sections which a user inifile replaces as a whole instead of being stacked
+# on top of the default inifile. In [extra_hooks], the presence of a numbered
+# hook (import_1, import_2, ...) loads it, so merging would keep default hooks
+# that the user left out on purpose.
+REPLACED_SECTIONS = ('extra_hooks',)
+
+
 def _new_parser():
     """Return a ConfigParser which keeps the case of the keys."""
     parser = ConfigParser()
@@ -394,7 +401,10 @@ def parse_inifile(path, verbose=False, use_defaults=True):
         are stacked on top of it. Hence, an inifile only needs to
         contain the values that differ from the defaults. A section
         which changes `import` or `absolute_import`, i.e. which uses
-        another class, replaces the default section instead.
+        another class, replaces the default section instead. The
+        sections in `REPLACED_SECTIONS` (i.e. [extra_hooks]) are always
+        replaced as a whole if the user inifile has them, so only the
+        hooks listed in the user inifile are loaded.
 
     Returns
     -------
@@ -435,11 +445,13 @@ def parse_inifile(path, verbose=False, use_defaults=True):
             user_parser = _new_parser()
             user_parser.read(user_path)
             # a section that swaps in another class does not inherit the
-            # settings of the class it replaces
+            # settings of the class it replaces; the hooks section is
+            # always replaced, so default hooks can be left out
             for section in user_parser.sections():
                 if (parser.has_section(section)
-                        and _changes_import(parser[section],
-                                            user_parser[section])):
+                        and (section in REPLACED_SECTIONS
+                             or _changes_import(parser[section],
+                                                user_parser[section]))):
                     parser.remove_section(section)
             files_read += parser.read(user_path)
     else:
