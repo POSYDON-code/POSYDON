@@ -35,6 +35,8 @@ class TestElements:
                     'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES',
                     'clean_binary_history_df', 'clean_binary_oneline_df',
                     'parse_inifile', 'simprop_kwargs_from_ini',
+                    'simprop_kwargs_from_parser',
+                    'binarypop_kwargs_from_parser',
                     'binarypop_kwargs_from_ini', 'DEFAULT_INI_PATH',
                     '_new_parser', '_changes_import',
                     'RESOLVED_INI_SUFFIX', 'REPLACED_SECTIONS', 'resolved_inifile_name',
@@ -398,6 +400,12 @@ class TestFunctions:
             {s: dict(alone[s]) for s in alone.sections()}
         assert totest.binarypop_kwargs_from_ini(resolved, use_defaults=False) \
             == totest.binarypop_kwargs_from_ini(user_ini)
+
+        # an already parsed inifile gives the same resolved file
+        from_parser = os.path.join(tmp_path, "from_parser.ini")
+        totest.write_resolved_inifile(
+            user_ini, from_parser, parser=totest.parse_inifile(user_ini))
+        assert open(from_parser).read() == open(resolved).read()
 
     def test_short_inifile_gives_full_kwargs(self, monkeypatch, tmp_path):
         monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)

@@ -483,7 +483,7 @@ def resolved_inifile_name(path):
     return stem + RESOLVED_INI_SUFFIX
 
 
-def write_resolved_inifile(path, output_path, verbose=False):
+def write_resolved_inifile(path, output_path, verbose=False, parser=None):
     """Write the complete set of parameters of a run to one inifile.
 
     The given inifile(s) are stacked on top of the default inifile, see
@@ -500,6 +500,9 @@ def write_resolved_inifile(path, output_path, verbose=False):
         Path of the resolved inifile to write.
     verbose : bool
         Print helpful info.
+    parser : ConfigParser or None
+        The result of `parse_inifile(path)`, if it is already available.
+        If None (default), `path` is parsed.
 
     Returns
     -------
@@ -508,7 +511,8 @@ def write_resolved_inifile(path, output_path, verbose=False):
     """
     from posydon import __version__
 
-    parser = parse_inifile(path, verbose=verbose)
+    if parser is None:
+        parser = parse_inifile(path, verbose=verbose)
     sources = [path] if isinstance(path, str) else list(path)
     with open(output_path, 'w') as f:
         f.write(f"# POSYDON version: {__version__}\n")
@@ -550,6 +554,26 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False, use_defaults=True):
         The inifile converted to the kwargs.
     """
     parser = parse_inifile(path, verbose=verbose, use_defaults=use_defaults)
+    return simprop_kwargs_from_parser(parser, only=only)
+
+
+def simprop_kwargs_from_parser(parser, only=None):
+    """Convert a parsed inifile into kwargs for the SimulationProperties class.
+
+    Parameters
+    ---------
+    parser : ConfigParser
+        The parsed inifile, see `parse_inifile`.
+
+    only : str
+        Name of a section to limit getting kwargs from, e.g.,
+        step_SN, step_CE, step_detached, etc.
+
+    Returns
+    -------
+    parser_dict : <class, dict>
+        The inifile converted to the kwargs.
+    """
     parser_dict = {}
     for section in parser:
         # skip default section
@@ -652,7 +676,22 @@ def binarypop_kwargs_from_ini(path, verbose=False, use_defaults=True):
         The inifile converted to the kwargs.
     """
     parser = parse_inifile(path, verbose=verbose, use_defaults=use_defaults)
+    return binarypop_kwargs_from_parser(parser)
 
+
+def binarypop_kwargs_from_parser(parser):
+    """Convert a parsed inifile into kwargs for the BinaryPopulation class.
+
+    Parameters
+    ---------
+    parser : ConfigParser
+        The parsed inifile, see `parse_inifile`.
+
+    Returns
+    -------
+    parser_dict : <class, dict>
+        The inifile converted to the kwargs.
+    """
     # make sure the inifile has all of these sections
     for sect_name in ['BinaryPopulation_options', 'BinaryStar_output',
                       'SingleStar_1_output', 'SingleStar_2_output']:
