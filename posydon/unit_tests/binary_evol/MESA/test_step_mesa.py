@@ -7,9 +7,11 @@ __authors__ = [
 
 # import module which will be tested
 import posydon.binary_evol.MESA.step_mesa as totest
+
 np = totest.np
 
 from types import SimpleNamespace
+
 
 class TestOutputTimes:
     """ Tests for the helper functions relating to 'output_times' rows

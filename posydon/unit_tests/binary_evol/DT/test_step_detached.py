@@ -6,6 +6,7 @@ __authors__ = [
 ]
 
 from types import SimpleNamespace
+
 from pytest import mark
 
 import posydon.binary_evol.DT.step_detached as totest
