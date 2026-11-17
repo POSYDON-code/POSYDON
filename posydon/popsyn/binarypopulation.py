@@ -22,7 +22,8 @@ __authors__ = [
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Max Briel <max.briel@unige.ch>",
     "Matthias Kruckow <Matthias.Kruckow@unige.ch>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 
@@ -151,8 +152,9 @@ class BinaryPopulation:
 
         self.population_properties.max_simulation_time = self.kwargs.get(
             'max_simulation_time')  # years
-        self.population_properties.output_times = self.kwargs.get(
-            'output_times') # years
+        if self.kwargs.get('output_times') is not None:
+            self.population_properties.output_times = self.kwargs.get(
+                'output_times') # years
 
         self.history_verbose = self.kwargs.get("history_verbose", False)
 

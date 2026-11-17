@@ -2,7 +2,8 @@
 """
 
 __authors__ = [
-    "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
+    "Elizabeth Teng <elizabethteng@u.northwestern.edu>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 # import the module which will be tested
@@ -461,6 +462,27 @@ class TestBinaryPopulation:
             max_simulation_time=13.8e9,
             entropy=42)
         assert pop.metallicity == 1.0
+
+    def test_init_output_times(self):
+        sim_prop = SimulationProperties(output_times=[1.0e6, 1.0e7])
+        totest.BinaryPopulation(
+            number_of_binaries=1,
+            population_properties=sim_prop,
+            star_formation='burst',
+            max_simulation_time=13.8e9,
+            output_times=[3.0e6],
+            entropy=42)
+        assert sim_prop.output_times.tolist() == [3.0e6]
+
+    def test_init_without_output_times(self):
+        sim_prop = SimulationProperties(output_times=[1.0e6, 1.0e7])
+        totest.BinaryPopulation(
+            number_of_binaries=1,
+            population_properties=sim_prop,
+            star_formation='burst',
+            max_simulation_time=13.8e9,
+            entropy=42)
+        assert sim_prop.output_times.tolist() == [1.0e6, 1.0e7]
 
     def test_init_mpi_and_jobarray_incompatible(self):
         class FakeComm:

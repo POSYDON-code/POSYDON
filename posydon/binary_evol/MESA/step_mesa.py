@@ -11,6 +11,7 @@ __authors__ = [
     "Nam Tran <tranhn03@gmail.com>",
     "Zepei Xing <Zepei.Xing@unige.ch>",
     "Tassos Fragos <Anastasios.Fragkos@unige.ch>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 
@@ -536,7 +537,8 @@ class MesaGridStep:
         return
 
     def append_output_time_rows(self, binary, times, state_before_step):
-        """ Append rows at requested times inside this step to the history
+        """
+        Append rows at requested times inside this step to the history
         Values taken from NN tracks.
 
         Parameters
@@ -605,7 +607,8 @@ class MesaGridStep:
 
     def update_properties_NN(self, star_1_CO=False, star_2_CO=False,
                              track_interpolation=False, histories=None):
-        """Update properites according to nearest neighbour interpolation.
+        """
+        Update properites according to nearest neighbour interpolation.
 
         Parameters
         ----------

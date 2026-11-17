@@ -11,7 +11,8 @@ __authors__ = [
     "Kyle Akira Rocha <kylerocha2024@u.northwestern.edu>",
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Camille Liotine <cliotine@u.northwestern.edu>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 import time

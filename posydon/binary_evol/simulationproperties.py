@@ -10,7 +10,8 @@ __authors__ = [
     "Jeffrey Andrews <jeffrey.andrews@northwestern.edu>",
     "Simone Bavera <Simone.Bavera@unige.ch>",
     "Nam Tran <tranhn03@gmail.com>",
-    "Seth Gossage <seth.gossage@northwestern.edu>"
+    "Seth Gossage <seth.gossage@northwestern.edu>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 
@@ -248,7 +249,7 @@ class SimulationProperties:
 
     def output_times_between(self, t_start, t_end):
         """
-        Get the output times inside an evolution step (excluding boundary to avoid duplicate rows.
+        Get the output times inside an evolution step (excluding boundary to avoid duplicate rows).
 
         Parameters
         ----------
