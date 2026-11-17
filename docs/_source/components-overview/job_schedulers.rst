@@ -348,8 +348,6 @@ in the grid ini file:
 .. code-block:: ini
 
     [pbs]
-    number_of_nodes=1
-    number_of_mpi_tasks=1
     ; 64 runs with 4 threads per node: both hardware threads of every core
     number_of_cpus_per_task=4
     job_array=True
@@ -373,6 +371,10 @@ in the grid ini file:
     skip_finished_runs=True
     ; stop runs taking longer than this (e.g. with collapsed timesteps)
     max_run_time='48:00:00'
+
+``number_of_nodes`` and ``number_of_mpi_tasks`` are only used without job
+arrays (``job_array=False``) and can be left out here: the size of a packed
+job is set by ``tasks_per_node`` and ``max_nodes``.
 
 Post-processing pipeline, in the ``[account]`` section:
 

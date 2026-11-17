@@ -1037,6 +1037,15 @@ if __name__ == '__main__':
     if run_parameters.get('max_run_time') in (None, '', 'None'):
         run_parameters['max_run_time'] = None
 
+    # nodes and MPI tasks of the job: needed for dynamic grids (one MPI job);
+    # job arrays run one process per grid point
+    for key in ('number_of_nodes', 'number_of_mpi_tasks'):
+        if key not in slurm.keys():
+            if not slurm.get('job_array', False):
+                raise ValueError("Please add {0} to the scheduler section of "
+                                 "the inifile.".format(key))
+            slurm[key] = 1
+
     if ((not os.path.isfile(run_parameters['grid'])) and (not os.path.isdir(run_parameters['grid']))):
         raise ValueError("Supplied grid does not exist, please check your path and try again")
 

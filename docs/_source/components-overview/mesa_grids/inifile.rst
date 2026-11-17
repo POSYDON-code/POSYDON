@@ -46,9 +46,11 @@ PBS) can be added to this section, see :ref:`job_schedulers`.
     [slurm]
 
     ; Number of nodes you would like to request
+    ; (only used without job arrays; may be left out with job_array=True)
     number_of_nodes=1
 
     ; This is the number of processes that will be running MESA simulations
+    ; (only used without job arrays; may be left out with job_array=True)
     number_of_mpi_tasks=1
 
     ; This is the number of cores you will let each MESA simulation use
@@ -88,8 +90,8 @@ PBS) can be added to this section, see :ref:`job_schedulers`.
     =======================  ===========
     Setting name             Description
     =======================  ===========
-    number_of_nodes          The number of nodes each job will request
-    number_of_mpi_tasks      (outdated) The number of parallel processes ganerates by MPI (recommended to not change)
+    number_of_nodes          The number of nodes each job will request (only for `job_array=False`; default for job arrays: 1)
+    number_of_mpi_tasks      (outdated) The number of parallel processes ganerates by MPI (recommended to not change; only for `job_array=False`; default for job arrays: 1)
     number_of_cpus_per_task  The number of CPUs each job will request (in best this should align with the number of threads set for MESA)
     job_array                Set to `True` to run a job array (packed onto nodes on PBS)
     user                     User name
