@@ -38,8 +38,8 @@ POSYDON:
 This section designates all the job scheduler parameters. The section may
 also be called ``[pbs]`` or ``[scheduler]``; the scheduler itself is chosen
 with ``posydon-setup-grid --submission-type``. Options of the scheduler (e.g.
-``exclude`` for SLURM, or ``select`` and ``filesystems`` for PBS) can be added
-to this section, see :ref:`job_schedulers`.
+``exclude`` for SLURM, or ``site``, ``tasks_per_node`` and ``max_nodes`` for
+PBS) can be added to this section, see :ref:`job_schedulers`.
 
 .. code-block:: ini
 

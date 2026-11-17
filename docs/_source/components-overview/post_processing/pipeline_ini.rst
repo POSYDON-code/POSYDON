@@ -60,8 +60,8 @@ example to show the supported key words:
         GROUP = 'GL_S_Astro_POSYDON'
 
 To use another job scheduler than SLURM, e.g. PBS, add
-:samp:`SCHEDULER = 'pbs'` and its options (e.g. :samp:`SELECT` and
-:samp:`FILESYSTEMS`) to this section, see :ref:`job_schedulers`.
+:samp:`SCHEDULER = 'pbs'` and its options (e.g. :samp:`SITE = 'crux'` on
+ALCF Crux) to this section, see :ref:`job_schedulers`.
 
 The last one :samp:`GROUP` is a bit special. If it is set, ownership
 of all the files created by the pipeline will be assigned to :samp:`GROUP`.
