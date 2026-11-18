@@ -32,8 +32,12 @@ from pathlib import Path
 
 import pytest
 from test_setup_grid_baseline import CASES as GOLDEN_CASES
-from test_setup_grid_baseline import inlist_origin  # noqa: F401
-from test_setup_grid_baseline import GRID_COLUMNS, build_ini, make_setup_env
+from test_setup_grid_baseline import (  # noqa: F401
+    GRID_COLUMNS,
+    build_ini,
+    inlist_origin,
+    make_setup_env,
+)
 
 from posydon.grids.setup.build import build_inlists
 from posydon.grids.setup.grid_types import GRID_TYPES

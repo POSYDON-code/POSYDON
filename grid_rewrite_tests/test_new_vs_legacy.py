@@ -16,8 +16,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from test_setup_grid_baseline import LEGACY_SETUP_GRID  # noqa: F401
-from test_setup_grid_baseline import inlist_origin  # noqa: F401
+from test_setup_grid_baseline import LEGACY_SETUP_GRID, inlist_origin  # noqa: F401
 
 from posydon.grids.setup import legacy
 from posydon.grids.setup.config import GridConfig, ScenarioSection
@@ -151,13 +150,14 @@ def test_new_code_leaves_the_clone_clean(home):
 ###############################################################################
 # build.py against construct_static_inlist, for every golden case
 ###############################################################################
-from test_setup_grid_baseline import CASE_IDS
+from test_setup_grid_baseline import CASE_IDS, GRID_COLUMNS, build_ini, make_setup_env
 from test_setup_grid_baseline import CASES as GOLDEN_CASES  # noqa: E402
-from test_setup_grid_baseline import GRID_COLUMNS, build_ini, make_setup_env
 
-from posydon.grids.setup.build import build_inlists  # noqa: E402
-from posydon.grids.setup.build import is_single_star  # noqa: E402
-from posydon.grids.setup.build import output_keys  # noqa: E402
+from posydon.grids.setup.build import (  # noqa: E402
+    build_inlists,
+    is_single_star,
+    output_keys,
+)
 from posydon.grids.setup.grid_types import get_grid_type  # noqa: E402
 from posydon.grids.setup.legacy import read_legacy_config  # noqa: E402
 from posydon.utils import configfile  # noqa: E402
@@ -338,8 +338,8 @@ def read_inlist_text(text):
 ###############################################################################
 # extras.py against make_executables and the column-list copy of main()
 ###############################################################################
-from posydon.grids.setup.extras import column_list_sources  # noqa: E402
-from posydon.grids.setup.extras import (
+from posydon.grids.setup.extras import (  # noqa: E402
+    column_list_sources,
     compile_executables,
     keep_highest_extras,
     merge_extras,

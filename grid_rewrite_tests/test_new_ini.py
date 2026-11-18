@@ -36,14 +36,14 @@ from test_release_manifests import (
     REQUIRE_INLIST_REPO,
 )
 from test_setup_grid_baseline import CASES as GOLDEN_CASES
-from test_setup_grid_baseline import inlist_origin  # noqa: F401
-from test_setup_grid_baseline import (
+from test_setup_grid_baseline import (  # noqa: F401
     DATA,
     GRID_COLUMNS,
     GRID_ROWS,
     POSYDON_GRID,
     ROOT,
     build_ini,
+    inlist_origin,
     make_setup_env,
 )
 
