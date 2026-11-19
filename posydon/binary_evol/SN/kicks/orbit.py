@@ -1,8 +1,7 @@
 """Orbit of a binary right after a supernova with a natal kick.
 
-Ported from StepSN.orbital_kick, StepSN.get_combined_tilt and SNCheck on
-main. The functions take and return plain numbers; updating the binary and
-star objects is done by the SN step.
+The functions take and return plain numbers; updating the binary and star
+objects is done by the SN step.
 
 Geometry
 --------

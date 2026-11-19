@@ -1,8 +1,7 @@
 """Natal kicks of stars after their supernova.
 
-Ported from the drawing of the kick in StepSN.orbital_kick and from
-StepSN.generate_kick, StepSN._get_kick_velocity and
-StepSN._get_kick_normalisation on main. The orbit after the kick is
+The kick velocity, its direction and the position of the star in its
+orbit at the moment of the supernova. The orbit after the kick is
 computed in orbit.py.
 """
 
@@ -16,6 +15,11 @@ from posydon.utils.posydonwarning import Pwarn
 # DAVID (2026.09.15): make sure that WDs have 0 kicks.
 
 
+def _not_set(value):
+    """True for a kick quantity that was not set on the star: None or NaN."""
+    return value is None or (np.ndim(value) == 0 and np.isnan(value))
+
+
 def get_kick_prescription(**kwargs):
     """Return the Natal_Kick object for the given SN step settings."""
     return Natal_Kick(**kwargs)
@@ -26,7 +30,7 @@ DEPRECATED_KICK_NORMALISATIONS = ("asym_ej", "linear")
 
 
 def replace_deprecated_kick_normalisation(config):
-    """Return config with a deprecated kick_normalisation replaced, as on main.
+    """Return config with a deprecated kick_normalisation replaced.
 
     A kick_normalisation of 'asym_ej' or 'linear' becomes the
     kick_prescription, and the normalisation is set to 'one'.
@@ -47,10 +51,19 @@ class Kick_Velocity_Base(ABC):
     """Kick velocity before normalisation (option kick_prescription)."""
     def __init__(self,**kwargs):
         self.RNG = kwargs['RNG']
+        self.verbose = kwargs['verbose']
 
-    @abstractmethod
     def __call__(self,star,sigma,mean):
         """Return the kick velocity of the star in km/s."""
+        velocity = self._draw(star,sigma,mean)
+        if self.verbose:
+            print(f"{type(self).__name__}: kick velocity before "
+                  f"normalisation {velocity:.2f} km/s")
+        return velocity
+
+    @abstractmethod
+    def _draw(self,star,sigma,mean):
+        """Draw the kick velocity of the star in km/s."""
         raise NotImplementedError
 
     def __repr__(self):
@@ -63,7 +76,7 @@ class Kick_Velocity_Maxwellian(Kick_Velocity_Base):
     Hobbs, G., Lorimer, D. R., Lyne, A. G., & Kramer, M. (2005), MNRAS, 360,
     974, with sigma = 265 km/s.
     """
-    def __call__(self,star,sigma,mean):
+    def _draw(self,star,sigma,mean):
         # sigma is None only when no kick is drawn, so this is a fallback
         if sigma is None:
             sigma = 265.0
@@ -76,7 +89,7 @@ class Kick_Velocity_LogNormal(Kick_Velocity_Base):
 
     Disberg, P. & Mandel, I. (2025), arXiv:2505.22102.
     """
-    def __call__(self,star,sigma,mean):
+    def _draw(self,star,sigma,mean):
         # sigma is None only when no kick is drawn, so this is a fallback
         if sigma is None:
             sigma = 0.68
@@ -91,7 +104,7 @@ class Kick_Velocity_AsymEj(Kick_Velocity_Base):
 
     Janka, H.-T. (2017), ApJ, 837, 84.
     """
-    def __call__(self,star,sigma,mean):
+    def _draw(self,star,sigma,mean):
         f_kin = 0.1         # fraction of SN explosion energy that is kinetic energy of the gas
         beta = 0.1          # fraction of ejecta mass that is neutrino heated
         epsilon = 1
@@ -109,7 +122,7 @@ class Kick_Velocity_Linear(Kick_Velocity_Base):
     Richards, S. M., Eldridge, J. J., Briel, M. M., Stevance, H. F., &
     Willcox, R. (2022), arXiv:2208.02407.
     """
-    def __call__(self,star,sigma,mean):
+    def _draw(self,star,sigma,mean):
         # DAVID: WHY IS THIS star.co_core_mass_history[-1]-star.mass AND NOT
         # abs(star.mass_history[-1] - M_rembar) AS FOR asym_ej?
         M_ej = star.co_core_mass_history[-1] - star.mass    # ejecta mass
@@ -167,7 +180,8 @@ class Natal_Kick:
     (mean anomaly) are drawn uniformly. Values already set on the star
     (natal_kick_velocity, natal_kick_azimuthal_angle, natal_kick_polar_angle,
     natal_kick_mean_anomaly) are used instead of drawing them, and drawn
-    values are stored on the star, as on main.
+    values are stored on the star. Values that are None or NaN count as not
+    set.
 
     Kicks are only drawn for ECSN, CCSN, PPISN and PISN; WDs get no kick and
     are handled by the SN step. With kick=False the kick velocity is 0 (also
@@ -190,6 +204,7 @@ class Natal_Kick:
         self._normalisation = KICK_NORMALISATIONS[self.kick_normalisation]
         self.kick = kwargs['kick']
         self.no_kick_direct_collapse = kwargs['no_kick_direct_collapse']
+        self.verbose = kwargs['verbose']
         # (sigma, mean) of the kick distribution by SN type / remnant
         self._sigma_mean = {
             "ECSN": (kwargs['sigma_kick_ECSN'], kwargs['mean_kick_ECSN']),
@@ -202,32 +217,40 @@ class Natal_Kick:
 
         v_kick is in km/s, cos_theta is the cosine of the polar angle, and
         phi and mean_anomaly are in radians (see orbit.py for the geometry).
-        Random values are drawn in main's order: velocity, azimuthal angle,
-        polar angle, mean anomaly.
+        Random values are always drawn in the same order: velocity,
+        azimuthal angle, polar angle, mean anomaly.
         """
         if not self.kick:
             star.natal_kick_velocity = 0.0      # no natal kicks at all
-        elif star.natal_kick_velocity is None:
+            source = "kick=False"
+        elif _not_set(star.natal_kick_velocity):
             star.natal_kick_velocity = self._draw_velocity(star)
+            source = "drawn"
+        else:
+            source = "set on the star"
         v_kick = star.natal_kick_velocity
 
-        if star.natal_kick_azimuthal_angle is None:
+        if _not_set(star.natal_kick_azimuthal_angle):
             star.natal_kick_azimuthal_angle = self.RNG.uniform(0, 2 * np.pi)
         phi = star.natal_kick_azimuthal_angle
 
-        if star.natal_kick_polar_angle is None:
+        if _not_set(star.natal_kick_polar_angle):
             cos_theta = self.RNG.uniform(-1, 1)
             star.natal_kick_polar_angle = np.arccos(cos_theta)
         else:
             cos_theta = np.cos(star.natal_kick_polar_angle)
 
-        if star.natal_kick_mean_anomaly is None:
+        if _not_set(star.natal_kick_mean_anomaly):
             star.natal_kick_mean_anomaly = self.RNG.uniform(0, 2 * np.pi)
         elif not isinstance(star.natal_kick_mean_anomaly, float):
             raise ValueError("mean_anomaly must be a single float value."
                              f"\n mean_anomaly = {star.natal_kick_mean_anomaly}")
         mean_anomaly = star.natal_kick_mean_anomaly
 
+        if self.verbose:
+            print(f"Natal_Kick: v_kick={v_kick:.2f} km/s ({source}), polar "
+                  f"angle={star.natal_kick_polar_angle:.3f}, azimuthal "
+                  f"angle={phi:.3f}, mean anomaly={mean_anomaly:.3f}")
         return v_kick, cos_theta, phi, mean_anomaly
 
     def _draw_velocity(self,star):
@@ -236,20 +259,30 @@ class Natal_Kick:
             sigma, mean = self._sigma_mean["ECSN"]
         elif star.SN_type in ("CCSN", "PPISN", "PISN"):
             if star.state == "massless_remnant":
-                return 0.0                  # no kick on a massless object
+                self._report("no kick on a massless remnant")
+                return 0.0
             if star.state not in ("NS", "BH"):
                 raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
             if (self.no_kick_direct_collapse and star.state == "BH"
                     and star.f_fb == 1.0):
-                return 0.0                  # no kick for direct-collapse BHs
+                self._report("no kick for a direct-collapse BH")
+                return 0.0
             sigma, mean = self._sigma_mean[star.state]
         else:
             raise ValueError(f"Natal kicks are only drawn for ECSN, CCSN, "
                              f"PPISN and PISN, not for SN type "
                              f"{star.SN_type!r}.")
         if sigma is None:
+            self._report(f"no kick: sigma is None for this {star.SN_type}")
             return 0.0
-        return self._normalisation(star) * self._velocity(star, sigma, mean)
+        factor = self._normalisation(star)
+        self._report(f"{star.SN_type} {star.state}: sigma={sigma}, "
+                     f"mean={mean}, normalisation factor {factor:.3f}")
+        return factor * self._velocity(star, sigma, mean)
+
+    def _report(self,message):
+        if self.verbose:
+            print(f"Natal_Kick: {message}")
 
     def __repr__(self):
         return (f"Natal_Kick(kick_prescription={self.kick_prescription!r}, "

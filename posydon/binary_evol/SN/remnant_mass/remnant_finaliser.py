@@ -2,8 +2,7 @@
 
 The remnant-mass stage gives (SN_type, m_rembar, f_fb, state); this stage
 updates the star accordingly: a WD, a massless remnant (PISN), or a NS/BH
-with its gravitational mass, spin, disk and ejecta. Ported from
-StepSN.collapse_star on main.
+with its gravitational mass, spin, disk and ejecta.
 """
 
 import numpy as np
@@ -24,7 +23,7 @@ from posydon.utils.posydonwarning import Pwarn
 # Properties kept by a new compact object; all other STARPROPERTIES are reset.
 KEEP_COMPACT_OBJECT = ("state", "mass", "spin", "log_R", "metallicity",
                        "m_disk_accreted", "m_disk_radiated", "co_core_mass")
-# Properties kept by a new WD. log_R is kept, unlike on main (bug 12).
+# Properties kept by a new WD; all other STARPROPERTIES are reset.
 KEEP_WD = ("state", "mass", "spin", "log_R", "he_core_mass", "co_core_mass",
            "m_disk_accreted", "m_disk_radiated", "center_h1", "center_he4",
            "center_c12", "center_n14", "center_o16")
@@ -65,6 +64,8 @@ class Remnant_Finaliser:
             return self._finalise_WD(star,m_rembar)
         elif state=="massless_remnant":
             convert_star_to_massless_remnant(star=star)
+            if self.verbose:
+                print("Remnant_Finaliser: no remnant (massless_remnant)")
             return None
         return self._finalise_compact_object(star,SN_type,m_rembar,state)
 
@@ -79,6 +80,8 @@ class Remnant_Finaliser:
         else:
             star.co_core_mass = 0.0
         reset_star_properties(star,keep=KEEP_WD)
+        if self.verbose:
+            print(f"Remnant_Finaliser: WD of {star.mass:.3f} Msun")
         return None
 
     def _finalise_compact_object(self,star,SN_type,m_rembar,state):
@@ -94,6 +97,10 @@ class Remnant_Finaliser:
         star.metallicity = star.metallicity_history[-1]
         star.log_R = np.log10(CO_radius(star.mass,star.state))
         reset_star_properties(star,keep=KEEP_COMPACT_OBJECT)
+        if self.verbose:
+            spin = "None" if star.spin is None else f"{star.spin:.3f}"
+            print(f"Remnant_Finaliser: {state} of {star.mass:.3f} Msun, spin "
+                  f"{spin}, with {set_spin.__name__}")
         return None
 
     def _gravitational_mass(self,m_rembar):
@@ -105,9 +112,7 @@ class Remnant_Finaliser:
         """The mass decides: a remnant at or above max_NS_mass is a BH.
 
         If the explosion criterion gave a different state, the mass wins,
-        with a warning. On main, an engine BH below max_NS_mass fails the
-        binary (profile path) or becomes a NS (core-mass path); this is
-        pending a check on the grids.
+        with a warning.
         """
         mass_state = "BH" if m_grav >= self.max_NS_mass else "NS"
         if state is not None and state != mass_state:
@@ -147,7 +152,7 @@ class Remnant_Finaliser:
 
     def _spin_from_core_masses(self,star,SN_type,m_rembar,m_grav,state):
         """Without a profile: the BH spin comes from the star's angular momentum."""
-        # ECSNe always use this method (on main this is bug 10)
+        # ECSNe always use this method, even with use_core_masses=False
         if not (self.use_core_masses or SN_type=="ECSN"):
             return False
         star.mass = m_grav
@@ -158,6 +163,9 @@ class Remnant_Finaliser:
             # Eq. 14 of Fryer et al. (2012), in CGS units
             spin = (10**star.log_total_angular_momentum * const.clight
                     / (const.standard_cgrav * (m_grav * const.Msun) ** 2))
+            if spin > 1.0 and self.verbose:
+                print(f"Remnant_Finaliser: spin {spin:.3f} exceeds 1, "
+                      "capped at 1")
             star.spin = min(spin, 1.0)
         else:
             star.spin = 0.0

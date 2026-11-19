@@ -145,8 +145,8 @@ class Patton20_CO_core_models:
     carbon mass fraction and CO core mass (X_C, M_CO) of the models. Calling
     the object returns the quantities of the model(s) matching a CO core: with
     n_neighbors = 1, those of the closest model (outside the grid, of the
-    closest model on its edge). As in v2.4, X_C and M_CO are not rescaled,
-    which only matters for n_neighbors > 1.
+    closest model on its edge). X_C and M_CO are not rescaled, which only
+    matters for n_neighbors > 1.
     """
     def __init__(self, quantities):
         self.n_neighbors = N_NEIGHBORS
@@ -175,12 +175,13 @@ def Couch20_table(turbulence):
 
     A model without explosion energy ('Eexp' = 0) forms a BH, the others a
     NS. The Couch+20 data has no He core masses; they come from the table of
-    Sukhbold et al. (2016) by ZAMS mass ('Mzams'), as in v2.4. Columns:
+    Sukhbold et al. (2016) by ZAMS mass ('Mzams'). Columns:
     'Mzams', 'Eexp', 'He_c_mass' and 'stellar_state' (NS_STATE or BH_STATE).
 
     The rows keep the order of the data file: some models share a He core
     mass (rounded in Sukhbold's table) but not the outcome, and a
-    one-neighbour classifier then takes the first of them, as in v2.4.
+    one-neighbour classifier then takes the first of them, so the order
+    matters.
     The table is shared: do not modify it.
     """
     if turbulence not in COUCH20_TURBULENCE:

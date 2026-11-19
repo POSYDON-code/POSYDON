@@ -55,6 +55,32 @@ def replace_deprecated_mechanism(config):
     new_config.update(replacement)
     return new_config
 
+
+# Mechanisms that are not available, with the settings used instead.
+UNAVAILABLE_MECHANISMS = {
+    "Maltsev+25-engine": {"mechanism": "Patton&Sukhbold20-engine",
+                          "engine": "N20"},
+}
+
+
+def replace_unavailable_mechanism(config):
+    """Return config with an unavailable mechanism replaced by its fallback.
+
+    Configurations with any other mechanism are returned unchanged.
+    """
+    option = config['mechanism']
+    if option not in UNAVAILABLE_MECHANISMS:
+        return config
+    replacement = UNAVAILABLE_MECHANISMS[option]
+    Pwarn(f"mechanism={option!r} (engine={config['engine']!r}) is not "
+          f"available in this version of POSYDON. Using "
+          f"mechanism={replacement['mechanism']!r} with "
+          f"engine={replacement['engine']!r} instead.",
+          "UnsupportedModelWarning")
+    new_config = config.copy()
+    new_config.update(replacement)
+    return new_config
+
 # Possible outcomes of the explosion criteria:
 #   "NS" : successful explosion, creates a neutron star
 #          (Note that this does not mean NSs don't experience fallback)
@@ -68,9 +94,16 @@ class CCSN_check_base(ABC):
         self.mechanism = kwargs['mechanism']
         self.verbose = kwargs['verbose']
 
-    @abstractmethod
     def __call__(self,star):
         """Return one of EXPLOSION_OUTCOMES for a star classified as CCSN."""
+        outcome = self._outcome(star)
+        if self.verbose:
+            print(f"{type(self).__name__}: explosion outcome "
+                  f"{outcome or 'None (the remnant mass decides)'}")
+        return outcome
+
+    @abstractmethod
+    def _outcome(self,star):
         raise NotImplementedError
 
     def __repr__(self):
@@ -85,7 +118,7 @@ class CCSN_check_mass_based(CCSN_check_base):
     its own (Fryer+12, direct collapse). The remnant is a BH if its mass
     exceeds max_NS_mass, and a NS otherwise.
     """
-    def __call__(self,star):
+    def _outcome(self,star):
         return None
 
 
@@ -108,14 +141,21 @@ class CCSN_check_from_tables(CCSN_check_base):
                                                 weights="distance")
         self._classifier.fit(table[["He_c_mass"]].to_numpy(),
                              table["stellar_state"].to_numpy())
+        if self.verbose:
+            print(f"{type(self).__name__}: kNN classifier fitted on "
+                  f"{len(table)} models (engine {self.engine!r}, "
+                  f"n_neighbors={self.n_neighbors})")
 
     @abstractmethod
     def _table(self):
         """Return the models, with columns 'He_c_mass' and 'stellar_state'."""
         raise NotImplementedError
 
-    def __call__(self,star):
+    def _outcome(self,star):
         state = self._classifier.predict([[star.he_core_mass]])[0]
+        if self.verbose:
+            print(f"{type(self).__name__}: He core "
+                  f"{star.he_core_mass:.3f} Msun")
         return "NS" if state == NS_STATE else "BH"
 
     def __repr__(self):
@@ -171,8 +211,8 @@ class CCSN_check_Patton20(CCSN_check_base):
     mass) is mapped onto Patton & Sukhbold's models, and an explodability
     criterion (given by the subclass) judges their pre-supernova structure.
     CO cores below the models (<= 2.5 Msun) explode; those above them
-    (>= 10 Msun) collapse directly into a BH. As in v2.4, M4 and mu4 are
-    recorded on the star.
+    (>= 10 Msun) collapse directly into a BH. M4 and mu4 are recorded on
+    the star.
     """
     M_CO_min = 2.5
     M_CO_max = 10.0
@@ -182,11 +222,18 @@ class CCSN_check_Patton20(CCSN_check_base):
         super().__init__(**kwargs)
         self.approx_at_he_depletion = kwargs['approx_at_he_depletion']
         self._Patton20 = Patton20_CO_core_models(self.quantities)
+        if self.verbose:
+            print(f"{type(self).__name__}: {self._Patton20!r} fitted on the "
+                  "Patton & Sukhbold (2020) models")
 
-    def __call__(self,star):
+    def _outcome(self,star):
         X_C, M_CO = CO_core_at_He_depletion(star, self.approx_at_he_depletion)
         values = self._Patton20(X_C, M_CO)
         star.M4, star.mu4 = values["M4"], values["mu4"]
+        if self.verbose:
+            print(f"{type(self).__name__}: CO core at He depletion "
+                  f"X_C={X_C:.3f}, M_CO={M_CO:.3f} Msun: "
+                  + ", ".join(f"{q}={v:.4f}" for q, v in values.items()))
         if M_CO <= self.M_CO_min:
             return "NS"
         if M_CO >= self.M_CO_max:
@@ -203,7 +250,7 @@ class CCSN_check_Patton20_Ertl16(CCSN_check_Patton20):
     """
     Patton & Sukhbold (2020) CO-core models with the criterion of Ertl et al.
     (2016), using k1 and k2 of the engine calibration given by the option
-    engine (as in v2.4).
+    engine.
     """
     def __init__(self,**kwargs):
         self.engine = kwargs['engine']

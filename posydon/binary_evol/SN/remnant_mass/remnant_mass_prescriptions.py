@@ -65,10 +65,21 @@ class PPISN_Mass_Base(ABC):
     def __init__(self,remnant_mass,**kwargs):
         # the remnant-mass prescription, for PPI prescriptions that need it
         self.remnant_mass = remnant_mass
+        self.verbose = kwargs['verbose']
 
-    @abstractmethod
     def __call__(self,star,explosion):
         """Return the mass left after the pulses, nan if the star is disrupted."""
+        mass = self._compute(star,explosion)
+        if self.verbose:
+            if np.isnan(mass):
+                print(f"{type(self).__name__}: the pulses disrupt the star")
+            else:
+                print(f"{type(self).__name__}: remnant mass limited to "
+                      f"{mass:.3f} Msun")
+        return mass
+
+    @abstractmethod
+    def _compute(self,star,explosion):
         raise NotImplementedError
 
 def PISN_mass_Marchant(star):
@@ -96,7 +107,7 @@ def PISN_mass_Marchant(star):
     )
 
 class PPISN_Mass_Marchant19(PPISN_Mass_Base):
-    def __call__(self,star,explosion):
+    def _compute(self,star,explosion):
         return PISN_mass_Marchant(star)
 
 
@@ -117,8 +128,11 @@ class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
         self.delta_M_PPI_extra_ML = extra if extra is not None else 0.0
         self.conserve_hydrogen_PPI = kwargs['conserve_hydrogen_PPI']
 
-    def __call__(self,star,explosion):
+    def _compute(self,star,explosion):
         delta_M_PPI = self.mass_lost_in_pulses(star)
+        if self.verbose:
+            print(f"{type(self).__name__}: delta_M_PPI={delta_M_PPI:.3f} Msun"
+                  + (" (no pulses)" if delta_M_PPI <= 0.0 else ""))
         if delta_M_PPI <= 0.0:
             # no pulses: nothing limits the CCSN remnant mass
             return self.remnant_mass._m_collapsing(star)
@@ -132,8 +146,8 @@ class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
         stripped_star.mass = m_after_pulses
         stripped_star.he_core_mass = min(star.he_core_mass, m_after_pulses)
         stripped_star.co_core_mass = min(star.co_core_mass, m_after_pulses)
-        # NOTE: uses the explosion outcome of the original star; on main an
-        # engine re-decides for the stripped star (to revisit with engines)
+        # the explosion outcome of the original star also applies to the
+        # stripped star
         m_rembar, _, _ = self.remnant_mass._get_rem_mass_core_collapse(
             stripped_star, explosion)
         if m_rembar < 10.0:
@@ -153,7 +167,7 @@ class PPISN_Mass_constant(PPISN_Mass_Base):
     def __init__(self,remnant_mass,**kwargs):
         super().__init__(remnant_mass,**kwargs)
         self.PISN_mass_cap = float(kwargs['PISN'])
-    def __call__(self,star,explosion):
+    def _compute(self,star,explosion):
         return self.PISN_mass_cap
 
 PPISN_MASS_PRESCRIPTIONS = {
@@ -183,10 +197,18 @@ class Remnant_Mass_Base(ABC):
         """Return (SN_type, m_rembar, f_fb, state) of the remnant.
 
         SN_type can differ from the input: a PPISN candidate whose pulses
-        do not reduce the remnant mass is a CCSN, as on main.
+        do not reduce the remnant mass is a CCSN.
         state is "WD", "NS", "BH", "massless_remnant", or None if it has
         to be decided from the remnant mass.
         """
+        result = self._remnant(star,SN_type,explosion)
+        if self.verbose:
+            new_SN_type, m_rembar, f_fb, state = result
+            print(f"{type(self).__name__}: {new_SN_type}: m_rembar="
+                  f"{m_rembar:.3f} Msun, f_fb={f_fb:.2f}, state {state}")
+        return result
+
+    def _remnant(self,star,SN_type,explosion):
         if SN_type=="WD":
             return (SN_type, *WD_mass(star))
         elif SN_type=="ECSN":
@@ -389,7 +411,7 @@ class Remnant_Mass_Patton20(Remnant_Mass_from_tables):
 
     The NS mass is M4 of the model matching the star's CO core at He
     depletion. CO cores below the models (<= 2.5 Msun) give NSs of
-    1.25 Msun, as in v2.4. BHs form by direct collapse.
+    1.25 Msun. BHs form by direct collapse.
     """
     NS_mass_below_models = 1.25
 

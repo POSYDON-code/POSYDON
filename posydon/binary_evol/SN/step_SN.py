@@ -30,6 +30,7 @@ from posydon.binary_evol.flow_chart import (
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     get_CCSN_prescription,
     replace_deprecated_mechanism,
+    replace_unavailable_mechanism,
 )
 from posydon.binary_evol.SN.explodability.ECSN_prescriptions import (
     get_ECSN_prescription,
@@ -37,6 +38,7 @@ from posydon.binary_evol.SN.explodability.ECSN_prescriptions import (
 from posydon.binary_evol.SN.explodability.PISN_prescriptions import (
     get_PISN_prescription,
 )
+from posydon.binary_evol.SN.interp_collapse import InterpCollapse
 from posydon.binary_evol.SN.kicks.kick_prescriptions import (
     get_kick_prescription,
     replace_deprecated_kick_normalisation,
@@ -93,6 +95,7 @@ class StepSN(object):
         config = self.DEFAULT_KWARGS.copy()
         config.update(kwargs)
         config = replace_deprecated_mechanism(config)
+        config = replace_unavailable_mechanism(config)
         config = replace_deprecated_kick_normalisation(config)
         if config["RNG"] is None:
             config["RNG"] = np.random.default_rng()
@@ -112,6 +115,13 @@ class StepSN(object):
         self._get_remnant_mass = get_remnant_mass_prescription(**config)
         self._update_params = Remnant_Finaliser(**config)
         self._natal_kick = get_kick_prescription(**config)
+        # fails here, at setup, if no SN model matches the settings
+        self._interp_collapse = (InterpCollapse(**config)
+                                 if config['use_interp_values'] else None)
+        if self.verbose:
+            print(f"StepSN: {self._SN_type_checks[0]!r}; {self._PISN_check!r};"
+                  f" {self._explosion_criterion!r};"
+                  f" {self._get_remnant_mass!r}; {self._natal_kick!r}")
 
     def __call__(self,binary):
         dying_star,other_star = self._select_dying_star(binary)
@@ -141,6 +151,9 @@ class StepSN(object):
         if star.state not in STAR_STATES_CC:
             return f"The star cannot collapse: star state {star.state}."
         SN_type = self.collapse_outcome(star)
+        if (self._interp_collapse is not None
+                and self._interp_collapse(star, SN_type)):
+            return None
         explosion = self.explosion_outcome(star, SN_type)
         SN_type, m_rembar, f_fb, state = self._get_remnant_mass(star, SN_type, explosion)
         # returns an error message if the collapse fails, else None
@@ -150,7 +163,7 @@ class StepSN(object):
         """Return the outcome of the explosion criterion, for CCSN, PPISN and PISN.
 
         A PISN leaves no remnant, but its f_fb comes from the CCSN
-        prescription (as on main), which needs the explosion outcome.
+        prescription, which needs the explosion outcome.
         Above the pair-instability gap the core collapses directly into a BH
         ("BH"), whatever the mechanism, as in Marchant et al. (2019) and
         Hendriks et al. (2023).
@@ -158,6 +171,9 @@ class StepSN(object):
         if SN_type not in ("CCSN", "PPISN", "PISN"):
             return None
         if self._PISN_check.is_above_gap(star):
+            if self.verbose:
+                print("StepSN: above the pair-instability gap, direct "
+                      "collapse into a BH")
             return "BH"
         return self._explosion_criterion(star)
 
@@ -187,7 +203,8 @@ class StepSN(object):
         if dying_star.state_history[-1] not in STAR_STATES_CC:
             raise ValueError("There is no information in the evolutionary "
                              "history about STAR_STATES_CC.")
-        # the kick is drawn even if there is no orbit to update, as on main
+        # the kick is drawn, and recorded on the star, even if there is no
+        # orbit to update
         v_kick, cos_theta, phi, mean_anomaly = self._natal_kick(dying_star)
         if binary.state in NO_ORBIT_STATES:
             self._clear_orbit(binary)
