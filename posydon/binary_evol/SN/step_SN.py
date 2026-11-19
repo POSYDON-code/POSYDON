@@ -151,6 +151,11 @@ class StepSN(object):
         'one' : 1.
         'NS_one_minus_fallback_BH_one': 1 for BH, (1-f_fb) for NS
 
+    no_kick_direct_collapse : bool
+        If True, ignore the kick for BHs formed by direct collapse
+        (fallback fraction f_fb = 1). Only affects the CCSN/PPISN/PISN
+        branch of the orbital kick, where the remnant state is 'BH'.
+
     ECSN : str
         Prescription to determine the production of an electron-capture
         supernova.
@@ -255,6 +260,7 @@ class StepSN(object):
         "mean_kick_CCSN_BH": None,
         "sigma_kick_ECSN": 20.0,
         "mean_kick_ECSN": None,
+        "no_kick_direct_collapse": False,
         # other
         "RNG": None,
         "verbose": False
@@ -370,7 +376,8 @@ class StepSN(object):
                     filename = os.path.join(self.path_to_Patton_datasets,
                                             file_name)
                     if not os.path.exists(filename):
-                        data_download(set_name='auxiliary')
+                        data_download(set_name='auxiliary', confirm=True,
+                                      missing_file=filename)
 
                     # Reading the dataset
                     data = np.loadtxt(filename, skiprows=6, dtype='str')
@@ -405,7 +412,7 @@ class StepSN(object):
                 CO_core_params_sc, sc_target = format_data_Patton20(
                     'Kepler_sc_table.dat')
 
-                n_neighbors = 5
+                n_neighbors = 1
 
                 if self.verbose:
                     print('Training the classifier ...')
@@ -1047,9 +1054,10 @@ class StepSN(object):
 
                     # delta_PPI -> -inf if Z -> 0
                     # limit mass loss to Z = 1e-4 for Z below it.
-                    # 1e-4 is the lowest metallicity in the Hendriks et al. 2023
-                    if star.metallicity < 1e-4:
-                        Z = 1e-4
+                    # 1e-4 is the lowest (absolute) metallicity in the
+                    # Hendriks et al. 2023, while star.metallicity is Z/Zsun
+                    if star.metallicity < 1e-4 / const.Zsun:
+                        Z = 1e-4 / const.Zsun
                     else:
                         Z = star.metallicity
                     # Hendriks et al. 2023 Equation 6
@@ -1574,10 +1582,16 @@ class StepSN(object):
                         mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
-                    # Kick for core-collapse SN
-                    Vkick = self.generate_kick(
-                        star=binary.star_1, sigma=sigma, mean=mean
-                    )
+                    # no kick for BHs formed by direct collapse
+                    if (self.no_kick_direct_collapse
+                            and binary.star_1.state == 'BH'
+                            and binary.star_1.f_fb == 1.0):
+                        Vkick = 0.0
+                    else:
+                        # Kick for core-collapse SN
+                        Vkick = self.generate_kick(
+                            star=binary.star_1, sigma=sigma, mean=mean
+                        )
                 elif binary.star_1.SN_type == "WD":
                     # Kick for white dwarfs (allways f_fb = 1 => Vkick = 0)
                     Vkick = 0.0
@@ -1678,10 +1692,16 @@ class StepSN(object):
                         mean = None
                     else:
                         raise ValueError("CCSN/PPISN/PISN only for NS/BH.")
-                    # Kick for core-collapse SN
-                    Vkick = self.generate_kick(star=binary.star_2,
-                                               sigma=sigma,
-                                               mean=mean)
+                    # no kick for BHs formed by direct collapse
+                    if (self.no_kick_direct_collapse
+                            and binary.star_2.state == 'BH'
+                            and binary.star_2.f_fb == 1.0):
+                        Vkick = 0.0
+                    else:
+                        # Kick for core-collapse SN
+                        Vkick = self.generate_kick(star=binary.star_2,
+                                                   sigma=sigma,
+                                                   mean=mean)
                 else:
                     raise ValueError("The SN type is not ECSN neither CCSN.")
 
@@ -2615,7 +2635,8 @@ class Sukhbold16_corecollapse(object):
             filename = os.path.join(path_engine_dataset,
                                     "results_" + self.engine + "_table.csv")
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True,
+                              missing_file=filename)
 
             Engine_data = read_csv(filename)
 
@@ -2808,7 +2829,8 @@ class Couch20_corecollapse(object):
             # Check if interpolation files exist
             filename = os.path.join(path_to_Couch_datasets, 'explDatsSTIR2.json')
             if not os.path.exists(filename):
-                data_download(set_name='auxiliary')
+                data_download(set_name='auxiliary', confirm=True,
+                              missing_file=filename)
 
             Couch_data_file = open(filename)
             Couch_data = json.load(Couch_data_file)

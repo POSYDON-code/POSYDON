@@ -767,6 +767,8 @@ class LogUniform():
         """
         Probability density function of the log-uniform distribution.
 
+        Normalised in log10(x) space to 1.
+
         Parameters
         ----------
         x : float or array_like
@@ -775,13 +777,13 @@ class LogUniform():
         Returns
         -------
         float or ndarray
-            Probability density at x.
+            Probability density per unit log10(x) at x.
         """
         x = np.asarray(x)
         valid = (x > 0) & (x >= self.min) & (x <= self.max)
         pdf_values = np.zeros_like(x, dtype=float)
 
-        pdf_values[valid] = self.norm / x[valid]  # PDF is constant in log space, so divide by x for linear space
+        pdf_values[valid] = self.norm
 
         return pdf_values
 
