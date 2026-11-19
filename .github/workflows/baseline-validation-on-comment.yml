@@ -98,6 +98,13 @@ jobs:
           ref: ${{ env.PR_SHA }}
           persist-credentials: false
 
+      # The runner has no conda; run_test_suite.sh finds this one via $CONDA.
+      - name: Set up conda
+        uses: conda-incubator/setup-miniconda@v3
+        with:
+          miniforge-version: latest
+          auto-activate-base: false
+
       - name: Set up paths
         run: |
           {
