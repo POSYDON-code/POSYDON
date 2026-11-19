@@ -10,14 +10,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 import scipy as sp
 
+from posydon.utils.common_functions import is_None_or_nan
 from posydon.utils.posydonwarning import Pwarn
-
-# DAVID (2026.09.15): make sure that WDs have 0 kicks.
-
-
-def _not_set(value):
-    """True for a kick quantity that was not set on the star: None or NaN."""
-    return value is None or (np.ndim(value) == 0 and np.isnan(value))
 
 
 def get_kick_prescription(**kwargs):
@@ -105,13 +99,14 @@ class Kick_Velocity_AsymEj(Kick_Velocity_Base):
     Janka, H.-T. (2017), ApJ, 837, 84.
     """
     def _draw(self,star,sigma,mean):
-        f_kin = 0.1         # fraction of SN explosion energy that is kinetic energy of the gas
-        beta = 0.1          # fraction of ejecta mass that is neutrino heated
+        # fraction of the SN explosion energy that is kinetic energy of the gas
+        f_kin = 0.1
+        beta = 0.1      # fraction of the ejecta mass that is neutrino heated
         epsilon = 1
         alpha_ej = 0.01
-        M_NS = star.mass                                    # neutron star mass
-        M_rembar = (((3*M_NS/20 + 1)**2) - 1)/0.3           # remnant baryonic mass
-        M_ej = abs(star.mass_history[-1] - M_rembar)        # ejecta mass
+        M_NS = star.mass                                # neutron star mass
+        M_rembar = (((3*M_NS/20 + 1)**2) - 1)/0.3       # remnant baryonic mass
+        M_ej = abs(star.mass_history[-1] - M_rembar)    # ejecta mass
         return (211*(f_kin*beta*epsilon)**(1/2)*(alpha_ej/0.1)*(M_ej/0.1)
                 * (M_NS/1.5)**(-1))
 
@@ -123,11 +118,10 @@ class Kick_Velocity_Linear(Kick_Velocity_Base):
     Willcox, R. (2022), arXiv:2208.02407.
     """
     def _draw(self,star,sigma,mean):
-        # DAVID: WHY IS THIS star.co_core_mass_history[-1]-star.mass AND NOT
-        # abs(star.mass_history[-1] - M_rembar) AS FOR asym_ej?
         M_ej = star.co_core_mass_history[-1] - star.mass    # ejecta mass
         M_rem = star.mass                                   # remnant mass
-        alpha = 115                                         # alpha and beta are best-fit parameters
+        # best-fit parameters
+        alpha = 115
         beta = 15
         return alpha * (M_ej/M_rem) + beta
 
@@ -143,22 +137,27 @@ KICK_VELOCITY_PRESCRIPTIONS = {
 # Factor multiplying the kick velocity (option kick_normalisation).
 # 1 - f_fb is Eq. 21 of Fryer et al. (2012), ApJ, 749, 91.
 def norm_one_minus_fallback(star):
+    """1 - f_fb."""
     return 1.0 - star.f_fb
 
 def norm_one_over_mass(star):
+    """1.4 Msun / M for BHs, 1 for NSs."""
     if star.state == 'BH':
         return 1.4 / star.mass
     return 1.0
 
 def norm_NS_one_minus_fallback_BH_one(star):
+    """1 - f_fb for NSs, 1 for BHs."""
     if star.state == 'BH':
         return 1.0
     return 1.0 - star.f_fb
 
 def norm_one(star):
+    """1: no normalisation."""
     return 1.0
 
 def norm_zero(star):
+    """0: no natal kicks."""
     return 0.0
 
 KICK_NORMALISATIONS = {
@@ -195,12 +194,14 @@ class Natal_Kick:
         if self.kick_prescription not in KICK_VELOCITY_PRESCRIPTIONS:
             raise ValueError(
                 f"Invalid kick_prescription {self.kick_prescription!r}. "
-                f"Valid options are: {', '.join(KICK_VELOCITY_PRESCRIPTIONS)}.")
+                "Valid options are: "
+                f"{', '.join(KICK_VELOCITY_PRESCRIPTIONS)}.")
         if self.kick_normalisation not in KICK_NORMALISATIONS:
             raise ValueError(
                 f"Invalid kick_normalisation {self.kick_normalisation!r}. "
                 f"Valid options are: {', '.join(KICK_NORMALISATIONS)}.")
-        self._velocity = KICK_VELOCITY_PRESCRIPTIONS[self.kick_prescription](**kwargs)
+        velocity = KICK_VELOCITY_PRESCRIPTIONS[self.kick_prescription]
+        self._velocity = velocity(**kwargs)
         self._normalisation = KICK_NORMALISATIONS[self.kick_normalisation]
         self.kick = kwargs['kick']
         self.no_kick_direct_collapse = kwargs['no_kick_direct_collapse']
@@ -223,28 +224,29 @@ class Natal_Kick:
         if not self.kick:
             star.natal_kick_velocity = 0.0      # no natal kicks at all
             source = "kick=False"
-        elif _not_set(star.natal_kick_velocity):
+        elif is_None_or_nan(star.natal_kick_velocity):
             star.natal_kick_velocity = self._draw_velocity(star)
             source = "drawn"
         else:
             source = "set on the star"
         v_kick = star.natal_kick_velocity
 
-        if _not_set(star.natal_kick_azimuthal_angle):
+        if is_None_or_nan(star.natal_kick_azimuthal_angle):
             star.natal_kick_azimuthal_angle = self.RNG.uniform(0, 2 * np.pi)
         phi = star.natal_kick_azimuthal_angle
 
-        if _not_set(star.natal_kick_polar_angle):
+        if is_None_or_nan(star.natal_kick_polar_angle):
             cos_theta = self.RNG.uniform(-1, 1)
             star.natal_kick_polar_angle = np.arccos(cos_theta)
         else:
             cos_theta = np.cos(star.natal_kick_polar_angle)
 
-        if _not_set(star.natal_kick_mean_anomaly):
+        if is_None_or_nan(star.natal_kick_mean_anomaly):
             star.natal_kick_mean_anomaly = self.RNG.uniform(0, 2 * np.pi)
         elif not isinstance(star.natal_kick_mean_anomaly, float):
-            raise ValueError("mean_anomaly must be a single float value."
-                             f"\n mean_anomaly = {star.natal_kick_mean_anomaly}")
+            raise ValueError(
+                "mean_anomaly must be a single float value."
+                f"\n mean_anomaly = {star.natal_kick_mean_anomaly}")
         mean_anomaly = star.natal_kick_mean_anomaly
 
         if self.verbose:

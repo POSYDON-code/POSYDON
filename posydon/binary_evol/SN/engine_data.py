@@ -14,7 +14,10 @@ import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.utils.common_functions import calculate_Patton20_values_at_He_depl
+from posydon.utils.common_functions import (
+    calculate_Patton20_values_at_He_depl,
+    is_None_or_nan,
+)
 from posydon.utils.data_download import data_download
 from posydon.utils.interpolators import interp1d
 from posydon.utils.posydonerror import ModelError
@@ -34,7 +37,7 @@ BH_STATE = 14
 N_NEIGHBORS = 1
 
 def _auxiliary_file(filename):
-    """Return filename, downloading the auxiliary data first if it is missing."""
+    """Return filename, downloading the auxiliary data if it is missing."""
     if not os.path.exists(filename):
         data_download(set_name='auxiliary', confirm=True,
                       missing_file=filename)
@@ -93,11 +96,6 @@ def Patton20_table(quantity):
     return table
 
 
-def _missing(value):
-    """True for a value that was not set (None or NaN)."""
-    return value is None or (isinstance(value, float) and np.isnan(value))
-
-
 def CO_core_at_He_depletion(star, approximate=False):
     """
     Return the carbon mass fraction and CO core mass of a star at core He
@@ -124,12 +122,12 @@ def CO_core_at_He_depletion(star, approximate=False):
         raise ValueError(f"Cannot approximate the CO core at He depletion "
                          f"of a star in state {star.state!r}: it must be "
                          f"H-rich or stripped_He.")
-    if (_missing(star.avg_c_in_c_core_at_He_depletion)
-            or _missing(star.co_core_mass_at_He_depletion)):
+    if (is_None_or_nan(star.avg_c_in_c_core_at_He_depletion)
+            or is_None_or_nan(star.co_core_mass_at_He_depletion)):
         calculate_Patton20_values_at_He_depl(star)
     X_C = star.avg_c_in_c_core_at_He_depletion
     M_CO = star.co_core_mass_at_He_depletion
-    if _missing(X_C) or _missing(M_CO):
+    if is_None_or_nan(X_C) or is_None_or_nan(M_CO):
         raise ModelError(f"The star has no CO core at He depletion, neither "
                          f"as attributes nor in its history: M_CO = {M_CO}, "
                          f"X_C = {X_C}.")
@@ -153,7 +151,8 @@ class Patton20_CO_core_models:
         self._maps = {}
         for quantity in quantities:
             table = Patton20_table(quantity)
-            regressor = KNeighborsRegressor(self.n_neighbors, weights="distance")
+            regressor = KNeighborsRegressor(self.n_neighbors,
+                                            weights="distance")
             self._maps[quantity] = regressor.fit(
                 table[["X_C", "M_CO"]].to_numpy(), table[quantity].to_numpy())
 

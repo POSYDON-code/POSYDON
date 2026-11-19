@@ -1,3 +1,10 @@
+"""Remnant masses of collapsing stars.
+
+For each mechanism: the baryonic remnant mass, the fallback fraction and,
+when known, the state of the remnant, for WDs, ECSNe, CCSNe and
+pair-instability supernovae (PPISN, PISN).
+"""
+
 import copy
 import numbers
 from abc import ABC, abstractmethod
@@ -20,13 +27,14 @@ from posydon.utils.posydonwarning import Pwarn
 
 
 def get_remnant_mass_prescription(**kwargs):
+    """Return the remnant-mass prescription of kwargs['mechanism']."""
     option = kwargs['mechanism']
     if option in REMNANT_MASS_PRESCRIPTIONS:
         return REMNANT_MASS_PRESCRIPTIONS[option](**kwargs)
     if option in SN_MECHANISMS:
         raise NotImplementedError(
-            f"The remnant mass for mechanism {option!r} has not been ported "
-            "to the new step_SN structure yet."
+            f"Mechanism {option!r} is not available in this version of "
+            "POSYDON."
         )
     raise ValueError(
         f"Invalid option {option!r} given to remnant mass prescription. "
@@ -34,22 +42,19 @@ def get_remnant_mass_prescription(**kwargs):
     )
 
 
-STATE_FROM_EXPLOSION = {
-    "NS": "NS",
-    "BH": "BH",
-    None: None,
-}
-
 # NS masses from ECSNe are computed separately from those in the CCSN
 # mechanism. The whole remnant is treated as a PNS, and there is no
 # fallback (following Giacobbo & Mapelli 2020).
 def ECSN_mass_Tauris(star):
+    """ECSN remnant: the whole CO core forms the NS."""
     return star.co_core_mass, 0.0, "NS"
 
 def ECSN_mass_Podsiadlowski(star):
+    """ECSN remnant: a NS with a baryonic mass of 1.38 Msun."""
     return 1.38, 0.0, "NS"
 
 def ECSN_mass_No_ECSN(star):
+    """Fail: without an ECSN prescription, no star can be an ECSN."""
     raise ValueError("A star was classified as ECSN with the ECSN option "
                      "'No_ECSN'.")
 
@@ -68,18 +73,21 @@ class PPISN_Mass_Base(ABC):
         self.verbose = kwargs['verbose']
 
     def __call__(self,star,explosion):
-        """Return the mass left after the pulses, nan if the star is disrupted."""
+        """Return the mass left after the pulses, nan if the star is
+        disrupted."""
         mass = self._compute(star,explosion)
         if self.verbose:
             if np.isnan(mass):
                 print(f"{type(self).__name__}: the pulses disrupt the star")
             else:
-                print(f"{type(self).__name__}: remnant mass limited to "
+                print(f"{type(self).__name__}: maximum remnant mass "
                       f"{mass:.3f} Msun")
         return mass
 
     @abstractmethod
     def _compute(self,star,explosion):
+        """Return the mass left after the pulses (Msun), nan if the star is
+        disrupted."""
         raise NotImplementedError
 
 def PISN_mass_Marchant(star):
@@ -107,6 +115,8 @@ def PISN_mass_Marchant(star):
     )
 
 class PPISN_Mass_Marchant19(PPISN_Mass_Base):
+    """Mass left after the pulses: the fit to Marchant et al. (2019), see
+    PISN_mass_Marchant."""
     def _compute(self,star,explosion):
         return PISN_mass_Marchant(star)
 
@@ -164,6 +174,7 @@ class PPISN_Mass_Hendriks23(PPISN_Mass_Base):
                 - 0.0013 * x**2 + self.delta_M_PPI_extra_ML)
 
 class PPISN_Mass_constant(PPISN_Mass_Base):
+    """Mass left after the pulses: the cap given by the option PISN (Msun)."""
     def __init__(self,remnant_mass,**kwargs):
         super().__init__(remnant_mass,**kwargs)
         self.PISN_mass_cap = float(kwargs['PISN'])
@@ -176,6 +187,8 @@ PPISN_MASS_PRESCRIPTIONS = {
 }
 
 def get_PISN_mass_prescription(remnant_mass,**kwargs):
+    """Return the prescription of the mass left after the pulses for
+    kwargs['PISN'], or None if there is none."""
     option=kwargs['PISN']
     if isinstance(option,numbers.Real) and not isinstance(option,bool):
         return PPISN_Mass_constant(remnant_mass,**kwargs)
@@ -184,6 +197,12 @@ def get_PISN_mass_prescription(remnant_mass,**kwargs):
     return None
 
 class Remnant_Mass_Base(ABC):
+    """Base class of the remnant-mass prescriptions.
+
+    Calling it returns (SN_type, m_rembar, f_fb, state). WDs, ECSNe, PPISNe,
+    PISNe and direct collapse are handled here; subclasses implement
+    _get_rem_mass_CCSN for the core collapse of their mechanism.
+    """
     def __init__(self,**kwargs):
         self.mechanism = kwargs['mechanism']
         self.ECSN_option = kwargs['ECSN']
@@ -209,6 +228,7 @@ class Remnant_Mass_Base(ABC):
         return result
 
     def _remnant(self,star,SN_type,explosion):
+        """Return (SN_type, m_rembar, f_fb, state); see __call__."""
         if SN_type=="WD":
             return (SN_type, *WD_mass(star))
         elif SN_type=="ECSN":
@@ -220,7 +240,8 @@ class Remnant_Mass_Base(ABC):
         elif SN_type=="PISN":
             return (SN_type, *self._get_rem_mass_PISN(star,explosion))
         else:
-            raise ValueError(f"Invalid SN type {SN_type!r} passed during remnant mass calculation")
+            raise ValueError(f"Invalid SN type {SN_type!r} passed during "
+                             "remnant mass calculation")
 
     def _get_rem_mass_PPISN(self,star,explosion):
         """
@@ -230,7 +251,8 @@ class Remnant_Mass_Base(ABC):
         If the cap does not reduce it, the star is labelled CCSN, and if the
         pulses disrupt the star it is labelled PISN.
         """
-        m_rembar, f_fb, state = self._get_rem_mass_core_collapse(star,explosion)
+        m_rembar, f_fb, state = self._get_rem_mass_core_collapse(star,
+                                                                 explosion)
         m_after_pulses = self._mass_after_pulses(star,explosion)
         if np.isnan(m_after_pulses):
             # the pulses disrupt the star, label changes to a PISN
@@ -246,7 +268,8 @@ class Remnant_Mass_Base(ABC):
         return np.nan, f_fb, "massless_remnant"
 
     def _m_collapsing(self,star):
-        """Choose the mass that collapses. Either the whole star, or only its He core"""
+        """Choose the mass that collapses: the whole star, or only its He
+        core."""
         if self.conserve_hydrogen_envelope:
             return star.mass
         return star.he_core_mass
@@ -268,6 +291,7 @@ class Remnant_Mass_Base(ABC):
         return self._get_rem_mass_CCSN(star,explosion)
 
     def _get_rem_mass_ECSN(self,star):
+        """Return (m_rembar, f_fb, state) of an ECSN, from the ECSN option."""
         return ECSN_MASS_OPTIONS[self.ECSN_option](star)
 
     @abstractmethod
@@ -277,11 +301,6 @@ class Remnant_Mass_Base(ABC):
 
     def __repr__(self):
         return f"{type(self).__name__}(mechanism={self.mechanism!r})"
-
-
-class Remnant_Mass_constant(Remnant_Mass_Base):
-    def __init__(self,**kwargs):
-        super().__init__(**kwargs)
 
 
 class Remnant_Mass_Fryer12(Remnant_Mass_Base):
@@ -297,14 +316,19 @@ class Remnant_Mass_Fryer12(Remnant_Mass_Base):
         m_outside_proto = self._m_collapsing(star) - m_proto
         m_fb = self._fallback_mass(m_CO,m_outside_proto)
         f_fb = m_fb / m_outside_proto
-        return m_proto + m_fb, f_fb, STATE_FROM_EXPLOSION[explosion]
+        # explosion is "NS" or None here, a failed explosion is a direct
+        # collapse
+        return m_proto + m_fb, f_fb, explosion
 
     @abstractmethod
     def _proto_mass(self,m_CO):
+        """Return the mass of the proto-compact object (Msun)."""
         raise NotImplementedError
 
     @abstractmethod
     def _fallback_mass(self,m_CO,m_outside_proto):
+        """Return the mass that falls back onto the proto-compact object
+        (Msun)."""
         raise NotImplementedError
 
 
@@ -357,7 +381,6 @@ class Remnant_Mass_Fryer_rapid(Remnant_Mass_Fryer12):
             return m_outside_proto
 
 
-
 class Remnant_Mass_from_tables(Remnant_Mass_Base):
     """
     Remnant mass for the mechanisms where the value can be inferred from
@@ -393,6 +416,9 @@ class Remnant_Mass_Sukhbold16(Remnant_Mass_from_tables):
 
 class Remnant_Mass_Couch20(Remnant_Mass_from_tables):
     """
+    Remnant mass for the models of Couch, Warren & O'Connor (2020), ApJ,
+    890, 127.
+
     Couch et al. (2020) do not give values for remnant masses, so by default
     every NS is given a baryonic mass of 1.4 Msun as a placeholder value.
     """
@@ -400,8 +426,6 @@ class Remnant_Mass_Couch20(Remnant_Mass_from_tables):
 
     def _NS_mass(self,star):
         return self.NS_baryonic_mass
-
-
 
 
 class Remnant_Mass_Patton20(Remnant_Mass_from_tables):
@@ -428,18 +452,15 @@ class Remnant_Mass_Patton20(Remnant_Mass_from_tables):
 
 
 class Remnant_Mass_direct(Remnant_Mass_Base):
+    """Direct collapse: the collapsing mass (the He core, or the whole star
+    with conserve_hydrogen_envelope=True) forms the remnant, with f_fb = 1,
+    also for ECSNe."""
     def _get_rem_mass_CCSN(self, star, explosion):
-        return self._m_collapsing(star), 1.0, STATE_FROM_EXPLOSION[explosion]
+        # explosion is "NS" or None here, a failed explosion is a direct
+        # collapse
+        return self._m_collapsing(star), 1.0, explosion
     def _get_rem_mass_ECSN(self, star):
         return self._m_collapsing(star), 1.0, "NS"
-
-# class Remnant_Mass_Mueller16(Remnant_Mass_Base):
-#     def __init__(**kwargs):
-#         super().__init__(**kwargs)
-
-# class Remnant_Mass_Boccioli24(Remnant_Mass_Base):
-#     def __init__(**kwargs):
-#         super().__init__(**kwargs)
 
 
 REMNANT_MASS_PRESCRIPTIONS = {
@@ -453,6 +474,11 @@ REMNANT_MASS_PRESCRIPTIONS = {
 
 
 def WD_mass(star):
+    """Return (m_rembar, f_fb, "WD") of a WD.
+
+    The WD mass is the CO core mass, else the He core mass, else the mass of
+    the star if it is below 0.5 Msun.
+    """
     m_co_core = star.co_core_mass
     m_He_core = star.he_core_mass
     m_star = star.mass
@@ -466,22 +492,12 @@ def WD_mass(star):
         if m_star < 0.5:
             m_rembar = m_star
             if ((m_co_core < 0.)or(m_He_core < 0.)):
-                Pwarn('Invalid co/He core masses! '
-                                'Setting m_WD=m_star!', "ApproximationWarning")
+                Pwarn('Invalid co/He core masses! Setting m_WD=m_star!',
+                      "ApproximationWarning")
             else:
-                Pwarn('co/He core masses are zero! '
-                                'Setting m_WD=m_star!', "ApproximationWarning")
+                Pwarn('co/He core masses are zero! Setting m_WD=m_star!',
+                      "ApproximationWarning")
         else:
             raise ModelError('Invalid co/He core masses! Cannot complete SN.')
     f_fb = 1.0
     return m_rembar, f_fb, "WD"
-
-# def NS_mass_Boccioli24(xi_1p5,xi_1p75,xi_2p0,xi_2p25):
-#     if xi_1p5<0.6:
-#         return 0.191*xi_1p5+1.242
-#     elif xi_1p5>=0.6 and xi_1p75<0.6:
-#         return 0.578*xi_1p75 + 1.237
-#     elif xi_1p5>=0.6 and xi_1p75>=0.6 and xi_2p0<0.6:
-#         return 0.914*xi_2p0+1.262
-#     else:
-#         return 0.665*xi_2p25+1.514

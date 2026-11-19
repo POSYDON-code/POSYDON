@@ -1,3 +1,10 @@
+"""Explosion criteria of the core-collapse mechanisms.
+
+For a star classified as a CCSN, or a PPISN or PISN candidate, the criterion
+of the mechanism decides whether the explosion succeeds ("NS") or fails
+("BH", direct collapse), or leaves the decision to the remnant mass (None).
+"""
+
 from abc import ABC, abstractmethod
 
 from sklearn.neighbors import KNeighborsClassifier
@@ -81,21 +88,24 @@ def replace_unavailable_mechanism(config):
     new_config.update(replacement)
     return new_config
 
+
 # Possible outcomes of the explosion criteria:
 #   "NS" : successful explosion, creates a neutron star
 #          (Note that this does not mean NSs don't experience fallback)
 #   "BH" : failed explosion, direct collapse to a black hole
 #   None : no criterion; the remnant mass decides NS vs BH
-EXPLOSION_OUTCOMES = ("NS", "BH", None)
-
-
 class CCSN_check_base(ABC):
+    """Base class of the explosion criteria.
+
+    Calling it returns "NS", "BH" or None (see the outcomes above);
+    subclasses implement _outcome.
+    """
     def __init__(self,**kwargs):
         self.mechanism = kwargs['mechanism']
         self.verbose = kwargs['verbose']
 
     def __call__(self,star):
-        """Return one of EXPLOSION_OUTCOMES for a star classified as CCSN."""
+        """Return "NS", "BH" or None for a star classified as CCSN."""
         outcome = self._outcome(star)
         if self.verbose:
             print(f"{type(self).__name__}: explosion outcome "
@@ -104,6 +114,7 @@ class CCSN_check_base(ABC):
 
     @abstractmethod
     def _outcome(self,star):
+        """Return the explosion outcome of the star."""
         raise NotImplementedError
 
     def __repr__(self):
@@ -115,8 +126,8 @@ class CCSN_check_mass_based(CCSN_check_base):
     NS vs BH is decided directly by the remnant mass prescription.
 
     Used by mechanisms where the remnant mass prescription sets the outcome on
-    its own (Fryer+12, direct collapse). The remnant is a BH if its mass
-    exceeds max_NS_mass, and a NS otherwise.
+    its own (Fryer+12, direct collapse). The remnant is a BH if its
+    gravitational mass is at or above max_NS_mass, and a NS otherwise.
     """
     def _outcome(self,star):
         return None
@@ -124,13 +135,14 @@ class CCSN_check_mass_based(CCSN_check_base):
 
 class CCSN_check_from_tables(CCSN_check_base):
     """
-    A general class for CCSN explosion outcomes that are taken from data tables
-    with pre-computed core-collapse models. Currently applied to the mechanisms
-    of Sukhbold et al. 2016 and Couch et al. 2020.
+    A general class for CCSN explosion outcomes that are taken from data
+    tables with pre-computed core-collapse models. Currently applied to the
+    mechanisms of Sukhbold et al. 2016 and Couch et al. 2020.
 
-    Includes a kNN classifier (where n_neighbors = 1 is the default value to better
-    capture the intrinsic nonlinearity of the problem), and predicts the outcome as
-    "NS" for successful SNe, or "BH" for failed ones (direct collapse).
+    Includes a kNN classifier (where n_neighbors = 1 is the default value to
+    better capture the intrinsic nonlinearity of the problem), and predicts
+    the outcome as "NS" for successful SNe, or "BH" for failed ones (direct
+    collapse).
     """
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
@@ -282,13 +294,14 @@ CCSN_EXPLOSION_CRITERIA = {
 
 
 def get_CCSN_prescription(**kwargs):
+    """Return the explosion criterion of the mechanism kwargs['mechanism']."""
     option = kwargs['mechanism']
     if option in CCSN_EXPLOSION_CRITERIA:
         return CCSN_EXPLOSION_CRITERIA[option](**kwargs)
     if option in SN_MECHANISMS:
         raise NotImplementedError(
-            f"The explosion criterion for mechanism {option!r} has not been "
-            "ported to the new step_SN structure yet."
+            f"Mechanism {option!r} is not available in this version of "
+            "POSYDON."
         )
     raise ValueError(
         f"Invalid option {option!r} given to mechanism (i.e. the CCSN "

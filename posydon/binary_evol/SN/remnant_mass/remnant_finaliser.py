@@ -70,6 +70,7 @@ class Remnant_Finaliser:
         return self._finalise_compact_object(star,SN_type,m_rembar,state)
 
     def _finalise_WD(self,star,m_rembar):
+        """Turn the star into a WD of mass m_rembar."""
         star.mass = m_rembar
         star.state = "WD"
         star.spin = 0.0
@@ -85,6 +86,8 @@ class Remnant_Finaliser:
         return None
 
     def _finalise_compact_object(self,star,SN_type,m_rembar,state):
+        """Turn the star into a NS or BH; return an error message if no way
+        of setting its spin applies."""
         m_grav = self._gravitational_mass(m_rembar)
         state = self._NS_or_BH(state,m_grav)
         for set_spin in self._spin_methods:
@@ -146,20 +149,22 @@ class Remnant_Finaliser:
             star.spin = 0.0
             star.m_disk_accreted = 0.0
             star.m_disk_radiated = 0.0
-        star.h1_mass_ej, star.he4_mass_ej = get_ejecta_element_mass_at_collapse(
-            star,star.mass,verbose=self.verbose)
+        star.h1_mass_ej, star.he4_mass_ej = (
+            get_ejecta_element_mass_at_collapse(star,star.mass,
+                                                verbose=self.verbose))
         return True
 
     def _spin_from_core_masses(self,star,SN_type,m_rembar,m_grav,state):
-        """Without a profile: the BH spin comes from the star's angular momentum."""
+        """Without a profile: the BH spin comes from the star's angular
+        momentum."""
         # ECSNe always use this method, even with use_core_masses=False
         if not (self.use_core_masses or SN_type=="ECSN"):
             return False
         star.mass = m_grav
         if state=="BH":
             if SN_type=="ECSN":
-                Pwarn(f"An ECSN should not form a black hole: m_grav={m_grav}.",
-                      "InappropriateValueWarning")
+                Pwarn("An ECSN should not form a black hole: "
+                      f"m_grav={m_grav}.", "InappropriateValueWarning")
             # Eq. 14 of Fryer et al. (2012), in CGS units
             spin = (10**star.log_total_angular_momentum * const.clight
                     / (const.standard_cgrav * (m_grav * const.Msun) ** 2))

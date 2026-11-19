@@ -136,8 +136,10 @@ def orbit_after_kick(M_pre, M_post, M_companion, separation, eccentricity,
                  ) ** -1
 
         # kick components in the coordinate system
-        Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi + cos_theta * cos_psi)
-        Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi + cos_theta * sin_psi)
+        Vkx = Vkick * (sin_theta * np.sin(phi) * sin_psi
+                       + cos_theta * cos_psi)
+        Vky = Vkick * (-sin_theta * np.sin(phi) * cos_psi
+                       + cos_theta * sin_psi)
         Vkz = Vkick * sin_theta * np.cos(phi)
 
         # Eq 4 in [1], extended to Eq 14 in [2]: eccentricity after the SN

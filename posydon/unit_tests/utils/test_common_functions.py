@@ -110,8 +110,9 @@ class TestElements:
                     'initialize_empty_array',\
                     'inspiral_timescale_from_orbital_period',\
                     'inspiral_timescale_from_separation', 'interp1d',\
-                    'inverse_sampler', 'is_number',\
+                    'inverse_sampler', 'is_None_or_nan', 'is_number',\
                     'linear_interpolation_between_two_cells', 'newton', 'np',\
+                    'numbers',\
                     'orbital_period_from_separation',\
                     'orbital_separation_from_period', 'os', 'pd',\
                     'period_change_stable_MT', 'period_evol_wind_loss',\
@@ -510,6 +511,18 @@ class TestFunctions:
         assert totest.is_number("1.2e-3")
         # try a non-float string
         assert totest.is_number("test") == False
+
+    def test_is_None_or_nan(self):
+        # missing argument
+        with raises(TypeError, match="missing 1 required positional argument"):
+            totest.is_None_or_nan()
+        # values that are not set
+        for value in [None, np.nan, float("nan"), np.float32("nan")]:
+            assert totest.is_None_or_nan(value)
+        # values that are set, including ones np.isnan cannot handle
+        for value in [0.0, 1, np.float64(2.5), "nan", "test", [np.nan],
+                      np.array([np.nan])]:
+            assert totest.is_None_or_nan(value) == False
 
     def test_stefan_boltzmann_law(self):
         # missing argument
