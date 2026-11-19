@@ -30,6 +30,19 @@ Anaconda (Recommended)
 
     If you haven't already, download and install Anaconda from `Anaconda's official website <https://www.anaconda.com/products/distribution>`_.
 
+.. important::
+
+    After you've installed Anaconda, you can use our installation script to set up
+    POSYDON on your machine or continue with the manual installation.
+    For the automatic installation, run the following command in your terminal
+    (this will install POSYDON in a new conda environment named ``posydon_env``):
+
+    .. code-block:: bash
+
+        bash <(curl -sSL https://raw.githubusercontent.com/POSYDON-code/POSYDON/main/install.sh)
+
+
+
 2. **Create a New Conda Environment**
 
     Open your terminal or Anaconda prompt and create a new environment called ``posydon_env`` using Python 3.11 (the ``-y`` automatically answers all confirmations with yes):
@@ -106,6 +119,8 @@ Anaconda (Recommended)
         get-posydon-data
 
     You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
+    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
     If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash
@@ -199,6 +214,8 @@ For users interested in the latest features and developments, you can install PO
         get-posydon-data
 
     You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
+    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
+    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
     If you would rather download something more minimal to run populations, you will need at least the auxillary data:
 
     .. code-block:: bash

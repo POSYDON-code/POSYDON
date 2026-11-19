@@ -43,6 +43,7 @@ class SimulationProperties:
     default_grid_paths = {"single_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HMS"),
                           "single_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "single_HeMS"),
                           "HMS_HMS_path": os.path.join(PATH_TO_POSYDON_DATA, "HMS-HMS"),
+                          "HMS_HMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "HMS-HMS_RLO"),
                           "CO_HMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HMS_RLO"),
                           "CO_HeMS_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS"),
                           "CO_HeMS_RLO_path": os.path.join(PATH_TO_POSYDON_DATA, "CO-HeMS_RLO")}
@@ -534,6 +535,7 @@ class SimulationProperties:
 
         # These steps need these grids:
         step_grid_map = {"step_HMS_HMS": self.HMS_HMS_path,
+                         "step_HMS_HMS_RLO": self.HMS_HMS_RLO_path,
                          "step_CO_HMS_RLO": self.CO_HMS_RLO_path,
                          "step_CO_HeMS": self.CO_HeMS_path,
                          "step_CO_HeMS_RLO": self.CO_HeMS_RLO_path}
