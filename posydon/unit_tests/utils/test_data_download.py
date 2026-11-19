@@ -437,7 +437,12 @@ class TestFunctions:
             return None
 
         def build_archive():
-            # create a small tar.gz archive at filepath
+            # create a small tar.gz archive at filepath; once a pristine copy
+            # exists, reuse it: tar and gzip embed timestamps, hence a rebuilt
+            # archive would not match the MD5 of the pristine one
+            if os.path.exists(pristine_archive):
+                copyfile(pristine_archive, filepath)
+                return
             os.makedirs(test_path, exist_ok=True)
             with open(os.path.join(test_path, "test.txt"), "w")\
                  as test_file:
