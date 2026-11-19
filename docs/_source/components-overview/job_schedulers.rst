@@ -192,8 +192,8 @@ all (options given explicitly take precedence):
        (default: ``.task_queue`` in the
        submission directory). It must be on a file system shared by all
        nodes, e.g. Eagle. Each run of a job uses its own subdirectory with a
-       single small file; the directory can be deleted when no job is
-       running.
+       counter file and a small claim file per task handed out; the
+       directory can be deleted when no job is running.
 
 Finding the system's ``mpiexec``
 --------------------------------

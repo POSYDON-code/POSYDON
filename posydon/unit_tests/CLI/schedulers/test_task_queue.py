@@ -78,6 +78,39 @@ class TestTaskQueue:
         assert queue.claim() == 3
         assert len(calls) == 2
 
+    def test_double_claim_is_skipped(self, tmp_path, monkeypatch, capsys):
+        directory = str(tmp_path / "q")
+        first = totest.TaskQueue(directory, list(range(6)), 0, 2)
+        second = totest.TaskQueue(directory, list(range(6)), 1, 2)
+        tasks_first, tasks_second = first.tasks(), second.tasks()
+        assert next(tasks_first) == 0
+        assert next(tasks_second) == 1
+        assert next(tasks_first) == 2        # next_2 -> next_3, claimed_2
+        # as seen on Lustre: the second rank also claims position 2 (a stale
+        # counter, and a rename that reports success)
+        stale = iter([2])
+        real_counter = totest.TaskQueue._counter
+
+        def counter(queue):
+            if queue.rank == 1:
+                for position in stale:
+                    return position
+            return real_counter(queue)
+
+        real_rename = totest.os.rename
+
+        def rename(src, dst):
+            if not src.endswith("next_2"):
+                real_rename(src, dst)
+
+        monkeypatch.setattr(totest.TaskQueue, "_counter", counter)
+        monkeypatch.setattr(totest.os, "rename", rename)
+        # the claim file shows position 2 is taken: skip it, take the next
+        assert next(tasks_second) == 3
+        assert "rank 1 also claimed position 2" in capsys.readouterr().err
+        assert open(os.path.join(directory, "claimed_2")).read() == "0\n"
+        assert open(os.path.join(directory, "claimed_3")).read() == "1\n"
+
     def test_waits_for_counter(self, tmp_path, monkeypatch):
         directory = str(tmp_path / "q")
         rank1 = totest.TaskQueue(directory, list(range(4)), 1, 2, poll=0)
@@ -125,4 +158,8 @@ def test_parallel_ranks_run_each_task_once(tmp_path):
         for rank in range(4)]
     assert [process.wait(timeout=120) for process in processes] == [0] * 4
     assert sorted(int(name) for name in os.listdir(done)) == list(range(40))
-    assert os.listdir(tmp_path / "queue" / "test") == ["next_40"]
+    assert counter_files(tmp_path / "queue" / "test") == ["next_40"]
+    # every position from the counter claimed once
+    assert sorted(name for name in os.listdir(tmp_path / "queue" / "test")
+                  if name.startswith(totest.CLAIM_PREFIX)) == sorted(
+        f"claimed_{n}" for n in range(4, 40))

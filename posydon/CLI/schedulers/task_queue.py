@@ -10,10 +10,12 @@ the tasks run out or the job ends.
 The ranks coordinate through a directory on a shared file system: it holds a
 single counter file `next_<n>`, where n is the position (in the list of
 tasks) of the next task to hand out. A rank claims position n by renaming
-the file to `next_<n+1>`. A rename succeeds for exactly one process, also
-across the nodes of a shared file system like Lustre, so every task is run
-by one rank only. No locks are used, so a rank that dies cannot block the
-others.
+the file to `next_<n+1>`. A rename should succeed for exactly one process,
+also across the nodes of a shared file system like Lustre. On ALCF's Eagle
+(Lustre), however, two ranks once both claimed the same position. Each
+claim is therefore confirmed by creating a file `claimed_<n>` exclusively
+(O_EXCL): a rank that finds it already there skips the position. No locks
+are used, so a rank that dies cannot block the others.
 
 The directory must be unique for each run of a job (e.g. the job ID and the
 start time), so that a rerun job does not continue the counter of an
@@ -26,9 +28,11 @@ __authors__ = [
 
 import os
 import random
+import sys
 import time
 
 COUNTER_PREFIX = 'next_'
+CLAIM_PREFIX = 'claimed_'
 
 
 class TaskQueue:
@@ -65,6 +69,20 @@ class TaskQueue:
 
     def _path(self, position):
         return os.path.join(self.directory, f"{COUNTER_PREFIX}{position}")
+
+    def _confirm(self, position):
+        """Create the claim file of `position`; False if another rank
+        already did, i.e. claimed the same position."""
+        path = os.path.join(self.directory, f"{CLAIM_PREFIX}{position}")
+        try:
+            fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        except FileExistsError:
+            print(f"task_queue: rank {self.rank} also claimed position "
+                  f"{position}; another rank runs it", file=sys.stderr)
+            return False
+        with os.fdopen(fd, 'w') as f:
+            f.write(f"{self.rank}\n")
+        return True
 
     def _counter(self):
         """Current position of the counter, or None if there is none."""
@@ -115,6 +133,8 @@ class TaskQueue:
             except FileNotFoundError:
                 # another rank claimed this position first
                 time.sleep(random.uniform(0.0, 0.05))
+                continue
+            if not self._confirm(position):
                 continue
             return self.task_ids[position]
 

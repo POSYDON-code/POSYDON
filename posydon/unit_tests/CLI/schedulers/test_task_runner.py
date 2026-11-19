@@ -202,7 +202,8 @@ class TestQueue:
                             "0-4", "--queue", queue_dir, "--log", log, "--"]
                            + PRINT_ENV) == 0
         assert (tmp_path / "t_1.out").exists()
-        assert os.listdir(tmp_path / "queue" / "run1") == ["next_5"]
+        assert sorted(os.listdir(tmp_path / "queue" / "run1")) == [
+            "claimed_2", "claimed_3", "claimed_4", "next_5"]
 
     def test_main_queue_timeout(self, tmp_path, clean_env, monkeypatch,
                                 capsys):
