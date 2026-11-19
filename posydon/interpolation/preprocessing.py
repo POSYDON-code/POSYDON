@@ -77,12 +77,13 @@ class Transformer:
 
         self.negative = (data < 0).any(axis = 0)
 
+
         computations = [
             lambda data: [0, 1],
-            lambda data: [data.min(axis = 0), data.max(axis = 0) - data.min(axis = 0)],
-            lambda data: [data.mean(axis = 0), data.std(axis = 0)],
-            lambda data: [np.log10(data + eps).min(axis = 0), np.log10(data + eps).max(axis = 0) - np.log10(data + eps).min(axis = 0)],
-            lambda data: [np.log10(data + eps).mean(axis = 0), np.log10(data + eps).std(axis = 0)],
+            lambda data: [np.nanmin(data, axis = 0), np.nanmax(data, axis = 0) - np.nanmin(data, axis = 0)],
+            lambda data: [np.nanmean(data, axis = 0), np.nanstd(data, axis = 0)],
+            lambda data: [np.nanmin(np.log10(data + eps), axis = 0), np.nanmax(np.log10(data + eps), axis = 0) - np.nanmin(np.log10(data + eps), axis = 0)],
+            lambda data: [np.nanmean(np.log10(data + eps), axis = 0), np.nanstd(np.log10(data + eps), axis = 0)],
         ]
         compute = dict(zip(IN_SCALING_OPTIONS, computations)) # this line assumes that all other options are a subset of IN_SCALING_OPTION
         og = scaling[:]
@@ -141,13 +142,9 @@ class Transformer:
         data = (data * (self.scale + eps)) + self.shift
 
         if type(self.log) == bool and self.log:
-            non_logged = ~self.logged
-
-            if non_logged.any() and data.shape[1] == self.logged.shape[0]:
-                data[:, non_logged] = 10**data[:, non_logged] - eps
-
-            elif data.shape[1] != self.logged.shape[0]:
-                data = 10**data - eps  # fallback: no column info available
+            # undo the log for every column; columns that are stored in log space
+            # (self.logged) are re-logged below, mirroring the list branch
+            data = 10**data - eps
         elif type(self.log) == list:
             for i, l in enumerate(self.log):
                 if l:

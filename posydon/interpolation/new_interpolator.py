@@ -549,32 +549,45 @@ class IFInterpolator:
             
             self.__normalization_utils = {"transform": Transformer(training_final_values, scaling, self.out_key_dict[key]), "key": key}
             interpolated, classes, _ = self.evaluate(self.validation_grid["initial_values"][klass_inds])
-            classes = classes[np.where(classes[:, 0] != "initial_MT")[0]]
+
+            # evaluate() silently drops binaries predicted as initial_MT from `interpolated`; the same rows
+            # must be dropped from `classes` and from the ground truth, otherwise every later row is misaligned
+            ic_ind = self.discrete_out_keys.index("interpolation_class")
+            keep = classes[:, ic_ind] != "initial_MT"
+            classes = classes[keep]
             predicted_klass_inds = np.where((classes[:, 0] == klass) | (classes[:, 1] == klass))[0]
-            
+
             # needs to be fixed to include any arbitrary SN model but this will do for now
-            ground_truth = self.validation_grid["final_values"][key]
+            ground_truth = self.validation_grid["final_values"][key][klass_inds][keep]
 
             if predicted_klass_inds.shape[0] == 0:
                 Pwarn(f"There were no predicted classes for {key}")
                  # setting error as 0.0 since all scalings will be the same
                 return [0.0] * len(self.out_key_dict[key]), Transformer(training_final_values, scaling, self.out_key_dict[key])
 
-            # some interpolated and ground truth values will be NaN, e.g., for keys describing CE phenomnea are NaN if no CE is present, need to filter these NaNs out
-            nans_mask = ~(np.isnan(interpolated[predicted_klass_inds]).any(axis = 1) + np.isnan(ground_truth[klass_inds][predicted_klass_inds]).any(axis = 1))
+            # some interpolated and ground truth values will be NaN, e.g., keys describing CE phenomena are NaN if no CE
+            # is present. NaNs are handled per key (not per row): a NaN in one key must not discard the whole binary
+            pred = interpolated[predicted_klass_inds]
+            gt = ground_truth[predicted_klass_inds]
 
-            errors = np.abs(
-                (interpolated[predicted_klass_inds][nans_mask] - ground_truth[klass_inds][predicted_klass_inds][nans_mask]) /
-                (ground_truth[klass_inds][predicted_klass_inds][nans_mask] + eps)
-            )
+            errors = np.abs((pred - gt) / (gt + eps)) # NaN wherever either side is NaN
 
             self.is_training = False
 
-            error_mean = np.median(errors, axis = 0) if len(errors) > 0 else [np.inf] * len(self.out_key_dict[key])
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", RuntimeWarning) # all-NaN columns
+                error_mean = np.nanmedian(errors, axis = 0)
+            error_mean[np.isnan(error_mean)] = np.inf # keys with no valid validation samples
 
             return error_mean, Transformer(training_final_values, scaling, self.out_key_dict[key])
 
         eval_matrix, stat_matrix = find_normalization_evaluation_matrix(eval_fnc, kwargs_fnc, kwargs) # finding normalization
+
+        no_valid = np.isinf(eval_matrix).all(axis = 1) # (labels, keys) True where no scaling could be scored
+        if no_valid.any():
+            Pwarn(f"{no_valid.sum()} (class, key) pairs for {key} had no valid validation samples under any "
+                  f"scaling; defaulting to 'none'")
+
         opt = eval_matrix.argmin(axis = 1)
 
         transformers = []

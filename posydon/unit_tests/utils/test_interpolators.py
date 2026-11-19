@@ -25,7 +25,9 @@ class TestElements:
         elements = {'interp1d', 'SingleStarInterpolator', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
                     '__loader__', '__name__', '__package__', '__spec__',\
-                    'np', 'PchipInterpolator', 'copy'}
+                    'np', 'PchipInterpolator', 'copy',\
+                    'compress_labels', 'decompress_labels',\
+                    'compress_all_labels', 'decompress_all_labels'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -40,6 +42,18 @@ class TestElements:
                                       +"Please check, whether they have been "\
                                       +"added on purpose and update this "\
                                       +"unit test."
+
+class TestLabelCompression:
+    def test_round_trip(self):
+        labels = np.array(['stable_MT', 'no_MT', 'stable_MT'])
+        int_arr, int_to_str = totest.compress_labels(labels)
+        assert int_arr.dtype == np.int8
+        assert np.array_equal(totest.decompress_labels(int_arr, int_to_str),
+                              labels)
+        arr_dict = {'interpolation_class': labels}
+        totest.compress_all_labels(arr_dict)
+        totest.decompress_all_labels(arr_dict)
+        assert np.array_equal(arr_dict['interpolation_class'], labels)
 
 class Testinterp1d:
     @fixture
