@@ -36,7 +36,6 @@ We've tried to group the documentation into four distinct sections to help you n
    :maxdepth: 1
    :caption: How-to (Getting Started)
 
-   getting-started/prerequisites
    getting-started/installation-guide
    getting-started/first-grids
    getting-started/first-population
