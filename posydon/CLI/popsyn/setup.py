@@ -12,29 +12,46 @@ from posydon.CLI.io import (
     create_slurm_scripts,
 )
 from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
-from posydon.popsyn.io import binarypop_kwargs_from_ini, simprop_kwargs_from_ini
+from posydon.popsyn.io import (
+    binarypop_kwargs_from_parser,
+    parse_inifile,
+    resolved_inifile_name,
+    simprop_kwargs_from_parser,
+    write_resolved_inifile,
+)
 from posydon.utils.common_functions import convert_metallicity_to_string
+from posydon.utils.ini_defaults import default_section_names
 from posydon.utils.posydonwarning import Pwarn
 
 
-def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
+def check_SN_MODEL_validity(simprop_kwargs, verbose_on_fail=True):
     '''Checks if the step_SN model is valid for this script
 
     Parameters
     ----------
-    ini_file : str
-        the path to the ini file
+    simprop_kwargs : dict
+        the SimulationProperties kwargs of the ini file, see
+        `posydon.popsyn.io.simprop_kwargs_from_parser`
     verbose_on_fail : bool (default: True)
         if `True` rerun the model selection with verbose mode if this failed
 
     Returns
     -------
     bool
-        True if the model is valid or use_interp_values=False, False otherwise
+        True if the model is valid, use_interp_values=False, or [step_SN]
+        uses a class that is not a StepSN; False otherwise
     '''
+    # imported here, since the step classes are only needed for this check
+    from posydon.binary_evol.SN.step_SN import StepSN
 
-    simprop_kwargs = simprop_kwargs_from_ini(ini_file)
-    step_SN_MODEL = simprop_kwargs['step_SN'][1]
+    SN_class, SN_kwargs = simprop_kwargs['step_SN']
+    # the SN model check only applies to POSYDON's SN step; a custom class
+    # does not use the SN models of the grids
+    if not (isinstance(SN_class, type) and issubclass(SN_class, StepSN)):
+        return True
+    # check the values the step runs with: a section, which swaps in a
+    # subclass of StepSN, only lists some keys and the class fills in the rest
+    step_SN_MODEL = {**SN_class.DEFAULT_KWARGS, **SN_kwargs}
     # always allow the use of non-interpolation values
     if step_SN_MODEL['use_interp_values'] == False:
         return True
@@ -48,6 +65,55 @@ def check_SN_MODEL_validity(ini_file, verbose_on_fail=True):
     else:
         return True
 
+def check_flow_steps(simprop_kwargs, sections):
+    '''Checks that the flow and the configured steps match
+
+    Every step the flow chart can send a binary to must have a section in the
+    ini file (or in the default ini file it is stacked on). Step sections that
+    are neither used by the flow nor part of the default ini file raise a
+    warning, since they usually point to a typo in a section name.
+
+    Parameters
+    ----------
+    simprop_kwargs : dict
+        the SimulationProperties kwargs of the ini file, see
+        `posydon.popsyn.io.simprop_kwargs_from_parser`
+    sections : iterable of str
+        the names of all sections of the ini file
+
+    Raises
+    ------
+    ValueError
+        if the ini file has no [flow] section, or if the flow references
+        steps that are not configured in the ini file
+    '''
+    if 'flow' not in simprop_kwargs:
+        raise ValueError("The ini file has no [flow] section.")
+
+    flow_function, flow_kwargs = simprop_kwargs['flow']
+    flow_steps = set(flow_function(**flow_kwargs).values())
+    configured_steps = {key for key in simprop_kwargs
+                        if key.startswith('step_')}
+
+    default_steps = default_section_names()
+
+    missing_steps = sorted(flow_steps - configured_steps)
+    if missing_steps:
+        raise ValueError("The flow uses steps that are not configured in the "
+                         f"ini file: {missing_steps}. Add a section for each "
+                         "of them.")
+
+    # simprop_kwargs only holds sections with an import key; a misspelled
+    # section that only sets parameters is found in the ini file itself
+    step_sections = {section for section in sections
+                     if section.startswith('step_')}
+    unused_steps = sorted((configured_steps | step_sections)
+                          - flow_steps - default_steps)
+    if unused_steps:
+        Pwarn(f"The ini file configures steps that the flow never uses: "
+              f"{unused_steps}. Check the section names for typos.",
+              "StepWarning")
+
 def validate_ini_file(ini_file):
     '''Validates the ini file for population synthesis
 
@@ -56,19 +122,34 @@ def validate_ini_file(ini_file):
     ini_file : str
         the path to the ini file
 
+    Returns
+    -------
+    ConfigParser
+        the ini file stacked on the default ini file, see
+        `posydon.popsyn.io.parse_inifile`; the setup reuses it, so the ini
+        file is parsed and the steps are imported only once
+
     Raises
     ------
     FileNotFoundError
         if the ini file does not exist
     ValueError
-        if the step_SN MODEL is not valid for this script
+        if the step_SN MODEL is not valid for this script, or if the flow
+        and the configured steps do not match
     '''
     if not os.path.exists(ini_file):
         raise FileNotFoundError(f'File {ini_file} not found')
 
-    if not check_SN_MODEL_validity(ini_file):
+    parser = parse_inifile(ini_file)
+    simprop_kwargs = simprop_kwargs_from_parser(parser)
+
+    check_flow_steps(simprop_kwargs, parser.sections())
+
+    if not check_SN_MODEL_validity(simprop_kwargs):
         raise ValueError("The step_SN MODEL is not valid for this script. "
                          "Please check the MODEL in the ini file")
+
+    return parser
 
 ################################################
 ### Main function to setup population synthesis
@@ -83,10 +164,17 @@ def setup_popsyn_function(args):
         the arguments passed to the function
     '''
 
-    # validate the ini file
-    validate_ini_file(args.ini_file)
+    # validate the ini file; its parsed content is reused below
+    parser = validate_ini_file(args.ini_file)
 
-    synpop_params = binarypop_kwargs_from_ini(args.ini_file)
+    # write all parameters of the run (defaults + user ini file) to one file;
+    # the jobs read this file, so later changes of the defaults or of the
+    # user ini file do not change the run
+    resolved_ini = os.path.abspath(resolved_inifile_name(args.ini_file))
+    write_resolved_inifile(args.ini_file, resolved_ini, parser=parser)
+    print(f"Wrote the resolved ini file with all parameters: {resolved_ini}")
+
+    synpop_params = binarypop_kwargs_from_parser(parser)
     # warn if mass ratio q = M2/M1 could fall below 0.05
     if synpop_params['secondary_mass_scheme'] == 'flat_mass_ratio':
         q_min_possible = (synpop_params['secondary_mass_min']
@@ -110,7 +198,7 @@ def setup_popsyn_function(args):
                          " decrease the job array length")
 
     # create the run_metallicity and merge_metallicity scripts
-    create_python_scripts(args.ini_file)
+    create_python_scripts(resolved_ini)
 
     for met in metallicities:
         # create log directory

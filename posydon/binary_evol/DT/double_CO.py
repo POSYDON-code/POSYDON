@@ -14,7 +14,11 @@ from scipy.integrate import solve_ivp
 from scipy.optimize import brentq
 
 import posydon.utils.constants as constants
-from posydon.binary_evol.DT.step_detached import detached_evolution, detached_step
+from posydon.binary_evol.DT.step_detached import (
+    detached_defaults_from_ini,
+    detached_evolution,
+    detached_step,
+)
 from posydon.utils.common_functions import (
     CO_radius,
     orbital_period_from_separation,
@@ -128,6 +132,10 @@ class DoubleCO(detached_step):
     of gravitational radiation.  The integration is performed in dimensionless
     variables to guarantee numerical stability.
     """
+
+    # defaults come from the [step_dco] section of the default inifile
+    DEFAULT_KWARGS = detached_defaults_from_ini(
+        'step_dco', base=detached_step.DEFAULT_KWARGS)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

@@ -20,7 +20,8 @@ class TestElements:
     def test_dir(self):
         elements = ['default_kwargs', '__authors__',\
                     '__builtins__', '__cached__', '__doc__', '__file__',\
-                    '__loader__', '__name__', '__package__', '__spec__','age_of_universe']
+                    '__loader__', '__name__', '__package__', '__spec__',\
+                    'section_defaults']
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -47,8 +48,8 @@ class TestElements:
             'orbital_separation_scheme',
             'orbital_separation_min',
             'orbital_separation_max',
-            'log_orbital_seperation_mean',
-            'log_orbital_seperation_sigma',
+            'log_orbital_separation_mean',
+            'log_orbital_separation_sigma',
             'orbital_period_scheme',
             'orbital_period_min',
             'orbital_period_max',
@@ -62,8 +63,14 @@ class TestElements:
             'binary_fraction_const',
             'binary_fraction_scheme'
         ]
-        assert set(totest.default_kwargs.keys()) == set(elements), \
-            "The default_kwargs dictionary keys have changed. Please update the test."
+        # all of these must be defined; the default inifile adds the run
+        # options (dump_rate, use_MPI, ...) and star formation settings
+        missing = set(elements) - set(totest.default_kwargs.keys())
+        assert not missing, f"Missing default_kwargs: {missing}"
+
+    def test_kwargs_from_ini(self):
+        assert totest.default_kwargs == \
+            totest.section_defaults('BinaryPopulation_options')
 
     def test_instance_entropy(self):
         assert isinstance(totest.default_kwargs['entropy'], (type(None), float)), \
@@ -101,12 +108,12 @@ class TestElements:
         assert isinstance(totest.default_kwargs['orbital_separation_max'], float), \
             "orbital_separation_max should be a float"
 
-    def test_instance_log_orbital_seperation_mean(self):
-        assert isinstance(totest.default_kwargs['log_orbital_seperation_mean'], (type(None), float)), \
+    def test_instance_log_orbital_separation_mean(self):
+        assert isinstance(totest.default_kwargs['log_orbital_separation_mean'], (type(None), float)), \
             "log_orbital_seperation_mean should be None or a float"
 
-    def test_instance_log_orbital_seperation_sigma(self):
-        assert isinstance(totest.default_kwargs['log_orbital_seperation_sigma'], (type(None), float)), \
+    def test_instance_log_orbital_separation_sigma(self):
+        assert isinstance(totest.default_kwargs['log_orbital_separation_sigma'], (type(None), float)), \
             "log_orbital_seperation_sigma should be None or a float"
 
     def test_instance_orbital_period_min(self):

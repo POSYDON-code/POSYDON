@@ -41,6 +41,17 @@ class TestGetIniFile:
         captured = capsys.readouterr()
         assert "Using INI file" in captured.out
 
+    def test_get_ini_file_prefers_resolved(self, mock_args, tmp_path,
+                                           monkeypatch):
+        """The resolved ini file written by the setup is used directly."""
+        (tmp_path / "run.ini").write_text("[test]")
+        resolved = tmp_path / "run_resolved.ini"
+        resolved.write_text("[test]")
+        monkeypatch.setattr('builtins.input',
+                            lambda _: pytest.fail("should not ask"))
+
+        assert totest.get_ini_file(mock_args) == str(resolved)
+
     def test_get_ini_file_multiple_files_valid_selection(
         self, mock_args, tmp_path, capsys, monkeypatch
     ):

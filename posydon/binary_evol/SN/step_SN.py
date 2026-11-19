@@ -57,7 +57,7 @@ from posydon.binary_evol.SN.profile_collapse import (
     get_ejecta_element_mass_at_collapse,
 )
 from posydon.config import PATH_TO_POSYDON_DATA
-from posydon.grids.SN_MODELS import DEFAULT_SN_MODEL, get_SN_MODEL_NAME
+from posydon.grids.SN_MODELS import get_SN_MODEL_NAME
 from posydon.utils.common_functions import (
     CO_radius,
     calculate_Patton20_values_at_He_depl,
@@ -69,6 +69,7 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
 )
 from posydon.utils.data_download import data_download
+from posydon.utils.ini_defaults import section_defaults
 from posydon.utils.interpolators import interp1d
 from posydon.utils.limits_thresholds import (
     NEUTRINO_MASS_LOSS_UPPER_LIMIT,
@@ -249,24 +250,10 @@ class StepSN(object):
          E. Laplace, 2025,  A&A, 700, A20. Explodability criteria for the neutrino-driven
          supernova mechanism
     """
-    DEFAULT_KWARGS = {
-        # kick physics
-        "kick": True,
-        "kick_normalisation": 'one_over_mass',
-        "kick_prescription": 'maxwellian',
-        "sigma_kick_CCSN_NS": 265.0,
-        "mean_kick_CCSN_NS": None,
-        "sigma_kick_CCSN_BH": 265.0,
-        "mean_kick_CCSN_BH": None,
-        "sigma_kick_ECSN": 20.0,
-        "mean_kick_ECSN": None,
-        "no_kick_direct_collapse": False,
-        # other
-        "RNG": None,
-        "verbose": False
-    }
-    # add core collapse physics
-    DEFAULT_KWARGS.update(DEFAULT_SN_MODEL)
+    # the random number generator is set at run time; all other defaults
+    # (kick and core-collapse physics) come from the [step_SN] section of the
+    # default inifile
+    DEFAULT_KWARGS = {"RNG": None, **section_defaults('step_SN')}
 
 
     def __init__(self, **kwargs):

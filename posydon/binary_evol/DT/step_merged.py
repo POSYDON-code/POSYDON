@@ -11,6 +11,7 @@ __authors__ = [
 
 import numpy as np
 
+from posydon.binary_evol.DT.step_detached import detached_defaults_from_ini
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_H_RICH,
@@ -39,6 +40,10 @@ class MergedStep(IsolatedStep):
     """
     Prepare a merging star to do an an IsolatedStep
     """
+
+    # defaults come from the [step_merged] section of the default inifile
+    DEFAULT_KWARGS = detached_defaults_from_ini(
+        'step_merged', base=IsolatedStep.DEFAULT_KWARGS)
 
     def __init__(self,
                  merger_critical_rot = 0.4,

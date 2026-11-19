@@ -2289,3 +2289,9 @@ class TrackMatcher:
         profile_new['omega'] = star.surf_avg_omega
 
         star.profile = profile_new
+
+
+# step settings which are handed to the TrackMatcher and are not parameters
+# of the step itself ('metallicity' and 'verbose' are used by both)
+MATCHER_ONLY_KWARGS = frozenset(TrackMatcher.DEFAULT_KWARGS) - {"metallicity",
+                                                                "verbose"}
