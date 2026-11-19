@@ -27,8 +27,8 @@ class PISN_check_base(ABC):
     def is_above_gap(self,star):
         """True if the star is above the pair-instability gap.
 
-        Such stars collapse directly into a BH (explosion outcome
-        "BH_direct"), whatever the CCSN mechanism.
+        Such stars collapse directly into a BH (explosion outcome "BH"),
+        whatever the CCSN mechanism.
         """
         return False
 

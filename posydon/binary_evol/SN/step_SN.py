@@ -152,13 +152,13 @@ class StepSN(object):
         A PISN leaves no remnant, but its f_fb comes from the CCSN
         prescription (as on main), which needs the explosion outcome.
         Above the pair-instability gap the core collapses directly into a BH
-        ("BH_direct"), whatever the mechanism, as in Marchant et al. (2019)
-        and Hendriks et al. (2023).
+        ("BH"), whatever the mechanism, as in Marchant et al. (2019) and
+        Hendriks et al. (2023).
         """
         if SN_type not in ("CCSN", "PPISN", "PISN"):
             return None
         if self._PISN_check.is_above_gap(star):
-            return "BH_direct"
+            return "BH"
         return self._explosion_criterion(star)
 
     def collapse_outcome(self,star):

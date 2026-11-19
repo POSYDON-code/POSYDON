@@ -5,9 +5,15 @@ from abc import ABC, abstractmethod
 import numpy as np
 
 import posydon.utils.constants as const
-from posydon.binary_evol.SN.engine_data import NS_STATE, Sukhbold16_table
+from posydon.binary_evol.SN.engine_data import (
+    NS_STATE,
+    CO_core_at_He_depletion,
+    Patton20_CO_core_models,
+    Sukhbold16_table,
+)
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     SN_MECHANISMS,
+    CCSN_check_Patton20,
 )
 from posydon.utils.posydonerror import ModelError
 from posydon.utils.posydonwarning import Pwarn
@@ -30,8 +36,7 @@ def get_remnant_mass_prescription(**kwargs):
 
 STATE_FROM_EXPLOSION = {
     "NS": "NS",
-    "BH_fallback": "BH",
-    "BH_direct": "BH",
+    "BH": "BH",
     None: None,
 }
 
@@ -232,11 +237,11 @@ class Remnant_Mass_Base(ABC):
         """
         Return (m_rembar, f_fb, state) after the core collapse of the star.
 
-        A failed explosion ("BH_direct", e.g. above the pair-instability gap)
-        is a direct collapse for every mechanism; otherwise the mechanism's
-        CCSN prescription applies.
+        A failed explosion ("BH", e.g. above the pair-instability gap) is a
+        direct collapse for every mechanism; otherwise the mechanism's CCSN
+        prescription applies.
         """
-        if explosion == "BH_direct":
+        if explosion == "BH":
             return self._get_rem_mass_direct_collapse(star)
         return self._get_rem_mass_CCSN(star,explosion)
 
@@ -377,9 +382,28 @@ class Remnant_Mass_Couch20(Remnant_Mass_from_tables):
 
 
 
-class Remnant_Mass_Patton20(Remnant_Mass_Base):
+class Remnant_Mass_Patton20(Remnant_Mass_from_tables):
+    """
+    Remnant mass for the CO-core models of Patton & Sukhbold (2020),
+    MNRAS, 499, 2803.
+
+    The NS mass is M4 of the model matching the star's CO core at He
+    depletion. CO cores below the models (<= 2.5 Msun) give NSs of
+    1.25 Msun, as in v2.4. BHs form by direct collapse.
+    """
+    NS_mass_below_models = 1.25
+
     def __init__(self,**kwargs):
         super().__init__(**kwargs)
+        self.approx_at_he_depletion = kwargs['approx_at_he_depletion']
+        self._Patton20 = Patton20_CO_core_models(("M4",))
+
+    def _NS_mass(self,star):
+        X_C, M_CO = CO_core_at_He_depletion(star, self.approx_at_he_depletion)
+        if M_CO <= CCSN_check_Patton20.M_CO_min:
+            return self.NS_mass_below_models
+        return self._Patton20(X_C, M_CO)["M4"]
+
 
 class Remnant_Mass_direct(Remnant_Mass_Base):
     def _get_rem_mass_CCSN(self, star, explosion):
@@ -402,6 +426,7 @@ REMNANT_MASS_PRESCRIPTIONS = {
     "direct": Remnant_Mass_direct,
     "Sukhbold+16-engine": Remnant_Mass_Sukhbold16,
     "Couch+20-engine": Remnant_Mass_Couch20,
+    "Patton&Sukhbold20-engine": Remnant_Mass_Patton20,
 }
 
 

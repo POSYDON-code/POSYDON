@@ -1,7 +1,8 @@
-"""Tables of the supernova engines.
+"""Tables of the supernova engines, and the tools that place stars on them.
 
-They are shared by the explosion criteria and the remnant-mass prescriptions,
-and each table is read only once per process.
+They are shared by the explosion criteria and the remnant-mass prescriptions.
+Each table is read only once per process; objects fitted to the tables are
+created by the stages that use them.
 """
 
 import json
@@ -13,8 +14,10 @@ import pandas as pd
 from sklearn.neighbors import KNeighborsRegressor
 
 from posydon.config import PATH_TO_POSYDON_DATA
+from posydon.utils.common_functions import calculate_Patton20_values_at_He_depl
 from posydon.utils.data_download import data_download
 from posydon.utils.interpolators import interp1d
+from posydon.utils.posydonerror import ModelError
 
 PATH_TO_SUKHBOLD16 = os.path.join(PATH_TO_POSYDON_DATA, "Sukhbold+16")
 PATH_TO_PATTON20 = os.path.join(PATH_TO_POSYDON_DATA, "Patton+Sukhbold20")
@@ -22,12 +25,13 @@ PATH_TO_COUCH20 = os.path.join(PATH_TO_POSYDON_DATA, "Couch+2020")
 
 SUKHBOLD16_ENGINES = ("N20", "S19.8", "W15", "W18", "W20")
 COUCH20_TURBULENCE = ("1.0", "1.2", "1.23", "1.25", "1.27", "1.3", "1.4")
-PATTON20_QUANTITIES = ("M4", "mu4", "Xi", "sc", "Xi_1p5", "Xi_1p75", "Xi_2p0", "Xi_2p25")
+PATTON20_QUANTITIES = ("M4", "mu4", "Xi", "sc")
 
 # code for remnant types in the tables of Sukhbold et al. (2016)
 NS_STATE = 13
 BH_STATE = 14
 
+N_NEIGHBORS = 1
 
 def _auxiliary_file(filename):
     """Return filename, downloading the auxiliary data first if it is missing."""
@@ -74,10 +78,6 @@ def Patton20_table(quantity):
     fractions at core He depletion between 0.05 and 0.5. For each model, the
     values of M4, mu4, xi_2.5 and central entropy sc are given, so that the
     explodability criterion of Ertl et al. (2016) can be applied.
-
-    The quantities "Xi_1p5","Xi_1p75","Xi_2p0","Xi_2p25" were computed from
-    the KEPLER models, and can be used to model NS masses according to
-    Boccioli & Fragione (2024).
     """
     if quantity not in PATTON20_QUANTITIES:
         raise ValueError(
@@ -93,20 +93,79 @@ def Patton20_table(quantity):
     return table
 
 
-@lru_cache(maxsize=None)
-def Patton20_CO_core_map(quantity, n_neighbors):
-    """
-    Return pre-SN variables for POSYDON models by matching their properties at core
-    helium depletion to the models of Patton & Sukhbold 2020, and using their pre-SN
-    properties.
+def _missing(value):
+    """True for a value that was not set (None or NaN)."""
+    return value is None or (isinstance(value, float) and np.isnan(value))
 
-    A kNN regressor takes X_C and M_CO, and returns one of the possible pre-computed
-    values from the Patton & Sukhbold models.
+
+def CO_core_at_He_depletion(star, approximate=False):
     """
-    table = Patton20_table(quantity)
-    regressor = KNeighborsRegressor(n_neighbors, weights="distance")
-    return regressor.fit(table[["X_C", "M_CO"]].to_numpy(),
-                         table[quantity].to_numpy())
+    Return the carbon mass fraction and CO core mass of a star at core He
+    depletion, the properties that place it among the CO-core models of
+    Patton & Sukhbold (2020).
+
+    Without approximation, they come from the star's
+    avg_c_in_c_core_at_He_depletion and co_core_mass_at_He_depletion, or
+    from its history if those are missing. With approximate=True, the CO core
+    mass at the end of the star's evolution stands in for the one at He
+    depletion, and the carbon mass fraction comes from fits to it, for H-rich
+    and stripped stars.
+
+    Returns
+    -------
+    X_C, M_CO : float
+    """
+    if approximate:
+        M_CO = star.co_core_mass
+        if "H-rich" in star.state:
+            return 0.20 / M_CO + 0.15, M_CO
+        if "stripped_He" in star.state:
+            return -0.084 * np.log(M_CO) + 0.4, M_CO
+        raise ValueError(f"Cannot approximate the CO core at He depletion "
+                         f"of a star in state {star.state!r}: it must be "
+                         f"H-rich or stripped_He.")
+    if (_missing(star.avg_c_in_c_core_at_He_depletion)
+            or _missing(star.co_core_mass_at_He_depletion)):
+        calculate_Patton20_values_at_He_depl(star)
+    X_C = star.avg_c_in_c_core_at_He_depletion
+    M_CO = star.co_core_mass_at_He_depletion
+    if _missing(X_C) or _missing(M_CO):
+        raise ModelError(f"The star has no CO core at He depletion, neither "
+                         f"as attributes nor in its history: M_CO = {M_CO}, "
+                         f"X_C = {X_C}.")
+    return X_C, M_CO
+
+
+class Patton20_CO_core_models:
+    """
+    Pre-supernova quantities of the CO-core models of Patton & Sukhbold
+    (2020), for a CO core at He depletion.
+
+    When created, fits one k-nearest-neighbours regressor per quantity on the
+    carbon mass fraction and CO core mass (X_C, M_CO) of the models. Calling
+    the object returns the quantities of the model(s) matching a CO core: with
+    n_neighbors = 1, those of the closest model (outside the grid, of the
+    closest model on its edge). As in v2.4, X_C and M_CO are not rescaled,
+    which only matters for n_neighbors > 1.
+    """
+    def __init__(self, quantities):
+        self.n_neighbors = N_NEIGHBORS
+        self._maps = {}
+        for quantity in quantities:
+            table = Patton20_table(quantity)
+            regressor = KNeighborsRegressor(self.n_neighbors, weights="distance")
+            self._maps[quantity] = regressor.fit(
+                table[["X_C", "M_CO"]].to_numpy(), table[quantity].to_numpy())
+
+    def __call__(self, X_C, M_CO):
+        """Return {quantity: value} for a CO core at He depletion."""
+        point = [[X_C, M_CO]]
+        return {quantity: float(regressor.predict(point)[0])
+                for quantity, regressor in self._maps.items()}
+
+    def __repr__(self):
+        return (f"{type(self).__name__}(quantities={tuple(self._maps)}, "
+                f"n_neighbors={self.n_neighbors})")
 
 
 @lru_cache(maxsize=None)
