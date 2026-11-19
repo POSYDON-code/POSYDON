@@ -454,6 +454,11 @@ class TestFunctions:
                                        +"installed and up to date.")
             rmtree(test_path)
 
+        def restore_archive():
+            # the archive as first built: rebuilding it would change its MD5
+            # whenever the clock passes a second (tar stores the files'
+            # modification times; on macOS even with sub-second precision)
+            copyfile(pristine_archive, filepath)
         def clean_up():
             # remove leftovers of previous test scenarios
             for leftover in [filepath, partpath]:
@@ -612,13 +617,13 @@ class TestFunctions:
             assert os.path.exists(os.path.join(test_path, "test.txt"))
             clean_up()
             # without verbose output
-            build_archive()
+            restore_archive()
             totest.download_one_dataset(dataset='Test')
             captured_output = capsys.readouterr()
             assert "Verifying existing archive" not in captured_output.out
             clean_up()
             # wrong checksum: replace the existing archive by a fresh download
-            build_archive()
+            restore_archive()
             with open(filepath, "ab") as corrupted_archive:
                 corrupted_archive.write(b"corrupted\n")
             mp.setattr(totest.urllib.request, "urlretrieve",
@@ -634,7 +639,7 @@ class TestFunctions:
             assert os.path.exists(os.path.join(test_path, "test.txt"))
             clean_up()
             # unreadable archive: replace it by a fresh download
-            build_archive()
+            restore_archive()
             md5_of_file = totest._md5_of_file
             self.md5_calls = 0
             def unreadable_once_md5(filepath):
@@ -653,7 +658,7 @@ class TestFunctions:
             clean_up()
 
         # forced downloads replace a leftover archive by a fresh download
-        build_archive()
+        restore_archive()
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
             mp.setattr(totest, "ZENODO_COLLECTION",
@@ -672,7 +677,7 @@ class TestFunctions:
             clean_up()
 
         # missing disk space stops before downloading or extracting
-        build_archive()
+        restore_archive()
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
             mp.setattr(totest, "ZENODO_COLLECTION",
@@ -703,7 +708,7 @@ class TestFunctions:
 
         # a leftover archive means an interrupted extraction: extract it, even
         # if the data set seems to be installed
-        build_archive()
+        restore_archive()
         with monkeypatch.context() as mp:
             mp.setattr(totest, "PATH_TO_POSYDON_DATA", test_path)
             mp.setattr(totest, "ZENODO_COLLECTION",
@@ -721,7 +726,7 @@ class TestFunctions:
 
         # without MD5 check, a truncated leftover archive gets replaced by a
         # fresh download
-        build_archive()
+        restore_archive()
         with open(filepath, "r+b") as truncated_archive:
             truncated_archive.truncate(os.path.getsize(filepath)//2)
         with monkeypatch.context() as mp:
