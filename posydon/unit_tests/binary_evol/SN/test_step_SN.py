@@ -15,6 +15,7 @@ from pytest import approx, fixture, mark, raises, warns
 import posydon.binary_evol.SN.step_SN as totest
 import posydon.utils.posydonwarning as pw
 from posydon.binary_evol.binarystar import BinaryStar
+from posydon.binary_evol.singlestar import SingleStar
 from posydon.binary_evol.SN.engine_data import Sukhbold16_table
 from posydon.binary_evol.SN.explodability.CCSN_explosion_criteria import (
     explodes_Ertl16,
@@ -24,7 +25,6 @@ from posydon.binary_evol.SN.remnant_mass.remnant_mass_prescriptions import (
     PISN_mass_Marchant,
     get_remnant_mass_prescription,
 )
-from posydon.binary_evol.singlestar import SingleStar
 from posydon.utils.common_functions import (
     CO_radius,
     orbital_period_from_separation,
