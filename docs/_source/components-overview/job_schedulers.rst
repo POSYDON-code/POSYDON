@@ -1,0 +1,436 @@
+.. _job_schedulers:
+
+##############
+Job schedulers
+##############
+
+POSYDON's command line tools write job scripts for a cluster's job scheduler:
+``posydon-popsyn`` for population synthesis, ``posydon-setup-grid`` for MESA
+grids and ``posydon-setup-pipeline`` for post-processing. Two schedulers are
+supported:
+
+- ``slurm``: SLURM (``sbatch``). This is the default.
+- ``pbs``: PBS Pro (``qsub``), e.g. on ALCF Crux.
+
+The tools describe their jobs independently of the scheduler, so switching
+schedulers is a single setting:
+
+.. list-table::
+   :header-rows: 1
+   :widths: 25 40 35
+
+   * - Tool
+     - Select the scheduler
+     - Scheduler options
+   * - ``posydon-popsyn setup``
+     - ``--scheduler pbs``
+     - ``--scheduler_option KEY=VALUE`` (repeatable)
+   * - ``posydon-setup-grid``
+     - ``--submission-type pbs``
+     - keys in the ``[slurm]``/``[pbs]``/``[scheduler]`` ini section
+   * - ``posydon-setup-pipeline``
+     - ``SCHEDULER = 'pbs'`` in ``[account]``
+     - upper case keys in ``[account]``, e.g. ``SELECT``
+
+The general job settings (account, queue/partition, walltime, email) keep
+their usual names for every scheduler. Generated files use the scheduler's
+extension, e.g. ``step_1.slurm`` or ``step_1.pbs``, and the submission
+scripts (``slurm_submit.sh``/``pbs_submit.sh``, ``run_grid.sh`` and
+``run_pipeline.sh``) chain the jobs with the scheduler's dependencies. They
+stop with an error message as soon as a submission fails, so no job is
+submitted without the jobs it depends on.
+
+``posydon-popsyn setup`` saves the job settings of a run in
+``popsyn_jobs.json``. ``posydon-popsyn check`` uses this file to create rescue
+jobs for the same scheduler. Arguments given to ``check`` override the saved
+settings.
+
+
+SLURM
+=====
+
+Each array task is a SLURM array task, started with ``srun``.
+
+.. list-table:: SLURM options
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Option
+     - Description
+   * - ``exclude``
+     - Comma separated list of nodes to exclude. For ``posydon-popsyn`` this
+       is also available as ``--exclude``.
+   * - ``launcher``
+     - Command prefix starting a task (default: ``srun``).
+   * - ``rerunnable``
+     - Write ``--requeue`` (``True``) or ``--no-requeue`` (``False``); not
+       set by default, so the cluster's default applies. SLURM requeues the
+       array tasks that were killed (e.g. preempted), not the whole array;
+       a requeued task starts from the beginning.
+   * - ``task_stats``
+     - Directory in which the start, end, exit code, CPU time and peak
+       memory of every array task are recorded, as for PBS (see
+       :ref:`task_stats`). Off by default.
+
+
+PBS (e.g. ALCF Crux)
+====================
+
+Many PBS sites, including ALCF, schedule **whole nodes**: jobs never share a
+node, and only a few jobs per project may be queued or running. POSYDON's jobs
+are mostly arrays of small tasks (e.g. single-core population synthesis
+batches). One PBS job per task would occupy a full node for every task, so
+POSYDON *packs* array tasks onto nodes instead:
+
+- One PBS job requests
+  :math:`\lceil N_\mathrm{tasks}/\mathrm{tasks\_per\_node} \rceil` nodes, or
+  at most ``max_nodes``.
+- ``mpiexec`` starts the POSYDON task runner
+  (``python -m posydon.CLI.schedulers.task_runner``) in each slot.
+- Each runner runs the same command a SLURM array task would run, once for
+  each array index assigned to it. It sets ``POSYDON_ARRAY_TASK_ID``,
+  ``POSYDON_ARRAY_TASK_COUNT``, ``POSYDON_ARRAY_TASK_MIN`` and
+  ``POSYDON_ARRAY_JOB_ID``, and writes one log file per task, as on SLURM.
+- If there are more tasks than slots, a slot that becomes free takes the
+  next task that no other slot has taken yet (a work queue). All slots stay
+  busy until the tasks run out, even if the tasks' run times differ a lot,
+  as for MESA runs. Choose the walltime accordingly (see
+  :ref:`large_grids`).
+- The slots are spread evenly over the cores of a node, e.g. 56
+  single-core tasks get 2 cores each, so both sockets of a node (and their
+  memory) are used.
+- The job fails if any task failed. This means jobs depending on it with
+  ``afterok`` (e.g. the merge job of a population) only start when all tasks
+  succeeded. A failed task doesn't stop the others, though: the runners end
+  with exit code 0 (a non-zero code would make ``mpiexec`` stop all other
+  slots and their running tasks) and list their failed tasks in
+  ``<queue_dir>/<job ID>_<start time>.failed/``. After ``mpiexec`` returns,
+  the job script exits with 1 if that directory exists.
+
+The job scripts export the environment of ``qsub`` (``-V``), as SLURM does
+by default, so submit them from a shell with your POSYDON environment
+activated. The scripts change into the submission directory when they start.
+
+To pack tasks, POSYDON needs the size of a node, and the job scripts need the
+system's MPI launcher and any site-specific resources. Nothing is assumed:
+give them as options, or name a known system with ``site``, which sets them
+all (options given explicitly take precedence):
+
+.. list-table:: Known sites (``site=...``)
+   :header-rows: 1
+   :widths: 15 85
+
+   * - Site
+     - Settings
+   * - ``crux``
+     - ALCF Crux: ``cores_per_node=128``, ``memory_per_node=256G``,
+       ``select=system=crux``, ``filesystems=home:eagle``,
+       ``launcher=pals``, ``chunk_resources=False`` (whole nodes)
+
+.. list-table:: PBS options
+   :header-rows: 1
+   :widths: 25 75
+
+   * - Option
+     - Description
+   * - ``site``
+     - A known system whose settings are used for the options not given (see
+       above).
+   * - ``select``
+     - Additional resources of each chunk in ``-l select=N:...``, e.g.
+       ``system=crux``.
+   * - ``chunk_resources``
+     - Request the cores (``ncpus``), MPI ranks (``mpiprocs``) and, if the job
+       has a memory per core, memory (``mem``) of each chunk in ``-l select``,
+       as needed on systems that share nodes between jobs (default:
+       ``True``). Sites that allocate whole nodes don't need them
+       (``False`` for ``crux``).
+   * - ``filesystems``
+     - Value of ``-l filesystems=``, e.g. ``home:eagle`` (required at ALCF).
+   * - ``tasks_per_node``
+     - Array tasks per node. The default is the number that fits on a node,
+       given the cores and memory per task: the smaller of
+       ``cores_per_node`` / cores per task and ``memory_per_node`` / memory
+       per task (e.g. on Crux 56 popsyn tasks with ``--mem_per_cpu 4.5G``).
+   * - ``max_nodes``
+     - Maximum number of nodes of an array job.
+   * - ``cores_per_node``, ``memory_per_node``
+     - Size of a node: physical cores and memory, e.g. ``128`` and ``256G``.
+       Needed when ``tasks_per_node`` is not given; the cores also spread the
+       slots over a node. No default: give them, or a ``site``.
+   * - ``launcher``
+     - ``pals`` (Cray PALS ``mpiexec``, the default), ``mpich`` (MPICH or
+       Intel MPI) or ``openmpi``, or a template with the fields
+       ``{mpiexec}``, ``{ntasks}``, ``{ppn}``, ``{depth}`` and ``{nodes}``.
+       ``pals`` is
+       ``{mpiexec} -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth``;
+       ``{mpiexec}`` is the system's ``mpiexec`` (see below), ``{depth}``
+       the number of cores per slot: the cores of a node divided evenly
+       between the slots, but at least the cores per task. The ``mpich``
+       and ``openmpi`` templates have not been tested yet.
+   * - ``mpiexec_search``
+     - File pattern of the system's ``mpiexec`` (default with ``pals``:
+       ``/opt/cray/pals/*/bin/mpiexec``; with other launchers: none). Empty:
+       use the ``mpiexec`` in ``PATH``.
+   * - ``place``
+     - Value of ``-l place=`` (default: ``scatter``).
+   * - ``export_env``
+     - Export the environment of ``qsub`` (default: ``True``).
+   * - ``rerunnable``
+     - ``True`` writes ``#PBS -r y``, ``False`` writes ``#PBS -r n``; not set
+       by default. A rerunnable job is restarted **from the beginning**, e.g.
+       after being preempted (see below).
+   * - ``task_stats``
+     - Directory in which each array task's start, end, CPU time and peak
+       memory are recorded (see :ref:`task_stats`). Off by default.
+   * - ``task_order``
+     - ``dynamic`` (default): with more tasks than slots, a free slot takes
+       the next task nobody has taken yet. ``static``: slot *r* runs the tasks
+       *r*, *r* + slots, ... assigned when the job starts.
+   * - ``queue_dir``
+     - Directory of the work queues and the lists of failed tasks
+       (default: ``.task_queue`` in the
+       submission directory). It must be on a file system shared by all
+       nodes, e.g. Eagle. Each run of a job uses its own subdirectory with a
+       counter file and a small claim file per task handed out; the
+       directory can be deleted when no job is running.
+
+Finding the system's ``mpiexec``
+--------------------------------
+
+Installing ``mpi4py`` with conda usually installs conda's own MPI (e.g. Open
+MPI) into the environment, whose ``mpiexec`` then comes first in your
+``PATH``. It doesn't understand the options of Cray's ``mpiexec``, and a job
+using it fails with ``An unrecognized option was included on the mpiexec
+command line: --ppn``.
+
+The job scripts therefore look for the system's ``mpiexec`` when they start,
+with the file pattern ``mpiexec_search`` (with the ``pals`` launcher by
+default Cray PALS', ``/opt/cray/pals/*/bin/mpiexec``). If several versions are
+installed, the latest one is used, so the scripts keep working after a
+system update. If none is found, they use the ``mpiexec`` in ``PATH``.
+
+To use a specific launcher instead, give it in ``launcher``, e.g.
+
+.. code-block:: bash
+
+    --scheduler_option "launcher=/opt/cray/pals/1.8/bin/mpiexec -n {ntasks} --ppn {ppn} --depth {depth} --cpu-bind depth"
+
+(or ``launcher=...`` in the grid ini, ``LAUNCHER = '...'`` in the pipeline's
+``[account]`` section).
+
+
+ALCF Crux queues
+----------------
+
+.. list-table::
+   :header-rows: 1
+   :widths: 18 12 12 58
+
+   * - Queue
+     - Nodes per job
+     - Walltime
+     - Notes
+   * - ``debug``
+     - 1-4
+     - 2 h
+     - 1 running and 1 queued job per user, so dependent jobs (e.g. the popsyn
+       merge job) can't be queued at the same time; submit them later (e.g.
+       with ``posydon-popsyn check``)
+   * - ``workq-route``
+     - 1-176
+     - 24 h
+     - Routes to ``workq``: 20 jobs queued or running and 10 running per
+       project; use it for production runs
+   * - ``preemptable``
+     - 1-10
+     - 72 h
+     - Up to 20 jobs per project; jobs can be **killed without warning** when
+       jobs are submitted to ``demand``
+   * - ``demand``
+     - 1-64
+     - 1 h
+     - By request only
+
+Check the current limits with ``qstat -Qf <queue>``.
+
+Preemption and reruns
+---------------------
+
+A preempted job is killed as a whole: all its nodes and all array tasks
+packed into it. With ``rerunnable=True`` PBS restarts the job script **from
+the beginning**, so every task of the job is run again:
+
+- MESA grids: set ``skip_finished_runs=True`` in the ``[run_parameters]``
+  section of the grid ini. ``posydon-run-grid`` then skips grid points whose
+  directory already contains a finished MESA run (one with a termination
+  code), instead of deleting and rerunning them. Unfinished runs start from
+  the beginning.
+- Population synthesis: don't make the jobs rerunnable; after a kill,
+  ``posydon-popsyn check`` creates a rescue job for the missing batches only.
+
+Smaller jobs (fewer nodes) lose less when they are killed.
+
+
+.. _large_grids:
+
+Large MESA grids
+----------------
+
+A MESA grid larger than one job can hold runs as a series of jobs:
+
+1. Set ``max_nodes`` to the job size you want, e.g. ``max_nodes=20`` with
+   ``tasks_per_node=64`` gives 1280 slots. Without ``max_nodes``, a job
+   would request a slot for every grid point.
+2. Set ``skip_finished_runs=True`` in the ``[run_parameters]`` section.
+3. Submit the grid job. Its slots work through the grid points in order
+   until the walltime ends; runs still going are killed.
+4. Submit the same job script again (e.g. ``qsub grid.pbs``). It skips the
+   grid points that have finished (within seconds each) and continues with
+   the killed and remaining ones. Repeat until all grid points are done.
+
+Runs that need longer than the walltime never finish this way; run them with
+a longer walltime (e.g. in ``preemptable``) or more threads per run.
+
+A packed job ends only when its last run ends, and its nodes are charged
+until then. A few runs whose timesteps have collapsed can keep a job going
+for days after all other runs finished. Set ``max_run_time`` in the
+``[run_parameters]`` section (e.g. ``max_run_time='48:00:00'``) to stop such
+runs. Stopped runs count as finished for ``skip_finished_runs``, so later jobs
+don't run them again.
+
+Two jobs running at the same time on the same grid would not know about
+each other's work and could run the same grid point twice, so submit the
+next job only after the previous one ended (e.g. with
+``qsub -W depend=afterany:<job ID> grid.pbs``).
+
+
+.. _task_stats:
+
+Per-task statistics
+-------------------
+
+The scheduler's own accounting can't show the resources of the individual
+tasks of a packed job. With the option ``task_stats=<directory>``, the
+task runner records the start, end, exit code, CPU time and peak memory
+(including child processes, e.g. MESA) of every task, one CSV file per rank
+(PBS) or per array task (SLURM). On SLURM, ``sacct`` shows much of this too;
+``task_stats`` gives the same files on both schedulers.
+Tasks that were still running when the job was killed have a start but no
+end. Summarize them with:
+
+.. code-block:: bash
+
+    python -m posydon.CLI.schedulers.task_stats <directory> --cpus-per-task 4 --site crux
+
+which prints the numbers of finished, failed and unfinished tasks, the
+distribution of run times and peak memory, and a suggested ``tasks_per_node``
+for the measured peak memory (on other systems give the node size with
+``--cores-per-node`` and ``--memory-per-node`` instead of ``--site``).
+
+
+ALCF Crux examples
+------------------
+
+Population synthesis, e.g. 1 million binaries per metallicity in 56 tasks
+on one node (each task needs up to about 3.8 GB; ``--mem_per_cpu 4.5G``
+gives 56 tasks per node):
+
+.. code-block:: bash
+
+    posydon-popsyn setup population_params.ini --n_tasks 56 --mem_per_cpu 4.5G \
+        --scheduler pbs --queue workq-route --account <PROJECT> \
+        --scheduler_option site=crux \
+        --walltime 04:00:00 --merge_walltime 02:00:00
+    ./pbs_submit.sh
+
+Run populations from a directory on Eagle rather than from your home
+directory.
+
+MESA grid (``posydon-setup-grid --submission-type pbs --inifile grid.ini``),
+in the grid ini file:
+
+.. code-block:: ini
+
+    [pbs]
+    ; 64 runs with 4 threads per node: both hardware threads of every core
+    number_of_cpus_per_task=4
+    job_array=True
+    partition=preemptable
+    account={PROJECT}
+    walltime='72:00:00'
+    email={YOUR_EMAIL_ADDRESS}
+    site=crux
+    tasks_per_node=64
+    ; about 500 grid points per node
+    max_nodes=8
+    ; rerun the job if it is preempted
+    rerunnable=True
+    ; optional: record run times and memory per grid point
+    task_stats=stats
+
+    [run_parameters]
+    ...
+    ; keep grid points that already finished (for a series of jobs, or
+    ; rerunnable jobs)
+    skip_finished_runs=True
+    ; stop runs taking longer than this (e.g. with collapsed timesteps)
+    max_run_time='48:00:00'
+
+``number_of_nodes`` and ``number_of_mpi_tasks`` are only used without job
+arrays (``job_array=False``) and can be left out here: the size of a packed
+job is set by ``tasks_per_node`` and ``max_nodes``.
+
+Post-processing pipeline, in the ``[account]`` section:
+
+.. code-block:: ini
+
+    [account]
+        ACCOUNT = '<PROJECT>'
+        PARTITION = 'workq-route'
+        WALLTIME = '12:00:00'
+        MAILTYPE = 'FAIL'
+        EMAIL = 'me@university.edu'
+        SCHEDULER = 'pbs'
+        SITE = 'crux'
+
+.. note::
+
+    On ALCF Crux, ``workq`` jobs are limited to 24 hours, so MESA runs that
+    need longer will not finish within a single job. The ``preemptable`` queue
+    allows 72 hours, with the risks described above.
+
+
+Other PBS systems
+-----------------
+
+On a PBS system without a ``site`` entry, give the node size and, if it is
+not Cray PALS, the MPI launcher, e.g. for nodes with 64 cores and 512 GB
+and MPICH:
+
+.. code-block:: bash
+
+    --scheduler_option cores_per_node=64 --scheduler_option memory_per_node=512G \
+    --scheduler_option launcher=mpich
+
+With ``chunk_resources`` (the default), the jobs request the cores, ranks and
+memory they use, e.g. ``#PBS -l select=2:ncpus=64:mpiprocs=64:mem=256gb``, so
+they also work where nodes are shared between jobs. A system used often can
+get its own entry in ``SITES`` in ``posydon/CLI/schedulers/pbs.py``.
+
+
+Adding a scheduler
+==================
+
+Jobs are described by :class:`posydon.CLI.schedulers.base.JobSpec` and
+:class:`~posydon.CLI.schedulers.base.ArraySpec`. Commands and log file names
+can use the placeholders ``{task_id}``, ``{job_id}`` and ``{job_end}``.
+
+To support another scheduler:
+
+1. Subclass :class:`posydon.CLI.schedulers.base.Scheduler`.
+2. Set ``name``, ``extension``, ``submit_program`` and ``options``.
+3. Implement ``directives``, ``body``, ``submit_line`` and ``mpi_launcher``.
+4. Add the class to ``SCHEDULERS`` in ``posydon/CLI/schedulers/__init__.py``.
+
+All tools then accept the new scheduler name.

@@ -14,8 +14,8 @@ simulation in your grid. The design of the :samp:`ini` file file is such that it
 start with the MESA defaults for every possible MESA parameter, stack on top of
 that the POSYDON suggested defaults, and then finally, if supplied, stack user
 specific parameters on top of both the MESA defaults and the POSYDON defaults.
-This scheme requires a high-performance computing environment with SLURM
-installed.
+This scheme requires a high-performance computing environment with a job
+scheduler, SLURM or PBS (see :ref:`job_schedulers`).
 
 Below we describe each section of the :samp:`ini` file and what each value corresponds
 to. In general, lines with capitalized quantities surrounded by {} are
@@ -35,16 +35,22 @@ POSYDON:
 [slurm]
 -------
 
-This section designates all the SLURM-related parameters.
+This section designates all the job scheduler parameters. The section may
+also be called ``[pbs]`` or ``[scheduler]``; the scheduler itself is chosen
+with ``posydon-setup-grid --submission-type``. Options of the scheduler (e.g.
+``exclude`` for SLURM, or ``site``, ``tasks_per_node`` and ``max_nodes`` for
+PBS) can be added to this section, see :ref:`job_schedulers`.
 
 .. code-block:: ini
 
     [slurm]
 
     ; Number of nodes you would like to request
+    ; (only used without job arrays; may be left out with job_array=True)
     number_of_nodes=1
 
     ; This is the number of processes that will be running MESA simulations
+    ; (only used without job arrays; may be left out with job_array=True)
     number_of_mpi_tasks=1
 
     ; This is the number of cores you will let each MESA simulation use
@@ -84,16 +90,16 @@ This section designates all the SLURM-related parameters.
     =======================  ===========
     Setting name             Description
     =======================  ===========
-    number_of_nodes          The number of nodes each job will request
-    number_of_mpi_tasks      (outdated) The number of parallel processes ganerates by MPI (recommended to not change)
+    number_of_nodes          The number of nodes each job will request (only for `job_array=False`; default for job arrays: 1)
+    number_of_mpi_tasks      (outdated) The number of parallel processes ganerates by MPI (recommended to not change; only for `job_array=False`; default for job arrays: 1)
     number_of_cpus_per_task  The number of CPUs each job will request (in best this should align with the number of threads set for MESA)
-    job_array                Set to `True` to run a SLURM job array
+    job_array                Set to `True` to run a job array (packed onto nodes on PBS)
     user                     User name
-    partition                SLURM partition to run the jobs on
-    account                  SLURM account to run the jobs on
-    walltime                 Maximum time for each run, otherwise it will get cancelled by SLURM to avoid never ending MESA runs going on too short time steps
+    partition                Partition/queue to run the jobs on
+    account                  Account/project to run the jobs on
+    walltime                 Maximum time for each run, otherwise it will get cancelled by the scheduler to avoid never ending MESA runs going on too short time steps
     work_dir                 The path to the place, where the data will be writting during runtime (it is recommended to use fast local node storage here), afterwards the data will be copied/moved to the current directory (uncommend this line to write always to the final location)
-    email                    Your email address to receive notifications from SLURM
+    email                    Your email address to receive notifications from the scheduler
     newgroup                 The name of the owning group all the files should get (leave empty if no changes are needed here)
     =======================  ===========
 
@@ -346,3 +352,15 @@ This section designates the run parameters for a grid.
     grid = {PATH_TO_GRID}
 
 The :samp:`grid` specifies where to find the csv file to read the runs from.
+
+Optionally, :samp:`skip_finished_runs = True` makes job array runs skip grid
+points whose output directory already contains a finished MESA run, instead of
+deleting and rerunning them. This is useful when a job is run again, e.g. a
+rerunnable job after preemption (see :ref:`job_schedulers`).
+
+Optionally, :samp:`max_run_time = '48:00:00'` stops each MESA run after that
+time (formats as for walltimes, e.g. :samp:`'1-00:00:00'`). This is meant for
+runs whose timesteps have collapsed and that would otherwise keep their slot
+busy until the end of the job. A stopped run ends without a termination code,
+like a run stopped at a cluster's time limit, and with
+:samp:`skip_finished_runs = True` it counts as finished and is not run again.

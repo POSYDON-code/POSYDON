@@ -66,8 +66,8 @@ Now, with our `grid.csv` and `example_grid.ini` files ready to go, we use a
 POSYDON script `posydon-setup-grid` to generate all the necessary files to run
 the grid using slurm. Note the different arguments here. We are designating
 that: 1) we are using a fixed grid, 2) that our job scheduler is slurm, and 3)
-the name of the :samp:`ini` file. We may expand compatibility for other job
-schedulers in the future, but for now slurm is the only implemented option.
+the name of the :samp:`ini` file. Other job schedulers, e.g. PBS with
+``--submission-type pbs``, are described in :ref:`job_schedulers`.
 
 .. code-block::
 

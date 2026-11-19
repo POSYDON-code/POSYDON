@@ -501,6 +501,39 @@ def simprop_kwargs_from_ini(path, only=None, verbose=False):
     return parser_dict
 
 
+def get_job_array_environment(environ=None):
+    """Get the job array information from the environment.
+
+    SLURM job arrays set SLURM_ARRAY_JOB_ID, SLURM_ARRAY_TASK_ID,
+    SLURM_ARRAY_TASK_MIN and SLURM_ARRAY_TASK_COUNT. Jobs on other
+    schedulers (e.g. PBS via `posydon.CLI.schedulers.task_runner`) set the
+    equivalent POSYDON_ARRAY_* variables. SLURM variables take precedence.
+
+    Parameters
+    ----------
+    environ : dict or None
+        The environment (default: os.environ).
+
+    Returns
+    -------
+    dict
+        Keys 'JOB_ID', 'TASK_ID', 'TASK_MIN' and 'TASK_COUNT'. Values
+        not set in the environment are None (all of them if not running
+        as part of a job array).
+    """
+    if environ is None:
+        environ = os.environ
+    for prefix in ('SLURM_ARRAY_', 'POSYDON_ARRAY_'):
+        job_id = environ.get(prefix + 'JOB_ID')
+        if job_id is not None:
+            return {'JOB_ID': job_id,
+                    'TASK_ID': environ.get(prefix + 'TASK_ID'),
+                    'TASK_MIN': environ.get(prefix + 'TASK_MIN'),
+                    'TASK_COUNT': environ.get(prefix + 'TASK_COUNT')}
+    return {'JOB_ID': None, 'TASK_ID': None, 'TASK_MIN': None,
+            'TASK_COUNT': None}
+
+
 def binarypop_kwargs_from_ini(path, verbose=False):
     """Convert an inifile into kwargs for the BinaryPopulation class.
 
@@ -533,7 +566,10 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 pop_kwargs[key] = ast.literal_eval(val)
 
 
-            JOB_ID = os.getenv('SLURM_ARRAY_JOB_ID')
+            # job array information from SLURM, or from POSYDON's task runner
+            # on other schedulers (POSYDON_ARRAY_* variables)
+            array_env = get_job_array_environment()
+            JOB_ID = array_env['JOB_ID']
             # MPI import for local use only
             if pop_kwargs['use_MPI'] == True and JOB_ID is not None:
                 raise ValueError('MPI must be turned off for job arrays.')
@@ -549,11 +585,11 @@ def binarypop_kwargs_from_ini(path, verbose=False):
                 if JOB_ID is not None and pop_kwargs['use_MPI'] is True: # pragma: no cover
                     raise ValueError('MPI must be turned off for job arrays.')
                 elif JOB_ID is not None:
-                    pop_kwargs['JOB_ID'] = np.int64(os.environ['SLURM_ARRAY_JOB_ID'])
+                    pop_kwargs['JOB_ID'] = np.int64(JOB_ID)
                     # account for job array not starting at 0
-                    min_rank = np.int64(os.environ['SLURM_ARRAY_TASK_MIN'])
-                    pop_kwargs['RANK'] = np.int64(os.environ['SLURM_ARRAY_TASK_ID'])-min_rank
-                    pop_kwargs['size'] = np.int64(os.environ['SLURM_ARRAY_TASK_COUNT'])
+                    min_rank = np.int64(array_env['TASK_MIN'])
+                    pop_kwargs['RANK'] = np.int64(array_env['TASK_ID'])-min_rank
+                    pop_kwargs['size'] = np.int64(array_env['TASK_COUNT'])
                 else:
                     pop_kwargs['RANK'] = None
                     pop_kwargs['size'] = None
