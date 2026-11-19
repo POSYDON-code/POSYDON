@@ -370,67 +370,71 @@ class MesaGridStep:
 
         if self.flip_stars_before_step:
             flip_stars(binary)
-        max_MESA_sim_time = self.get_final_MESA_step_time()
+        # always flip the stars back, even if the step raises an error;
+        # otherwise a failed binary keeps star_1 and star_2 (including their
+        # full histories) swapped
+        try:
+            max_MESA_sim_time = self.get_final_MESA_step_time()
 
-        if pd.isna(max_MESA_sim_time):
+            if pd.isna(max_MESA_sim_time):
+                binary.state = 'initial_RLOF'
+                return
+
+            step_will_exceed_max_time = (binary.time+max_MESA_sim_time
+                                        > binary.properties.max_simulation_time)
+            if (step_will_exceed_max_time
+                    and self.stop_method == 'stop_at_max_time'):
+
+                if self.interpolation_method != 'nearest_neighbour':
+                    self.closest_binary, self.nearest_neighbour_distance, \
+                        self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
+
+                if self.track_interpolation:
+                    self.flush_history = False
+                else:
+                    self.flush_history = True
+                self.update_properties_NN(star_1_CO=self.star_1_CO,
+                                          star_2_CO=self.star_2_CO,
+                                          track_interpolation=True)
+            else:
+                self.step(binary, interp_method=self.interpolation_method)
+
+            if (self.stop_method == 'stop_at_max_time'
+                    and binary.time >= binary.properties.max_simulation_time):
+
+                # self.flush_history = True # needed???
+
+                # stop_at_condition looks through the MESA output appended to
+                # the binary object. The times have already been added to the
+                # binary's start time, so the correct value to pass is
+                # max_simulation_time
+                self.stop_at_condition(binary,
+                                       star='star_1',
+                                       property='time',
+                                       value=binary.properties.max_simulation_time,
+                                       interpolate=self.stop_interpolate,
+                                       star_1_CO=self.star_1_CO,
+                                       star_2_CO=self.star_2_CO)
+            elif self.stop_method == 'stop_at_condition':
+                self.stop_at_condition(binary,
+                                       property=self.stop_var_name,
+                                       value=self.stop_value,
+                                       star=self.stop_star,
+                                       interpolate=self.stop_interpolate,
+                                       star_1_CO=self.star_1_CO,
+                                       star_2_CO=self.star_2_CO)
+            else:
+                self.stop_at_end(binary,
+                                 property=self.stop_var_name,
+                                 value=self.stop_value,
+                                 star=self.stop_star,
+                                 interpolate=self.stop_interpolate,
+                                 star_1_CO=self.star_1_CO,
+                                 star_2_CO=self.star_2_CO)
+        finally:
             if self.flip_stars_before_step:
                 flip_stars(binary)
-            binary.state = 'initial_RLOF'
-            return
 
-        step_will_exceed_max_time = (binary.time+max_MESA_sim_time
-                                    > binary.properties.max_simulation_time)
-        if (step_will_exceed_max_time
-                and self.stop_method == 'stop_at_max_time'):
-
-            if self.interpolation_method != 'nearest_neighbour':
-                self.closest_binary, self.nearest_neighbour_distance, \
-                    self.termination_flags = self._psyTrackInterp.evaluate(self.binary)
-
-            if self.track_interpolation:
-                self.flush_history = False
-            else:
-                self.flush_history = True
-            self.update_properties_NN(star_1_CO=self.star_1_CO,
-                                      star_2_CO=self.star_2_CO,
-                                      track_interpolation=True)
-        else:
-            self.step(binary, interp_method=self.interpolation_method)
-
-        if (self.stop_method == 'stop_at_max_time'
-                and binary.time >= binary.properties.max_simulation_time):
-
-            # self.flush_history = True # needed???
-
-            # stop_at_condition looks through the MESA output appended to the
-            # binary object. The times have already been added to the binary's
-            # start time, so the correct value to pass is max_simulation_time
-            self.stop_at_condition(binary,
-                                   star='star_1',
-                                   property='time',
-                                   value=binary.properties.max_simulation_time,
-                                   interpolate=self.stop_interpolate,
-                                   star_1_CO=self.star_1_CO,
-                                   star_2_CO=self.star_2_CO)
-        elif self.stop_method == 'stop_at_condition':
-            self.stop_at_condition(binary,
-                                   property=self.stop_var_name,
-                                   value=self.stop_value,
-                                   star=self.stop_star,
-                                   interpolate=self.stop_interpolate,
-                                   star_1_CO=self.star_1_CO,
-                                   star_2_CO=self.star_2_CO)
-        else:
-            self.stop_at_end(binary,
-                             property=self.stop_var_name,
-                             value=self.stop_value,
-                             star=self.stop_star,
-                             interpolate=self.stop_interpolate,
-                             star_1_CO=self.star_1_CO,
-                             star_2_CO=self.star_2_CO)
-
-        if self.flip_stars_before_step:
-            flip_stars(binary)
         if binary.time > binary.properties.max_simulation_time:
             binary.event = 'MaxTime_exceeded'
         elif binary.time == binary.properties.max_simulation_time:
