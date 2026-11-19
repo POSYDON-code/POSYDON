@@ -180,8 +180,9 @@ class PBSScheduler(Scheduler):
         takes the next task nobody has taken yet. "static": rank r runs the
         tasks r, r+nranks, ... assigned at the start.
     queue_dir : str
-        Directory of the dynamic task queues, on a shared file system
-        (default: ".task_queue" in the submission directory).
+        Directory of the dynamic task queues and of the lists of failed
+        tasks, on a shared file system (default: ".task_queue" in the
+        submission directory).
     """
 
     name = 'pbs'
@@ -378,6 +379,7 @@ class PBSScheduler(Scheduler):
             runner += ["--stats", self.settings['task_stats']]
         if dynamic:
             runner += ["--queue", self.settings['queue_dir']]
+        runner += ["--failures", self.settings['queue_dir']]
         runner_text = " ".join(shlex.quote(part) for part in runner + ["--"])
         # {task_id} and {job_id} are replaced by the task runner, $VARIABLES
         # by the shell
@@ -389,13 +391,22 @@ class PBSScheduler(Scheduler):
         launcher = self.settings['launcher'].format(
             mpiexec=self.mpiexec(), ntasks=n_ranks, ppn=ppn, depth=depth,
             nodes=nodes)
-        lines = [f"export POSYDON_ARRAY_JOB_ID={PBS_JOB_NUMBER}"]
-        if dynamic:
-            # unique for each run of the job (a rerun job keeps its ID)
-            lines.append("export POSYDON_QUEUE_ID="
-                         f"{PBS_JOB_NUMBER}_$(date +%s)")
-        lines += [f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{cpus}}}",
-                  f"{launcher} {runner_text} {command_text}"]
+        # the queue ID is unique for each run of the job (a rerun job keeps
+        # its ID); it names the task queue and the record of failed tasks
+        failed = (shlex.quote(self.settings['queue_dir'])
+                  + '/"${POSYDON_QUEUE_ID}.failed"')
+        lines = [f"export POSYDON_ARRAY_JOB_ID={PBS_JOB_NUMBER}",
+                 f"export POSYDON_QUEUE_ID={PBS_JOB_NUMBER}_$(date +%s)",
+                 f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{cpus}}}",
+                 f"{launcher} {runner_text} {command_text}",
+                 # the ranks end with exit code 0 even if tasks failed (else
+                 # the launcher would stop all ranks); fail the job here
+                 "status=$?",
+                 f"if [ -d {failed} ]; then",
+                 f"    echo \"Failed tasks: $(cat {failed}/* | tr '\\n' ' ')\" >&2",
+                 "    exit 1",
+                 "fi",
+                 "exit $status"]
         return lines
 
     def submit_line(self, variable, script, after=None, condition='ok'):

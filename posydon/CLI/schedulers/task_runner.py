@@ -244,6 +244,11 @@ def parse_args(argv=None):
                         help='hand out the tasks dynamically, coordinated '
                              'through a counter in DIR/<queue id> (on a '
                              'shared file system)')
+    parser.add_argument('--failures', default=None, metavar='DIR',
+                        help='record failed tasks in DIR/<queue id>.failed/'
+                             'rank<rank> and end with exit code 0, so that '
+                             'the MPI launcher does not stop the other ranks '
+                             '(the job script checks DIR afterwards)')
     parser.add_argument('command', nargs=argparse.REMAINDER,
                         help='command to run (after "--")')
     args = parser.parse_args(argv)
@@ -282,14 +287,34 @@ def main(argv=None):
     else:
         my_tasks = get_my_tasks(rank, args.nranks, ntasks=args.ntasks,
                                 task_ids=args.task_ids)
+    failures = None
+    if args.failures is not None:
+        failures = os.path.join(args.failures, f"{get_queue_id()}.failed",
+                                f"rank{rank}")
     failed = 0
     try:
         for task_id in my_tasks:
-            failed += _run_one(args, task_id, job_id, task_count, stats)
+            if _run_one(args, task_id, job_id, task_count, stats):
+                failed += 1
+                _record_failure(failures, f"task {task_id}")
     except TimeoutError as error:
         print(f"task_runner: {error}", file=sys.stderr)
-        return 1
+        failed += 1
+        _record_failure(failures, f"rank {rank}: {error}")
+    if failures is not None:
+        # a non-zero exit code would make the MPI launcher stop all other
+        # ranks, including their running tasks
+        return 0
     return 1 if failed else 0
+
+
+def _record_failure(path, line):
+    """Append `line` to the failure file `path` (if not None)."""
+    if path is None:
+        return
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, 'a') as f:
+        f.write(line + "\n")
 
 
 def _run_one(args, task_id, job_id, task_count, stats):

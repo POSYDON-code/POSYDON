@@ -101,7 +101,11 @@ POSYDON *packs* array tasks onto nodes instead:
   memory) are used.
 - The job fails if any task failed. This means jobs depending on it with
   ``afterok`` (e.g. the merge job of a population) only start when all tasks
-  succeeded.
+  succeeded. A failed task doesn't stop the others, though: the runners end
+  with exit code 0 (a non-zero code would make ``mpiexec`` stop all other
+  slots and their running tasks) and list their failed tasks in
+  ``<queue_dir>/<job ID>_<start time>.failed/``. After ``mpiexec`` returns,
+  the job script exits with 1 if that directory exists.
 
 The job scripts export the environment of ``qsub`` (``-V``), as SLURM does
 by default, so submit them from a shell with your POSYDON environment
@@ -184,7 +188,8 @@ all (options given explicitly take precedence):
        the next task nobody has taken yet. ``static``: slot *r* runs the tasks
        *r*, *r* + slots, ... assigned when the job starts.
    * - ``queue_dir``
-     - Directory of the work queues (default: ``.task_queue`` in the
+     - Directory of the work queues and the lists of failed tasks
+       (default: ``.task_queue`` in the
        submission directory). It must be on a file system shared by all
        nodes, e.g. Eagle. Each run of a job uses its own subdirectory with a
        single small file; the directory can be deleted when no job is

@@ -4,6 +4,10 @@ __authors__ = [
     "Seth Gossage <seth.gossage@northwestern.edu>",
 ]
 
+import os
+import subprocess
+import sys
+
 import pytest
 
 import posydon.CLI.schedulers.pbs as totest
@@ -15,6 +19,11 @@ NODE = dict(cores_per_node=128, memory_per_node="256G", chunk_resources=False)
 SEARCH = ("POSYDON_MPIEXEC=$(ls /opt/cray/pals/*/bin/mpiexec 2>/dev/null "
           "| sort -V | tail -n 1)")
 MPIEXEC = '"${POSYDON_MPIEXEC:-mpiexec}"'
+
+
+def launch(lines):
+    """The line of a job script that launches the array tasks."""
+    return next(line for line in lines if "task_runner" in line)
 
 
 class TestHelpers:
@@ -117,9 +126,9 @@ class TestPBSNewOptions:
 
     def test_task_stats(self):
         job = JobSpec(name="a", array=ArraySpec(command="run", n_tasks=2))
-        assert "--stats stats/run1 --" in totest.PBSScheduler(
-            task_stats="stats/run1", **NODE).body(job)[-1]
-        assert "--stats" not in totest.PBSScheduler(**NODE).body(job)[-1]
+        assert "--stats stats/run1 --" in launch(totest.PBSScheduler(
+            task_stats="stats/run1", **NODE).body(job))
+        assert "--stats" not in launch(totest.PBSScheduler(**NODE).body(job))
 
 
 class TestPBSWorkQueue:
@@ -131,27 +140,29 @@ class TestPBSWorkQueue:
     def test_dynamic_queue(self):
         scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2)
         lines = scheduler.body(self.grid_job(1000))
-        assert lines[-3] == \
+        i = lines.index(launch(lines))
+        assert lines[i - 2] == \
             "export POSYDON_QUEUE_ID=${PBS_JOBID%%.*}_$(date +%s)"
-        assert lines[-2] == "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}"
-        assert lines[-1].startswith(MPIEXEC + " -n 128 --ppn 64 --depth 2 ")
+        assert lines[i - 1] == "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-2}"
+        assert launch(lines).startswith(MPIEXEC + " -n 128 --ppn 64 --depth 2 ")
         assert "--nranks 128 --ntasks 1000 --task-count 1000 " \
-            "--queue .task_queue -- run {task_id}" in lines[-1]
+            "--queue .task_queue --failures .task_queue -- run {task_id}" \
+            in launch(lines)
         scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2,
                                         queue_dir="/eagle/q")
-        assert "--queue /eagle/q --" in scheduler.body(self.grid_job(1000))[-1]
+        assert "--queue /eagle/q --failures /eagle/q --" in \
+            launch(scheduler.body(self.grid_job(1000)))
 
     def test_no_queue_needed(self):
         # one rank per task: nothing to hand out
         lines = totest.PBSScheduler(tasks_per_node=64).body(self.grid_job(64))
-        assert "--queue" not in lines[-1]
-        assert not any("POSYDON_QUEUE_ID" in line for line in lines)
+        assert "--queue" not in launch(lines)
 
     def test_static_order(self):
         scheduler = totest.PBSScheduler(tasks_per_node=64, max_nodes=2,
                                         task_order="Static")
         assert scheduler.settings['task_order'] == "static"
-        assert "--queue" not in scheduler.body(self.grid_job(1000))[-1]
+        assert "--queue" not in launch(scheduler.body(self.grid_job(1000)))
         with pytest.raises(ValueError, match="task_order"):
             totest.PBSScheduler(task_order="random")
 
@@ -163,10 +174,32 @@ class TestPBSWorkQueue:
         assert scheduler.depth(JobSpec(name="a", cpus_per_task=cpus),
                                ppn) == depth
         lines = scheduler.body(self.grid_job(ppn, cpus))
-        assert f"--depth {depth} " in lines[-1]
+        assert f"--depth {depth} " in launch(lines)
         # threads of a task: its cores, not the spacing
-        assert lines[-2] == \
+        assert lines[lines.index(launch(lines)) - 1] == \
             f"export OMP_NUM_THREADS=${{OMP_NUM_THREADS:-{cpus}}}"
+
+
+class TestFailedTasks:
+    """Ranks end with exit code 0 even if tasks failed (the MPI launcher
+    would stop all other ranks otherwise); the job script fails the job."""
+
+    @pytest.mark.parametrize("code, failed", [(0, False), (3, True)])
+    def test_job_fails_after_launch(self, tmp_path, code, failed):
+        # one rank, started without MPI (rank 0 from PMI_RANK)
+        scheduler = totest.PBSScheduler(launcher="env PMI_RANK=0 {mpiexec}",
+                                        mpiexec_search="", **NODE)
+        job = JobSpec(name="a", array=ArraySpec(
+            command=f"{sys.executable} -c 'import sys; sys.exit({code})'",
+            n_tasks=1))
+        lines = [line.replace("env PMI_RANK=0 mpiexec", "env PMI_RANK=0", 1)
+                 .replace("python -m", f"{sys.executable} -m", 1)
+                 for line in scheduler.body(job)]
+        env = dict(os.environ, PBS_JOBID="12.server")
+        result = subprocess.run(["bash", "-c", "\n".join(lines)], cwd=tmp_path,
+                                env=env, capture_output=True, text=True)
+        assert result.returncode == (1 if failed else 0)
+        assert ("Failed tasks: task 0" in result.stderr) == failed
 
 
 class TestPBSBody:
@@ -185,20 +218,30 @@ class TestPBSBody:
             "export POSYDON_JOB_END=$(( $(date +%s) + 3600 ))",
             "export A=${PBS_JOBID%%.*}",
             "export POSYDON_ARRAY_JOB_ID=${PBS_JOBID%%.*}",
+            "export POSYDON_QUEUE_ID=${PBS_JOBID%%.*}_$(date +%s)",
             "export OMP_NUM_THREADS=${OMP_NUM_THREADS:-1}",
             MPIEXEC + " -n 50 --ppn 28 --depth 4 --cpu-bind depth python -m "
             "posydon.CLI.schedulers.task_runner --nranks 50 --ntasks 50 "
             "--task-count 50 --log './logs/popsyn_{job_id}_{task_id}.out' "
-            "-- run --index {task_id} --end $POSYDON_JOB_END 'a b'"]
+            "--failures .task_queue "
+            "-- run --index {task_id} --end $POSYDON_JOB_END 'a b'",
+            "status=$?",
+            'if [ -d .task_queue/"${POSYDON_QUEUE_ID}.failed" ]; then',
+            '    echo "Failed tasks: $(cat .task_queue/"${POSYDON_QUEUE_ID}'
+            '.failed"/* | tr \'\\n\' \' \')" >&2',
+            "    exit 1",
+            "fi",
+            "exit $status"]
 
     def test_rescue_body(self):
         scheduler = totest.PBSScheduler(
             launcher="srun -n {ntasks} -N {nodes} -c {depth}", **NODE)
         job = JobSpec(name="a", cpus_per_task=4, array=ArraySpec(
             command="run", task_ids=[7, 3], task_count=10, launched=False))
-        assert scheduler.body(job)[-1] == (
+        assert launch(scheduler.body(job)) == (
             "srun -n 2 -N 1 -c 64 python -m posydon.CLI.schedulers.task_runner"
-            " --nranks 2 --task-ids 3,7 --task-count 10 -- run")
+            " --nranks 2 --task-ids 3,7 --task-count 10"
+            " --failures .task_queue -- run")
 
     def test_single_job_body(self):
         job = JobSpec(name="a", commands=["compress-mesa ."],
@@ -263,7 +306,7 @@ class TestFindMpiexec:
     def test_search_line_only_when_used(self):
         lines = totest.PBSScheduler(**NODE).body(self.array_job())
         assert lines[1] == SEARCH
-        assert lines[-1].startswith(MPIEXEC + " -n 2 ")
+        assert launch(lines).startswith(MPIEXEC + " -n 2 ")
         # MPI job using the launcher in its command (e.g. MESA grids)
         scheduler = totest.PBSScheduler()
         job = JobSpec(name="a", commands=[
@@ -277,13 +320,13 @@ class TestFindMpiexec:
             **NODE)
         lines = explicit.body(self.array_job())
         assert SEARCH not in lines
-        assert lines[-1].startswith("/opt/cray/pals/1.8/bin/mpiexec -n 2 ")
+        assert launch(lines).startswith("/opt/cray/pals/1.8/bin/mpiexec -n 2 ")
 
     def test_no_search(self):
         lines = totest.PBSScheduler(mpiexec_search="", **NODE).body(
             self.array_job())
         assert not any("POSYDON_MPIEXEC" in line for line in lines)
-        assert lines[-1].startswith("mpiexec -n 2 ")
+        assert launch(lines).startswith("mpiexec -n 2 ")
 
     def test_custom_search(self):
         scheduler = totest.PBSScheduler(mpiexec_search="/sw/mpi/*/mpiexec",
@@ -337,7 +380,7 @@ class TestSitesAndPortability:
         job = JobSpec(name="a", mem_per_cpu="4.5G",
                       array=ArraySpec(command="c", n_tasks=56))
         assert "#PBS -l select=1:system=crux" in scheduler.directives(job)
-        assert "--ppn 56 --depth 2 " in scheduler.body(job)[-1]
+        assert "--ppn 56 --depth 2 " in launch(scheduler.body(job))
 
     def test_explicit_options_win(self):
         scheduler = totest.PBSScheduler(site="crux", cores_per_node=64,
@@ -361,7 +404,7 @@ class TestSitesAndPortability:
             totest.PBSScheduler().body(job)
         # explicit tasks per node: no node size needed, no spreading
         lines = totest.PBSScheduler(tasks_per_node=4).body(job)
-        assert "-n 4 --ppn 4 --depth 1 " in lines[-1]
+        assert "-n 4 --ppn 4 --depth 1 " in launch(lines)
 
     def test_chunk_resources(self):
         scheduler = totest.PBSScheduler(cores_per_node=64,
@@ -396,7 +439,7 @@ class TestSitesAndPortability:
                                         cores_per_node=8)
         job = JobSpec(name="a", array=ArraySpec(command="c", n_tasks=8))
         lines = scheduler.body(job)
-        assert lines[-1].startswith(start + " python -m ")
+        assert launch(lines).startswith(start + " python -m ")
         # only the PALS launcher looks for Cray's mpiexec by default
         assert any("POSYDON_MPIEXEC=" in line for line in lines) == \
             (name == "pals")

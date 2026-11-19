@@ -153,6 +153,38 @@ def test_shell_braces_are_kept(tmp_path):
     assert open(log).read().strip() == "${FILE} 005"
 
 
+class TestFailures:
+
+    def test_failures_recorded_and_exit_zero(self, tmp_path, clean_env,
+                                             capsys):
+        clean_env.setenv('POSYDON_QUEUE_ID', '9_100')
+        failures = tmp_path / "q"
+        fail_odd = [sys.executable, "-c",
+                    "import sys; sys.exit(int(sys.argv[1]) % 2)", "{task_id}"]
+        assert totest.main(["--nranks", "1", "--ntasks", "4", "--failures",
+                            str(failures), "--"] + fail_odd) == 0
+        assert (failures / "9_100.failed" / "rank0").read_text() == \
+            "task 1\ntask 3\n"
+        assert "task 1 failed with exit code 1" in capsys.readouterr().err
+        # all tasks succeed: nothing recorded
+        assert totest.main(["--nranks", "1", "--ntasks", "2", "--rank", "0",
+                            "--failures", str(tmp_path / "ok"), "--",
+                            "true"]) == 0
+        assert not (tmp_path / "ok").exists()
+
+    def test_queue_timeout_recorded(self, tmp_path, clean_env, monkeypatch):
+        clean_env.setenv('POSYDON_QUEUE_ID', '9_200')
+        queue_class = totest.TaskQueue
+        monkeypatch.setattr(totest, "TaskQueue", lambda *args: queue_class(
+            *args, timeout=0.05, poll=0.01))
+        # rank 1 of 2 waits for a counter that rank 0 never creates
+        assert totest.main(["--nranks", "2", "--rank", "1", "--ntasks", "5",
+                            "--queue", str(tmp_path / "q"), "--failures",
+                            str(tmp_path / "q"), "--", "true"]) == 0
+        assert "rank 1:" in (tmp_path / "q" / "9_200.failed" /
+                             "rank1").read_text()
+
+
 class TestQueue:
 
     def test_main_with_queue(self, tmp_path, clean_env):
