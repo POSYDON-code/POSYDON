@@ -322,9 +322,7 @@ def get_population_data(pop, metallicity, grid_type, channel=None, prop=None):
     # 3. Get the history data for the selected population based on the grid/step names
     selected_indices = pop.population.index[channel_mask & metallicity_mask].tolist()
 
-    where_string = "(index in "+str(selected_indices)+")"
-
-    data = pop.history.select(where=where_string,
+    data = pop.history.select_indices(selected_indices,
                               columns=['S1_mass',
                                        'S2_mass',
                                        'orbital_period',
