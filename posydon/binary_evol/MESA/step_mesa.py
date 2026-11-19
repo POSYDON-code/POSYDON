@@ -1331,7 +1331,7 @@ class MS_MS_step(MesaGridStep):
               state_2 == 'H-rich_Core_H_burning' and
               event == 'ZAMS' and
               self.m1_min <= m2 <= self.m1_max and
-              np.max([self.q_min, 0.5/m1]) <= 1./mass_ratio <= self.q_max and
+              np.max([self.q_min, 0.5/m2]) <= 1./mass_ratio <= self.q_max and
               self.p_min <= p <= self.p_max):
             self.flip_stars_before_step = True
             super().__call__(self.binary)

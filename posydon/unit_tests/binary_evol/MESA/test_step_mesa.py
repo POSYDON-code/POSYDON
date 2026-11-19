@@ -115,3 +115,50 @@ class TestMesaGridStepFlipStars:
         with raises(GridError):
             step(binary)
         self.assert_original_order(binary)
+
+
+class TestMSMSStepGridCheck:
+    """Check the in-grid conditions of MS_MS_step.__call__ for both the normal
+    and the flipped (m2 > m1) star order."""
+
+    @fixture
+    def step(self, monkeypatch):
+        # avoid loading any grids by bypassing __init__
+        step = object.__new__(totest.MS_MS_step)
+        step.m1_min, step.m1_max = 7.0, 120.0
+        step.p_min, step.p_max = 1.0, 1000.0
+        step.q_min, step.q_max = 0.05, 1.0
+        # record that the MESA step would be called instead of running it
+        step.called = False
+
+        def fake_call(self, binary):
+            self.called = True
+
+        monkeypatch.setattr(totest.MesaGridStep, '__call__', fake_call)
+        return step
+
+    def make_ZAMS_binary(self, m1, m2, p=10.0):
+        return BinaryStar(star_1=SingleStar(mass=m1,
+                                            state='H-rich_Core_H_burning'),
+                          star_2=SingleStar(mass=m2,
+                                            state='H-rich_Core_H_burning'),
+                          state='detached', event='ZAMS', orbital_period=p)
+
+    def test_in_grid(self, step):
+        step(self.make_ZAMS_binary(m1=8.0, m2=0.55))
+        assert step.called
+        assert not step.flip_stars_before_step
+
+    def test_in_grid_flipped(self, step):
+        # flipped: the primary is star_2 (8 Msun), the secondary is star_1
+        # (0.55 Msun, above the 0.5 Msun limit), q = 0.55/8 ~ 0.069 >= q_min;
+        # the lower q limit must use the primary mass, i.e. 0.5/m2
+        step(self.make_ZAMS_binary(m1=0.55, m2=8.0))
+        assert step.called
+        assert step.flip_stars_before_step
+
+    def test_outside_grid_flipped(self, step):
+        # flipped with a secondary below 0.5 Msun
+        with raises(GridError):
+            step(self.make_ZAMS_binary(m1=0.45, m2=8.0))
+        assert not step.called
