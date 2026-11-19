@@ -842,6 +842,3 @@ class IFInterpolator:
             obj.triangulate(obj.training_grid)
 
         return obj
-
-
-
