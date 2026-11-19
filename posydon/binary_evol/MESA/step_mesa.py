@@ -23,8 +23,8 @@ from posydon.binary_evol.binarystar import BINARYPROPERTIES, BinaryStar
 from posydon.binary_evol.singlestar import STARPROPERTIES
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.grids.SN_MODELS import SN_MODELS, get_SN_MODEL_NAME
-from posydon.interpolation.new_interpolator import IFInterpolator
 from posydon.interpolation.interpolation import psyTrackInterp
+from posydon.interpolation.new_interpolator import IFInterpolator
 from posydon.utils import common_functions as cf
 from posydon.utils.common_functions import (
     CO_radius,
@@ -385,12 +385,12 @@ class MesaGridStep:
 
         elif self.interpolation_method in self.supported_interp_methods:
             self.final_values, self.classes, _ = self._Interp.evaluate(
-                self.binary, 
+                self.binary,
                 sn_model = get_SN_MODEL_NAME(vars(self.binary.properties.step_SN))
             )
 
             self.final_values = dict(zip(self._Interp.continuous_out_keys, self.final_values[0]))
-            
+
             self.classes = dict(zip(self._Interp.discrete_out_keys, self.classes[0]))
             max_MESA_sim_time = self.final_values[
                 POSYDON_TO_MESA['binary']['time']

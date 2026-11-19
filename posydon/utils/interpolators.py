@@ -12,6 +12,7 @@ import copy
 import numpy as np
 from scipy.interpolate import PchipInterpolator
 
+
 def compress_labels(str_arr):
     str_arr = str_arr.copy()
     labels = np.unique(str_arr)
