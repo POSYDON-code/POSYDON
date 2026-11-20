@@ -123,6 +123,7 @@ source = [
   "posydon.utils",
   "posydon.grids",
   "posydon.popsyn.IMFs",
+  "posydon.popsyn.initial_distributions",
   "posydon.popsyn.norm_pop",
   "posydon.popsyn.distributions",
   "posydon.popsyn.star_formation_history",
