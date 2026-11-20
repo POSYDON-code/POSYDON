@@ -840,6 +840,10 @@ class LogPowerLawPeriod():
                 f"<p>p_min = {self.p_min}</p>"
                 f"<p>p_max = {self.p_max}</p>")
 
+    def _is_log_uniform(self):
+        """Return True if slope is -1, where the integral of x^slope is ln(x)."""
+        return abs(self.slope + 1.0) < 1e-10
+
     def _calculate_normalization(self):
         """Calculate the normalization constant for the log power law period
         distribution.
@@ -850,12 +854,12 @@ class LogPowerLawPeriod():
             The normalization constant ensuring the PDF integrates to 1
             over log10(P).
         """
-        integral = quad(self.log_power_law_period,
-                        np.log10(self.p_min),
-                        np.log10(self.p_max))[0]
-        if integral == 0: # pragma: no cover
-            raise ValueError("Normalization integral is zero. "
-                             "Check period parameters.")
+        x_min, x_max = np.log10(self.p_min), np.log10(self.p_max)
+        if self._is_log_uniform():
+            integral = np.log(x_max / x_min)
+        else:
+            a = self.slope + 1.0
+            integral = (x_max**a - x_min**a) / a
         return 1.0 / integral
 
     def log_power_law_period(self, logp):
@@ -924,15 +928,16 @@ class LogPowerLawPeriod():
         p = np.asarray(p, dtype=float)
         return per_dex_to_linear(self.pdf_per_dex(p), p)
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, rng=None):
         """Draw random samples from the log power law period distribution.
+
+        Uses the analytic inverse of the cumulative distribution in log10(P),
+        which stays exact for p_min close to 1 day.
 
         Parameters
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
-        n_points : int, optional
-            Number of grid points for the inverse sampling (default: 1000).
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
 
@@ -944,17 +949,16 @@ class LogPowerLawPeriod():
         if rng is None:
             rng = np.random.default_rng()
 
-        # Import here to avoid circular dependency
-        from posydon.utils.common_functions import inverse_sampler
+        x_min, x_max = np.log10(self.p_min), np.log10(self.p_max)
+        u = rng.uniform(size=size)
+        if self._is_log_uniform():
+            logp_samples = x_min * (x_max / x_min)**u
+        else:
+            a = self.slope + 1.0
+            logp_samples = (x_min**a + u * (x_max**a - x_min**a))**(1.0 / a)
 
-        logp_grid = np.linspace(np.log10(self.p_min), np.log10(self.p_max),
-                                n_points)
-        pdf_values = self.log_power_law_period(logp_grid)
-
-        logp_samples = inverse_sampler(logp_grid, pdf_values, size=size,
-                                       rng=rng)
-
-        return 10**logp_samples
+        # guard against floating point round-off at the boundaries
+        return np.clip(10**logp_samples, self.p_min, self.p_max)
 
 
 class LogUniform():

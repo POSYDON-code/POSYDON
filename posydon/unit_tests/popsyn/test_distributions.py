@@ -836,14 +836,14 @@ class TestLogPowerLawPeriod:
         np.testing.assert_array_equal(custom_log_power_law.pdf(p),
                                       np.zeros_like(p))
 
-    @pytest.mark.parametrize("slope", [-0.55, 0.0, 1.0])
+    @pytest.mark.parametrize("slope", [-2.0, -1.0, -0.55, 0.0, 1.0])
     def test_pdf_per_dex_normalised_in_log_space(self, slope):
         """Test the PDF per dex integrates to 1 over log10(P)."""
         dist = LogPowerLawPeriod(slope=slope)
         integral = integrate_per_dex(dist.pdf_per_dex, dist.p_min, dist.p_max)
         assert np.isclose(integral, 1.0)
 
-    @pytest.mark.parametrize("slope", [-0.55, 0.0, 1.0])
+    @pytest.mark.parametrize("slope", [-2.0, -1.0, -0.55, 0.0, 1.0])
     def test_pdf_normalised_in_linear_space(self, slope):
         """Test the PDF integrates to 1 over P."""
         dist = LogPowerLawPeriod(slope=slope)
@@ -872,6 +872,25 @@ class TestLogPowerLawPeriod:
         expected = [quad(lambda logp: custom_log_power_law.pdf_per_dex(10**logp),
                          lo, hi)[0] for lo, hi in zip(edges[:-1], edges[1:])]
         np.testing.assert_allclose(counts / len(samples), expected, atol=0.01)
+
+    @pytest.mark.parametrize("slope", [-2.0, -1.0, -0.55, 0.0, 2.0])
+    @pytest.mark.parametrize("p_min", [1.0001, 1.4])
+    def test_rvs_follows_pdf(self, slope, p_min):
+        """Test samples follow the analytic CDF in log10(P), also when
+        p_min is close to 1 day where (log10 P)^slope is steep."""
+        from scipy.stats import kstest
+        dist = LogPowerLawPeriod(slope=slope, p_min=p_min, p_max=6e3)
+        samples = dist.rvs(size=20000, rng=np.random.default_rng(1))
+        x_min, x_max = np.log10(p_min), np.log10(6e3)
+
+        def cdf(x):
+            x = np.clip(x, x_min, x_max)
+            if slope == -1.0:
+                return np.log(x / x_min) * dist.norm
+            a = slope + 1.0
+            return (x**a - x_min**a) / a * dist.norm
+
+        assert kstest(np.log10(samples), cdf).pvalue > 1e-3
 
     def test_rvs_without_rng(self, custom_log_power_law):
         """Test random sampling without providing an RNG."""
