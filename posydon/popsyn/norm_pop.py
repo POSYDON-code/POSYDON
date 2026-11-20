@@ -157,7 +157,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `log_power_law`;
+          optional for `power_law` (default: -1, flat in log10(P))
         - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     population_parameters : dict
@@ -177,7 +178,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `log_power_law`;
+          optional for `power_law` (default: -1, flat in log10(P))
         - `log_orbital_separation_mean` and `log_orbital_separation_sigma` if `orbital_separation_scheme` is `log_normal`
 
     Returns

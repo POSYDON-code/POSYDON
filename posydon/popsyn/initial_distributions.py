@@ -151,8 +151,10 @@ def get_orbital_distribution(kwargs):
 
     Supported schemes:
     - `period`, with `orbital_period_min`, `orbital_period_max` and
-      `orbital_period_scheme`: `Sana+12_period_extended`, `power_law` or
-      `log_power_law` (both with `power_law_slope`).
+      `orbital_period_scheme`: `Sana+12_period_extended`, `power_law`
+      (dN/dP ∝ P^`power_law_slope`; the slope defaults to -1, flat in
+      log10(P)) or `log_power_law` (dN/dlog10(P) ∝
+      (log10(P))^`power_law_slope`).
     - `separation`, with `orbital_separation_min`, `orbital_separation_max`
       and `orbital_separation_scheme`: `log_uniform` or `log_normal` (with
       `log_orbital_separation_mean` and `log_orbital_separation_sigma`),
@@ -180,10 +182,12 @@ def get_orbital_distribution(kwargs):
                 p_max=kwargs['orbital_period_max'],
             )
         elif kwargs['orbital_period_scheme'] == 'power_law':
+            # default slope of -1 is flat in log10(P) (Öpik)
+            slope = kwargs.get('power_law_slope')
             return PowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
-                slope=kwargs['power_law_slope'],
+                slope=-1.0 if slope is None else slope,
             )
         elif kwargs['orbital_period_scheme'] == 'log_power_law':
             return LogPowerLawPeriod(
