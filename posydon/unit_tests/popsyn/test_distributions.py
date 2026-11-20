@@ -7,6 +7,7 @@ used in population synthesis: FlatMassRatio, Sana12Period, and PowerLawPeriod.
 import numpy as np
 import pytest
 from scipy.integrate import quad
+from scipy.stats import kstest
 
 from posydon.popsyn.distributions import (
     FlatMassRatio,
@@ -1337,3 +1338,27 @@ class TestPowerLawMassRatio:
         dist = PowerLawMassRatio(alpha=alpha, q_min=0.1, q_max=1.0)
         integral, _ = quad(dist.pdf, dist.q_min, dist.q_max)
         np.testing.assert_allclose(integral, 1.0, rtol=1e-6)
+
+
+class TestPowerLawMassRatioSampling:
+    """KS tests of PowerLawMassRatio.rvs against its analytic CDF."""
+
+    @pytest.mark.parametrize("alpha, q_min, q_max", [
+        (0.0, 0.0, 1.0), (0.0, 0.05, 1.0), (1.5, 0.1, 0.9),
+        (-1.0, 0.1, 0.9), (-1.0, 0.01, 1.0), (-3.5, 0.01, 1.0),
+        (-0.5, 0.0, 0.5)])
+    def test_rvs_follows_pdf(self, alpha, q_min, q_max):
+        dist = PowerLawMassRatio(alpha=alpha, q_min=q_min, q_max=q_max)
+
+        def cdf(q):
+            q = np.clip(q, q_min, q_max)
+            if alpha == -1.0:
+                return np.log(q / q_min) / np.log(q_max / q_min)
+            k = alpha + 1.0
+            return (q**k - q_min**k) / (q_max**k - q_min**k)
+
+        samples = dist.rvs(size=100_000, rng=np.random.default_rng(2024))
+        assert np.all((samples >= q_min) & (samples <= q_max))
+        res = kstest(samples, cdf)
+        assert res.statistic < 0.006
+        assert res.pvalue > 1e-3
