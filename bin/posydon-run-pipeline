@@ -81,7 +81,6 @@ from posydon.grids.psygrid import (PSyGrid,
 from posydon.grids.post_processing import (post_process_grid,
                                            add_post_processed_quantities)
 from posydon.grids.SN_MODELS import SN_MODELS
-from posydon.config import PATH_TO_POSYDON
 from posydon.utils.gridutils import get_new_grid_name
 from posydon.utils.posydonwarning import (Pwarn,print_stats)
 from posydon.interpolation.IF_interpolation import IFInterpolator
@@ -643,14 +642,13 @@ def copy_ini_file(grid_type, rerun_metallicity, rerun_type, destination,
         os.makedirs(destination)
     # copy the default ini file to directory
     if cluster in ['quest','yggdrasil']:
-        if os.path.isdir(PATH_TO_POSYDON):
-            ini_dir_path = os.path.join(PATH_TO_POSYDON,
-                'grid_params/POSYDON-MESA-INLISTS/r11701/running_scripts')
-            if not os.path.isdir(PATH_TO_POSYDON):
-                raise NotADirectoryError(f'{ini_dir_path} not found!')
-        else:
-            raise NotADirectoryError(f'PATH_TO_POSYDON={PATH_TO_POSYDON} not '
-                                     'found!')
+        # the v2 ini files, from POSYDON-MESA-INLISTS at the commit POSYDON
+        # pins (POSYDON no longer ships grid_params/)
+        from posydon.grids.setup.support import support_root
+        ini_dir_path = os.path.join(support_root(), 'r11701',
+                                    'running_scripts')
+        if not os.path.isdir(ini_dir_path):
+            raise NotADirectoryError(f'{ini_dir_path} not found!')
         if "single_HMS" in grid_type:
             ini_file_path = os.path.join(ini_dir_path, f'single_HMS_{cluster}.ini')
             ini_file_dest = os.path.join(destination, f'single_HMS_{cluster}.ini')

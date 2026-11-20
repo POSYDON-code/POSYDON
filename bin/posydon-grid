@@ -1,0 +1,11 @@
+#!/usr/bin/env python
+"""posydon-grid: set up and run grids of MESA runs.
+
+    posydon-grid types | init | explain | setup | run
+
+See ``posydon/CLI/grid/main.py`` or ``posydon-grid --help``.
+"""
+from posydon.CLI.grid.main import main
+
+if __name__ == '__main__':
+    main()

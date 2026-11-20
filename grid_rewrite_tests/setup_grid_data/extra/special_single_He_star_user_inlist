@@ -1,0 +1,14 @@
+&controls
+
+	x_logical_ctrl(1) = .true.
+
+
+
+        / ! end of star1_controls namelist
+
+        &star_job
+
+
+        / / ! end of star_job namelist
+
+        

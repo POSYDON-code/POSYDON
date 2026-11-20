@@ -1,0 +1,25 @@
+
+! only differences compared to default_common_inlists/inlist2
+
+&star_job
+
+      mesa_dir = ''
+      show_log_description_at_start = .false.
+
+
+/ ! end of star_job namelist
+
+&controls
+
+      history_interval = 1
+      terminal_interval = 1
+      write_header_frequency = 10
+
+/ ! end of controls namelist
+
+
+&pgstar
+
+
+
+/ ! end of pgstar namelist

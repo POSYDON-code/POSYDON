@@ -28,6 +28,16 @@ currently **experimental**; see :ref:`dynamic_grid`.
    mesa_grids/dynamic
 
 
+The posydon-grid command
+~~~~~~~~~~~~~~~~~~~~~~~~
+
+The commands that set up a grid, the layers the inlists are stacked from,
+the run directory and its record.
+
+.. toctree::
+
+   mesa_grids/posydon_grid
+
 Ini file documentation
 ~~~~~~~~~~~~~~~~~~~~~~
 
