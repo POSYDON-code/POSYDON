@@ -8,6 +8,32 @@ from scipy.integrate import quad
 from scipy.stats import truncnorm
 
 
+def per_dex_to_linear(pdf_per_dex, x):
+    """Convert a probability density per dex to one per unit x.
+
+    Uses dP/dx = dP/dlog10(x) * dlog10(x)/dx = dP/dlog10(x) / (x ln(10)).
+
+    Parameters
+    ----------
+    pdf_per_dex : float or array_like
+        Probability density per unit log10(x), evaluated at x.
+    x : float or array_like
+        Value(s) at which the density is evaluated. Where x <= 0 the
+        density is set to 0.
+
+    Returns
+    -------
+    float or ndarray
+        Probability density per unit x at x.
+    """
+    pdf_per_dex = np.asarray(pdf_per_dex, dtype=float)
+    x = np.asarray(x, dtype=float)
+    pdf_values = np.zeros_like(pdf_per_dex)
+    valid = x > 0
+    pdf_values[valid] = pdf_per_dex[valid] / (x[valid] * np.log(10))
+    return pdf_values
+
+
 class FlatMassRatio:
     """Flat mass ratio distribution for binary star systems.
 
@@ -439,11 +465,11 @@ class Sana12Period():
         return result
 
 
-    def pdf(self, p, m1):
-        '''Probability density function of the Sana12 period distribution.
+    def pdf_per_dex(self, p, m1):
+        '''Probability density per dex of the Sana12 period distribution.
         Conditional on m1.
 
-        Normalised in logP space to 1.
+        Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P).
 
         Parameters
         ----------
@@ -455,7 +481,7 @@ class Sana12Period():
         Returns
         -------
         float or ndarray
-            Probability density at period p.
+            Probability density per unit log10(P) at period p.
 
         '''
         p = np.asarray(p)
@@ -473,6 +499,28 @@ class Sana12Period():
         pdf_values[valid] = (self.sana12_period(logp[valid], m1[valid])
                              * self.norm(m1[valid]))
         return pdf_values
+
+    def pdf(self, p, m1):
+        '''Probability density function of the Sana12 period distribution.
+        Conditional on m1.
+
+        Normalised in linear P space to 1, i.e. this returns dP/dP.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+        m1 : float or array_like
+            Mass value(s). Single value or an array of the same length as p.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit P (in days) at period p.
+
+        '''
+        p = np.asarray(p, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(p, m1), p)
 
     def rvs(self, size=1, m1=None, rng=None):
         """Draw random samples from the Sana12 period distribution.
@@ -543,28 +591,31 @@ class Sana12Period():
 
 
 class PowerLawPeriod():
-    '''Power law period distribution with slope pi and boundaries m_min, m_max.
+    """Power law period distribution with boundaries p_min, p_max.
 
-    Normalised in logP space to 1.
+    The distribution follows dN/dP ∝ P^slope, which is equivalent to
+    dN/dlog10(P) ∝ P^(slope+1). A slope of -1 gives a log-uniform (Öpik)
+    distribution and a slope of 0 a distribution that is flat in P. See
+    `LogPowerLawPeriod` for a power law in log10(P).
 
     Parameters
     ----------
     slope : float
-        Slope of the power law.
+        Slope of the power law in P, i.e. dN/dP ∝ P^slope.
     p_min : float
-        Minimum period.
+        Minimum period in days.
     p_max : float
-        Maximum period.
+        Maximum period in days.
 
-    '''
+    """
 
-    def __init__(self, slope=-0.55, p_min=1.4, p_max=3e6):
+    def __init__(self, slope=-1.0, p_min=1.4, p_max=3e6):
         """Initialize the power law period distribution.
 
         Parameters
         ----------
         slope : float, optional
-            Power law slope (default: -0.55).
+            Power law slope in P (default: -1.0, i.e. log-uniform).
         p_min : float, optional
             Minimum period in days (default: 1.4).
         p_max : float, optional
@@ -608,6 +659,10 @@ class PowerLawPeriod():
                 f"<p>p_min = {self.p_min}</p>"
                 f"<p>p_max = {self.p_max}</p>")
 
+    def _is_log_uniform(self):
+        """Return True if slope is -1, where the integral of P^slope is ln(P)."""
+        return abs(self.slope + 1.0) < 1e-10
+
     def _calculate_normalization(self):
         """Calculate the normalization constant for the power law period
         distribution.
@@ -615,30 +670,30 @@ class PowerLawPeriod():
         Returns
         -------
         float
-            The normalization constant ensuring the PDF integrates to 1.
+            The normalization constant ensuring the PDF integrates to 1
+            over P.
         """
-        integral = quad(self.power_law_period,
-                        np.log10(self.p_min),
-                        np.log10(self.p_max))[0]
-        if integral == 0: # pragma: no cover
-            raise ValueError("Normalization integral is zero. "
-                             "Check period parameters.")
+        if self._is_log_uniform():
+            integral = np.log(self.p_max / self.p_min)
+        else:
+            a = self.slope + 1.0
+            integral = (self.p_max**a - self.p_min**a) / a
         return 1.0 / integral
 
-    def power_law_period(self, logp):
-        """Compute the power law period distribution at given periods.
+    def power_law_period(self, p):
+        """Compute the unnormalised power law dN/dP ∝ P^slope.
 
         Parameters
         ----------
-        logp : float or array
-            Log10 of period(s).
+        p : float or array
+            Period(s) in days.
 
         Returns
         -------
         float or ndarray
-            Distribution value(s).
+            Distribution value(s), P^slope within the range and 0 outside.
         """
-        p = 10**np.asarray(logp)
+        p = np.asarray(p, dtype=float)
 
         result = np.zeros_like(p, dtype=float)
         valid = (p >= self.p_min) & (p <= self.p_max)
@@ -649,6 +704,8 @@ class PowerLawPeriod():
     def pdf(self, p):
         """Probability density function of the power law period distribution.
 
+        Normalised in linear P space to 1, i.e. this returns dP/dP.
+
         Parameters
         ----------
         p : float or array_like
@@ -657,20 +714,33 @@ class PowerLawPeriod():
         Returns
         -------
         float or ndarray
-            Probability density at period p.
+            Probability density per unit P (in days) at period p.
         """
-        p = np.asarray(p)
-        valid = (p > 0) & (p >= self.p_min) & (p <= self.p_max)
-        pdf_values = np.zeros_like(p, dtype=float)
+        return self.power_law_period(p) * self.norm
 
-        logp = np.log10(p[valid])
-        pdf_values[valid] = (self.power_law_period(logp)
-                             * self.norm)
+    def pdf_per_dex(self, p):
+        """Probability density per dex of the power law period distribution.
 
-        return pdf_values
+        Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P)
+        = P ln(10) dP/dP ∝ P^(slope+1).
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        return self.pdf(p) * np.where(p > 0, p, 0.0) * np.log(10)
+
+    def rvs(self, size=1, rng=None):
         """Draw random samples from the power law period distribution.
+
+        Uses the analytic inverse of the cumulative distribution in P.
 
         Parameters
         ----------
@@ -687,18 +757,208 @@ class PowerLawPeriod():
         if rng is None:
             rng = np.random.default_rng()
 
-        # Import here to avoid circular dependency
-        from posydon.utils.common_functions import inverse_sampler
+        u = rng.uniform(size=size)
+        if self._is_log_uniform():
+            samples = self.p_min * (self.p_max / self.p_min)**u
+        else:
+            a = self.slope + 1.0
+            samples = (self.p_min**a
+                       + u * (self.p_max**a - self.p_min**a))**(1.0 / a)
 
-        # Create discretized PDF for inverse sampling
-        logp_grid = np.linspace(np.log10(self.p_min), np.log10(self.p_max), n_points)
-        pdf_values = self.power_law_period(logp_grid)
+        # guard against floating point round-off at the boundaries
+        return np.clip(samples, self.p_min, self.p_max)
 
-        # Sample in log space
-        logp_samples = inverse_sampler(logp_grid, pdf_values, size=size, rng=rng)
 
-        # Convert back to linear space
-        return 10**logp_samples
+class LogPowerLawPeriod():
+    """Power law in log10(P) period distribution with boundaries p_min, p_max.
+
+    The distribution per dex follows dN/dlog10(P) ∝ (log10(P))^slope, as in
+    Sana H., et al., 2012, Science, 337, 444 (with slope = -0.55). See
+    `PowerLawPeriod` for a power law in P.
+
+    Parameters
+    ----------
+    slope : float
+        Slope of the power law in log10(P).
+    p_min : float
+        Minimum period in days. Must be larger than 1 day, such that
+        log10(P) > 0.
+    p_max : float
+        Maximum period in days.
+
+    """
+
+    def __init__(self, slope=-0.55, p_min=1.4, p_max=3e6):
+        """Initialize the log power law period distribution.
+
+        Parameters
+        ----------
+        slope : float, optional
+            Power law slope in log10(P) (default: -0.55).
+        p_min : float, optional
+            Minimum period in days (default: 1.4). Must be larger than 1 day.
+        p_max : float, optional
+            Maximum period in days (default: 3e6).
+
+        Raises
+        ------
+        ValueError
+            If p_min <= 1 day or p_max <= p_min.
+        """
+        if p_min <= 1:
+            raise ValueError("p_min must be larger than 1 day, "
+                             "such that log10(p_min) > 0")
+        if p_max <= p_min:
+            raise ValueError("p_max must be greater than p_min")
+        self.slope = slope
+        self.p_min = p_min
+        self.p_max = p_max
+
+        self.norm = self._calculate_normalization()
+
+    def __repr__(self):
+        """Return string representation of the distribution.
+
+        Returns
+        -------
+        str
+            String representation showing the distribution parameters.
+        """
+        return (f"LogPowerLawPeriod(slope={self.slope}, p_min={self.p_min}, "
+                f"p_max={self.p_max})")
+
+    def _repr_html_(self):
+        """Return HTML representation for Jupyter notebooks.
+
+        Returns
+        -------
+        str
+            HTML string for rich display in notebooks.
+        """
+        return (f"<h3>Log Power Law Period Distribution</h3>"
+                f"<p>slope = {self.slope}</p>"
+                f"<p>p_min = {self.p_min}</p>"
+                f"<p>p_max = {self.p_max}</p>")
+
+    def _is_log_uniform(self):
+        """Return True if slope is -1, where the integral of x^slope is ln(x)."""
+        return abs(self.slope + 1.0) < 1e-10
+
+    def _calculate_normalization(self):
+        """Calculate the normalization constant for the log power law period
+        distribution.
+
+        Returns
+        -------
+        float
+            The normalization constant ensuring the PDF integrates to 1
+            over log10(P).
+        """
+        x_min, x_max = np.log10(self.p_min), np.log10(self.p_max)
+        if self._is_log_uniform():
+            integral = np.log(x_max / x_min)
+        else:
+            a = self.slope + 1.0
+            integral = (x_max**a - x_min**a) / a
+        return 1.0 / integral
+
+    def log_power_law_period(self, logp):
+        """Compute the log power law period distribution at given periods.
+
+        Parameters
+        ----------
+        logp : float or array
+            Log10 of period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Distribution value(s), (log10(P))^slope within the range.
+        """
+        logp = np.asarray(logp, dtype=float)
+
+        result = np.zeros_like(logp, dtype=float)
+        valid = ((logp >= np.log10(self.p_min))
+                 & (logp <= np.log10(self.p_max)))
+        result[valid] = logp[valid]**self.slope
+
+        return result
+
+    def pdf_per_dex(self, p):
+        """Probability density per dex of the log power law period
+        distribution.
+
+        Normalised in log10(P) space to 1, i.e. this returns dP/dlog10(P).
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit log10(P) at period p.
+        """
+        p = np.asarray(p)
+        valid = (p >= self.p_min) & (p <= self.p_max)
+        pdf_values = np.zeros_like(p, dtype=float)
+
+        logp = np.log10(p[valid])
+        pdf_values[valid] = self.log_power_law_period(logp) * self.norm
+
+        return pdf_values
+
+    def pdf(self, p):
+        """Probability density function of the log power law period
+        distribution.
+
+        Normalised in linear P space to 1, i.e. this returns dP/dP.
+
+        Parameters
+        ----------
+        p : float or array_like
+            Period(s).
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit P (in days) at period p.
+        """
+        p = np.asarray(p, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(p), p)
+
+    def rvs(self, size=1, rng=None):
+        """Draw random samples from the log power law period distribution.
+
+        Uses the analytic inverse of the cumulative distribution in log10(P),
+        which stays exact for p_min close to 1 day.
+
+        Parameters
+        ----------
+        size : int, optional
+            Number of samples to draw (default: 1).
+        rng : numpy.random.Generator, optional
+            Random number generator. If None, uses np.random.default_rng().
+
+        Returns
+        -------
+        ndarray
+            Random period samples in days.
+        """
+        if rng is None:
+            rng = np.random.default_rng()
+
+        x_min, x_max = np.log10(self.p_min), np.log10(self.p_max)
+        u = rng.uniform(size=size)
+        if self._is_log_uniform():
+            logp_samples = x_min * (x_max / x_min)**u
+        else:
+            a = self.slope + 1.0
+            logp_samples = (x_min**a + u * (x_max**a - x_min**a))**(1.0 / a)
+
+        # guard against floating point round-off at the boundaries
+        return np.clip(10**logp_samples, self.p_min, self.p_max)
 
 
 class LogUniform():
@@ -763,11 +1023,12 @@ class LogUniform():
         """
         return 1.0 / (np.log10(self.max) - np.log10(self.min))
 
-    def pdf(self, x):
+    def pdf_per_dex(self, x):
         """
-        Probability density function of the log-uniform distribution.
+        Probability density per dex of the log-uniform distribution.
 
-        Normalised in log10(x) space to 1.
+        Normalised in log10(x) space to 1, i.e. this returns dP/dlog10(x),
+        not dP/dx as returned by e.g. ``scipy.stats.loguniform.pdf``.
 
         Parameters
         ----------
@@ -786,6 +1047,26 @@ class LogUniform():
         pdf_values[valid] = self.norm
 
         return pdf_values
+
+    def pdf(self, x):
+        """
+        Probability density function of the log-uniform distribution.
+
+        Normalised in linear x space to 1, i.e. this returns dP/dx, as
+        ``scipy.stats.loguniform.pdf`` does.
+
+        Parameters
+        ----------
+        x : float or array_like
+            Value(s) to evaluate the PDF at.
+
+        Returns
+        -------
+        float or ndarray
+            Probability density per unit x at x.
+        """
+        x = np.asarray(x, dtype=float)
+        return per_dex_to_linear(self.pdf_per_dex(x), x)
 
     def rvs(self, size=1, rng=None):
         """Draw random samples from the log-uniform distribution.
