@@ -49,6 +49,7 @@ from posydon.utils.common_functions import (
     orbital_period_from_separation,
     orbital_separation_from_period,
 )
+from posydon.utils.constants import Zsun
 from posydon.utils.posydonerror import FlowError
 
 # star property: column names in binary history for star 1 and star 2
@@ -1029,8 +1030,10 @@ class BinaryStar:
                     setattr(star, attr, final_value)
 
         # set metallicities (if defined in the track)...
+        # grids store the absolute metallicity Z, while SingleStar.metallicity
+        # is Z/Zsun (as in step_MESA and the SN/CE steps)
         try:
-            metallicity = run.initial_values["Z"]
+            metallicity = run.initial_values["Z"] / Zsun
         except AttributeError:
             metallicity = None
         # ...and other star parameters taken from the binary history
