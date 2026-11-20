@@ -19,13 +19,17 @@ from posydon.config import PATH_TO_POSYDON
 # file to test
 from posydon.popsyn import norm_pop
 from posydon.popsyn.independent_sample import generate_independent_samples
+from posydon.popsyn.initial_distributions import (
+    get_IMF_distribution,
+    get_Moe_17_PsandQs,
+)
 from posydon.unit_tests.popsyn.test_initial_distributions import (  # noqa: F401
     DummyIMF,
     FlatIMF,
     register_test_imfs,
 )
 from posydon.utils.common_functions import orbital_period_from_separation
-from posydon.utils.posydonwarning import ValueWarning
+from posydon.utils.posydonwarning import InappropriateValueWarning, ValueWarning
 
 
 class TestGetMeanMass:
@@ -795,9 +799,8 @@ class TestOrbitalSchemeReweighting():
 class TestBinaryFractions():
 
     def test_unsupported_scheme_in_model_weights(self):
-        # the sampler supports Moe+17-massdependent, but the reweighting
-        # does not; this must be a clear ValueError, not a KeyError for the
-        # missing binary_fraction_const
+        # an unsupported scheme must give a clear ValueError, not a
+        # KeyError for the missing binary_fraction_const
         params = {'binary_fraction_scheme': 'Moe+17-massdependent'}
         with pytest.raises(ValueError,
                            match="Binary fraction scheme not recognized"):
@@ -919,3 +922,195 @@ class TestBinaryFractions():
         assert np.isclose(np.sum(selection),
                           np.sum(small_weights[mask2]),
                           atol=1e-3)
+
+
+###########################################
+# Moe & Di Stefano (2017) distributions
+###########################################
+
+@fixture
+def moe_kwargs(base_simulation_kwargs):
+    kwargs = base_simulation_kwargs.copy()
+    for key in ['binary_fraction_const', 'binary_fraction_scheme',
+                'secondary_mass_min', 'secondary_mass_max']:
+        kwargs.pop(key)
+    kwargs['primary_mass_max'] = 40.0
+    kwargs['secondary_mass_scheme'] = 'Moe+17-PsandQs'
+    kwargs['orbital_period_scheme'] = 'Moe+17-PsandQs'
+    kwargs['orbital_period_min'] = 10**0.15
+    kwargs['orbital_period_max'] = 1e4
+    return kwargs
+
+
+def binary_stats(data, weights=None):
+    '''Binary fraction, and mean/std of log10(P) and mean q of the binaries.'''
+    w = np.ones(len(data)) if weights is None else np.asarray(weights)
+    binary = (data['state_i'] != 'initially_single_star').to_numpy()
+    logP = np.log10(data['orbital_period_i'].to_numpy()[binary])
+    q = (data['S2_mass_i'] / data['S1_mass_i']).to_numpy()[binary]
+    wb = w[binary]
+    return (wb.sum() / w.sum(),
+            np.average(logP, weights=wb),
+            np.sqrt(np.cov(logP, aweights=wb)),
+            np.average(q, weights=wb))
+
+
+def check_reweighting_mixed(sim_kwargs, pop_kwargs):
+    '''Compare a reweighted mixed simulation to direct sampling.'''
+    sim_data = pop_data(sim_kwargs)
+    M_sim = sim_data['S1_mass_i'].sum() + sim_data['S2_mass_i'].sum()
+    weights = norm_pop.calculate_model_weights(sim_data, M_sim,
+                                               sim_kwargs, pop_kwargs)
+    direct_data = pop_data(pop_kwargs)
+    M_direct = direct_data['S1_mass_i'].sum() + direct_data['S2_mass_i'].sum()
+
+    # number of systems per unit mass
+    assert np.isclose(weights.sum(), len(direct_data) / M_direct, rtol=0.03)
+    reweighted = binary_stats(sim_data, weights)
+    direct = binary_stats(direct_data)
+    assert np.isclose(reweighted[0], direct[0], atol=0.01)
+    assert np.isclose(reweighted[1], direct[1], atol=0.05)
+    assert np.isclose(reweighted[2], direct[2], rtol=0.05)
+    assert np.isclose(reweighted[3], direct[3], atol=0.01)
+
+
+class TestMoe17PsandQs():
+
+    def test_single_star_pdf(self, moe_kwargs):
+        moe = get_Moe_17_PsandQs(moe_kwargs)
+        m1 = np.array([0.05, 1.0, 10.0, 30.0])
+        f_b = moe.binary_fraction(m1)
+        # binary_fraction_* are ignored
+        kwargs = moe_kwargs.copy()
+        kwargs['binary_fraction_scheme'] = 'const'
+        kwargs['binary_fraction_const'] = 0.3
+        pdf = norm_pop.get_pdf(kwargs)
+        IMF_pdf = get_IMF_distribution(kwargs).pdf
+        assert np.allclose(pdf(m1, binary=False), IMF_pdf(m1) * (1 - f_b))
+
+    def test_pdf(self, moe_kwargs):
+        moe = get_Moe_17_PsandQs(moe_kwargs)
+        IMF_pdf = get_IMF_distribution(moe_kwargs).pdf
+        pdf = norm_pop.get_pdf(moe_kwargs)
+        m1 = np.array([8.0, 15.0, 30.0, 12.0])
+        q = np.array([0.5, 0.2, 0.97, 0.0])
+        P = np.array([5.0, 300.0, 2e3, np.nan])
+        binary = np.array([True, True, True, False])
+        result = pdf(m1, q=q, P=P, binary=binary)
+        # binaries: IMF * joint (q, P) density, with f_b counted once
+        assert np.allclose(result[:3],
+                           IMF_pdf(m1[:3]) * moe.pdf(m1[:3], P[:3], q[:3]))
+        # single stars
+        assert np.isclose(result[3],
+                          IMF_pdf(m1[3]) * (1 - moe.binary_fraction(m1[3])))
+        # outside the period range or below q = 0.1
+        assert pdf(10.0, q=0.5, P=2e4, binary=True) == 0.0
+        assert pdf(10.0, q=0.05, P=10.0, binary=True) == 0.0
+
+    def test_mass_pdf_not_available(self, moe_kwargs):
+        with pytest.raises(ValueError, match="mass_pdf=False"):
+            norm_pop.get_pdf(moe_kwargs, mass_pdf=True)
+
+    def test_mean_mass(self, moe_kwargs):
+        mean_mass = norm_pop.get_mean_mass(moe_kwargs)
+        # larger than the mean primary mass alone
+        IMF_pdf = get_IMF_distribution(moe_kwargs).pdf
+        mean_m1 = quad(lambda m: m * IMF_pdf(m),
+                       moe_kwargs['primary_mass_min'],
+                       moe_kwargs['primary_mass_max'])[0]
+        assert mean_mass > 1.2 * mean_m1
+        # matches the mean mass of a sampled population
+        sample = pop_data(moe_kwargs)
+        mass = sample['S1_mass_i'] + sample['S2_mass_i']
+        assert np.isclose(mean_mass, mass.mean(), rtol=5e-3)
+
+    def test_mean_mass_low_masses(self, moe_kwargs):
+        # across the low-mass extension, f_b = 0 at M_min, and the kinks of
+        # the mass interpolation
+        moe_kwargs['primary_mass_min'] = 0.08
+        moe_kwargs['primary_mass_max'] = 10.0
+        mean_mass = norm_pop.get_mean_mass(moe_kwargs)
+        sample = pop_data(moe_kwargs)
+        mass = sample['S1_mass_i'] + sample['S2_mass_i']
+        assert np.isclose(mean_mass, mass.mean(), rtol=1e-2)
+
+    def test_mean_mass_const(self, base_simulation_kwargs):
+        # matches the mean mass of a sampled population with f_b < 1
+        base_simulation_kwargs['binary_fraction_const'] = 0.6
+        mean_mass = norm_pop.get_mean_mass(base_simulation_kwargs)
+        sample = pop_data(base_simulation_kwargs)
+        mass = sample['S1_mass_i'] + sample['S2_mass_i']
+        assert np.isclose(mean_mass, mass.mean(), rtol=5e-3)
+
+    def test_coverage_error(self, moe_kwargs, base_simulation_kwargs):
+        # Moe has no binaries at M1 <= M_min = 0.08
+        moe_kwargs['primary_mass_min'] = 0.05
+        pop = base_simulation_kwargs.copy()
+        pop['primary_mass_min'] = 0.05
+        pop['secondary_mass_min'] = 0.01
+        pop['binary_fraction_const'] = 1.0
+        with pytest.raises(ValueError,
+                           match="No binaries simulated, but requested for "
+                                 "primary masses 0.05-0.0"):
+            norm_pop.check_binary_fraction_coverage(moe_kwargs, pop)
+        # all single stars requested, only binaries simulated
+        sim = base_simulation_kwargs.copy()
+        pop = base_simulation_kwargs.copy()
+        pop['binary_fraction_const'] = 0.0
+        with pytest.raises(ValueError, match="No single stars simulated"):
+            norm_pop.check_binary_fraction_coverage(sim, pop)
+
+    def test_coverage_warning(self, moe_kwargs, base_simulation_kwargs):
+        # Moe single stars are not in a binary-only simulation
+        with pytest.warns(InappropriateValueWarning,
+                          match="No single stars simulated"):
+            norm_pop.check_binary_fraction_coverage(base_simulation_kwargs,
+                                                    moe_kwargs)
+        # binaries below M_min requested from a Moe simulation
+        moe_kwargs['primary_mass_min'] = 0.05
+        pop = base_simulation_kwargs.copy()
+        pop['primary_mass_min'] = 0.05
+        pop['binary_fraction_const'] = 0.5
+        with pytest.warns(InappropriateValueWarning,
+                          match="No binaries simulated"):
+            norm_pop.check_binary_fraction_coverage(moe_kwargs, pop)
+
+    def test_coverage_ok(self, moe_kwargs, base_simulation_kwargs):
+        import warnings
+        pop = base_simulation_kwargs.copy()
+        pop['binary_fraction_const'] = 0.5
+        with warnings.catch_warnings():
+            warnings.simplefilter('error')
+            norm_pop.check_binary_fraction_coverage(moe_kwargs, pop)
+            # no overlap of the primary-mass ranges: nothing to check
+            pop['primary_mass_min'] = 50.0
+            pop['primary_mass_max'] = 100.0
+            pop['binary_fraction_const'] = 1.0
+            sim = base_simulation_kwargs.copy()
+            sim['primary_mass_max'] = 40.0
+            sim['binary_fraction_const'] = 0.0
+            norm_pop.check_binary_fraction_coverage(sim, pop)
+
+    def test_Moe_to_Moe(self, moe_kwargs):
+        pop = moe_kwargs.copy()
+        pop['orbital_period_min'] = 10.0
+        pop['orbital_period_max'] = 3e3
+        check_reweighting_mixed(moe_kwargs, pop)
+
+    def test_const_to_Moe(self, base_simulation_kwargs, moe_kwargs):
+        # q >= 0.35 / m1 and P in [0.35, 6000] d cover Moe's q >= 0.1
+        sim = base_simulation_kwargs.copy()
+        sim['binary_fraction_const'] = 0.5
+        sim['primary_mass_max'] = 40.0
+        moe_kwargs['orbital_period_max'] = 5e3
+        check_reweighting_mixed(sim, moe_kwargs)
+
+    def test_Moe_to_const(self, moe_kwargs, base_simulation_kwargs):
+        pop = base_simulation_kwargs.copy()
+        pop['binary_fraction_const'] = 0.5
+        pop['primary_mass_max'] = 40.0
+        # q >= 4 / m1 >= 0.1 and P inside the Moe period range
+        pop['secondary_mass_min'] = 4.0
+        pop['orbital_period_min'] = 10**0.15
+        pop['orbital_period_max'] = 6e3
+        check_reweighting_mixed(moe_kwargs, pop)
