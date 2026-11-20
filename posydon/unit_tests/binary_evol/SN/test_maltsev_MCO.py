@@ -180,7 +180,29 @@ def test_call_fallback_BH(engine):
     assert state == "BH"
     assert star.SN_categorisation == "fallback_BH"
     assert f_fb == approx(eng.fallback_fraction)
-    assert m_rem == approx(star.he_core_mass)
+    assert eng.fallback_fraction == approx(0.5)  # Schneider+21 default
+    # proto-NS plus half of the presumed ejecta (Schneider+21, Sect. 4.2.2)
+    expected = eng.NS_mass + 0.5 * (star.he_core_mass - eng.NS_mass)
+    assert m_rem == approx(expected)
+    assert eng.NS_mass < m_rem < star.he_core_mass
+
+    # with the H envelope conserved, the whole star is the collapsing mass
+    star = FakeStar(co_core_mass=12.0, metallicity=1.0)
+    m_rem, _, _ = eng(star, "single", conserve_hydrogen_envelope=True)
+    assert m_rem == approx(eng.NS_mass + 0.5 * (star.mass - eng.NS_mass))
+
+
+def test_fallback_BH_mass():
+    eng = Maltsev25_MCO_corecollapse(RNG=np.random.default_rng(0),
+                                     fallback_fraction=0.3)
+    assert eng.fallback_BH_mass(1.5, 11.5) == approx(1.5 + 0.3 * 10.0)
+    # limits: no fallback gives the proto-NS, full fallback the whole mass
+    eng.fallback_fraction = 0.0
+    assert eng.fallback_BH_mass(1.4, 8.0) == approx(1.4)
+    eng.fallback_fraction = 1.0
+    assert eng.fallback_BH_mass(1.4, 8.0) == approx(8.0)
+    # no negative ejecta if the collapsing mass is below the proto-NS mass
+    assert eng.fallback_BH_mass(1.4, 1.0) == approx(1.4)
 
 
 def test_custom_NS_mass_model():

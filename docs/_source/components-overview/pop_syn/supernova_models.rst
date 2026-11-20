@@ -93,8 +93,8 @@ POSYDON supports the following core-collapse mechanisms:
         - ``1.4``
         - Baryonic neutron-star mass (Msun). The recipe predicts the remnant type but not its mass.
       * - ``Maltsev25_MCO_fallback_fraction``
-        - ``0.99``
-        - Fallback fraction ``f_fb`` assigned to a fallback black hole. A fallback black hole gets the full collapsing mass (He core, or the whole star with ``conserve_hydrogen_envelope``), like a direct-collapse black hole; ``f_fb`` only matters for the natal kick with ``kick_normalisation = 'one_minus_fallback'``.
+        - ``0.5``
+        - Fraction ``f_fb`` of the presumed ejecta that falls back onto the proto-neutron star when a fallback black hole forms, as in Schneider et al. (2021, Sect. 4.2.2). The baryonic fallback black-hole mass is ``M_NS + f_fb * (M_collapsing - M_NS)``, where ``M_collapsing`` is the He-core mass (or the whole star with ``conserve_hydrogen_envelope``) and ``M_NS`` is ``M4`` for ``'Maltsev+25-engine'`` or ``Maltsev25_MCO_NS_mass`` for ``'Maltsev+25-MCO-rapid'``. Direct-collapse black holes get the whole collapsing mass.
       * - ``Maltsev25_MCO_fallback_model``
         - ``'A'``
         - Probability of forming a fallback black hole instead of a neutron star for a successful SN with M2 < M_CO < M3: ``'A'``: 15% outside the guaranteed-NS window; ``'B'``: a uniform 10% without guaranteed-NS window (Maltsev et al. 2025, Sects. 3.2.2 and 3.2.3).

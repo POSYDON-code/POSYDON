@@ -51,7 +51,7 @@ MALTSEV_MECHANISMS = (
 
 DEFAULT_MALTSEV_SN_MODEL = {
     "Maltsev25_MCO_NS_mass": 1.4,
-    "Maltsev25_MCO_fallback_fraction": 0.99,
+    "Maltsev25_MCO_fallback_fraction": 0.5,
     "Maltsev25_MCO_fallback_model": "A",
     "Maltsev25_MCO_extrapolation_mode": "balanced",
     }
@@ -553,7 +553,7 @@ SN_MODELS = {
     #    "use_core_masses": False,
     #    # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
     #    "Maltsev25_MCO_NS_mass": 1.4,
-    #    "Maltsev25_MCO_fallback_fraction": 0.99,
+    #    "Maltsev25_MCO_fallback_fraction": 0.5,
     #    "Maltsev25_MCO_fallback_model": "A",
     #    "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
@@ -575,7 +575,7 @@ SN_MODELS = {
     #    "use_core_masses": False,
     #    # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
     #    "Maltsev25_MCO_NS_mass": 1.4,
-    #    "Maltsev25_MCO_fallback_fraction": 0.99,
+    #    "Maltsev25_MCO_fallback_fraction": 0.5,
     #    "Maltsev25_MCO_fallback_model": "A",
     #    "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
@@ -597,7 +597,7 @@ SN_MODELS = {
     #    "use_core_masses": False,
     #    # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
     #    "Maltsev25_MCO_NS_mass": 1.4,
-    #    "Maltsev25_MCO_fallback_fraction": 0.99,
+    #    "Maltsev25_MCO_fallback_fraction": 0.5,
     #    "Maltsev25_MCO_fallback_model": "A",
     #    "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,
@@ -619,7 +619,7 @@ SN_MODELS = {
     #    "use_core_masses": False,
     #    # Maltsev+25 parameters, required for the Maltsev+25 mechanisms
     #    "Maltsev25_MCO_NS_mass": 1.4,
-    #    "Maltsev25_MCO_fallback_fraction": 0.99,
+    #    "Maltsev25_MCO_fallback_fraction": 0.5,
     #    "Maltsev25_MCO_fallback_model": "A",
     #    "Maltsev25_MCO_extrapolation_mode": "balanced",
 #        "allow_spin_None" : False,

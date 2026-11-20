@@ -23,7 +23,11 @@ Crucially, the recipe **separates** two distinct questions:
 
 The recipe only returns the type; remnant *masses* are not part of
 it. The class default therefore contains a NS mass scheme (see the
-``NS_mass_model`` argument of :meth:`__init__`).
+``NS_mass_model`` argument of :meth:`__init__`). A direct-collapse BH gets
+the whole collapsing mass. A fallback BH follows Schneider et al. 2021
+(A&A 645, A5, Sect. 4.2.2): a proto-NS forms, and a fraction
+``fallback_fraction`` (default 0.5) of the presumed ejecta (collapsing mass
+minus proto-NS mass) falls back onto it (see :meth:`fallback_BH_mass`).
 
 Extrapolation modes
 -------------------
@@ -136,12 +140,12 @@ class Maltsev25_MCO_corecollapse(object):
     NS_mass : float
         Default baryonic NS mass (Msun) used by the built-in ``NS_mass_model``.
     fallback_fraction : float
-        Fallback mass fraction ``f_fb`` assigned to a fallback BH. Default
-        0.99. The fallback BH gets the full collapsing mass as baryonic
-        remnant mass (as a direct-collapse BH does); ``f_fb`` only matters
-        for the natal kick, and only if step_SN uses
-        ``kick_normalisation = 'one_minus_fallback'`` (the default
-        ``'one_over_mass'`` does not use it).
+        Fraction ``f_fb`` of the presumed ejecta that falls back onto the
+        proto-NS when a fallback BH forms. Default 0.5, as assumed by
+        Schneider et al. (2021, Sect. 4.2.2). The baryonic fallback-BH mass
+        is ``M_NS + f_fb * (M_collapsing - M_NS)`` (see
+        :meth:`fallback_BH_mass`), and ``f_fb`` is also returned as the
+        fallback fraction used by step_SN for the natal kick.
     fallback_model : {'A', 'B'}
         Stochastic model for the NS/fallback-BH split of successful SNe with
         ``M2 < M_CO < M3``. 'A': 15% fallback probability outside the
@@ -157,7 +161,7 @@ class Maltsev25_MCO_corecollapse(object):
     """
 
     def __init__(self, RNG=None, NS_mass_model=None, NS_mass=1.4,
-                 fallback_fraction=0.99, fallback_model='A',
+                 fallback_fraction=0.5, fallback_model='A',
                  extrapolation_mode='balanced',
                  verbose=False):
         """Initialize a Maltsev25_MCO_corecollapse instance."""
@@ -445,6 +449,31 @@ class Maltsev25_MCO_corecollapse(object):
     # ------------------------------------------------------------------
     # Remnant mass / fallback assignment
     # ------------------------------------------------------------------
+    def fallback_BH_mass(self, m_proto, m_collapsing):
+        """Baryonic mass of a fallback BH, following Schneider+21.
+
+        A proto-NS of mass ``m_proto`` forms and a fraction
+        ``self.fallback_fraction`` of the presumed ejecta,
+        ``m_collapsing - m_proto``, falls back onto it (Schneider et al.
+        2021, A&A 645, A5, Sect. 4.2.2, where the fraction is 50%).
+
+        Parameters
+        ----------
+        m_proto : float
+            Baryonic proto-NS mass (Msun).
+        m_collapsing : float
+            Mass available to the remnant (Msun): the He-core mass, or the
+            whole stellar mass with ``conserve_hydrogen_envelope``.
+
+        Returns
+        -------
+        float
+            Baryonic fallback-BH mass (Msun).
+
+        """
+        m_ejecta = max(m_collapsing - m_proto, 0.0)
+        return m_proto + self.fallback_fraction * m_ejecta
+
     def remnant_mass_and_fallback(self, outcome, star,
                                   conserve_hydrogen_envelope=False):
         """Assign the baryonic remnant mass and fallback fraction.
@@ -464,10 +493,10 @@ class Maltsev25_MCO_corecollapse(object):
         -------
         (m_rembar, f_fb) : tuple of float
             Baryonic remnant mass (Msun) and fallback mass fraction. A
-            fallback BH has the same remnant mass as a direct-collapse BH (the
-            collapsing mass); only ``f_fb`` (``self.fallback_fraction`` instead
-            of 1) differs, which affects the natal kick only for
-            ``kick_normalisation = 'one_minus_fallback'`` in step_SN.
+            direct-collapse BH gets the whole collapsing mass (``f_fb = 1``);
+            a fallback BH gets the NS mass plus ``self.fallback_fraction`` of
+            the remaining collapsing mass (``f_fb = self.fallback_fraction``,
+            see :meth:`fallback_BH_mass`).
 
         """
         if outcome == 'NS':
@@ -479,8 +508,12 @@ class Maltsev25_MCO_corecollapse(object):
             else:
                 m_collapsing = star.he_core_mass
 
-            f_fb = 1.0 if outcome == 'direct_BH' else self.fallback_fraction
-            return m_collapsing, f_fb
+            if outcome == 'direct_BH':
+                return m_collapsing, 1.0
+
+            m_rembar = self.fallback_BH_mass(self.NS_mass_model(star),
+                                             m_collapsing)
+            return m_rembar, self.fallback_fraction
 
         raise ValueError("Unknown outcome '%s'." % outcome)
 

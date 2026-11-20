@@ -2559,11 +2559,15 @@ class StepSN(object):
 
                     else:  # successful SN but with fallback BH
                         if conserve_hydrogen_envelope:
-                            m_rem = star.mass
+                            m_collapsing = star.mass
                         else:
-                            m_rem = star.he_core_mass
+                            m_collapsing = star.he_core_mass
 
-                        f_fb = 0.99
+                        # proto-NS of mass M4 plus a fraction of the presumed
+                        # ejecta falling back (Schneider+21, Sect. 4.2.2)
+                        m_rem = self.Maltsev25_MCO_engine.fallback_BH_mass(
+                            M4, m_collapsing)
+                        f_fb = self.Maltsev25_MCO_fallback_fraction
                         state = 'BH'
 
                 else:
