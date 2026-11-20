@@ -270,13 +270,18 @@ class PowerLawMassRatio:
         pdf_values[valid] = self.power_law_mass_ratio(q[valid]) * self.norm
         return pdf_values
 
-    def rvs(self, size=1, n_points=1000, rng=None):
+    def rvs(self, size=1, n_points=None, rng=None):
         """Draw random samples from the power law mass ratio distribution.
+
+        Uses the analytic inverse CDF of the truncated power law.
 
         Parameters
         ----------
         size : int, optional
             Number of samples to draw (default: 1).
+        n_points : None, optional
+            Unused. Kept for backward compatibility with the former
+            grid-based sampler.
         rng : numpy.random.Generator, optional
             Random number generator. If None, uses np.random.default_rng().
 
@@ -288,10 +293,13 @@ class PowerLawMassRatio:
         if rng is None:
             rng = np.random.default_rng()
 
-        from posydon.utils.common_functions import inverse_sampler
-        q_grid = np.linspace(self.q_min, self.q_max, n_points)
-        pdf_values = self.power_law_mass_ratio(q_grid)
-        return inverse_sampler(q_grid, pdf_values, size=size, rng=rng)
+        u = rng.uniform(size=size)
+        if np.isclose(self.alpha, -1.0):
+            q = self.q_min * (self.q_max / self.q_min)**u
+        else:
+            k = self.alpha + 1.0
+            q = (self.q_min**k + u * (self.q_max**k - self.q_min**k))**(1.0 / k)
+        return np.clip(q, self.q_min, self.q_max)
 
 
 class Sana12Period():
