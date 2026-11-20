@@ -229,6 +229,32 @@ class TestGetPeriodPdf:
         assert isinstance(result2, (float, np.ndarray))
         assert np.all(result2 >= 0)
 
+    @mark.parametrize("slope", [-1.0, 0.0, -0.55])
+    def test_power_law_period_is_power_law_in_P(self, slope):
+        kwargs = {
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'power_law',
+            'orbital_period_min': 1.4,
+            'orbital_period_max': 3e6,
+            'power_law_slope': slope,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        # dN/dP ∝ P^slope, so the PDF per dex scales as P^(slope+1)
+        ratio = period_pdf_func(1e4, 20.0) / period_pdf_func(100.0, 20.0)
+        assert np.isclose(ratio, 100.0**(slope + 1))
+
+    def test_power_law_period_default_slope_is_flat_in_logP(self):
+        kwargs = {
+            'orbital_scheme': 'period',
+            'orbital_period_scheme': 'power_law',
+            'orbital_period_min': 0.35,
+            'orbital_period_max': 6e3,
+        }
+        period_pdf_func = norm_pop.get_period_pdf(kwargs)
+        P = np.array([0.35, 0.5, 10.0, 6e3])
+        np.testing.assert_allclose(period_pdf_func(P, 20.0),
+                                   1.0 / np.log10(6e3 / 0.35))
+
     def test_log_power_law_period(self):
         kwargs = {
             'orbital_scheme': 'period',

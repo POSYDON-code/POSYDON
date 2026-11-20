@@ -468,7 +468,7 @@ class TestPowerLawPeriod:
 
     def test_initialization_default(self, default_power_law):
         """Test default initialization of PowerLawPeriod."""
-        assert default_power_law.slope == -0.55
+        assert default_power_law.slope == -1.0
         assert default_power_law.p_min == 1.4
         assert default_power_law.p_max == 3e6
         assert hasattr(default_power_law, 'norm')
@@ -502,7 +502,7 @@ class TestPowerLawPeriod:
         """Test string representation of the distribution."""
         default_repr = default_power_law.__repr__()
         assert "PowerLawPeriod(" in default_repr
-        assert "slope=-0.55" in default_repr
+        assert "slope=-1.0" in default_repr
         assert "p_min=1.4" in default_repr
         assert "p_max=3000000.0" in default_repr
 
@@ -516,59 +516,38 @@ class TestPowerLawPeriod:
         """Test HTML representation for Jupyter notebooks."""
         html_str = default_power_law._repr_html_()
         assert "<h3>Power Law Period Distribution</h3>" in html_str
-        assert "slope = -0.55" in html_str
+        assert "slope = -1.0" in html_str
         assert "p_min = 1.4" in html_str
         assert "p_max = 3000000.0" in html_str
 
     def test_power_law_period_method(self, custom_power_law):
-        """Test the power_law_period method."""
-        logp_values = np.array([1.0, 2.0, 3.0])
-        result = custom_power_law.power_law_period(logp_values)
-
-        # Calculate expected values
-        p_values = 10**logp_values
-        expected = np.zeros_like(p_values)
-        valid = (p_values >= custom_power_law.p_min) & (p_values <= custom_power_law.p_max)
-        expected[valid] = p_values[valid]**custom_power_law.slope
-
-        np.testing.assert_allclose(result, expected)
+        """Test the power_law_period method returns P^slope."""
+        p_values = np.array([10.0, 100.0, 1000.0])
+        result = custom_power_law.power_law_period(p_values)
+        np.testing.assert_allclose(result,
+                                   p_values**custom_power_law.slope)
 
     def test_power_law_period_outside_range(self, custom_power_law):
         """Test power_law_period method with values outside valid range."""
-        # Below range
-        logp_below = np.log10(5.0)  # p_min is 10.0
-        result_below = custom_power_law.power_law_period(logp_below)
-        assert result_below == 0.0
+        assert custom_power_law.power_law_period(5.0) == 0.0  # p_min = 10
+        assert custom_power_law.power_law_period(2e5) == 0.0  # p_max = 1e5
 
-        # Above range
-        logp_above = np.log10(2e5)  # p_max is 1e5
-        result_above = custom_power_law.power_law_period(logp_above)
-        assert result_above == 0.0
-
-    def test_calculate_normalization(self, custom_power_law):
-        """Test that normalization calculation works correctly."""
-        # Verify that normalization is positive
-        assert custom_power_law.norm > 0
-
-        # Test that integral with normalization is reasonable
-        integral, _ = quad(custom_power_law.power_law_period,
-                          np.log10(custom_power_law.p_min),
-                          np.log10(custom_power_law.p_max))
-        expected_norm = 1.0 / integral
-        np.testing.assert_allclose(custom_power_law.norm, expected_norm)
+    @pytest.mark.parametrize("slope", [-2.5, -1.0, -0.55, 0.0, 1.0])
+    def test_calculate_normalization(self, slope):
+        """Test the analytic normalization against numerical integration."""
+        dist = PowerLawPeriod(slope=slope, p_min=10.0, p_max=1e5)
+        integral, _ = quad(lambda logp: dist.power_law_period(10**logp)
+                           * 10**logp * np.log(10), 1.0, 5.0)
+        np.testing.assert_allclose(dist.norm, 1.0 / integral, rtol=1e-8)
 
     def test_pdf_within_range(self, custom_power_law):
         """Test PDF returns correct values within the period range."""
         p_values = np.logspace(np.log10(custom_power_law.p_min),
                               np.log10(custom_power_law.p_max), 10)
-        pdf_values = custom_power_law.pdf_per_dex(p_values)
+        pdf_values = custom_power_law.pdf(p_values)
 
-        # All should be positive within range
         assert np.all(pdf_values > 0)
-
-        # Calculate expected values
-        logp = np.log10(p_values)
-        expected = custom_power_law.power_law_period(logp) * custom_power_law.norm
+        expected = custom_power_law.power_law_period(p_values) * custom_power_law.norm
         np.testing.assert_allclose(pdf_values, expected)
 
     def test_pdf_outside_range(self, custom_power_law):
@@ -628,32 +607,34 @@ class TestPowerLawPeriod:
         assert pdf_mixed[2] > 0.0   # Positive within range
         assert pdf_mixed[3] > 0.0   # Positive within range
 
-    def test_normalization_consistency(self, default_power_law):
-        """Test that normalization is applied consistently."""
-        # Test that the normalization constant matches expected calculation
-        integral, _ = quad(default_power_law.power_law_period,
-                          np.log10(default_power_law.p_min),
-                          np.log10(default_power_law.p_max))
-        expected_norm = 1.0 / integral
-        np.testing.assert_allclose(default_power_law.norm, expected_norm, rtol=1e-10)
-
-        # Test that PDF values are properly normalized
-        p_test = np.array([10.0, 100.0, 1000.0])
-        pdf_values = default_power_law.pdf_per_dex(p_test)
-
-        # Calculate expected PDF values manually
-        logp_test = np.log10(p_test)
-        raw_values = default_power_law.power_law_period(logp_test)
-        expected_pdf = raw_values * default_power_law.norm
-
-        np.testing.assert_allclose(pdf_values, expected_pdf)
+    def test_pdf_shape(self, custom_power_law):
+        """Test the PDF in P scales as P^slope."""
+        p = np.array([100.0, 1000.0])
+        pdf_values = custom_power_law.pdf(p)
+        np.testing.assert_allclose(pdf_values[1] / pdf_values[0],
+                                   10**custom_power_law.slope)
 
     def test_pdf_per_dex_shape(self, custom_power_law):
-        """Test the PDF per dex scales as P^slope."""
+        """Test the PDF per dex scales as P^(slope+1)."""
         p = np.array([100.0, 1000.0])
         pdf_values = custom_power_law.pdf_per_dex(p)
         np.testing.assert_allclose(pdf_values[1] / pdf_values[0],
-                                   10**custom_power_law.slope)
+                                   10**(custom_power_law.slope + 1))
+
+    def test_slope_zero_is_flat_in_p(self):
+        """Test that slope 0 gives a distribution flat in P."""
+        dist = PowerLawPeriod(slope=0.0, p_min=10.0, p_max=1e3)
+        p = np.array([10.0, 50.0, 500.0, 1e3])
+        np.testing.assert_allclose(dist.pdf(p), 1.0 / (1e3 - 10.0))
+
+    def test_slope_minus_one_is_log_uniform(self):
+        """Test that slope -1 matches the log-uniform distribution."""
+        dist = PowerLawPeriod(slope=-1.0, p_min=10.0, p_max=1e5)
+        log_uniform = LogUniform(min=10.0, max=1e5)
+        p = np.logspace(1, 5, 9)
+        np.testing.assert_allclose(dist.pdf(p), log_uniform.pdf(p))
+        np.testing.assert_allclose(dist.pdf_per_dex(p),
+                                   log_uniform.pdf_per_dex(p))
 
     def test_pdf_per_dex_normalised_in_log_space(self, default_power_law):
         """Test the PDF per dex integrates to 1 over log10(P)."""
@@ -685,6 +666,22 @@ class TestPowerLawPeriod:
         assert len(samples) == 1000
         assert np.all(samples >= custom_power_law.p_min)
         assert np.all(samples <= custom_power_law.p_max)
+
+    @pytest.mark.parametrize("slope", [-2.5, -1.0, -0.55, 0.0, 1.0])
+    def test_rvs_follows_pdf(self, slope):
+        """Test samples follow the analytic CDF of dN/dP ∝ P^slope."""
+        from scipy.stats import kstest
+        dist = PowerLawPeriod(slope=slope, p_min=10.0, p_max=1e5)
+        samples = dist.rvs(size=20000, rng=np.random.default_rng(1))
+
+        def cdf(p):
+            p = np.clip(p, dist.p_min, dist.p_max)
+            if slope == -1.0:
+                return np.log(p / dist.p_min) * dist.norm
+            a = slope + 1.0
+            return (p**a - dist.p_min**a) / a * dist.norm
+
+        assert kstest(samples, cdf).pvalue > 1e-3
 
     def test_rvs_without_rng(self, custom_power_law):
         """Test random sampling without providing an RNG."""

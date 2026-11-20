@@ -175,7 +175,9 @@ def get_period_pdf(kwargs):
     Supported schemes:
     - `period` for `orbital_scheme` with `orbital_period_scheme`:
         - `Sana+12_period_extended`
-        - `power_law`: dN/dlog10(P) ∝ P^`power_law_slope`
+        - `power_law`: dN/dP ∝ P^`power_law_slope`
+          (i.e. dN/dlog10(P) ∝ P^(`power_law_slope` + 1)); `power_law_slope`
+          defaults to -1, which is flat in log10(P)
         - `log_power_law`: dN/dlog10(P) ∝ (log10(P))^`power_law_slope`
     - `separation` for `orbital_scheme` with `orbital_separation_scheme`:
         - `log_uniform`
@@ -199,10 +201,11 @@ def get_period_pdf(kwargs):
             )
             period_pdf = lambda P, m1, q=None: period.pdf_per_dex(P, m1)
         elif kwargs['orbital_period_scheme'] == 'power_law':
+            # default slope of -1 is flat in log10(P) (Öpik)
             period = PowerLawPeriod(
                 p_min=kwargs['orbital_period_min'],
                 p_max=kwargs['orbital_period_max'],
-                slope=kwargs['power_law_slope'],
+                slope=kwargs.get('power_law_slope', -1.0),
             )
             period_pdf = lambda P, m1=None, q=None: period.pdf_per_dex(P)
         elif kwargs['orbital_period_scheme'] == 'log_power_law':
@@ -376,7 +379,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `log_power_law`;
+          optional for `power_law` (default: -1, flat in log10(P))
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     population_parameters : dict
@@ -394,7 +398,8 @@ def calculate_model_weights(pop_data,
         - `orbital_scheme`
         - `orbital_period_scheme` or `orbital_separation_scheme` depending on the `orbital_scheme`
         - `orbital_period_min` and `orbital_period_max` or `orbital_separation_min` and `orbital_separation_max` depending on the `orbital_scheme`
-        - `power_law_slope` if `orbital_period_scheme` is `power_law` or `log_power_law`
+        - `power_law_slope` if `orbital_period_scheme` is `log_power_law`;
+          optional for `power_law` (default: -1, flat in log10(P))
         - `q_min` and `q_max` if `secondary_mass_scheme` is `flat_mass_ratio`
 
     Returns
