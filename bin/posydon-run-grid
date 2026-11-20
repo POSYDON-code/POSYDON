@@ -384,8 +384,30 @@ def create_binary_inlists(binary_controls, binary_job,
 
     return
 
-def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, new_Z=False):
+
+def format_inlist_value(value):
+    """Format a grid value as a MESA inlist values
+    """
+    # Bool Check
+    if isinstance(value, (bool, np.bool_)):
+        return '.true.' if value else '.false.'
+    # Integer Check
+    elif isinstance(value, (int, np.integer)):
+        return '{0}'.format(int(value))
+    # Float Check
+    elif isinstance(value, (float, np.floating)):
+        if float(value).is_integer():
+            return '{0}'.format(int(value))
+        return '{0:.10e}'.format(value).replace('e', 'd')
+    # Otherwise, return as given
+    else:
+        return '{0}'.format(value)
+
+
+def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, new_Z=False, grid_controls=None, grid_job=None):
     """Create the inlist and inlist grid points needed to run this part of grid
+       grid_controls and grid_job: Add other grid parameters of this grid point (e.g. new_omega_div_omega_crit) that go into the
+       &controls and &star_job sections.
     """
 
     binary_controls_str = """
@@ -430,11 +452,17 @@ def create_star_formation(mass, work_dir, star_inlist_project, initial_z=None, n
                                      .format(initial_z).replace('e','d'))
             inlist_grid_points.write("Zbase = "+"{0:.10e}\n"\
                                      .format(initial_z).replace('e','d'))
+        for param, value in (grid_controls or {}).items():
+            if param not in ('initial_mass', 'initial_z', 'Zbase'):
+                inlist_grid_points.write("{0} = {1}\n".format(param, format_inlist_value(value)))
         inlist_grid_points.write("/ ! end of star_controls namelist\n")
         inlist_grid_points.write("&star_job\n")
         if new_Z:
             inlist_grid_points.write("new_Z = "+"{0:.10e}\n"\
                                      .format(initial_z).replace('e','d'))
+        for param, value in (grid_job or {}).items():
+            if param != 'new_Z':
+                inlist_grid_points.write("{0} = {1}\n".format(param, format_inlist_value(value)))
         inlist_grid_points.write("/ ! end of star_job namelist\n")
         inlist_grid_points.close()
 
@@ -898,6 +926,20 @@ if __name__ == '__main__':
         print("You are running a single star grid, we are checking for what parameters you are varying in your grid")
         print("Grid parameters that effect star1_formation_controls: {0}".format(','.join(grid_params_star1_formation_controls)))
         print("Grid parameters that effect star1_formation_job: {0}".format(','.join(grid_params_star1_formation_job)))
+        unused_grid_params = [param for param in grid.columns
+                              if param not in grid_params_star1_formation_controls
+                              and param not in grid_params_star1_formation_job]
+        if unused_grid_params:
+            Pwarn("Grid parameters not found in {0}, so they are not passed to MESA: "
+                  "{1}".format(args.mesa_star1_inlist_project[0], ','.join(unused_grid_params)),
+                  "InappropriateValueWarning")
+        # Empty cell in grid file is read as NaN
+        non_finite_params = [params for params, value in grid_param_dict.items()
+                             if isinstance(value, (float, np.floating)) and not np.isfinite(value)]
+
+        if non_finite_params:
+            raise ValueError("Grid point {0} has empty or non-finite values for: "
+                             "{1}".format(args.grid_point_index, ','.join(non_finite_params)))
 
         # based on the values create directory
         work_dir, final_dir = create_working_directory(grid_param_dict, args)
@@ -909,11 +951,11 @@ if __name__ == '__main__':
             # single_HeMS star has step0, step1, step2, last two steps require metallicity
             # but only step1 requires new_Z
             if index == last_step:
-                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], False)
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], False, grid_controls=star1_formation_controls, grid_job=star1_formation_job)
             elif index == 1:
-                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], True)
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_param_dict['initial_z'], True, grid_controls=star1_formation_controls, grid_job=star1_formation_job)
             else :
-                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step)
+                create_star_formation(grid_param_dict['initial_mass'], work_dir, inlist_step, grid_controls=star1_formation_controls, grid_job=star1_formation_job)
             run_mesa(args.mesa_star1_executable, work_dir, final_dir,
                      outfile_name='out_star1_formation_step{0}.txt'.format(index),
                      keep_profiles=args.keep_profiles, keep_photos=args.keep_photos,
