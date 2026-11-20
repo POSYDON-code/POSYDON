@@ -875,6 +875,10 @@ It also contains which sampling distributions to use for the initial conditions 
     - | Maximum simulation time (in years).
     - ``13.8e9``
 
+  * - ``output_times``
+    - | List of times to have history output, in addition to default (years).
+    - ``None``
+
   * - ``binary_fraction``
     - | Fraction of binaries (0 < fraction <= 1).
     - ``1.0``

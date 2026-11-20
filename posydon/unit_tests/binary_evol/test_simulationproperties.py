@@ -2,14 +2,16 @@
 """
 
 __authors__ = [
-    "Max Briel <max.briel@unige.ch>"
+    "Max Briel <max.briel@unige.ch>",
+    "Anurag Sawarkar <anurag.sawarkar@unige.ch>"
 ]
 
 # import other needed code for the tests, which is not already imported in the
 # module you like to test
 import os
+from types import SimpleNamespace
 
-from pytest import fixture, mark
+from pytest import fixture, mark, raises
 
 # import the module which will be tested
 import posydon.binary_evol.simulationproperties as totest
@@ -52,3 +54,34 @@ class TestGridPaths:
         _, step_kwargs = sim_prop.check_step(1.0, None, "step_HMS_HMS_RLO",
                                              (FakeGridStep, {}))
         assert step_kwargs['grid_path'] == str(tmp_path)
+
+
+class TestOutputTimes:
+    """Test the output_times property read/write and the output_times_between method."""
+    def test_output_times(self):
+        assert len(totest.SimulationProperties().output_times) == 0
+        sim_prop = totest.SimulationProperties(output_times=[3.0, 1.0, 3.0, 2.0])
+        assert sim_prop.output_times.tolist() == [1.0, 2.0, 3.0]
+        assert sim_prop.output_times_between(1.0, 3.0).tolist() == [2.0]
+        assert sim_prop.output_times_between(3.0, 6.0).tolist() == []
+        with raises(ValueError, match="non-finite"):
+            sim_prop.output_times = [1.0, float('nan')]
+
+
+class TestHooksOutputTimes:
+    """Test the output_times timesteps' hooks for names and times"""
+    @fixture
+    def binary(self):
+        return SimpleNamespace(event_history=['ZAMS', None, None, 'oRLO1'],
+                               step_names=['initial_cond'],
+                               step_times=[0.0])
+    def test_step_names(self, binary):
+        totest.StepNamesHooks().post_step(binary, 'step_HMS_HMS')
+        assert binary.step_names == ['initial_cond'] + 3 * ['step_HMS_HMS']
+
+    def test_step_times(self, binary):
+        hooks = totest.TimingHooks()
+        hooks.pre_step(binary, 'step_HMS_HMS')
+        hooks.post_step(binary, 'step_HMS_HMS')
+        assert binary.step_times[:3] == [0.0, None, None]
+        assert binary.step_times[3] >= 0.0
