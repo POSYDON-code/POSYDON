@@ -18,6 +18,7 @@ __authors__ = [
 
 
 import copy
+import numbers
 import os
 
 import numpy as np
@@ -100,6 +101,12 @@ def is_number(s):
         return True
     except ValueError:
         return False
+
+
+def is_None_or_nan(value):
+    """Check if a value is not set: None, or a real number that is NaN."""
+    return value is None or (isinstance(value, numbers.Real)
+                             and bool(np.isnan(value)))
 
 def zero_negative_values(arr, key): # pragma no cover
     """
