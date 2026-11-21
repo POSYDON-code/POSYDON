@@ -678,7 +678,7 @@ class BaseIFInterpolator:
                 self.interp_classes, self.interp_method)
             self.interpolator.train(XTn, YTn, ic)
 
-    def test_interpolator(self, Xt):
+    def test_interpolator(self, Xt, classes=None):
         """Use the interpolator to approximate output vector.
 
         Parameters
@@ -686,14 +686,17 @@ class BaseIFInterpolator:
         Xt : numpy array
             A list of input vectors for which the output vectors are
             to be approximated.
+        classes : numpy array, optional
+            Output of `self.test_classifier(self.c_key, Xt)`, if already
+            computed. Passing it avoids classifying the same input twice.
 
         Returns
         -------
         Output space approximation as numpy array
 
         """
-        classes = self.test_classifier(self.c_key, Xt)
-
+        if classes is None:
+            classes = self.test_classifier(self.c_key, Xt)
 
         if isinstance(self.interp_method, list):
             Xtn = self.X_scaler.normalize(Xt, classes)
@@ -835,7 +838,9 @@ class BaseIFInterpolator:
             raise ValueError("Wrong dimensions. Xt should have as many "
                             "columns as it was trained with.")
         # if binary classified as 'initial_MT', set numerical quantities to nan
-        ynum, ycat = self.test_interpolator(Xt), self.test_classifiers(Xt)
+        # classify first so that test_interpolator can reuse the c_key result
+        ycat = self.test_classifiers(Xt)
+        ynum = self.test_interpolator(Xt, classes=ycat[self.c_key])
         if self.class_method != '1NN':
             ynum[ycat[self.c_key] == 'initial_MT', :] = np.nan
         if self.interp_method == '1NN':
@@ -1375,6 +1380,55 @@ class Classifier:
         print(error / XT.shape[0])
 
 
+def _predict_single_distance_weighted(clf, Xt):
+    """Fast path of `KNeighborsClassifier.predict` for one query point.
+
+    Population synthesis evaluates the classifiers one binary at a time, and
+    for a single point most of sklearn's `predict` time is spent in generic
+    input validation and the joblib wrapper around the tree query. This
+    function queries the fitted KD/Ball tree directly and then reproduces
+    sklearn's distance weighting (`_get_weights`) and weighted vote
+    (`weighted_mode`, ties resolved towards the lower class index), so the
+    returned labels are identical to `clf.predict(Xt)`.
+
+    Returns None whenever the fast path does not apply; the caller then uses
+    `clf.predict`. Covered by unit tests against sklearn for equivalence.
+    """
+    tree = getattr(clf, "_tree", None)
+    if (tree is None
+            or getattr(clf, "weights", None) != "distance"
+            or getattr(clf, "outputs_2d_", True)
+            or not isinstance(Xt, np.ndarray)
+            or Xt.ndim != 2 or Xt.shape[0] != 1
+            or Xt.shape[1] != getattr(clf, "n_features_in_", -1)
+            or clf.n_neighbors > getattr(clf, "n_samples_fit_", -1)):
+        return None
+    X = np.ascontiguousarray(Xt, dtype=np.float64)
+    if not np.isfinite(X).all():
+        return None                         # let sklearn raise its error
+
+    dist, ind = tree.query(X, clf.n_neighbors, True)
+    with np.errstate(divide="ignore"):
+        weights = 1.0 / dist
+    inf_mask = np.isinf(weights)
+    inf_row = np.any(inf_mask, axis=1)
+    weights[inf_row] = inf_mask[inf_row]
+    if not weights.any():
+        return None                         # sklearn raises in this case
+
+    labels = clf._y[ind[0]]
+    w = weights[0]
+    best, best_count = 0.0, 0.0
+    for label in np.unique(labels):
+        template = np.zeros(labels.shape)
+        mask = labels == label
+        template[mask] = w[mask]
+        count = np.sum(template)
+        if count > best_count:
+            best, best_count = label, count
+    return clf.classes_.take(np.array([int(best)], dtype=np.intp))
+
+
 class KNNClassifier(Classifier):
     """Class implementing K - Nearest Neighbors classifier."""
 
@@ -1412,6 +1466,9 @@ class KNNClassifier(Classifier):
 
         """
         super().predict(Xt)
+        fast = _predict_single_distance_weighted(self.classifier, Xt)
+        if fast is not None:
+            return fast
         return self.classifier.predict(Xt)
 
     def predict_prob(self, Xt):

@@ -224,6 +224,13 @@ class SingleStarInterpolator:
             # Map values to keys
             keys = self._keys[(is_positive, is_derivative)]
 
+            if values.ndim == 1 and np.ndim(t) == 0:
+                # scalar time (e.g. each ODE right-hand-side evaluation):
+                # same np.float64 entries as values[0, i] below, without
+                # the per-key indexing overhead
+                results.update(zip(keys, values))
+                continue
+
             values = np.atleast_2d(values)
 
             for i, key in enumerate(keys):
