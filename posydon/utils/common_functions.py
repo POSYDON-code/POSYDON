@@ -386,7 +386,15 @@ def orbital_period_from_separation(separation, m1, m2):
 
     """
     #TODO: check for invalid or negative inputs
-    return const.dayyer * ((separation / const.aursun)**3.0 / (m1 + m2)) ** 0.5
+    m1 = np.asarray(m1, dtype="float64")
+    m2 = np.asarray(m2, dtype="float64")
+    separation = np.asarray(separation, dtype="float64")
+
+    period_sec = (4.0 * const.pi**2.0 * (separation * const.Rsun)**3.0
+                  / (const.standard_cgrav * (m1 * const.Msun + m2 * const.Msun))
+                  )**0.5
+    period_days = period_sec / const.day2sec
+    return period_days
 
 
 

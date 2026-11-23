@@ -16,18 +16,26 @@ Before contributing, it's essential to familiarize yourself with:
 
 Setting Up Your Development Environment
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-1. **Fork the Repository**: Navigate to `POSYDON's GitHub page <https://github.com/POSYDON-code/POSYDON.git>` and click the 'Fork' button to create a copy of the repository in your personal GitHub account.
-2. **Clone Your Fork**: Once forked, clone the repository to your local machine:
+1. **Fork the Repository**: Navigate to `POSYDON's GitHub page <https://github.com/POSYDON-code/POSYDON>`_ and click the 'Fork' button to create a copy of the repository in your personal GitHub account.
+2. **Clone Your Fork and Install It**: Follow the :ref:`development install <development-install>`, but clone your fork instead of the main repository:
 
 .. code-block:: bash
 
    git clone https://github.com/your-username/POSYDON.git
 
-3. **Install Dependencies**: Navigate to the cloned repository and install necessary dependencies:
+.. _building-docs:
+
+Building the Documentation
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+To build the documentation locally, install the documentation dependencies from your ``POSYDON`` directory and run Sphinx:
 
 .. code-block:: bash
 
-   pip install .
+   pip install ".[doc]"
+   cd docs
+   make html
+
+The HTML pages are written to ``docs/_build/html``; open ``_build/html/index.html`` in your browser. Converting the notebooks also needs the ``pandoc`` program, which ``pip`` does not provide. Install it with ``conda install -c conda-forge pandoc`` (or ``brew install pandoc`` on macOS).
 
 Making a Contribution
 ~~~~~~~~~~~~~~~~~~~~~
