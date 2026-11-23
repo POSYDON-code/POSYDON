@@ -58,7 +58,7 @@ def get_github_tags():
         return version_tags
 
     except Exception as e:
-        print(f"Error getting tags from github: {e}")
+        print(f"Error getting tags from github: {e}", file=sys.stderr)
         return []
 
 def group_per_major_minor(tags):
@@ -136,7 +136,7 @@ html_context = {
     'current_version': current_version,
     'main_versions_dicts': main_version_dicts,
 }
-print(html_context)
+print(html_context, file=sys.stderr)
 
 # The short X.Y version.
 version = posydon_version
