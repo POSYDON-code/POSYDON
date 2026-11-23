@@ -5,6 +5,8 @@ __authors__ = [
     "Elizabeth Teng <elizabethteng@u.northwestern.edu>"
 ]
 
+from scipy.stats import kstest
+
 # import the module which will be tested
 import posydon.popsyn.independent_sample as totest
 
@@ -70,6 +72,7 @@ class TestFunctions:
         # period scheme (default)
         orb_p, ecc_p, m1_p, m2_p = totest.generate_independent_samples(
             orbital_scheme='period',
+            orbital_period_scheme='Sana+12_period_extended',
             RNG=np.random.default_rng(seed=42))
         assert orb_p[0] == approx(872.213878458193,abs=6e-12)
         assert ecc_p[0] == approx(0.7259611833901314,abs=6e-12)
@@ -100,22 +103,67 @@ class TestFunctions:
 
     def test_generate_orbital_periods(self):
         # missing argument
-        with raises(TypeError, match="missing 1 required positional argument: 'primary_masses'"):
-            totest.generate_orbital_periods()
+        with raises(ValueError, match="m1 must be a single value or have size=1"):
+            totest.generate_orbital_periods(orbital_period_scheme='Sana+12_period_extended')
 
         # bad input
         with raises(ValueError, match="p_max must be greater than p_min"):
-            totest.generate_orbital_periods(np.array([1.]),
+            totest.generate_orbital_periods(primary_masses=np.array([1.]),
                                             orbital_period_min=10.,
-                                            orbital_period_max=1.)
+                                            orbital_period_max=1.,
+                                            orbital_period_scheme='Sana+12_period_extended')
         with raises(ValueError, match="You must provide an allowed orbital period scheme."):
-            totest.generate_orbital_periods(np.array([1.]),
+            totest.generate_orbital_periods(primary_masses=np.array([1.]),
                                             orbital_period_scheme='test')
         # examples
         tests = [(1.0,42,approx(403.44608837021764,abs=6e-12)),
                  (1.0,12,approx(3.4380527315000666,abs=6e-12))]
         for (m,r,p) in tests:
-            assert totest.generate_orbital_periods(m,RNG = np.random.default_rng(seed=r))[0] == p
+            assert totest.generate_orbital_periods(primary_masses=m,
+                                                   orbital_period_scheme='Sana+12_period_extended',
+                                                   RNG = np.random.default_rng(seed=r))[0] == p
+
+        # power_law tests
+        n = 5000
+        m1 = np.full(n, 20.)
+        p_min, p_max = 1.4, 3000.
+
+        # samples respect the bounds
+        periods = totest.generate_orbital_periods(
+            m1, number_of_binaries=n, orbital_period_min=p_min,
+            orbital_period_max=p_max, orbital_period_scheme='power_law',
+            RNG=np.random.default_rng(seed=1))
+        assert periods.shape == (n,)
+        assert np.all(periods >= p_min) and np.all(periods <= p_max)
+
+        # default slope (0) is flat in log10(P), independent of primary mass
+        logp_range = np.log10(p_max) - np.log10(p_min)
+        ks = kstest(np.log10(periods), 'uniform',
+                           args=(np.log10(p_min), logp_range))
+        assert ks.pvalue > 0.001
+
+        # an explicit slope of 0 reproduces the default
+        explicit = totest.generate_orbital_periods(
+            m1, number_of_binaries=n, orbital_period_min=p_min,
+            orbital_period_max=p_max, orbital_period_scheme='power_law',
+            power_law_slope=0.0, RNG=np.random.default_rng(seed=1))
+        np.testing.assert_array_equal(periods, explicit)
+
+        # power_law_slope is passed on to the distribution
+        mean_logp = {}
+        for slope in (-1.0, 1.0):
+            samples = totest.generate_orbital_periods(
+                m1, number_of_binaries=n, orbital_period_min=p_min,
+                orbital_period_max=p_max, orbital_period_scheme='power_law',
+                power_law_slope=slope, RNG=np.random.default_rng(seed=1))
+            mean_logp[slope] = np.mean(np.log10(samples))
+        assert mean_logp[1.0] > mean_logp[-1.0]
+
+        # invalid period range is caught by the distribution
+        with raises(ValueError, match="p_max must be greater than p_min"):
+            totest.generate_orbital_periods(
+                np.array([1.]), orbital_period_min=10.,
+                orbital_period_max=1., orbital_period_scheme='power_law')
 
     def test_generate_orbital_separations(self):
         # missing log_normal params
