@@ -35,10 +35,15 @@ class TestElements:
                     'EXTRA_STAR_COLUMNS_DTYPES', 'SCALAR_NAMES_DTYPES',
                     'clean_binary_history_df', 'clean_binary_oneline_df',
                     'parse_inifile', 'simprop_kwargs_from_ini',
-                    'binarypop_kwargs_from_ini',
+                    'simprop_kwargs_from_parser',
+                    'binarypop_kwargs_from_parser',
+                    'binarypop_kwargs_from_ini', 'DEFAULT_INI_PATH',
+                    'new_parser', '_changes_import',
+                    'RESOLVED_INI_SUFFIX', 'REPLACED_SECTIONS', 'resolved_inifile_name',
+                    'write_resolved_inifile',
                     '__builtins__', '__cached__', '__doc__', '__file__',
                     '__loader__', '__name__', '__package__', '__spec__',
-                    'ConfigParser', 'ast', 'importlib', 'os', 'errno',
+                    'ast', 'importlib', 'os', 'errno',
                     'pprint', 'np', 'pd',]
         totest_elements = set(dir(totest))
         missing_in_test = set(elements) - totest_elements
@@ -287,6 +292,139 @@ class TestFunctions:
         assert parser.has_option("section", "key1")
         assert parser.has_option("section", "key2")
 
+    def test_parse_inifile_stacks_on_defaults(self, tmp_path):
+        default_parser = totest.parse_inifile(totest.DEFAULT_INI_PATH,
+                                              use_defaults=False)
+        user_ini = os.path.join(tmp_path, "user.ini")
+        with open(user_ini, "w") as f:
+            f.write("[step_SN]\nmechanism = 'Sukhbold+16-engine'\n"
+                    "[my_section]\nkey = 1\n")
+
+        # the defaults are read first, the user inifile overrides them
+        parser = totest.parse_inifile(user_ini)
+        assert set(default_parser.sections()) < set(parser.sections())
+        assert parser.get("step_SN", "mechanism") == "'Sukhbold+16-engine'"
+        assert parser.get("step_SN", "engine") == \
+            default_parser.get("step_SN", "engine")
+        assert parser.get("my_section", "key") == "1"
+
+        # the same holds for a list of inifiles
+        parser = totest.parse_inifile([user_ini])
+        assert parser.get("step_SN", "mechanism") == "'Sukhbold+16-engine'"
+        assert parser.has_section("step_CE")
+
+        # a section that swaps in another class replaces the default section
+        swap_ini = os.path.join(tmp_path, "swap.ini")
+        with open(swap_ini, "w") as f:
+            f.write("[step_CE]\nimport = None\n"
+                    "absolute_import = ['my_step.py', 'MyStep']\n"
+                    "verbose = True\n")
+        parser = totest.parse_inifile(swap_ini)
+        assert dict(parser["step_CE"]) == {
+            "import": "None",
+            "absolute_import": "['my_step.py', 'MyStep']",
+            "verbose": "True"}
+        # ... and a later file can add settings to the swapped-in class
+        extra_ini = os.path.join(tmp_path, "extra.ini")
+        with open(extra_ini, "w") as f:
+            f.write("[step_CE]\nmy_setting = 2\n")
+        parser = totest.parse_inifile([swap_ini, extra_ini])
+        assert parser.get("step_CE", "my_setting") == "2"
+        assert parser.get("step_CE", "verbose") == "True"
+        assert not parser.has_option("step_CE", "prescription")
+        # repeating the default class keeps the default settings
+        same_ini = os.path.join(tmp_path, "same.ini")
+        with open(same_ini, "w") as f:
+            f.write("[step_CE]\n"
+                    "import = ['posydon.binary_evol.CE.step_CEE', 'StepCEE']\n"
+                    "common_envelope_efficiency = 0.5\n")
+        parser = totest.parse_inifile(same_ini)
+        assert parser.get("step_CE", "common_envelope_efficiency") == "0.5"
+        assert parser.has_option("step_CE", "prescription")
+
+        # [extra_hooks] in the user inifile replaces the default hooks
+        hooks_ini = os.path.join(tmp_path, "hooks.ini")
+        with open(hooks_ini, "w") as f:
+            f.write("[extra_hooks]\n"
+                    "import_1 = ['posydon.binary_evol.simulationproperties', "
+                    "'TimingHooks']\n"
+                    "absolute_import_1 = None\nkwargs_1 = {}\n")
+        parser = totest.parse_inifile(hooks_ini)
+        assert set(parser["extra_hooks"]) == {"import_1", "absolute_import_1",
+                                              "kwargs_1"}
+        simkwargs = totest.simprop_kwargs_from_ini(hooks_ini)
+        assert [cls.__name__ for cls, _ in simkwargs["extra_hooks"]] == \
+            ["TimingHooks"]
+        # ... an empty [extra_hooks] section turns off all hooks
+        no_hooks_ini = os.path.join(tmp_path, "no_hooks.ini")
+        with open(no_hooks_ini, "w") as f:
+            f.write("[extra_hooks]\n")
+        assert totest.simprop_kwargs_from_ini(no_hooks_ini)["extra_hooks"] \
+            == []
+        # ... and without an [extra_hooks] section the default hooks are used
+        assert set(totest.parse_inifile(user_ini)["extra_hooks"]) == \
+            set(default_parser["extra_hooks"])
+
+        # without defaults only the user inifile is read
+        parser = totest.parse_inifile(user_ini, use_defaults=False)
+        assert parser.sections() == ["step_SN", "my_section"]
+
+    def test_resolved_inifile_name(self):
+        assert totest.resolved_inifile_name('dir/run.ini') == 'run_resolved.ini'
+        assert totest.resolved_inifile_name('params') == 'params_resolved.ini'
+
+    def test_write_resolved_inifile(self, monkeypatch, tmp_path):
+        monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
+        user_ini = os.path.join(tmp_path, "user.ini")
+        with open(user_ini, "w") as f:
+            f.write("[BinaryPopulation_options]\nnumber_of_binaries = 42\n"
+                    "[step_CE]\nimport = None\n"
+                    "absolute_import = ['my_step.py', 'MyStep']\n")
+        resolved = os.path.join(tmp_path, "user_resolved.ini")
+        assert totest.write_resolved_inifile([user_ini], resolved) == resolved
+
+        text = open(resolved).read()
+        assert text.startswith("# POSYDON version:")
+        assert f"# Default ini file: {totest.DEFAULT_INI_PATH}" in text
+        assert os.path.isabs(totest.DEFAULT_INI_PATH)
+        assert f"# User ini file: {user_ini}" in text
+
+        # a relative path to the user ini file is written as absolute path
+        monkeypatch.chdir(tmp_path)
+        totest.write_resolved_inifile("user.ini", resolved)
+        assert f"# User ini file: {user_ini}\n" in open(resolved).read()
+
+        stacked = totest.parse_inifile(user_ini)
+        alone = totest.parse_inifile(resolved, use_defaults=False)
+        assert {s: dict(stacked[s]) for s in stacked.sections()} == \
+            {s: dict(alone[s]) for s in alone.sections()}
+        assert totest.binarypop_kwargs_from_ini(resolved, use_defaults=False) \
+            == totest.binarypop_kwargs_from_ini(user_ini)
+
+        # an already parsed inifile gives the same resolved file
+        from_parser = os.path.join(tmp_path, "from_parser.ini")
+        totest.write_resolved_inifile(
+            user_ini, from_parser, parser=totest.parse_inifile(user_ini))
+        assert open(from_parser).read() == open(resolved).read()
+
+    def test_short_inifile_gives_full_kwargs(self, monkeypatch, tmp_path):
+        monkeypatch.delenv('SLURM_ARRAY_JOB_ID', raising=False)
+        user_ini = os.path.join(tmp_path, "user.ini")
+        with open(user_ini, "w") as f:
+            f.write("[BinaryPopulation_options]\nnumber_of_binaries = 42\n"
+                    "[step_CE]\ncommon_envelope_efficiency = 0.5\n")
+        full_pop = totest.binarypop_kwargs_from_ini(totest.DEFAULT_INI_PATH)
+        user_pop = totest.binarypop_kwargs_from_ini(user_ini)
+        assert user_pop['number_of_binaries'] == 42
+        assert set(user_pop) == set(full_pop)
+        assert user_pop['S1_kwargs'] == full_pop['S1_kwargs']
+
+        full_sim = totest.simprop_kwargs_from_ini(totest.DEFAULT_INI_PATH)
+        user_sim = totest.simprop_kwargs_from_ini(user_ini)
+        assert set(user_sim) == set(full_sim)
+        assert user_sim['step_CE'][1]['common_envelope_efficiency'] == 0.5
+        assert user_sim['step_SN'] == full_sim['step_SN']
+
 
     def test_simprop_kwargs_from_ini(self,monkeypatch,sim_ini,grid_paths_ini,tmp_path):
         # example
@@ -304,7 +442,7 @@ class TestFunctions:
 
         monkeypatch.setattr(importlib, "import_module", dummy_import_module)
 
-        simkwargs = totest.simprop_kwargs_from_ini(sim_ini)
+        simkwargs = totest.simprop_kwargs_from_ini(sim_ini, use_defaults=False)
 
         # Check keys exist
         assert 'flow' in simkwargs
@@ -324,7 +462,8 @@ class TestFunctions:
         assert hooks[1][1] == {}
 
         # test with 'only' parameter
-        simkwargs_only = totest.simprop_kwargs_from_ini(sim_ini, only='step_HMS_HMS')
+        simkwargs_only = totest.simprop_kwargs_from_ini(sim_ini, only='step_HMS_HMS',
+                                                        use_defaults=False)
         assert 'step_HMS_HMS' in simkwargs_only
         assert 'flow' not in simkwargs_only
 
@@ -347,14 +486,16 @@ class TestFunctions:
         ini_path = os.path.join(tmp_path, "sim_abs_import.ini")
         with open(ini_path, "w") as f:
             f.write(ini_content)
-        simkwargs = totest.simprop_kwargs_from_ini(str(ini_path))
+        simkwargs = totest.simprop_kwargs_from_ini(str(ini_path),
+                                                   use_defaults=False)
         dummy_class = simkwargs['flow'][0]
         assert dummy_class.__name__ == "MyDummyClass"
         instance = dummy_class()
         assert instance.value == 42
 
         # test grid_paths section
-        simkwargs = totest.simprop_kwargs_from_ini(grid_paths_ini)
+        simkwargs = totest.simprop_kwargs_from_ini(grid_paths_ini,
+                                                   use_defaults=False)
         assert 'HMS_HMS' in simkwargs
         assert simkwargs['HMS_HMS'] == '/path/to/grid'
 

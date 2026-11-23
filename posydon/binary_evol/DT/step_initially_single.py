@@ -8,6 +8,7 @@ __authors__ = [
 ]
 
 
+from posydon.binary_evol.DT.step_detached import detached_defaults_from_ini
 from posydon.binary_evol.DT.step_isolated import IsolatedStep
 from posydon.binary_evol.flow_chart import STAR_STATES_H_RICH, STAR_STATES_HE_RICH
 from posydon.config import PATH_TO_POSYDON_DATA
@@ -25,6 +26,10 @@ class InitiallySingleStep(IsolatedStep):
     """
     Prepare a runaway star to do an an isolated_step)
     """
+
+    # defaults come from the [step_initially_single] section of the default inifile
+    DEFAULT_KWARGS = detached_defaults_from_ini(
+        'step_initially_single', base=IsolatedStep.DEFAULT_KWARGS)
 
     def __init__(self, *args, **kwargs):
 

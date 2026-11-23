@@ -110,30 +110,18 @@ write your own importable ``flow_chart`` via :ref:`/components-overview/pop_syn/
 However, as a brief example and alternative way to adjust the flow chart,
 let's say we wanted to evolve a single binary with a modified flow. As in
 the tutorial that describes how to :ref:`/tutorials-examples/population-synthesis/evolve_single_binaries.ipynb`,
-we will load in the default simulation properties from ``posydon/pop_syn/population_params_default.ini``.
-First, let's copy the default simulation parameter ``.ini`` file to our current
-directory so we can play around with it:
-
-.. code-block:: python
-
-  import os
-  import shutil
-  from posydon.config import PATH_TO_POSYDON
-
-  path_to_params = os.path.join(PATH_TO_POSYDON, "posydon/popsyn/population_params_default.ini")
-  shutil.copyfile(path_to_params, './population_params.ini')
-
-Next, we can load the evolution steps that our simulation will use,
+we will load in the default simulation properties from ``posydon/popsyn/population_params_default.ini``.
+We can load the evolution steps that our simulation will use,
 providing a desired metallicity to evolve our binary with:
 
 .. code-block:: python
 
     # load the function to load the simulation properties from the ini file
-    from posydon.popsyn.io import simprop_kwargs_from_ini
+    from posydon.popsyn.io import DEFAULT_INI_PATH, simprop_kwargs_from_ini
     from posydon.binary_evol.simulationproperties import SimulationProperties
 
     # Load the simulation properties from the default ini file.
-    sim_kwargs = simprop_kwargs_from_ini('population_params.ini')
+    sim_kwargs = simprop_kwargs_from_ini(DEFAULT_INI_PATH)
     # manually add the metallicity to each step that requires it
     metallicity = {'metallicity':1}
 
@@ -151,8 +139,8 @@ providing a desired metallicity to evolve our binary with:
     sim_prop.load_steps(verbose=True)
 
 At this point, we would be ready to simulate our binary at solar metallicity,
-however, let's modify the flow first. The ``population_params.ini`` loads the
-default POSYDON flow chart by default. You can access it with:
+however, let's modify the flow first. The default ini file loads the
+default POSYDON flow chart. You can access it with:
 
 .. code-block:: python
 

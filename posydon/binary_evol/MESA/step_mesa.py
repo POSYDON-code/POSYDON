@@ -34,6 +34,7 @@ from posydon.utils.common_functions import (
     set_binary_to_failed,
 )
 from posydon.utils.data_download import data_download
+from posydon.utils.ini_defaults import section_defaults
 from posydon.utils.posydonerror import FlowError, GridError
 from posydon.utils.posydonwarning import Pwarn
 
@@ -161,20 +162,13 @@ def _collect_sn_model_values(sn_row, star_idx):
 class MesaGridStep:
     """Superclass for steps using the POSYDON grids."""
 
-    DEFAULT_KWARGS = {'metallicity': None,
+    # parameters set at run time, which are not in the inifile
+    RUNTIME_KWARGS = {'metallicity': None,
                       'grid_path': None,
-                      'interpolation_path': None,
-                      'interpolation_filename': None,
-                      'interpolation_method': 'nearest_neighbour',
-                      'save_initial_conditions': True,
-                      'track_interpolation': False,
-                      'stop_method': 'stop_at_max_time', # "stop_at_end"
-                      'stop_star': 'star_1',
-                      'stop_var_name': None,
-                      'stop_value': None,
-                      'stop_interpolate': True,
-                      'RNG': np.random.default_rng(),
-                      'verbose': False}
+                      'RNG': np.random.default_rng()}
+    # all other defaults come from the default inifile; subclasses use their
+    # own section, steps without a section use the one of step_HMS_HMS
+    DEFAULT_KWARGS = {**RUNTIME_KWARGS, **section_defaults('step_HMS_HMS')}
 
     def __init__(self, **kwargs):
         """Evolve a binary object given a MESA grid or interpolation object.
@@ -1285,6 +1279,9 @@ class MesaGridStep:
 class MS_MS_step(MesaGridStep):
     """Class for performing the MESA step for a MS-MS binary."""
 
+    DEFAULT_KWARGS = {**MesaGridStep.RUNTIME_KWARGS,
+                      **section_defaults('step_HMS_HMS')}
+
     def __init__(self, *args, **kwargs):
         """Initialize a MS_MS_step instance."""
         self.grid_type = 'HMS_HMS'
@@ -1390,6 +1387,9 @@ class MS_MS_step(MesaGridStep):
 
 class CO_HMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HMS_RLO binary."""
+
+    DEFAULT_KWARGS = {**MesaGridStep.RUNTIME_KWARGS,
+                      **section_defaults('step_CO_HMS_RLO')}
 
     def __init__(self, *args, **kwargs):
         """Initialize a CO_HMS_RLO_step instance."""
@@ -1517,6 +1517,9 @@ class CO_HMS_RLO_step(MesaGridStep):
 
 class CO_HeMS_RLO_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS_RLO binary."""
+
+    DEFAULT_KWARGS = {**MesaGridStep.RUNTIME_KWARGS,
+                      **section_defaults('step_CO_HeMS_RLO')}
 
     def __init__(self, *args, **kwargs):
         """Initialize a CO_HeMS_RLO_step instance."""
@@ -1649,6 +1652,9 @@ class CO_HeMS_RLO_step(MesaGridStep):
 
 class CO_HeMS_step(MesaGridStep):
     """Class for performing the MESA step for a CO-HeMS binary."""
+
+    DEFAULT_KWARGS = {**MesaGridStep.RUNTIME_KWARGS,
+                      **section_defaults('step_CO_HeMS')}
 
     def __init__(self, *args, **kwargs):
         """Initialize a CO_HeMS_step instance."""
