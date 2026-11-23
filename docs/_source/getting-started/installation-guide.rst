@@ -3,399 +3,202 @@
 Installation Guide
 ******************
 
-This guide will help you install POSYDON step-by-step. We recommend using Anaconda, a package manager, to manage the installation and dependencies, ensuring a smooth setup process.
+Before you start
+================
 
-.. contents:: Table of Contents
-   :local:
+:Operating system: Linux (officially tested) or macOS
+:conda: 23.1.0 or newer (:ref:`why <installation-issues>`)
+:Python: 3.11 (installed for you)
+:Disk space: ~12 GB per metallicity (:ref:`details <data-releases>`)
+:Memory: 8 GB minimum, 16 GB recommended
 
-Installing POSYDON
-==================
+Population runs use one process per CPU, so a multi-core machine or an HPC
+cluster speeds them up.
 
-Anaconda (Recommended)
-----------------------
+.. _development-install:
 
-.. important::
-    **Conda Version Requirements**: POSYDON requires a recent version of conda (version >= 23.1.0) with the libmamba solver for efficient dependency resolution. Older conda versions (especially those prior to v23.1.0) may take an extremely long time (hours or more) to resolve dependencies and may fail to complete installation.
+Install POSYDON
+===============
 
-    To check your conda version and solver configuration:
+Choose **one** of the three methods below. The quick install suits most users;
+use the GitHub install if you want to modify the code or
+:ref:`contribute <how-to-contribute>`.
 
-    .. code-block:: bash
+.. tab-set::
+    :class: install-tabs
 
-        conda --version
-        conda config --show solver
+    .. tab-item:: Quick install
 
-    If you're using an older conda version or experiencing slow installation, please see the :ref:`troubleshooting guide <installation-issues>` for detailed instructions on updating conda or configuring the libmamba solver.
-
-1. **Install Anaconda**
-
-    If you haven't already, download and install Anaconda from `Anaconda's official website <https://www.anaconda.com/products/distribution>`_.
-
-.. important::
-
-    After you've installed Anaconda, you can use our installation script to set up
-    POSYDON on your machine or continue with the manual installation.
-    For the automatic installation, run the following command in your terminal
-    (this will install POSYDON in a new conda environment named ``posydon_env``):
-
-    .. code-block:: bash
-
-        bash <(curl -sSL https://raw.githubusercontent.com/POSYDON-code/POSYDON/main/install.sh)
-
-
-
-2. **Create a New Conda Environment**
-
-    Open your terminal or Anaconda prompt and create a new environment called ``posydon_env`` using Python 3.11 (the ``-y`` automatically answers all confirmations with yes):
-
-    .. code-block:: bash
-
-        conda create --name posydon_env python=3.11 -y
-
-    Activate the new environment:
-
-    .. code-block:: bash
-
-        conda activate posydon_env
-
-    As many of the required versions of packages are available on ``conda-forge`` you may need to add this channel to conda if you have not already:
-
-    .. code-block:: bash
-
-        conda config --add channels conda-forge
-
-3. **Install POSYDON**
-
-    With the environment activated, install the POSYDON code from the POSYDON channel using (by default the installation will take place in the current directory, hence please navigate to your desired location first or use the ``-p`` option to specify a path):
-
-    .. code-block:: bash
-
-        conda install -c posydon posydon
-
-    .. note::
-        In the next step you will need to know where this package was installed. You can find it by running the following
-        commands in Python:
-
-        .. code-block:: python
-
-            import posydon
-            print(posydon.__file__)
-
-        Use the parent directory of ``/posydon/__init__.py`` as the value for the environment variable
-        :code:`PATH_TO_POSYDON` in the next step, e.g. ``/Users/Documents/POSYDON/conda/site-packages/posydon/__init__.py``
-        becomes ``/Users/Documents/POSYDON/conda/site-packages``.
-
-.. _posydon-env:
-
-4. **Set Environment Variables**
-
-    Export the required paths (please change the location names accordingly to your installation from the previous step):
-
-    .. code-block:: bash
-
-        conda env config vars set PATH_TO_POSYDON=/path/to/your/posydon/installation
-        conda env config vars set PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
-
-    The path for the data location is up to you, but keeping the data separate from the code is recommended for organization.
-
-    .. note::
-        So that your new `conda` environment is loaded whenever you open a new terminal, you can add the following line to
-        your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent:
+        The installation script creates a conda environment, installs
+        POSYDON, sets the required environment variables and asks which data
+        to download:
 
         .. code-block:: bash
 
-            conda activate posydon_env
+            bash <(curl -sSL https://raw.githubusercontent.com/POSYDON-code/POSYDON/main/install.sh)
 
-5. **Download the Dataset**
+        The script also downloads the data, so you can skip straight to
+        :ref:`verify-installation`.
 
-    You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
+    .. tab-item:: Conda
 
-    .. warning::
-        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for
-        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
-        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
+        1. **Create and activate an environment**
 
-    .. code-block:: bash
+           .. code-block:: bash
 
-        get-posydon-data
+               conda create --name posydon_env python=3.11 -y
+               conda activate posydon_env
+               conda config --add channels conda-forge
 
-    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
-    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
-    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
-    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
+        2. **Install POSYDON**
 
-    .. code-block:: bash
+           .. code-block:: bash
 
-        get-posydon-data auxiliary
+               conda install -c posydon posydon
 
-    and data for at least one metallicity (the examples and tutorials typically use solar):
+        3. **Set the environment variables**
 
-    .. code-block:: bash
+           ``PATH_TO_POSYDON`` points to the directory that contains the
+           installed ``posydon`` package, and ``PATH_TO_POSYDON_DATA`` is where
+           the data will be stored. Choose a data directory with enough free
+           space; keeping it separate from the code is recommended.
 
-        get-posydon-data DR2_1Zsun
+           .. code-block:: bash
 
-    Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
+               conda env config vars set PATH_TO_POSYDON=$(python -c \
+                 "import posydon, pathlib; print(pathlib.Path(posydon.__file__).parents[1])")
+               conda env config vars set PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
+               conda activate posydon_env
 
-.. _stable-version:
+           ``conda env config vars`` stores the variables in the environment,
+           so they are set automatically every time you run
+           ``conda activate posydon_env``. Re-activating the environment (the
+           last line) applies them now.
 
-GitHub (Stable Version)
-----------------------------
+        Then continue with :ref:`download-data`.
 
-For users interested in the latest features and developments, you can install POSYDON directly from its GitHub repository:
+    .. tab-item:: GitHub (development)
 
-1. **Clone the Repository**
+        1. **Create and activate an environment**
 
-    In your terminal or command prompt execute one of the following command to clone the repo with the ``https`` protocol:
+           .. code-block:: bash
 
-    .. warning::
-        By default, the repository will be placed in the current directory, so navigate to your desired location before proceeding.
+               conda create --name posydon_env python=3.11 -y
+               conda activate posydon_env
+               conda config --add channels conda-forge
 
-    .. code-block:: bash
+        2. **Clone the repository and install it in editable mode**
 
-        git clone https://github.com/POSYDON-code/POSYDON.git
+           .. code-block:: bash
 
-    For the ``ssh`` protocol:
+               git clone https://github.com/POSYDON-code/POSYDON.git
+               cd POSYDON
+               pip install -e .
 
-    .. code-block:: bash
+           The repository is cloned into the current directory, so move to
+           where you want it first. On Apple Silicon Macs, see
+           :ref:`the macOS notes <installation-issues-macos>` if ``pip`` fails
+           to build ``tables``.
 
-        git clone git@github.com:POSYDON-code/POSYDON.git
+        3. **Set the environment variables**, from inside the ``POSYDON``
+           directory:
 
-    Or for the Github CLI:
+           .. code-block:: bash
 
-    .. code-block:: bash
+               conda env config vars set PATH_TO_POSYDON=$(pwd)
+               conda env config vars set PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
+               conda activate posydon_env
 
-        gh repo clone POSYDON-code/POSYDON
+           If you are not using conda, ``export`` the same two variables in
+           your ``~/.bashrc`` (or your shell's equivalent) instead.
 
-2. **Install the Stable Version**
+        Then continue with :ref:`download-data`.
 
-    .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should first install ``hdf5`` and ``pytables`` through ``conda``
-        with ``conda install hdf5 pytables``, before following the instructions below.
+.. _download-data:
 
-    Navigate to the cloned repository's directory:
+Download the data
+=================
 
-    .. code-block:: bash
+POSYDON needs precomputed MESA grids, interpolators and auxiliary files to run.
+The ``get-posydon-data`` command downloads them into ``PATH_TO_POSYDON_DATA``.
 
-        cd POSYDON
+For the :ref:`getting-started examples <first-population>` and most tutorials,
+the solar-metallicity set (about 12 GB, including the auxiliary data) is
+enough:
 
-    Install the software as an editable package using ``pip``:
+.. code-block:: bash
 
-    .. code-block:: bash
+    get-posydon-data DR2_1Zsun
 
-        pip install -e .
+To download all eight DR2 metallicities (about 110 GB):
 
-3. **Set Environment Variables**
+.. code-block:: bash
 
-    Next, export the required paths as environment variables. From the ``POSYDON`` directory that you just performed the installation in,
-    you can execute ``pwd`` if you are unsure of the path name. Please change the location names accordingly below to your installation
-    path:
+    get-posydon-data DR2
 
-    .. code-block:: bash
-
-        export PATH_TO_POSYDON=/path/to/your/posydon/installation
-        export PATH_TO_POSYDON_DATA=/path/where/you/want/to/store/data
-
-    The path for the data location is up to you, but keeping the data separate
-    from the code is recommended for organization.
-
-    .. note::
-        You can add these lines to your :code:`~/.bashrc` or :code:`~/.bash_profile` or your shell equivalent to ensure the environment variables are set every time you open a new terminal.
-
-4. **Download the Dataset**
-
-    You can use POSYDON's built-in API command (the downloaded data will be downloaded to the directory specified by :code:`PATH_TO_POSYDON_DATA`):
-
-    .. warning::
-        Executing the following command ``get-posydon-data`` will download the full DR2 data set. This includes data for
-        all eight of the available metallicities, plus auxillary data. This may be more than you want, the data for each
-        metallicity requires about 10 GB of disk space. In total, the DR2  dataset requires 103 GB of disk space.
-
-    .. code-block:: bash
-
-        get-posydon-data
-
-    You may use :code:`get-posydon-data -h` to see all the options for this command, which allows you to list all the datasets and download the ones of your choice.
-    If a dataset is already present in :code:`PATH_TO_POSYDON_DATA`, it is skipped, so you can safely re-run the same command to resume an interrupted download.
-    Use :code:`get-posydon-data -f <dataset>` to force a fresh download.
-    If you would rather download something more minimal to run populations, you will need at least the auxillary data:
-
-    .. code-block:: bash
-
-        get-posydon-data auxillary
-
-    and data for at least one metallicity (the examples and tutorials typically use solar):
-
-    .. code-block:: bash
-
-        get-posydon-data DR2_1Zsun
-
-    Alternatively, you can manually download the datasets from Zenodo. You can find the POSYDON datasets on the `POSYDON community <https://zenodo.org/communities/posydon/>`_ on Zenodo.
-
-Installing Jupyter for Tutorials
-=================================
-
-Our tutorials are provided as Jupyter notebooks. If you want to run these notebooks interactively, you will need to have either Jupyter Lab or Jupyter Notebook installed.
-
-1. **Using Anaconda (Recommended)**
-
-
-    If you have already installed Anaconda as suggested earlier in the installation guide, installing Jupyter Lab or Notebook is straightforward:
-
-    .. code-block:: bash
-
-        conda install -c conda-forge jupyterlab
-
-    Or, for the classic Jupyter Notebook:
-
-    .. code-block:: bash
-
-        conda install -c conda-forge notebook
-
-2. **Alternatively, via pip**
-
-
-    If you prefer using ``pip``, you can also install Jupyter Lab or Notebook using the following commands:
-
-    .. code-block:: bash
-
-        pip install jupyterlab
-
-    Or, for the classic Jupyter Notebook:
-
-    .. code-block:: bash
-
-        pip install notebook
-
-3. **After Installation**
-
-
-    Once installed, you can start Jupyter Lab or Notebook by running:
-
-    .. code-block:: bash
-
-        jupyter lab
-
-    Or:
-
-    .. code-block:: bash
-
-        jupyter notebook
-
-    From the terminal or command prompt. This will open a browser window where you can navigate to the downloaded notebooks and run them interactively.
-
-    .. note::
-        Remember to navigate to the directory containing the Jupyter notebooks or you won't see them listed in the Jupyter interface.
-
-.. note::
-    You might need to install a iPython kernel for the conda environment you are using.
-    You can do this by running inside your conda environment:
-
-    .. code-block:: bash
-
-        conda install -c conda-forge ipykernel
-        python -m ipykernel install --name=posydon_env
-
-
-
-Installing additional dependencies (Optional)
-=============================================
-
-For some specific functionalities, you may need to install additional dependencies.
-Below are the instructions for installing these dependencies and what they are used for.
-
-Running grids of MESA models using POSYDON
-------------------------------------------
-
-If you are planning to create MESA grids using POSYDON on HPC facilities, it's essential to have ``mpi4py`` installed to take advantage of parallel computations.
-You do not need to have ``mpi4py`` installed if you are only running population synthesis simulations.
-
-1. **Install mpi4py via Anaconda (Recommended)**:
-
-    .. code-block:: bash
-
-        conda install mpi4py
-
-2. **Alternatively, via pip**:
-
-    .. code-block:: bash
-
-        pip install ".[hpc]"
-
-
-.. warning::
-    Users have reported issues when trying to install ``mpi4py`` via pip. If you encounter any issues, try installing ``mpi4py`` through
-    Anaconda. If you cannot solve the issue, please refer to the :ref:`Troubleshooting Guide <installation-issues>` or seek support from
-    the community or developers, see the :ref:`contact us <contact_info>` page.
-
-
-Documentation Building
-------------------------
-
-If you're interested in building the POSYDON documentation locally:
-
-1. **Install Documentation Modules**:
-
-    Navigate to your POSYDON directory and install the required documentation modules:
-
-    .. code-block:: bash
-
-        pip install ".[doc]"
-
-    .. warning::
-        If you are installing POSYDON on a Mac with Apple M1 or M2 chips, you should install ``pandoc`` separately through brew with
-        ``brew install pandoc``.
-
-2. **Compile the Documentation**:
-
-    Once you have the required modules installed, you can build the documentation using Sphinx:
-
-    .. code-block:: bash
-
-        cd docs
-        make html
-
-    This command will generate the HTML documentation in the ``_build/html`` directory within the ``docs`` folder.
-
-3. **Open the Compiled Documentation**:
-
-    After successfully building the documentation, you can view it in your preferred browser. Navigate to the build directory and open the ``index.html``:
-
-    .. code-block:: bash
-
-        open _build/html/index.html
-
-    .. note::
-        The ``open`` command works on macOS. If you're using a different OS, you might need to open the ``index.html`` using your file manager or use a different command.
-
-
-
-Machine Learning Dependencies
----------------------------------------
-
-For users who wish to utilize POSYDON's latest machine learning features.
-This is specifically used in the active learning module and profile interpolation.
-You do not require these dependencies if you are using the provided Initial-Final interpolators.
-
-1. **Navigate to your POSYDON directory** (where the ``setup.py`` is located) and run:
-
-    .. code-block:: bash
-
-        pip install ".[ml]"
-
-
-Installing Experimental Visualization Libraries
------------------------------------------------
-
-POSYDON provides experimental visualization libraries to enhance the experience of data analysis and results visualization. While these libraries offer advanced features, please note that they might still be in development and could be subject to changes.
-
-To install these experimental visualization libraries
-
-1. **Navigate to your POSYDON directory** (where the `setup.py` is located) and run:
-
-    .. code-block:: bash
-
-        pip install ".[vis]"
-
-    After installing these libraries, you can access various visualization tools and features integrated within POSYDON. Ensure to consult the documentation or any guides associated with these features for their optimal usage.
-
-    .. note::
-        As these are experimental features, feedback, and bug reports regarding the visualization tools are highly appreciated. It will aid the development and optimization of these features for future stable releases.
+Run ``get-posydon-data -l complete`` to list all datasets, and
+``get-posydon-data -h`` for the other options. Datasets already present in
+``PATH_TO_POSYDON_DATA`` are skipped, so you can safely re-run the same command
+to resume an interrupted download; use ``get-posydon-data -f <dataset>`` to
+force a fresh download. The data can also be downloaded
+manually from the `POSYDON community on Zenodo
+<https://zenodo.org/communities/posydon/>`_. See :ref:`data-releases` for what
+each release contains.
+
+.. _verify-installation:
+
+Verify the installation
+=======================
+
+With the environment activated, check that POSYDON imports and both
+environment variables are set:
+
+.. code-block:: bash
+
+    python -c "import posydon; print(posydon.__version__)"
+    echo $PATH_TO_POSYDON $PATH_TO_POSYDON_DATA
+
+You are now ready for :ref:`your first population <first-population>`. If
+something went wrong, see :ref:`installation-issues`.
+
+Jupyter Lab install
+===================
+
+The tutorials are Jupyter notebooks. To run them, install JupyterLab in your
+environment and register the environment as a kernel:
+
+.. code-block:: bash
+
+    conda install -c conda-forge jupyterlab ipykernel
+    python -m ipykernel install --user --name=posydon_env
+    jupyter lab
+
+Optional extras
+===============
+
+Some features need additional packages. From a GitHub checkout, install them
+with ``pip install ".[<extra>]"`` in the ``POSYDON`` directory; with a conda
+install, install the listed package directly.
+
+.. list-table::
+   :header-rows: 1
+   :widths: 10 30 60
+
+   * - Extra
+     - Package
+     - Needed for
+   * - ``hpc``
+     - ``mpi4py``
+     - Running MESA grids or parallel population runs on HPC clusters. We
+       recommend ``conda install mpi4py``, as installing it with ``pip`` often
+       fails.
+   * - ``ml``
+     - ``tensorflow``
+     - Active learning and profile interpolation. Not needed for the provided
+       initial-final interpolators.
+   * - ``vis``
+     - ``PyQt5``
+     - Experimental visualization tools.
+   * - ``doc``
+     - Sphinx and related packages
+     - :ref:`Building the documentation locally <building-docs>`.

@@ -1,11 +1,11 @@
 .. _installation-issues:
 
 Common Installation Issues
--------------------
+--------------------------
 
 From time to time, users might encounter issues during the installation of POSYDON. This page aims to address common installation problems and offer solutions. If your problem isn't covered here, please `report the issue <https://github.com/POSYDON-code/POSYDON/issues>`_ so we can assist you and possibly update this page for the benefit of others.
 
-1. **Slow `conda` solving or installation taking hours:**
+1. **Slow ``conda`` solving or installation taking hours:**
 
     **Conda Version Requirements**: POSYDON has a complex dependency tree, and older conda versions (especially those prior to v23.1.0) use very slow dependency solvers that can take hours or may never complete the installation process. Modern conda versions (>= 23.1.0) include the libmamba solver by default, which resolves dependencies efficiently in seconds to minutes.
 
@@ -42,43 +42,42 @@ From time to time, users might encounter issues during the installation of POSYD
            # Verify the configuration
            conda config --show solver
 
-    c. **Use mamba** (Alternative): Another option is to use the `mamba` package manager, which is a drop-in replacement for `conda` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_). However, this approach has not been fully vetted with POSYDON.
+    c. **Use mamba** (Alternative): Another option is to use the ``mamba`` package manager, which is a drop-in replacement for ``conda`` but is much faster (`click here for more details <https://www.anaconda.com/blog/a-faster-conda-for-a-growing-community>`_). However, this approach has not been fully vetted with POSYDON.
 
     .. note::
         If you're on an HPC cluster with an old system-wide conda installation (e.g., conda 2021.11), you may need to install a recent conda version locally in your home directory rather than using the system version.
 
-    `conda` can also be slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster, as it creates many small files which can be difficult for HPC clusters to handle. The libmamba solver helps with this issue as well.
+    ``conda`` can also be slow and sometimes gets stuck on "Verifying transaction" or "Executing transaction", especially when installing packages on a cluster, as it creates many small files which can be difficult for HPC clusters to handle. The libmamba solver helps with this issue as well.
 
 2. **Failed Dependencies**:
     - **Description**: Sometimes, certain dependencies might fail to install or conflict with pre-existing ones.
-    - **Solution**: Try installing the failed dependencies separately using ``pip`` or ``conda`` before installing POSYDON. If using ``conda``, consider creating a fresh environment specifically for POSYDON. Additionally, some of the package versions are only available on ``conda-forge``. Please ensure that ``conda-forge`` has been added to conda as a channel using the command ``conda config --add channels conda-forge``.
+    - **Solution**: Install POSYDON in a fresh conda environment. Some of the required package versions are only available on ``conda-forge``, so make sure it is added as a channel with ``conda config --add channels conda-forge``. If a single dependency still fails, try installing it separately with ``conda`` before installing POSYDON.
 
     We try our best to keep the dependencies updated and compatible. However, if you encounter issues, please let us know!
 
-3. **Failed to Set Environment Variables**:
-    - **Description**: After installation, you might forget to set the ``PATH_TO_POSYDON`` and ``PATH_TO_POSYDON_DATA`` environment variables.
-    - **Solution**: Refer back to the :ref:`installation guide <installation-guide>` to ensure all post-installation steps are followed.
+3. **Environment Variables Not Set**:
+    - **Description**: POSYDON cannot find its data, or complains that ``PATH_TO_POSYDON`` or ``PATH_TO_POSYDON_DATA`` is not set.
+    - **Solution**: Check the variables with ``echo $PATH_TO_POSYDON $PATH_TO_POSYDON_DATA``. If they are empty, set them as described in the :ref:`installation guide <installation-guide>`. Variables set with ``conda env config vars set`` only take effect after re-activating the environment.
 
 4. **Insufficient Storage Space**:
-    - **Description**: POSYDON requires around 140GB of free storage space for the down-sampled MESA simulation library and related files.
-    - **Solution**: Ensure you have enough space on your installation drive. Delete unnecessary files or consider using a larger storage solution.
+    - **Description**: The data download fails or fills up your disk.
+    - **Solution**: Download only the metallicities you need (about 12 GB each) instead of the full DR2 dataset (about 110 GB), see :ref:`download-data`, or point ``PATH_TO_POSYDON_DATA`` to a larger disk.
 
-Troubleshooting Tips
-~~~~~~~~~~~~~~~~~~~~
+.. _installation-issues-macos:
 
-1. **Check Error Messages**: Always read the error messages during the installation. They often provide hints or exact reasons for the failure.
+5. **Installation Fails on Apple Silicon Macs**:
+    - **Description**: On Macs with Apple M-series chips, ``pip install -e .`` can fail while building ``tables`` (PyTables) or ``h5py``.
+    - **Solution**: Install the HDF5 libraries from conda first, then repeat the ``pip`` installation:
 
-2. **Use a Virtual Environment**: Installing POSYDON in a virtual environment (e.g., via ``conda`` or ``venv``) can prevent conflicts with system-wide packages.
+      .. code-block:: bash
 
-3. **Update Your Package Managers**: Ensure that both ``pip`` and ``conda`` (if you use them) are updated to their latest versions.
+          conda install hdf5 pytables
 
-4. **System Compatibility**: Double-check the compatibility of POSYDON with your operating system and Python version.
-
-5. **Check Online Forums**: Platforms like Stack Overflow often have threads related to common Python package installation issues.
+6. **mpi4py Fails to Install**:
+    - **Description**: ``pip install ".[hpc]"`` or ``pip install mpi4py`` fails to compile.
+    - **Solution**: Install it with ``conda install mpi4py`` instead. On HPC clusters, you may need to load the cluster's MPI module first; ask your cluster's support team which MPI implementation to use.
 
 Still Facing Issues?
 ~~~~~~~~~~~~~~~~~~~~
 
-If you've tried the solutions above and are still encountering problems, please :ref:`contact us <contact_info>` with as much detail as possible. We're here to help!
-
-Thank you for your patience, and we appreciate your interest in POSYDON!
+If you've tried the solutions above and are still encountering problems, please `open an issue <https://github.com/POSYDON-code/POSYDON/issues>`_ or :ref:`contact us <contact_info>`. Include your operating system, the output of ``conda --version``, the commands you ran and the full error message.

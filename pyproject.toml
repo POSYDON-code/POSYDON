@@ -68,6 +68,7 @@ doc = [
   "PSphinxTheme",
   "nbsphinx",
   "pandoc",
+  "sphinx-design",
 ]
 vis = [
   "PyQt5 >= 5.15.9, <= 5.15.11",
