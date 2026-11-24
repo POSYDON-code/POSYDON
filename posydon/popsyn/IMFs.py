@@ -8,8 +8,8 @@ from abc import ABC, abstractmethod
 
 import numpy as np
 from scipy.integrate import quad
+from scipy.stats import truncnorm
 
-from posydon.utils.common_functions import inverse_sampler
 from posydon.utils.posydonwarning import Pwarn
 
 
@@ -65,6 +65,36 @@ class IMFBase(ABC):
             raise ValueError(
                 "Normalization integral is zero. Check IMF parameters.")
         return 1.0 / integral
+
+    @staticmethod
+    def _powerlaw_ppf(v, lo, hi, alpha):
+        """Inverse CDF at quantiles `v` of m^(-alpha) truncated to [lo, hi]."""
+        if np.isclose(alpha, 1.0):
+            m = lo * (hi / lo)**v
+        else:
+            k = 1.0 - alpha
+            m = (lo**k + v * (hi**k - lo**k))**(1.0 / k)
+        return np.clip(m, lo, hi)
+
+    def _sample_segments(self, segments, size, rng):
+        """Exact inverse-transform sampling of a piecewise-defined IMF.
+
+        `segments` is a list of (lo, hi, ppf) covering [m_min, m_max], with
+        `ppf` the inverse CDF of the IMF restricted to [lo, hi]. Each uniform
+        number picks a segment with probability equal to the IMF integral
+        over it and is mapped through that segment's ppf, so the masses are
+        a monotonic function of the uniform numbers.
+        """
+        weights = [quad(self.imf, lo, hi)[0] for lo, hi, _ in segments]
+        cum = np.concatenate([[0.0], np.cumsum(weights)])
+        cum /= cum[-1]
+        u = rng.uniform(size=size)
+        idx = np.searchsorted(cum, u, side='right') - 1
+        masses = np.empty_like(u)
+        for i, (_, _, ppf) in enumerate(segments):
+            sel = idx == i
+            masses[sel] = ppf((u[sel] - cum[i]) / (cum[i + 1] - cum[i]))
+        return masses
 
     def pdf(self, m):
         """Compute the probability density function (PDF) values
@@ -191,18 +221,8 @@ class Salpeter(IMFBase):
         """
         if rng is None:
             rng = np.random.default_rng()
-
-        # Analytical inverse transform sampling
-        # For power law IMF: m^(-alpha), the inverse CDF is:
-        # m = (u * (m_max^(1-alpha) - m_min^(1-alpha)) + m_min^(1-alpha))^(1/(1-alpha))
-        normalization_constant = (1.0 - self.alpha) / (
-            self.m_max**(1.0 - self.alpha) - self.m_min**(1.0 - self.alpha)
-        )
-        u = rng.uniform(size=size)
-        masses = (u * (1.0 - self.alpha) / normalization_constant
-                  + self.m_min**(1.0 - self.alpha))**(1.0 / (1.0 - self.alpha))
-
-        return masses
+        return self._powerlaw_ppf(rng.uniform(size=size),
+                             self.m_min, self.m_max, self.alpha)
 
 
 class Kroupa1993(IMFBase):
@@ -289,18 +309,8 @@ class Kroupa1993(IMFBase):
         """
         if rng is None:
             rng = np.random.default_rng()
-
-        # Analytical inverse transform sampling
-        # For power law IMF: m^(-alpha), the inverse CDF is:
-        # m = (u * (m_max^(1-alpha) - m_min^(1-alpha)) + m_min^(1-alpha))^(1/(1-alpha))
-        normalization_constant = (1.0 - self.alpha) / (
-            self.m_max**(1.0 - self.alpha) - self.m_min**(1.0 - self.alpha)
-        )
-        u = rng.uniform(size=size)
-        masses = (u * (1.0 - self.alpha) / normalization_constant
-                  + self.m_min**(1.0 - self.alpha))**(1.0 / (1.0 - self.alpha))
-
-        return masses
+        return self._powerlaw_ppf(rng.uniform(size=size),
+                             self.m_min, self.m_max, self.alpha)
 
 
 class Kroupa2001(IMFBase):
@@ -415,8 +425,8 @@ class Kroupa2001(IMFBase):
     def rvs(self, size=1, rng=None):
         """Draw random samples from the Kroupa2001 IMF.
 
-        Uses inverse transform sampling with discretized PDF for the
-        broken power-law distribution.
+        Uses exact inverse transform sampling of the broken power law,
+        restricted to the segments overlapping [m_min, m_max].
 
         Parameters
         ----------
@@ -433,16 +443,15 @@ class Kroupa2001(IMFBase):
         if rng is None:
             rng = np.random.default_rng()
 
-        # Create discretized PDF for inverse sampling
-        # Use more points near the breaks for better accuracy
-        n_points = 2000
-        m_grid = np.linspace(self.m_min, self.m_max, n_points)
-        pdf_values = self.imf(m_grid)
-
-        # Sample using inverse transform method
-        masses = inverse_sampler(m_grid, pdf_values, size=size, rng=rng)
-
-        return masses
+        segments = []
+        for lo, hi, alpha in [(self.m_min, self.m1break, self.alpha1),
+                              (self.m1break, self.m2break, self.alpha2),
+                              (self.m2break, self.m_max, self.alpha3)]:
+            lo, hi = max(lo, self.m_min), min(hi, self.m_max)
+            if lo < hi:
+                segments.append((lo, hi, lambda v, lo=lo, hi=hi, alpha=alpha:
+                                 self._powerlaw_ppf(v, lo, hi, alpha)))
+        return self._sample_segments(segments, size, rng)
 
 
 class Chabrier2003(IMFBase):
@@ -536,8 +545,11 @@ class Chabrier2003(IMFBase):
     def rvs(self, size=1, rng=None):
         """Draw random samples from the Chabrier2003 IMF.
 
-        Uses inverse transform sampling with discretized PDF for the
-        combined lognormal and power-law distribution.
+        Uses exact inverse transform sampling: below m_break the IMF is a
+        normal distribution in log10(m) (sampled with a truncated normal),
+        above m_break it is a power law (sampled with its analytic inverse
+        CDF). The uniform number selects the part according to its
+        probability mass within [m_min, m_max].
 
         Parameters
         ----------
@@ -554,13 +566,17 @@ class Chabrier2003(IMFBase):
         if rng is None:
             rng = np.random.default_rng()
 
-        # Create discretized PDF for inverse sampling
-        # Use more points near the transition for better accuracy
-        n_points = 2000
-        m_grid = np.linspace(self.m_min, self.m_max, n_points)
-        pdf_values = self.imf(m_grid)
-
-        # Sample using inverse transform method
-        masses = inverse_sampler(m_grid, pdf_values, size=size, rng=rng)
-
-        return masses
+        mu, sigma = np.log10(self.m_c), self.sigma
+        segments = []
+        # below m_break: normal distribution in log10(m)
+        lo, hi = self.m_min, min(self.m_break, self.m_max)
+        if lo < hi:
+            a, b = (np.log10([lo, hi]) - mu) / sigma
+            segments.append((lo, hi, lambda v: np.clip(
+                10**truncnorm.ppf(v, a, b, loc=mu, scale=sigma), lo, hi)))
+        # above m_break: power law
+        lo2, hi2 = max(self.m_break, self.m_min), self.m_max
+        if lo2 < hi2:
+            segments.append((lo2, hi2, lambda v: self._powerlaw_ppf(
+                v, lo2, hi2, self.alpha)))
+        return self._sample_segments(segments, size, rng)

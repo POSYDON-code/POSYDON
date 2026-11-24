@@ -184,7 +184,7 @@ class TestFunctions:
         # examples for all three schemes
         tests = [('Salpeter', 42, approx(19.97764511120556, abs=6e-12)),
                  ('Kroupa1993', 42, approx(16.52331793661949, abs=6e-12)),
-                 ('Kroupa2001', 42, approx(20.633204764212334, abs=6e-12))]
+                 ('Kroupa2001', 42, approx(20.633412780370858, abs=6e-12))]
         for (s, r, m1) in tests:
             assert totest.generate_primary_masses(
                 primary_mass_scheme=s,

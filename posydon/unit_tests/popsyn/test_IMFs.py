@@ -11,6 +11,7 @@ import warnings
 import numpy as np
 import pytest
 from scipy.integrate import quad
+from scipy.stats import kstest
 
 import posydon.popsyn.IMFs as IMFs
 
@@ -580,3 +581,57 @@ class TestChabrierIMF:
         assert len(samples) == 100
         assert np.all(samples >= default_chabrier.m_min)
         assert np.all(samples <= default_chabrier.m_max)
+
+
+def _integrated_cdf(imf, n=500):
+    """CDF of `imf` obtained by integrating its pdf with quad on a
+    log-spaced grid; returns a callable interpolating it in log(m)."""
+    breaks = [getattr(imf, k) for k in ("m1break", "m2break", "m_break")
+              if hasattr(imf, k)]
+    edges = np.geomspace(imf.m_min, imf.m_max, n)
+    pieces = []
+    for a, b in zip(edges[:-1], edges[1:]):
+        pts = [x for x in breaks if a < x < b] or None
+        pieces.append(quad(imf.pdf, a, b, points=pts, limit=200)[0])
+    cdf = np.concatenate([[0.0], np.cumsum(pieces)])
+    cdf /= cdf[-1]
+    return lambda m: np.interp(np.log(m), np.log(edges), cdf)
+
+
+# class defaults, POSYDON primary ranges, ranges that start and/or end
+# inside a segment, and non-default parameters (incl. a slope of exactly 1)
+KS_CASES = [(cls, dict(m_min=lo, m_max=hi))
+            for cls in (IMFs.Salpeter, IMFs.Kroupa1993,
+                        IMFs.Kroupa2001, IMFs.Chabrier2003)
+            for lo, hi in [(0.01, 200.0), (7.0, 120.0), (7.0, 150.0),
+                           (0.01, 0.05), (0.02, 0.3), (0.1, 0.4),
+                           (0.2, 0.9), (0.3, 5.0), (1.5, 3.0)]]
+KS_CASES += [
+    (IMFs.Kroupa2001, dict(alpha1=1.0, alpha2=0.5, alpha3=2.7, m1break=0.1,
+                           m2break=1.0, m_min=0.05, m_max=50.0)),
+    (IMFs.Chabrier2003, dict(m_c=0.3, sigma=0.5, alpha=2.0, m_break=2.0,
+                             m_min=0.05, m_max=30.0))]
+
+
+class TestSamplingAccuracy:
+    """Tests that rvs() follows the IMF's own pdf()."""
+
+    @pytest.mark.parametrize("imf_class, kwargs", KS_CASES)
+    def test_rvs_follows_pdf(self, imf_class, kwargs):
+        """KS test against the CDF integrated from pdf(). The old
+        linear-grid sampler gave D=0.024 (Kroupa2001) and D=0.061
+        (Chabrier2003) for the default range."""
+        imf = imf_class(**kwargs)
+        samples = imf.rvs(size=100_000, rng=np.random.default_rng(12345))
+        assert np.all((samples >= imf.m_min) & (samples <= imf.m_max))
+        res = kstest(samples, _integrated_cdf(imf))
+        assert res.statistic < 0.006
+        assert res.pvalue > 1e-3
+
+    def test_kroupa2001_matches_single_power_law(self):
+        """Above m2break Kroupa2001 is a single power law with alpha3."""
+        k = IMFs.Kroupa2001(m_min=7.0, m_max=120.0)
+        s = IMFs.Salpeter(alpha=k.alpha3, m_min=7.0, m_max=120.0)
+        np.testing.assert_allclose(k.rvs(1000, rng=np.random.default_rng(3)),
+                                   s.rvs(1000, rng=np.random.default_rng(3)),
+                                   rtol=1e-12)
