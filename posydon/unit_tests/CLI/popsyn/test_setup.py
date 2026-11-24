@@ -13,6 +13,13 @@ import pytest
 import posydon.CLI.popsyn.setup as totest
 
 
+@pytest.fixture(autouse=True)
+def no_run_settings_file():
+    """Do not write the run settings file into the working directory."""
+    with patch('posydon.CLI.popsyn.setup.write_run_settings'):
+        yield
+
+
 class TestSNModelValidation:
     """Test class for SN model validation functions."""
 
@@ -135,7 +142,7 @@ class TestSetupPopsynFunction:
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
     @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     @patch('os.makedirs')
     def test_setup_popsyn_function_success(
@@ -164,7 +171,7 @@ class TestSetupPopsynFunction:
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
     @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     @patch('os.makedirs')
     def test_setup_popsyn_function_creates_log_directories(
@@ -204,7 +211,7 @@ class TestFlatMassRatioWarning:
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
     @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     @patch('posydon.CLI.popsyn.setup.Pwarn')
     @patch('os.makedirs')
@@ -230,7 +237,7 @@ class TestFlatMassRatioWarning:
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
     @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     @patch('posydon.CLI.popsyn.setup.Pwarn')
     @patch('os.makedirs')
@@ -254,7 +261,7 @@ class TestFlatMassRatioWarning:
     @patch('posydon.CLI.popsyn.setup.validate_ini_file')
     @patch('posydon.CLI.popsyn.setup.binarypop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     @patch('posydon.CLI.popsyn.setup.Pwarn')
     @patch('os.makedirs')
@@ -281,7 +288,7 @@ class TestIntegration:
     @patch('posydon.CLI.popsyn.setup.simprop_kwargs_from_ini')
     @patch('posydon.CLI.popsyn.setup.get_SN_MODEL_NAME')
     @patch('posydon.CLI.popsyn.setup.create_python_scripts')
-    @patch('posydon.CLI.popsyn.setup.create_slurm_scripts')
+    @patch('posydon.CLI.popsyn.setup.create_job_scripts')
     @patch('posydon.CLI.popsyn.setup.create_bash_submit_script')
     def test_full_setup_workflow(
         self, mock_bash, mock_slurm, mock_python,
