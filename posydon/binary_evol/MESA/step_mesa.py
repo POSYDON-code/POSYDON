@@ -381,12 +381,10 @@ class MesaGridStep:
             max_MESA_sim_time = self.closest_binary.binary_history[key][-1]
 
         elif self.interpolation_method in self.supported_interp_methods:
-            self.final_values, self.classes, _ = self._Interp.evaluate(
-                self.binary,
-                sn_model = get_SN_MODEL_NAME(vars(self.binary.properties.step_SN))
-            )
+            sn_model = get_SN_MODEL_NAME(vars(self.binary.properties.step_SN))
+            self.final_values, self.classes, _ = self._Interp.evaluate(self.binary, sn_model = sn_model)
 
-            self.final_values = dict(zip(self._Interp.continuous_out_keys, self.final_values[0]))
+            self.final_values = dict(zip(self._Interp.continuous_keys_for(sn_model), self.final_values[0]))
 
             self.classes = dict(zip(self._Interp.discrete_out_keys, self.classes[0]))
             max_MESA_sim_time = self.final_values[

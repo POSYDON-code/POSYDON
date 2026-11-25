@@ -288,6 +288,11 @@ class IFInterpolator:
 
         return interpolated, meta_data
 
+    def continuous_keys_for(self, sn_model):
+        """Continuous output keys in the order evaluate() returns them for this SN model."""
+        return (self.out_key_dict["interpolation_class"]
+                + self.out_key_dict[f"S1_{sn_model}_CO_interpolation_class"])
+
     def evaluate(self, initial_values, sn_model = "SN_MODEL_v2_01"):
         """ The main method of the class used to classify and interpolate
 
@@ -328,7 +333,7 @@ class IFInterpolator:
 
         classes = np.array([
             cl["classifier"].predict(cl["transform"].normalize(initial_values))
-            for cl in self.classifiers.values()]).T
+            for cl in (self.classifiers[k] for k in self.discrete_out_keys)]).T
 
         interpolated_values = []
         n = []

@@ -75,7 +75,7 @@ class Transformer:
         self.logged = np.array(["log" in k or "lg" in k for k in keys])
         data[:, self.logged] = 10**data[:, self.logged]
 
-        self.negative = (data < 0).any(axis = 0)
+        self.negative = (data <= 0).any(axis = 0)
 
 
         computations = [
