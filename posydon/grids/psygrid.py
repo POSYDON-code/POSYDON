@@ -386,7 +386,6 @@ GRIDPROPERTIES = {
     "accept_missing_profile": False,
 }
 
-
 class PSyGrid:
     """Class handling a grid of MESA runs encoded in HDF5 format."""
 

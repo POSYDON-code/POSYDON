@@ -57,7 +57,8 @@ class TestElements:
                     '__authors__', '__builtins__',\
                     '__cached__', '__doc__', '__file__', '__loader__',\
                     '__name__', '__package__', '__spec__', 'add_field',\
-                    'clean_inlist_file', '_get_grid_column', 'LazyHDF5',\
+                    'clean_inlist_file', '_get_grid_column',\
+                    '_get_grid_columns', 'LazyHDF5',\
                     'convert_output_to_table', 'find_index_nearest_neighbour',\
                     'find_nearest', 'fix_He_core', 'get_cell_edges',\
                     'get_final_proposed_points', 'get_new_grid_name', 'gzip',\
@@ -424,6 +425,14 @@ class TestFunctions:
         # test getting a SN column
         column_data = totest._get_grid_column(psygrid, 'S1_SN_MODEL_v2_01_CO_type')
         assert np.array_equal(column_data, psygrid.SN_MODELS['SN_MODEL_v2_01']['S1_CO_type'])
+
+    def test_get_grid_columns(self, psygrid):
+        keys = ['age', 'star_1_mass']
+        columns = totest._get_grid_columns(psygrid, keys)
+        for i, key in enumerate(keys):
+            assert np.array_equal(columns[:, i],
+                                  totest._get_grid_column(psygrid, key),
+                                  equal_nan=True)
 
     def test_join_lists(self):
         # missing argument
