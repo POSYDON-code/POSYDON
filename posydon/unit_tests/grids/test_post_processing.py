@@ -36,7 +36,7 @@ from posydon.utils.posydonwarning import (
 class TestElements:
     # check for objects, which should be an element of the tested module
     def test_dir(self):
-        elements = {'BinaryStar', 'CC_quantities',\
+        elements = {'BinaryStar', 'CC_quantities', 'CC_quantities_str',\
                     'CEE_parameters_from_core_abundance_thresholds',\
                     'Catch_POSYDON_Warnings',\
                     'DEFAULT_MARKERS_COLORS_LEGENDS', 'SN_MODELS', 'Pwarn',\
@@ -50,7 +50,7 @@ class TestElements:
                     'check_state_of_star', 'combine_TF12', 'copy', 'np',\
                     'post_process_grid', 'print_CC_quantities', 'tqdm',\
                     'get_SN_MODEL', 'H5_REC_STR_DTYPE', 'h5py',\
-                    'recfunctions'}
+                    'recfunctions', 'pd', 'unset_CC_value'}
         totest_elements = set(dir(totest))
         missing_in_test = elements - totest_elements
         assert len(missing_in_test) == 0, "There are missing objects in "\
@@ -69,6 +69,12 @@ class TestElements:
     def test_instance_CC_quantities(self):
         assert isinstance(totest.CC_quantities, (list)), "CC_quantities is "\
                + "of type: " + str(type(totest.CC_quantities))
+
+    def test_instance_CC_quantities_str(self):
+        assert isinstance(totest.CC_quantities_str, (list))
+
+    def test_instance_unset_CC_value(self):
+        assert isroutine(totest.unset_CC_value)
 
     def test_instance_assign_core_collapse_quantities_none(self):
         assert isroutine(totest.assign_core_collapse_quantities_none)
@@ -91,6 +97,19 @@ class TestValues:
                   'CO_interpolation_class', 'M4', 'mu4', 'h1_mass_ej',\
                   'he4_mass_ej']:
             assert q in totest.CC_quantities
+
+    def test_value_CC_quantities_str(self):
+        for q in ['state', 'SN_type', 'CO_interpolation_class']:
+            assert q in totest.CC_quantities_str
+            assert q in totest.CC_quantities
+
+
+def is_unset_CC(column, value):
+    """Check for an unset value: None for strings, NaN for numbers."""
+    if column.endswith(('_state', '_CO_type', '_SN_type',
+                        '_CO_interpolation_class')):
+        return value is None
+    return isinstance(value, float) and np.isnan(value)
 
 
 class TestFunctions:
@@ -211,6 +230,14 @@ class TestFunctions:
         return test_grid
 
     # test functions
+    def test_unset_CC_value(self):
+        for q in totest.CC_quantities:
+            v = totest.unset_CC_value(q)
+            if q in totest.CC_quantities_str:
+                assert v is None
+            else:
+                assert np.isnan(v)
+
     def test_assign_core_collapse_quantities_none(self):
         # missing argument
         with raises(TypeError, match="missing 2 required positional "\
@@ -241,7 +268,9 @@ class TestFunctions:
             totest.assign_core_collapse_quantities_none(test_EXTRA_COLUMNS, s)
             for m in totest.SN_MODELS.keys():
                 for q in totest.CC_quantities:
-                    assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
+                    column = test_EXTRA_COLUMNS[f'S{s}_{m}_{q}']
+                    assert len(column) == 1
+                    assert is_unset_CC(f'S{s}_{m}_{q}', column[0])
         # examples: given model
         for s in [1, 2]:
             test_EXTRA_COLUMNS = {}
@@ -252,7 +281,9 @@ class TestFunctions:
                                                         SN_MODEL_NAME=m)
             for m in ["TESTMODEL"]:
                 for q in totest.CC_quantities:
-                    assert test_EXTRA_COLUMNS[f'S{s}_{m}_{q}'] == [None]
+                    column = test_EXTRA_COLUMNS[f'S{s}_{m}_{q}']
+                    assert len(column) == 1
+                    assert is_unset_CC(f'S{s}_{m}_{q}', column[0])
 
     def test_print_CC_quantities(self, star, capsys):
         # missing argument
@@ -326,14 +357,17 @@ class TestFunctions:
                 assert len(EXTRA_COLUMNS[k]) == n_runs
                 for i in range(run_range[0], run_range[1]):
                     if ((i == 0) and (k != "mt_history")):
-                        # check missing run: all None
-                        assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
+                        # check missing run: all unset
+                        assert is_unset_CC(k, EXTRA_COLUMNS[k][i]),\
+                               f"i={i}, k={k}"
                     elif (("S2_SN_MODEL" in k) and (i in [1, 2, 4, 6])):
-                        # check star2: all None beside state
-                        assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
+                        # check star2: all unset beside state
+                        assert is_unset_CC(k, EXTRA_COLUMNS[k][i]),\
+                               f"i={i}, k={k}"
                     elif (("S1_SN_MODEL" in k) and (i in [2, 4, 6])):
-                        # check SN of star1 for None
-                        assert EXTRA_COLUMNS[k][i] is None, f"i={i}, k={k}"
+                        # check SN of star1 for unset values
+                        assert is_unset_CC(k, EXTRA_COLUMNS[k][i]),\
+                               f"i={i}, k={k}"
         def check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, n_runs, keys):
             """Function to check the EXTRA_COLUMNS of single star girds
 
@@ -361,6 +395,8 @@ class TestFunctions:
                 raise TypeError("Testing exception.")
             else:
                 return 'WD'
+        def mock_CEE_parameters_from_core_abundance_thresholds(star):
+            raise TypeError("Testing exception.")
         def mock_collapse_star(SN, star):
             for quantity in totest.CC_quantities:
                 setattr(star, quantity, True)
@@ -489,9 +525,10 @@ class TestFunctions:
         assert MESA_dirs == test_PSyGrid.MESA_dirs
         check_EXTRA_COLUMNS_single(EXTRA_COLUMNS, 7, keys)
         # examples: verbose
-        with warns(POSYDONWarning): # warnings from SN
-            with warns(InappropriateValueWarning, match="Failed to print "\
-                                                        +"star values!"):
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "CEE_parameters_from_core_abundance_thresholds",\
+                       mock_CEE_parameters_from_core_abundance_thresholds)
+            with warns(POSYDONWarning): # warnings from SN
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid, verbose=True)
         output = capsys.readouterr().out
@@ -511,9 +548,10 @@ class TestFunctions:
 
         assert "in check_state_of_star(star_2) with IC=" in output
         # examples: single and verbose
-        with warns(POSYDONWarning): # warnings from SN
-            with warns(InappropriateValueWarning, match="Failed to print "\
-                                                        +"star values!"):
+        with monkeypatch.context() as mp:
+            mp.setattr(totest, "CEE_parameters_from_core_abundance_thresholds",\
+                       mock_CEE_parameters_from_core_abundance_thresholds)
+            with warns(POSYDONWarning): # warnings from SN
                 MESA_dirs, EXTRA_COLUMNS = totest.post_process_grid(\
                                             test_PSyGrid, single_star=True,\
                                             verbose=True)

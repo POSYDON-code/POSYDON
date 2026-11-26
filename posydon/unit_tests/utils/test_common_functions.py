@@ -1078,9 +1078,10 @@ class TestFunctions:
             totest.spin_stable_mass_transfer()
         # examples:
         tests = [(None, 1.0, 1.0), (-1.0, 1.0, 1.0), (1.0, None, 1.0),\
-                 (1.0, -1.0, 1.0), (1.0, 1.0, None), (1.0, 1.0, -1.0)]
+                 (1.0, -1.0, 1.0), (1.0, 1.0, None), (1.0, 1.0, -1.0),\
+                 (np.nan, 1.0, 1.0), (1.0, np.nan, 1.0), (1.0, 1.0, np.nan)]
         for (si, mi, mf) in tests:
-            assert totest.spin_stable_mass_transfer(si, mi, mf) is None
+            assert np.isnan(totest.spin_stable_mass_transfer(si, mi, mf))
         assert totest.spin_stable_mass_transfer(0.5, 0.9, 1.0) ==\
                approx(0.69217452285, abs=6e-12)
         assert np.isnan(totest.spin_stable_mass_transfer(1.0, 1.0, 0.1))
@@ -1711,8 +1712,8 @@ class TestFunctions:
         star.avg_c_in_c_core_at_He_depletion = 0.5
         star.state_history = None
         totest.calculate_Patton20_values_at_He_depl(star)
-        assert star.co_core_mass_at_He_depletion is None
-        assert star.avg_c_in_c_core_at_He_depletion is None
+        assert np.isnan(star.co_core_mass_at_He_depletion)
+        assert np.isnan(star.avg_c_in_c_core_at_He_depletion)
         # examples: no He_depleted in history
         star.co_core_mass_at_He_depletion = 0.5
         star.avg_c_in_c_core_at_He_depletion = 0.5
@@ -1723,8 +1724,8 @@ class TestFunctions:
                   "stripped_He_undetermined"]:
             star.state_history = [s]
             totest.calculate_Patton20_values_at_He_depl(star)
-            assert star.co_core_mass_at_He_depletion is None
-            assert star.avg_c_in_c_core_at_He_depletion is None
+            assert np.isnan(star.co_core_mass_at_He_depletion)
+            assert np.isnan(star.avg_c_in_c_core_at_He_depletion)
         # examples: loop through star types with He depletion
         tests = [("H-rich_Core_He_depleted", 0.1),\
                  ("stripped_He_Core_He_depleted", 0.2)]

@@ -21,6 +21,7 @@ from posydon.binary_evol.singlestar import (
     unset_star_value,
 )
 from posydon.binary_evol.SN.step_SN import StepSN
+from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.popsyn.io import BINARYPROPERTIES_DTYPES, STARPROPERTIES_DTYPES
 from posydon.utils.common_functions import (
     MT_CASE_NO_RLO,
@@ -30,6 +31,15 @@ from posydon.utils.common_functions import (
 
 NATAL_KICK_KEYS = ['natal_kick_velocity', 'natal_kick_azimuthal_angle',
                    'natal_kick_polar_angle', 'natal_kick_mean_anomaly']
+
+
+# properties which may still be None: categorical (string) and object
+# properties, the binary index, and the SN_MODELS keys (a dict of
+# core-collapse results per SN model)
+ALLOWED_NONE = {'state', 'event', 'SN_type', 'profile', 'interp1d',
+                'properties', 'index', *SN_MODELS.keys()}
+ALLOWED_NONE_PREFIXES = ('interp_class_', 'mt_history_',
+                         'cumulative_mt_case_')
 
 
 def is_nan(value):
@@ -88,6 +98,29 @@ class TestDefaults:
         for key in NATAL_KICK_KEYS:
             assert is_nan(getattr(star, key)), key
 
+    def test_star_extra_numerical_defaults_are_nan(self):
+        star = SingleStar()
+        for key in ['spin_orbit_tilt_first_SN', 'spin_orbit_tilt_second_SN',
+                    'f_fb', 'm_disk_accreted', 'm_disk_radiated',
+                    'h1_mass_ej', 'he4_mass_ej', 'M4', 'mu4', 'Xi', 'sc',
+                    'avg_c_in_c_core_at_He_depletion',
+                    'co_core_mass_at_He_depletion']:
+            assert is_nan(getattr(star, key)), key
+        for quantity in ['m_core_CE', 'r_core_CE']:
+            for val in [1, 10, 30, 'pure_He_star_10']:
+                assert is_nan(getattr(star, f'{quantity}_{val}cent'))
+        # categorical and object properties stay None
+        assert star.SN_type is None
+        assert star.interp1d is None
+
+    def test_no_numerical_none_in_default_objects(self):
+        binary = BinaryStar()
+        for obj in [binary, binary.star_1, binary.star_2]:
+            for key, value in vars(obj).items():
+                if value is None:
+                    assert key in ALLOWED_NONE or key.startswith(
+                        ALLOWED_NONE_PREFIXES), key
+
     def test_given_values_are_kept(self):
         binary = BinaryStar(time=1.0, separation=2.0)
         assert binary.time == 1.0
@@ -145,3 +178,11 @@ class TestNatalKickWithUnsetValues:
             assert pd.notna(value), key
             assert value == getattr(with_none.star_1, key), key
         assert with_nan.state == with_none.state
+
+
+class TestStepSNUnsetValues:
+    def test_reset_other_star_properties(self):
+        star = SingleStar(lg_mdot=-5.0, lg_system_mdot=-6.0)
+        StepSN(verbose=False)._reset_other_star_properties(star)
+        assert is_nan(star.lg_mdot)
+        assert is_nan(star.lg_system_mdot)

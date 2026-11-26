@@ -1077,10 +1077,10 @@ def spin_stable_mass_transfer(spin_i, star_mass_preMT, star_mass_postMT):
     Based on Thorne 1974 eq. 2a.
 
     """
-    if ((star_mass_preMT is None) or (star_mass_preMT<=0.0) or
-        (star_mass_postMT is None) or (star_mass_postMT<=0.0) or
-        (spin_i is None) or (spin_i<0.0)):
-        return None
+    if (pd.isna(star_mass_preMT) or (star_mass_preMT<=0.0) or
+        pd.isna(star_mass_postMT) or (star_mass_postMT<=0.0) or
+        pd.isna(spin_i) or (spin_i<0.0)):
+        return np.nan
     z1 = 1+(1-spin_i**2)**(1/3)*((1+spin_i)**(1/3)+(1-spin_i)**(1/3))
     z2 = (3*spin_i**2+z1**2)**0.5
     r_isco = 3 + z2 - ((3-z1)*(3+z1+2*z2))**0.5
@@ -1853,8 +1853,8 @@ def calculate_Patton20_values_at_He_depl(star):
         (almost at the same time as carbon core ignition)
 
     """
-    co_core_mass_at_He_depletion = None
-    avg_c_in_c_core_at_He_depletion = None
+    co_core_mass_at_He_depletion = np.nan
+    avg_c_in_c_core_at_He_depletion = np.nan
     if star.state_history is not None:
         if ("H-rich_Core_He_depleted" in star.state_history):
             i_He_depl = np.argmax(
@@ -1869,8 +1869,8 @@ def calculate_Patton20_values_at_He_depl(star):
             avg_c_in_c_core_at_He_depletion = star.avg_c_in_c_core_history[
                 i_He_depl]
     else:
-        co_core_mass_at_He_depletion = None
-        avg_c_in_c_core_at_He_depletion = None
+        co_core_mass_at_He_depletion = np.nan
+        avg_c_in_c_core_at_He_depletion = np.nan
 
     # return co_core_mass_at_He_depletion, avg_c_in_c_core_at_He_depletion
     star.co_core_mass_at_He_depletion = co_core_mass_at_He_depletion

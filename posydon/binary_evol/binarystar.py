@@ -36,7 +36,11 @@ import pandas as pd
 
 from posydon.binary_evol.flow_chart import UNDEFINED_STATES
 from posydon.binary_evol.simulationproperties import SimulationProperties
-from posydon.binary_evol.singlestar import STARPROPERTIES, SingleStar
+from posydon.binary_evol.singlestar import (
+    STARPROPERTIES,
+    SingleStar,
+    unset_star_value,
+)
 from posydon.popsyn.io import (
     BINARYPROPERTIES_DTYPES,
     OBJECT_FIXED_SUB_DTYPES,
@@ -1012,8 +1016,8 @@ class BinaryStar:
                     else:
                         col_history = [final_value]
                 else:
-                    final_value = None
-                    col_history = [None] * n_steps
+                    final_value = unset_binary_value(attr)
+                    col_history = [final_value] * n_steps
                 assert n_steps == len(col_history)
                 setattr(binary, attr + "_history", col_history)
                 setattr(binary, attr, final_value)
@@ -1036,8 +1040,8 @@ class BinaryStar:
                         else:
                             col_history = [final_value]
                     else:
-                        final_value = None
-                        col_history = [None] * n_steps
+                        final_value = unset_star_value(attr)
+                        col_history = [final_value] * n_steps
                     assert n_steps == len(col_history)
                     setattr(star, attr + "_history", col_history)
                     setattr(star, attr, final_value)
@@ -1048,7 +1052,7 @@ class BinaryStar:
         try:
             metallicity = run.initial_values["Z"] / Zsun
         except AttributeError:
-            metallicity = None
+            metallicity = np.nan
         # ...and other star parameters taken from the binary history
         for star_index, star in enumerate([binary.star_1, binary.star_2]):
             star.metallicity = metallicity

@@ -515,6 +515,7 @@ class MesaGridStep:
             length_binary_hist = len(cb_bh['age']) - 1
             length_star_hist = len(cb_hs[0]['center_he4']) - 1
             length_hist = min(length_binary_hist, length_star_hist)
+            # history padding for the categorical state/event and profile
             empty_h = [None] * length_hist
             MESA_history_bug_fix = False
             if length_binary_hist != length_star_hist:
@@ -535,9 +536,10 @@ class MesaGridStep:
             if POSYDON_TO_MESA['binary'][key] is None:
                 setattr(binary, key, unset_binary_value(key))
                 if self.save_initial_conditions:
-                    getattr(binary, key_h).append(empty_h[0])
+                    getattr(binary, key_h).append(unset_binary_value(key))
                 if track_interpolation:
-                    getattr(binary, key_h).extend(empty_h)
+                    getattr(binary, key_h).extend(
+                        [unset_binary_value(key)] * length_hist)
             elif key == 'time':
                 key_p = POSYDON_TO_MESA['binary'][key]
                 current = getattr(self.binary, key)
@@ -589,9 +591,10 @@ class MesaGridStep:
                     if POSYDON_TO_MESA['star'][key] is None:
                         setattr(star, key, unset_star_value(key))
                         if self.save_initial_conditions:
-                            getattr(star, key_h).append(empty_h[0])
+                            getattr(star, key_h).append(unset_star_value(key))
                         if track_interpolation:
-                            getattr(star, key_h).extend(empty_h)
+                            getattr(star, key_h).extend(
+                                [unset_star_value(key)] * length_hist)
                     elif key == 'mass':
                         key_p = 'star_%d_mass' % (k+1)
                         setattr(star, key, cb_bh[key_p][-1])
@@ -1017,7 +1020,7 @@ class MesaGridStep:
                     if (interpolation_class == 'unstable_MT'
                         and (key == 'avg_c_in_c_core_at_He_depletion'
                              or key == 'co_core_mass_at_He_depletion')):
-                        setattr(star, key, None)
+                        setattr(star, key, np.nan)
                     else:
                         setattr(star, key, fv['S%d_%s' % (k+1, key)])
 
@@ -1150,7 +1153,8 @@ class MesaGridStep:
                         v_before = property_history[i]
                         v_after = property_history[i + 1]
                         if v_before is None or v_after is None:
-                            interpolated_quanties[star][key] = None
+                            interpolated_quanties[star][key] = \
+                                unset_star_value(key)
                             continue
                         interpolated_quanties[star][key] = self.interpolate_at_t(
                                 t, t_before, t_after, v_before, v_after)
@@ -1173,7 +1177,8 @@ class MesaGridStep:
                     v_after = property_history[i + 1]
 
                     if v_before is None or v_after is None:
-                        interpolated_quanties['binary'][key] = None
+                        interpolated_quanties['binary'][key] = \
+                            unset_binary_value(key)
                         continue
 
                     # To deal with V_sys, nearest_neighbour, etc.

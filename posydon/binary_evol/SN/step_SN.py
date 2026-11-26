@@ -445,8 +445,8 @@ class StepSN(object):
 
     def _reset_other_star_properties(self, star):
         """Reset the properties of the star that is not being collapsed."""
-        star.lg_mdot = None
-        star.lg_system_mdot = None
+        star.lg_mdot = np.nan
+        star.lg_system_mdot = np.nan
 
     def __call__(self, binary):
         """Perform the supernova step on a binary object.
@@ -571,7 +571,7 @@ class StepSN(object):
         # after this function is called certain quantities shouldn't be None
         # type objects anymore
         for key in ['m_disk_accreted', 'm_disk_radiated']:
-            if getattr(star, key) is None:
+            if pd.isna(getattr(star, key)):
                 setattr(star, key, np.nan)
 
         # Verifies if the star is in state state where it can
@@ -809,7 +809,7 @@ class StepSN(object):
                     # If the profile is not available and spin can stay
                     # undetermined
                     star.mass = m_grav
-                    star.spin = None
+                    star.spin = np.nan
                     star.m_disk_accreted = 0.0
                     star.m_disk_radiated = 0.0
                     if m_grav >= self.max_NS_mass:
@@ -822,7 +822,8 @@ class StepSN(object):
                 else:
                     # This leads to a failed binary
                     for key in STARPROPERTIES:
-                        setattr(star, key, None)
+                        setattr(star, key, None if key == 'state'
+                                else unset_star_value(key))
                     return "FAILED core collapse!"
 
             elif self.mechanism in [self.Sukhbold16_engines,
@@ -908,7 +909,8 @@ class StepSN(object):
                     else:
                         # This leads to a failed binary
                         for key in STARPROPERTIES:
-                            setattr(star, key, None)
+                            setattr(star, key, None if key == 'state'
+                                    else unset_star_value(key))
                         return f"FAILED core collapse! (Invalid core state: {state})"
 
                     star.h1_mass_ej, star.he4_mass_ej = \
@@ -950,7 +952,7 @@ class StepSN(object):
                     # If the profile is not available and spin can stay
                     # undetermined
                     star.mass = m_grav
-                    star.spin = None
+                    star.spin = np.nan
                     star.m_disk_accreted = 0.0
                     star.m_disk_radiated = 0.0
                     if m_grav >= self.max_NS_mass:
@@ -963,7 +965,8 @@ class StepSN(object):
                 else:
                     # This leads to a failed binary
                     for key in STARPROPERTIES:
-                        setattr(star, key, None)
+                        setattr(star, key, None if key == 'state'
+                                else unset_star_value(key))
                     return "FAILED core collapse!"
 
         else:
@@ -1295,7 +1298,7 @@ class StepSN(object):
                 "There is no information in the evolutionary history"
                 "about STAR_STATES_CC."
             )
-        if m_core is None or pd.isna(m_core):
+        if pd.isna(m_core):
             # This should not happen
             raise ValueError("The CO core mass is not correct! CO core = {}".
                              format(m_core))
@@ -2310,8 +2313,8 @@ class StepSN(object):
                 C_core_abundance = self.C_abundance_for_He_stars(CO_core_mass)
             else:
                 raise ValueError("star.state at CC should contain either 'H-rich' or 'stripped_He' ")
-        elif ((star.avg_c_in_c_core_at_He_depletion is not None)
-              and (star.co_core_mass_at_He_depletion is not None)):
+        elif (pd.notna(star.avg_c_in_c_core_at_He_depletion)
+              and pd.notna(star.co_core_mass_at_He_depletion)):
             C_core_abundance = star.avg_c_in_c_core_at_He_depletion
             CO_core_mass = star.co_core_mass_at_He_depletion
         else:
@@ -2319,7 +2322,7 @@ class StepSN(object):
             C_core_abundance = star.avg_c_in_c_core_at_He_depletion
             CO_core_mass = star.co_core_mass_at_He_depletion
 
-            if (C_core_abundance is None) or (CO_core_mass is None):
+            if pd.isna(C_core_abundance) or pd.isna(CO_core_mass):
                 raise ModelError('The history did not contain core masses at'
                                  f' He depletion! {CO_core_mass}'
                                  f' {C_core_abundance}')

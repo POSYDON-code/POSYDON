@@ -4,6 +4,7 @@ import copy
 
 import h5py
 import numpy as np
+import pandas as pd
 from numpy.lib import recfunctions
 from tqdm import tqdm
 
@@ -38,10 +39,22 @@ CC_quantities = ['state', 'SN_type', 'f_fb', 'mass', 'spin',
                  'm_disk_accreted', 'm_disk_radiated',
                  'CO_interpolation_class', 'M4', 'mu4',
                  'h1_mass_ej', 'he4_mass_ej']
+# core collapse quantities which are strings, all others are numbers
+CC_quantities_str = ['state', 'SN_type', 'CO_interpolation_class']
+
+def unset_CC_value(quantity):
+    """Return the value of an unset core collapse quantity.
+
+    Strings are None, numbers are NaN.
+    """
+    return None if quantity in CC_quantities_str else np.nan
 
 def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
                                          SN_MODEL_NAME=None):
-    """Assign None values to all core collapse properties.
+    """Assign unset values to all core collapse properties.
+
+    The unset value is None for strings and NaN for numbers, see
+    `unset_CC_value`.
 
         Parameters
         ----------
@@ -59,14 +72,17 @@ def assign_core_collapse_quantities_none(EXTRA_COLUMNS, star_i,
     if SN_MODEL_NAME is None:
         for NAME in SN_MODELS.keys():
             for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(None)
+                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(
+                    unset_CC_value(quantity))
     elif isinstance(SN_MODEL_NAME, str):
         for quantity in CC_quantities:
-            EXTRA_COLUMNS[f'S{star_i}_{SN_MODEL_NAME}_{quantity}'].append(None)
+            EXTRA_COLUMNS[f'S{star_i}_{SN_MODEL_NAME}_{quantity}'].append(
+                unset_CC_value(quantity))
     elif isinstance(SN_MODEL_NAME, list):
         for NAME in SN_MODEL_NAME:
             for quantity in CC_quantities:
-                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(None)
+                EXTRA_COLUMNS[f'S{star_i}_{NAME}_{quantity}'].append(
+                    unset_CC_value(quantity))
     else:
         raise TypeError("'SN_MODEL_NAME' should be a string, a list of "
                         "strings, or None.")
@@ -109,7 +125,7 @@ def print_CC_quantities(star, SN_MODEL_NAME=None):
         try:
             checked_quantities_for_None = {}
             for quantity in ["spin", "M4", "mu4", "h1_mass_ej", "he4_mass_ej"]:
-                if getattr(star, quantity) is None:
+                if pd.isna(getattr(star, quantity)):
                     checked_quantities_for_None[quantity] = np.nan
                 else:
                     checked_quantities_for_None[quantity] = getattr(star,
@@ -232,8 +248,8 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                     star, star_CO=False))
                 # core masses at he depletion
                 with Catch_POSYDON_Warnings(record=True) as cpw:
-                    if ((star.avg_c_in_c_core_at_He_depletion is None) or
-                        (star.co_core_mass_at_He_depletion is None)):
+                    if (pd.isna(star.avg_c_in_c_core_at_He_depletion) or
+                        pd.isna(star.co_core_mass_at_He_depletion)):
                         calculate_Patton20_values_at_He_depl(star)
                 EXTRA_COLUMNS[f'S{j+1}_avg_c_in_c_core_at_He_depletion'].append(
                     star.avg_c_in_c_core_at_He_depletion)
@@ -274,7 +290,7 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                 EXTRA_COLUMNS['S%s_surface_other' % (j+1)].append(s_o)
                 EXTRA_COLUMNS['S%s_center_other' % (j+1)].append(c_o)
             else:
-                # fill everything with Nones
+                # fill everything as unset (None for the state, else NaN)
                 if IC == 'initial_MT' or IC == 'not_converged':
                     EXTRA_COLUMNS['S%s_state' % (j+1)].append(None)
                 else:
@@ -290,9 +306,9 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                                  'surface_other', 'center_other', 'lambda_CE', 'm_core_CE', 'r_core_CE']:
                     if 'CE' in quantity:
                         for val in [1, 10, 30, 'pure_He_star_10']:
-                            EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(None)
+                            EXTRA_COLUMNS[f'S{j+1}_{quantity}_{val}cent'].append(np.nan)
                     else:
-                        EXTRA_COLUMNS[f'S{j+1}_{quantity}'].append(None)
+                        EXTRA_COLUMNS[f'S{j+1}_{quantity}'].append(np.nan)
 
         # core collapse quantities
         if not single_star:
@@ -311,13 +327,13 @@ def post_process_grid(grid, index=None, star_2_CO=True, SN_MODELS=SN_MODELS,
                     assign_core_collapse_quantities_none(EXTRA_COLUMNS, 1,
                      list(SN_MODELS.keys()))
                 elif TF1 == 'gamma_center_limit':
-                    if (binary.star_1.center_gamma is not None and
+                    if (pd.notna(binary.star_1.center_gamma) and
                         binary.star_1.center_gamma >= 10.):
                         star = binary.star_1
                         star_i = 1
                         assign_core_collapse_quantities_none(EXTRA_COLUMNS, 2,
                          list(SN_MODELS.keys()))
-                    elif (binary.star_2.center_gamma is not None and
+                    elif (pd.notna(binary.star_2.center_gamma) and
                         binary.star_2.center_gamma >= 10.):
                         star = binary.star_2
                         star_i = 2

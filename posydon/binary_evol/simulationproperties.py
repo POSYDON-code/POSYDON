@@ -888,7 +888,7 @@ class TimingHooks(EvolveHooks):
 
         if len(binary.event_history) > len(binary.step_times):
             diff = len(binary.event_history) - len(binary.step_times)
-            binary.step_times += [None] * (diff)
+            binary.step_times += [np.nan] * (diff)
         elif len(binary.event_history) < len(binary.step_times):
             last_items = len(binary.event_history)
             binary.step_times = binary.step_times[-(last_items - 1):]
@@ -896,10 +896,10 @@ class TimingHooks(EvolveHooks):
         return binary
 
     def post_evolve(self, binary):
-        """Add None's to step_times to match history rows."""
+        """Pad step_times with NaN to match history rows."""
         if binary.event == 'END' or binary.event == 'FAILED':
             diff = int(len(binary.event_history) - len(binary.step_times))
-            binary.step_times += [None] * diff
+            binary.step_times += [np.nan] * diff
         return binary
 
 

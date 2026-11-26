@@ -342,29 +342,29 @@ class SingleStar:
         if not hasattr(self, 'natal_kick_mean_anomaly'):
             self.natal_kick_mean_anomaly = np.nan
         if not hasattr(self, 'spin_orbit_tilt_first_SN'):
-            self.spin_orbit_tilt_first_SN = None
+            self.spin_orbit_tilt_first_SN = np.nan
         if not hasattr(self, 'spin_orbit_tilt_second_SN'):
-            self.spin_orbit_tilt_second_SN = None
+            self.spin_orbit_tilt_second_SN = np.nan
         if not hasattr(self, 'f_fb'):
-            self.f_fb = None
+            self.f_fb = np.nan
         if not hasattr(self, 'SN_type'):
             self.SN_type = None
         if not hasattr(self, 'm_disk_accreted'):
-            self.m_disk_accreted = None
+            self.m_disk_accreted = np.nan
         if not hasattr(self, 'm_disk_radiated'):
-            self.m_disk_radiated = None
+            self.m_disk_radiated = np.nan
         if not hasattr(self, 'h1_mass_ej'):
-            self.h1_mass_ej = None
+            self.h1_mass_ej = np.nan
         if not hasattr(self, 'he4_mass_ej'):
-            self.he4_mass_ej = None
+            self.he4_mass_ej = np.nan
         if not hasattr(self, 'M4'):
-            self.M4 = None
+            self.M4 = np.nan
         if not hasattr(self, 'mu4'):
-            self.mu4 = None
+            self.mu4 = np.nan
         if not hasattr(self, 'Xi'):
-            self.Xi = None
+            self.Xi = np.nan
         if not hasattr(self, 'sc'):
-            self.sc = None
+            self.sc = np.nan
         if not hasattr(self, 'interp1d'):
             self.interp1d = None
 
@@ -374,15 +374,15 @@ class SingleStar:
         for quantity in ['m_core_CE', 'r_core_CE']:
             for val in [1, 10, 30, 'pure_He_star_10']:
                 if not hasattr(self, f'{quantity}_{val}cent'):
-                    setattr(self, f'{quantity}_{val}cent', None)
+                    setattr(self, f'{quantity}_{val}cent', np.nan)
 
         # core masses at He depletion
         for quantity in ['avg_c_in_c_core_at_He_depletion',
                          'co_core_mass_at_He_depletion']:
             if not hasattr(self, quantity):
-                setattr(self, quantity, None)
+                setattr(self, quantity, np.nan)
 
-        # core collapse quantities
+        # core collapse quantities (a dict per SN model, None if not set)
         for SN_MODEL_NAME in SN_MODELS.keys():
             if not hasattr(self, SN_MODEL_NAME):
                 setattr(self, SN_MODEL_NAME, None)
@@ -574,10 +574,10 @@ class SingleStar:
                     )
                     # Create array from individual properties
                     natal_kick_array = [
-                        getattr(self, 'natal_kick_velocity', None),
-                        getattr(self, 'natal_kick_azimuthal_angle', None),
-                        getattr(self, 'natal_kick_polar_angle', None),
-                        getattr(self, 'natal_kick_mean_anomaly', None)
+                        getattr(self, 'natal_kick_velocity', np.nan),
+                        getattr(self, 'natal_kick_azimuthal_angle', np.nan),
+                        getattr(self, 'natal_kick_polar_angle', np.nan),
+                        getattr(self, 'natal_kick_mean_anomaly', np.nan)
                     ]
                     for i in range(4):
                         col_name = prefix+name+'_{}'.format(int(i))
@@ -623,8 +623,8 @@ class SingleStar:
                 else:
                     col_history = [final_value]
             else:
-                final_value = None
-                col_history = [None] * n_steps
+                final_value = unset_star_value(attr)
+                col_history = [final_value] * n_steps
             assert n_steps == len(col_history)
             setattr(star, attr + "_history", col_history)
             setattr(star, attr, final_value)
@@ -634,7 +634,7 @@ class SingleStar:
         try:
             star.metallicity = run.initial_values["Z"] / Zsun
         except AttributeError:
-            star.metallicity = None
+            star.metallicity = np.nan
 
         # add values at He depletion
         for colname in run.final_values.dtype.names:
