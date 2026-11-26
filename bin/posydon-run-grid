@@ -54,7 +54,8 @@ def parse_commandline():
     fixed_grid_arguments = parser.add_argument_group('Arguments specific to running a fixed grid')
     fixed_grid_arguments.add_argument("--grid-point-index",
                                       help="Override grid point slection by "
-                                      "explictly saying which grid point you want.",
+                                      "explictly saying which grid point you want."
+                                      "This must be run with mpirun -np 1!!",
                                       type=int)
 
     dynamic_grid_arguments = parser.add_argument_group('Arguments specific to running a dynamic grid')
