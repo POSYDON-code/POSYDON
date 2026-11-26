@@ -1,3 +1,0 @@
-[submodule "grid_params/POSYDON-MESA-INLISTS"]
-	path = grid_params/POSYDON-MESA-INLISTS
-	url = https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git

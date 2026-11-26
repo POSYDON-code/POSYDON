@@ -7,7 +7,12 @@ ini file documentation for POSYDON GRIDS
 How to write a configuration file
 ==================================
 
-The `posydon-setup-grid` command-line executable cannot run without a
+Grids are set up with the ``posydon-grid`` command (``posydon-grid types``,
+``init``, ``explain``, ``setup``; ``posydon-grid run`` runs a grid). The
+older ``posydon-setup-grid`` still works but is deprecated: it prints the
+``posydon-grid`` command to use instead.
+
+``posydon-grid setup`` cannot run without a
 configuration file. This :samp:`ini` file needs to specify all aspects of the MESA
 simulation that are static, i.e. those parts that are shared amongst every MESA
 simulation in your grid. The design of the :samp:`ini` file file is such that it will
@@ -21,13 +26,167 @@ Below we describe each section of the :samp:`ini` file and what each value corre
 to. In general, lines with capitalized quantities surrounded by {} are
 quantities that need to be adjusted for your specific case.
 
-Here is a link to the most recent stable release version of the default :samp:`ini` file
-for POSYDON:
-`Stable Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/main/grid_params/grid_params.ini>`_
+The template of a **legacy** :samp:`ini` file (the format with
+``[slurm]``, ``[mesa_inlists]``, ``[mesa_extras]`` and ``[run_parameters]``,
+described from :ref:`inifile_slurm` on) is in POSYDON-MESA-INLISTS:
+`grid_params.ini <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS/blob/v2_sources/templates/grid_params.ini>`_.
+For the new format, write a starter file with ``posydon-grid init`` instead
+(:ref:`inifile_new`).
 
-Here is a link to the unstable development version of the default :samp:`ini` file for
-POSYDON:
-`Development Version INIFILE <https://github.com/POSYDON-code/POSYDON/blob/development/grid_params/grid_params.ini>`_
+POSYDON no longer ships the ``grid_params/`` folder. Legacy ini files still name
+its files as ``${posydon_github_root}/grid_params/...`` (MESA defaults, ZAMS
+models, column lists); when such a path does not exist, ``posydon-grid``
+reads the same file from POSYDON-MESA-INLISTS at the commit POSYDON pins
+(``posydon/grids/setup/support.py``) and says so in a warning.
+
+The sections below the next one describe this (legacy) format. A shorter,
+new format is also accepted; it is described first.
+
+.. _inifile_new:
+
+The new format
+==============
+
+An :samp:`ini` file with a ``[grid]`` section is read in the new format.
+Write a starter file for a grid type with
+
+.. code-block:: bash
+
+    posydon-grid types
+    posydon-grid init CO-HeMS grid.ini
+
+and fill in the ``<...>`` values. The file lists every option the grid
+type takes, each with a short note; options left at their default are
+commented out (``; key = value``), so remove the ``;`` to set one.
+
+**Examples.** Ready-made files for every grid type, and for a rerun with your
+own physics, a dynamic grid and a laptop run, are in
+`docs/_source/components-overview/mesa_grids/examples
+<https://github.com/POSYDON-code/POSYDON/tree/main/docs/_source/components-overview/mesa_grids/examples>`_
+(they are read and set up by POSYDON's unit tests, so they follow the
+format). For example, an HMS-HMS grid with a rerun of v2.0 and your own
+inlists and Fortran source on top:
+
+.. literalinclude:: examples/HMS-HMS_rerun_and_my_physics.ini
+    :language: ini
+
+Relative paths are relative to the :samp:`ini` file.
+
+**The scenario** selects the POSYDON inlists. ``release`` is a folder of
+`POSYDON-MESA-INLISTS <https://github.com/POSYDON-code/POSYDON-MESA-INLISTS>`_
+(``r11701/releases/<release>/``) and ``rerun`` one of its physics variants
+(``reruns/<rerun>/``, which holds only the keys and files it changes); all
+v2.0 reruns are there. ``mesa`` names the MESA version if a release exists
+for several.
+
+``inlist_repo`` is your clone of the repository (default:
+``~/.posydon_mesa_inlists``). The setup reads it as it is and never runs git
+to change it: cloning it and keeping it up to date is up to you, e.g.
+
+.. code-block:: bash
+
+    git clone --branch v2_sources https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git ~/POSYDON-MESA-INLISTS
+    git -C ~/POSYDON-MESA-INLISTS pull
+
+It can be your own fork or branch, laid out the same way. The keys
+``source``, ``ref``, ``commit`` and ``branch`` of earlier versions are no
+longer used: remove them. (The legacy format, below, still checks out the
+commit its scenario names.)
+
+**Layers.** For every inlist the values are stacked, a later layer winning
+key by key:
+
+1. MESA's defaults of the release's MESA installation
+   (``r11701/mesa/<installation>/``), for every inlist ``[mesa_inlists]``
+   does not list files for;
+2. the release's files for the grid type (and the rerun's on top of them);
+3. your ``[user_inlists]``;
+4. the keys the setup writes itself (wiring, output options, ZAMS models).
+
+There is no ``[posydon_inlists]`` section: POSYDON's inlists come from the
+``[scenario]`` release. Put your own files in ``[user_inlists]``, or make your
+own release folder in your clone of the inlist repository.
+
+``[user_inlists]`` takes ``binary``, ``star1``, ``star2`` (both namelists),
+a single namelist such as ``star1_controls`` or ``binary_job``,
+``star1_formation_step0`` (on top of that formation step), and whole files
+for ``history_columns``, ``binary_history_columns``, ``profile_columns``
+and the Fortran sources (below). Several files for one key are
+separated by commas and applied in order. In a single-star grid, which
+runs star 1 as its formation steps, ``star1`` files apply to every step,
+and ``[output] star1`` applies to its last step, which runs the star to
+its end (``final_model`` saves ``final_star1.mod``).
+
+A ZAMS model set in ``[grid]`` (``zams``, ``zams_star1``, ``zams_star2``)
+is used instead of the release's. ``[submission]`` settings left out
+(``account``, ``partition``, ``walltime``, ``email``) are left out of the
+SLURM scripts, so the cluster's defaults apply.
+
+**Fortran sources** have one place, ``[user_inlists]``, and replace the
+release's (which replace MESA's stock ones):
+
+.. code-block:: ini
+
+    [user_inlists]
+    run_star_extras = my_star_extras.f     ; every star: the binary's, star 1, star 2
+    run_binary_extras = my_binary_extras.f
+    run_star1_extras = my_star1_extras.f   ; only star 1 (wins over run_star_extras there)
+    run_star2_extras = my_star2_extras.f   ; only star 2
+
+They are copied under the name MESA compiles (``run_star_extras.f``,
+``run_binary_extras.f``), so your files can have any name.
+``[mesa_inlists]`` takes no Fortran sources. ``[extras]`` takes only MESA's
+own work files, ``makefile_binary``, ``makefile_star``, ``binary_run`` and
+``star_run``; each one it does not set comes from ``$MESA_DIR``. Other
+``[extras]`` keys (``user_star1_extras``, ...) are refused with a pointer to
+``[user_inlists]``. The legacy ``[mesa_extras]`` section is unchanged.
+
+To see where every value comes from without writing anything, run
+
+.. code-block:: bash
+
+    posydon-grid explain grid.ini
+
+It lists, for each inlist, the keys POSYDON or you set, with the layer and
+file of each value and the values it overrides.
+
+**Command line.** A new-format file is the only input:
+
+.. code-block:: bash
+
+    posydon-grid setup grid.ini
+
+It says the mode, run directory and backend itself (``[grid] mode``,
+``run_directory``, ``[submission] backend``), so ``--grid-type``,
+``--run-directory`` and ``--submission-type`` are refused for it. A legacy
+file cannot say these, so for it they are given on the command line:
+
+.. code-block:: bash
+
+    posydon-grid setup grid_params.ini --grid-type fixed --submission-type slurm
+
+**The run directory** gets a ``setup_record.ini`` with what it was set up
+from:
+
+- ``[setup]``: the :samp:`ini` file, its format, the grid type and mode,
+  when, on which host and with which command;
+- ``[posydon]``: the POSYDON that ran (version, location, its commit, and
+  whether its ``posydon/`` or ``bin/`` code differed from it) and Python;
+- ``[mesa]``: ``$MESA_DIR`` and ``$MESASDK_ROOT``;
+- ``[scenario]``: the release and rerun, and the inlist repository as it was
+  read: its folder, ``origin``, commit (``inlist_commit``), whether the
+  files used differed from that commit (``inlist_dirty``) and a sha256 of
+  those files (``inlist_fingerprint``). Two grids with the same fingerprint
+  read identical files, whatever folder or branch they came from;
+- ``[inlists]``: for every written inlist and namelist, the files stacked
+  into it, lowest layer first, with the layer names of ``posydon-grid
+  explain`` (``mesa_inlists``, ``posydon_inlists`` for the release's files,
+  ``user_inlists``);
+- ``[whole_files]``: for every column list and Fortran source in the run
+  directory, the file it was copied from.
+
+``None`` means git could not tell (not a git repository of its own). Paths
+inside the inlist repository are relative to it.
 
 .. _inifile_slurm:
 

@@ -1,0 +1,14 @@
+returncode: 2
+error: posydon-grid: error: [slurm] job_array: a fixed grid needs job_array = True
+
+## staged sources
+
+## run directory tree
+f grid.csv
+f grid.ini
+
+## created outside the run directory
+(none)
+
+## untracked or changed files in the inlist clone
+(none)

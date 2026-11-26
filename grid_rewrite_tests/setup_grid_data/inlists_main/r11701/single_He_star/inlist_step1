@@ -1,0 +1,51 @@
+!!! create a pure He star
+! relax composition to desired uniform values
+! set "accretion_species" to the desired composition
+&star_job
+         !This will allow to relaxe to only he4
+         relax_initial_to_xaccrete = .true.
+         num_steps_to_relax_composition = 50
+
+         save_model_when_terminate = .true.
+         save_model_filename = 'step1.mod'
+
+         new_rotation_flag = .false.
+         change_rotation_flag = .true.
+         set_initial_surface_rotation_v = .false.
+
+/ ! end of star_job namelist
+
+&controls
+        zams_filename = "zams_z2m2_y28.data"
+        initial_z = 0.02d0
+        Zbase = 0.02d0
+
+        photo_directory = 'photos'
+        log_directory = 'LOGS'
+        history_interval = 1
+        terminal_interval = 1
+        write_header_frequency = 100
+        photo_digits = 5
+        photo_interval = 0
+
+         !flags to relax metallicity to desired quantity
+         accrete_same_as_surface = .false.
+         accrete_given_mass_fractions = .true.
+
+         ! PURE HE
+         ! set target uniform composition for relax_initial_to_xaccrete
+         num_accretion_species = 1
+         accretion_species_id(1) = 'he4'
+         accretion_species_xa(1) = 1.0
+
+         xa_central_lower_limit_species(1) = 'he4'
+         xa_central_lower_limit(1) = 1.0
+
+         use_other_wind=.false.
+         hot_wind_scheme = ' '
+         cool_wind_RGB_scheme = ' '
+         cool_wind_AGB_scheme = ' '
+         mass_change = 0d0
+
+/ ! end of controls namelist
+

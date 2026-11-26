@@ -1,0 +1,89 @@
+name: Grid setup rewrite
+
+# Temporary: runs on the rewrite branch while posydon-setup-grid is
+# rewritten. The baseline job runs grid_rewrite_tests/ (delete it together
+# with that folder); the unit-tests job runs posydon/unit_tests exactly as the
+# main CI does, since that CI only runs for pull requests into main.
+
+on:
+  push:
+    branches:
+      - 'enhancement/rewrite_mesa_grids'
+  pull_request:
+    paths:
+      - 'bin/posydon-grid'
+      - 'bin/posydon-setup-grid'
+      - 'bin/posydon-run-grid'
+      - 'posydon/**'
+      - 'grid_rewrite_tests/**'
+      - '.github/workflows/grid_rewrite_tests.yml'
+  workflow_dispatch:
+
+jobs:
+  baseline:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ['3.11']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install POSYDON with test dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[test]
+
+    - name: Clone POSYDON-MESA-INLISTS for the release-manifest tests
+      run: |
+        git clone --branch v2_sources --single-branch \
+          https://github.com/POSYDON-code/POSYDON-MESA-INLISTS.git \
+          "$RUNNER_TEMP/inlists"
+        git -C "$RUNNER_TEMP/inlists" checkout \
+          8482d7d2d6f4abd3374437053aa6cf2b11ff70ca
+
+    - name: Run the grid setup baseline tests
+      run: |
+        export POSYDON_INLIST_REPO="$RUNNER_TEMP/inlists"
+        # fail, not skip, if the clone is missing
+        export POSYDON_REQUIRE_INLIST_REPO=1
+        pytest grid_rewrite_tests
+
+  unit-tests:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [macos-latest, ubuntu-latest]
+        python-version: ['3.11']
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+
+    - name: Install POSYDON with test dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install .[test]
+
+    - name: Run all tests in posydon/unit_tests
+      run: |
+        export PATH_TO_POSYDON=./
+        export PATH_TO_POSYDON_DATA=./posydon/unit_tests/_data/
+        export MESA_DIR=./
+        pytest # run and coverage parameters are defined in pyproject.toml
