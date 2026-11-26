@@ -42,7 +42,7 @@ from pandas import read_csv
 from sklearn import neighbors
 
 import posydon.utils.constants as const
-from posydon.binary_evol.binarystar import BINARYPROPERTIES
+from posydon.binary_evol.binarystar import BINARYPROPERTIES, unset_binary_value
 from posydon.binary_evol.flow_chart import (
     STAR_STATES_C_DEPLETED,
     STAR_STATES_CC,
@@ -51,6 +51,7 @@ from posydon.binary_evol.flow_chart import (
 from posydon.binary_evol.singlestar import (
     STARPROPERTIES,
     convert_star_to_massless_remnant,
+    unset_star_value,
 )
 from posydon.binary_evol.SN.profile_collapse import (
     do_core_collapse_BH,
@@ -658,14 +659,14 @@ class StepSN(object):
                                                 "m_disk_radiated", "center_h1",
                                                 "center_he4", "center_c12",
                                                 "center_n14", "center_o16"]:
-                                    setattr(star, key, None)
+                                    setattr(star, key, unset_star_value(key))
 
                         else:
                             for key in STARPROPERTIES:
                                 if key not in ["state", "mass", "spin",
                                             "m_disk_accreted",
                                             "m_disk_radiated"]:
-                                    setattr(star, key, None)
+                                    setattr(star, key, unset_star_value(key))
 
                         # No remnant if a PISN happens
                         if star.SN_type == 'PISN':
@@ -721,7 +722,7 @@ class StepSN(object):
                                          "center_h1", "center_he4",
                                          "center_c12", "center_n14",
                                          "center_o16"]:
-                            setattr(star, key, None)
+                            setattr(star, key, unset_star_value(key))
                     return
 
                 # check if the star was disrupted by the PISN
@@ -857,7 +858,7 @@ class StepSN(object):
                                          "center_h1", "center_he4",
                                          "center_c12", "center_n14",
                                          "center_o16"]:
-                            setattr(star, key, None)
+                            setattr(star, key, unset_star_value(key))
                     return
 
                 # check if the star was disrupted by the PISN
@@ -977,7 +978,7 @@ class StepSN(object):
             if key not in ["state", "mass", "spin", "log_R", "metallicity",
                            "m_disk_accreted", "m_disk_radiated",
                            "co_core_mass"]:
-                setattr(star, key, None)
+                setattr(star, key, unset_star_value(key))
 
         return
 
@@ -1522,7 +1523,7 @@ class StepSN(object):
                 )
                 for key in BINARYPROPERTIES:
                     if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
-                        setattr(binary, key, None)
+                        setattr(binary, key, unset_binary_value(key))
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
@@ -1553,7 +1554,7 @@ class StepSN(object):
             M_companion = binary.star_2.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_1.natal_kick_velocity is None:
+            if pd.notna(binary.star_1.natal_kick_velocity):
                 Vkick = binary.star_1.natal_kick_velocity
             else:
                 # Draw a random orbital kick
@@ -1600,20 +1601,20 @@ class StepSN(object):
 
                 binary.star_1.natal_kick_velocity = Vkick
 
-            if not binary.star_1.natal_kick_azimuthal_angle is None:
+            if pd.notna(binary.star_1.natal_kick_azimuthal_angle):
                 phi = binary.star_1.natal_kick_azimuthal_angle
             else:
                 phi = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_1.natal_kick_azimuthal_angle = phi
 
-            if not binary.star_1.natal_kick_polar_angle is None:
+            if pd.notna(binary.star_1.natal_kick_polar_angle):
                 cos_theta = np.cos(binary.star_1.natal_kick_polar_angle)
             else:
                 cos_theta = self.RNG.uniform(-1, 1)
                 binary.star_1.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_1.natal_kick_mean_anomaly is None:
+            if pd.notna(binary.star_1.natal_kick_mean_anomaly):
                 mean_anomaly = binary.star_1.natal_kick_mean_anomaly
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
@@ -1634,7 +1635,7 @@ class StepSN(object):
                 )
                 for key in BINARYPROPERTIES:
                     if key not in ['V_sys', 'nearest_neighbour_distance', 'state']:
-                        setattr(binary, key, None)
+                        setattr(binary, key, unset_binary_value(key))
                     # if key is 'nearest_neighbour_distance':
                     #     setattr(binary, key, ['None', 'None', 'None'])
                 binary.separation = new_separation
@@ -1665,7 +1666,7 @@ class StepSN(object):
             M_companion = binary.star_1.mass
 
             # check if a kick is passed, otherwise generate it
-            if not binary.star_2.natal_kick_velocity is None:
+            if pd.notna(binary.star_2.natal_kick_velocity):
                 Vkick = binary.star_2.natal_kick_velocity
             else:
                 # Draw a random orbital kick
@@ -1707,20 +1708,20 @@ class StepSN(object):
 
                 binary.star_2.natal_kick_velocity = Vkick
 
-            if not binary.star_2.natal_kick_azimuthal_angle is None:
+            if pd.notna(binary.star_2.natal_kick_azimuthal_angle):
                 phi = binary.star_2.natal_kick_azimuthal_angle
             else:
                 phi = self.RNG.uniform(0, 2 * np.pi)
                 binary.star_2.natal_kick_azimuthal_angle = phi
 
-            if not binary.star_2.natal_kick_polar_angle is None:
+            if pd.notna(binary.star_2.natal_kick_polar_angle):
                 cos_theta = np.cos(binary.star_2.natal_kick_polar_angle)
             else:
                 cos_theta = self.RNG.uniform(-1, 1)
                 binary.star_2.natal_kick_polar_angle = np.arccos(cos_theta)
 
             # generate random point in the orbit where the kick happens
-            if not binary.star_2.natal_kick_mean_anomaly is None:
+            if pd.notna(binary.star_2.natal_kick_mean_anomaly):
                 mean_anomaly = binary.star_2.natal_kick_mean_anomaly
                 # check that ONLY one value is passed and is of type float
                 if not isinstance(mean_anomaly, float):
@@ -1736,7 +1737,7 @@ class StepSN(object):
             # update the binary object which was disrupted already before the SN
             for key in BINARYPROPERTIES:
                 if key not in  ('nearest_neighbour_distance','state'):
-                    setattr(binary, key, None)
+                    setattr(binary, key, unset_binary_value(key))
             #binary.state = "disrupted"
             binary.event = None
             binary.separation = np.nan
@@ -2004,7 +2005,7 @@ class StepSN(object):
             #Check if this is the first SN
             for key in BINARYPROPERTIES:
                 if key not in ['nearest_neighbour_distance','event']:
-                    setattr(binary, key, None)
+                    setattr(binary, key, unset_binary_value(key))
 
             if flag_binary:
                 # update the tilt

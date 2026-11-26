@@ -119,6 +119,20 @@ STAR_ATTRIBUTES_FROM_STAR_HISTORY_SINGLE = {
     'profile': None
 }
 
+def unset_star_value(key):
+    """Return the value a star property takes when it is not set.
+
+    Numerical properties are NaN, so arithmetic on an unset value propagates
+    NaN instead of raising a TypeError. Strings are empty and anything without
+    a defined dtype is None.
+    """
+    dtype = STARPROPERTIES_DTYPES.get(key, '')
+    if dtype == 'float64' or dtype == 'int':
+        return np.nan
+    elif dtype == 'string':
+        return ''
+    return None
+
 def properties_massless_remnant():
     PROPERTIES_MASSLESS = {}
     for key in STARPROPERTIES:
@@ -304,15 +318,7 @@ class SingleStar:
 
             # everything else, set it according to stored dtype:
             else:
-                dtype = STARPROPERTIES_DTYPES.get(item, '')
-                if dtype == 'float64' or dtype == 'int':
-                    default = np.nan
-                elif dtype == 'string':
-                    default = ''
-                else:
-                    # if we haven't defined a dtype for this prop
-                    default = None
-                setattr(self, item, kwargs.pop(item, default))
+                setattr(self, item, kwargs.pop(item, unset_star_value(item)))
 
             setattr(self, item + '_history', [getattr(self, item)])
 
@@ -326,14 +332,15 @@ class SingleStar:
         # store extra values in the star object without a history
 
         # these quantities are updated in step_SN.py
+        # NaN means "not set": step_SN draws a random kick component
         if not hasattr(self, 'natal_kick_velocity'):
-            self.natal_kick_velocity = None
+            self.natal_kick_velocity = np.nan
         if not hasattr(self, 'natal_kick_azimuthal_angle'):
-            self.natal_kick_azimuthal_angle = None
+            self.natal_kick_azimuthal_angle = np.nan
         if not hasattr(self, 'natal_kick_polar_angle'):
-            self.natal_kick_polar_angle = None
+            self.natal_kick_polar_angle = np.nan
         if not hasattr(self, 'natal_kick_mean_anomaly'):
-            self.natal_kick_mean_anomaly = None
+            self.natal_kick_mean_anomaly = np.nan
         if not hasattr(self, 'spin_orbit_tilt_first_SN'):
             self.spin_orbit_tilt_first_SN = None
         if not hasattr(self, 'spin_orbit_tilt_second_SN'):

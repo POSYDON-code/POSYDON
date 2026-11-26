@@ -119,6 +119,18 @@ BINARYPROPERTIES = [
 ]
 
 
+def unset_binary_value(key):
+    """Return the value a binary property takes when it is not set.
+
+    Numerical properties are NaN, so arithmetic on an unset value propagates
+    NaN instead of raising a TypeError. Everything else is None (e.g., the
+    flow chart uses an event of None as a key).
+    """
+    if BINARYPROPERTIES_DTYPES.get(key) == 'float64':
+        return np.nan
+    return None
+
+
 MAXIMUM_STEP_TIME = 120
 
 
@@ -183,7 +195,8 @@ class BinaryStar:
             elif item == 'eccentricity':
                 setattr(self, item, binary_kwargs.pop(item, 0.0))
             else:
-                setattr(self, item, binary_kwargs.pop(item, None))
+                setattr(self, item,
+                        binary_kwargs.pop(item, unset_binary_value(item)))
 
             setattr(self, item + '_history', [getattr(self, item)])
 
@@ -203,14 +216,14 @@ class BinaryStar:
                 setattr(self, "orbital_period_history", [getattr(self, "orbital_period")])
 
         if not hasattr(self, 'inspiral_time'):
-            self.inspiral_time = None
+            self.inspiral_time = np.nan
         if not hasattr(self, 'mass_transfer_case'):
             self.mass_transfer_case = 'None'
 
         if not hasattr(self, 'true_anomaly_first_SN'):
-            self.true_anomaly_SN1 = None
+            self.true_anomaly_first_SN = np.nan
         if not hasattr(self, 'true_anomaly_second_SN'):
-            self.true_anomaly_SN2 = None
+            self.true_anomaly_second_SN = np.nan
         if not hasattr(self, 'first_SN_already_occurred'):
             self.first_SN_already_occurred = False
 

@@ -1115,7 +1115,7 @@ class StepCEE(object):
                     star.surface_h1 = 0.01
                 star.he_core_mass = core_mass
                 star.he_core_radius = core_radius
-                if star.metallicity is None:
+                if pd.isna(star.metallicity):
                     star.surface_he4 = 1 - star.surface_h1 - Zsun
                 else:
                     star.surface_he4 = 1 - star.surface_h1 - star.metallicity * Zsun

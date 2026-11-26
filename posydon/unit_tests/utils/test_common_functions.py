@@ -1168,7 +1168,7 @@ class TestFunctions:
         def mock_infer_mass_transfer_case(rl_relative_overflow,\
                                           lg_mtransfer_rate, donor_state,\
                                           dominating_star=True, verbose=False):
-            if rl_relative_overflow is not None:
+            if totest.pd.notna(rl_relative_overflow):
                 if rl_relative_overflow > 0:
                     return totest.MT_CASE_A
                 else:

@@ -494,7 +494,7 @@ def beaming(binary):
     """
     mdot_edd = eddington_limit(binary, idx=-1)[0]
 
-    if binary.lg_mtransfer_rate is None:
+    if pd.isna(binary.lg_mtransfer_rate):
         rlo_mdot = np.nan
     else:
         rlo_mdot = 10**binary.lg_mtransfer_rate
@@ -1240,9 +1240,9 @@ def get_binary_state_and_event_and_mt_case(binary, interpolation_class=None,
             gamma2 = None
 
     # get numerical MT cases
-    if ((rl_overflow1 is not None) and (rl_overflow2 is not None)):
+    if pd.notna(rl_overflow1) and pd.notna(rl_overflow2):
         dominating_star1 = (rl_overflow1 >= rl_overflow2)
-    elif rl_overflow2 is not None:
+    elif pd.notna(rl_overflow2):
         dominating_star1 = False
     else:
         dominating_star1 = True
@@ -1603,7 +1603,7 @@ def infer_mass_transfer_case(rl_relative_overflow,
         The mass-transfer case integer flag.
 
     """
-    if rl_relative_overflow is None or lg_mtransfer_rate is None:
+    if pd.isna(rl_relative_overflow) or pd.isna(lg_mtransfer_rate):
         return MT_CASE_NO_RLO
 
     if ((rl_relative_overflow <= RL_RELATIVE_OVERFLOW_THRESHOLD) and

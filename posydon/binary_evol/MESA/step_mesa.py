@@ -19,8 +19,12 @@ import os
 import numpy as np
 import pandas as pd
 
-from posydon.binary_evol.binarystar import BINARYPROPERTIES, BinaryStar
-from posydon.binary_evol.singlestar import STARPROPERTIES
+from posydon.binary_evol.binarystar import (
+    BINARYPROPERTIES,
+    BinaryStar,
+    unset_binary_value,
+)
+from posydon.binary_evol.singlestar import STARPROPERTIES, unset_star_value
 from posydon.config import PATH_TO_POSYDON_DATA
 from posydon.grids.SN_MODELS import SN_MODELS
 from posydon.interpolation.IF_interpolation import IFInterpolator
@@ -529,7 +533,7 @@ class MesaGridStep:
             key_h = key + "_history"
             old_h = [getattr(binary, key)] * length_hist
             if POSYDON_TO_MESA['binary'][key] is None:
-                setattr(binary, key, None)
+                setattr(binary, key, unset_binary_value(key))
                 if self.save_initial_conditions:
                     getattr(binary, key_h).append(empty_h[0])
                 if track_interpolation:
@@ -583,7 +587,7 @@ class MesaGridStep:
                 old_h = [getattr(star, key)] * length_hist
                 if not stars_CO[k]:
                     if POSYDON_TO_MESA['star'][key] is None:
-                        setattr(star, key, None)
+                        setattr(star, key, unset_star_value(key))
                         if self.save_initial_conditions:
                             getattr(star, key_h).append(empty_h[0])
                         if track_interpolation:
@@ -882,7 +886,7 @@ class MesaGridStep:
 
         for key in BINARYPROPERTIES:
             if POSYDON_TO_MESA['binary'][key] is None:
-                setattr(self.binary, key, None)
+                setattr(self.binary, key, unset_binary_value(key))
             elif key == 'time':
                 key_p = POSYDON_TO_MESA['binary'][key]
                 current = getattr(self.binary, key)
@@ -901,7 +905,7 @@ class MesaGridStep:
             for key in STARPROPERTIES:
                 if not stars_CO[k]:
                     if POSYDON_TO_MESA['star'][key] is None:
-                        setattr(star, key, None)
+                        setattr(star, key, unset_star_value(key))
                     elif key == 'mass':
                         key_p = 'star_%d_mass' % (k+1)
                         setattr(star, key, fv[key_p])
@@ -920,7 +924,7 @@ class MesaGridStep:
                         setattr(star, key, fv[key_p])
                 else: # star is a compact object
                     if POSYDON_TO_MESA['star'][key] is None:
-                        setattr(star, key, None)
+                        setattr(star, key, unset_star_value(key))
                     elif key == 'mass':
                         key_p = 'star_%d_mass' % (k+1)
                         setattr(star, key, fv[key_p])

@@ -224,14 +224,14 @@ class TestFunctions:
         assert k2[1, 0] == 150.0  # s2 velocity row 1
 
     def test_get_kick_samples_from_file_no_columns(self, no_kick_csv):
-        """No kick columns — all set to None arrays."""
+        """No kick columns — all set to NaN arrays (drawn in step_SN)."""
         k1, k2 = totest.get_kick_samples_from_file(
             read_samples_from_file=no_kick_csv)
         assert k1.shape == (2, 4)
         assert k2.shape == (2, 4)
-        # All values should be None
-        assert all(v is None for v in k1.flatten())
-        assert all(v is None for v in k2.flatten())
+        # All values should be NaN
+        assert totest.np.isnan(k1).all()
+        assert totest.np.isnan(k2).all()
 
     def test_get_kick_samples_from_file_with_number(self, kick_csv):
         """Request more binaries than in file — triggers expansion."""

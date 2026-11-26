@@ -1053,8 +1053,8 @@ class BinaryGenerator:
                 number_of_binaries = kwargs['number_of_binaries']
             else:
                 number_of_binaries = 1
-            kick1 = np.array(number_of_binaries*[[None, None, None, None]])
-            kick2 = np.array(number_of_binaries*[[None, None, None, None]])
+            kick1 = np.full((number_of_binaries, 4), np.nan)
+            kick2 = np.full((number_of_binaries, 4), np.nan)
 
         # Checking m2 to see if the system is a binary or initially single
         is_binary = ~np.isnan(m2)

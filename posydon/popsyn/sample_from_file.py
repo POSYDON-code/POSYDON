@@ -222,7 +222,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No kick velocity column of primary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        w_set = np.array(set_n*[None])
+        w_set = np.full(set_n, np.nan)
     else:
         w_set = np.array(df[key])
     # Azimuthal angle
@@ -231,7 +231,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No azimuthal angle column of primary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        phi_set = np.array(set_n*[None])
+        phi_set = np.full(set_n, np.nan)
     else:
         phi_set = np.array(df[key])
     # Polar angle
@@ -240,7 +240,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No polar angle column of primary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        theta_set = np.array(set_n*[None])
+        theta_set = np.full(set_n, np.nan)
     else:
         theta_set = np.array(df[key])
     # Mean anomaly
@@ -249,7 +249,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No mean anomaly column of primary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        mean_anomaly_set = np.array(set_n*[None])
+        mean_anomaly_set = np.full(set_n, np.nan)
     else:
         mean_anomaly_set = np.array(df[key])
     kick_1_set = np.transpose(np.array([w_set, phi_set, theta_set,\
@@ -262,7 +262,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No kick velocity column of secondary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        w_set = np.array(set_n*[None])
+        w_set = np.full(set_n, np.nan)
     else:
         w_set = np.array(df[key])
     # Azimuthal angle
@@ -271,7 +271,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No azimuthal angle column of secondary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        phi_set = np.array(set_n*[None])
+        phi_set = np.full(set_n, np.nan)
     else:
         phi_set = np.array(df[key])
     # Polar angle
@@ -280,7 +280,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No polar angle column of secondary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        theta_set = np.array(set_n*[None])
+        theta_set = np.full(set_n, np.nan)
     else:
         theta_set = np.array(df[key])
     # Mean anomaly
@@ -289,7 +289,7 @@ def get_kick_samples_from_file(**kwargs):
     if key=='':
         Pwarn(f'No mean anomaly column of secondary found in {filename},'
               ' hence do not set them.', "ReplaceValueWarning")
-        mean_anomaly_set = np.array(set_n*[None])
+        mean_anomaly_set = np.full(set_n, np.nan)
     else:
         mean_anomaly_set = np.array(df[key])
     kick_2_set = np.transpose(np.array([w_set, phi_set, theta_set,\
