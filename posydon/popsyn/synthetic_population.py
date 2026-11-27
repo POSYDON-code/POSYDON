@@ -288,6 +288,64 @@ class DFInterface:
             out = pd.concat(out, axis=0)
         return out
 
+    def _row_index(self, store, key):
+        '''Return the 'index' column of the key table, cached per table.
+
+        PyTables stores a table row by row, so reading this column costs
+        about as much as reading the whole table. The cache is reloaded if
+        the number of rows in the table changed.
+
+        Parameters
+        ----------
+        store : pandas.HDFStore
+            The open store of the population file.
+        key : str
+            The key of the table.
+
+        Returns
+        -------
+        numpy.ndarray
+            The index of every row of the table, in file order.
+        '''
+        cache = getattr(self, "_row_index_cache", {})
+        nrows = store.get_storer(key).nrows
+        if key not in cache or len(cache[key]) != nrows:
+            cache[key] = store.select_column(key, "index").to_numpy()
+            self._row_index_cache = cache
+        return cache[key]
+
+    def _read_coordinates(self, store, key, coords, columns=None):
+        '''Read the rows of the key table at the given row coordinates.
+
+        The rows are read as one block if they are contiguous, else by
+        coordinates in chunks of `self.chunksize` rows.
+
+        Parameters
+        ----------
+        store : pandas.HDFStore
+            The open store of the population file.
+        key : str
+            The key of the table to read from.
+        coords : numpy.ndarray
+            The row coordinates to read, in increasing order.
+        columns : list, optional
+            A list of column names to select.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The rows read, in file order.
+        '''
+        if len(coords) == 0:
+            return store.select(key, start=0, stop=0, columns=columns)
+        if coords[-1] - coords[0] + 1 == len(coords):  # one contiguous block
+            return store.select(key, start=int(coords[0]),
+                                stop=int(coords[-1]) + 1, columns=columns)
+        out = [store.select(key, where=coords[i:i + self.chunksize],
+                            columns=columns)
+               for i in range(0, len(coords), self.chunksize)]
+        return pd.concat(out, axis=0)
+
     def get_repr(self, key):
         '''Return a string representation of the key table.
 
@@ -366,6 +424,7 @@ class History(DFInterface):
         self.verbose = verbose
         self.chunksize = chunksize
         self.lengths = None
+        self._lengths_match_rows = True
         self.number_of_systems = None
         self.columns = None
         if not os.path.exists(filename):
@@ -449,8 +508,7 @@ class History(DFInterface):
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            indices = list(range(pre, pre + chunk))
-            return self.select(where=f'index in {indices}')
+            return self.select(where=f"index >= {pre} & index < {pre + chunk}")
 
         # single index
         elif isinstance(key, int):
@@ -461,7 +519,7 @@ class History(DFInterface):
             if len(key) == 0:
                 return pd.DataFrame()
             else:
-                return self.select(where=f"index in {key}")
+                return self.select_indices(key)
 
         # numpy array
         elif isinstance(key, np.ndarray) and (key.dtype == int):
@@ -469,7 +527,7 @@ class History(DFInterface):
                 return pd.DataFrame()
             else:
                 indices = key.tolist()
-                return self.select(where=f"index in {indices}")
+                return self.select_indices(key)
 
         # boolean mask
         elif (isinstance(key, np.ndarray) and key.dtype == bool) or (isinstance(key, pd.DataFrame) and all(key.dtypes == bool)):
@@ -564,6 +622,47 @@ class History(DFInterface):
             The HTML representation of the history dataframe.
         """
         return super().get_html_repr("history")
+
+    def select_indices(self, indices, columns=None):
+        """Select the history of the binaries with the given indices.
+
+        The rows of the selected binaries are located with `self.lengths`,
+        assuming that the rows of each binary are stored contiguously and in
+        the order of `history_lengths`, as POSYDON writes them. This is
+        checked on the rows read. If it does not hold, the rows are located
+        with the 'index' column of the table instead, which costs about as
+        much as reading the whole table the first time (it is then cached).
+
+        Parameters
+        ----------
+        indices : array-like of int
+            The indices of the binaries to select.
+        columns : list, optional
+            A list of column names to select.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The history of the selected binaries, in file order.
+        """
+        lengths = self.lengths.iloc[:, 0].to_numpy()
+        pos = np.flatnonzero(np.isin(self.indices, indices))
+        counts = lengths[pos]
+        starts = np.cumsum(lengths)[pos] - counts
+        # row coordinates: starts[k], ..., starts[k] + counts[k] - 1 for each k
+        shift = np.repeat(starts - np.cumsum(counts) + counts, counts)
+        coords = shift + np.arange(counts.sum())
+        with pd.HDFStore(self.filename, mode="r") as store:
+            nrows = store.get_storer("history").nrows
+            if self._lengths_match_rows and lengths.sum() == nrows:
+                out = self._read_coordinates(store, "history", coords, columns)
+                expected = np.repeat(self.indices[pos], counts)
+                if np.array_equal(out.index.to_numpy(), expected):
+                    return out
+            self._lengths_match_rows = False
+            row_index = self._row_index(store, "history")
+            coords = np.flatnonzero(np.isin(row_index, indices))
+            return self._read_coordinates(store, "history", coords, columns)
 
     def select(self, where=None, start=None, stop=None, columns=None):
         """Select a subset of the history table based on the given conditions.
@@ -694,24 +793,20 @@ class Oneline(DFInterface):
                 chunk = self.number_of_systems
             else:
                 chunk = key.stop - pre
-            indices = list(range(pre, pre + chunk))
-            return self.select(where=f'index in {indices}')
+            return self.select(where=f"index >= {pre} & index < {pre + chunk}")
 
         elif isinstance(key, int):
             return self.select(where=f"index == {key}")
         elif isinstance(key, list) and all(isinstance(x, int) for x in key):
-            return self.select(where=f"index in {key}")
+            return self.select_indices(key)
         elif isinstance(key, np.ndarray) and (key.dtype == int):
-            indices = key.tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(key)
         elif isinstance(key, list) and all(isinstance(x, float) for x in key):
             raise ValueError("elements in list are not integers! Try casting to int.")
         elif isinstance(key, pd.DataFrame) and all(key.dtypes == bool):
-            indices = self.indices[key.to_numpy().flatten()].tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(self.indices[key.to_numpy().flatten()])
         elif isinstance(key, np.ndarray) and key.dtype == bool:
-            indices = self.indices[key].tolist()
-            return self.select(where=f"index in {indices}")
+            return self.select_indices(self.indices[key])
         elif isinstance(key, str):
             if key in self.columns:
                 return self.select(columns=[key])
@@ -788,6 +883,28 @@ class Oneline(DFInterface):
             The HTML representation of the oneline table.
         """
         return super().get_html_repr("oneline")
+
+    def select_indices(self, indices, columns=None):
+        """Select the oneline rows of the binaries with the given indices.
+
+        The rows are located with `self.indices`, the 'index' column read on
+        initialisation.
+
+        Parameters
+        ----------
+        indices : array-like of int
+            The indices of the binaries to select.
+        columns : list, optional
+            A list of column names to select.
+
+        Returns
+        -------
+        pandas.DataFrame
+            The oneline rows of the selected binaries, in file order.
+        """
+        coords = np.flatnonzero(np.isin(self.indices, indices))
+        with pd.HDFStore(self.filename, mode="r") as store:
+            return self._read_coordinates(store, "oneline", coords, columns)
 
     def select(self, where=None, start=None, stop=None, columns=None):  # pragma: no cover
         """Select a subset of the oneline table based on the given conditions.
@@ -1950,7 +2067,7 @@ class TransientPopulation(Population):
             M_sim = self.mass_per_metallicity['simulated_mass'].iloc[i]
             if len(met_indices) == 0: # pragma: no cover
                 continue
-            pop_data = self.oneline.select(where='index in '+str(met_indices.tolist()),
+            pop_data = self.oneline.select_indices(met_indices,
                                            columns=['S1_mass_i', 'S2_mass_i', 'orbital_period_i', 'eccentricity_i', 'state_i'])
 
             # For some reason some binaries might be flipped in the sampling
