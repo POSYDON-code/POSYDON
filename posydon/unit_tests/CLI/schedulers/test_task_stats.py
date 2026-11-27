@@ -100,6 +100,31 @@ class TestSummary:
         assert "give the size of a node" in text
 
 
+class TestRerunOrder:
+
+    def test_last_run_wins_across_rank_files(self, tmp_path):
+        # a rerun job (same PBS job ID) ran task 4 again on another rank:
+        # the older run is in a file that sorts after the newer one
+        newer = totest.StatsWriter(str(tmp_path), "5", 0)
+        older = totest.StatsWriter(str(tmp_path), "5", 1)
+        older.start(4, timestamp=100.0)
+        older.end(4, 10.0, 1, timestamp=110.0)
+        newer.start(4, timestamp=200.0)
+        newer.end(4, 30.0, 0, timestamp=230.0)
+        task = totest.read_stats(str(tmp_path))[("5", 4)]
+        assert (task["start"], task["exit_code"], task["elapsed_s"]) == \
+            (200.0, 0, 30.0)
+        # also when the rerun was killed: started, but no end
+        older.start(4, timestamp=300.0)
+        assert totest.read_stats(str(tmp_path))[("5", 4)]["end"] is None
+
+    def test_full_pbs_job_id(self, tmp_path):
+        writer = totest.StatsWriter(str(tmp_path), "381172", 0)
+        writer.start(0, timestamp=1.0)
+        assert list(totest.read_stats(
+            str(tmp_path), "381172.crux-pbs-0001.head")) == [("381172", 0)]
+
+
 class TestMain:
 
     def test_main(self, stats_dir, capsys):

@@ -122,7 +122,8 @@ def read_stats(directory, job_id=None):
     directory : str
         Statistics directory.
     job_id : str or None
-        Only read the files of this job.
+        Only read the files of this job (a full PBS job ID such as
+        "123.server" works too).
 
     Returns
     -------
@@ -132,27 +133,34 @@ def read_stats(directory, job_id=None):
         'max_rss_kb' (None if unknown, e.g. for unfinished tasks). If a task
         was run several times (e.g. a rerun job), its last run is used.
     """
+    if job_id:
+        job_id = str(job_id).split('.')[0]
     pattern = f"stats_{job_id}_*.csv" if job_id else "stats_*.csv"
-    tasks = {}
+    # the runs of a task in a rerun job can be in the files of different
+    # ranks: process all events in the order they happened
+    rows = []
     for path in sorted(glob.glob(os.path.join(directory, pattern))):
         with open(path, newline='') as f:
-            for row in csv.DictReader(f):
-                key = (row['job_id'], int(row['task_id']))
-                if row['event'] == 'start':
-                    tasks[key] = {'host': row['host'],
-                                  'start': _float(row['time']), 'end': None,
-                                  'elapsed_s': None, 'exit_code': None,
-                                  'user_cpu_s': None, 'sys_cpu_s': None,
-                                  'max_rss_kb': None}
-                else:  # 'end'
-                    task = tasks.setdefault(key, {'host': row['host'],
-                                                  'start': None})
-                    task.update(end=_float(row['time']),
-                                elapsed_s=_float(row['elapsed_s']),
-                                exit_code=int(row['exit_code']),
-                                user_cpu_s=_float(row['user_cpu_s']),
-                                sys_cpu_s=_float(row['sys_cpu_s']),
-                                max_rss_kb=_float(row['max_rss_kb']))
+            rows.extend(csv.DictReader(f))
+    rows.sort(key=lambda row: _float(row['time']) or 0.0)
+    tasks = {}
+    for row in rows:
+        key = (row['job_id'], int(row['task_id']))
+        if row['event'] == 'start':
+            tasks[key] = {'host': row['host'],
+                          'start': _float(row['time']), 'end': None,
+                          'elapsed_s': None, 'exit_code': None,
+                          'user_cpu_s': None, 'sys_cpu_s': None,
+                          'max_rss_kb': None}
+        else:  # 'end'
+            task = tasks.setdefault(key, {'host': row['host'],
+                                          'start': None})
+            task.update(end=_float(row['time']),
+                        elapsed_s=_float(row['elapsed_s']),
+                        exit_code=int(row['exit_code']),
+                        user_cpu_s=_float(row['user_cpu_s']),
+                        sys_cpu_s=_float(row['sys_cpu_s']),
+                        max_rss_kb=_float(row['max_rss_kb']))
     return tasks
 
 

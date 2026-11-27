@@ -1215,3 +1215,56 @@ class TestPBSPopulationRun:
         resubmit = totest.create_bash_submit_rescue_script(
             str(tmp_path), [rescue], scheduler=scheduler)
         assert resubmit.endswith("resubmit_pbs.sh")
+
+    def test_rescue_with_another_scheduler(self, args, tmp_path, monkeypatch):
+        # set up for SLURM, rescued with PBS: the resubmit script chains the
+        # PBS merge job, so it is written too
+        monkeypatch.chdir(tmp_path)
+        args.scheduler = 'slurm'
+        args.scheduler_option = None
+        slurm = totest.scheduler_from_args(args)
+        totest.create_job_scripts(1.0, args, slurm, path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        totest.write_run_settings(args, slurm, path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        rescue_args = MagicMock()
+        rescue_args.run_folder = str(tmp_path)
+        for name in ['walltime', 'mem_per_cpu', 'partition', 'account',
+                     'email', 'max_concurrent_jobs', 'exclude']:
+            setattr(rescue_args, name, None)
+        rescue_args.scheduler = 'pbs'
+        rescue_args.scheduler_option = ["site=crux"]
+        rescue = totest.create_batch_rescue_script(
+            rescue_args, {'metallicity': 1.0, 'missing_indices': [3]})
+        assert rescue.endswith("1e+00_Zsun_rescue.pbs")
+        merge = tmp_path / "1e+00_Zsun_merge_popsyn.pbs"
+        content = merge.read_text()
+        assert "#PBS -l walltime=01:00:00" in content
+        assert "#PBS -l select=1:system=crux" in content
+        # an existing merge script is kept
+        merge.write_text("kept")
+        assert totest.ensure_merge_script(
+            str(tmp_path), 1.0, totest.get_scheduler('pbs', site='crux')) \
+            == str(merge)
+        assert merge.read_text() == "kept"
+
+    def test_ensure_merge_script_settings(self, args, tmp_path, monkeypatch):
+        monkeypatch.chdir(tmp_path)
+        pbs = totest.get_scheduler('pbs', site='crux')
+        # settings read from the run folder
+        args.scheduler = 'slurm'
+        args.scheduler_option = None
+        totest.write_run_settings(args, totest.scheduler_from_args(args),
+                                  path_to_posydon="/p",
+                                  path_to_posydon_data="/d")
+        path = totest.ensure_merge_script(str(tmp_path), 1.0, pbs)
+        assert "walltime=01:00:00" in open(path).read()
+        # an older run without settings: from its SLURM array script, with
+        # the array's walltime (the merge walltime is unknown)
+        os.remove(path)
+        os.remove(totest.RUN_SETTINGS_FILE)
+        with open("1e+00_Zsun_slurm_array.slurm", "w") as f:
+            f.write("#SBATCH --array=0-9\n#SBATCH --time=03:00:00\n"
+                    "#SBATCH --mem-per-cpu=4G\n#SBATCH --account=acc\n")
+        path = totest.ensure_merge_script(str(tmp_path), 1.0, pbs)
+        assert "walltime=03:00:00" in open(path).read()

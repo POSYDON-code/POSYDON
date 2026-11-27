@@ -931,7 +931,7 @@ class TestHandleBatchesComplete:
     ):
         """Test when user confirms to resubmit merge jobs."""
         # Create merge script
-        merge_script = tmp_path / "7_Zsun_merge_popsyn.slurm"
+        merge_script = tmp_path / "1e+00_Zsun_merge_popsyn.slurm"
         merge_script.write_text("#!/bin/bash\\n")
 
         missing_files = {1.0: False}
@@ -943,6 +943,35 @@ class TestHandleBatchesComplete:
 
         assert result is True
         mock_submit.assert_called_once()
+        assert mock_submit.call_args[0][0] == str(merge_script)
+
+    @patch('posydon.CLI.popsyn.check.get_user_confirmation')
+    @patch('posydon.CLI.popsyn.check.submit_job')
+    def test_handle_batches_complete_other_scheduler(
+        self, mock_submit, mock_confirm, mock_args, tmp_path, capsys
+    ):
+        """A run set up for SLURM, checked with --scheduler pbs: the PBS
+        merge script is written before it is submitted."""
+        (tmp_path / "1e+00_Zsun_merge_popsyn.slurm").write_text("#!/bin/bash\n")
+        (tmp_path / "popsyn_jobs.json").write_text(
+            '{"scheduler": "slurm", "scheduler_options": {}, "n_tasks": 10, '
+            '"walltime": "02:00:00", "merge_walltime": "01:00:00", '
+            '"mem_per_cpu": "4G", "partition": null, "account": "acc", '
+            '"email": null, "max_concurrent_jobs": null, '
+            '"path_to_posydon": "/p", "path_to_posydon_data": "/d"}')
+        mock_args.scheduler = "pbs"
+        mock_args.scheduler_option = ["site=crux"]
+        mock_args.exclude = None
+        mock_confirm.return_value = True
+        mock_submit.return_value = True
+
+        assert totest.handle_batches_complete(
+            mock_args, {1.0: False}, {1.0: {'status': 'complete'}}) is True
+        merge_pbs = tmp_path / "1e+00_Zsun_merge_popsyn.pbs"
+        assert mock_submit.call_args[0][0] == str(merge_pbs)
+        content = merge_pbs.read_text()
+        assert "#PBS -l walltime=01:00:00" in content
+        assert "python ./merge_metallicity.py 1.0" in content
 
 
 class TestCheckPopsynFunction:

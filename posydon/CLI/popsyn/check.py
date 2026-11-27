@@ -15,7 +15,7 @@ from posydon.CLI.io import (
     clear_previous_lines,
     create_bash_submit_rescue_script,
     create_batch_rescue_script,
-    merge_script_name,
+    ensure_merge_script,
     print_error,
     print_separator_line,
     print_success,
@@ -774,11 +774,9 @@ def handle_batches_complete(args, missing_files, batch_status):
             scheduler = get_run_scheduler(args)
             all_succeeded = True
             for met in missing_files:
-                str_met = convert_metallicity_to_string(met)
-                script_path = os.path.join(
-                    args.run_folder,
-                    merge_script_name(str_met, scheduler)
-                )
+                # written if the run was set up for another scheduler
+                script_path = ensure_merge_script(args.run_folder, met,
+                                                  scheduler)
                 if not submit_job(script_path, scheduler): #pragma: no cover
                     all_succeeded = False
 

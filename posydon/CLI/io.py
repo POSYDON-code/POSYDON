@@ -659,6 +659,9 @@ def create_batch_rescue_script(args, batch_status):
             settings[key] = value
 
     scheduler = scheduler_for_run(args, settings)
+    # the rescue is followed by the merge job of the same scheduler, which
+    # a run set up for another scheduler doesn't have yet
+    ensure_merge_script(run_folder, metallicity, scheduler, settings)
 
     job = popsyn_array_job(
         metallicity, settings['n_tasks'], settings['walltime'],
@@ -671,6 +674,49 @@ def create_batch_rescue_script(args, batch_status):
     scheduler.write(job, rescue_script)
     print_success(f"Rescue script generated: {rescue_script}")
     return rescue_script
+
+
+def ensure_merge_script(run_folder, metallicity, scheduler, settings=None):
+    '''Write the merge job script of a metallicity for `scheduler`, unless
+    the run folder already has it.
+
+    A run's merge scripts are written by `posydon-popsyn setup` for its
+    scheduler. When `posydon-popsyn check` is told to use another scheduler,
+    the merge jobs it submits need scripts for that one.
+
+    Parameters
+    ----------
+    run_folder : str
+        The run folder
+    metallicity : float
+        The metallicity in solar units
+    scheduler : Scheduler
+        The job scheduler backend
+    settings : dict, optional
+        The run settings (default: read from the run folder, see
+        `read_run_settings`)
+
+    Returns
+    -------
+    str
+        Path to the merge script
+    '''
+    str_met = convert_metallicity_to_string(metallicity)
+    path = os.path.join(run_folder, merge_script_name(str_met, scheduler))
+    if os.path.isfile(path):
+        return path
+    if settings is None:
+        settings = read_run_settings(run_folder)
+        if settings is None:
+            settings = _legacy_slurm_settings(run_folder, str_met)
+    job = popsyn_merge_job(
+        metallicity, settings.get('merge_walltime') or settings['walltime'],
+        settings['mem_per_cpu'], settings['partition'], settings['account'],
+        settings['email'], settings['path_to_posydon'],
+        settings['path_to_posydon_data'])
+    scheduler.write(job, path)
+    print(f"Merge script for {scheduler.name.upper()} created: {path}")
+    return path
 
 
 def create_bash_submit_rescue_script(filename, rescue_scripts, scheduler=None):

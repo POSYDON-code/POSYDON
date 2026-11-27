@@ -253,6 +253,20 @@ def run_is_finished(run_dir, outfile_name='out.txt'):
             return get_flag_from_MESA_output(path) != "reach cluster timelimit"
     return False
 
+def single_star_run_is_finished(grid_param_dict, args, last_step):
+    """Whether the single star grid point of `grid_param_dict` finished
+    (with --skip-finished in a fixed grid), judged from the output of its
+    last formation step; prints a message if so."""
+    if not (args.skip_finished and args.grid_type == 'fixed'):
+        return False
+    _, final_dir = get_run_directories(grid_param_dict, args)
+    outfile_name = 'out_star1_formation_step{0}.txt'.format(last_step)
+    if not run_is_finished(final_dir, outfile_name=outfile_name):
+        return False
+    print("Grid point already finished in {0}, skipping it".format(final_dir))
+    sys.stdout.flush()
+    return True
+
 def create_working_directory(grid_param_dict, args):
     """Function to build the directory name and make inlists for a given grid point
 
@@ -1071,11 +1085,16 @@ if __name__ == '__main__':
         print("Grid parameters that effect star1_formation_controls: {0}".format(','.join(grid_params_star1_formation_controls)))
         print("Grid parameters that effect star1_formation_job: {0}".format(','.join(grid_params_star1_formation_job)))
 
+        last_step = len(args.mesa_star1_inlist_project) - 1
+        # skip a grid point which already finished (e.g. in a rerun job);
+        # its last formation step has the output of the run
+        if single_star_run_is_finished(grid_param_dict, args, last_step):
+            sys.exit(0)
+
         # based on the values create directory
         work_dir, final_dir = create_working_directory(grid_param_dict, args)
 
         # run the single star grid
-        last_step = len(args.mesa_star1_inlist_project) - 1
         for index, inlist_step in enumerate(args.mesa_star1_inlist_project):
             # single_HMS star has only step0, metallicity is required but not new_Z
             # single_HeMS star has step0, step1, step2, last two steps require metallicity
