@@ -6,6 +6,7 @@ __authors__ = [
 
 import json
 import os
+import shutil
 import textwrap
 
 from posydon.CLI.schedulers import (
@@ -647,18 +648,7 @@ def create_batch_rescue_script(args, batch_status):
                          "Please run the check function to resubmit the merge jobs.\n\n"
                          "posydon-popsyn check <run_folder>\n")
 
-    settings = read_run_settings(run_folder)
-    if settings is None:
-        settings = _legacy_slurm_settings(run_folder, str_met)
-
-    # Override with command-line arguments if provided
-    for key in ('walltime', 'mem_per_cpu', 'partition', 'account', 'email',
-                'max_concurrent_jobs'):
-        value = _valid_option(args, key)
-        if value is not None:
-            settings[key] = value
-
-    scheduler = scheduler_for_run(args, settings)
+    settings, scheduler = settings_for_check(args, run_folder, str_met)
     # the rescue is followed by the merge job of the same scheduler, which
     # a run set up for another scheduler doesn't have yet
     ensure_merge_script(run_folder, metallicity, scheduler, settings)
@@ -674,6 +664,96 @@ def create_batch_rescue_script(args, batch_status):
     scheduler.write(job, rescue_script)
     print_success(f"Rescue script generated: {rescue_script}")
     return rescue_script
+
+
+def settings_for_check(args, run_folder, str_met):
+    '''The settings and the scheduler with which `posydon-popsyn check`
+    continues a run.
+
+    The run's saved settings (or, for older runs, those of its SLURM array
+    script), with the job settings given on the command line taking
+    precedence. If the scheduler differs from the run's (e.g. a run set up
+    on a SLURM cluster is continued on a PBS system), the run has moved:
+    the jobs then use the paths of the current POSYDON installation, and
+    the settings are saved with the new scheduler, its options and the
+    command line settings, so later checks need no override (see
+    `move_run`).
+
+    Parameters
+    ----------
+    args : argparse.Namespace
+        The arguments passed to `posydon-popsyn check`
+    run_folder : str
+        The run folder
+    str_met : str
+        String representation of a metallicity (for older runs)
+
+    Returns
+    -------
+    tuple (dict, Scheduler)
+    '''
+    settings = read_run_settings(run_folder)
+    if settings is None:
+        settings = _legacy_slurm_settings(run_folder, str_met)
+    # job settings given on the command line
+    for key in ('walltime', 'merge_walltime', 'mem_per_cpu', 'partition',
+                'account', 'email', 'max_concurrent_jobs'):
+        value = _valid_option(args, key)
+        if value is not None:
+            settings[key] = value
+    scheduler = scheduler_for_run(args, settings)
+    if scheduler.name != settings.get('scheduler'):
+        settings = move_run(run_folder, settings, scheduler)
+    return settings, scheduler
+
+
+def move_run(run_folder, settings, scheduler, path_to_posydon=None,
+             path_to_posydon_data=None):
+    '''Continue a run with another scheduler, e.g. on another system.
+
+    The settings of the run get the new scheduler and its options, and the
+    paths of the current POSYDON installation (the saved ones are those of
+    the system the run was set up on). They are saved in the run folder;
+    the previous settings file is kept as `popsyn_jobs.<old scheduler>.json`.
+
+    Parameters
+    ----------
+    run_folder : str
+        The run folder
+    settings : dict
+        The current settings of the run
+    scheduler : Scheduler
+        The new scheduler
+    path_to_posydon, path_to_posydon_data : str
+        Paths written into the job scripts (default: the current
+        installation)
+
+    Returns
+    -------
+    dict
+        The new settings
+    '''
+    if path_to_posydon is None:
+        path_to_posydon = PATH_TO_POSYDON
+    if path_to_posydon_data is None:
+        path_to_posydon_data = os.path.dirname(PATH_TO_POSYDON_DATA)
+    old = settings.get('scheduler') or 'slurm'
+    path = os.path.join(run_folder, RUN_SETTINGS_FILE)
+    if os.path.isfile(path):
+        backup = os.path.join(run_folder, f"popsyn_jobs.{old}.json")
+        shutil.copyfile(path, backup)
+        print(f"Previous run settings kept in {backup}")
+    new = dict(settings, scheduler=scheduler.name,
+               scheduler_options=scheduler.given_options(),
+               path_to_posydon=path_to_posydon,
+               path_to_posydon_data=path_to_posydon_data)
+    with open(path, 'w') as f:
+        json.dump(new, f, indent=2, sort_keys=True)
+    print(f"The run moves from {old.upper()} to {scheduler.name.upper()}: "
+          f"its jobs use PATH_TO_POSYDON={path_to_posydon} and "
+          f"PATH_TO_POSYDON_DATA={path_to_posydon_data}; settings saved in "
+          f"{path}")
+    return new
 
 
 def ensure_merge_script(run_folder, metallicity, scheduler, settings=None):

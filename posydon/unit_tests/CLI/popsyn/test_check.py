@@ -930,9 +930,12 @@ class TestHandleBatchesComplete:
         self, mock_submit, mock_confirm, mock_args, tmp_path, capsys
     ):
         """Test when user confirms to resubmit merge jobs."""
-        # Create merge script
+        # Create merge script (of a run set up with an older version: its
+        # settings are in the array script)
         merge_script = tmp_path / "1e+00_Zsun_merge_popsyn.slurm"
         merge_script.write_text("#!/bin/bash\\n")
+        (tmp_path / "1e+00_Zsun_slurm_array.slurm").write_text(
+            "#SBATCH --array=0-9\n#SBATCH --time=01:00:00\n")
 
         missing_files = {1.0: False}
         batch_status = {1.0: {'status': 'complete'}}
@@ -972,6 +975,13 @@ class TestHandleBatchesComplete:
         content = merge_pbs.read_text()
         assert "#PBS -l walltime=01:00:00" in content
         assert "python ./merge_metallicity.py 1.0" in content
+        # the run moved: current installation paths, settings saved for PBS
+        assert "export PATH_TO_POSYDON=/p\n" not in content
+        assert (tmp_path / "popsyn_jobs.slurm.json").exists()
+        settings = totest.read_run_settings(str(tmp_path))
+        assert settings["scheduler"] == "pbs"
+        assert settings["scheduler_options"]["site"] == "crux"
+        assert settings["path_to_posydon"] != "/p"
 
 
 class TestCheckPopsynFunction:

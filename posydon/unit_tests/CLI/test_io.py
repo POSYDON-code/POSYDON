@@ -4,6 +4,7 @@ __authors__ = [
     "Max Briel <max.briel@gmail.com>",
 ]
 
+import json
 import os
 import textwrap
 from unittest.mock import MagicMock
@@ -1234,19 +1235,60 @@ class TestPBSPopulationRun:
             setattr(rescue_args, name, None)
         rescue_args.scheduler = 'pbs'
         rescue_args.scheduler_option = ["site=crux"]
+        rescue_args.partition = "workq-route"
+        rescue_args.merge_walltime = "00:30:00"
+        monkeypatch.setattr(totest, "PATH_TO_POSYDON", "/crux/POSYDON")
+        monkeypatch.setattr(totest, "PATH_TO_POSYDON_DATA",
+                            "/crux/data/POSYDON_data")
         rescue = totest.create_batch_rescue_script(
             rescue_args, {'metallicity': 1.0, 'missing_indices': [3]})
         assert rescue.endswith("1e+00_Zsun_rescue.pbs")
         merge = tmp_path / "1e+00_Zsun_merge_popsyn.pbs"
         content = merge.read_text()
-        assert "#PBS -l walltime=01:00:00" in content
+        assert "#PBS -l walltime=00:30:00" in content
         assert "#PBS -l select=1:system=crux" in content
+        assert "#PBS -q workq-route" in content
+        # the run moved: the jobs use the paths on the new system
+        for script in (rescue, str(merge)):
+            text = open(script).read()
+            assert "export PATH_TO_POSYDON=/crux/POSYDON" in text
+            assert "export PATH_TO_POSYDON_DATA=/crux/data" in text
+        # ... which are saved with the new scheduler; the old settings kept
+        settings = totest.read_run_settings(str(tmp_path))
+        assert (settings['scheduler'], settings['partition'],
+                settings['path_to_posydon']) == \
+            ('pbs', 'workq-route', '/crux/POSYDON')
+        assert settings['scheduler_options']['site'] == 'crux'
+        old = json.load(open(tmp_path / "popsyn_jobs.slurm.json"))
+        assert (old['scheduler'], old['path_to_posydon']) == ('slurm', '/p')
+        # a later check needs no override
+        rescue_args.scheduler = None
+        rescue_args.scheduler_option = None
+        rescue_args.partition = None
+        rescue_args.merge_walltime = None
+        assert totest.settings_for_check(
+            rescue_args, str(tmp_path), "1e+00")[1].name == 'pbs'
         # an existing merge script is kept
         merge.write_text("kept")
         assert totest.ensure_merge_script(
             str(tmp_path), 1.0, totest.get_scheduler('pbs', site='crux')) \
             == str(merge)
         assert merge.read_text() == "kept"
+
+    def test_move_older_run(self, tmp_path, monkeypatch):
+        # a run without settings file (older version) moves to PBS
+        monkeypatch.chdir(tmp_path)
+        with open("1e+00_Zsun_slurm_array.slurm", "w") as f:
+            f.write("#SBATCH --array=0-9\n#SBATCH --time=03:00:00\n"
+                    "export PATH_TO_POSYDON=/quest/POSYDON\n")
+        settings = totest._legacy_slurm_settings(".", "1e+00")
+        new = totest.move_run(".", settings,
+                              totest.get_scheduler('pbs', site='crux'),
+                              path_to_posydon="/a", path_to_posydon_data="/b")
+        assert (new['scheduler'], new['n_tasks'], new['path_to_posydon'],
+                new['path_to_posydon_data']) == ('pbs', 10, '/a', '/b')
+        assert totest.read_run_settings(".") == new
+        assert not os.path.exists("popsyn_jobs.slurm.json")
 
     def test_ensure_merge_script_settings(self, args, tmp_path, monkeypatch):
         monkeypatch.chdir(tmp_path)

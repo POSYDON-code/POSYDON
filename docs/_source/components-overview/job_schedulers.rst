@@ -45,6 +45,22 @@ submitted without the jobs it depends on.
 jobs for the same scheduler. Arguments given to ``check`` override the saved
 settings.
 
+A run can be continued on another system, e.g. set up on a SLURM cluster and
+rescued on ALCF Crux:
+
+.. code-block:: bash
+
+    posydon-popsyn check <run folder> --scheduler pbs \
+        --scheduler_option site=crux --partition workq-route --account <PROJECT>
+
+With a scheduler other than the run's, ``check`` treats the run as moved: its
+rescue and merge jobs are written for the new scheduler with the paths of the
+current POSYDON installation (``PATH_TO_POSYDON``, ``PATH_TO_POSYDON_DATA``),
+and ``popsyn_jobs.json`` is updated with them and the settings given to
+``check``, so later checks need no ``--scheduler``. The previous settings are
+kept in ``popsyn_jobs.<old scheduler>.json``, and the scripts of the old
+scheduler are left as they are.
+
 
 SLURM
 =====

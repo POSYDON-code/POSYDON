@@ -21,6 +21,7 @@ from posydon.CLI.io import (
     print_success,
     read_run_settings,
     scheduler_for_run,
+    settings_for_check,
 )
 from posydon.CLI.schedulers import get_scheduler
 from posydon.popsyn.io import binarypop_kwargs_from_ini
@@ -771,12 +772,14 @@ def handle_batches_complete(args, missing_files, batch_status):
         print("Please resubmit the merge jobs to generate the population files.")
 
         if get_user_confirmation("Would you like to resubmit the merge jobs? (yes/no): "):
-            scheduler = get_run_scheduler(args)
             all_succeeded = True
             for met in missing_files:
+                settings, scheduler = settings_for_check(
+                    args, args.run_folder,
+                    convert_metallicity_to_string(met))
                 # written if the run was set up for another scheduler
                 script_path = ensure_merge_script(args.run_folder, met,
-                                                  scheduler)
+                                                  scheduler, settings)
                 if not submit_job(script_path, scheduler): #pragma: no cover
                     all_succeeded = False
 
