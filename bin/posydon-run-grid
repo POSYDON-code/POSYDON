@@ -21,11 +21,8 @@ from posydon.grids.psygrid import PSyGrid
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
 
-try:
-    from mpi4py import MPI
-    MPI_IMPORTED = True
-except ImportError:
-    MPI_IMPORTED = False
+# mpi4py is only needed for dynamic grids and imported there
+MPI = None
 
 ###############################################################################
 # DEFINE COMMANDLINE ARGUMENTS
@@ -792,13 +789,17 @@ def run_grid_point(grid, star1_formation, star2_formation,
 ###############################################################################
 if __name__ == '__main__':
 
-    # check MPI was imported
-    if not MPI_IMPORTED:
-        raise ImportError('MPI module mpi4py not installed! Plese check your POSYDON installation!')
-
     # READ COMMANDLINE ARGUMENTS
     ###########################################################################
     args = parse_commandline()
+
+    if args.grid_type == 'dynamic':
+        try:
+            from mpi4py import MPI
+        except ImportError as e:
+            raise ImportError("Dynamic grids require mpi4py. Install it with "
+                              "e.g. `conda install mpi4py` or "
+                              "`pip install posydon[hpc]`.") from e
     # do to the fact that the arguments args.mesa_star2_inlist_project and args.mesa_star1_inlist_project
     # are interpreted as lists when you supply None it stringifies it and makes it a list
     if 'None' in args.mesa_star1_inlist_project:
