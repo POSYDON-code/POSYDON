@@ -21,8 +21,7 @@ from posydon.grids.psygrid import PSyGrid
 from posydon.utils import gridutils as utils
 from posydon.utils.posydonwarning import Pwarn
 
-# mpi4py is only needed for dynamic grids and is imported lazily in the main
-# block: importing it unconditionally can conflict with the MPI used by srun.
+# mpi4py is only needed for dynamic grids and imported there
 MPI = None
 
 ###############################################################################
