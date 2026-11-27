@@ -253,14 +253,18 @@ def run_is_finished(run_dir, outfile_name='out.txt'):
             return get_flag_from_MESA_output(path) != "reach cluster timelimit"
     return False
 
-def single_star_run_is_finished(grid_param_dict, args, last_step):
-    """Whether the single star grid point of `grid_param_dict` finished
-    (with --skip-finished in a fixed grid), judged from the output of its
-    last formation step; prints a message if so."""
+def skip_finished(grid_param_dict, args, outfile_name='out.txt'):
+    """Whether to skip the grid point of `grid_param_dict` because it
+    already finished (e.g. in an earlier run of a rerun job).
+
+    Only with --skip-finished, in a fixed grid. The run is judged from its
+    MESA output `outfile_name` (see `run_is_finished`): out.txt for binary
+    runs, the output of the last formation step for single star runs.
+    Prints a message if the grid point is skipped.
+    """
     if not (args.skip_finished and args.grid_type == 'fixed'):
         return False
     _, final_dir = get_run_directories(grid_param_dict, args)
-    outfile_name = 'out_star1_formation_step{0}.txt'.format(last_step)
     if not run_is_finished(final_dir, outfile_name=outfile_name):
         return False
     print("Grid point already finished in {0}, skipping it".format(final_dir))
@@ -917,13 +921,8 @@ def run_grid_point(grid, star1_formation, star2_formation,
     """
 
     # skip grid points which already finished (e.g. in a rerun job)
-    if args.skip_finished and args.grid_type == 'fixed':
-        _, final_dir = get_run_directories(grid_param_dict, args)
-        if run_is_finished(final_dir):
-            print("Grid point already finished in {0}, skipping it".format(
-                final_dir))
-            sys.stdout.flush()
-            return pandas.DataFrame()
+    if skip_finished(grid_param_dict, args):
+        return pandas.DataFrame()
 
     # based on the values create directory
     work_dir, final_dir = create_working_directory(grid_param_dict, args)
@@ -1087,8 +1086,9 @@ if __name__ == '__main__':
 
         last_step = len(args.mesa_star1_inlist_project) - 1
         # skip a grid point which already finished (e.g. in a rerun job);
-        # its last formation step has the output of the run
-        if single_star_run_is_finished(grid_param_dict, args, last_step):
+        # the output of its last formation step tells
+        if skip_finished(grid_param_dict, args, outfile_name=
+                         'out_star1_formation_step{0}.txt'.format(last_step)):
             sys.exit(0)
 
         # based on the values create directory
