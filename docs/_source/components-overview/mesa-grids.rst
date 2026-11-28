@@ -36,3 +36,13 @@ Learn more about the MESA ini file content and how to use it in your own code.
 .. toctree::
 
    mesa_grids/inifile
+
+Job schedulers
+~~~~~~~~~~~~~~
+
+Learn how to run grids, populations and the pipeline with SLURM or PBS (e.g.
+ALCF Crux).
+
+.. toctree::
+
+   job_schedulers

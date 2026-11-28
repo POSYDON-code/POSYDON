@@ -42,16 +42,16 @@ Frequently Asked Questions
     ``dump_rate`` that is greater than the number of binaries in your population will effectivley counteract the purpose of this parameter, as it means you would only dump your binaries into a file after you have run all of them.)
 
 
-4. **What should the walltime and job array size be for my population synthesis run?**
-    The :code:`walltime` and job array size are dependent on the number of binaries you want to simulate and the memory usage of the simulation.
-    The job array size should be set such that the number of binaries per job is at least 1000, since there's a minimum overhead per job due to loading the grids.
+4. **What should the walltime and number of tasks be for my population synthesis run?**
+    The :code:`walltime` and the number of tasks (:code:`--n_tasks`, the size of the job array on SLURM) are dependent on the number of binaries you want to simulate and the memory usage of the simulation.
+    The number of tasks should be set such that the number of binaries per task is at least 1000, since there's a minimum overhead per task due to loading the grids.
 
     The :code:`walltime` depends on the number of binaries per job, where each binary takes about 1-2 seconds to run.
     For example, 100,000 binaries split over 100 jobs (per metallicity) means that every job runs 1,000 binaries. This will take around 33 minutes per job. So a :code:`walltime` of :code:`00:45:00` is reasonable.
 
-    The balance between :code:`walltime` and the size of the job array is important.
-    If the :code:`walltime` is too long, it might be worth increasing the job array size to decrease the time per job and allow the population synthesis to finish faster.
-    But if the :code:`walltime` is too short, the job array size should be decreased, since each job has an initial overhead that is not dependent on the number of binaries in the job.
+    The balance between :code:`walltime` and the number of tasks is important.
+    If the :code:`walltime` is too long, it might be worth increasing the number of tasks to decrease the time per task and allow the population synthesis to finish faster.
+    But if the :code:`walltime` is too short, the number of tasks should be decreased, since each task has an initial overhead that is not dependent on the number of binaries in the task.
 
     .. note::
         The processing time increases if you make the :code:`dump_rate` too low due to many I/O operations.
